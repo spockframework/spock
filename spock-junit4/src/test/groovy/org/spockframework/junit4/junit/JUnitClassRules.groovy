@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,8 @@ import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 import org.spockframework.runtime.InvalidSpecException
-
+import spock.lang.Issue
+import spock.lang.ResourceLock
 import spock.lang.Shared
 
 class JUnitClassRules extends JUnitBaseSpec {
@@ -30,6 +31,7 @@ class JUnitClassRules extends JUnitBaseSpec {
   def setup() {
     runner.addClassImport(ClassRule)
     runner.addClassImport(TestName)
+    runner.addClassImport(OrderTracker)
   }
 
   def "are instantiated automatically by default"() {
@@ -77,6 +79,41 @@ class JUnitClassRules extends JUnitBaseSpec {
     e.message.contains("must be @Shared")
   }
 
+  @ResourceLock("OrderTracker")
+  @Issue("https://github.com/spockframework/spock/issues/1050")
+  def "rules from parent fields should run before rules in child specs"() {
+    given:
+    OrderTracker.invocations = []
+    when:
+    runner.runWithImports """
+abstract class Parent extends Specification {
+      @Shared @ClassRule OrderTracker parent1 = new OrderTracker("parent-1")
+      @Shared @ClassRule OrderTracker parent2 = new OrderTracker("parent-2")
+
+}
+class Child extends Parent {
+      @Shared @ClassRule OrderTracker child1 = new OrderTracker("child-1")
+      @Shared @ClassRule OrderTracker child2 = new OrderTracker("child-2")
+
+    def "test"() {
+        expect: true
+    }
+}
+    """
+
+    then:
+    OrderTracker.invocations == [
+      "before parent-1",
+      "before parent-2",
+      "before child-1",
+      "before child-2",
+      "after child-2",
+      "after child-1",
+      "after parent-2",
+      "after parent-1",
+    ]
+  }
+
   static @ClassRule TestName staticRule
 
   def "static class rules are not detected"() {
@@ -98,6 +135,28 @@ class JUnitClassRules extends JUnitBaseSpec {
         @Override
         void evaluate() {
           base.evaluate()
+        }
+      }
+    }
+  }
+
+  static class OrderTracker implements TestRule {
+    static List<String> invocations = []
+
+    private final String identifier
+
+    OrderTracker(String identifier) {
+      this.identifier = identifier
+    }
+
+    @Override
+    Statement apply(Statement base, Description description) {
+      new Statement() {
+        @Override
+        void evaluate() {
+          invocations << "before $identifier".toString()
+          base.evaluate()
+          invocations << "after $identifier".toString()
         }
       }
     }

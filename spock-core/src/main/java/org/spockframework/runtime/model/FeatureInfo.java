@@ -1,7 +1,9 @@
 package org.spockframework.runtime.model;
 
+import org.spockframework.runtime.extension.IDataDriver;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.model.parallel.*;
+import org.spockframework.util.Beta;
 import org.spockframework.util.Nullable;
 
 import java.lang.reflect.AnnotatedElement;
@@ -10,25 +12,31 @@ import java.util.*;
 /**
  * @author Peter Niederwieser
  */
-public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
+public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> implements ITestTaggable {
   private int declarationOrder; // per spec class
   private int executionOrder;   // per spec inheritance chain
 
-  private List<String> parameterNames = new ArrayList<>();
-  private List<String> dataVariables = new ArrayList<>();
+  private final List<String> parameterNames = new ArrayList<>();
+  private final List<String> dataVariables = new ArrayList<>();
   private final List<BlockInfo> blocks = new ArrayList<>();
   private final List<IMethodInterceptor> iterationInterceptors = new ArrayList<>();
 
   private final Set<ExclusiveResource> exclusiveResources = new HashSet<>();
+
+  private final Set<TestTag> testTags = new HashSet<>();
 
   private ExecutionMode executionMode = null;
 
   private MethodInfo featureMethod;
   private MethodInfo dataProcessorMethod;
   private NameProvider<IterationInfo> iterationNameProvider;
+  private IDataDriver dataDriver = IDataDriver.DEFAULT;
   private final List<DataProviderInfo> dataProviders = new ArrayList<>();
+  private final IterationFilter iterationFilter = new IterationFilter();
 
   private boolean reportIterations = true;
+
+  private boolean forceParameterized = false;
 
   public SpecInfo getSpec() {
     return getParent();
@@ -132,7 +140,23 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
   }
 
   public boolean isParameterized() {
-    return dataProcessorMethod != null;
+    return dataProcessorMethod != null || forceParameterized;
+  }
+
+
+  @Beta
+  public boolean isForceParameterized() {
+    return forceParameterized;
+  }
+
+  /**
+   * Forces this feature to behave as if it were parameterized, even if it has no data processor method.
+   *
+   * @since 2.3
+   */
+  @Beta
+  public void setForceParameterized(boolean forceParameterized) {
+    this.forceParameterized = forceParameterized;
   }
 
   public boolean isReportIterations() {
@@ -152,6 +176,18 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
     iterationNameProvider = provider;
   }
 
+  public IterationFilter getIterationFilter() {
+    return iterationFilter;
+  }
+
+  public IDataDriver getDataDriver() {
+    return dataDriver;
+  }
+
+  public void setDataDriver(IDataDriver dataDriver) {
+    this.dataDriver = dataDriver;
+  }
+
   /**
    * Tells if any of the methods associated with this feature has the specified
    * name in bytecode.
@@ -166,5 +202,15 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
     for (DataProviderInfo provider : dataProviders)
       if (provider.getDataProviderMethod().hasBytecodeName(name)) return true;
     return false;
+  }
+
+  @Override
+  public void addTestTag(TestTag tag) {
+    testTags.add(tag);
+  }
+
+  @Override
+  public Set<TestTag> getTestTags() {
+    return testTags;
   }
 }

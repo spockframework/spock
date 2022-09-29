@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,6 +43,30 @@ def feature3() {
     runner.configurationScript = {
       runner {
         include(*annotationTypes)
+      }
+    }
+
+    when:
+    def result = runner.runClass(spec)
+
+    then:
+    result.testsSucceededCount == runCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+
+    where:
+    annotationTypes << [[Slow], [Fast], [Slow, Fast]]
+    runCount        << [1,      1,      2           ]
+  }
+
+  def "include methods based on annotations using different configuration style"() {
+    runner.configurationScript = {
+      runner {
+        include {
+          annotationTypes.each {
+            annotation(it)
+          }
+        }
       }
     }
 

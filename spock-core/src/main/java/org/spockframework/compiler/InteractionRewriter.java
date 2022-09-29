@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,6 +26,7 @@ import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.syntax.Types;
 
+import static java.util.Arrays.asList;
 import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
 
 /**
@@ -164,7 +165,7 @@ public class InteractionRewriter {
     builderExpr = new ConstructorCallExpression(
         resources.getAstNodeCache().InteractionBuilder,
         new ArgumentListExpression(
-            Arrays.<Expression> asList(
+            asList(
                 new ConstantExpression(expr.getLineNumber()),
                 new ConstantExpression(expr.getColumnNumber()),
                 new ConstantExpression(resources.getSourceText(expr)))));

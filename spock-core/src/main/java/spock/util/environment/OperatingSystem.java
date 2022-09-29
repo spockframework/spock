@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,8 @@
  */
 
 package spock.util.environment;
+
+import java.util.Locale;
 
 /**
  * Provides information on the current operating system, such as its name, version, and family.
@@ -140,7 +142,7 @@ public class OperatingSystem {
   public static OperatingSystem getCurrent() {
     String name = System.getProperty("os.name");
     String version = System.getProperty("os.version");
-    String lowerName = name.toLowerCase();
+    String lowerName = name.toLowerCase(Locale.ROOT);
     if (lowerName.contains("linux")) return new OperatingSystem(name, version, Family.LINUX);
     if (lowerName.contains("mac os") || lowerName.contains("darwin")) return new OperatingSystem(name, version, Family.MAC_OS);
     if (lowerName.contains("windows")) return new OperatingSystem(name, version, Family.WINDOWS);

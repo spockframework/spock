@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -151,6 +151,66 @@ public class Jvm {
   }
 
   /**
+   * Tells whether the Java version is 18.
+   *
+   * @since 2.0
+   * @return whether the Java version is 18
+   */
+  public boolean isJava18() {
+    return "18".equals(javaSpecVersion);
+  }
+
+  /**
+   * Tells whether the Java version is 19.
+   *
+   * @since 2.0
+   * @return whether the Java version is 19
+   */
+  public boolean isJava19() {
+    return "19".equals(javaSpecVersion);
+  }
+
+  /**
+   * Tells whether the Java version is 20.
+   *
+   * @since 2.0
+   * @return whether the Java version is 20
+   */
+  public boolean isJava20() {
+    return "20".equals(javaSpecVersion);
+  }
+
+  /**
+   * Tells whether the Java version is 21.
+   *
+   * @since 2.0
+   * @return whether the Java version is 21
+   */
+  public boolean isJava21() {
+    return "21".equals(javaSpecVersion);
+  }
+
+  /**
+   * Tells whether the Java version is 22.
+   *
+   * @since 2.0
+   * @return whether the Java version is 22
+   */
+  public boolean isJava22() {
+    return "22".equals(javaSpecVersion);
+  }
+
+  /**
+   * Tells whether the Java version is 23.
+   *
+   * @since 2.0
+   * @return whether the Java version is 23
+   */
+  public boolean isJava23() {
+    return "23".equals(javaSpecVersion);
+  }
+
+  /**
    * Tells whether the Java version is equal to the given major Java version.
    *
    * @since 2.0
@@ -261,6 +321,66 @@ public class Jvm {
    */
   public boolean isJava17Compatible() {
     return javaSpecVersionNumber.getMajor() >= 17;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with Java 18.
+   *
+   * @since 2.0
+   * @return whether the Java version is compatible with Java 18
+   */
+  public boolean isJava18Compatible() {
+    return javaSpecVersionNumber.getMajor() >= 18;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with Java 19.
+   *
+   * @since 2.0
+   * @return whether the Java version is compatible with Java 19
+   */
+  public boolean isJava19Compatible() {
+    return javaSpecVersionNumber.getMajor() >= 19;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with Java 20.
+   *
+   * @since 2.0
+   * @return whether the Java version is compatible with Java 20
+   */
+  public boolean isJava20Compatible() {
+    return javaSpecVersionNumber.getMajor() >= 20;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with Java 21.
+   *
+   * @since 2.0
+   * @return whether the Java version is compatible with Java 21
+   */
+  public boolean isJava21Compatible() {
+    return javaSpecVersionNumber.getMajor() >= 21;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with Java 22.
+   *
+   * @since 2.0
+   * @return whether the Java version is compatible with Java 22
+   */
+  public boolean isJava22Compatible() {
+    return javaSpecVersionNumber.getMajor() >= 22;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with Java 23.
+   *
+   * @since 2.0
+   * @return whether the Java version is compatible with Java 23
+   */
+  public boolean isJava23Compatible() {
+    return javaSpecVersionNumber.getMajor() >= 23;
   }
 
   /**

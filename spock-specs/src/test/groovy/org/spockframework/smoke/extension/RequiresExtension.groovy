@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,7 @@ package org.spockframework.smoke.extension
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.extension.ExtensionException
+import org.spockframework.runtime.extension.builtin.PreconditionContext
 import spock.lang.FailsWith
 import spock.lang.IgnoreIf
 import spock.lang.Issue
@@ -42,8 +43,7 @@ class RequiresExtension extends EmbeddedSpecification {
     ]
   }
 
-
-  def 'fails directly when referencing an unknown variable'() {
+  def 'fails directly when referencing an unknown property'() {
     when:
     runner.runSpecBody """
 @Requires({ b })
@@ -56,6 +56,21 @@ def foo() {
     then:
     ExtensionException ee = thrown()
     ee.cause instanceof MissingPropertyException
+  }
+
+  def 'fails directly when referencing an unknown variable'() {
+    when:
+    runner.runSpecBody """
+@Requires({ data.b })
+def foo() {
+    expect: false
+    where: a = { throw new RuntimeException() }.call()
+}
+"""
+
+    then:
+    ExtensionException ee = thrown()
+    ee.cause instanceof PreconditionContext.DataVariableContextException
   }
 
   def 'fails directly when throwing an arbitrary exception'() {
@@ -92,6 +107,117 @@ class Foo extends Specification {
     result.testsSucceededCount == 1
   }
 
+  def "spec usage with unqualified static method access"() {
+    when:
+    def result = runner.runWithImports """
+@Requires({ shouldRun() })
+class Foo extends Specification {
+  def "basic usage"() {
+    expect: true
+  }
+
+  static boolean shouldRun() {
+    ${shouldRun}
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == testStartAndSucceededCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == testStartAndSucceededCount
+    result.containersSkippedCount == specSkippedCount
+
+    where:
+    shouldRun | testStartAndSucceededCount | specSkippedCount
+    true      | 1                          | 0
+    false     | 0                          | 1
+  }
+
+  def "spec usage with unqualified static field access"() {
+    when:
+    def result = runner.runWithImports """
+@Requires({ shouldRun })
+class Foo extends Specification {
+  def "basic usage"() {
+    expect: true
+  }
+
+  static boolean shouldRun = ${shouldRun}
+}
+"""
+
+    then:
+    result.testsStartedCount == testStartAndSucceededCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == testStartAndSucceededCount
+    result.containersSkippedCount == specSkippedCount
+
+    where:
+    shouldRun | testStartAndSucceededCount | specSkippedCount
+    true      | 1                          | 0
+    false     | 0                          | 1
+  }
+
+  def "spec usage with shared field access"() {
+    when:
+    def result = runner.runWithImports """
+@Requires({ shared.shouldRun })
+class Foo extends Specification {
+  @Shared
+  boolean shouldRun = ${shouldRun}
+
+  def "basic usage"() {
+    expect: true
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == testStartAndSucceededCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == testStartAndSucceededCount
+    result.containersStartedCount == 2
+    result.containersAbortedCount == specAbortedCount
+
+    where:
+    shouldRun | testStartAndSucceededCount | specAbortedCount
+    true      | 1                          | 0
+    false     | 0                          | 1
+  }
+
+  def "spec usage with instance field access"() {
+    when:
+    def result = runner.runWithImports """
+@Requires({ instance.shouldRun })
+class Foo extends Specification {
+  boolean shouldRun = ${shouldRun}
+
+  def "basic usage"() {
+    expect: true
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == 1
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == testAbortedCount
+    result.testsSucceededCount == testSucceededCount
+
+    where:
+    shouldRun | testSucceededCount | testAbortedCount
+    true      | 1                  | 0
+    false     | 0                  | 1
+  }
+
   def "spec usage with false"() {
     when:
     def result = runner.runWithImports """
@@ -109,6 +235,21 @@ class Foo extends Specification {
     result.testsSkippedCount == 0
     result.testsAbortedCount == 0
     result.testsSucceededCount == 0
+  }
+
+  def "ignored spec contains custom message"() {
+    when:
+    def result = runner.runWithImports """
+@Requires(reason = "dummy message", value = { false })
+class Foo extends Specification {
+  def "basic usage"() {
+    expect: false
+  }
+}
+"""
+
+    then:
+    result.allEvents().skipped().list()[0].payload.get() == 'Ignored via @Requires: dummy message'
   }
 
   def "fails if condition cannot be instantiated"() {
@@ -140,6 +281,31 @@ class Foo extends Specification {
   @Shared
   int value
   @Requires({ instance.value != 2 })
+  def "bar #input"() {
+    value = input
+
+    expect:
+    true
+
+    where:
+    input << [1, 2, 3]
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 3
+    result.testsAbortedCount == 1
+  }
+
+  def "@Requires provides condition access to Specification shared fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  @Shared
+  int value
+  @Requires({ shared.value != 2 })
   def "bar #input"() {
     value = input
 
@@ -215,6 +381,49 @@ class Foo extends Specification {
     result.testsFailedCount == 0
   }
 
+  def "Requires can be configured to be inherited"() {
+    when:
+    def result = runner.runWithImports """
+class Base extends Specification {
+  def "base feature"() {
+    expect: true
+  }
+}
+
+@Requires(value = { false }, inherited = ${inherited})
+class Foo extends Base {
+  def "foo feature"() {
+    expect: true
+  }
+}
+
+class Bar extends Foo {
+  def "bar feature"() {
+    expect: true
+  }
+}
+
+class Test extends Bar {
+  def "test feature"() {
+    expect: true
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == testStartAndSucceededCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == testStartAndSucceededCount
+    result.containersSkippedCount == specSkippedCount
+
+    where:
+    inherited | testStartAndSucceededCount | specSkippedCount
+    false     | 1 + 0 + 3 + 4              | 1
+    true      | 1                          | 3
+  }
+
   static class RequiresExtensionExamples extends Specification {
 
     @Requires({ 1 < 2 })
@@ -255,16 +464,19 @@ class Foo extends Specification {
       expect: true
     }
 
-    @Requires({ a == 2 })
+    @Requires({ data.a == 2 })
     def 'can evaluate for single iterations if data variables are accessed'() {
-      expect: a == 2
-      where: a << [1, 2]
+      expect:
+      a == 2
+      where:
+      a << [1, 2]
     }
 
     @Requires({ false })
     def 'can skip data providers completely if no data variables are accessed'() {
       expect: false
-      where: a = { throw new RuntimeException() }.call()
+      where:
+      a = { throw new RuntimeException() }.call()
     }
 
     @Issue("https://github.com/spockframework/spock/issues/535")
@@ -276,17 +488,15 @@ class Foo extends Specification {
 
     @Requires({ false })
     @Requires({ true })
-    def "feature is ignored if at least one Requires annotation is false" () {
+    def "feature is ignored if at least one Requires annotation is false"() {
       expect: false
     }
 
     @Requires({ true })
     @Requires({ true })
     @FailsWith(ConditionNotSatisfiedError)
-    def "feature is not ignored if all Requires annotations are true" () {
+    def "feature is not ignored if all Requires annotations are true"() {
       expect: false
     }
   }
 }
-
-

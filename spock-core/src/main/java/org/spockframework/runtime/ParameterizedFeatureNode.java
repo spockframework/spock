@@ -36,7 +36,7 @@ public class ParameterizedFeatureNode extends FeatureNode {
     verifyNotSkipped(getNodeInfo());
     ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
     context = context.withErrorInfoCollector(errorInfoCollector);
-    ParameterizedFeatureChildExecutor childExecutor = new ParameterizedFeatureChildExecutor(this, dynamicTestExecutor);
+    ParameterizedFeatureChildExecutor childExecutor = new ParameterizedFeatureChildExecutor(this, dynamicTestExecutor, context.getEngineExecutionListener());
     context.getRunner().runParameterizedFeature(context, childExecutor);
     errorInfoCollector.assertEmpty();
     if (childExecutor.getExecutionCount() < 1) {

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,7 @@
 
 package org.spockframework.smoke.condition
 
-import org.spockframework.runtime.ExpressionInfoValueRenderer
+
 import org.spockframework.runtime.FailedStringComparisonRenderer
 import spock.lang.Issue
 
@@ -81,11 +81,12 @@ null == "foo"
       assert ("the quick" == "the quick") instanceof String
     }
   }
+
   @Issue("https://github.com/spockframework/spock/issues/121")
   def "large String comparison does not cause OOM-Error, difference at start"() {
     StringBuilder sb = largeStringBuilder()
     String a = sb.toString()
-    sb.setCharAt(0, 'b'  as char)
+    sb.setCharAt(0, 'b' as char)
     String b = sb.toString()
 
     expect:
@@ -102,7 +103,7 @@ null == "foo"
   def "large String comparison does not cause OOM-Error, difference in the middle"() {
     StringBuilder sb = largeStringBuilder()
     String a = sb.toString()
-    sb.setCharAt(sb.length() / 2 as int, 'b'  as char)
+    sb.setCharAt(sb.length() / 2 as int, 'b' as char)
     String b = sb.toString()
 
     expect:
@@ -119,7 +120,7 @@ null == "foo"
   def "large String comparison does not cause OOM-Error, difference at end"() {
     StringBuilder sb = largeStringBuilder()
     String a = sb.toString()
-    sb.setCharAt(sb.length()-1, 'b'  as char)
+    sb.setCharAt(sb.length() - 1, 'b' as char)
     String b = sb.toString()
 
     expect:
@@ -132,13 +133,12 @@ null == "foo"
   }
 
 
-
   @Issue("https://github.com/spockframework/spock/issues/121")
   def "large String comparison does not cause OOM-Error, difference at start and  end"() {
     StringBuilder sb = largeStringBuilder()
     String a = sb.toString()
-    sb.setCharAt(0, 'b'  as char)
-    sb.setCharAt(sb.length()-1, 'b'  as char)
+    sb.setCharAt(0, 'b' as char)
+    sb.setCharAt(sb.length() - 1, 'b' as char)
     String b = sb.toString()
 
     expect:
@@ -221,6 +221,7 @@ null == "foo"
   @Issue("https://github.com/spockframework/spock/issues/737")
   def 'shows differences between string literals with newline escapes'() {
     expect:
+    // whitespace is important
     isRendered '''
 """foo  """ == """bar  """
             |

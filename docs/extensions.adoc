@@ -78,6 +78,15 @@ class MySpec extends Specification { ... }
 
 In most execution environments, ignored feature methods and specs will be reported as "skipped".
 
+By default, `@Ignore` will only affect the annotated specification, by setting `inherited` to `true` you can configure it to apply to sub-specifications as well:
+
+[source,groovy]
+----
+@Ignore(inherited = true)
+class MySpec extends Specification { ... }
+class MySubSpec extends MySpec { ... }
+----
+
 Care should be taken when ignoring feature methods in a spec class annotated with `spock.lang.Stepwise` since
 later feature methods may depend on earlier feature methods having executed.
 
@@ -103,29 +112,49 @@ later feature methods may depend on earlier feature methods having executed.
 === IgnoreIf
 
 To ignore a feature method or specification under certain conditions, annotate it with `spock.lang.IgnoreIf`,
-followed by a predicate:
+followed by a predicate and an optional reason:
 
 [source,groovy,indent=0]
 ----
 include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-a]
 ----
 
+[[precondition_context]]
+==== Precondition Context
 To make predicates easier to read and write, the following properties are available inside the closure:
 
-* `sys` A map of all system properties
-* `env` A map of all environment variables
-* `os` Information about the operating system (see `spock.util.environment.OperatingSystem`)
-* `jvm` Information about the JVM (see `spock.util.environment.Jvm`)
-* `instance` The specification instance if instance fields, shared fields or instance methods are needed.
+`sys`:: A map of all system properties
+`env`:: A map of all environment variables
+`os`:: Information about the operating system (see `spock.util.environment.OperatingSystem`)
+`jvm`:: Information about the JVM (see `spock.util.environment.Jvm`)
+`shared`:: The shared specification instance, only shared fields will have been initialized.
+  If this property is used, then the whole annotated element cannot be skipped up-front without initializing the shared instance.
+`instance`:: The specification instance, if instance fields, shared fields, or instance methods are needed.
   If this property is used, the whole annotated element cannot be skipped up-front without executing fixtures,
-  data providers and similar. Instead the whole workflow is followed up to the feature method invocation,
-  where then the closure is checked and it is decided whether to abort the specific iteration or not.
+  data providers and similar. Instead, the whole workflow is followed up to the feature method invocation,
+  where then the closure is checked, and it is decided whether to abort the specific iteration or not.
+`data`:: A map of all the data variables for the current iteration.
+  Similar to `instance` this will run the whole workflow and only skip individual iterations.
 
 Using the `os` property, the previous example can be rewritten as:
 
 [source,groovy,indent=0]
 ----
 include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-b]
+----
+
+You can also give an optional `reason` why the given feature or specification is to be ignored:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-f]
+----
+
+By default, `@IgnoreIf` will only affect the annotated specification, by setting `inherited` to `true` you can configure it to apply to sub-specifications as well:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-g]
 ----
 
 If multiple `@IgnoreIf` annotations are present, they are effectively combined with a logical "or".
@@ -148,12 +177,16 @@ which is not available otherwise:
 include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-d]
 ----
 
-If applied to a data driven feature, the closure can also access the data variables.
-If the closure does not reference any actual data variables or is applied to a spec,
-the whole annotated element is skipped up-front, no fixtures, data providers or anything
-else will be executed. But if the closure actually does reference valid data variables,
-the whole workflow is followed up to the feature method invocation, where then the closure
-is checked and it is decided whether to abort the specific iteration or not.
+Using `data.*` to filter out iterations is especially helpful when using `.combinations()` to generate iterations.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-e]
+----
+
+Also note that the condition is split into separate `@IgnoreIf` annotations so that they can be evaluated independently.
+It is good practice ordering them based on their specificity, so that the least specific one is evaluated first, that is from static to shared to instance.
+If you need to combine the conditions in a single `@IgnoreIf` annotation, you should order them from least specific to most specific inside as well.
 
 === Requires
 
@@ -237,13 +270,9 @@ include::{sourcedir}/extension/PendingFeatureIfDocSpec.groovy[tag=example-c]
 
 To execute features in the order that they are declared, annotate a spec class with `spock.lang.Stepwise`:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-@Stepwise
-class RunInOrderSpec extends Specification {
-  def "I run first"()  { ... }
-  def "I run second"() { ... }
-}
+include::{sourcedir}/extension/StepwiseDocSpec.groovy[tag=example-a]
 ----
 
 `Stepwise` only affects the class carrying the annotation; not sub or super classes.  Features after the first
@@ -253,6 +282,17 @@ failure are skipped.
 should be taken when ignoring feature methods in spec classes annotated with `Stepwise`.
 
 NOTE: This will also set the execution mode to `SAME_THREAD`, see <<parallel-execution.adoc#parallel-execution, Parallel Execution>> for more information.
+
+Since Spock 2.2, `Stepwise` can be applied to data-driven feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations if one iteration fails:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/extension/StepwiseDocSpec.groovy[tag=example-b]
+----
+
+This will pass for the first two iterations, fail on the third and skip the remaining two. Without `Stepwise` on feature method level, the third iteration would fail and the remaining 4 iterations would pass.
+
+NOTE: For backward compatibility with Spock versions prior to 2.2, applying the annotation on spec level will _not_ automatically skip subsequent feature method iterations upon failure in a previous iteration. If you want that in addition to (or instead of) step-wise spec mode, you do have to annotate each individual feature method you wish to have that capability. This also conforms to the principle that if you want to skip tests under whatever conditions, you ought to document your intent explicitly.
 
 === Timeout
 
@@ -481,12 +521,13 @@ annotated object. To prevent cleanup exceptions from being reported, override th
 def ignoreMyExceptions
 ----
 
+[[_temp_dir]]
 === TempDir
 
 In order to generate a temporary directory for test and delete it after test, annotate a member field of type
-`java.io.File`, `java.nio.file.Path` or untyped using `def` in a spec class (`def` will inject a `Path`). If the
-annotated field is `@Shared`, the temporary directory will be shared in the corresponding specification, otherwise every
-feature method and every iteration per parametrized feature method will have their own temporary directories:
+`java.io.File`, `java.nio.file.Path` or untyped using `def` in a spec class (`def` will inject a `Path`).
+Alternatively, you can annotate a field with a custom type that has a public constructor accepting either `java.io.File` or `java.nio.file.Path` as its single parameter (see <<utilities.adoc#file-stystem-fixture, FileSystemFixture>> for an example).
+If the annotated field is `@Shared`, the temporary directory will be shared in the corresponding specification, otherwise every feature method and every iteration per parametrized feature method will have their own temporary directories:
 
 [source,groovy,indent=0]
 ----
@@ -510,6 +551,7 @@ tempdir {
 }
 ----
 
+[[title-and-narrative-extension]]
 === Title and Narrative
 
 To attach a natural-language name to a spec, use `spock.lang.Title`:
@@ -563,7 +605,7 @@ issue.
 ----
 report {
     issueNamePrefix 'Bug '
-    issueUrlPrefix 'http://my.issues.org/'
+    issueUrlPrefix 'https://my.issues.org/'
 }
 ----
 
@@ -609,8 +651,8 @@ execution of `setupSpec` methods and the after-actions are done after the execut
 === Include and Exclude
 
 Spock is capable of including and excluding specifications according to their classes, super-classes and interfaces and
-according to annotations that are applied to the specification. Spock is also capable of including and excluding
-individual features according to annotations that are applied to the feature method. The configuration for what to
+according to annotations that are applied to the specification.Spock is also capable of including and excluding
+individual features according to annotations that are applied to the feature method.The configuration for what to
 include or exclude is done according to the <<spock-configuration-file,Spock Configuration File>> section.
 
 .Include / Exclude Configuration
@@ -627,6 +669,30 @@ runner {
   }
 }
 ----
+
+[[test-tag-extension]]
+=== Tags
+
+Since version 2.2 Spock supports https://junit.org/junit5/docs/current/user-guide/#running-tests-tags[JUnit Platform tags].
+See the platform documentation for more information regarding valid tag values and how to configure your test execution to use them.
+
+The `@Tag` annotation can be used to tag a spec or feature with one or more tags.
+If applied on a spec, the tags are applied to all features in the spec.
+Tags are inherited from parent specs.
+If applied on a feature, the tags are applied to the feature.
+
+.Tag Extension
+[source,groovy]
+----
+include::{sourcedir}/extension/TagDocSpec.groovy[tag=tag-extension]
+----
+
+NOTE: JUnit Jupiter also has a `@Tag` annotation, but it will have no effect when used on a `Specification`.
+
+=== Repeat until failure
+
+Since version 2.3 the `@RepeatUntilFailure` annotation can be used to repeat a single feature until it fails or until it reaches the `maxAttempts` value.
+This is intended to aid in manual debugging of flaky tests and should not be committed to source control.
 
 === Optimize Run Order
 

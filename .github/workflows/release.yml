@@ -10,13 +10,17 @@ on:
 jobs:
   build-and-verify:
     runs-on: ${{ matrix.os }}
-    if: github.repository == 'spockframework/spock' && github.ref == 'refs/heads/master'
+    if: github.repository == 'spockframework/spock'
     strategy:
       fail-fast: false
       matrix:
         os: [ 'ubuntu-latest' ]
-        variant: [ '2.5', '3.0' ]
-        java: [ '8', '11', '15' ]
+        variant: ['2.5', '3.0', '4.0']
+        java: [ '8', '11', '17' ]
+        exclude:
+          - os: 'ubuntu-latest'
+            variant: '2.5'
+            java: '17'
         include:
           - os: 'windows-latest'
             variant: '2.5'
@@ -24,79 +28,55 @@ jobs:
           - os: 'windows-latest'
             variant: '3.0'
             java: '8'
+          - os: 'windows-latest'
+            variant: '4.0'
+            java: '8'
           - os: 'macos-latest'
             variant: '2.5'
             java: '8'
           - os: 'macos-latest'
             variant: '3.0'
             java: '8'
+          - os: 'macos-latest'
+            variant: '4.0'
+            java: '8'
     steps:
       - uses: actions/checkout@v2
         with:
           # Codecov needs fetch-depth > 1
           fetch-depth: 2
-      - name: Cache Gradle wrapper and dependencies
-        uses: actions/cache@v2
+      - name: 'Set up JDKs'
+        uses: ./.github/actions/setup-build-env
         with:
-          path: |
-            ~/.gradle/caches/
-            ~/.gradle/wrapper/dists
-          key: test-${{ runner.os }}-variant-${{ matrix.variant }}-gradle-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', '**/gradle.properties', 'gradle/**', 'buildSrc/src/main/**') }}
-          restore-keys: |
-            test-${{ runner.os }}-variant-${{ matrix.variant }}-
-      - name: 'Set up JDK'
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      - name: 'Gradle Version'
-        run: |
-          ./gradlew --version
+          additional-java-version: ${{ matrix.java }}
       - name: 'Build Spock'
         env:
           ORG_GRADLE_PROJECT_spockBuildCacheUsername: ${{ secrets.SPOCK_BUILD_CACHE_USERNAME }}
           ORG_GRADLE_PROJECT_spockBuildCachePassword: ${{ secrets.SPOCK_BUILD_CACHE_PASSWORD }}
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
-        run: |
-          ./gradlew --no-parallel --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}"  "-Dscan.tag.main-build"
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: --no-parallel --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}"  "-Dscan.tag.main-build"
       - name: 'Stop Daemon'
         run: |
           ./gradlew --stop
       - name: 'Upload to Codecov.io'
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v2
 
   release-spock:
     runs-on: ${{ matrix.os }}
     needs: [ 'build-and-verify' ]
-    # Use always() and check needs result manually since we skip the 'build-and-verify' execution on a tag,
-    # but still want to depend on it on the main branch
-    if: |
-      always()
-      && (needs.build-and-verify.result == 'success' || needs.build-and-verify.result == 'skipped')
-      && github.event_name == 'push'
-      && github.repository == 'spockframework/spock'
     strategy:
       matrix:
         os: [ 'ubuntu-latest' ]
-        variant: [ '2.5', '3.0' ]   # publish needs to be done for both versions
+        variant: [ '2.5', '3.0', '4.0' ]   # publish needs to be done for all versions
         java: [ '8' ]               # publish needs the min supported java version
     steps:
       - uses: actions/checkout@v2
-      - name: Cache Gradle wrapper and dependencies
-        uses: actions/cache@v2
+      - name: 'Set up JDKs'
+        uses: ./.github/actions/setup-build-env
         with:
-          path: |
-            ~/.gradle/caches/
-            ~/.gradle/wrapper/dists
-          key: test-${{ runner.os }}-variant-${{ matrix.variant }}-gradle-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', '**/gradle.properties', 'gradle/**', 'buildSrc/src/main/**') }}
-          restore-keys: |
-            test-${{ runner.os }}-variant-${{ matrix.variant }}-
-      - name: 'Set up JDK'
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      - name: 'Gradle Version'
-        run: |
-          ./gradlew --version
+          additional-java-version: ${{ matrix.java }}
       - name: 'Publish Spock'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -106,11 +86,9 @@ jobs:
           ORG_GRADLE_PROJECT_spockBuildCacheUsername: ${{ secrets.SPOCK_BUILD_CACHE_USERNAME }}
           ORG_GRADLE_PROJECT_spockBuildCachePassword: ${{ secrets.SPOCK_BUILD_CACHE_PASSWORD }}
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
-        run: |
-          ./gradlew --no-parallel --stacktrace ghActionsPublish "-Dvariant=${{ matrix.variant }}"  "-Dscan.tag.main-publish"
-      - name: 'Stop Daemon'
-        run: |
-          ./gradlew --stop
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: --no-parallel --stacktrace ghActionsPublish "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" "-Dscan.tag.main-publish"
 
   publish-release-docs:
     runs-on: ${{ matrix.os }}
@@ -118,54 +96,23 @@ jobs:
     strategy:
       matrix:
         os: ['ubuntu-latest']
-        variant: ['3.0']      # docs need the highest variant
-        java: ['15']          # docs need the highest java version
+        variant: ['4.0']      # docs need the highest variant
+        java: ['17']          # docs need the highest java version
     steps:
       - uses: actions/checkout@v2
-      - name: Cache Gradle wrapper and dependencies
-        uses: actions/cache@v2
+      - name: 'Set up JDKs'
+        uses: ./.github/actions/setup-build-env
         with:
-          path: |
-            ~/.gradle/caches/
-            ~/.gradle/wrapper/dists
-          key: test-${{ runner.os }}-variant-${{ matrix.variant }}-gradle-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', '**/gradle.properties', 'gradle/**', 'buildSrc/src/main/**') }}
-          restore-keys: |
-            test-${{ runner.os }}-variant-${{ matrix.variant }}-
-      - name: 'Set up JDK'
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      - name: 'Gradle Version'
+          additional-java-version: ${{ matrix.java }}
+      - name: 'Create Temporary Branch'
         run: |
-          ./gradlew --version
+          git checkout -b "docs-$GITHUB_SHA"
       - name: 'Publish Docs'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ORG_GRADLE_PROJECT_spockBuildCacheUsername: ${{ secrets.SPOCK_BUILD_CACHE_USERNAME }}
           ORG_GRADLE_PROJECT_spockBuildCachePassword: ${{ secrets.SPOCK_BUILD_CACHE_PASSWORD }}
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
-        run: |
-          ./gradlew --no-parallel --stacktrace ghActionsDocs "-Dvariant=${{ matrix.variant }}" "-Dscan.tag.main-docs"
-      - name: 'Stop Daemon'
-        run: |
-          ./gradlew --stop
-
-  create-release:
-    runs-on: ubuntu-latest
-    needs: ['release-spock']
-    if: github.repository == 'spockframework/spock' && startsWith(github.ref, 'refs/tags/spock-')
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        uses: gradle/gradle-build-action@v2
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            TODO: Add a link to the real release notes
-          draft: true
-          prerelease: false
+          arguments: --no-parallel --stacktrace ghActionsDocs "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" "-Dscan.tag.main-docs"

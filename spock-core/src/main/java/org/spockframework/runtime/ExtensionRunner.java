@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,8 +19,8 @@ import org.spockframework.runtime.model.*;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
-import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -95,7 +95,7 @@ public class ExtensionRunner {
         .collect(toList());
     } else {
       annotations = new ArrayList<>();
-      List<Class<? extends Annotation>> repeatedAnnotations = Arrays.asList(repeatedExtensionAnnotations.value());
+      List<Class<? extends Annotation>> repeatedAnnotations = asList(repeatedExtensionAnnotations.value());
 
       // add all direct annotations except those marked as repeated
       Arrays.stream(node.getAnnotations())
@@ -107,7 +107,7 @@ public class ExtensionRunner {
 
       // add all annotations marked as repeated
       for (Class<? extends Annotation> repeatedAnnotation : repeatedAnnotations) {
-        annotations.add(Arrays.asList(node.getAnnotationsByType(repeatedAnnotation)));
+        annotations.add(asList(node.getAnnotationsByType(repeatedAnnotation)));
       }
     }
 

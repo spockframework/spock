@@ -8,6 +8,8 @@ import java.util.*;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.hierarchical.ExclusiveResource;
 
+import static java.util.Collections.emptySet;
+
 public class IterationNode extends SpockNode<FeatureInfo> {
   private final IterationInfo iterationInfo;
 
@@ -60,7 +62,10 @@ public class IterationNode extends SpockNode<FeatureInfo> {
 
   @Override
   public void around(SpockExecutionContext context, Invocation<SpockExecutionContext> invocation) {
-    context.getRunner().runIteration(context, iterationInfo, () -> sneakyInvoke(invocation, context));
+    ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
+    SpockExecutionContext innerContext = context.withErrorInfoCollector(errorInfoCollector);
+    innerContext.getRunner().runIteration(innerContext, iterationInfo, () -> sneakyInvoke(invocation, innerContext));
+    errorInfoCollector.assertEmpty();
   }
 
   @Override
@@ -69,12 +74,12 @@ public class IterationNode extends SpockNode<FeatureInfo> {
   }
 
   @Override
-  public SkipResult shouldBeSkipped(SpockExecutionContext context) throws Exception {
+  public SkipResult shouldBeSkipped(SpockExecutionContext context) {
     return shouldBeSkipped(iterationInfo.getFeature());
   }
 
   @Override
   public Set<ExclusiveResource> getExclusiveResources() {
-    return Collections.emptySet();
+    return emptySet();
   }
 }

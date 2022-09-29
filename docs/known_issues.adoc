@@ -1,7 +1,7 @@
 = Known Issues
 include::include.adoc[]
 
-== Usage of `final` in a feature method with `cleanup` https://github.com/spockframework/spock/issues/1017[#1017]
+== Usage of `final` in a feature method with `cleanup` spockIssue:1017[]
 
 You might run into issues if you use `final` in your Specification.
 Groovy 2.5 introduced a final checker which broke previously compiling code.
@@ -98,7 +98,7 @@ This works fine for normal variables, but final variable can only be initialized
 Traits on Specifications are not supported by Spock, some use-cases might work while others don't.
 This is due to how groovy implements traits and AST transformations.
 
-[quote,'http://docs.groovy-lang.org/next/html/documentation/core-traits.html#_compatibility_with_ast_transformations[Groovy Docs]']
+[quote,'https://docs.groovy-lang.org/next/html/documentation/core-traits.html#_compatibility_with_ast_transformations[Groovy Docs]']
 ____
 Traits are not officially compatible with AST transformations. Some of them, like @CompileStatic will be applied on the trait itself (not on implementing classes), while others will apply on both the implementing class and the trait. There is absolutely no guarantee that an AST transformation will run on a trait as it does on a regular class, so use it at your own risk!
 ____

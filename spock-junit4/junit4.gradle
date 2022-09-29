@@ -9,10 +9,12 @@ Spock is inspired from JUnit, jMock, RSpec, Groovy, Scala, Vulcans, and other fa
 
 
 dependencies {
-  compile project(":spock-core")
-  compile libs.junit4
+  api project(":spock-core")
+  api libs.junit4
 
-  testCompile libs.groovyTest  //for @NotYetImplemented
+  testCompileOnly libs.jetbrainsAnnotations
+  testImplementation libs.junitPlatformTestkit
+  testImplementation libs.groovyTest  //for @NotYetImplemented
 }
 
 jar {

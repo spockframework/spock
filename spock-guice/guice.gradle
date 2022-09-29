@@ -5,8 +5,9 @@ ext.displayName = "Spock Framework - Guice Module"
 description = "Spock's Guice Module provides support for testing Guice 2/3 based applications."
 
 dependencies {
-  compile project(":spock-core")
-  compile "com.google.inject:guice:3.0", provided
+  api project(":spock-core")
+  compileOnly "com.google.inject:guice:3.0"
+  testImplementation "com.google.inject:guice:3.0"
 }
 
 jar {

@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,8 +22,10 @@ import java.util.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import static java.util.Arrays.asList;
+
 public class ExpressionInfoValueRenderer {
-  private static final List<ExpressionComparisonRenderer> RENDERERS = Arrays.asList(
+  private static final List<ExpressionComparisonRenderer> RENDERERS = asList(
     new FailedStringComparisonRenderer(),
     new FailedSetEqualityComparisonRenderer(),
     new FailedEqualityComparisonRenderer(),

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.lang.reflect.*;
 import java.util.*;
 
+import static java.util.Arrays.asList;
+
 /**
  * Utility class for doing reflection on types.
  *
@@ -144,7 +146,7 @@ public class GenericTypeReflector {
 		Class<?> clazz = variable.getGenericDeclaration();
 		Type superType = getExactSuperType(type, clazz);
 		if (superType instanceof ParameterizedType) {
-			int index = Arrays.asList(clazz.getTypeParameters()).indexOf(variable);
+			int index = asList(clazz.getTypeParameters()).indexOf(variable);
 			return ((ParameterizedType)superType).getActualTypeArguments()[index];
 		} else {
 			return null;
@@ -297,7 +299,7 @@ public class GenericTypeReflector {
 	}
 
 	private static Type[] getArrayExactDirectSuperTypes(Type arrayType) {
-		// see http://java.sun.com/docs/books/jls/third_edition/html/typesValues.html#4.10.3
+		// see https://java.sun.com/docs/books/jls/third_edition/html/typesValues.html#4.10.3
 		Type typeComponent = getArrayComponentType(arrayType);
 
 		Type[] result;

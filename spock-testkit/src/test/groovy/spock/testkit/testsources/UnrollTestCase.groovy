@@ -11,7 +11,7 @@ class UnrollTestCase extends Specification {
     where:
     a | b | c
     1 | 2 | 2
-    2 | 2 | 2
+    2 | 2 | 0
     3 | 2 | 3
   }
 

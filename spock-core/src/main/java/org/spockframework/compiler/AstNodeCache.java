@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,6 +26,8 @@ import org.spockframework.util.Identifiers;
 import spock.lang.Specification;
 
 import org.codehaus.groovy.ast.*;
+
+import java.util.Set;
 
 /**
  * Provides access to frequently used AST nodes.
@@ -57,6 +59,12 @@ public class AstNodeCache {
 
   public final MethodNode SpockRuntime_VerifyMethodCondition =
       SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.VERIFY_METHOD_CONDITION).get(0);
+
+  public final MethodNode SpockRuntime_MatchCollectionsAsSet =
+      SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.MATCH_COLLECTIONS_AS_SET).get(0);
+
+  public final MethodNode SpockRuntime_MatchCollectionsInAnyOrder =
+      SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.MATCH_COLLECTIONS_IN_ANY_ORDER).get(0);
 
   public final MethodNode SpockRuntime_DespreadList =
       SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.DESPREAD_LIST).get(0);
@@ -162,6 +170,7 @@ public class AstNodeCache {
   // external types
   public final ClassNode Throwable = ClassHelper.makeWithoutCaching(Throwable.class);
   public final ClassNode PojoWrapper = ClassHelper.makeWithoutCaching(PojoWrapper.class);
+  public final ClassNode Set = ClassHelper.makeWithoutCaching(Set.class);
 
   public final MethodNode Throwable_AddSuppressed =
     Throwable.getDeclaredMethods("addSuppressed").get(0);

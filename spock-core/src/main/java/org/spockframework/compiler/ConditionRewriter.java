@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@
 
 package org.spockframework.compiler;
 
+import org.codehaus.groovy.syntax.Token;
 import org.spockframework.compat.groovy2.GroovyCodeVisitorCompat;
 import org.spockframework.runtime.ValueRecorder;
 import org.spockframework.util.*;
@@ -29,6 +30,8 @@ import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.classgen.BytecodeExpression;
 import org.codehaus.groovy.syntax.Types;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
 
 // NOTE: currently some conversions reference old expression objects rather than copying them;
@@ -50,6 +53,7 @@ import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
  */
 public class ConditionRewriter extends AbstractExpressionConverter<Expression> implements GroovyCodeVisitorCompat {
   private static final Pattern COMMENTS_PATTERN = Pattern.compile("/\\*.*?\\*/|//.*$");
+  private static final String THROWABLE = "$spock_condition_throwable";
 
   private final IRewriteResources resources;
 
@@ -415,7 +419,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
   @Override
   public void visitSpreadMapExpression(SpreadMapExpression expr) {
     // to not record the underlying MapExpression twice, we do nothing here
-    // see http://jira.codehaus.org/browse/GROOVY-3421
+    // see https://jira.codehaus.org/browse/GROOVY-3421
     result = recordNa(expr);
   }
 
@@ -592,6 +596,9 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
   }
 
   private Statement rewriteCondition(Expression expr, Expression message, boolean explicit) {
+    if (isSpecialCollectionCondition(expr)) { // todo check if we can better integrate it
+      expr = transformSpecialCollectionCondition(expr);
+    }
     // method conditions with spread operator are not lifted because MOP doesn't support spreading
     if (expr instanceof MethodCallExpression && !((MethodCallExpression) expr).isSpreadSafe()) {
       MethodCallExpression methodCallExpression = (MethodCallExpression)expr;
@@ -665,9 +672,57 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
     Expression rewritten = convert(condition);
 
     final Expression executeAndVerify = rewriteToSpockRuntimeCall(resources.getAstNodeCache().SpockRuntime_VerifyCondition,
-        condition, message, Collections.singletonList(rewritten));
+        condition, message, singletonList(rewritten));
 
     return surroundWithTryCatch(condition, message, executeAndVerify);
+  }
+
+  private Expression transformSpecialCollectionCondition(Expression condition) {
+    BinaryExpression binaryExpression = (BinaryExpression) condition;
+    Token operation = binaryExpression.getOperation();
+    int operationType = operation.getType();
+    if(operationType == Types.FIND_REGEX) {
+      MethodCallExpression result = createDirectMethodCall(
+        new ClassExpression(resources.getAstNodeCache().SpockRuntime),
+        resources.getAstNodeCache().SpockRuntime_MatchCollectionsAsSet,
+        new ArgumentListExpression(asList(
+          binaryExpression.getLeftExpression(),
+          binaryExpression.getRightExpression()
+        ))
+      );
+      result.setSourcePosition(condition);
+      return result;
+    } else if(operationType == Types.MATCH_REGEX) {
+      MethodCallExpression result = createDirectMethodCall(
+        new ClassExpression(resources.getAstNodeCache().SpockRuntime),
+        resources.getAstNodeCache().SpockRuntime_MatchCollectionsInAnyOrder,
+        new ArgumentListExpression(asList(
+          binaryExpression.getLeftExpression(),
+          binaryExpression.getRightExpression()
+        ))
+      );
+      result.setSourcePosition(condition);
+      return result;
+    }
+    throw new IllegalStateException("This should never happen");
+  }
+
+  private boolean isSpecialCollectionCondition(Expression condition) {
+    if (!( condition instanceof BinaryExpression)) return false;
+    BinaryExpression binaryExpression = (BinaryExpression) condition;
+    int operationType = binaryExpression.getOperation().getType();
+
+    return (operationType == Types.MATCH_REGEX || operationType == Types.FIND_REGEX)
+      // we don't want to transform expressions where we already know that they are not collection conditions
+      && !(isStringLikeExpression(binaryExpression.getLeftExpression()) || isStringLikeExpression(binaryExpression.getRightExpression()));
+  }
+
+  private boolean isStringLikeExpression(Expression expression) {
+    if (expression instanceof ConstantExpression) {
+      return expression.getType().getTypeClass() == String.class;
+    }
+    if (expression instanceof GStringExpression) return true;
+    return false;
   }
 
   private TryCatchStatement surroundWithTryCatch(Expression condition, Expression message, Expression executeAndVerify) {
@@ -678,19 +733,19 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
 
     tryCatchStatement.addCatch(
         new CatchStatement(
-            new Parameter(new ClassNode(Throwable.class), "throwable"),
+            new Parameter(new ClassNode(Throwable.class), THROWABLE),
             new ExpressionStatement(
                 createDirectMethodCall(
                     new ClassExpression(resources.getAstNodeCache().SpockRuntime),
                     resources.getAstNodeCache().SpockRuntime_ConditionFailedWithException,
-                    new ArgumentListExpression(Arrays.asList(
+                    new ArgumentListExpression(asList(
                         new VariableExpression(errorCollectorName),
                       new VariableExpression(valueRecorderName),                      // recorder
                         new ConstantExpression(resources.getSourceText(condition)),   // text
                         new ConstantExpression(condition.getLineNumber()),            // line
                         new ConstantExpression(condition.getColumnNumber()),          // column
                         message == null ? ConstantExpression.NULL : message,          // message
-                        new VariableExpression("throwable")                           // throwable
+                        new VariableExpression(THROWABLE)                             // throwable
                     ))
                 )
             )
@@ -707,14 +762,14 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
 
     tryCatchStatement.addCatch(
       new CatchStatement(
-        new Parameter(new ClassNode(Throwable.class), "throwable"),
+        new Parameter(new ClassNode(Throwable.class), THROWABLE),
         new ExpressionStatement(
           createDirectMethodCall(
             new ClassExpression(resources.getAstNodeCache().SpockRuntime),
             resources.getAstNodeCache().SpockRuntime_GroupConditionFailedWithException,
-            new ArgumentListExpression(Arrays.<Expression>asList(
+            new ArgumentListExpression(asList(
               new VariableExpression(errorCollectorName),
-              new VariableExpression("throwable")                                     // throwable
+              new VariableExpression(THROWABLE)                                     // throwable
             ))
           )
         )

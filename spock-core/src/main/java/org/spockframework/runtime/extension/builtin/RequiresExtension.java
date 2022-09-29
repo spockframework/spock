@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,10 +23,17 @@ import spock.lang.Requires;
 
 import groovy.lang.Closure;
 
+import java.util.List;
+
+import static java.util.Collections.singletonList;
+
 /**
  * @author Peter Niederwieser
  */
 public class RequiresExtension extends ConditionalExtension<Requires> {
+
+  private static final String DEFAULT_MESSAGE = "Ignored via @" + Requires.class.getSimpleName();
+
   @Override
   protected Class<? extends Closure> getConditionClass(Requires annotation) {
     return annotation.value();
@@ -34,22 +41,31 @@ public class RequiresExtension extends ConditionalExtension<Requires> {
 
   @Override
   protected void specConditionResult(boolean result, Requires annotation, SpecInfo spec) {
-    if (!result) {
-      spec.skip("Ignored via @Requires");
-    }
+    if (result) return;
+    List<SpecInfo> specsToSkip = annotation.inherited() ? spec.getSpecsCurrentToBottom() : singletonList(spec);
+    specsToSkip.forEach(toSkip -> toSkip.skip(ignoredMessage(annotation)));
   }
 
   @Override
   protected void featureConditionResult(boolean result, Requires annotation, FeatureInfo feature) {
     if (!result) {
-      feature.skip("Ignored via @Requires");
+      feature.skip(ignoredMessage(annotation));
     }
   }
 
   @Override
   protected void iterationConditionResult(boolean result, Requires annotation, IMethodInvocation invocation) {
     if (!result) {
-      throw new TestAbortedException("Ignored via @Requires");
+      throw new TestAbortedException(ignoredMessage(annotation));
+    }
+  }
+
+  private static String ignoredMessage(Requires annotation) {
+    String reason = annotation.reason();
+    if (reason.isEmpty()) {
+      return DEFAULT_MESSAGE;
+    } else {
+      return DEFAULT_MESSAGE + ": " + reason;
     }
   }
 }

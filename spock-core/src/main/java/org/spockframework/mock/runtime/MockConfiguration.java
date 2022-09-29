@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,9 @@ import org.spockframework.util.*;
 
 import java.lang.reflect.Type;
 import java.util.*;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 @Beta
 public class MockConfiguration implements IMockConfiguration {
@@ -49,7 +52,7 @@ public class MockConfiguration implements IMockConfiguration {
     this.nature = getOption(options, "nature", MockNature.class, nature);
     this.implementation = getOption(options, "implementation", MockImplementation.class, implementation);
     this.constructorArgs = getOptionAsList(options, "constructorArgs");
-    this.additionalInterfaces = getOption(options, "additionalInterfaces", List.class, Collections.emptyList());
+    this.additionalInterfaces = getOption(options, "additionalInterfaces", List.class, emptyList());
     this.defaultResponse = getOption(options, "defaultResponse", IDefaultResponse.class, this.nature.getDefaultResponse());
     this.global = getOption(options, "global", Boolean.class, false);
     this.verified = getOption(options, "verified", Boolean.class, this.nature.isVerified());
@@ -126,7 +129,7 @@ public class MockConfiguration implements IMockConfiguration {
     if (options.containsKey(key)) {
       Object obj = options.get(key);
       if (obj instanceof Map) {
-        return Collections.singletonList((Map)obj);
+        return singletonList((Map)obj);
       }
       return (List)obj;
     }

@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -69,12 +69,12 @@ class JvmSpec extends Specification {
     def jvm = Jvm.current
 
     expect:
-    for (i in 8..17) {
+    for (i in 8..23) {
       assert jvm."java$i" == (i == major)
     }
 
     where:
-    major << (9..20)
+    major << (9..23)
   }
 
   def "can check for Java version compatibility"() {
@@ -82,12 +82,12 @@ class JvmSpec extends Specification {
     def jvm = Jvm.current
 
     expect:
-    for (i in 8..17) {
+    for (i in 8..23) {
       assert jvm."java${i}Compatible" == (i <= major)
     }
 
     where:
-    major << (9..20)
+    major << (9..23)
   }
 
   def "can check for Java version (given major version)"() {
@@ -95,12 +95,12 @@ class JvmSpec extends Specification {
     def jvm = Jvm.current
 
     expect:
-    for (i in 8..17) {
+    for (i in 8..23) {
       assert jvm.isJavaVersion(i) == (i == major)
     }
 
     where:
-    major << (9..20)
+    major << (9..23)
   }
 
   def "can check for Java version compatibility (given major version)"() {
@@ -108,11 +108,11 @@ class JvmSpec extends Specification {
     def jvm = Jvm.current
 
     expect:
-    for (i in 8..17) {
+    for (i in 8..23) {
       assert jvm.isJavaVersionCompatible(i) == (i <= major)
     }
 
     where:
-    major << (9..20)
+    major << (9..23)
   }
 }

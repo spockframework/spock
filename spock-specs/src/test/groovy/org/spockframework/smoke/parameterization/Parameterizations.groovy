@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,6 +37,14 @@ where :
   (a, b) = aAndB
 '''
   }
+
+  def "multi-parameterization with named parameters"() {
+    expect:
+    a == b
+    where:
+    [a, b] << [[a: 1, b: 1], [a: 2, b: 2], [b: 3, a: 3]]
+  }
+
 
   def "multi-parameterization with placeholder in first position"() {
     expect: a == b
@@ -118,6 +126,15 @@ where :
 expect: a == b
 where:
   [a, [_, b]] << [[3, [1, 3]]]
+'''
+  }
+
+  def "nested multi-parameterization with named parameters"() {
+    expect:
+    runner.runFeatureBody '''
+expect: a == b
+where:
+  [a, [_, b]] << [[3, [c:1, b:3]]]
 '''
   }
 

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -125,8 +125,8 @@ public java.lang.Object $spock_feature_0_0prov0() {
         try {
             org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder1.reset(), 'true', 2, 29, null, $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(0), true))
         }
-        catch (java.lang.Throwable throwable) {
-            org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder1, 'true', 2, 29, null, throwable)}
+        catch (java.lang.Throwable $spock_condition_throwable) {
+            org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder1, 'true', 2, 29, null, $spock_condition_throwable)}
         finally {
         }
     }]
@@ -179,8 +179,8 @@ public java.lang.Object $spock_feature_0_0proc(java.lang.Object $spock_p0) {
         try {
             org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder1.reset(), 'true', 3, 31, null, $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(0), true))
         }
-        catch (java.lang.Throwable throwable) {
-            org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder1, 'true', 3, 31, null, throwable)}
+        catch (java.lang.Throwable $spock_condition_throwable) {
+            org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder1, 'true', 3, 31, null, $spock_condition_throwable)}
         finally {
         }
     }) as java.lang.Object)

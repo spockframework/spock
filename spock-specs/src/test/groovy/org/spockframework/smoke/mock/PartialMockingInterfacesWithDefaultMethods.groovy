@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,9 +16,11 @@
 
 package org.spockframework.smoke.mock
 
-import spock.lang.Specification
+import spock.lang.Issue
 
 import static spock.util.matcher.HamcrestMatchers.closeTo
+
+import spock.lang.Specification
 
 class PartialMockingInterfacesWithDefaultMethods extends Specification {
   def "ISquare area should be computed using the stubbed length - test with when: and then: blocks"() {
@@ -164,4 +166,18 @@ class PartialMockingInterfacesWithDefaultMethods extends Specification {
     thrown(IDeposit.DepositException)
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/1516")
+  def "Partial mocking for methods inherited from Object works"() {
+    given:
+    IQuarterlyCompoundedDeposit deposit = Spy()
+
+    when:
+    deposit."$method"()
+
+    then:
+    noExceptionThrown()
+
+    where:
+    method << ['toString', 'hashCode', 'equals']
+  }
 }

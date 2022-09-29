@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -279,7 +279,17 @@ thrown() == e
     thrown(IllegalStateException)
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/1332")
+  def "thrown conditions don't destroy method reference when invocation is assigned to a multi-assignment with the same name"() {
+    when:
+    def (foobar, b) = foobar()
+
+    then:
+    thrown(Exception)
+  }
+
   def foobar() {
     throw new IllegalStateException("foo")
   }
+
 }

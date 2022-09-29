@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +19,10 @@ package org.spockframework.smoke.extension
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.extension.ExtensionException
-import spock.lang.*
+import org.spockframework.runtime.extension.builtin.PreconditionContext
+import spock.lang.IgnoreIf
+import spock.lang.Issue
+import spock.lang.Requires
 
 class IgnoreIfExtension extends EmbeddedSpecification {
   @IgnoreIf({ 1 < 2 })
@@ -34,7 +37,7 @@ class IgnoreIfExtension extends EmbeddedSpecification {
 
   @IgnoreIf({
     jvm.java8 || jvm.java9 || jvm.java10 || jvm.java11 || jvm.java12 || jvm.java13 || jvm.java14 || jvm.java15 || jvm.java16 || jvm.java17 ||
-      jvm.isJavaVersion(18)
+      jvm.java18 || jvm.java19 || jvm.java20 || jvm.java21 || jvm.java22 || jvm.java23
   })
   def "provides JVM information"() {
     expect: false
@@ -55,19 +58,22 @@ class IgnoreIfExtension extends EmbeddedSpecification {
     expect: false
   }
 
-  @IgnoreIf({ a == 1 })
+  @IgnoreIf({ data.a == 1 })
   def 'can evaluate for single iterations if data variables are accessed'() {
-    expect: a == 2
-    where: a << [1, 2]
+    expect:
+    a == 2
+    where:
+    a << [1, 2]
   }
 
   @IgnoreIf({ true })
   def 'can skip data providers completely if no data variables are accessed'() {
     expect: false
-    where: a = { throw new RuntimeException() }.call()
+    where:
+    a = { throw new RuntimeException() }.call()
   }
 
-  def 'fails directly when referencing an unknown variable'() {
+  def 'fails directly when referencing an unknown property'() {
     when:
     runner.runSpecBody """
 @IgnoreIf({ b })
@@ -80,6 +86,21 @@ def foo() {
     then:
     ExtensionException ee = thrown()
     ee.cause instanceof MissingPropertyException
+  }
+
+  def 'fails directly when referencing an unknown variable'() {
+    when:
+    runner.runSpecBody """
+@IgnoreIf({ data.b })
+def foo() {
+    expect: false
+    where: a = { throw new RuntimeException() }.call()
+}
+"""
+
+    then:
+    ExtensionException ee = thrown()
+    ee.cause instanceof PreconditionContext.DataVariableContextException
   }
 
   def 'fails directly when throwing an arbitrary exception'() {
@@ -100,7 +121,7 @@ def foo() {
   @Issue("https://github.com/spockframework/spock/issues/535")
   @Requires({ false })
   @IgnoreIf({ false })
-  def "allows determinate use of multiple filters" () {
+  def "allows determinate use of multiple filters"() {
     expect: false
   }
 
@@ -140,6 +161,175 @@ class Foo extends Specification {
     result.testsSkippedCount == 0
     result.testsAbortedCount == 0
     result.testsSucceededCount == 1
+  }
+
+  def "ignored spec contains custom message"() {
+    when:
+    def result = runner.runWithImports """
+@IgnoreIf(reason = "dummy message", value = { true })
+class Foo extends Specification {
+  def "basic usage"() {
+    expect: false
+  }
+}
+"""
+
+    then:
+    result.allEvents().skipped().list()[0].payload.get() == 'Ignored via @IgnoreIf: dummy message'
+  }
+
+  def "spec usage with unqualified static method access"() {
+    when:
+    def result = runner.runWithImports """
+@IgnoreIf({ shouldNotRun() })
+class Foo extends Specification {
+  def "basic usage"() {
+    expect: true
+  }
+
+  static boolean shouldNotRun() {
+    !${shouldRun}
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == testStartAndSucceededCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == testStartAndSucceededCount
+    result.containersSkippedCount == specSkippedCount
+
+    where:
+    shouldRun | testStartAndSucceededCount | specSkippedCount
+    true      | 1                          | 0
+    false     | 0                          | 1
+  }
+
+  def "spec usage with unqualified static field access"() {
+    when:
+    def result = runner.runWithImports """
+@IgnoreIf({ shouldNotRun })
+class Foo extends Specification {
+  def "basic usage"() {
+    expect: true
+  }
+
+  static boolean shouldNotRun = !${shouldRun}
+}
+"""
+
+    then:
+    result.testsStartedCount == testStartAndSucceededCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == testStartAndSucceededCount
+    result.containersSkippedCount == specSkippedCount
+
+    where:
+    shouldRun | testStartAndSucceededCount | specSkippedCount
+    true      | 1                          | 0
+    false     | 0                          | 1
+  }
+
+  def "spec usage with shared field access"() {
+    when:
+    def result = runner.runWithImports """
+@IgnoreIf({ shared.shouldRun })
+class Foo extends Specification {
+  @Shared
+  boolean shouldRun = ${shouldRun}
+
+  def "basic usage"() {
+    expect: true
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == testStartAndSucceededCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == testStartAndSucceededCount
+    result.containersStartedCount == 2
+    result.containersAbortedCount == specAbortedCount
+
+    where:
+    shouldRun | testStartAndSucceededCount | specAbortedCount
+    false     | 1                          | 0
+    true      | 0                          | 1
+  }
+
+  def "spec usage with instance field access"() {
+    when:
+    def result = runner.runWithImports """
+@IgnoreIf({ instance.shouldRun })
+class Foo extends Specification {
+  boolean shouldRun = ${shouldRun}
+
+  def "basic usage"() {
+    expect: true
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == 1
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == testAbortedCount
+    result.testsSucceededCount == testSucceededCount
+
+    where:
+    shouldRun | testSucceededCount | testAbortedCount
+    false     | 1                  | 0
+    true      | 0                  | 1
+  }
+
+  def "@IgnoreIf can be configured to be inherited"() {
+    when:
+    def result = runner.runWithImports """
+class Base extends Specification {
+  def "base feature"() {
+    expect: true
+  }
+}
+
+@IgnoreIf(value = { true }, inherited = ${inherited})
+class Foo extends Base {
+  def "foo feature"() {
+    expect: true
+  }
+}
+
+class Bar extends Foo {
+  def "bar feature"() {
+    expect: true
+  }
+}
+
+class Test extends Bar {
+  def "test feature"() {
+    expect: true
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == testStartAndSucceededCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == testStartAndSucceededCount
+    result.containersSkippedCount == specSkippedCount
+
+    where:
+    inherited | testStartAndSucceededCount | specSkippedCount
+    false     | 1 + 0 + 3 + 4              | 1
+    true      | 1                          | 3
   }
 
   def "fails if condition cannot be instantiated"() {
@@ -184,25 +374,53 @@ def foo() {
     thrown(ConditionNotSatisfiedError)
   }
 
-  @IgnoreIf({ a == 1 })
+  @IgnoreIf({ data.a == 1 })
   @IgnoreIf({ false })
   def "feature is ignored if data variable accessing IgnoreIf annotation is true"() {
     expect: false
-    where: a = 1
+    where:
+    a = 1
   }
 
-  @IgnoreIf({ a == 1 })
-  @IgnoreIf({ a != 1 })
+  @IgnoreIf({ data.a == 1 })
+  @IgnoreIf({ data.a != 1 })
   def "feature is ignored if at least one data variable accessing IgnoreIf annotation is true"() {
     expect: false
-    where: a = 1
+    where:
+    a = 1
   }
 
   @IgnoreIf({ true })
-  @IgnoreIf({ a != 1 })
+  @IgnoreIf({ data.a != 1 })
   def "feature is ignored if non data variable accessing IgnoreIf annotation is true"() {
     expect: false
-    where: a = 1
+    where:
+    a = 1
+  }
+
+  def "@IgnoreIf provides condition access to Specification shared fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  @Shared
+  int value
+  @IgnoreIf({ shared.value == 2 })
+  def "bar #input"() {
+    value = input
+
+    expect:
+    true
+
+    where:
+    input << [1, 2, 3]
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 3
+    result.testsAbortedCount == 1
   }
 
   def "@IgnoreIf provides condition access to Specification instance shared fields"() {

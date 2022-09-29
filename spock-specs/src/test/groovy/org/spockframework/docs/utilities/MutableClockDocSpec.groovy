@@ -26,5 +26,5 @@ class MutableClockDocSpec extends Specification {
     then:
     ageFilter.test(birthday)                                                                 // <5>
   }
-}
 // end::age-filter-spec[]
+}

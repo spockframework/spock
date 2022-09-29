@@ -1,0 +1,11 @@
+org.hamcrest
+org.hamcrest.beans
+org.hamcrest.collection
+org.hamcrest.comparator
+org.hamcrest.core
+org.hamcrest.internal
+org.hamcrest.io
+org.hamcrest.number
+org.hamcrest.object
+org.hamcrest.text
+org.hamcrest.xml

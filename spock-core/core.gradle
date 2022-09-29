@@ -1,5 +1,3 @@
-import aQute.bnd.gradle.BundleTaskConvention
-import aQute.bnd.gradle.FileSetRepositoryConvention
 import aQute.bnd.gradle.Resolve
 
 plugins {
@@ -15,25 +13,30 @@ What makes it stand out from the crowd is its beautiful and highly expressive sp
 Thanks to its JUnit runner, Spock is compatible with most IDEs, build tools, and continuous integration servers.
 Spock is inspired from JUnit, jMock, RSpec, Groovy, Scala, Vulcans, and other fascinating life forms.'''
 
-configurations { coreConsoleRuntime }
+configurations {
+  coreConsoleRuntime
+  osgiVerification {
+    extendsFrom configurations.compileClasspath
+  }
+}
 
 dependencies {
-  compile libs.groovy // easiest way to add Groovy dependency to POM
-  compile libs.junitPlatform
-  compile libs.junitPlatformTestkit, optional
-  compile libs.hamcrest
-
-  compile libs.jetbrainsAnnotations, optional
-  compile libs.asm, optional
-  compile libs.bytebuddy, optional
-  compile libs.cglib, optional
-  compile libs.objenesis, optional
-
+  api libs.groovy // easiest way to add Groovy dependency to POM
+  api platform(libs.junitBom)
+  api libs.junitPlatform
+  api libs.hamcrest
   if (variant == 2.5) {
-    dependencies {
-      compile project(':spock-groovy2-compat')
-    }
+    api project(':spock-groovy2-compat')
   }
+
+  compileOnly libs.jetbrainsAnnotations
+
+  compileOnly libs.junitPlatformTestkit
+  compileOnly libs.asm
+  compileOnly libs.bytebuddy
+  compileOnly libs.cglib
+  compileOnly libs.objenesis
+
 
   coreConsoleRuntime groovyConsoleExtraDependencies
 }
@@ -52,21 +55,23 @@ jar {
       'Automatic-Module-Name': 'org.spockframework.core'
     )
   }
-  bnd(
-    'Export-Package': ['org.spockframework.*', 'spock.*'].join(','),
-    'Import-Package': [
-      'org.junit.platform.testkit.*;resolution:=optional',
-      'org.hamcrest.*;resolution:=optional',
-      'org.objenesis.*;resolution:=optional',
-      'net.bytebuddy.*;resolution:=optional',
-      'net.sf.cglib.*;resolution:=optional',
-      'org.objectweb.asm.*;resolution:=optional',
-      '*'
-    ].join(','),
-    '-noclassforname': 'true',
-    '-noextraheaders': 'true',
-    '-removeheaders': 'Private-Package'
-  )
+  bundle {
+    bnd(
+      'Export-Package': ['org.spockframework.*', 'spock.*'].join(','),
+      'Import-Package': [
+        'org.junit.platform.testkit.*;resolution:=optional',
+        'org.hamcrest.*;resolution:=optional',
+        'org.objenesis.*;resolution:=optional',
+        'net.bytebuddy.*;resolution:=optional',
+        'net.sf.cglib.*;resolution:=optional',
+        'org.objectweb.asm.*;resolution:=optional',
+        '*'
+      ].join(','),
+      '-noclassforname': 'true',
+      '-noextraheaders': 'true',
+      '-removeheaders': 'Private-Package'
+    )
+  }
 }
 
 processResources {
@@ -87,37 +92,34 @@ task coreConsole(type: JavaExec,
   }
 }
 
-def osgiPropertiesFile = file("$buildDir/verifyOSGiProperties.bndrun")
-
 // Bnd's Resolve task uses a properties file for its configuration. This
 // task writes out the properties necessary for it to verify the OSGi
 // metadata.
-tasks.register('osgiProperties', WriteProperties) {
-  outputFile = osgiPropertiesFile
+def osgiProperties = tasks.register('osgiProperties', WriteProperties) {
+  outputFile = layout.getBuildDirectory().file("verifyOSGiProperties.bndrun")
   property('-standalone', true)
-  property('-runee', "JavaSE-${javaVersion}")
+  property('-runee', "JavaSE-${javaVersion < 9 ? '1.' + javaVersion : javaVersion}")
   property('-runrequires', "osgi.identity;filter:='(osgi.identity=${project.name})'")
 }
 
 // Bnd's Resolve task is what verifies that a jar can be used in OSGi and
 // that its metadata is valid. If the metadata is invalid this task will
 // fail.
-tasks.register('verifyOSGi', Resolve) {
-
-  dependsOn(osgiProperties)
-  setBndrun(osgiPropertiesFile)
+def verifyOSGi = tasks.register('verifyOSGi', Resolve) {
+  getBndrun().fileProvider(osgiProperties.map { it.outputFile })
+  getOutputBndrun().set(layout.getBuildDirectory().file("resolvedOSGiProperties.bndrun"))
   reportOptional = false
-
-  // workaround until https://github.com/bndtools/bnd/issues/4577 is fixed
-  def taskMarker = file("$buildDir/verifyOSGi.marker")
-  writeOnChanges = false
-  outputs.cacheIf { true }
-  outputs.file(taskMarker).withPropertyName("taskMarker")
-  doLast {
-    taskMarker.text = "done"
-  }
+  // By default bnd will use jars found in:
+  // 1. project.sourceSets.main.runtimeClasspath
+  // 2. project.configurations.archives.artifacts.files
+  // to validate the metadata.
+  // This adds jars defined in `osgiVerification` also so that bnd
+  // can use them to validate the metadata without causing those to
+  // end up in the dependencies of those projects.
+  bundles(configurations.osgiVerification)
 }
 
-tasks.check {
+tasks.named('check') {
   dependsOn(verifyOSGi)
 }
+

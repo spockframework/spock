@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,10 +16,11 @@
 
 package org.spockframework.smoke.parameterization
 
-import org.opentest4j.MultipleFailuresError
-import org.opentest4j.TestAbortedException
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpockComparisonFailure
+import spock.lang.Issue
+
+import org.opentest4j.*
 
 class ParameterizedFeatureNodeStatuses extends EmbeddedSpecification {
   def setup() {
@@ -798,6 +799,93 @@ where: a << [1, 2]
       totalAbortedCount == 0
       totalSucceededCount == 3
       totalFailureCount == 2
+    }
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1441")
+  def 'exceptions in iteration interceptors should not affect other iterations'() {
+    when:
+    def result = runner.runWithImports """
+import org.opentest4j.TestAbortedException
+import org.spockframework.runtime.AbstractRunListener
+import org.spockframework.runtime.extension.ExtensionAnnotation
+import org.spockframework.runtime.extension.IAnnotationDrivenExtension
+import org.spockframework.runtime.extension.IMethodInterceptor
+import org.spockframework.runtime.extension.IMethodInvocation
+import org.spockframework.runtime.model.ErrorInfo
+import org.spockframework.runtime.model.FeatureInfo
+import org.spockframework.runtime.model.parallel.ExecutionMode
+import org.spockframework.util.SpockReleaseInfo
+import spock.lang.Specification
+
+import java.lang.annotation.ElementType
+import java.lang.annotation.Retention
+import java.lang.annotation.RetentionPolicy
+import java.lang.annotation.Target
+
+class StepwiseIterationsTest extends Specification {
+
+  @StepwiseIterations
+  def "myFeature #count"() {
+    expect:
+    1 == 1
+
+    where:
+    count << (1..5)
+  }
+}
+
+// ------------------------------------------------------------------------
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+@ExtensionAnnotation(StepwiseIterationsExtension)
+@interface StepwiseIterations {}
+
+// ------------------------------------------------------------------------
+
+class StepwiseIterationsExtension implements IAnnotationDrivenExtension<StepwiseIterations> {
+  @Override
+  void visitFeatureAnnotation(StepwiseIterations annotation, FeatureInfo feature) {
+    feature.addIterationInterceptor(new ThrowingInterceptor())
+  }
+
+
+  static class ThrowingInterceptor implements IMethodInterceptor {
+
+    @Override
+    void intercept(IMethodInvocation invocation) throws Throwable {
+      if (invocation.iteration.iterationIndex == 2) {
+        throw new TestAbortedException("Test aborted")
+      }
+      invocation.proceed()
+    }
+  }
+}
+"""
+
+    then:
+    verifyAll(result) {
+
+      dynamicallyRegisteredCount == 5
+
+      containersStartedCount == 3
+      containersSkippedCount == 0
+      containersAbortedCount == 0
+      containersSucceededCount == 3
+      containersFailedCount == 0
+
+      testsStartedCount == 6
+      testsSkippedCount == 0
+      testsAbortedCount == 1
+      testsSucceededCount == 5
+      testsFailedCount == 0
+
+      totalStartedCount == 8
+      totalSkippedCount == 0
+      totalAbortedCount == 1
+      totalSucceededCount == 7
+      totalFailureCount == 0
     }
   }
 }

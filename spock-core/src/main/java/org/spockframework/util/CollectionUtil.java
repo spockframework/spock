@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +16,8 @@ package org.spockframework.util;
 
 import java.lang.reflect.Array;
 import java.util.*;
+
+import static java.util.Arrays.asList;
 
 public abstract class CollectionUtil {
   public static <E, F> ArrayList<F> filterMap(Collection<E> collection, IFunction<? super E, ? extends F> function) {
@@ -96,13 +98,13 @@ public abstract class CollectionUtil {
   }
 
   public static <T> Set<T> asSet(T[] values) {
-    return new HashSet<>(Arrays.asList(values));
+    return new HashSet<>(asList(values));
   }
 
   @SafeVarargs
   public static <E> List<E> listOf(E... elements) {
     List<E> result = new ArrayList<>(elements.length);
-    result.addAll(Arrays.asList(elements));
+    result.addAll(asList(elements));
     return result;
   }
 
@@ -153,7 +155,7 @@ public abstract class CollectionUtil {
 
   @SafeVarargs
   public static <T> Iterable<T> concat(Iterable<? extends T>... iterables) {
-    return concat(Arrays.asList(iterables));
+    return concat(asList(iterables));
   }
 
   public static <T> Iterable<T> concat(final List<Iterable<? extends T>> iterables) {

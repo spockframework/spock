@@ -1,0 +1,25 @@
+name: Setup Gradle and JDKs
+description: Sets up Gradle and JDKs
+inputs:
+  additional-java-version:
+    required: false
+    description: Additional Java version to install
+    default: '8'
+
+runs:
+  using: "composite"
+  steps:
+    - name: 'Set up JDKs'
+      uses: ./.github/actions/setup-jdks
+      with:
+        additional-java-version: ${{ inputs.additional-java-version }}
+    - name: Init Gradle Build Action
+      uses: gradle/gradle-build-action@v2
+      with:
+        # cache options only count for the first invocation
+        cache-read-only: ${{ github.ref != 'refs/heads/master' }}
+        arguments: --version
+    - name: 'Gradle javaToolchains'
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: javaToolchains

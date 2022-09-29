@@ -1,8 +1,10 @@
 = Introduction
 include::include.adoc[]
 
+image::images/spock-main-logo.png[Spock Logo, align=center, width=20%]
+
 Spock is a testing and specification framework for Java and Groovy applications. What makes it stand out from the crowd
 is its beautiful and highly expressive specification language. Thanks to its JUnit runner, Spock is compatible with most
-IDEs, build tools, and continuous integration servers. Spock is inspired from http://junit.org/[JUnit],
-http://www.jmock.org/[jMock], http://rspec.info/[RSpec], http://groovy-lang.org/[Groovy], http://scala-lang.org/[Scala],
+IDEs, build tools, and continuous integration servers. Spock is inspired from https://junit.org/[JUnit],
+https://www.jmock.org/[jMock], https://rspec.info/[RSpec], https://groovy-lang.org/[Groovy], https://scala-lang.org/[Scala],
 https://en.wikipedia.org/wiki/Vulcan_(Star_Trek)[Vulcans], and other fascinating life forms.

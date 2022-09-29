@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,6 +18,9 @@ import org.spockframework.util.*;
 import spock.lang.Specification;
 
 import java.util.*;
+
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
 
 /**
  * This factory allows the creations of mocks outside of a {@link spock.lang.Specification},
@@ -44,7 +47,7 @@ public class DetachedMockFactory implements MockFactory {
      */
   @Override
   public <T> T Mock(Class<T> type) {
-    return createMock(inferNameFromType(type), type, MockNature.MOCK, Collections.<String, Object>emptyMap());
+    return createMock(inferNameFromType(type), type, MockNature.MOCK, emptyMap());
   }
 
   /**
@@ -83,7 +86,7 @@ public class DetachedMockFactory implements MockFactory {
      */
   @Override
   public <T> T Stub(Class<T> type) {
-    return createMock(inferNameFromType(type), type, MockNature.STUB, Collections.<String, Object>emptyMap());
+    return createMock(inferNameFromType(type), type, MockNature.STUB, emptyMap());
   }
 
   /**
@@ -122,12 +125,12 @@ public class DetachedMockFactory implements MockFactory {
      */
   @Override
   public <T> T Spy(Class<T> type) {
-    return createMock(inferNameFromType(type), type, MockNature.SPY, Collections.<String, Object>emptyMap());
+    return createMock(inferNameFromType(type), type, MockNature.SPY, emptyMap());
   }
 
   @Override
   public <T> T Spy(T obj) {
-    return createMock(inferNameFromType(obj.getClass()), obj, MockNature.SPY,  Collections.<String, Object>singletonMap("useObjenesis", true));
+    return createMock(inferNameFromType(obj.getClass()), obj, MockNature.SPY,  singletonMap("useObjenesis", true));
   }
 
   /**

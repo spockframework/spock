@@ -12,7 +12,10 @@ import org.codehaus.groovy.ast.expr.*
 import org.codehaus.groovy.ast.stmt.*
 import org.codehaus.groovy.classgen.*
 import org.codehaus.groovy.control.*
+import org.codehaus.groovy.control.customizers.ImportCustomizer
 import org.codehaus.groovy.syntax.Types
+
+import static java.util.Collections.disjoint
 
 /*
  * This has been adapted from https://github.com/apache/groovy/blob/5d2944523f198d96b6515e85a24d2b4e43ce665f/subprojects/groovy-console/src/main/groovy/groovy/console/ui/AstNodeToScriptAdapter.groovy
@@ -267,7 +270,7 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
   }
 
   private boolean showAny(EnumSet<Show> set) {
-    !Collections.disjoint(show, set)
+    !disjoint(show, set)
   }
 
   def showOn(Show s, Closure block) {

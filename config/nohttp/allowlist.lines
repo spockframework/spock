@@ -1,0 +1,9 @@
+// Unitils website doesn't have https support yet.
+^http://www.unitils.org/?$
+
+// SVG
+^http://www.inkscape.org/$
+^http://purl.org/dc/dcmitype/StillImage$
+
+// XMLNS
+^http://www.spockframework.org/spring$

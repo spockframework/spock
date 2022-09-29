@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,8 @@ package org.spockframework.runtime.model;
 import org.spockframework.util.*;
 
 import java.util.*;
+
+import static java.util.Arrays.asList;
 
 /**
  * @author Peter Niederwieser
@@ -62,7 +64,7 @@ public class ExpressionInfo implements Iterable<ExpressionInfo> {
 
   public ExpressionInfo(TextRegion region, TextPosition anchor, @Nullable String operation,
       ExpressionInfo... children) {
-    this(region, anchor, operation, Arrays.asList(children));
+    this(region, anchor, operation, asList(children));
   }
 
   public TextRegion getRegion() {
@@ -154,6 +156,16 @@ public class ExpressionInfo implements Iterable<ExpressionInfo> {
 
   public boolean isEqualityComparison() {
     return "==".equals(operation) && children.size() == 2;
+  }
+
+  public boolean isSetComparison() {
+    if ("=~".equals(operation) && children.size() == 2) {
+      Object value1 = children.get(0).getValue();
+      Object value2 = children.get(1).getValue();
+
+      return value1 instanceof Set && value2 instanceof Set;
+    }
+    return false;
   }
 
   public boolean isInstanceOfComparison() {

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,29 +16,22 @@
 
 plugins {
   id "io.spring.dependency-management" version "1.0.5.RELEASE"
-  id 'org.springframework.boot' version "2.0.6.RELEASE"
+  id 'org.springframework.boot' version "2.5.3"
 }
 
 dependencies {
-  compile "org.springframework.boot:spring-boot-starter-data-jpa"
-  compile "org.springframework.boot:spring-boot-starter-web"
+  implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+  implementation "org.springframework.boot:spring-boot-starter-web"
 
-  // Remove this when Spring Boot 2 is upgraded to 2.1.x version
-  compile "org.hibernate:hibernate-core:5.3.7.Final"
-
-  testCompile "org.springframework.boot:spring-boot-starter-test"
-  testCompile project(":spock-core")
-  testCompile project(":spock-spring")
+  testImplementation "org.springframework.boot:spring-boot-starter-test"
+  testImplementation project(":spock-core")
+  testImplementation project(":spock-spring")
 
   if (javaVersion >= 9) {
-    testCompile libs.jaxb
+    testImplementation libs.jaxb
   }
 
-  runtime "com.h2database:h2"
+  runtimeOnly "com.h2database:h2"
 
-}
-
-repositories {
-  mavenCentral()
 }
 

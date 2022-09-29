@@ -2,6 +2,7 @@ package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
 import spock.lang.*
+import spock.util.io.FileSystemFixture
 
 import java.nio.file.*
 
@@ -122,13 +123,20 @@ def method1() {
 
 abstract class TempDirBaseSpec extends Specification {
   @TempDir Path tmp
+  @TempDir @Shared Path sharedTmp
 }
 
-@Issue("https://github.com/spockframework/spock/issues/1229")
 class TempDirInheritedSpec extends TempDirBaseSpec {
+  @Issue("https://github.com/spockframework/spock/issues/1229")
   void "TempDir works for inherited fields"() {
     expect:
     tmp != null
+  }
+
+  @Issue("https://github.com/spockframework/spock/pull/1373")
+  void "TempDir works for inherited shared fields"() {
+    expect:
+    sharedTmp != null
   }
 }
 
@@ -167,5 +175,131 @@ class ParallelTempDirSpec extends Specification {
 
     where:
     n << [1, 2, 3]
+  }
+}
+
+class FileSystemFixtureSpec extends Specification {
+  @TempDir
+  MyFile myFile
+
+  @TempDir
+  MyPath myPath
+
+  @TempDir
+  FileSystemFixture fsFixture
+
+  def "can use helper classes if they have a constructor accepting File or Path"() {
+    expect:
+    myPath.root != null
+    myFile.root != null
+    fsFixture.currentPath != null
+  }
+
+  def "FileSystemFixture can create a directory structure"() {
+    when:
+    fsFixture.create {
+      dir('src') {
+        dir('main') {
+          dir('groovy') {
+            file('HelloWorld.java') << 'println "Hello World"'
+          }
+        }
+        dir('test/resources') {
+          file('META-INF/MANIFEST.MF') << 'bogus entry'
+        }
+      }
+    }
+
+    then:
+    Files.isDirectory(fsFixture.resolve('src/main/groovy'))
+    Files.isDirectory(fsFixture.resolve('src/test/resources/META-INF'))
+    fsFixture.resolve('src/main/groovy/HelloWorld.java').text == 'println "Hello World"'
+    fsFixture.resolve('src/test/resources/META-INF/MANIFEST.MF').text == 'bogus entry'
+  }
+
+  def "can copy files from classpath"() {
+    given:
+    Path result = null
+    Path result2 = null
+
+    when:
+    fsFixture.create {
+      dir("target") {
+        result = copyFromClasspath("/org/spockframework/smoke/extension/SampleFile.txt")
+        result2 = copyFromClasspath("/org/spockframework/smoke/extension/SampleFile.txt", 'SampleFile2.txt')
+      }
+    }
+
+    then:
+    result.fileName.toString() == "SampleFile.txt"
+    result.text == 'HelloWorld\n'
+    result2.text == 'HelloWorld\n'
+  }
+
+  def "can copy files from classpath using explicit context class"() {
+    given:
+    Path result = null
+    Path result2 = null
+
+    when:
+    fsFixture.create {
+      dir("target") {
+        result = copyFromClasspath("SampleFile.txt", FileSystemFixtureSpec)
+        result2 = copyFromClasspath("SampleFile.txt", 'SampleFile2.txt', FileSystemFixtureSpec)
+      }
+    }
+
+    then:
+    result.fileName.toString() == "SampleFile.txt"
+    result.text == 'HelloWorld\n'
+    result2.text == 'HelloWorld\n'
+  }
+}
+
+@Issue("https://github.com/spockframework/spock/issues/1518")
+class CustomTempDirSpec extends Specification {
+  @TempDir
+  TempFile tmpFile
+
+  @TempDir
+  TempPath tmpPath
+
+  def "can use custom dir objects"() {
+    expect:
+    tmpFile != null
+    tmpPath != null
+  }
+}
+
+class MyFile {
+  File root
+
+  MyFile(File path) {
+    this.root = path
+  }
+}
+
+
+class MyPath {
+ Path root
+
+  MyPath(Path path) {
+    this.root = path
+  }
+}
+
+class TempFile extends File {
+  TempFile(File parent) {
+    super(parent.absolutePath)
+  }
+}
+
+class TempPath implements Path {
+
+  @Delegate
+  Path delegate
+
+  TempPath(Path delegate) {
+    this.delegate = delegate
   }
 }

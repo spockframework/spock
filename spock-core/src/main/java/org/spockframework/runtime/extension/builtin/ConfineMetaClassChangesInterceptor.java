@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,7 +28,6 @@ import groovy.lang.*;
  */
 public class ConfineMetaClassChangesInterceptor implements IMethodInterceptor {
   private final Collection<Class<?>> classes;
-  private final List<MetaClass> originalMetaClasses = new ArrayList<>();
 
   public ConfineMetaClassChangesInterceptor(Collection<Class<?>> classes) {
     this.classes = classes;
@@ -37,6 +36,7 @@ public class ConfineMetaClassChangesInterceptor implements IMethodInterceptor {
   @Override
   public void intercept(IMethodInvocation invocation) throws Throwable {
     MetaClassRegistry registry = GroovySystem.getMetaClassRegistry();
+    List<MetaClass> originalMetaClasses = new ArrayList<>();
 
     for (Class<?> clazz : classes) {
       originalMetaClasses.add(registry.getMetaClass(clazz));

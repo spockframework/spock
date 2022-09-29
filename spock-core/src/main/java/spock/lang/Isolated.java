@@ -14,7 +14,7 @@ import java.lang.annotation.*;
  * as the Specification.
  *
  * If you need more fine grained control take a look at
- * {@link ResourceLock} or {@link ResourceLockChildren}
+ * {@link ResourceLock}
  *
  * @see Execution
  * @see ResourceLock

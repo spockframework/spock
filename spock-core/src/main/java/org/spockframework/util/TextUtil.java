@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,8 @@ package org.spockframework.util;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
+
+import static java.util.Arrays.asList;
 
 /**
  * Utility methods for text processing.
@@ -50,7 +52,7 @@ public abstract class TextUtil {
   }
 
   public static String changeSubsequentIndent(String block, int delta, String lineSeparator) {
-    List<String> lines = Arrays.asList(block.split(lineSeparator));
+    List<String> lines = asList(block.split(lineSeparator));
     if (lines.size() == 1) {
       return block;
     }
@@ -89,16 +91,17 @@ public abstract class TextUtil {
 
   public static String join(String separator, List<?> objects) {
     StringBuilder builder = new StringBuilder();
-    for (int i = 0; i < objects.size(); i++) {
+    int size = objects.size();
+    for (int i = 0; i < size; i++) {
       builder.append(objects.get(i));
-      if (i != objects.size() - 1)
+      if (i != size - 1)
         builder.append(separator);
     }
     return builder.toString();
   }
 
   public static String join(String separator, Object... objects) {
-    return join(separator, Arrays.asList(objects));
+    return join(separator, asList(objects));
   }
 
   public static int countOccurrences(String text, char symbol) {
@@ -132,7 +135,7 @@ public abstract class TextUtil {
   }
 
   // taken from:
-  // http://stackoverflow.com/questions/1660501/what-is-a-good-64bit-hash-function-in-java-for-textual-strings
+  // https://stackoverflow.com/questions/1660501/what-is-a-good-64bit-hash-function-in-java-for-textual-strings
   public static long longHashCode(String string) {
     long h = 1125899906842597L;
     int len = string.length();
@@ -154,10 +157,10 @@ public abstract class TextUtil {
       String uppers = matcher.group(2);
 
       if (uppers.length() == 0) {
-        result.append(lowers.toUpperCase());
+        result.append(lowers.toUpperCase(Locale.ROOT));
       } else {
         if (lowers.length() > 0) {
-          result.append(lowers.toUpperCase());
+          result.append(lowers.toUpperCase(Locale.ROOT));
           result.append('_');
         }
         if (uppers.length() > 1 && !matcher.hitEnd()) {

@@ -1,0 +1,31 @@
+def springVersion = "6.0.0-M2"
+
+repositories {
+  mavenCentral()
+  maven {
+    url = "https://repo.spring.io/artifactory/libs-milestone-local/"
+    content {
+      includeGroup "org.springframework"
+    }
+  }
+}
+
+dependencies {
+  implementation "org.springframework:spring-core"
+
+  testImplementation project(":spock-core")
+  testImplementation project(":spock-spring")
+  testImplementation libs.junit4
+  testImplementation "org.springframework:spring-context"
+  testImplementation ("org.springframework:spring-test")
+
+}
+
+
+configurations.all {
+  resolutionStrategy.eachDependency {
+    if (requested.group == "org.springframework" ) {
+      useVersion(springVersion)
+    }
+  }
+}

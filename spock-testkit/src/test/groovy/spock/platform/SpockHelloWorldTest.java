@@ -1,5 +1,6 @@
 package spock.platform;
 
+import org.junit.platform.engine.discovery.MethodSelector;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.TestPlan;
 import org.junit.platform.launcher.core.LauncherConfig;
@@ -8,6 +9,7 @@ import org.junit.platform.launcher.core.LauncherFactory;
 import org.spockframework.runtime.SpockEngine;
 import spock.testkit.testsources.*;
 
+import java.util.Arrays;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.platform.engine.*;
 import org.junit.platform.testkit.engine.*;
 
+import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
 
@@ -45,8 +48,23 @@ class SpockHelloWorldTest extends SpockEngineBase {
   }
 
   @Test
+  void mixedDiscoveryOfClassAndUniqueIdSelectorsIsSupportedRegardlessOfOrder() {
+    UniqueId classUniqueId = UniqueId.forEngine("spock").append("spec", StepwiseTestCase.class.getName());
+
+    Consumer<EventStatistics> assertions = stats -> stats.started(4).succeeded(3).failed(1).skipped(1);
+    execute(asList(
+      selectClass(StepwiseTestCase.class),
+      selectUniqueId(classUniqueId.append("feature", "$spock_feature_0_0"))
+      ), assertions);
+    execute(asList(
+      selectUniqueId(classUniqueId.append("feature", "$spock_feature_0_0")),
+      selectClass(StepwiseTestCase.class)
+      ), assertions);
+  }
+
+  @Test
   void packageSelectorsAreResolved() {
-    assertEquals(7, execute(selectPackage(ExampleTestCase.class.getPackage().getName()))
+    assertEquals(11, execute(selectPackage(ExampleTestCase.class.getPackage().getName()))
       .containerEvents()
       .filter(event -> event.getType() == EventType.STARTED)
       .filter(event -> "spec".equals(event.getTestDescriptor().getUniqueId().getLastSegment().getType()))
@@ -54,8 +72,65 @@ class SpockHelloWorldTest extends SpockEngineBase {
   }
 
   @Test
+  void iterationsAreResolvedViaUniqueIdSelector() {
+    UniqueId featureMethodUniqueId = UniqueId.forEngine("spock")
+      .append("spec", UnrollTestCase.class.getName())
+      .append("feature", "$spock_feature_0_0");
+
+    execute(
+      selectUniqueId(featureMethodUniqueId.append("iteration", "1")),
+      stats -> stats.started(2).succeeded(1).failed(1)
+    );
+    execute(
+      asList(
+        selectUniqueId(featureMethodUniqueId.append("iteration", "0")),
+        selectUniqueId(featureMethodUniqueId.append("iteration", "2"))
+      ),
+      stats -> stats.started(3).succeeded(3)
+    );
+    execute(
+      asList(
+        selectUniqueId(featureMethodUniqueId.append("iteration", "0")),
+        selectUniqueId(featureMethodUniqueId)
+      ),
+      stats -> stats.started(4).succeeded(3).failed(1)
+    );
+  }
+
+  @Test
+  void iterationsAreResolvedViaIterationSelector() {
+    UniqueId featureMethodUniqueId = UniqueId.forEngine("spock")
+      .append("spec", UnrollTestCase.class.getName())
+      .append("feature", "$spock_feature_0_0");
+    MethodSelector methodSelector = selectMethod(UnrollTestCase.class, "unrollMe");
+
+    execute(
+      selectIteration(methodSelector, 1),
+      stats -> stats.started(2).succeeded(1).failed(1)
+    );
+    execute(
+      selectIteration(methodSelector, 0, 2),
+      stats -> stats.started(3).succeeded(3)
+    );
+    execute(
+      asList(
+        selectIteration(methodSelector, 1),
+        selectUniqueId(featureMethodUniqueId)
+      ),
+      stats -> stats.started(4).succeeded(3).failed(1)
+    );
+    execute(
+      asList(
+        selectIteration(methodSelector, 0),
+        selectUniqueId(featureMethodUniqueId.append("iteration", "2"))
+      ),
+      stats -> stats.started(3).succeeded(3)
+    );
+  }
+
+  @Test
   void verifyUnrollExample() {
-    execute(selectClass(UnrollTestCase.class), stats -> stats.started(13).succeeded(13));
+    execute(selectClass(UnrollTestCase.class), stats -> stats.started(13).succeeded(12).failed(1));
   }
 
   @Test

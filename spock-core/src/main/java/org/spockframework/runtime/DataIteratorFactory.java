@@ -17,6 +17,9 @@ public class DataIteratorFactory {
   }
 
   public IDataIterator createFeatureDataIterator(SpockExecutionContext context) {
+    if (context.getCurrentFeature().getDataProcessorMethod() == null) {
+      return new SingleEmptyIterationDataIterator();
+    }
     return new DataProcessorIterator(supervisor, context, new FeatureDataProviderIterator(supervisor, context));
   }
 
@@ -36,6 +39,47 @@ public class DataIteratorFactory {
         supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(method, throwable));
         return null;
       }
+    }
+  }
+
+  /**
+   * A fallback iterator that returns a single empty iteration.
+   * <p>
+   * This is used when a feature has no data provider method and iteration behavior is forcefully enabled.
+   *
+   * @since 2.3
+   */
+  private static class SingleEmptyIterationDataIterator implements IDataIterator {
+
+    public static final List<Object[]> DEFAULT_PARAMS = Collections.singletonList(new Object[0]);
+    private final Iterator<Object[]> delegate;
+
+    public SingleEmptyIterationDataIterator() {
+      delegate = DEFAULT_PARAMS.iterator();
+    }
+
+    @Override
+    public boolean hasNext() {
+      return delegate.hasNext();
+    }
+
+    @Override
+    public Object[] next() {
+      return delegate.next();
+    }
+
+    @Override
+    public int getEstimatedNumIterations() {
+      return 1;
+    }
+
+    @Override
+    public List<String> getDataVariableNames() {
+      return Collections.emptyList();
+    }
+
+    @Override
+    public void close() throws Exception {
     }
   }
 

@@ -33,6 +33,28 @@ class JavaMocksDefaultBehavior extends Specification {
     !mock.equals(mockOfDifferentType)
   }
 
+  // Groovy's == defers to .equals unless the underlying class implements
+  // Comparable, in which case it defers to compareTo.
+  //
+  // See https://issues.apache.org/jira/browse/GROOVY-3364
+  // and https://issues.apache.org/jira/browse/GROOVY-2334
+  @Issue("https://github.com/spockframework/spock/issues/1322")
+  def "by default, a Comparable mock is only equal to itself"() {
+    def mock = Mock(Baz)
+    def anotherMockOfSameType = Mock(Baz)
+    def mockOfDifferentType = Mock(Qux)
+
+    expect:
+    mock == mock
+    mock != anotherMockOfSameType
+    mock != mockOfDifferentType
+
+    and:
+    mock.equals(mock)
+    !mock.equals(anotherMockOfSameType)
+    !mock.equals(mockOfDifferentType)
+  }
+
   def "by default, a mock returns System.identityHashCode() for its hash code"() {
     def mock = Mock(Foo)
 
@@ -85,9 +107,23 @@ class JavaMocksDefaultBehavior extends Specification {
     foo.toString() == "mock around the clock"
   }
 
+  def "default compareTo() behavior can be overridden"() {
+    def baz = Mock(Baz)
+    def qux = Mock(Qux)
+
+    _.compareTo(_) >> -1
+
+    expect:
+        baz.compareTo(qux) == -1
+        baz.compareTo(baz) == -1
+        qux.compareTo(baz) == -1
+        qux.compareTo(qux) == -1
+  }
+
   interface Foo {}
 
   interface Bar {}
+
+  interface Baz extends Comparable {}
+  interface Qux extends Comparable {}
 }
-
-

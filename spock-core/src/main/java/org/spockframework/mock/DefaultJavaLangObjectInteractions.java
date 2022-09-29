@@ -27,7 +27,10 @@ public class DefaultJavaLangObjectInteractions implements IInteractionScope {
 
   private final List<DefaultInteraction> interactions = asList(
       DefaultEqualsInteraction.INSTANCE, DefaultHashCodeInteraction.INSTANCE,
-      DefaultToStringInteraction.INSTANCE, DefaultFinalizeInteraction.INSTANCE);
+      DefaultToStringInteraction.INSTANCE, DefaultFinalizeInteraction.INSTANCE,
+      // Although not really part of java.lang.Object, we include this as it affects equality in Groovy
+      DefaultCompareToInteraction.INSTANCE
+  );
 
   @Override
   public void addInteraction(IMockInteraction interaction) {

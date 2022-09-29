@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<meta name="author" content="Peter Niederwieser, Leonard Brünings, The Spock Framework Team">
+<title>Known Issues</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+</head>
+<body class="article">
+<div id="header">
+<h1>Known Issues</h1>
+<div class="details">
+<span id="author" class="author">Peter Niederwieser, Leonard Brünings, The Spock Framework Team</span><br>
+<span id="revnumber">version 2.3</span>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_usage_of_final_in_a_feature_method_with_cleanup_1017"><a class="anchor" href="#_usage_of_final_in_a_feature_method_with_cleanup_1017"></a><a class="link" href="#_usage_of_final_in_a_feature_method_with_cleanup_1017">Usage of <code>final</code> in a feature method with <code>cleanup</code> <a href="https://github.com/spockframework/spock/issues/1017">#1017</a></a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You might run into issues if you use <code>final</code> in your Specification.
+Groovy 2.5 introduced a final checker which broke previously compiling code.</p>
+</div>
+<div class="paragraph">
+<p><strong>tl;dr</strong>: Do not use <code>final</code> inside of features if you get compile errors.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Users combining <code>final</code> and <code>@CompileStatic</code> or <code>final</code> and Spock may see errors from the <code>final</code> variable analyzer.
+Work is underway to resolve those error messages.
+You may need to temporarily remove the final modifier in the meantime.</p>
+</div>
+</blockquote>
+<div class="attribution">
+&#8212; <a href="https://groovy-lang.org/releasenotes/groovy-2.5.html#Groovy2.5releasenotes-Knownissues">Groovy 2.5 Release Notes</a>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">Broken</span> <span class="directive">extends</span> Specification {
+    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">test</span><span class="delimiter">&quot;</span></span>() {
+        <span class="directive">final</span> value = <span class="string"><span class="delimiter">'</span><span class="content">hello</span><span class="delimiter">'</span></span>
+
+        <span class="key">expect</span>:
+        value.size() &gt; <span class="integer">3</span>
+
+        <span class="key">cleanup</span>:
+        clean value
+    }
+
+    <span class="keyword">def</span> <span class="function">clean</span>(v) {}
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Will fail with something like.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>&gt; Task :compileTestGroovy FAILED
+startup failed:
+/Users/acme/projects/spock-tests/src/test/groovy/Broken.groovy: 11: The variable [value] may be uninitialized
+. At [11:15]  @ line 11, column 15.
+           clean value</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is due to how Spock implements <code>cleanup</code>, by wrapping the whole body in a <code>try-finally</code> block during the AST transformation.
+If you look at the compiled code you can see how it was transformed</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">try</span> {
+    java.lang.Object value                                       // <b class="conum">(1)</b>
+    java.lang.Throwable <span class="error">$</span>spock_feature_throwable
+    <span class="keyword">try</span> {
+        value = <span class="string"><span class="delimiter">'</span><span class="content">hello</span><span class="delimiter">'</span></span>                                          // <b class="conum">(2)</b>
+        <span class="keyword">try</span> {
+            org.spockframework.runtime.SpockRuntime.verifyCondition(<span class="error">$</span>spock_errorCollector, <span class="error">$</span>spock_valueRecorder.reset(), <span class="string"><span class="delimiter">'</span><span class="content">value.size() &gt; 3</span><span class="delimiter">'</span></span>, <span class="integer">8</span>, <span class="integer">9</span>, <span class="predefined-constant">null</span>, <span class="error">$</span>spock_valueRecorder.record(<span class="error">$</span>spock_valueRecorder.startRecordingValue(<span class="integer">5</span>), <span class="error">$</span>spock_valueRecorder.record(<span class="error">$</span>spock_valueRecorder.startRecordingValue(<span class="integer">3</span>), <span class="error">$</span>spock_valueRecorder.record(<span class="error">$</span>spock_valueRecorder.startRecordingValue(<span class="integer">0</span>), value).<span class="error">$</span>spock_valueRecorder.record(<span class="error">$</span>spock_valueRecorder.startRecordingValue(<span class="integer">1</span>), <span class="string"><span class="delimiter">'</span><span class="content">size</span><span class="delimiter">'</span></span>)()) &gt; <span class="error">$</span>spock_valueRecorder.record(<span class="error">$</span>spock_valueRecorder.startRecordingValue(<span class="integer">4</span>), <span class="integer">3</span>)))
+        }
+        <span class="keyword">catch</span> (java.lang.Throwable throwable) {
+            org.spockframework.runtime.SpockRuntime.conditionFailedWithException(<span class="error">$</span>spock_errorCollector, <span class="error">$</span>spock_valueRecorder, <span class="string"><span class="delimiter">'</span><span class="content">value.size() &gt; 3</span><span class="delimiter">'</span></span>, <span class="integer">8</span>, <span class="integer">9</span>, <span class="predefined-constant">null</span>, throwable)}
+        <span class="keyword">finally</span> {
+        }
+    }
+    <span class="keyword">catch</span> (java.lang.Throwable <span class="error">$</span>spock_tmp_throwable) {
+        <span class="error">$</span>spock_feature_throwable = <span class="error">$</span>spock_tmp_throwable
+        <span class="keyword">throw</span> <span class="error">$</span>spock_tmp_throwable
+    }
+    <span class="keyword">finally</span> {
+        <span class="keyword">try</span> {
+            <span class="local-variable">this</span>.clean(value)                                   // <b class="conum">(3)</b>
+        }
+        <span class="keyword">catch</span> (java.lang.Throwable <span class="error">$</span>spock_tmp_throwable) {
+            <span class="keyword">if</span> ( <span class="error">$</span>spock_feature_throwable != <span class="predefined-constant">null</span>) {
+                <span class="error">$</span>spock_feature_throwable.addSuppressed(<span class="error">$</span>spock_tmp_throwable)
+            } <span class="keyword">else</span> {
+                <span class="keyword">throw</span> <span class="error">$</span>spock_tmp_throwable
+            }
+        }
+        <span class="keyword">finally</span> {
+        }
+    }
+    <span class="local-variable">this</span>.getSpecificationContext().getMockController().leaveScope()
+}
+<span class="keyword">finally</span> {
+    <span class="error">$</span>spock_errorCollector.validateCollectedErrors()
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>Here it moved the variable declaration outside of the <code>try-finally</code> block</p>
+</li>
+<li>
+<p>Here it tries to initialize the field</p>
+</li>
+<li>
+<p>Here it is passed to cleanup</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The catch-22 is that the variable must be declared outside of the <code>try-finally</code> block, to be available in the finally,
+but for the variable initialization to be covered by the cleanup it must be initialized inside the <code>try</code> block.
+This works fine for normal variables, but final variable can only be initialized when they are declared.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_using_traits_with_specifications"><a class="anchor" href="#_using_traits_with_specifications"></a><a class="link" href="#_using_traits_with_specifications">Using Traits with Specifications</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Traits on Specifications are not supported by Spock, some use-cases might work while others don&#8217;t.
+This is due to how groovy implements traits and AST transformations.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Traits are not officially compatible with AST transformations. Some of them, like @CompileStatic will be applied on the trait itself (not on implementing classes), while others will apply on both the implementing class and the trait. There is absolutely no guarantee that an AST transformation will run on a trait as it does on a regular class, so use it at your own risk!</p>
+</div>
+</blockquote>
+<div class="attribution">
+&#8212; <a href="https://docs.groovy-lang.org/next/html/documentation/core-traits.html#_compatibility_with_ast_transformations">Groovy Docs</a>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_groovy_version_compatibility"><a class="anchor" href="#_groovy_version_compatibility"></a><a class="link" href="#_groovy_version_compatibility">Groovy version compatibility</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By default, Spock can only be used with the Groovy version it was compiled with. It means that Spock <code>2.0-groovy-2.5</code> can only executed with Groovy 2.5.x, <code>2.0-groovy-3.0</code> with 3.0.x, etc. That restriction was introduced to help users find an appropriate Groovy variant and limit number of reported invalid issues caused by the incompatibilities between the major Groovy versions.</p>
+</div>
+<div class="paragraph">
+<p>However, occasionally it might be useful to be able to play with the next (officially unsupported) Groovy version, especially that usually, in the majority of cases, it should just work fine. Starting with Groovy 2.0 that restriction has been relaxed in the Spock SNAPSHOT versions. In addition, the early adopters can implicitly disable that check - also in the production versions - providing the system property <code>-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true</code>. <strong>Please bear in mind, however, that it is completely unsupported and might lead to some unexpected errors</strong>.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 2.3<br>
+Last updated 2022-09-29 17:33:23 UTC
+</div>
+</div>
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+</body>
+</html>

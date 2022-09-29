@@ -31,7 +31,7 @@ ext {
       }
     } else if (variant == 3.0) {
       groovyGroup = "org.codehaus.groovy"
-      groovyVersion = "3.0.12"
+      groovyVersion = "3.0.13"
       minGroovyVersion = "3.0.0"
       maxGroovyVersion = "3.9.99"
     }  else if (variant == 4.0) {

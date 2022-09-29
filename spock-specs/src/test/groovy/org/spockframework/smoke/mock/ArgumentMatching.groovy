@@ -313,6 +313,7 @@ class ArgumentMatching extends Specification {
     1 * varargs.m("one")
   }
 
+  @Issue("https://github.com/spockframework/spock/pull/1323")
   @FailsWith(TooFewInvocationsError)
   def "expect non-matching Comparables"() {
     ComparableExample bar = Mock()
@@ -343,4 +344,3 @@ class ArgumentMatching extends Specification {
     void foo(Comparable arg)
   }
 }
-

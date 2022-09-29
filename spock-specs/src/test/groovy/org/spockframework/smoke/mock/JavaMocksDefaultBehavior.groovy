@@ -37,21 +37,22 @@ class JavaMocksDefaultBehavior extends Specification {
   // Comparable, in which case it defers to compareTo.
   //
   // See https://issues.apache.org/jira/browse/GROOVY-3364
-  // and https://issues.apache.org/jira/browse/GROOVY-2334 .
+  // and https://issues.apache.org/jira/browse/GROOVY-2334
+  @Issue("https://github.com/spockframework/spock/pull/1323")
   def "by default, a Comparable mock is only equal to itself"() {
     def mock = Mock(Baz)
     def anotherMockOfSameType = Mock(Baz)
     def mockOfDifferentType = Mock(Qux)
 
     expect:
-        mock == mock
-        mock != anotherMockOfSameType
-        mock != mockOfDifferentType
+    mock == mock
+    mock != anotherMockOfSameType
+    mock != mockOfDifferentType
 
     and:
-        mock.equals(mock)
-        !mock.equals(anotherMockOfSameType)
-        !mock.equals(mockOfDifferentType)
+    mock.equals(mock)
+    !mock.equals(anotherMockOfSameType)
+    !mock.equals(mockOfDifferentType)
   }
 
   def "by default, a mock returns System.identityHashCode() for its hash code"() {
@@ -126,5 +127,3 @@ class JavaMocksDefaultBehavior extends Specification {
   interface Baz extends Comparable {}
   interface Qux extends Comparable {}
 }
-
-

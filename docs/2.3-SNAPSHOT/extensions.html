@@ -1081,6 +1081,13 @@ JUnit Jupiter also has a <code>@Tag</code> annotation, but it will have no effec
 </div>
 </div>
 <div class="sect2">
+<h3 id="_repeat_until_failure"><a class="anchor" href="#_repeat_until_failure"></a><a class="link" href="#_repeat_until_failure">Repeat until failure</a></h3>
+<div class="paragraph">
+<p>Since version 2.3 the <code>@RepeatUntilFailure</code> annotation can be used to repeat a single feature until it fails or until it reaches the <code>maxAttempts</code> value.
+This is intended to aid in manual debugging of flaky tests and should not be committed to source control.</p>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_optimize_run_order"><a class="anchor" href="#_optimize_run_order"></a><a class="link" href="#_optimize_run_order">Optimize Run Order</a></h3>
 <div class="paragraph">
 <p>Spock can remember which features last failed and how often successively and also how long a feature needed to be
@@ -1514,7 +1521,7 @@ assignments happen before the method interceptor is called</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.3-SNAPSHOT<br>
-Last updated 2022-09-22 10:03:42 UTC
+Last updated 2022-09-29 14:09:28 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

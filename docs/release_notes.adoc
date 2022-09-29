@@ -2,6 +2,8 @@
 = Release Notes
 include::include.adoc[]
 
+== 2.4 (tbd)
+
 == 2.3 (2022-09-29)
 
 * Add RepeatUntilFailure extension spockPull:1522[]

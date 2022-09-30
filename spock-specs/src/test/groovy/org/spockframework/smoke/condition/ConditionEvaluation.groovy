@@ -16,14 +16,13 @@
 
 package org.spockframework.smoke.condition
 
+import org.opentest4j.AssertionFailedError
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.ConditionFailedWithExceptionError
 import org.spockframework.runtime.ConditionNotSatisfiedError
 
 import spock.lang.Issue
 import spock.lang.FailsWith
-import spock.lang.Specification
-
-import java.util.concurrent.Callable
 
 import static java.lang.Math.max
 import static java.lang.Math.min
@@ -391,6 +390,26 @@ class ConditionEvaluation extends EmbeddedSpecification {
     [aType, bType] << ['int[]', 'Integer[]', 'List', 'Queue', 'Deque'].with { [it, it] }.combinations()
   }
 
+  @FailsWith(ConditionFailedWithExceptionError)
+  def "regular implicit condition"() {
+    expect:
+    customContains("foo", "bar")
+  }
+
+  @FailsWith(AssertionFailedError)
+  def "opt-out of implicit-condition handling does not wrap exceptions"() {
+    expect:
+    !!customContains("foo", "bar")
+  }
+
+  def "opt-out of implicit-condition handling won't fail for falsy values"() {
+    expect:
+    !!aList.each { assert it > 0 }
+
+    where:
+    aList << [[1], []]
+  }
+
   /*
   def "MapEntryExpression"() {
       // tested as part of testMapExpression
@@ -412,6 +431,12 @@ class ConditionEvaluation extends EmbeddedSpecification {
       // cannot occur in condition
   }
   */
+
+  void customContains(String a, String b) {
+    if(!a.contains(b)) {
+      throw new AssertionFailedError("'$a' does not contain '$b'", a, b)
+    }
+  }
 
   static class Properties {
     def getNext() { this }

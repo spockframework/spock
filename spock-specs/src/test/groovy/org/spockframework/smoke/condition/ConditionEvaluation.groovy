@@ -410,6 +410,23 @@ class ConditionEvaluation extends EmbeddedSpecification {
     aList << [[1], []]
   }
 
+  def "opt-out of implicit-condition handling won't fail static method conditions returning falsy value"() {
+    expect:
+    !!min(0, 0)
+  }
+
+  @FailsWith(ConditionNotSatisfiedError)
+  def "opt-out only works if it is the outermost expression"() {
+    expect:
+    !!false && false
+  }
+
+
+  def "opt-out only works for the outermost expression"() {
+    expect:
+    !!(true && false)
+  }
+
   /*
   def "MapEntryExpression"() {
       // tested as part of testMapExpression

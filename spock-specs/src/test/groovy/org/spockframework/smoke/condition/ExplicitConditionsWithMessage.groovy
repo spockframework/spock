@@ -154,24 +154,4 @@ Additional message
     }
   }
 
-  void "condition rendering can be disabled via opt-out operator"() {
-    expect:
-    isRendered("""
-("foo" == "bar")
-
-foobar
-""", {
-        assert !!("foo" == "bar") : 'foobar'
-    })
-  }
-
-  void "condition rendering can be disabled via opt-out operator without message"() {
-    expect:
-    isRendered("""
-("foo" == "bar")
-""", {
-        assert !!("foo" == "bar")
-    })
-  }
-
 }

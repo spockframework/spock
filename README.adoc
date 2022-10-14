@@ -130,7 +130,7 @@ automatically (unless already present).
 === Contributing
 
 Contributions are welcome! Please see the
-https://github.com/spockframework/spock/blob/master/CONTRIBUTING.md[contributing
+https://github.com/spockframework/spock/blob/master/CONTRIBUTING.adoc[contributing
 page] for detailed instructions.
 
 === Support

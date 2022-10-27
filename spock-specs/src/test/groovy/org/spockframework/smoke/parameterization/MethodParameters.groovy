@@ -22,6 +22,7 @@ import org.spockframework.runtime.SpockExecutionException
 import org.spockframework.runtime.extension.ExtensionAnnotation
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension
 import org.spockframework.runtime.model.MethodInfo
+import org.spockframework.runtime.model.MethodKind
 import spock.lang.Issue
 import spock.lang.Rollup
 import spock.lang.Unroll
@@ -108,7 +109,7 @@ def foo(x, y, z) {
 
     then:
     SpockExecutionException see = thrown()
-    see.message == /No argument was provided for parameters: 'z'/
+    see.message == /No argument was provided for parameters: 'z' in method: 'apackage.ASpec.foo'/
   }
 
   @Issue("https://github.com/spockframework/spock/issues/652")
@@ -181,7 +182,7 @@ def foo(x, y) {
 
     then:
     SpockExecutionException see = thrown()
-    see.message == /No argument was provided for parameters: 'x', 'y'/
+    see.message == /No argument was provided for parameters: 'x', 'y' in method: 'apackage.ASpec.foo'/
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1279")
@@ -201,27 +202,27 @@ def foo(x, y) {
   @Issue("https://github.com/spockframework/spock/issues/1305")
   def "method arguments in #fixtureMethod that are eventually provided by extensions throw an exception at runtime if not set"() {
     when:
-    runner.runSpecBody '''
-def setup(x, y) {
+    runner.runSpecBody """
+def $fixtureMethod(x, y) {
 }
 
 def foo() {
   expect:
   true
 }
-  '''
+  """
 
     then:
     SpockExecutionException see = thrown()
-    see.message == /No argument was provided for parameters: 'arg0', 'arg1'/
+    see.message == /No argument was provided for parameters: 'arg0', 'arg1' in method: 'apackage.ASpec.$fixtureMethod'/
 
     where:
-    fixtureMethod << [
-      "setupSpec",
-      "setup",
-      "cleanup",
-      "cleanupSpec"
-    ]
+    fixtureMethod | _
+    "setupSpec"   | _
+    "setup"       | _
+    "cleanup"     | _
+    "cleanupSpec" | _
+
   }
 
   @Unroll

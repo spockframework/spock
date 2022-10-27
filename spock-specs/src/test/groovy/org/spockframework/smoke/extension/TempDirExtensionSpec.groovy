@@ -271,6 +271,38 @@ class CustomTempDirSpec extends Specification {
   }
 }
 
+class TempDirParameterSpec extends Specification {
+  @Shared
+  Path setupSpecParameter
+  @Shared
+  Path setupParameter
+  @Shared
+  def featureParameter
+
+  def setupSpec(@TempDir Path tempDir) {
+    setupSpecParameter = tempDir
+  }
+
+  def setup(@TempDir Path tempDir) {
+    setupParameter = tempDir
+  }
+
+  def "test"(@TempDir tempDir) {
+    given:
+    featureParameter = tempDir
+    expect:
+    tempDir instanceof Path
+    Files.isDirectory(setupSpecParameter)
+    Files.isDirectory(setupParameter)
+    Files.isDirectory(tempDir as Path)
+  }
+
+  def cleanupSpec() {
+    assert !Files.exists(setupParameter)
+    assert !Files.exists(featureParameter as Path)
+  }
+}
+
 class MyFile {
   File root
 

@@ -17,11 +17,11 @@
 package org.spockframework.util;
 
 /**
- * A function from domain D to co-domain C that may throw a checked exception.
+ * A BiConsumer that may throw a checked exception.
  *
  * @author Peter Niederwieser
  */
 @FunctionalInterface
-public interface IThrowableFunction<D, C, T extends Throwable> {
-  C apply(D value) throws T;
+public interface IThrowableBiConsumer<A, B, T extends Throwable> {
+  void accept(A a, B b) throws T;
 }

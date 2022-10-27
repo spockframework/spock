@@ -10,6 +10,8 @@ import spock.lang.TempDir;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.nio.file.Path;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * @author dqyuan
@@ -17,6 +19,8 @@ import java.nio.file.Path;
  */
 @Beta
 public class TempDirExtension implements IAnnotationDrivenExtension<TempDir> {
+
+  private static final Set<MethodKind> VALID_METHOD_KINDS = EnumSet.of(MethodKind.SETUP, MethodKind.SETUP_SPEC, MethodKind.FEATURE);
   private final TempDirConfiguration configuration;
 
   public TempDirExtension(TempDirConfiguration configuration) {
@@ -25,9 +29,7 @@ public class TempDirExtension implements IAnnotationDrivenExtension<TempDir> {
 
   @Override
   public void visitFieldAnnotation(TempDir annotation, FieldInfo field) {
-    Class<?> fieldType = field.getType();
-    IThrowableFunction<Path, ?, Exception> mapper = createPathToFieldTypeMapper(fieldType);
-    TempDirInterceptor interceptor = new TempDirInterceptor(mapper, field, configuration.baseDir, configuration.keep);
+    TempDirInterceptor interceptor = TempDirInterceptor.forField(field, configuration.baseDir, configuration.keep);
 
     // attach interceptor
     SpecInfo specInfo = field.getParent();
@@ -38,26 +40,10 @@ public class TempDirExtension implements IAnnotationDrivenExtension<TempDir> {
     }
   }
 
-  private IThrowableFunction<Path, ?, Exception> createPathToFieldTypeMapper(Class<?> fieldType) {
-    if (fieldType.isAssignableFrom(Path.class) || Object.class.equals(fieldType)) {
-      return p -> p;
-    }
-    if (fieldType.isAssignableFrom(File.class)) {
-      return Path::toFile;
-    }
-
-    try {
-      return fieldType.getConstructor(Path.class)::newInstance;
-    } catch (NoSuchMethodException ignore) {
-      // fall through
-    }
-    try {
-      Constructor<?> constructor = fieldType.getConstructor(File.class);
-      return path -> constructor.newInstance(path.toFile());
-    } catch (NoSuchMethodException ignore) {
-      // fall through
-    }
-    throw new InvalidSpecException("@TempDir can only be used on File, Path, untyped field, " +
-      "or class that takes Path or File as single constructor argument.");
+  @Override
+  public void visitParameterAnnotation(TempDir annotation, ParameterInfo parameter) {
+    Checks.checkArgument(VALID_METHOD_KINDS.contains(parameter.getParent().getKind()), () -> "@TempDir can only be used on setup, setupSpec or feature method parameters.");
+    TempDirInterceptor interceptor = TempDirInterceptor.forParameter(parameter, configuration.baseDir, configuration.keep);
+    parameter.getParent().addInterceptor(interceptor);
   }
 }

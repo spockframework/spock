@@ -1,20 +1,26 @@
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.ErrorCollector;
-import org.spockframework.runtime.ErrorRethrower;
-import org.spockframework.runtime.extension.*;
+import org.codehaus.groovy.runtime.ResourceGroovyMethods;
+import org.spockframework.runtime.InvalidSpecException;
+import org.spockframework.runtime.extension.IMethodInterceptor;
+import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.extension.IStore;
 import org.spockframework.runtime.model.FieldInfo;
+import org.spockframework.runtime.model.ParameterInfo;
 import org.spockframework.util.*;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.lang.reflect.Constructor;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.regex.Pattern;
 
-import org.codehaus.groovy.runtime.ResourceGroovyMethods;
-import org.spockframework.util.ExceptionUtil;
-
 import static java.nio.file.FileVisitResult.CONTINUE;
+import static org.spockframework.runtime.model.MethodInfo.MISSING_ARGUMENT;
 
 /**
  * @author dqyuan
@@ -27,15 +33,19 @@ public class TempDirInterceptor implements IMethodInterceptor {
   private static final String TEMP_DIR_PREFIX = "spock";
   private static final Pattern VALID_CHARS = Pattern.compile("[^a-zA-Z0-9_.-]++");
 
-  private final IThrowableFunction<Path, ?, Exception> pathToFieldMapper;
-  private final FieldInfo fieldInfo;
+  private final IThrowableBiConsumer<IMethodInvocation, Path, Exception> valueSetter;
+  private final String name;
   private final Path parentDir;
   private final boolean keep;
 
-  TempDirInterceptor(IThrowableFunction<Path, ?, Exception> pathToFieldMapper, FieldInfo fieldInfo,
-                     Path parentDir, boolean keep) {
-    this.pathToFieldMapper = pathToFieldMapper;
-    this.fieldInfo = fieldInfo;
+  private TempDirInterceptor(
+    IThrowableBiConsumer<IMethodInvocation, Path, Exception> valueSetter,
+    String name,
+    Path parentDir,
+    boolean keep) {
+
+    this.valueSetter = valueSetter;
+    this.name = name;
     this.parentDir = parentDir;
     this.keep = keep;
   }
@@ -55,7 +65,7 @@ public class TempDirInterceptor implements IMethodInterceptor {
     if (invocation.getIteration() != null) {
       prefix.append('_').append(invocation.getIteration().getIterationIndex());
     }
-    return prefix.append('_').append(fieldInfo.getName()).toString();
+    return prefix.append('_').append(name).toString();
   }
 
   private Path generateTempDir(IMethodInvocation invocation) throws IOException {
@@ -71,15 +81,39 @@ public class TempDirInterceptor implements IMethodInterceptor {
 
   protected Path setUp(IMethodInvocation invocation) throws Exception {
     Path tempPath = generateTempDir(invocation);
-    fieldInfo.writeValue(invocation.getInstance(), pathToFieldMapper.apply(tempPath));
+    valueSetter.accept(invocation, tempPath);
     return tempPath;
   }
 
   @Override
   public void intercept(IMethodInvocation invocation) throws Throwable {
     Path path = setUp(invocation);
-    invocation.getStore(NAMESPACE).put(fieldInfo, new TempDirContainer(path, keep));
+    invocation.getStore(NAMESPACE).put(path, new TempDirContainer(path, keep));
     invocation.proceed();
+  }
+
+
+  private static IThrowableFunction<Path, ?, Exception> createPathToTypeMapper(Class<?> targetType) {
+    if (targetType.isAssignableFrom(Path.class) || Object.class.equals(targetType)) {
+      return p -> p;
+    }
+    if (targetType.isAssignableFrom(File.class)) {
+      return Path::toFile;
+    }
+
+    try {
+      return targetType.getConstructor(Path.class)::newInstance;
+    } catch (NoSuchMethodException ignore) {
+      // fall through
+    }
+    try {
+      Constructor<?> constructor = targetType.getConstructor(File.class);
+      return path -> constructor.newInstance(path.toFile());
+    } catch (NoSuchMethodException ignore) {
+      // fall through
+    }
+    throw new InvalidSpecException("@TempDir can only be used on File, Path, untyped field, " +
+      "or class that takes Path or File as single constructor argument.");
   }
 
   private static void deleteTempDir(Path tempPath) throws IOException {
@@ -113,6 +147,26 @@ public class TempDirInterceptor implements IMethodInterceptor {
       dir.toFile().setWritable(true);
       return CONTINUE;
     }
+  }
+
+  static TempDirInterceptor forField(FieldInfo fieldInfo, Path parentDir, boolean keep) {
+    IThrowableFunction<Path, ?, Exception> typeMapper = createPathToTypeMapper(fieldInfo.getType());
+    return new TempDirInterceptor(
+      (invocation, path) -> fieldInfo.writeValue(invocation.getInstance(), typeMapper.apply(path)),
+      fieldInfo.getName(),
+      parentDir,
+      keep);
+  }
+
+  static TempDirInterceptor forParameter(ParameterInfo parameterInfo, Path parentDir, boolean keep) {
+    IThrowableFunction<Path, ?, Exception> typeMapper = createPathToTypeMapper(parameterInfo.getReflection().getType());
+    return new TempDirInterceptor(
+      (IMethodInvocation invocation, Path path) -> {
+        invocation.resolveArgument(parameterInfo.getIndex(), typeMapper.apply(path));
+      },
+      parameterInfo.getName(),
+      parentDir,
+      keep);
   }
 
   static class TempDirContainer implements AutoCloseable {

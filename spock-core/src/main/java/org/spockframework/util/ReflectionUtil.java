@@ -16,6 +16,9 @@ package org.spockframework.util;
 
 import static java.util.Arrays.asList;
 
+import org.junit.platform.commons.util.ExceptionUtils;
+import org.junit.platform.commons.util.Preconditions;
+
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
@@ -281,5 +284,45 @@ public abstract class ReflectionUtil {
         // ignore
       }
       field.setAccessible(accessible);
+  }
+
+  public static <T> T newInstance(Class<T> clazz, Object... args) {
+    Preconditions.notNull(clazz, "Class must not be null");
+    Preconditions.notNull(args, "Argument array must not be null");
+    Preconditions.containsNoNullElements(args, "Individual arguments must not be null");
+
+    try {
+      Class<?>[] parameterTypes = Arrays.stream(args).map(Object::getClass).toArray(Class[]::new);
+      return newInstance(clazz.getDeclaredConstructor(parameterTypes), args);
+    }
+    catch (Throwable t) {
+      throw ExceptionUtils.throwAsUncheckedException(getUnderlyingCause(t));
+    }
+  }
+
+  public static <T> T newInstance(Constructor<T> constructor, Object... args) {
+    Preconditions.notNull(constructor, "Constructor must not be null");
+
+    try {
+      return makeAccessible(constructor).newInstance(args);
+    }
+    catch (Throwable t) {
+      throw ExceptionUtils.throwAsUncheckedException(getUnderlyingCause(t));
+    }
+  }
+
+  @SuppressWarnings("deprecation") // "AccessibleObject.isAccessible()" is deprecated in Java 9
+  public static <T extends AccessibleObject> T makeAccessible(T object) {
+    if (!object.isAccessible()) {
+      object.setAccessible(true);
+    }
+    return object;
+  }
+
+  private static Throwable getUnderlyingCause(Throwable t) {
+    if (t instanceof InvocationTargetException) {
+      return getUnderlyingCause(((InvocationTargetException) t).getTargetException());
+    }
+    return t;
   }
 }

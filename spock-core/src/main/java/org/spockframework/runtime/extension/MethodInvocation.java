@@ -90,6 +90,11 @@ public class MethodInvocation implements IMethodInvocation {
   }
 
   @Override
+  public IStore getStore(IStore.Namespace namespace) {
+    throw new UnsupportedOperationException("getStore");
+  }
+
+  @Override
   public void setArguments(Object[] arguments) {
     Checks.checkArgument(arguments.length != this.arguments.length, () -> "length of arguments array must not change from " + this.arguments.length + " to " + arguments.length);
     this.arguments = arguments;

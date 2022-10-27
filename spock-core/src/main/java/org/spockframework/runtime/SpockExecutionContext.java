@@ -28,6 +28,8 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
 
   private ErrorInfoCollector errorInfoCollector;
 
+  private StoreProvider storeProvider;
+
   public SpockExecutionContext(EngineExecutionListener engineExecutionListener) {
     this.engineExecutionListener = engineExecutionListener;
   }
@@ -74,6 +76,11 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
 
   public SpockExecutionContext setErrorInfoCollector(ErrorInfoCollector errorInfoCollector) {
     this.errorInfoCollector = errorInfoCollector;
+    return this;
+  }
+
+  private SpockExecutionContext setStoreProvider(StoreProvider storeProvider) {
+    this.storeProvider = storeProvider;
     return this;
   }
 
@@ -130,6 +137,10 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
     return clone().setParentId(uniqueId);
   }
 
+  public SpockExecutionContext withChildStore() {
+    return clone().setStoreProvider(storeProvider.createChildStore());
+  }
+
   public Specification getSharedInstance() {
     return sharedInstance;
   }
@@ -160,5 +171,9 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
 
   public EngineExecutionListener getEngineExecutionListener() {
     return engineExecutionListener;
+  }
+
+  public StoreProvider getStoreProvider() {
+    return storeProvider;
   }
 }

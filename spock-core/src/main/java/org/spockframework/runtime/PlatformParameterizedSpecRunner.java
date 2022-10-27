@@ -40,6 +40,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
       return;
     }
 
+    context = context.withChildStore();
     FeatureInfo feature = context.getCurrentFeature();
     try (IDataIterator dataIterator = new DataIteratorFactory(supervisor).createFeatureDataIterator(context)) {
       IIterationRunner iterationRunner = createIterationRunner(context, childExecutor);
@@ -50,7 +51,10 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
       throw ie;
     } catch (Exception e) {
       ExceptionUtil.sneakyThrow(e);
+    } finally {
+      runCloseContextStore(context, MethodKind.CLEANUP);
     }
+
   }
 
   private IIterationRunner createIterationRunner(SpockExecutionContext context, ParameterizedFeatureChildExecutor childExecutor) {

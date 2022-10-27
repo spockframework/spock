@@ -82,7 +82,7 @@ public class PlatformSpecRunner {
     }
 
 
-    context = context.withCurrentInstance(instance);
+    context = context.withChildStore().withCurrentInstance(instance);
     getSpecificationContext(context).setCurrentSpec(context.getSpec());
     if (shared) {
       context = context.withSharedInstance(instance);
@@ -151,6 +151,7 @@ public class PlatformSpecRunner {
 
   void runCleanupSpec(SpockExecutionContext context) {
     runCleanupSpec(context.withCurrentInstance(context.getSharedInstance()), context.getSpec());
+    runCloseContextStore(context, MethodKind.CLEANUP_SPEC);
   }
 
   private void runCleanupSpec(SpockExecutionContext context, SpecInfo spec) {
@@ -327,6 +328,7 @@ public class PlatformSpecRunner {
 
   void runCleanup(SpockExecutionContext context) {
     runCleanup(context, context.getSpec());
+    runCloseContextStore(context, MethodKind.CLEANUP);
   }
 
   private void runCleanup(SpockExecutionContext context, SpecInfo spec) {
@@ -369,6 +371,20 @@ public class PlatformSpecRunner {
         supervisor.error(context.getErrorInfoCollector(), error);
       }
     }
+  }
+
+  void runCloseContextStore(SpockExecutionContext context, MethodKind kind) {
+    MethodInfo methodInfo = createMethodInfoForCloseContextStore(context, kind);
+    invokeRaw(context, context.getStoreProvider(), methodInfo);
+  }
+  private MethodInfo createMethodInfoForCloseContextStore(SpockExecutionContext context, MethodKind kind) {
+    MethodInfo result = new MethodInfo((Object target, Object... arguments) -> {
+        context.getStoreProvider().close();
+        return null;
+      }
+    );
+    result.setKind(kind);
+    return result;
   }
 
   protected void invoke(SpockExecutionContext context, Object target, MethodInfo method, Object... arguments) {

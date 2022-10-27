@@ -22,6 +22,8 @@ import static java.nio.file.FileVisitResult.CONTINUE;
  */
 @Beta
 public class TempDirInterceptor implements IMethodInterceptor {
+
+  private static final IStore.Namespace NAMESPACE = IStore.Namespace.create(TempDirInterceptor.class);
   private static final String TEMP_DIR_PREFIX = "spock";
   private static final Pattern VALID_CHARS = Pattern.compile("[^a-zA-Z0-9_.-]++");
 
@@ -73,34 +75,14 @@ public class TempDirInterceptor implements IMethodInterceptor {
     return tempPath;
   }
 
-  protected void destroy(Path path) {
-    if (!keep) {
-      try {
-        deleteTempDir(path);
-      } catch (IOException e) {
-        ExceptionUtil.sneakyThrow(e);
-      }
-    }
-  }
-
   @Override
   public void intercept(IMethodInvocation invocation) throws Throwable {
     Path path = setUp(invocation);
-    if(fieldInfo.isShared()) {
-      invocation.getSpec().addCleanupSpecInterceptor(cleanupInvocation -> {
-        try {
-          cleanupInvocation.proceed();
-        } finally {
-          destroy(path);
-        }
-      });
-    } else {
-      invocation.getIteration().addCleanup(() -> destroy(path));
-    }
+    invocation.getStore(NAMESPACE).put(fieldInfo, new TempDirContainer(path, keep));
     invocation.proceed();
   }
 
-  private void deleteTempDir(Path tempPath) throws IOException {
+  private static void deleteTempDir(Path tempPath) throws IOException {
     if (Files.notExists(tempPath)) {
       return;
     }
@@ -113,7 +95,7 @@ public class TempDirInterceptor implements IMethodInterceptor {
     ResourceGroovyMethods.deleteDir(tempPath.toFile());
   }
 
-  private void tryMakeWritable(Path tempPath) throws IOException {
+  private static void tryMakeWritable(Path tempPath) throws IOException {
     Files.walkFileTree(tempPath, MakeWritableVisitor.INSTANCE);
   }
 
@@ -130,6 +112,27 @@ public class TempDirInterceptor implements IMethodInterceptor {
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
       dir.toFile().setWritable(true);
       return CONTINUE;
+    }
+  }
+
+  static class TempDirContainer implements AutoCloseable {
+    private final Path path;
+    private final boolean keep;
+
+    TempDirContainer(Path path, boolean keep) {
+      this.path = path;
+      this.keep = keep;
+    }
+
+    @Override
+    public void close() {
+      if (!keep) {
+        try {
+          deleteTempDir(path);
+        } catch (IOException e) {
+          ExceptionUtil.sneakyThrow(e);
+        }
+      }
     }
   }
 }

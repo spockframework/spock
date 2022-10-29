@@ -17,19 +17,18 @@
 package org.spockframework.spring;
 
 import org.spockframework.runtime.AbstractRunListener;
-import org.spockframework.runtime.extension.*;
+import org.spockframework.runtime.extension.IGlobalExtension;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import spock.lang.Shared;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.ProfileValueUtils;
+import org.springframework.test.annotation.*;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 
 @NotThreadSafe
@@ -48,20 +47,22 @@ public class SpringExtension implements IGlobalExtension {
     (Class)ReflectionUtil.loadClassIfAvailable("org.springframework.test.context.BootstrapWith");
 
   static {
-    Class<?> metaAnnotationUtilsClass =
-      ReflectionUtil.loadClassIfAvailable("org.springframework.test.util.MetaAnnotationUtils");
-    findAnnotationDescriptorForTypesMethod = metaAnnotationUtilsClass == null ? null :
-      ReflectionUtil.getMethodBySignature(metaAnnotationUtilsClass,
-        "findAnnotationDescriptorForTypes", Class.class, Class[].class);
+    findAnnotationDescriptorForTypesMethod = Optional.ofNullable(ReflectionUtil.loadFirstAvailableClass(
+      "org.springframework.test.context.TestContextAnnotationUtils",
+      "org.springframework.test.util.MetaAnnotationUtils")
+    ).map(annotationUtilsClass -> ReflectionUtil.getMethodBySignature(annotationUtilsClass,
+      "findAnnotationDescriptorForTypes", Class.class, Class[].class)
+    ).orElse(null);
   }
+
 
   @Override
   public void visitSpec(SpecInfo spec) {
-    if (!isSpringSpec(spec)) return;
+    if (!isSpringSpec(spec)) {return;}
 
     verifySharedFieldsInjection(spec);
 
-    if (!handleProfileValues(spec)) return;
+    if (!handleProfileValues(spec)) {return;}
 
     SpringTestContextManager manager = new SpringTestContextManager(spec.getReflection());
     final SpringInterceptor interceptor = new SpringInterceptor(manager);
@@ -81,9 +82,9 @@ public class SpringExtension implements IGlobalExtension {
   }
 
   private boolean isSpringSpec(SpecInfo spec) {
-    if (isSpringSpecUsingFindAnnotationDescriptorForTypes(spec)) return true;
+    if (isSpringSpecUsingFindAnnotationDescriptorForTypes(spec)) {return true;}
 
-    if (ReflectionUtil.isAnnotationPresentRecursive(spec.getReflection(), ContextConfiguration.class)) return true;
+    if (ReflectionUtil.isAnnotationPresentRecursive(spec.getReflection(), ContextConfiguration.class)) {return true;}
 
     return (contextHierarchyClass != null
       && ReflectionUtil.isAnnotationPresentRecursive(spec.getReflection(), contextHierarchyClass));
@@ -131,11 +132,12 @@ public class SpringExtension implements IGlobalExtension {
         && (field.getReflection().isAnnotationPresent(Autowired.class)
         // avoid compile-time dependency on optional classes
         || ReflectionUtil.isAnnotationPresent(field.getReflection(), "javax.annotation.Resource")
-        || ReflectionUtil.isAnnotationPresent(field.getReflection(), "javax.inject.Inject")))
+        || ReflectionUtil.isAnnotationPresent(field.getReflection(), "javax.inject.Inject"))) {
         throw new SpringExtensionException(
           "@Shared field injection is not enabled by default therefore '%s' field cannot be injected. Refer to " +
-              "javadoc of %s for information on how to opt-in for @Shared field injection.")
+            "javadoc of %s for information on how to opt-in for @Shared field injection.")
           .withArgs(field.getName(), EnableSharedInjection.class.getName());
+      }
     }
   }
 
@@ -147,8 +149,7 @@ public class SpringExtension implements IGlobalExtension {
 
     for (FeatureInfo feature : spec.getAllFeatures())
       if (!ProfileValueUtils.isTestEnabledInThisEnvironment(
-        feature.getFeatureMethod().getReflection(), spec.getReflection()))
-        feature.setExcluded(true);
+        feature.getFeatureMethod().getReflection(), spec.getReflection())) {feature.setExcluded(true);}
 
     return true;
   }

@@ -14,7 +14,8 @@
 
 package org.spockframework.util;
 
-import org.codehaus.groovy.runtime.MetaClassHelper;
+import static java.util.Arrays.asList;
+
 import org.spockframework.gentyref.GenericTypeReflector;
 
 import java.io.File;
@@ -22,7 +23,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 
-import static java.util.Arrays.asList;
+import org.codehaus.groovy.runtime.MetaClassHelper;
 
 public abstract class ReflectionUtil {
   /**
@@ -32,6 +33,14 @@ public abstract class ReflectionUtil {
   public static String getPackageName(Class<?> clazz) {
     int lengthDiff = clazz.getName().length() - clazz.getSimpleName().length();
     return lengthDiff == 0 ? clazz.getName() : clazz.getName().substring(0, lengthDiff - 1);
+  }
+
+  public static Class<?> loadFirstAvailableClass(String... classNames) {
+    for (String className : classNames) {
+      Class<?> clazz = loadClassIfAvailable(className);
+      if (clazz != null) {return clazz;}
+    }
+    return null;
   }
 
   public static Class<?> loadClassIfAvailable(String className) {

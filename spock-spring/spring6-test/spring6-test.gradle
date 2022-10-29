@@ -1,4 +1,4 @@
-def springVersion = "6.0.0-M2"
+def springVersion = "6.0.0-RC2"
 
 repositories {
   mavenCentral()

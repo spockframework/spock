@@ -12,6 +12,17 @@ pluginManagement {
     id "org.gradle.test-retry" version "1.4.1"
     id "io.spring.nohttp" version "0.0.10"
   }
+  repositories {
+    gradlePluginPortal()
+    maven {
+      url 'https://repo.spring.io/milestone'
+
+      content {
+        includeGroup "org.springframework.boot"
+        includeGroup "org.springframework"
+      }
+    }
+  }
 }
 
 plugins {
@@ -109,6 +120,7 @@ include "spock-spring:boot2-test"
 include "spock-spring:spring3-test"
 include "spock-spring:spring5-test"
 if (((System.getProperty("javaVersion") ?: 8) as int) >= 17) {
+  include "spock-spring:boot3-test"
   include "spock-spring:spring6-test"
 }
 

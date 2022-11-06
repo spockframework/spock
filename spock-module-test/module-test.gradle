@@ -1,0 +1,37 @@
+ext.displayName = "Spock Framework - Temp Specs for Core Module"
+
+apply plugin: "spock-base"
+
+dependencies {
+  testCompile project(":spock-core")
+
+  testRuntime libs.asm
+  testRuntime libs.bytebuddy
+  testRuntime libs.cglib
+  testRuntime libs.objenesis
+}
+
+sourceCompatibility = javaVersion
+targetCompatibility = javaVersion
+
+tasks.withType(JavaCompile) {
+  sourceCompatibility = javaVersion
+  targetCompatibility = javaVersion
+  options.compilerArgs -= ['--release', '8']
+  options.encoding = 'UTF-8'
+}
+
+java {
+  // enable module path
+  modularity.inferModulePath = true
+}
+
+
+test {
+  useJUnitPlatform()
+  reports.junitXml.enabled = true
+  reports.html.enabled = true
+
+  testLogging.exceptionFormat = "full"
+  testLogging.showExceptions = true
+}

@@ -96,12 +96,16 @@ include "spock-testkit"
 if ((System.getProperty("variant") as BigDecimal ?: 2.5) == 2.5) {
   //Remove once Groovy 2.5 support is dropped
   include "spock-groovy2-compat"
+} else if (JavaVersion.current().isJava9Compatible()) {
+  // works only in Java 9+ and groovy 3+ as spock-groovy2-compat is incompatible with the module system
+  include "spock-module-test"
 }
 
 // https://issues.apache.org/jira/projects/TAP5/issues/TAP5-2588
 if (((System.getProperty("javaVersion") ?: 8) as int) == 8) {
   include "spock-tapestry"
 }
+
 
 include "spock-unitils"
 

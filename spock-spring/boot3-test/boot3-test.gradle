@@ -24,6 +24,12 @@ repositories {
   maven { url 'https://repo.spring.io/milestone' }
 }
 
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(17)
+  }
+}
+
 tasks.withType(JavaCompile) {
   javaCompiler = javaToolchains.compilerFor {
     languageVersion = JavaLanguageVersion.of(17)

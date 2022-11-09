@@ -10,6 +10,19 @@ repositories {
   }
 }
 
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(17)
+  }
+}
+
+tasks.withType(JavaCompile) {
+  javaCompiler = javaToolchains.compilerFor {
+    languageVersion = JavaLanguageVersion.of(17)
+  }
+  options.encoding = 'UTF-8'
+}
+
 dependencies {
   implementation "org.springframework:spring-core"
 
@@ -17,7 +30,7 @@ dependencies {
   testImplementation project(":spock-spring")
   testImplementation libs.junit4
   testImplementation "org.springframework:spring-context"
-  testImplementation ("org.springframework:spring-test")
+  testImplementation("org.springframework:spring-test")
 
 }
 

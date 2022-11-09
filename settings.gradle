@@ -36,8 +36,8 @@ dependencyResolutionManagement {
   }
 }
 
-if (((System.getProperty("java.specification.version") ?: 8) as BigDecimal) < 11) {
-  throw new InvalidUserDataException("The spock build needs to be run with JDK 11 or higher, but was: ${System.getProperty("java.specification.version")}")
+if (((System.getProperty("java.specification.version") ?: 8) as BigDecimal) < 17) {
+  throw new InvalidUserDataException("The spock build needs to be run with JDK 17 or higher, but was: ${System.getProperty("java.specification.version")}")
 }
 
 
@@ -104,9 +104,14 @@ include "spock-guice"
 include "spock-junit4"
 include "spock-testkit"
 
-if ((System.getProperty("variant") as BigDecimal ?: 2.5) == 2.5) {
+def variant = System.getProperty("variant") as BigDecimal ?: 2.5
+if (variant == 2.5) {
   //Remove once Groovy 2.5 support is dropped
   include "spock-groovy2-compat"
+} else {
+  // require Java 17 which isn't supported by Groovy 2.5
+  include "spock-spring:boot3-test"
+  include "spock-spring:spring6-test"
 }
 
 // https://issues.apache.org/jira/projects/TAP5/issues/TAP5-2588
@@ -119,10 +124,6 @@ include "spock-unitils"
 include "spock-spring:boot2-test"
 include "spock-spring:spring3-test"
 include "spock-spring:spring5-test"
-if (((System.getProperty("javaVersion") ?: 8) as int) >= 17) {
-  include "spock-spring:boot3-test"
-  include "spock-spring:spring6-test"
-}
 
 rootProject.name = "spock"
 nameBuildScriptsAfterProjectNames(rootProject.children)

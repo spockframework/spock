@@ -2,7 +2,9 @@
 = Release Notes
 include::include.adoc[]
 
-== 2.4 (tbd)
+== 2.4-M1 (2022-11-30)
+
+* Fix issues with Spring 6/Spring Boot 3 spockPull:1541[]
 
 == 2.3 (2022-09-29)
 
@@ -13,8 +15,8 @@ include::include.adoc[]
 * Validate uniqueness of fixture methods per specification class spockPull:1521[]
 
 NOTE: The changes to equality checking for `Comparable` mocks can lead to different behavior when no explicit `compareTo` interactions was defined.
-      For example, Groovy will use `compareTo` to check equality when classes implement `Compareable`.
-      Until now, the mock would return `0` for default invocations, which would lead to the objects being considered equal.
+For example, Groovy will use `compareTo` to check equality when classes implement `Compareable`.
+Until now, the mock would return `0` for default invocations, which would lead to the objects being considered equal.
 
 Thanks to all the contributors to this release: Jackson Popkin
 

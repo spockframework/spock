@@ -14,18 +14,18 @@ description = "Spock Framework"
 
 ext {
   baseVersion = "2.4"
-  snapshotVersion = true
-  milestone = 0
+  snapshotVersion = false
+  milestone = 1
   javaVersions = [8, 11, 17] // ensure that latest version is actually build on travis, otherwise no docs get published
   javaVersion = (System.getProperty("javaVersion") ?: 8) as int
   variants = [2.5, 3.0, 4.0]
   variant = System.getProperty("variant") as BigDecimal ?: variants.first()
   buildScan.tag "groovy-$variant"
   if (variant == 2.5) {
-      groovyGroup = "org.codehaus.groovy"
-      groovyVersion = "2.5.19"
-      minGroovyVersion = "2.5.0"
-      maxGroovyVersion = "2.9.99"
+    groovyGroup = "org.codehaus.groovy"
+    groovyVersion = "2.5.19"
+    minGroovyVersion = "2.5.0"
+    maxGroovyVersion = "2.9.99"
       if(javaVersion >= 17) {
         throw new InvalidUserDataException("Groovy $variant is not compatible with Java $javaVersion")
       }

@@ -33,7 +33,7 @@
     </text>
     <line style='stroke: #A80036; stroke-width: 1.5;' x1='84' x2='84' y1='131.9063' y2='233.8125'/>
     <line style='stroke: #A80036; stroke-width: 1.5;' x1='84' x2='126' y1='63.9688' y2='63.9688'/>
-    <!--MD5=[ed84b9ad2964c89783a20283dde01948]
+    <!--MD5=[6b6252e80dcf67b8231b8a444554a003]
 @startwbs
 <style>
 wbsDiagram {
@@ -69,7 +69,7 @@ PlantUML version 1.2020.06(Sun Apr 05 12:38:32 UTC 2020)
 (APACHE source distribution)
 Java Runtime: OpenJDK Runtime Environment
 JVM: OpenJDK 64-Bit Server VM
-Java Version: 11.0.16.1+1
+Java Version: 17.0.5+8
 Operating System: Linux
 Default Encoding: UTF-8
 Language: en

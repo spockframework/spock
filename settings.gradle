@@ -12,17 +12,6 @@ pluginManagement {
     id "org.gradle.test-retry" version "1.4.1"
     id "io.spring.nohttp" version "0.0.10"
   }
-  repositories {
-    gradlePluginPortal()
-    maven {
-      url 'https://repo.spring.io/milestone'
-
-      content {
-        includeGroup "org.springframework.boot"
-        includeGroup "org.springframework"
-      }
-    }
-  }
 }
 
 plugins {

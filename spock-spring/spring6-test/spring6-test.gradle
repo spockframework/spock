@@ -1,14 +1,4 @@
-def springVersion = "6.0.0-RC2"
-
-repositories {
-  mavenCentral()
-  maven {
-    url = "https://repo.spring.io/artifactory/libs-milestone-local/"
-    content {
-      includeGroup "org.springframework"
-    }
-  }
-}
+def springVersion = "6.0.0"
 
 java {
   toolchain {

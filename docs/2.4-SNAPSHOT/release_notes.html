@@ -5,7 +5,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<meta name="author" content="Peter Niederwieser, Leonard Brünings, The Spock Framework Team">
 <title>Release Notes</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
@@ -14,7 +13,6 @@
 <div id="header">
 <h1>Release Notes</h1>
 <div class="details">
-<span id="author" class="author">Peter Niederwieser, Leonard Brünings, The Spock Framework Team</span><br>
 <span id="revnumber">version 2.4-SNAPSHOT</span>
 </div>
 </div>
@@ -23,6 +21,18 @@
 <h2 id="_2_4_tbd"><a class="anchor" href="#_2_4_tbd"></a><a class="link" href="#_2_4_tbd">2.4 (tbd)</a></h2>
 <div class="sectionbody">
 
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_4_m1_2022_11_30"><a class="anchor" href="#_2_4_m1_2022_11_30"></a><a class="link" href="#_2_4_m1_2022_11_30">2.4-M1 (2022-11-30)</a></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Fix issues with Spring 6/Spring Boot 3 <a href="https://github.com/spockframework/spock/pull/1541">#1541</a></p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -55,8 +65,8 @@
 </td>
 <td class="content">
 The changes to equality checking for <code>Comparable</code> mocks can lead to different behavior when no explicit <code>compareTo</code> interactions was defined.
-      For example, Groovy will use <code>compareTo</code> to check equality when classes implement <code>Compareable</code>.
-      Until now, the mock would return <code>0</code> for default invocations, which would lead to the objects being considered equal.
+For example, Groovy will use <code>compareTo</code> to check equality when classes implement <code>Compareable</code>.
+Until now, the mock would return <code>0</code> for default invocations, which would lead to the objects being considered equal.
 </td>
 </tr>
 </table>
@@ -2622,7 +2632,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2022-11-30 21:16:15 UTC
+Last updated 2022-11-30 21:35:15 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

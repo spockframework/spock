@@ -245,6 +245,7 @@
 <li><a href="#_release_notes">Release Notes</a>
 <ul class="sectlevel2">
 <li><a href="#_2_4_tbd">2.4 (tbd)</a></li>
+<li><a href="#_2_4_m1_2022_11_30">2.4-M1 (2022-11-30)</a></li>
 <li><a href="#_2_3_2022_09_29">2.3 (2022-09-29)</a></li>
 <li><a href="#_2_2_2022_08_31">2.2 (2022-08-31)</a></li>
 <li><a href="#_2_2_m3_2022_07_15">2.2-M3 (2022-07-15)</a></li>
@@ -6457,6 +6458,16 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 
 </div>
 <div class="sect2">
+<h3 id="_2_4_m1_2022_11_30"><a class="anchor" href="#_2_4_m1_2022_11_30"></a><a class="link" href="#_2_4_m1_2022_11_30">2.4-M1 (2022-11-30)</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Fix issues with Spring 6/Spring Boot 3 <a href="https://github.com/spockframework/spock/pull/1541">#1541</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_2_3_2022_09_29"><a class="anchor" href="#_2_3_2022_09_29"></a><a class="link" href="#_2_3_2022_09_29">2.3 (2022-09-29)</a></h3>
 <div class="ulist">
 <ul>
@@ -6485,8 +6496,8 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 </td>
 <td class="content">
 The changes to equality checking for <code>Comparable</code> mocks can lead to different behavior when no explicit <code>compareTo</code> interactions was defined.
-      For example, Groovy will use <code>compareTo</code> to check equality when classes implement <code>Compareable</code>.
-      Until now, the mock would return <code>0</code> for default invocations, which would lead to the objects being considered equal.
+For example, Groovy will use <code>compareTo</code> to check equality when classes implement <code>Compareable</code>.
+Until now, the mock would return <code>0</code> for default invocations, which would lead to the objects being considered equal.
 </td>
 </tr>
 </table>
@@ -9589,7 +9600,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2022-11-30 21:16:15 UTC
+Last updated 2022-11-30 21:35:15 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

@@ -1,6 +1,9 @@
 [[_release_notes]]
 = Release Notes
+
 include::include.adoc[]
+
+== 2.4 (tbd)
 
 == 2.4-M1 (2022-11-30)
 

@@ -86,10 +86,10 @@ https://tapestry.apache.org/[Tapestry 5] IoC container.
 
 ==== Prerequisites
 
-Spock needs both a JDK 8 and JDK 11+ installed.
+Spock needs both a JDK 8 and JDK 17+ installed.
 
 * JDK 8 is required to compile Spock via toolchains (automatic download is disabled).
-* The gradle build itself requires at least JDK 11 to run.
+* The gradle build itself requires at least JDK 17 to run.
 
 JDK locations must be made known to toolchains via `JDK<version>=<PATH>` environment
 variable, e.g., `JDK8=/path/to/jdk8`.

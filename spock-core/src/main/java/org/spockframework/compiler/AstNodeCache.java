@@ -46,6 +46,7 @@ public class AstNodeCache {
   public final ClassNode SpecificationContext = ClassHelper.makeWithoutCaching(SpecificationContext.class);
   public final ClassNode DataVariableMultiplication = ClassHelper.makeWithoutCaching(DataVariableMultiplication.class);
   public final ClassNode DataVariableMultiplicationFactor = ClassHelper.makeWithoutCaching(DataVariableMultiplicationFactor.class);
+  public final ClassNode BlockInfo = ClassHelper.makeWithoutCaching(BlockInfo.class);
 
   public final MethodNode SpecInternals_GetSpecificationContext =
       SpecInternals.getDeclaredMethods(Identifiers.GET_SPECIFICATION_CONTEXT).get(0);
@@ -70,6 +71,8 @@ public class AstNodeCache {
 
   public final MethodNode SpockRuntime_DespreadList =
       SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.DESPREAD_LIST).get(0);
+  public final MethodNode SpockRuntime_CallEnterBlock =
+      SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.CALL_ENTER_BLOCK).get(0);
 
   public final MethodNode ValueRecorder_Reset =
       ValueRecorder.getDeclaredMethods(org.spockframework.runtime.ValueRecorder.RESET).get(0);

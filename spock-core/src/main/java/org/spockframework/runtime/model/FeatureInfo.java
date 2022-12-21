@@ -15,6 +15,7 @@
 
 package org.spockframework.runtime.model;
 
+import org.spockframework.runtime.extension.IBlockListener;
 import org.spockframework.runtime.extension.IDataDriver;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.model.parallel.ExclusiveResource;
@@ -41,6 +42,8 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
   private final List<IMethodInterceptor> cleanupInterceptors = new ArrayList<>();
   private final List<IMethodInterceptor> initializerInterceptors = new ArrayList<>();
   private final Map<MethodInfo, List<IMethodInterceptor>> scopedMethodInterceptors = new HashMap<>();
+
+  private final List<IBlockListener> blockListeners = new ArrayList<>();
 
   private final Set<ExclusiveResource> exclusiveResources = new HashSet<>();
 
@@ -219,6 +222,14 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
 
   public void addIterationInterceptor(IMethodInterceptor interceptor) {
     iterationInterceptors.add(interceptor);
+  }
+
+  public List<IBlockListener> getBlockListeners() {
+    return blockListeners;
+  }
+
+  public void addBlockListener(IBlockListener blockListener) {
+    blockListeners.add(blockListener);
   }
 
   public MethodInfo getFeatureMethod() {

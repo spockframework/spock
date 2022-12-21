@@ -26,8 +26,10 @@ import org.spockframework.util.Identifiers;
 import org.spockframework.util.Nullable;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.codehaus.groovy.ast.expr.MethodCallExpression.NO_ARGUMENTS;
+import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
 
 /**
  * Walks the statement and expression tree to:
@@ -54,6 +56,34 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   @Override
   public void visit(Block block) {
     super.visit(block);
+    addBlockEnterCall(block);
+  }
+
+  private void addBlockEnterCall(Block block) {
+    BlockParseInfo blockType = block.getParseInfo();
+    if (blockType == BlockParseInfo.WHERE
+      || blockType == BlockParseInfo.METHOD_END
+      || blockType == BlockParseInfo.ANONYMOUS) return;
+
+    MethodCallExpression enterBlockCall = createDirectMethodCall(
+      new ClassExpression(resources.getAstNodeCache().SpockRuntime),
+      resources.getAstNodeCache().SpockRuntime_CallEnterBlock,
+      new ArgumentListExpression(
+        createDirectMethodCall(VariableExpression.THIS_EXPRESSION,
+          resources.getAstNodeCache().SpecInternals_GetSpecificationContext,
+          ArgumentListExpression.EMPTY_ARGUMENTS),
+        new ConstructorCallExpression(resources.getAstNodeCache().BlockInfo,
+          new ArgumentListExpression(
+            new PropertyExpression(
+              new ClassExpression(resources.getAstNodeCache().BlockKind),
+              blockType.name()
+            ),
+            new ListExpression(
+              block.getDescriptions().stream().map(ConstantExpression::new).collect(Collectors.toList())
+            )
+          ))
+      ));
+    block.getAst().add(0, new ExpressionStatement(enterBlockCall));
   }
 
   @Override

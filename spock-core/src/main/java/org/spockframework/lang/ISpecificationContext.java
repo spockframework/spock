@@ -15,6 +15,7 @@
 package org.spockframework.lang;
 
 import org.spockframework.mock.IThreadAwareMockController;
+import org.spockframework.runtime.model.BlockInfo;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.Beta;
@@ -24,14 +25,19 @@ import org.spockframework.util.Nullable;
 
 @Beta
 public interface ISpecificationContext {
+  @Nullable
   SpecInfo getCurrentSpec();
+  @Nullable
   FeatureInfo getCurrentFeature();
+  @Nullable
   IterationInfo getCurrentIteration();
+  @Nullable
+  BlockInfo getCurrentBlock();
 
   @Nullable
   Throwable getThrownException();
 
   IMockController getMockController();
-  
+
   IThreadAwareMockController getThreadAwareMockController();
 }

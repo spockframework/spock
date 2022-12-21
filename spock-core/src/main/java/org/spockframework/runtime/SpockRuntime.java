@@ -24,7 +24,10 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.opentest4j.MultipleFailuresError;
+import org.spockframework.runtime.extension.IBlockListener;
+import org.spockframework.runtime.model.BlockInfo;
 import org.spockframework.runtime.model.ExpressionInfo;
+import org.spockframework.runtime.model.IterationInfo;
 import org.spockframework.runtime.model.TextPosition;
 import org.spockframework.util.CollectionUtil;
 import org.spockframework.util.ExceptionUtil;
@@ -223,6 +226,17 @@ public abstract class SpockRuntime {
 
   public static Object[] despreadList(Object[] args, Object[] spreads, int[] positions) {
     return GroovyRuntimeUtil.despreadList(args, spreads, positions);
+  }
+
+  public static final String CALL_ENTER_BLOCK = "callEnterBlock";
+  public static void callEnterBlock(SpecificationContext context, BlockInfo blockInfo) {
+    IterationInfo currentIteration = context.getCurrentIteration();
+    context.setCurrentBlock(blockInfo);
+    List<IBlockListener> blockListeners = currentIteration.getFeature().getBlockListeners();
+    if (blockListeners.isEmpty()) return;
+    for (IBlockListener blockListener : blockListeners) {
+      blockListener.blockEntered(currentIteration, blockInfo);
+    }
   }
 
   private static List<Object> getValues(ValueRecorder recorder) {

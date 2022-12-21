@@ -27,6 +27,14 @@ public class BlockInfo {
   private BlockKind kind;
   private List<String> texts;
 
+  public BlockInfo() {
+  }
+
+  public BlockInfo(BlockKind kind, List<String> texts) {
+    this.kind = kind;
+    this.texts = texts;
+  }
+
   public BlockKind getKind() {
     return kind;
   }

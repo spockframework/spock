@@ -40,4 +40,6 @@ public interface ISpecificationContext {
   IMockController getMockController();
 
   IThreadAwareMockController getThreadAwareMockController();
+
+  boolean isSharedContext();
 }

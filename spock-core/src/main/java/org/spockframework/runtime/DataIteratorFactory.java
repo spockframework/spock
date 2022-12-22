@@ -44,9 +44,13 @@ public class DataIteratorFactory {
       try {
         return method.invoke(target, arguments);
       } catch (Throwable throwable) {
-        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(method, throwable));
+        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(method, throwable, getErrorContext()));
         return null;
       }
+    }
+
+    protected IErrorContext getErrorContext() {
+      return ErrorContext.from(context.getCurrentInstance().getSpecificationContext());
     }
 
     protected int estimateNumIterations(@Nullable Object dataProvider) {
@@ -104,12 +108,12 @@ public class DataIteratorFactory {
           } else if (result != hasNext) {
             DataProviderInfo provider = dataProviderInfos.get(i);
             supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(provider.getDataProviderMethod(),
-              createDifferentNumberOfDataValuesException(provider, hasNext)));
+              createDifferentNumberOfDataValuesException(provider, hasNext), getErrorContext()));
             return false;
           }
 
         } catch (Throwable t) {
-          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(dataProviderInfos.get(i).getDataProviderMethod(), t));
+          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(dataProviderInfos.get(i).getDataProviderMethod(), t, getErrorContext()));
           return false;
         }
 
@@ -125,12 +129,12 @@ public class DataIteratorFactory {
         Iterator<?> iter = GroovyRuntimeUtil.asIterator(dataProvider);
         if (iter == null) {
           supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(dataProviderInfo.getDataProviderMethod(),
-            new SpockExecutionException("Data provider's iterator() method returned null")));
+            new SpockExecutionException("Data provider's iterator() method returned null"), getErrorContext()));
           return null;
         }
         return iter;
       } catch (Throwable t) {
-        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(dataProviderInfo.getDataProviderMethod(), t));
+        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(dataProviderInfo.getDataProviderMethod(), t, getErrorContext()));
         return null;
       }
     }
@@ -239,7 +243,7 @@ public class DataIteratorFactory {
       try {
         return (Object[]) invokeRaw(context.getSharedInstance(), context.getCurrentFeature().getDataProcessorMethod(), next);
       } catch (Throwable t) {
-        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProcessorMethod(), t));
+        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProcessorMethod(), t, getErrorContext()));
         return null;
       }
     }
@@ -316,7 +320,7 @@ public class DataIteratorFactory {
             System.arraycopy(nextValues, 0, next, i, nextValues.length);
             i += nextValues.length;
           } catch (Throwable t) {
-            supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProviders().get(i).getDataProviderMethod(), t));
+            supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProviders().get(i).getDataProviderMethod(), t, getErrorContext()));
             return null;
           }
         }
@@ -347,7 +351,7 @@ public class DataIteratorFactory {
           }
           // filter block does not like these values, try next ones if available
         } catch (Throwable t) {
-          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(filterMethod, t));
+          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(filterMethod, t, getErrorContext()));
           return null;
         }
       }
@@ -390,7 +394,7 @@ public class DataIteratorFactory {
           break;
         } else if (provider == null) {
           SpockExecutionException error = new SpockExecutionException("Data provider is null!");
-          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(method, error));
+          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(method, error, getErrorContext()));
           break;
         }
 
@@ -413,7 +417,7 @@ public class DataIteratorFactory {
           dataVariableMultiplications = Arrays.stream(((DataVariableMultiplication[]) invokeRaw(null, dataVariableMultiplicationsMethod))).iterator();
           nextDataVariableMultiplication = dataVariableMultiplications.next();
         } catch (Throwable t) {
-          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(dataVariableMultiplicationsMethod, t));
+          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(dataVariableMultiplicationsMethod, t, getErrorContext()));
           return null;
         }
       } else {
@@ -572,7 +576,7 @@ public class DataIteratorFactory {
       try {
         return iterator.hasNext();
       } catch (Throwable t) {
-        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(providerInfo.getDataProviderMethod(), t));
+        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(providerInfo.getDataProviderMethod(), t, getErrorContext()));
         return false;
       }
     }
@@ -586,7 +590,7 @@ public class DataIteratorFactory {
       try {
         return new Object[]{iterator.next()};
       } catch (Throwable t) {
-        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(providerInfo.getDataProviderMethod(), t));
+        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(providerInfo.getDataProviderMethod(), t, getErrorContext()));
         return null;
       }
     }
@@ -864,7 +868,7 @@ public class DataIteratorFactory {
           try {
             multiplicandIterators[i] = collectedMultiplicandValues.get(i).iterator();
           } catch (Throwable t) {
-            supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(multiplicandProviderInfos.get(i).getDataProviderMethod(), t));
+            supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(multiplicandProviderInfos.get(i).getDataProviderMethod(), t, getErrorContext()));
             return null;
           }
         }
@@ -942,7 +946,7 @@ public class DataIteratorFactory {
         try {
           result[i] = iterators[i].next();
         } catch (Throwable t) {
-          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(providerInfos.get(i).getDataProviderMethod(), t));
+          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(providerInfos.get(i).getDataProviderMethod(), t, getErrorContext()));
           return null;
         }
       }

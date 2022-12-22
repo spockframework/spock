@@ -44,6 +44,9 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   // https://issues.apache.org/jira/browse/GROOVY-10403
   // needed for groovy-4 compatibility and only available since groovy-4
   private static final java.lang.reflect.Method GET_PLAIN_NODE_REFERENCE = ReflectionUtil.getMethodBySignature(ClassNode.class, "getPlainNodeReference", boolean.class);
+  public static final String SPOCK_VALUE = "$spock_value";
+  public static final String SPOCK_FEATURE_THROWABLE = "$spock_feature_throwable";
+  public static final String SPOCK_TMP_THROWABLE = "$spock_tmp_throwable";
 
   private final AstNodeCache nodeCache;
   private final SourceLookup lookup;
@@ -159,7 +162,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   private void createSharedFieldSetter(Field field) {
     String setterName = "set" + MetaClassHelper.capitalize(field.getName());
-    Parameter[] params = new Parameter[] { new Parameter(field.getAst().getType(), "$spock_value") };
+    Parameter[] params = new Parameter[] { new Parameter(field.getAst().getType(), SPOCK_VALUE) };
     MethodNode setter = spec.getAst().getMethod(setterName, params);
     if (setter != null) {
       errorReporter.error(field.getAst(),
@@ -180,7 +183,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
                     // use internal name
                     new ConstantExpression(field.getAst().getName())),
                 Token.newSymbol(Types.ASSIGN, -1, -1),
-                new VariableExpression("$spock_value"))));
+                new VariableExpression(SPOCK_VALUE))));
 
     setter.setSourcePosition(field.getAst());
     spec.getAst().addMethod(setter);
@@ -489,7 +492,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     }
 
     VariableExpression featureThrowableVar =
-        new VariableExpression("$spock_feature_throwable", nodeCache.Throwable);
+        new VariableExpression(SPOCK_FEATURE_THROWABLE, nodeCache.Throwable);
     method.getStatements().add(createVariableDeclarationStatement(featureThrowableVar));
 
     List<Statement> featureStats = new ArrayList<>();
@@ -517,13 +520,6 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     movedStatsBackToMethod = true;
   }
 
-  private BinaryExpression createVariableNotNullExpression(VariableExpression var) {
-    return new BinaryExpression(
-        new VariableExpression(var),
-        Token.newSymbol(Types.COMPARE_NOT_EQUAL, -1, -1),
-        new ConstantExpression(null));
-  }
-
   private Statement createVariableDeclarationStatement(VariableExpression var) {
     DeclarationExpression throwableDecl =
         new DeclarationExpression(
@@ -548,7 +544,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   private CatchStatement createThrowableAssignmentAndRethrowCatchStatement(VariableExpression assignmentVar) {
-    Parameter catchParameter = new Parameter(nodeCache.Throwable, "$spock_tmp_throwable");
+    Parameter catchParameter = new Parameter(nodeCache.Throwable, SPOCK_TMP_THROWABLE);
 
     BinaryExpression assignThrowableExpr =
         new BinaryExpression(
@@ -565,9 +561,9 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   private CatchStatement createHandleSuppressedThrowableStatement(VariableExpression featureThrowableVar) {
-    Parameter catchParameter = new Parameter(nodeCache.Throwable, "$spock_tmp_throwable");
+    Parameter catchParameter = new Parameter(nodeCache.Throwable, SPOCK_TMP_THROWABLE);
 
-    BinaryExpression featureThrowableNotNullExpr = createVariableNotNullExpression(featureThrowableVar);
+    BinaryExpression featureThrowableNotNullExpr = AstUtil.createVariableNotNullExpression(featureThrowableVar);
 
     List<Statement> addSuppressedStats =
       singletonList(new ExpressionStatement(

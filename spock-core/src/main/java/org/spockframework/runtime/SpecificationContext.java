@@ -52,7 +52,7 @@ public class SpecificationContext implements ISpecificationContext {
 
   @Override
   public IterationInfo getCurrentIteration() {
-    if (currentIteration == null) {
+    if (isSharedContext()) {
       throw new IllegalStateException("Cannot request current iteration in @Shared context, or feature context");
     }
     return currentIteration;
@@ -90,5 +90,10 @@ public class SpecificationContext implements ISpecificationContext {
   @Override
   public IThreadAwareMockController getThreadAwareMockController() {
     return mockController;
+  }
+
+  @Override
+  public boolean isSharedContext() {
+    return currentFeature == null || currentIteration == null;
   }
 }

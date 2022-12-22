@@ -36,9 +36,14 @@ public class DataIteratorFactory {
       try {
         return method.invoke(target, arguments);
       } catch (Throwable throwable) {
-        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(method, throwable));
+        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(method, throwable, getErrorContext()));
         return null;
       }
+    }
+
+
+    protected IErrorContext getErrorContext() {
+      return ErrorContext.from(context.getCurrentInstance().getSpecificationContext());
     }
   }
 
@@ -132,7 +137,7 @@ public class DataIteratorFactory {
       try {
         return (Object[]) invokeRaw(context.getSharedInstance(), context.getCurrentFeature().getDataProcessorMethod(), next);
       } catch (Throwable t) {
-        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProcessorMethod(), t));
+        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProcessorMethod(), t, getErrorContext()));
         return null;
       }
     }
@@ -184,13 +189,17 @@ public class DataIteratorFactory {
             haveNext = hasNext;
           } else if (haveNext != hasNext) {
             DataProviderInfo provider = context.getCurrentFeature().getDataProviders().get(i);
-            supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(provider.getDataProviderMethod(),
-              createDifferentNumberOfDataValuesException(provider, hasNext)));
+            supervisor.error(context.getErrorInfoCollector(),
+              new ErrorInfo(
+                provider.getDataProviderMethod(),
+                createDifferentNumberOfDataValuesException(provider, hasNext),
+                getErrorContext())
+            );
             return false;
           }
 
         } catch (Throwable t) {
-          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProviders().get(i).getDataProviderMethod(), t));
+          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProviders().get(i).getDataProviderMethod(), t, getErrorContext()));
           return false;
         }
 
@@ -210,7 +219,7 @@ public class DataIteratorFactory {
         try {
           next[i] = iterators[i].next();
         } catch (Throwable t) {
-          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProviders().get(i).getDataProviderMethod(), t));
+          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProviders().get(i).getDataProviderMethod(), t, getErrorContext()));
           return null;
         }
       }
@@ -288,7 +297,7 @@ public class DataIteratorFactory {
           break;
         } else if (provider == null) {
           SpockExecutionException error = new SpockExecutionException("Data provider is null!");
-          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(method, error));
+          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(method, error, getErrorContext()));
           break;
         }
 
@@ -336,12 +345,12 @@ public class DataIteratorFactory {
           Iterator<?> iter = GroovyRuntimeUtil.asIterator(dataProviders[i]);
           if (iter == null) {
             supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProviders().get(i).getDataProviderMethod(),
-              new SpockExecutionException("Data provider's iterator() method returned null")));
+              new SpockExecutionException("Data provider's iterator() method returned null"), getErrorContext()));
             return null;
           }
           iterators[i] = iter;
         } catch (Throwable t) {
-          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProviders().get(i).getDataProviderMethod(), t));
+          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProviders().get(i).getDataProviderMethod(), t, getErrorContext()));
           return null;
         }
 

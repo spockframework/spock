@@ -376,7 +376,7 @@ public class PlatformSpecRunner {
       try {
         cleanup.run();
       } catch (Throwable t) {
-        ErrorInfo error = new ErrorInfo(CollectionUtil.getFirstElement(context.getSpec().getCleanupMethods()), t);
+        ErrorInfo error = new ErrorInfo(CollectionUtil.getFirstElement(context.getSpec().getCleanupMethods()), t, ErrorContext.from(getSpecificationContext(context)));
         supervisor.error(context.getErrorInfoCollector(), error);
       }
     }
@@ -429,7 +429,7 @@ public class PlatformSpecRunner {
     try {
       invocation.proceed();
     } catch (Throwable throwable) {
-      ErrorInfo error = new ErrorInfo(method, throwable);
+      ErrorInfo error = new ErrorInfo(method, throwable, ErrorContext.from(getSpecificationContext(context)));
       supervisor.error(context.getErrorInfoCollector(), error);
     }
   }
@@ -438,7 +438,7 @@ public class PlatformSpecRunner {
     try {
       return method.invoke(target, arguments);
     } catch (Throwable throwable) {
-      supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(method, throwable));
+      supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(method, throwable, ErrorContext.from(getSpecificationContext(context))));
       return null;
     }
   }

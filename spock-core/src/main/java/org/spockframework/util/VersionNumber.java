@@ -14,83 +14,133 @@
 
 package org.spockframework.util;
 
-import java.util.regex.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A version number with format major.minor.micro-qualifier.
  */
 @Immutable
 public final class VersionNumber implements Comparable<VersionNumber> {
-  public static final VersionNumber UNKNOWN = new VersionNumber(0, 0, 0, null);
+  public static final VersionNumber UNKNOWN = new VersionNumber(0, 0, 0, false, null);
 
-	private static final Pattern versionPattern = Pattern.compile("(\\d+)(?:\\.(\\d+))?+(?:\\.(\\d+))?+(?:[-.](.+))?");
-	private static final String versionTemplate = "%d.%d.%d%s";
+  private static final Pattern versionPattern = Pattern.compile("(?<major>\\d+)(?:\\.(?<minor>\\d+))?+(?:\\.(?<micro>\\d+))?+(?<qualifier>[-.].+?)??(?<snapshot>-SNAPSHOT)?");
+  private static final String versionTemplate = "%d.%d.%d%s";
 
-	private final int major;
-	private final int minor;
-	private final int micro;
+  private final int major;
+  private final int minor;
+  private final int micro;
+  private final boolean isSnapshot;
   private final String qualifier;
+  private final int versionFields;
 
-	public VersionNumber(int major, int minor, int micro, @Nullable String qualifier) {
-		this.major = major;
-		this.minor = minor;
-		this.micro = micro;
-    this.qualifier = qualifier;
-	}
-
-	public int getMajor() {
-		return major;
-	}
-
-	public int getMinor() {
-		return minor;
-	}
-
-	public int getMicro() {
-		return micro;
-	}
-
-	public String getQualifier() {
-    return qualifier;
+  public VersionNumber(int major, int minor, int micro, boolean isSnapshot, @Nullable String qualifier) {
+    this(major, minor, micro, isSnapshot, qualifier == null ? null : "-" + qualifier, 3);
   }
 
-	@Override
-  public int compareTo(VersionNumber other) {
-		if (major != other.major) return major - other.major;
-		if (minor != other.minor) return minor - other.minor;
-		if (micro != other.micro) return micro - other.micro;
-    return ObjectUtil.compare(qualifier, other.qualifier);
-	}
+  // Visible for testing
+  VersionNumber(int major, int minor, int micro, boolean isSnapshot, @Nullable String qualifier, int versionFields) {
+    this.major = major;
+    this.minor = minor;
+    this.micro = micro;
+    this.isSnapshot = isSnapshot;
+    this.qualifier = qualifier;
+    this.versionFields = versionFields;
+  }
 
-	public boolean equals(Object other) {
-		return other instanceof VersionNumber && compareTo((VersionNumber)other) == 0;
-	}
+  public int getMajor() {
+    return major;
+  }
+
+  public int getMinor() {
+    return minor;
+  }
+
+  public int getMicro() {
+    return micro;
+  }
+
+  public String getQualifier() {
+    return qualifier == null ? null : qualifier.substring(1);
+  }
+
+  public boolean isSnapshot() {
+    return isSnapshot;
+  }
+
+  @Override
+  public int compareTo(VersionNumber other) {
+    if (major != other.major) return major - other.major;
+    if (minor != other.minor) return minor - other.minor;
+    if (micro != other.micro) return micro - other.micro;
+    int qualComp = ObjectUtil.compare(getQualifier(), other.getQualifier());
+    if (qualComp != 0) return qualComp;
+    return isSnapshot == other.isSnapshot
+      ? 0
+      : isSnapshot
+      ? -1
+      : 1;
+  }
+
+  public boolean equals(Object other) {
+    return other instanceof VersionNumber && compareTo((VersionNumber) other) == 0;
+  }
 
   public int hashCode() {
     int result = major;
     result = 31 * result + minor;
     result = 31 * result + micro;
-    result = 31 * result + ObjectUtil.hashCode(qualifier);
+    result = 31 * result + ObjectUtil.hashCode(getQualifier());
+    result = 31 * result + Boolean.hashCode(isSnapshot);
     return result;
   }
 
   public String toString() {
-		return String.format(versionTemplate, major, minor, micro, qualifier == null ? "" : "-" + qualifier);
-	}
+    return String.format(versionTemplate, major, minor, micro, (qualifier == null ? "" : "-" + getQualifier()) + (isSnapshot ? "-SNAPSHOT" : ""));
+  }
 
-	public static VersionNumber parse(String versionString) {
+  public String toOriginalString() {
+    return toOriginalString(true, true);
+  }
+
+  public String toOriginalString(boolean includeQualifier, boolean includeSnapshot) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(major);
+    if (versionFields > 1) {
+      sb.append('.').append(minor);
+      if (versionFields > 2) {
+        sb.append('.').append(micro);
+      }
+    }
+    if (includeQualifier && qualifier != null) {
+      sb.append(qualifier);
+    }
+    if (includeSnapshot && isSnapshot) {
+      sb.append("-SNAPSHOT");
+    }
+    return sb.toString();
+  }
+
+  public static VersionNumber parse(String versionString) {
     if (versionString == null) return UNKNOWN;
-		Matcher m = versionPattern.matcher(versionString);
-		if (!m.matches()) return UNKNOWN;
+    Matcher m = versionPattern.matcher(versionString);
+    if (!m.matches()) return UNKNOWN;
 
-        int major = Integer.parseInt(m.group(1));
-		String minorString = m.group(2);
-        int minor = minorString == null ? 0 : Integer.parseInt(minorString);
-		String microString = m.group(3);
-        int micro = microString == null ? 0 : Integer.parseInt(microString);
-    String qualifier = m.group(4);
+    int major = Integer.parseInt(m.group("major"));
+    String minorString = m.group("minor");
+    int minor = minorString == null ? 0 : Integer.parseInt(minorString);
+    String microString = m.group("micro");
+    int micro = microString == null ? 0 : Integer.parseInt(microString);
+    String qualifier = m.group("qualifier");
+    boolean isSnapshot = m.group("snapshot") != null;
+    int versionFields = 1;
+    if (minorString != null) {
+      versionFields++;
+      if (microString != null) {
+        versionFields++;
+      }
+    }
 
-		return new VersionNumber(major, minor, micro, qualifier);
-	}
+    return new VersionNumber(major, minor, micro, isSnapshot, qualifier, versionFields);
+  }
 }
-

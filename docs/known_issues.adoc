@@ -1,6 +1,22 @@
 = Known Issues
 include::include.adoc[]
 
+== Constructing a Spy from an existing instance on Java 17+
+
+Java continues to tighten up on reflection usage,
+and it is no longer possible to make fields accessible in every case.
+
+As spying on an existing instance involves creating a spy instance,
+and then copying the fields from the original instance to the spy instance,
+this can run into issues on Java 17+ when the code does not have access to the module of the class being spied upon, or any of its parent classes.
+
+A workaround is to use the appropriate `--add-opens` parameter to the jvm.
+For example, if you are spying on a class in the `java.util`, `--add-opens java.base/java.util=ALL-UNNAMED`.
+
+WARNING: Be aware that this will affect all code in the test JVM, so it can hide issues in the code under test.
+
+In general, it is recommended to use `Mock`/`Stub` instead of `Spy` when possible.
+
 == Usage of `final` in a feature method with `cleanup` spockIssue:1017[]
 
 You might run into issues if you use `final` in your Specification.

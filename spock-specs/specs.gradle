@@ -1,6 +1,5 @@
 plugins {
   id 'org.spockframework.base'
-  id "org.gradle.test-retry"
 }
 
 ext.displayName = "Spock Framework - Specs for Core Module"

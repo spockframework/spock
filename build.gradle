@@ -183,7 +183,6 @@ subprojects {
     from javadoc
   }
 
-  def javaVersionNoShadow = javaVersion // Test task also has javaVersion
   tasks.withType(Test) {
     useJUnitPlatform()
     def taskName = name

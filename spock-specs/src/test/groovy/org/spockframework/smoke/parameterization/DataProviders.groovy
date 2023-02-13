@@ -18,8 +18,7 @@ package org.spockframework.smoke.parameterization
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpockExecutionException
-import spock.lang.Issue
-import spock.lang.Rollup
+import spock.lang.*
 import spock.util.Show
 
 /**
@@ -272,6 +271,26 @@ where: a << b
       methodName == 'a feature'
       lineNumber != -1
     }
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1573")
+  def "estimate iterations correctly"() {
+    expect:
+    specificationContext.currentIteration.estimatedNumIterations == 3
+
+    where:
+    a << [1, 2, 3]
+    b << (1..3)
+  }
+
+
+  @Issue("https://github.com/spockframework/spock/issues/1573")
+  def "estimate iterations correctly for Iterators"() {
+    expect:
+    specificationContext.currentIteration.estimatedNumIterations == -1
+
+    where:
+    b << (1..3).iterator()
   }
 
   static class MyIterator implements Iterator {

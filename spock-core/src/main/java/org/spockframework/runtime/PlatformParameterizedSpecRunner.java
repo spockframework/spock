@@ -58,9 +58,9 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
       private final AtomicInteger iterationIndex = new AtomicInteger(0);
 
       @Override
-      public CompletableFuture<ExecutionResult> runIteration(Object[] args) {
+      public CompletableFuture<ExecutionResult> runIteration(Object[] args, int estimatedNumIterations) {
         int currIterationIndex = iterationIndex.getAndIncrement();
-        IterationInfo iterationInfo = createIterationInfo(context, currIterationIndex, args, -1);
+        IterationInfo iterationInfo = createIterationInfo(context, currIterationIndex, args, estimatedNumIterations);
         IterationNode iterationNode = new IterationNode(
           context.getParentId().append("iteration", String.valueOf(currIterationIndex)),
           context.getRunContext().getConfiguration(RunnerConfiguration.class), iterationInfo);

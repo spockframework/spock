@@ -1,16 +1,11 @@
 package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.IDataIterator;
-import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
-import org.spockframework.runtime.extension.IDataDriver;
-import org.spockframework.runtime.extension.IIterationRunner;
-import org.spockframework.runtime.model.ExecutionResult;
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.ParameterInfo;
+import org.spockframework.runtime.extension.*;
+import org.spockframework.runtime.model.*;
 import spock.lang.RepeatUntilFailure;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class RepeatUntilFailureExtension implements IAnnotationDrivenExtension<RepeatUntilFailure> {
@@ -36,12 +31,14 @@ public class RepeatUntilFailureExtension implements IAnnotationDrivenExtension<R
 
     @Override
     public void runIterations(IDataIterator dataIterator, IIterationRunner iterationRunner, List<ParameterInfo> parameters) {
-      List<Object[]> data = new ArrayList<>(dataIterator.getEstimatedNumIterations());
+      int estimatedNumIterations = dataIterator.getEstimatedNumIterations();
+      int maxIterations = estimatedNumIterations * maxAttempts;
+      List<Object[]> data = new ArrayList<>(estimatedNumIterations);
       dataIterator.forEachRemaining(data::add);
       for (int attempt = 0; attempt < maxAttempts; attempt++) {
         for (Object[] args : data) {
           try {
-            ExecutionResult executionResult = iterationRunner.runIteration(args).get();
+            ExecutionResult executionResult = iterationRunner.runIteration(args, maxIterations).get();
             if (executionResult == ExecutionResult.FAILED) {
               return;
             }

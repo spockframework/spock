@@ -1,13 +1,13 @@
 package org.spockframework.runtime.extension;
 
+import static java.lang.System.arraycopy;
+import static org.spockframework.runtime.model.MethodInfo.MISSING_ARGUMENT;
+
 import org.spockframework.runtime.IDataIterator;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.Beta;
 
 import java.util.*;
-
-import static java.lang.System.arraycopy;
-import static org.spockframework.runtime.model.MethodInfo.MISSING_ARGUMENT;
 
 /**
  * The data driver is responsible to map the data from the data providers to the individual iterations.
@@ -16,10 +16,10 @@ import static org.spockframework.runtime.model.MethodInfo.MISSING_ARGUMENT;
  * filter data iterations, produce more iterations.
  * <p>
  * A thing to keep in mind is that if the order is not consistent between runs,
- * then it will interfere with {@link org.junit.platform.engine.discovery.DiscoverySelectors.IterationSelector}.
+ * then it will interfere with {@link org.junit.platform.engine.discovery.IterationSelector}.
  *
- * @since 2.2
  * @author Leonard Brünings
+ * @since 2.2
  */
 @Beta
 public interface IDataDriver {
@@ -29,12 +29,13 @@ public interface IDataDriver {
    * It simply runs all iterations.
    */
   IDataDriver DEFAULT = (dataIterator, iterationRunner, parameters) -> {
+    int estimatedNumIterations = dataIterator.getEstimatedNumIterations();
     while (dataIterator.hasNext()) {
       Object[] arguments = dataIterator.next();
 
       // dataIterator.next() will return null if an error occurs, so skip the iteration if it is null.
       if (arguments != null) {
-        iterationRunner.runIteration(prepareArgumentArray(arguments, parameters));
+        iterationRunner.runIteration(prepareArgumentArray(arguments, parameters), estimatedNumIterations);
       }
     }
   };

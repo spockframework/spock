@@ -30,7 +30,7 @@ publishing {
         scm {
           connection = "scm:git:git://github.com/spockframework/spock.git"
           developerConnection = "scm:git:ssh://git@github.com/spockframework/spock.git"
-          url = "https://github.spockframework.org/spock"
+          url = "https://github.com/spockframework/spock"
         }
         developers {
           developer {

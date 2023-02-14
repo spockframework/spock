@@ -14,15 +14,12 @@
 
 package org.spockframework.smoke.parameterization
 
-import org.opentest4j.MultipleFailuresError
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
 import org.spockframework.runtime.SpockExecutionException
+import spock.lang.*
 
-import spock.lang.Ignore
-import spock.lang.Issue
-import spock.lang.Rollup
-import spock.lang.Shared
+import org.opentest4j.MultipleFailuresError
 
 @Rollup
 class DataTables extends EmbeddedSpecification {
@@ -47,10 +44,22 @@ class DataTables extends EmbeddedSpecification {
     Math.max(a, b) == c
 
     where:
-    a ; b ; c
-    5 ; 7 ; 7
-    3 ; 1 ; 3
-    9 ; 9 ; 9
+    a; b; c
+    5; 7; 7
+    3; 1; 3
+    9; 9; 9
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1573")
+  def "estimate iterations correctly"() {
+    expect:
+    specificationContext.currentIteration.estimatedNumIterations == 3
+
+    where:
+    a | b | c
+    5 | 7 | 7
+    3 | 1 | 3
+    9 | 9 | 9
   }
 
   def "table must have at least two columns"() {

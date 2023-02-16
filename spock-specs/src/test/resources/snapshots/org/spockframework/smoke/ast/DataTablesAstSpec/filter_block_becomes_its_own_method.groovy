@@ -5,16 +5,22 @@ class ASpec extends Specification {
   def "aFeature"() {
 /*--------- tag::snapshot[] ---------*/
 public void $spock_feature_0_0(java.lang.Object a, java.lang.Object b) {
-    org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
-    org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
     try {
-        org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), 'true', 2, 7, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), true))
+        org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
+        org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
+        org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.EXPECT, []))
+        try {
+            org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), 'true', 2, 7, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), true))
+        }
+        catch (java.lang.Throwable $spock_condition_throwable) {
+            org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'true', 2, 7, null, $spock_condition_throwable)}
+        finally {
+        }
+        org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.FILTER, []))
+        this.getSpecificationContext().getMockController().leaveScope()
     }
-    catch (java.lang.Throwable $spock_condition_throwable) {
-        org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'true', 2, 7, null, $spock_condition_throwable)}
     finally {
-    }
-    this.getSpecificationContext().getMockController().leaveScope()
+        org.spockframework.runtime.SpockRuntime.clearCurrentBlock(this.getSpecificationContext())}
 }
 
 public java.lang.Object $spock_feature_0_0prov0() {
@@ -38,6 +44,7 @@ public static org.spockframework.runtime.model.DataVariableMultiplication[] $spo
 public static void $spock_feature_0_0filter(java.lang.Object a, java.lang.Object b) {
     org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
+    org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.FILTER, []))
     try {
         org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), 'a == 1', 15, 7, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), a) == $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), 1)))
     }

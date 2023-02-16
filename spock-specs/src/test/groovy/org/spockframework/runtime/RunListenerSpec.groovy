@@ -250,7 +250,7 @@ class ASpec extends Specification {
     "feature when"    | BlockKind.WHEN    | ["when label"]
     "feature then"    | BlockKind.THEN    | ["then label"]
     "feature cleanup" | BlockKind.CLEANUP | ["cleanup label"]
-    "cleanup"         | null              | [] // TODO the last block leaks into cleanup, this is a bug
+    "cleanup"         | null              | []
     "cleanupSpec"     | null              | []
   }
 }

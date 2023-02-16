@@ -17,6 +17,8 @@
 package org.spockframework.spring.mock
 
 import org.spockframework.spring.*
+import org.spockframework.util.VersionNumber
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 import javax.inject.Named
@@ -33,7 +35,7 @@ class ComplexUsageSpec extends Specification {
   @SpringBean
   Service2 aService2 = Mock()
 
-  @Named("myName")
+  @Qualifier("myName")
   @SpringBean
   Service2 nService2 = Mock()
 
@@ -75,7 +77,7 @@ class ComplexConfig {
   }
 
   @Bean
-  Service1 service1WithNamed(@Named("myName") Service2 namedService2) {
+  Service1 service1WithNamed(@Qualifier("myName") Service2 namedService2) {
     new Service1(namedService2)
   }
 

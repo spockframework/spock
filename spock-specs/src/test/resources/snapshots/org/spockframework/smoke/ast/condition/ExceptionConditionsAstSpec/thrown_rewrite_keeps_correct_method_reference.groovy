@@ -8,18 +8,24 @@ public java.lang.Object foobar() {
 }
 
 public void $spock_feature_0_0() {
-    java.lang.Object foobar
-    this.getSpecificationContext().setThrownException(null)
     try {
-        foobar = this.foobar()
-    }
-    catch (java.lang.Throwable $spock_ex) {
-        this.getSpecificationContext().setThrownException($spock_ex)
+        java.lang.Object foobar
+        this.getSpecificationContext().setThrownException(null)
+        try {
+            org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.WHEN, []))
+            foobar = this.foobar()
+        }
+        catch (java.lang.Throwable $spock_ex) {
+            this.getSpecificationContext().setThrownException($spock_ex)
+        }
+        finally {
+        }
+        org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.THEN, []))
+        this.thrownImpl(null, null, java.lang.IllegalStateException)
+        this.getSpecificationContext().getMockController().leaveScope()
     }
     finally {
-    }
-    this.thrownImpl(null, null, java.lang.IllegalStateException)
-    this.getSpecificationContext().getMockController().leaveScope()
+        org.spockframework.runtime.SpockRuntime.clearCurrentBlock(this.getSpecificationContext())}
 }
 /*--------- end::snapshot[] ---------*/
 }

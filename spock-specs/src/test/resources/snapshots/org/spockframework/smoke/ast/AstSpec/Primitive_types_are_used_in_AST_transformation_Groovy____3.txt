@@ -12,10 +12,12 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     TRYCATCHBLOCK L4 L5 L5 java/lang/Throwable
     TRYCATCHBLOCK L4 L5 L6 null
     TRYCATCHBLOCK L5 L7 L6 null
-   L8
+    TRYCATCHBLOCK L8 L9 L10 null
+   L11
     NOP
     INVOKESTATIC apackage/TestSpec.$getCallSiteArray ()[Lorg/codehaus/groovy/runtime/callsite/CallSite;
     ASTORE 1
+   L8
     ALOAD 1
     LDC 0
     AALOAD
@@ -25,7 +27,7 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
     CHECKCAST org/spockframework/runtime/ErrorCollector
     ASTORE 2
-   L9
+   L12
     ALOAD 2
     POP
     ALOAD 1
@@ -37,8 +39,32 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
     CHECKCAST org/spockframework/runtime/ValueRecorder
     ASTORE 3
-   L10
+   L13
     ALOAD 3
+    POP
+    ALOAD 0
+    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    LDC Lorg/spockframework/runtime/SpecificationContext;.class
+    INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
+    CHECKCAST org/spockframework/runtime/SpecificationContext
+    ALOAD 1
+    LDC 2
+    AALOAD
+    LDC Lorg/spockframework/runtime/model/BlockInfo;.class
+    ALOAD 1
+    LDC 3
+    AALOAD
+    LDC Lorg/spockframework/runtime/model/BlockKind;.class
+    INVOKEINTERFACE org/codehaus/groovy/runtime/callsite/CallSite.callGetProperty (Ljava/lang/Object;)Ljava/lang/Object; (itf)
+    ICONST_0
+    ANEWARRAY java/lang/Object
+    INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.createList ([Ljava/lang/Object;)Ljava/util/List;
+    INVOKEINTERFACE org/codehaus/groovy/runtime/callsite/CallSite.callConstructor (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; (itf)
+    LDC Lorg/spockframework/runtime/model/BlockInfo;.class
+    INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
+    CHECKCAST org/spockframework/runtime/model/BlockInfo
+    INVOKESTATIC org/spockframework/runtime/SpockRuntime.callEnterBlock (Lorg/spockframework/runtime/SpecificationContext;Lorg/spockframework/runtime/model/BlockInfo;)V
+    ACONST_NULL
     POP
    L0
     LINENUMBER 4 L0
@@ -59,11 +85,11 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     INVOKESTATIC org/spockframework/runtime/SpockRuntime.verifyCondition (Lorg/spockframework/runtime/ErrorCollector;Lorg/spockframework/runtime/ValueRecorder;Ljava/lang/String;IILjava/lang/Object;Ljava/lang/Object;)V
     ACONST_NULL
     POP
-    GOTO L11
+    GOTO L14
    L1
    FRAME FULL [apackage/TestSpec [Lorg/codehaus/groovy/runtime/callsite/CallSite; org/spockframework/runtime/ErrorCollector org/spockframework/runtime/ValueRecorder] [java/lang/Throwable]
     ASTORE 4
-   L12
+   L15
     ALOAD 2
     ALOAD 3
     LDC "true"
@@ -76,16 +102,16 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     POP
     NOP
    L3
-    GOTO L11
-   L11
+    GOTO L14
+   L14
    FRAME SAME
-    GOTO L13
+    GOTO L16
    L2
    FRAME SAME1 java/lang/Throwable
     ASTORE 5
     ALOAD 5
     ATHROW
-   L13
+   L16
    FRAME SAME
     ALOAD 0
     INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
@@ -100,14 +126,39 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     ACONST_NULL
     POP
    L4
-    LINENUMBER 6 L4
+    ALOAD 0
+    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    LDC Lorg/spockframework/runtime/SpecificationContext;.class
+    INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
+    CHECKCAST org/spockframework/runtime/SpecificationContext
+    ALOAD 1
+    LDC 4
+    AALOAD
+    LDC Lorg/spockframework/runtime/model/BlockInfo;.class
+    ALOAD 1
+    LDC 5
+    AALOAD
+    LDC Lorg/spockframework/runtime/model/BlockKind;.class
+    INVOKEINTERFACE org/codehaus/groovy/runtime/callsite/CallSite.callGetProperty (Ljava/lang/Object;)Ljava/lang/Object; (itf)
+    ICONST_0
+    ANEWARRAY java/lang/Object
+    INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.createList ([Ljava/lang/Object;)Ljava/util/List;
+    INVOKEINTERFACE org/codehaus/groovy/runtime/callsite/CallSite.callConstructor (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; (itf)
+    LDC Lorg/spockframework/runtime/model/BlockInfo;.class
+    INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
+    CHECKCAST org/spockframework/runtime/model/BlockInfo
+    INVOKESTATIC org/spockframework/runtime/SpockRuntime.callEnterBlock (Lorg/spockframework/runtime/SpecificationContext;Lorg/spockframework/runtime/model/BlockInfo;)V
+    ACONST_NULL
+    POP
+   L17
+    LINENUMBER 6 L17
     ICONST_1
     POP
-    GOTO L14
+    GOTO L18
    L5
    FRAME SAME1 java/lang/Throwable
     ASTORE 6
-   L15
+   L19
     ALOAD 0
     INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
     LDC Lorg/spockframework/runtime/SpecificationContext;.class
@@ -119,20 +170,45 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     POP
     NOP
    L7
-    GOTO L14
-   L14
+    GOTO L18
+   L18
    FRAME SAME
-    GOTO L16
+    GOTO L20
    L6
    FRAME SAME1 java/lang/Throwable
     ASTORE 7
     ALOAD 7
     ATHROW
-   L16
-    LINENUMBER 8 L16
+   L20
    FRAME SAME
+    ALOAD 0
+    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    LDC Lorg/spockframework/runtime/SpecificationContext;.class
+    INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
+    CHECKCAST org/spockframework/runtime/SpecificationContext
     ALOAD 1
-    LDC 2
+    LDC 6
+    AALOAD
+    LDC Lorg/spockframework/runtime/model/BlockInfo;.class
+    ALOAD 1
+    LDC 7
+    AALOAD
+    LDC Lorg/spockframework/runtime/model/BlockKind;.class
+    INVOKEINTERFACE org/codehaus/groovy/runtime/callsite/CallSite.callGetProperty (Ljava/lang/Object;)Ljava/lang/Object; (itf)
+    ICONST_0
+    ANEWARRAY java/lang/Object
+    INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.createList ([Ljava/lang/Object;)Ljava/util/List;
+    INVOKEINTERFACE org/codehaus/groovy/runtime/callsite/CallSite.callConstructor (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; (itf)
+    LDC Lorg/spockframework/runtime/model/BlockInfo;.class
+    INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
+    CHECKCAST org/spockframework/runtime/model/BlockInfo
+    INVOKESTATIC org/spockframework/runtime/SpockRuntime.callEnterBlock (Lorg/spockframework/runtime/SpecificationContext;Lorg/spockframework/runtime/model/BlockInfo;)V
+    ACONST_NULL
+    POP
+   L21
+    LINENUMBER 8 L21
+    ALOAD 1
+    LDC 8
     AALOAD
     ALOAD 0
     ACONST_NULL
@@ -152,13 +228,40 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     INVOKEVIRTUAL org/spockframework/mock/runtime/MockController.leaveScope ()V
     ACONST_NULL
     POP
-   L17
+   L22
+    GOTO L9
+   L9
+   FRAME SAME
+    ALOAD 0
+    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    LDC Lorg/spockframework/runtime/SpecificationContext;.class
+    INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
+    CHECKCAST org/spockframework/runtime/SpecificationContext
+    INVOKESTATIC org/spockframework/runtime/SpockRuntime.clearCurrentBlock (Lorg/spockframework/runtime/SpecificationContext;)V
+    ACONST_NULL
+    POP
+    GOTO L23
+   L10
+   FRAME FULL [apackage/TestSpec [Lorg/codehaus/groovy/runtime/callsite/CallSite;] [java/lang/Throwable]
+    ASTORE 8
+    ALOAD 0
+    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    LDC Lorg/spockframework/runtime/SpecificationContext;.class
+    INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
+    CHECKCAST org/spockframework/runtime/SpecificationContext
+    INVOKESTATIC org/spockframework/runtime/SpockRuntime.clearCurrentBlock (Lorg/spockframework/runtime/SpecificationContext;)V
+    ACONST_NULL
+    POP
+    ALOAD 8
+    ATHROW
+   L23
+   FRAME APPEND [org/spockframework/runtime/ErrorCollector org/spockframework/runtime/ValueRecorder]
     RETURN
-    LOCALVARIABLE this Lapackage/TestSpec; L8 L17 0
-    LOCALVARIABLE $spock_errorCollector Lorg/spockframework/runtime/ErrorCollector; L9 L17 2
-    LOCALVARIABLE $spock_valueRecorder Lorg/spockframework/runtime/ValueRecorder; L10 L17 3
-    LOCALVARIABLE $spock_condition_throwable Ljava/lang/Throwable; L12 L3 4
-    LOCALVARIABLE $spock_ex Ljava/lang/Throwable; L15 L7 6
+    LOCALVARIABLE this Lapackage/TestSpec; L11 L23 0
+    LOCALVARIABLE $spock_errorCollector Lorg/spockframework/runtime/ErrorCollector; L12 L22 2
+    LOCALVARIABLE $spock_valueRecorder Lorg/spockframework/runtime/ValueRecorder; L13 L22 3
+    LOCALVARIABLE $spock_condition_throwable Ljava/lang/Throwable; L15 L3 4
+    LOCALVARIABLE $spock_ex Ljava/lang/Throwable; L19 L7 6
     MAXSTACK = 9
-    MAXLOCALS = 8
+    MAXLOCALS = 9
 }

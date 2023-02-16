@@ -239,6 +239,11 @@ public abstract class SpockRuntime {
     }
   }
 
+  public static final String CLEAR_CURRENT_BLOCK = "clearCurrentBlock";
+  public static void clearCurrentBlock(SpecificationContext context) {
+    context.setCurrentBlock(null);
+  }
+
   private static List<Object> getValues(ValueRecorder recorder) {
       return recorder == null ? null : recorder.getValues();
   }

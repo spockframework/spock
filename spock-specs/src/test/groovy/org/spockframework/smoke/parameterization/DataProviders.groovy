@@ -114,7 +114,11 @@ where: x << []
     then:
     result.source == '''\
 public void $spock_feature_0_0(java.lang.Object dataPipe, java.lang.Object dataVariable) {
-    this.getSpecificationContext().getMockController().leaveScope()
+    try {
+        this.getSpecificationContext().getMockController().leaveScope()
+    }
+    finally {
+        org.spockframework.runtime.SpockRuntime.clearCurrentBlock(this.getSpecificationContext())}
 }
 
 public java.lang.Object $spock_feature_0_0prov0() {
@@ -163,7 +167,11 @@ public java.lang.Object $spock_feature_0_0proc(java.lang.Object $spock_p0) {
     then:
     result.source == '''\
 public void $spock_feature_0_0(java.lang.Object dataPipe, java.lang.Object dataVariable) {
-    this.getSpecificationContext().getMockController().leaveScope()
+    try {
+        this.getSpecificationContext().getMockController().leaveScope()
+    }
+    finally {
+        org.spockframework.runtime.SpockRuntime.clearCurrentBlock(this.getSpecificationContext())}
 }
 
 public java.lang.Object $spock_feature_0_0prov0() {

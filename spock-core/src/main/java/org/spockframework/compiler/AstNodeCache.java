@@ -73,6 +73,8 @@ public class AstNodeCache {
       SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.DESPREAD_LIST).get(0);
   public final MethodNode SpockRuntime_CallEnterBlock =
       SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.CALL_ENTER_BLOCK).get(0);
+  public final MethodNode SpockRuntime_ClearCurrentBlock =
+      SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.CLEAR_CURRENT_BLOCK).get(0);
 
   public final MethodNode ValueRecorder_Reset =
       ValueRecorder.getDeclaredMethods(org.spockframework.runtime.ValueRecorder.RESET).get(0);

@@ -407,6 +407,9 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     if (methodHasDeepNonGroupedCondition) {
       defineErrorRethrower(method.getStatements());
     }
+
+    if (method instanceof FeatureMethod)
+      clearCurrentBlockOnExit(method.getStatements());
   }
 
   @Override
@@ -541,6 +544,22 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     tryCatchStat.addCatch(createHandleSuppressedThrowableStatement(featureThrowableVar));
 
     return tryCatchStat;
+  }
+
+  // Wraps the feature method in a try-finally to clear the current block on exit.
+  private void clearCurrentBlockOnExit(List<Statement> statements) {
+    MethodCallExpression setCurrentBlockToNull = createDirectMethodCall(new ClassExpression(nodeCache.SpockRuntime),
+      nodeCache.SpockRuntime_ClearCurrentBlock, new ArgumentListExpression(getSpecificationContext()));
+
+    List<Statement> innerStatements = new ArrayList<>(statements);
+
+    TryCatchStatement tryCatchStat =
+        new TryCatchStatement(
+            new BlockStatement(innerStatements, null),
+            new ExpressionStatement(setCurrentBlockToNull));
+
+    statements.clear();
+    statements.add(tryCatchStat);
   }
 
   private CatchStatement createThrowableAssignmentAndRethrowCatchStatement(VariableExpression assignmentVar) {

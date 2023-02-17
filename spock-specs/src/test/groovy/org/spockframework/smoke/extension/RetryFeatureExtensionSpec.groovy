@@ -14,7 +14,7 @@ import static org.junit.platform.testkit.engine.EventConditions.finishedWithFail
 import static org.junit.platform.testkit.engine.EventConditions.test
 import static org.spockframework.runtime.model.parallel.ExecutionMode.SAME_THREAD
 
-@Execution(SAME_THREAD)
+@Execution(value = SAME_THREAD, reason = "tests use static field")
 class RetryFeatureExtensionSpec extends EmbeddedSpecification {
 
   static AtomicInteger setupCounter = new AtomicInteger()

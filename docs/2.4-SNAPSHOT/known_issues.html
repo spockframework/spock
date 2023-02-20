@@ -20,6 +20,39 @@
 </div>
 <div id="content">
 <div class="sect1">
+<h2 id="instance-spy-on-java-17"><a class="anchor" href="#instance-spy-on-java-17"></a><a class="link" href="#instance-spy-on-java-17">Constructing a Spy from an existing instance on Java 17+</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Java continues to tighten up on reflection usage,
+and it is no longer possible to make fields accessible in every case.</p>
+</div>
+<div class="paragraph">
+<p>As spying on an existing instance involves creating a spy instance,
+and then copying the fields from the original instance to the spy instance,
+this can run into issues on Java 17+ when the code does not have access to the module of the class being spied upon, or any of its parent classes.</p>
+</div>
+<div class="paragraph">
+<p>A workaround is to use the appropriate <code>--add-opens</code> parameter to the jvm.
+For example, if you are spying on a class in the <code>java.util</code>, <code>--add-opens java.base/java.util=ALL-UNNAMED</code>.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+Be aware that this will affect all code in the test JVM, so it can hide issues in the code under test.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In general, it is recommended to use <code>Mock</code>/<code>Stub</code> instead of <code>Spy</code> when possible.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_usage_of_final_in_a_feature_method_with_cleanup_1017"><a class="anchor" href="#_usage_of_final_in_a_feature_method_with_cleanup_1017"></a><a class="link" href="#_usage_of_final_in_a_feature_method_with_cleanup_1017">Usage of <code>final</code> in a feature method with <code>cleanup</code> <a href="https://github.com/spockframework/spock/issues/1017">#1017</a></a></h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -168,7 +201,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2022-11-30 21:35:15 UTC
+Last updated 2023-02-20 20:39:46 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

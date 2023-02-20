@@ -23,7 +23,7 @@ ext {
   buildScan.tag "groovy-$variant"
   if (variant == 2.5) {
     groovyGroup = "org.codehaus.groovy"
-    groovyVersion = "2.5.19"
+    groovyVersion = "3.0.15"
     minGroovyVersion = "2.5.0"
     maxGroovyVersion = "2.9.99"
       if(javaVersion >= 17) {

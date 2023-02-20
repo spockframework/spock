@@ -80,7 +80,7 @@ ext {
     junitPlatform       : "org.junit.platform:junit-platform-engine",
     junitPlatformTestkit: "org.junit.platform:junit-platform-testkit",
     junitPlatformConsole: "org.junit.platform:junit-platform-console",
-    log4j               : "log4j:log4j:1.2.17",
+    log4j               : "log4j:log4j:1.2.17-atlassian-1",
     objenesis           : "org.objenesis:objenesis:3.3",
     jacocoAgent         : "org.jacoco:org.jacoco.agent:$jacocoVersion:runtime"
   ]

@@ -35,8 +35,8 @@ dependencies {
 
 boolean isCiServer = System.env["CI"] || System.env["GITHUB_ACTIONS"]
 test {
-  reports.junitXml.enabled = true
-  reports.html.enabled = true
+  reports.junitXml.required = true
+  reports.html.required = true
 
   testLogging.exceptionFormat = "full"
   testLogging.showExceptions = true

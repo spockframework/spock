@@ -23,8 +23,8 @@ dependencies {
 }
 
 test {
-  reports.junitXml.enabled = true
-  reports.html.enabled = false
+  reports.junitXml.required = true
+  reports.html.required = false
 
   testLogging.exceptionFormat = "full"
   testLogging.showExceptions = true

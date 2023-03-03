@@ -64,7 +64,7 @@ ext {
   libs = [
     jetbrainsAnnotations: "org.jetbrains:annotations:20.1.0",
     asm                 : "org.ow2.asm:asm:9.2",
-    bytebuddy           : "net.bytebuddy:byte-buddy:1.12.14",
+    bytebuddy           : "net.bytebuddy:byte-buddy:1.14.0",
     cglib               : "cglib:cglib-nodep:3.3.0",
     groovy              : groovyDependencies,
     groovyNio           : "$groovyGroup:groovy-nio:$groovyVersion", //for groovy methods on Path

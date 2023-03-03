@@ -178,12 +178,12 @@ subprojects {
   configureGroovydoc(groovydoc)
 
   task sourcesJar(type: Jar) {
-    classifier "sources"
+    archiveClassifier = "sources"
     from sourceSets.main.allSource
   }
 
   task javadocJar(type: Jar) {
-    classifier "javadoc"
+    archiveClassifier = "javadoc"
     from javadoc
   }
 
@@ -192,10 +192,10 @@ subprojects {
     def taskName = name
     reports {
       junitXml {
-        destination = file("$destination/$taskName-$variant")
+        outputLocation = file("${outputLocation.get()}/$taskName-$variant")
       }
       html {
-        destination = file("$destination/$taskName-$variant")
+        outputLocation = file("${outputLocation.get()}/$taskName-$variant")
       }
     }
     //Required for building on Travis' container-based infrastructure to not be killed with
@@ -244,10 +244,10 @@ task codeCoverageReport (type: JacocoReport, group: 'Coverage reports') {
   executionData.from(file('spock-specs/build/jacoco/compileTestGroovy.exec'))
 
   reports {
-    html.enabled = true
-    xml.enabled = true
-    xml.destination file("${buildDir}/reports/jacoco/report.xml") // report must be here for codecov to pick it up
-    csv.enabled = false
+    html.required = true
+    xml.required = true
+    xml.outputLocation = file("${buildDir}/reports/jacoco/report.xml") // report must be here for codecov to pick it up
+    csv.required = false
   }
 }
 

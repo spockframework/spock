@@ -93,9 +93,6 @@ class EmbeddedSpecRunner {
     }
   }
 
-  // it's very important to open a new context BEFORE Request.aClass/classes is invoked
-  // this is because Sputnik is already constructed by those methods, and has to pop
-  // the correct context from the stack
   SummarizedEngineExecutionResults runClass(Class clazz) {
     withNewContext {
       doRunRequest([selectClass(clazz)])

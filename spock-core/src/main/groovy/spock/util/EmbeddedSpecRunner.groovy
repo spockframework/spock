@@ -16,6 +16,7 @@
 
 package spock.util
 
+import org.junit.platform.engine.Filter
 import org.spockframework.runtime.*
 import org.spockframework.util.*
 
@@ -77,10 +78,10 @@ class EmbeddedSpecRunner {
     compiler.addClassMemberImport(clazz)
   }
 
-
   SummarizedEngineExecutionResults runWithSelectors(DiscoverySelector... selectors) {
     runWithSelectors(asList(selectors))
   }
+
   SummarizedEngineExecutionResults runWithSelectors(List<DiscoverySelector> selectors) {
     withNewContext {
       doRunRequest(selectors)
@@ -93,12 +94,9 @@ class EmbeddedSpecRunner {
     }
   }
 
-  // it's very important to open a new context BEFORE Request.aClass/classes is invoked
-  // this is because Sputnik is already constructed by those methods, and has to pop
-  // the correct context from the stack
-  SummarizedEngineExecutionResults runClass(Class clazz) {
+  SummarizedEngineExecutionResults runClass(Class clazz, Filter<?>... filters) {
     withNewContext {
-      doRunRequest([selectClass(clazz)])
+      doRunRequest([selectClass(clazz)], asList(filters))
     }
   }
 
@@ -131,15 +129,17 @@ class EmbeddedSpecRunner {
         extensionClasses, configClasses, inheritParentExtensions, block as IThrowableFunction)
   }
 
-  private SummarizedEngineExecutionResults doRunRequest(List<DiscoverySelector> selectors) {
-    def executionResults = doRunRequestInner(selectors)
+  private SummarizedEngineExecutionResults doRunRequest(List<DiscoverySelector> selectors, List<Filter<?>> filters = []) {
+    def executionResults = doRunRequestInner(selectors, filters)
 
     return new SummarizedEngineExecutionResults(executionResults)
   }
-  private EngineExecutionResults doRunRequestInner(List<DiscoverySelector> selectors) {
+
+  private EngineExecutionResults doRunRequestInner(List<DiscoverySelector> selectors, List<Filter<?>> filters = []) {
     def executionResults = EngineTestKit
       .engine("spock")
       .selectors(*selectors)
+      .filters(*filters)
       .execute()
     if (throwFailure) {
       def first = executionResults.allEvents().executions().failed().stream().findFirst()

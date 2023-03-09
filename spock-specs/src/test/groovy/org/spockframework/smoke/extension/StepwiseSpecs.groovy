@@ -14,9 +14,12 @@
 
 package org.spockframework.smoke.extension
 
+import org.junit.platform.engine.FilterResult
 import org.junit.platform.engine.discovery.DiscoverySelectors
-
+import org.junit.platform.launcher.PostDiscoveryFilter
 import org.spockframework.EmbeddedSpecification
+import spock.lang.Issue
+import spock.lang.PendingFeature
 
 class StepwiseSpecs extends EmbeddedSpecification {
   def "basic usage"() {
@@ -59,6 +62,29 @@ class Foo extends Specification {
 
     when:
     def result = runner.runWithSelectors(DiscoverySelectors.selectMethod(clazz, "step3"))
+
+    then:
+    result.testsSucceededCount == 3
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+  }
+
+  @PendingFeature
+  @Issue("https://github.com/spockframework/spock/issues/1593")
+  def "automatically runs excluded methods that lead up to an included method with post discovery filter"() {
+    def clazz = compiler.compileWithImports("""
+@Stepwise
+class Foo extends Specification {
+  def step1() { expect: true }
+  def step2() { expect: true }
+  def step3() { expect: true }
+}
+    """)[0]
+
+    when:
+    def result = runner.runClass(clazz, {
+      FilterResult.includedIf(it.displayName == 'step3')
+    } as PostDiscoveryFilter)
 
     then:
     result.testsSucceededCount == 3

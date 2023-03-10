@@ -15,16 +15,20 @@
 
 package org.spockframework.compiler;
 
+import org.codehaus.groovy.ast.MethodNode;
+import org.jetbrains.annotations.NotNull;
+import org.spockframework.compiler.model.*;
+
+import java.util.stream.Collectors;
+
 import org.codehaus.groovy.ast.Parameter;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.syntax.Types;
-import org.spockframework.compiler.model.*;
 import org.spockframework.util.Identifiers;
 import org.spockframework.util.Nullable;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.codehaus.groovy.ast.expr.MethodCallExpression.NO_ARGUMENTS;
 import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
@@ -64,9 +68,34 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
       || blockType == BlockParseInfo.ANONYMOUS) return;
 
     // SpockRuntime.enterBlock(getSpecificationContext(), new BlockInfo(blockKind, [blockTexts]))
-    MethodCallExpression enterBlockCall = createDirectMethodCall(
+    MethodCallExpression enterBlockCall = createBlockListenerCall(block, blockType, resources.getAstNodeCache().SpockRuntime_CallEnterBlock);
+    // SpockRuntime.exitedBlock(getSpecificationContext(), new BlockInfo(blockKind, [blockTexts]))
+    MethodCallExpression exitBlockCall = createBlockListenerCall(block, blockType, resources.getAstNodeCache().SpockRuntime_CallExitBlock);
+
+    // As the cleanup block finalizes the specification, it would override any previous block in ErrorInfo,
+    // so we only call enterBlock if there is no error yet.
+    if (blockType == BlockParseInfo.CLEANUP) {
+      block.getAst().add(0, ifThrowableIsNull(enterBlockCall));
+      block.getAst().add(ifThrowableIsNull(exitBlockCall));
+    } else {
+      block.getAst().add(0, new ExpressionStatement(enterBlockCall));
+      block.getAst().add( new ExpressionStatement(exitBlockCall));
+    }
+  }
+
+  private IfStatement ifThrowableIsNull(MethodCallExpression methodCall) {
+    return new IfStatement(
+      // if ($spock_feature_throwable == null)
+      new BooleanExpression(AstUtil.createVariableIsNullExpression(new VariableExpression(SpecRewriter.SPOCK_FEATURE_THROWABLE, resources.getAstNodeCache().Throwable))),
+      new ExpressionStatement(methodCall),
+      EmptyStatement.INSTANCE
+    );
+  }
+
+  private MethodCallExpression createBlockListenerCall(Block block, BlockParseInfo blockType, MethodNode blockListenerMethod) {
+    return createDirectMethodCall(
       new ClassExpression(resources.getAstNodeCache().SpockRuntime),
-      resources.getAstNodeCache().SpockRuntime_CallEnterBlock,
+      blockListenerMethod,
       new ArgumentListExpression(
         createDirectMethodCall(VariableExpression.THIS_EXPRESSION,
           resources.getAstNodeCache().SpecInternals_GetSpecificationContext,
@@ -82,19 +111,6 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
             )
           ))
       ));
-
-    // As the cleanup block finalizes the specification, it would override any previous block in ErrorInfo,
-    // so we only call enterBlock if there is no error yet.
-    if (blockType == BlockParseInfo.CLEANUP) {
-      block.getAst().add(0, new IfStatement(
-        // if ($spock_feature_throwable == null)
-        new BooleanExpression(AstUtil.createVariableIsNullExpression(new VariableExpression(SpecRewriter.SPOCK_FEATURE_THROWABLE, resources.getAstNodeCache().Throwable))),
-        new ExpressionStatement(enterBlockCall),
-        EmptyStatement.INSTANCE
-      ));
-    } else {
-      block.getAst().add(0, new ExpressionStatement(enterBlockCall));
-    }
   }
 
   @Override

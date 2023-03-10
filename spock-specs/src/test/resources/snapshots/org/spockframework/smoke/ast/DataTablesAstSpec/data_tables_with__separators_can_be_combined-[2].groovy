@@ -16,6 +16,7 @@ public void $spock_feature_0_0(java.lang.Object a, java.lang.Object b, java.lang
             org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'true', 2, 7, null, $spock_condition_throwable)}
         finally {
         }
+        org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.EXPECT, []))
         this.getSpecificationContext().getMockController().leaveScope()
     }
     finally {

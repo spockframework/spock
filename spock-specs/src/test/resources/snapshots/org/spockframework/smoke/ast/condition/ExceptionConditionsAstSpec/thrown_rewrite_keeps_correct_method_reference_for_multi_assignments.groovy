@@ -14,6 +14,7 @@ public void $spock_feature_0_0() {
         try {
             org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.WHEN, []))
             (foobar, b) = this.foobar()
+            org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.WHEN, []))
         }
         catch (java.lang.Throwable $spock_ex) {
             this.getSpecificationContext().setThrownException($spock_ex)
@@ -22,6 +23,7 @@ public void $spock_feature_0_0() {
         }
         org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.THEN, []))
         this.thrownImpl(null, null, java.lang.IllegalStateException)
+        org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.THEN, []))
         this.getSpecificationContext().getMockController().leaveScope()
     }
     finally {

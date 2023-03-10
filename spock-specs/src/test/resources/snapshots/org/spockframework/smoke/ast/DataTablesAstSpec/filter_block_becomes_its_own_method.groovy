@@ -16,7 +16,9 @@ public void $spock_feature_0_0(java.lang.Object a, java.lang.Object b) {
             org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'true', 2, 7, null, $spock_condition_throwable)}
         finally {
         }
+        org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.EXPECT, []))
         org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.FILTER, []))
+        org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.FILTER, []))
         this.getSpecificationContext().getMockController().leaveScope()
     }
     finally {
@@ -59,6 +61,7 @@ public static void $spock_feature_0_0filter(java.lang.Object a, java.lang.Object
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'b == 2', 16, 7, null, $spock_condition_throwable)}
     finally {
     }
+    org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.FILTER, []))
 }
 /*--------- end::snapshot[] ---------*/
   }

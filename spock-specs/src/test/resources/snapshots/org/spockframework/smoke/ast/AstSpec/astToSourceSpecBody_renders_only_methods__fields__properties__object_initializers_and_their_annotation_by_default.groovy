@@ -15,6 +15,7 @@ public void $spock_feature_0_0() {
     try {
         org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.SETUP, []))
         java.lang.Object nothing = null
+        org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.SETUP, []))
         this.getSpecificationContext().getMockController().leaveScope()
     }
     finally {

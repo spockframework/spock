@@ -29,14 +29,13 @@ public @interface FeatureMetadata {
   String NAME = "name";
   String ORDINAL = "ordinal";
   String LINE = "line";
-  String DATA_VARIABLE_NAMES = "dataVariableNames";
   String PARAMETER_NAMES = "parameterNames";
   String BLOCKS = "blocks";
 
   int ordinal();
   String name();
   int line();
-  String[] dataVariableNames();
+
   String[] parameterNames();
   BlockMetadata[] blocks();
 }

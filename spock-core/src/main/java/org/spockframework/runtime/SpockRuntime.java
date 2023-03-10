@@ -234,9 +234,14 @@ public abstract class SpockRuntime {
     context.setCurrentBlock(blockInfo);
     List<IBlockListener> blockListeners = currentIteration.getFeature().getBlockListeners();
     if (blockListeners.isEmpty()) return;
-    for (IBlockListener blockListener : blockListeners) {
-      blockListener.blockEntered(currentIteration, blockInfo);
-    }
+    blockListeners.forEach(blockListener -> blockListener.blockEntered(currentIteration, blockInfo));
+  }
+  public static final String CALL_EXIT_BLOCK = "callExitBlock";
+  public static void callExitBlock(SpecificationContext context, BlockInfo blockInfo) {
+    IterationInfo currentIteration = context.getCurrentIteration();
+    List<IBlockListener> blockListeners = currentIteration.getFeature().getBlockListeners();
+    if (blockListeners.isEmpty()) return;
+    blockListeners.forEach(blockListener -> blockListener.blockExited(currentIteration, blockInfo));
   }
 
   public static final String CLEAR_CURRENT_BLOCK = "clearCurrentBlock";

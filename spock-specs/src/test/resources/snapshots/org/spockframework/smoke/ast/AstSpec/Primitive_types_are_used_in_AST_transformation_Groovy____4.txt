@@ -146,6 +146,44 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
       "()", 
       0
     ]
+    LDC Lorg/spockframework/runtime/model/BlockInfo;.class
+    LDC Lorg/spockframework/runtime/model/BlockKind;.class
+    INVOKEDYNAMIC getProperty(Ljava/lang/Class;)Ljava/lang/Object; [
+      // handle kind 0x6 : INVOKESTATIC
+      org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
+      // arguments:
+      "EXPECT", 
+      0
+    ]
+    ICONST_0
+    ANEWARRAY java/lang/Object
+    INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.createList ([Ljava/lang/Object;)Ljava/util/List;
+    INVOKEDYNAMIC init(Ljava/lang/Class;Ljava/lang/Object;Ljava/util/List;)Ljava/lang/Object; [
+      // handle kind 0x6 : INVOKESTATIC
+      org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
+      // arguments:
+      "<init>", 
+      0
+    ]
+    INVOKEDYNAMIC cast(Ljava/lang/Object;)Lorg/spockframework/runtime/model/BlockInfo; [
+      // handle kind 0x6 : INVOKESTATIC
+      org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
+      // arguments:
+      "()", 
+      0
+    ]
+    INVOKESTATIC org/spockframework/runtime/SpockRuntime.callExitBlock (Lorg/spockframework/runtime/SpecificationContext;Lorg/spockframework/runtime/model/BlockInfo;)V
+    ACONST_NULL
+    POP
+    ALOAD 0
+    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    INVOKEDYNAMIC cast(Lorg/spockframework/lang/ISpecificationContext;)Lorg/spockframework/runtime/SpecificationContext; [
+      // handle kind 0x6 : INVOKESTATIC
+      org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
+      // arguments:
+      "()", 
+      0
+    ]
     ACONST_NULL
     INVOKEVIRTUAL org/spockframework/runtime/SpecificationContext.setThrownException (Ljava/lang/Throwable;)V
     ACONST_NULL
@@ -192,6 +230,44 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
    L16
     LINENUMBER 6 L16
     ICONST_1
+    POP
+    ALOAD 0
+    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    INVOKEDYNAMIC cast(Lorg/spockframework/lang/ISpecificationContext;)Lorg/spockframework/runtime/SpecificationContext; [
+      // handle kind 0x6 : INVOKESTATIC
+      org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
+      // arguments:
+      "()", 
+      0
+    ]
+    LDC Lorg/spockframework/runtime/model/BlockInfo;.class
+    LDC Lorg/spockframework/runtime/model/BlockKind;.class
+    INVOKEDYNAMIC getProperty(Ljava/lang/Class;)Ljava/lang/Object; [
+      // handle kind 0x6 : INVOKESTATIC
+      org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
+      // arguments:
+      "WHEN", 
+      0
+    ]
+    ICONST_0
+    ANEWARRAY java/lang/Object
+    INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.createList ([Ljava/lang/Object;)Ljava/util/List;
+    INVOKEDYNAMIC init(Ljava/lang/Class;Ljava/lang/Object;Ljava/util/List;)Ljava/lang/Object; [
+      // handle kind 0x6 : INVOKESTATIC
+      org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
+      // arguments:
+      "<init>", 
+      0
+    ]
+    INVOKEDYNAMIC cast(Ljava/lang/Object;)Lorg/spockframework/runtime/model/BlockInfo; [
+      // handle kind 0x6 : INVOKESTATIC
+      org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
+      // arguments:
+      "()", 
+      0
+    ]
+    INVOKESTATIC org/spockframework/runtime/SpockRuntime.callExitBlock (Lorg/spockframework/runtime/SpecificationContext;Lorg/spockframework/runtime/model/BlockInfo;)V
+    ACONST_NULL
     POP
     GOTO L17
    L5
@@ -275,6 +351,44 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
       "thrownImpl", 
       2
     ]
+    POP
+    ALOAD 0
+    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    INVOKEDYNAMIC cast(Lorg/spockframework/lang/ISpecificationContext;)Lorg/spockframework/runtime/SpecificationContext; [
+      // handle kind 0x6 : INVOKESTATIC
+      org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
+      // arguments:
+      "()", 
+      0
+    ]
+    LDC Lorg/spockframework/runtime/model/BlockInfo;.class
+    LDC Lorg/spockframework/runtime/model/BlockKind;.class
+    INVOKEDYNAMIC getProperty(Ljava/lang/Class;)Ljava/lang/Object; [
+      // handle kind 0x6 : INVOKESTATIC
+      org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
+      // arguments:
+      "THEN", 
+      0
+    ]
+    ICONST_0
+    ANEWARRAY java/lang/Object
+    INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.createList ([Ljava/lang/Object;)Ljava/util/List;
+    INVOKEDYNAMIC init(Ljava/lang/Class;Ljava/lang/Object;Ljava/util/List;)Ljava/lang/Object; [
+      // handle kind 0x6 : INVOKESTATIC
+      org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
+      // arguments:
+      "<init>", 
+      0
+    ]
+    INVOKEDYNAMIC cast(Ljava/lang/Object;)Lorg/spockframework/runtime/model/BlockInfo; [
+      // handle kind 0x6 : INVOKESTATIC
+      org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
+      // arguments:
+      "()", 
+      0
+    ]
+    INVOKESTATIC org/spockframework/runtime/SpockRuntime.callExitBlock (Lorg/spockframework/runtime/SpecificationContext;Lorg/spockframework/runtime/model/BlockInfo;)V
+    ACONST_NULL
     POP
     ALOAD 0
     INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;

@@ -17,6 +17,7 @@
 package org.spockframework.runtime.extension;
 
 import org.spockframework.runtime.model.*;
+import org.spockframework.util.Beta;
 import org.spockframework.util.Nullable;
 
 /**
@@ -101,10 +102,22 @@ public interface IMethodInvocation {
   /**
    * Sets the arguments for this method invocation.
    *
-   * @deprecated set the fields in the return value of {@link #getArguments()} instead
+   * @deprecated set the fields in the return value of {@link #getArguments()} instead,
+   * or use {@link #resolveArgument(int, Object)}.
    */
   @Deprecated
   void setArguments(Object[] arguments);
+
+  /**
+   * Sets a missing argument value.
+   * <p>
+   * It will throw an exception if the argument is already set.
+   * @param index the index of the argument
+   * @param value the value of the argument
+   * @since 2.4
+   */
+  @Beta
+  void resolveArgument(int index, Object value);
 
   /**
    * Proceeds with the method call. Always call this method

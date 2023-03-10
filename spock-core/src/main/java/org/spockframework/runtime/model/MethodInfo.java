@@ -41,7 +41,7 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IExcludabl
   private IterationInfo iteration;
   private boolean excluded = false;
   private final List<IMethodInterceptor> interceptors = new ArrayList<>();
-  private Invoker invoker;
+  private final Invoker invoker;
   private List<ParameterInfo> parameters;
 
   public MethodInfo() {
@@ -65,6 +65,7 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IExcludabl
     this.setMetadata(other.getMetadata());
     this.interceptors.addAll(other.interceptors);
     this.invoker = other.invoker;
+    this.parameters = other.parameters;
   }
 
   public MethodKind getKind() {
@@ -123,7 +124,7 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IExcludabl
       Parameter[] params = getReflection().getParameters();
       List<ParameterInfo> result = new ArrayList<>(params.length);
       for (int i = 0; i < params.length; i++) {
-        result.add(new ParameterInfo(this, nameProvider.apply(i), params[i]));
+        result.add(new ParameterInfo(this, nameProvider.apply(i), params[i], i));
       }
       parameters = Collections.unmodifiableList(result);
     }

@@ -16,6 +16,8 @@ package org.spockframework.runtime;
 
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.*;
+import org.spockframework.util.Nullable;
+import org.spockframework.util.Pair;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -26,6 +28,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * Runs global and local extensions for a spec.
  */
+@SuppressWarnings("rawtypes")
 public class ExtensionRunner {
   private final SpecInfo spec;
   private final IExtensionRegistry extensionRegistry;
@@ -112,14 +115,27 @@ public class ExtensionRunner {
     }
 
     doRunAnnotationDrivenExtensions(node, annotations);
+    doRunAnnotationDrivenExtensionsForParameters(node);
+  }
+
+  @SuppressWarnings("unchecked")
+  private void doRunAnnotationDrivenExtensionsForParameters(NodeInfo<?, ?> node) {
+    if (node instanceof MethodInfo) {
+      MethodInfo method = (MethodInfo) node;
+      method.getParameters().forEach(parameterInfo ->
+        Arrays.stream(parameterInfo.getAnnotations())
+          .map(ann -> Pair.of(ann, getAnnotationDrivenExtension(ann)))
+          .filter(annEx -> annEx.second() != null)
+          .forEach(annEx -> annEx.second().visitParameterAnnotation(annEx.first(), parameterInfo))
+      );
+    }
   }
 
   @SuppressWarnings("unchecked")
   private void doRunAnnotationDrivenExtensions(NodeInfo<?, ?> node, List<List<Annotation>> annotations) {
     for (List<Annotation> ann : annotations) {
-      ExtensionAnnotation extAnn = ann.get(0).annotationType().getAnnotation(ExtensionAnnotation.class);
-      if (extAnn == null) continue;
-      IAnnotationDrivenExtension extension = getOrCreateExtension(extAnn.value());
+      IAnnotationDrivenExtension extension = getAnnotationDrivenExtension(ann.get(0));
+      if (extension == null) continue;
       if (node instanceof SpecInfo) {
         extension.visitSpecAnnotations(ann, (SpecInfo) node);
       } else if (node instanceof MethodInfo) {
@@ -134,6 +150,14 @@ public class ExtensionRunner {
       }
     }
   }
+
+  @Nullable
+  private IAnnotationDrivenExtension getAnnotationDrivenExtension(Annotation annotation) {
+    ExtensionAnnotation extAnn = annotation.annotationType().getAnnotation(ExtensionAnnotation.class);
+    if (extAnn == null) return null;
+    return getOrCreateExtension(extAnn.value());
+  }
+
 
   private IAnnotationDrivenExtension getOrCreateExtension(Class<? extends IAnnotationDrivenExtension> clazz) {
     IAnnotationDrivenExtension extension = localExtensions.get(clazz);

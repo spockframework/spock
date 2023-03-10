@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.model.*;
+import org.spockframework.util.Beta;
 
 /**
  * @author Peter Niederwieser
@@ -143,6 +144,20 @@ public interface IAnnotationDrivenExtension<T extends Annotation> {
    */
   default void visitFeatureAnnotation(T annotation, FeatureInfo feature) {
     throw new InvalidSpecException("@%s may not be applied to feature methods")
+      .withArgs(annotation.annotationType().getSimpleName());
+  }
+
+  /**
+   * Handles the annotation when applied to a feature/fixture method parameter of a specification.
+   * The default implementation of this method throws an {@link InvalidSpecException}.
+   *
+   * @param annotation the annotation found on the parameter
+   * @param parameter the annotated parameter
+   * @since 2.4
+   */
+  @Beta
+  default void visitParameterAnnotation(T annotation, ParameterInfo parameter) {
+    throw new InvalidSpecException("@%s may not be applied to parameters")
       .withArgs(annotation.annotationType().getSimpleName());
   }
 

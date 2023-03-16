@@ -21,4 +21,5 @@ jar {
       'Automatic-Module-Name': 'org.spockframework.groovy2-compat'
     )
   }
+  preserveFileTimestamps = false
 }

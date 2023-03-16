@@ -56,6 +56,7 @@ class Foo extends Specification {
 @Stepwise
 class Foo extends Specification {
   def step1() { expect: true }
+  @ResourceLock('a')
   def step2() { expect: true }
   def step3() { expect: true }
   def step4() { expect: true }
@@ -92,6 +93,7 @@ class Foo extends Specification {
 @Stepwise
 class Foo extends Specification {
   def step1() { expect: true }
+  @ResourceLock('a')
   def step2() { expect: true }
   def step3() { expect: true }
   def step4() { expect: true }

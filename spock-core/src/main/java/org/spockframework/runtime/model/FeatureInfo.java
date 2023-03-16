@@ -1,6 +1,5 @@
 package org.spockframework.runtime.model;
 
-import org.spockframework.runtime.FeatureNode;
 import org.spockframework.runtime.extension.IDataDriver;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.model.parallel.*;
@@ -38,8 +37,6 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
   private final List<FeatureInfo> dependees = new ArrayList<>();
 
   private final List<FeatureInfo> dependencies = new ArrayList<>();
-
-  private FeatureNode node;
 
   private boolean reportIterations = true;
 
@@ -137,14 +134,6 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
   public void addDependency(FeatureInfo featureInfo) {
     dependencies.add(featureInfo);
     featureInfo.dependees.add(this);
-  }
-
-  public FeatureNode getNode() {
-    return node;
-  }
-
-  public void setNode(FeatureNode node) {
-    this.node = node;
   }
 
   @Override

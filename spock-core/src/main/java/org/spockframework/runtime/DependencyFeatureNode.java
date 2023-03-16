@@ -4,7 +4,14 @@ import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestExecutionResult;
 import org.spockframework.runtime.model.FeatureInfo;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toList;
 
 /**
  * A feature that is a dependency of one or multiple other features, depends on one or multiple other features, or both.
@@ -68,30 +75,55 @@ public class DependencyFeatureNode extends FeatureNode {
   }
 
   private boolean allDependeesAreRemoved() {
-    return getNodeInfo()
-      .getDependees()
-      .stream()
-      .map(FeatureInfo::getNode)
-      .map(DependencyFeatureNode.class::cast)
-      .map(TestDescriptor::getParent)
-      .noneMatch(Optional::isPresent);
+    return !findDependencyFeatureNodes(getRootDescriptor(this), getNodeInfo().getDependees())
+      .findAny()
+      .isPresent();
   }
 
   @Override
   public void removeFromHierarchy() {
     if (getNodeInfo().getDependees().isEmpty() || allDependeesAreRemoved()) {
+      TestDescriptor rootDescriptor = getRootDescriptor(this);
       super.removeFromHierarchy();
       // retry to remove dependencies that were just preserved for this dependee
-      getNodeInfo()
-        .getDependencies()
-        .stream()
-        .map(FeatureInfo::getNode)
-        .map(DependencyFeatureNode.class::cast)
+      findDependencyFeatureNodes(rootDescriptor, getNodeInfo().getDependencies())
         .filter(dependency -> dependency.removedFromHierarchy)
         .forEach(TestDescriptor::removeFromHierarchy);
     } else {
       // do not remove from hierarchy but remember it was removed
       removedFromHierarchy = true;
     }
+  }
+
+  private static TestDescriptor getRootDescriptor(TestDescriptor testDescriptor) {
+    if (testDescriptor.isRoot()) {
+      return testDescriptor;
+    }
+    return getRootDescriptor(testDescriptor.getParent().orElseThrow(AssertionError::new));
+  }
+
+  private static Stream<DependencyFeatureNode> findDependencyFeatureNodes(TestDescriptor rootDescriptor, List<FeatureInfo> featureInfos) {
+    return featureInfos
+      .stream()
+      .map(featureInfo -> rootDescriptor
+        .getDescendants()
+        .stream()
+        .map(SpockNode.class::cast)
+        .filter(spockNode -> spockNode.getNodeInfo().equals(featureInfo))
+        .map(DependencyFeatureNode.class::cast)
+        .collect(collectingAndThen(toList(), spockNode -> {
+          switch (spockNode.size()) {
+            case 0:
+              return null;
+
+            case 1:
+              return spockNode.get(0);
+
+            default:
+              throw new AssertionError("Expected to find 0 or 1 node, but found " + spockNode.size());
+          }
+        }))
+      )
+      .filter(Objects::nonNull);
   }
 }

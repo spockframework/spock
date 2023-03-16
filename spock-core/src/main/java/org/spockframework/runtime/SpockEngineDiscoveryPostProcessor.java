@@ -28,7 +28,6 @@ class SpockEngineDiscoveryPostProcessor {
     if (!feature.getDependees().isEmpty() || !feature.getDependencies().isEmpty()) {
       result = new DependencyFeatureNode(result);
     }
-    feature.setNode(result);
     return result;
   }
 

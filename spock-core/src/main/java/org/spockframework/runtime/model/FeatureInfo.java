@@ -34,9 +34,9 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
   private final List<DataProviderInfo> dataProviders = new ArrayList<>();
   private final IterationFilter iterationFilter = new IterationFilter();
 
-  private final List<FeatureInfo> dependees = new ArrayList<>();
+  private final List<FeatureInfo> implyingFeatures = new ArrayList<>();
 
-  private final List<FeatureInfo> dependencies = new ArrayList<>();
+  private final List<FeatureInfo> impliedFeatures = new ArrayList<>();
 
   private boolean reportIterations = true;
 
@@ -123,17 +123,56 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
     dataProviders.add(dataProvider);
   }
 
-  public List<FeatureInfo> getDependees() {
-    return dependees;
+  /**
+   * Returns the features that imply this feature.
+   * If one of the returned features is going to be executed, this feature is also going to be executed,
+   * even if for example a post discovery filter would have filtered out this feature, like IDEs and build
+   * tools do if a specific test or a pattern of tests is executed.
+   *
+   * <p><b>NOTE:</b> This relationship does not imply any ordering constraint. According to configured
+   *                 run order and parallel execution settings the features can run in any order or even
+   *                 concurrently.
+   *
+   * @return the features that imply this feature
+   */
+  @Beta
+  public List<FeatureInfo> getImplyingFeatures() {
+    return implyingFeatures;
   }
 
-  public List<FeatureInfo> getDependencies() {
-    return dependencies;
+  /**
+   * Returns the features this feature implies.
+   * If this feature is going to be executed, the returned features are also going to be executed,
+   * even if for example a post discovery filter would have filtered them out, like IDEs and build
+   * tools do if a specific test or a pattern of tests is executed.
+   *
+   * <p><b>NOTE:</b> This relationship does not imply any ordering constraint. According to configured
+   *                 run order and parallel execution settings the features can run in any order or even
+   *                 concurrently.
+   *
+   * @return the features this feature implies
+   */
+  @Beta
+  public List<FeatureInfo> getImpliedFeatures() {
+    return impliedFeatures;
   }
 
-  public void addDependency(FeatureInfo featureInfo) {
-    dependencies.add(featureInfo);
-    featureInfo.dependees.add(this);
+  /**
+   * Adds the given feature as implied by this features.
+   * If this feature is going to be executed, the given feature is also going to be executed,
+   * even if for example a post discovery filter would have filtered out the given feature,
+   * like IDEs and build tools do if a specific test or a pattern of tests is executed.
+   *
+   * <p><b>NOTE:</b> This relationship does not imply any ordering constraint. According to configured
+   *                 run order and parallel execution settings the features can run in any order or even
+   *                 concurrently.
+   *
+   * @param feature a feature that should be implied by this feature
+   */
+  @Beta
+  public void addImpliedFeature(FeatureInfo feature) {
+    impliedFeatures.add(feature);
+    feature.implyingFeatures.add(this);
   }
 
   @Override

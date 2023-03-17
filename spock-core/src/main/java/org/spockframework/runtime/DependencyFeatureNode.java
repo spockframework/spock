@@ -75,18 +75,18 @@ public class DependencyFeatureNode extends FeatureNode {
   }
 
   private boolean allDependeesAreRemoved() {
-    return !findDependencyFeatureNodes(getRootDescriptor(this), getNodeInfo().getDependees())
+    return !findDependencyFeatureNodes(getRootDescriptor(this), getNodeInfo().getImplyingFeatures())
       .findAny()
       .isPresent();
   }
 
   @Override
   public void removeFromHierarchy() {
-    if (getNodeInfo().getDependees().isEmpty() || allDependeesAreRemoved()) {
+    if (getNodeInfo().getImplyingFeatures().isEmpty() || allDependeesAreRemoved()) {
       TestDescriptor rootDescriptor = getRootDescriptor(this);
       super.removeFromHierarchy();
       // retry to remove dependencies that were just preserved for this dependee
-      findDependencyFeatureNodes(rootDescriptor, getNodeInfo().getDependencies())
+      findDependencyFeatureNodes(rootDescriptor, getNodeInfo().getImpliedFeatures())
         .filter(dependency -> dependency.removedFromHierarchy)
         .forEach(TestDescriptor::removeFromHierarchy);
     } else {

@@ -4,27 +4,27 @@ import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestExecutionResult;
 import org.spockframework.runtime.model.FeatureInfo;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 
 /**
- * A feature that is a dependency of one or multiple other features, depends on one or multiple other features, or both.
+ * A feature that is implied by one or multiple other features within the same specification,
+ * implies one or multiple other features within the same specification,
+ * or both.
  * The actual test work is delegated to another feature node.
- * This node makes sure the node is not removed from hierarchy e.g. due to filtering as long as one dependee is still present.
+ * This node makes sure the node is not removed from hierarchy e.g. due to filtering as long as one implying feature is still present.
  */
-public class DependencyFeatureNode extends FeatureNode {
+public class ImplicationFeatureNode extends FeatureNode {
 
   private final FeatureNode delegate;
 
   private boolean removedFromHierarchy;
 
-  public DependencyFeatureNode(FeatureNode delegate) {
+  public ImplicationFeatureNode(FeatureNode delegate) {
     super(delegate);
     this.delegate = delegate;
   }
@@ -74,53 +74,50 @@ public class DependencyFeatureNode extends FeatureNode {
     return delegate.shouldBeSkipped(context);
   }
 
-  private boolean allDependeesAreRemoved() {
-    return !findDependencyFeatureNodes(getRootDescriptor(this), getNodeInfo().getImplyingFeatures())
+  private boolean allImplyingFeaturesAreRemoved() {
+    return !findImplicationFeatureNodes(getNodeInfo().getImplyingFeatures())
       .findAny()
       .isPresent();
   }
 
   @Override
   public void removeFromHierarchy() {
-    if (getNodeInfo().getImplyingFeatures().isEmpty() || allDependeesAreRemoved()) {
-      TestDescriptor rootDescriptor = getRootDescriptor(this);
+    if (getNodeInfo().getImplyingFeatures().isEmpty() || allImplyingFeaturesAreRemoved()) {
+      Stream<ImplicationFeatureNode> impliedFeatureNodes = findImplicationFeatureNodes(getNodeInfo().getImpliedFeatures());
       super.removeFromHierarchy();
-      // retry to remove dependencies that were just preserved for this dependee
-      findDependencyFeatureNodes(rootDescriptor, getNodeInfo().getImpliedFeatures())
-        .filter(dependency -> dependency.removedFromHierarchy)
+      // retry to remove implied features that were just preserved for this implying feature
+      impliedFeatureNodes
+        .filter(impliedFeature -> impliedFeature.removedFromHierarchy)
         .forEach(TestDescriptor::removeFromHierarchy);
     } else {
-      // do not remove from hierarchy but remember it was removed
+      // do not remove from hierarchy but remember it should have been removed
       removedFromHierarchy = true;
     }
   }
 
-  private static TestDescriptor getRootDescriptor(TestDescriptor testDescriptor) {
-    if (testDescriptor.isRoot()) {
-      return testDescriptor;
-    }
-    return getRootDescriptor(testDescriptor.getParent().orElseThrow(AssertionError::new));
-  }
+  private Stream<ImplicationFeatureNode> findImplicationFeatureNodes(List<FeatureInfo> features) {
+    SpecNode specNode = getParent()
+      .map(SpecNode.class::cast)
+      .orElseThrow(AssertionError::new);
 
-  private static Stream<DependencyFeatureNode> findDependencyFeatureNodes(TestDescriptor rootDescriptor, List<FeatureInfo> featureInfos) {
-    return featureInfos
+    return features
       .stream()
-      .map(featureInfo -> rootDescriptor
-        .getDescendants()
+      .map(featureInfo -> specNode
+        .getChildren()
         .stream()
-        .map(SpockNode.class::cast)
-        .filter(spockNode -> spockNode.getNodeInfo().equals(featureInfo))
-        .map(DependencyFeatureNode.class::cast)
-        .collect(collectingAndThen(toList(), spockNode -> {
-          switch (spockNode.size()) {
+        .map(FeatureNode.class::cast)
+        .filter(featureNode -> featureNode.getNodeInfo().equals(featureInfo))
+        .map(ImplicationFeatureNode.class::cast)
+        .collect(collectingAndThen(toList(), featureNodes -> {
+          switch (featureNodes.size()) {
             case 0:
               return null;
 
             case 1:
-              return spockNode.get(0);
+              return featureNodes.get(0);
 
             default:
-              throw new AssertionError("Expected to find 0 or 1 node, but found " + spockNode.size());
+              throw new AssertionError("Expected to find 0 or 1 node, but found multiple");
           }
         }))
       )

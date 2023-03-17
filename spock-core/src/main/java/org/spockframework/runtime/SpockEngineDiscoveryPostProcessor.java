@@ -26,7 +26,7 @@ class SpockEngineDiscoveryPostProcessor {
       result = describeSimpleFeature(specNode.getUniqueId(), feature, configuration);
     }
     if (!feature.getImplyingFeatures().isEmpty() || !feature.getImpliedFeatures().isEmpty()) {
-      result = new DependencyFeatureNode(result);
+      result = new ImplicationFeatureNode(result);
     }
     return result;
   }

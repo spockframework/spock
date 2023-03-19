@@ -125,7 +125,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
 
   /**
    * Returns the features that imply this feature.
-   * All features are within the same specification as this feature.
+   * All features are within the same specification hierarchy as this feature.
    * If one of the returned features is going to be executed, this feature is also going to be executed,
    * even if for example a post discovery filter would have filtered out this feature, like IDEs and build
    * tools do if a specific test or a pattern of tests is executed.
@@ -143,7 +143,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
 
   /**
    * Returns the features this feature implies.
-   * All features are within the same specification as this feature.
+   * All features are within the same specification hierarchy as this feature.
    * If this feature is going to be executed, the returned features are also going to be executed,
    * even if for example a post discovery filter would have filtered them out, like IDEs and build
    * tools do if a specific test or a pattern of tests is executed.
@@ -161,7 +161,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
 
   /**
    * Adds the given feature as implied by this feature.
-   * The given feature must be within the same specification as this feature.
+   * The given feature must be within the same specification hierarchy as this feature.
    * If this feature is going to be executed, the given feature is also going to be executed,
    * even if for example a post discovery filter would have filtered out the given feature,
    * like IDEs and build tools do if a specific test or a pattern of tests is executed.
@@ -178,8 +178,10 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
       throw new IllegalArgumentException("Features cannot imply themselves");
     }
 
-    if (!getParent().equals(feature.getParent())) {
-      throw new IllegalArgumentException("Features can only imply features within the same specification");
+    Class<?> otherClass = feature.getParent().getReflection();
+    Class<?> clazz = getParent().getReflection();
+    if (!otherClass.isAssignableFrom(clazz) && !clazz.isAssignableFrom(otherClass)) {
+      throw new IllegalArgumentException("Features can only imply features within the same specification hierarchy");
     }
 
     impliedFeatures.add(feature);

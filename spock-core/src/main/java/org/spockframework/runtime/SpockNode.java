@@ -27,6 +27,12 @@ public abstract class SpockNode<T extends SpecElementInfo<?,?>>
     this.nodeInfo = nodeInfo;
   }
 
+  protected SpockNode(SpockNode<T> other) {
+    super(other.getUniqueId(), other.getDisplayName(), other.getSource().orElse(null));
+    this.configuration = other.configuration;
+    this.nodeInfo = other.nodeInfo;
+  }
+
   public T getNodeInfo() {
     return nodeInfo;
   }

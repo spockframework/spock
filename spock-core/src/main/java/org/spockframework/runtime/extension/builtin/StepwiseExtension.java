@@ -71,6 +71,10 @@ public class StepwiseExtension implements IAnnotationDrivenExtension<Stepwise> {
       FeatureInfo feature = features.get(i);
       if (includeRemaining) feature.setExcluded(false);
       else if (!feature.isExcluded()) includeRemaining = true;
+
+      if (i > 0) {
+        feature.addImpliedFeature(features.get(i - 1));
+      }
     }
   }
 

@@ -16,6 +16,10 @@ public abstract class FeatureNode extends SpockNode<FeatureInfo> {
     super(uniqueId, displayName, source, configuration, featureInfo);
   }
 
+  protected FeatureNode(FeatureNode other) {
+    super(other);
+  }
+
   @Override
   public Type getType() {
     return Type.CONTAINER;

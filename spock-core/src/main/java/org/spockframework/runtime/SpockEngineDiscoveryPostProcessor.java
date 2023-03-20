@@ -18,12 +18,17 @@ class SpockEngineDiscoveryPostProcessor {
     return processedEngineDescriptor;
   }
 
-  private SpockNode createNode(SpecNode specNode, FeatureInfo feature, RunnerConfiguration configuration) {
+  private FeatureNode createNode(SpecNode specNode, FeatureInfo feature, RunnerConfiguration configuration) {
+    FeatureNode result;
     if (feature.isParameterized()) {
-      return describeParameterizedFeature(specNode.getUniqueId(), feature, configuration);
+      result = describeParameterizedFeature(specNode.getUniqueId(), feature, configuration);
     } else {
-      return describeSimpleFeature(specNode.getUniqueId(), feature, configuration);
+      result = describeSimpleFeature(specNode.getUniqueId(), feature, configuration);
     }
+    if (!feature.getImplyingFeatures().isEmpty() || !feature.getImpliedFeatures().isEmpty()) {
+      result = new ImplicationFeatureNode(result);
+    }
+    return result;
   }
 
   private FeatureNode describeParameterizedFeature(UniqueId parentId, FeatureInfo feature,
@@ -31,7 +36,7 @@ class SpockEngineDiscoveryPostProcessor {
     return new ParameterizedFeatureNode(toUniqueId(parentId, feature), configuration, feature);
   }
 
-  private SpockNode describeSimpleFeature(UniqueId parentId, FeatureInfo feature, RunnerConfiguration configuration) {
+  private FeatureNode describeSimpleFeature(UniqueId parentId, FeatureInfo feature, RunnerConfiguration configuration) {
     IterationInfo iterationInfo = new IterationInfo(feature, 0, EMPTY_ARGS, 1);
     iterationInfo.setName(feature.getName());
     UniqueId uniqueId = toUniqueId(parentId, feature);

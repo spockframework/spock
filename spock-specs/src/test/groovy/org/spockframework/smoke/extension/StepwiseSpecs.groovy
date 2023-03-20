@@ -19,7 +19,8 @@ import org.junit.platform.engine.discovery.DiscoverySelectors
 import org.junit.platform.launcher.PostDiscoveryFilter
 import org.spockframework.EmbeddedSpecification
 import spock.lang.Issue
-import spock.lang.PendingFeature
+
+import static org.junit.platform.testkit.engine.EventConditions.displayName
 
 class StepwiseSpecs extends EmbeddedSpecification {
   def "basic usage"() {
@@ -55,41 +56,74 @@ class Foo extends Specification {
 @Stepwise
 class Foo extends Specification {
   def step1() { expect: true }
+  @ResourceLock('a')
   def step2() { expect: true }
   def step3() { expect: true }
+  def step4() { expect: true }
 }
     """)[0]
 
     when:
-    def result = runner.runWithSelectors(DiscoverySelectors.selectMethod(clazz, "step3"))
+    def result = runner.runWithSelectors(DiscoverySelectors.selectMethod(clazz, step))
 
     then:
-    result.testsSucceededCount == 3
-    result.testsFailedCount == 0
-    result.testsSkippedCount == 0
+    verifyAll {
+      result.testsSucceededCount == succeeded
+      result.testsFailedCount == 0
+      result.testsSkippedCount == 0
+      result.testEvents().succeeded().assertEventsMatchExactly(
+        *([
+          displayName("step1"),
+          displayName("step2"),
+          displayName("step3")
+        ].subList(0, succeeded))
+      )
+    }
+
+    where:
+    step    | succeeded
+    'step1' | 1
+    'step2' | 2
+    'step3' | 3
   }
 
-  @PendingFeature
   @Issue("https://github.com/spockframework/spock/issues/1593")
   def "automatically runs excluded methods that lead up to an included method with post discovery filter"() {
     def clazz = compiler.compileWithImports("""
 @Stepwise
 class Foo extends Specification {
   def step1() { expect: true }
+  @ResourceLock('a')
   def step2() { expect: true }
   def step3() { expect: true }
+  def step4() { expect: true }
 }
     """)[0]
 
     when:
     def result = runner.runClass(clazz, {
-      FilterResult.includedIf(it.displayName == 'step3')
+      FilterResult.includedIf(it.displayName == step)
     } as PostDiscoveryFilter)
 
     then:
-    result.testsSucceededCount == 3
-    result.testsFailedCount == 0
-    result.testsSkippedCount == 0
+    verifyAll {
+      result.testsSucceededCount == succeeded
+      result.testsFailedCount == 0
+      result.testsSkippedCount == 0
+      result.testEvents().succeeded().assertEventsMatchExactly(
+        *([
+          displayName("step1"),
+          displayName("step2"),
+          displayName("step3")
+        ].subList(0, succeeded))
+      )
+    }
+
+    where:
+    step    | succeeded
+    'step1' | 1
+    'step2' | 2
+    'step3' | 3
   }
 
   def "honors method-level @Ignore"() {

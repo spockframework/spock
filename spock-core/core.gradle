@@ -72,7 +72,6 @@ jar {
       '-removeheaders': 'Private-Package'
     )
   }
-  preserveFileTimestamps = false
 }
 
 processResources {

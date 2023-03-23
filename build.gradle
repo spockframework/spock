@@ -187,6 +187,10 @@ subprojects {
     from javadoc
   }
 
+  tasks.withType(Jar) {
+    preserveFileTimestamps = false
+  }
+
   tasks.withType(Test) {
     useJUnitPlatform()
     def taskName = name

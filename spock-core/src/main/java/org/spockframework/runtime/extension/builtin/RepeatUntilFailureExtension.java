@@ -37,12 +37,8 @@ public class RepeatUntilFailureExtension implements IAnnotationDrivenExtension<R
       dataIterator.forEachRemaining(arguments::add);
       for (int attempt = 0; attempt < maxAttempts; attempt++) {
         for (Object[] args : arguments) {
-          try {
-            ExecutionResult executionResult = iterationRunner.runIteration(args, maxIterations).get();
-            if (executionResult == ExecutionResult.FAILED) {
-              return;
-            }
-          } catch (InterruptedException | ExecutionException e) {
+          ExecutionResult executionResult = iterationRunner.runIteration(args, maxIterations).join();
+          if (executionResult == ExecutionResult.FAILED) {
             return;
           }
         }

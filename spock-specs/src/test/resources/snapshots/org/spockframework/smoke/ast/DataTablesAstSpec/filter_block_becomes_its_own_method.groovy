@@ -46,7 +46,6 @@ public static org.spockframework.runtime.model.DataVariableMultiplication[] $spo
 public static void $spock_feature_0_0filter(java.lang.Object a, java.lang.Object b) {
     org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
-    org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.FILTER, []))
     try {
         org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), 'a == 1', 15, 7, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), a) == $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), 1)))
     }
@@ -61,7 +60,6 @@ public static void $spock_feature_0_0filter(java.lang.Object a, java.lang.Object
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'b == 2', 16, 7, null, $spock_condition_throwable)}
     finally {
     }
-    org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.FILTER, []))
 }
 /*--------- end::snapshot[] ---------*/
   }

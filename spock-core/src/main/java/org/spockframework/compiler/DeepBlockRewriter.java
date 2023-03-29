@@ -58,59 +58,6 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   @Override
   public void visit(Block block) {
     super.visit(block);
-    addBlockEnterCall(block);
-  }
-
-  private void addBlockEnterCall(Block block) {
-    BlockParseInfo blockType = block.getParseInfo();
-    if (blockType == BlockParseInfo.WHERE
-      || blockType == BlockParseInfo.METHOD_END
-      || blockType == BlockParseInfo.ANONYMOUS) return;
-
-    // SpockRuntime.enterBlock(getSpecificationContext(), new BlockInfo(blockKind, [blockTexts]))
-    MethodCallExpression enterBlockCall = createBlockListenerCall(block, blockType, resources.getAstNodeCache().SpockRuntime_CallEnterBlock);
-    // SpockRuntime.exitedBlock(getSpecificationContext(), new BlockInfo(blockKind, [blockTexts]))
-    MethodCallExpression exitBlockCall = createBlockListenerCall(block, blockType, resources.getAstNodeCache().SpockRuntime_CallExitBlock);
-
-    // As the cleanup block finalizes the specification, it would override any previous block in ErrorInfo,
-    // so we only call enterBlock if there is no error yet.
-    if (blockType == BlockParseInfo.CLEANUP) {
-      block.getAst().add(0, ifThrowableIsNull(enterBlockCall));
-      block.getAst().add(ifThrowableIsNull(exitBlockCall));
-    } else {
-      block.getAst().add(0, new ExpressionStatement(enterBlockCall));
-      block.getAst().add( new ExpressionStatement(exitBlockCall));
-    }
-  }
-
-  private IfStatement ifThrowableIsNull(MethodCallExpression methodCall) {
-    return new IfStatement(
-      // if ($spock_feature_throwable == null)
-      new BooleanExpression(AstUtil.createVariableIsNullExpression(new VariableExpression(SpecRewriter.SPOCK_FEATURE_THROWABLE, resources.getAstNodeCache().Throwable))),
-      new ExpressionStatement(methodCall),
-      EmptyStatement.INSTANCE
-    );
-  }
-
-  private MethodCallExpression createBlockListenerCall(Block block, BlockParseInfo blockType, MethodNode blockListenerMethod) {
-    return createDirectMethodCall(
-      new ClassExpression(resources.getAstNodeCache().SpockRuntime),
-      blockListenerMethod,
-      new ArgumentListExpression(
-        createDirectMethodCall(VariableExpression.THIS_EXPRESSION,
-          resources.getAstNodeCache().SpecInternals_GetSpecificationContext,
-          ArgumentListExpression.EMPTY_ARGUMENTS),
-        new ConstructorCallExpression(resources.getAstNodeCache().BlockInfo,
-          new ArgumentListExpression(
-            new PropertyExpression(
-              new ClassExpression(resources.getAstNodeCache().BlockKind),
-              blockType.name()
-            ),
-            new ListExpression(
-              block.getDescriptions().stream().map(ConstantExpression::new).collect(Collectors.toList())
-            )
-          ))
-      ));
   }
 
   @Override

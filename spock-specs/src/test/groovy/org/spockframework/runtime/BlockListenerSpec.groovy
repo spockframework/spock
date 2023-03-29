@@ -30,7 +30,7 @@ class BlockListenerSpec extends Specification {
     cleanup: "cleanup"
     assert blocks.kind == [BlockKind.SETUP, BlockKind.EXPECT, BlockKind.WHEN, BlockKind.THEN, BlockKind.CLEANUP]
     assert blocks.texts == [["setup"], ["precondition"], ["action"], ["assertion"], ["cleanup"]]
-    assert exitBlocks .kind == [BlockKind.SETUP, BlockKind.EXPECT, BlockKind.WHEN, BlockKind.THEN]
+    assert exitBlocks.kind == [BlockKind.SETUP, BlockKind.EXPECT, BlockKind.WHEN, BlockKind.THEN]
   }
 
   def "SpecificationContext holds a reference to the current block"() {

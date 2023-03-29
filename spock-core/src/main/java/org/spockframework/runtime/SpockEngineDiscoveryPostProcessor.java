@@ -19,16 +19,11 @@ class SpockEngineDiscoveryPostProcessor {
   }
 
   private FeatureNode createNode(SpecNode specNode, FeatureInfo feature, RunnerConfiguration configuration) {
-    FeatureNode result;
     if (feature.isParameterized()) {
-      result = describeParameterizedFeature(specNode.getUniqueId(), feature, configuration);
+      return describeParameterizedFeature(specNode.getUniqueId(), feature, configuration);
     } else {
-      result = describeSimpleFeature(specNode.getUniqueId(), feature, configuration);
+      return describeSimpleFeature(specNode.getUniqueId(), feature, configuration);
     }
-    if (!feature.getImplyingFeatures().isEmpty() || !feature.getImpliedFeatures().isEmpty()) {
-      result = new ImplicationFeatureNode(result);
-    }
-    return result;
   }
 
   private FeatureNode describeParameterizedFeature(UniqueId parentId, FeatureInfo feature,

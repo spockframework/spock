@@ -24,8 +24,8 @@ dependencyResolutionManagement {
   }
 }
 
-if (((System.getProperty("java.specification.version") ?: 8) as BigDecimal) < 17) {
-  throw new InvalidUserDataException("The spock build needs to be run with JDK 17 or higher, but was: ${System.getProperty("java.specification.version")}")
+if (!JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
+  throw new InvalidUserDataException("The spock build needs to be run with JDK 17 or higher, but was: ${JavaVersion.current()}")
 }
 
 

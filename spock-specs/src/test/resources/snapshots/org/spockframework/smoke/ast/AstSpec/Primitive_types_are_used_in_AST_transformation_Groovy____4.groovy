@@ -184,20 +184,6 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
       "()", 
       0
     ]
-    ACONST_NULL
-    INVOKEVIRTUAL org/spockframework/runtime/SpecificationContext.setThrownException (Ljava/lang/Throwable;)V
-    ACONST_NULL
-    POP
-   L4
-    ALOAD 0
-    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
-    INVOKEDYNAMIC cast(Lorg/spockframework/lang/ISpecificationContext;)Lorg/spockframework/runtime/SpecificationContext; [
-      // handle kind 0x6 : INVOKESTATIC
-      org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
-      // arguments:
-      "()", 
-      0
-    ]
     LDC Lorg/spockframework/runtime/model/BlockInfo;.class
     LDC Lorg/spockframework/runtime/model/BlockKind;.class
     INVOKEDYNAMIC getProperty(Ljava/lang/Class;)Ljava/lang/Object; [
@@ -227,10 +213,54 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     INVOKESTATIC org/spockframework/runtime/SpockRuntime.callEnterBlock (Lorg/spockframework/runtime/SpecificationContext;Lorg/spockframework/runtime/model/BlockInfo;)V
     ACONST_NULL
     POP
-   L16
-    LINENUMBER 6 L16
+    ALOAD 0
+    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    INVOKEDYNAMIC cast(Lorg/spockframework/lang/ISpecificationContext;)Lorg/spockframework/runtime/SpecificationContext; [
+      // handle kind 0x6 : INVOKESTATIC
+      org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
+      // arguments:
+      "()", 
+      0
+    ]
+    ACONST_NULL
+    INVOKEVIRTUAL org/spockframework/runtime/SpecificationContext.setThrownException (Ljava/lang/Throwable;)V
+    ACONST_NULL
+    POP
+   L4
+    LINENUMBER 6 L4
     ICONST_1
     POP
+    GOTO L16
+   L5
+   FRAME SAME1 java/lang/Throwable
+    ASTORE 5
+   L17
+    ALOAD 0
+    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    INVOKEDYNAMIC cast(Lorg/spockframework/lang/ISpecificationContext;)Lorg/spockframework/runtime/SpecificationContext; [
+      // handle kind 0x6 : INVOKESTATIC
+      org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
+      // arguments:
+      "()", 
+      0
+    ]
+    ALOAD 5
+    INVOKEVIRTUAL org/spockframework/runtime/SpecificationContext.setThrownException (Ljava/lang/Throwable;)V
+    ACONST_NULL
+    POP
+    NOP
+   L7
+    GOTO L16
+   L16
+   FRAME SAME
+    GOTO L18
+   L6
+   FRAME SAME1 java/lang/Throwable
+    ASTORE 6
+    ALOAD 6
+    ATHROW
+   L18
+   FRAME SAME
     ALOAD 0
     INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
     INVOKEDYNAMIC cast(Lorg/spockframework/lang/ISpecificationContext;)Lorg/spockframework/runtime/SpecificationContext; [
@@ -269,37 +299,6 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     INVOKESTATIC org/spockframework/runtime/SpockRuntime.callExitBlock (Lorg/spockframework/runtime/SpecificationContext;Lorg/spockframework/runtime/model/BlockInfo;)V
     ACONST_NULL
     POP
-    GOTO L17
-   L5
-   FRAME SAME1 java/lang/Throwable
-    ASTORE 5
-   L18
-    ALOAD 0
-    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
-    INVOKEDYNAMIC cast(Lorg/spockframework/lang/ISpecificationContext;)Lorg/spockframework/runtime/SpecificationContext; [
-      // handle kind 0x6 : INVOKESTATIC
-      org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
-      // arguments:
-      "()", 
-      0
-    ]
-    ALOAD 5
-    INVOKEVIRTUAL org/spockframework/runtime/SpecificationContext.setThrownException (Ljava/lang/Throwable;)V
-    ACONST_NULL
-    POP
-    NOP
-   L7
-    GOTO L17
-   L17
-   FRAME SAME
-    GOTO L19
-   L6
-   FRAME SAME1 java/lang/Throwable
-    ASTORE 6
-    ALOAD 6
-    ATHROW
-   L19
-   FRAME SAME
     ALOAD 0
     INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
     INVOKEDYNAMIC cast(Lorg/spockframework/lang/ISpecificationContext;)Lorg/spockframework/runtime/SpecificationContext; [
@@ -338,8 +337,8 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     INVOKESTATIC org/spockframework/runtime/SpockRuntime.callEnterBlock (Lorg/spockframework/runtime/SpecificationContext;Lorg/spockframework/runtime/model/BlockInfo;)V
     ACONST_NULL
     POP
-   L20
-    LINENUMBER 8 L20
+   L19
+    LINENUMBER 8 L19
     ALOAD 0
     ACONST_NULL
     ACONST_NULL
@@ -410,7 +409,7 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     INVOKEVIRTUAL org/spockframework/mock/runtime/MockController.leaveScope ()V
     ACONST_NULL
     POP
-   L21
+   L20
     GOTO L9
    L9
    FRAME SAME
@@ -426,7 +425,7 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     INVOKESTATIC org/spockframework/runtime/SpockRuntime.clearCurrentBlock (Lorg/spockframework/runtime/SpecificationContext;)V
     ACONST_NULL
     POP
-    GOTO L22
+    GOTO L21
    L10
    FRAME FULL [apackage/TestSpec] [java/lang/Throwable]
     ASTORE 7
@@ -444,15 +443,15 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     POP
     ALOAD 7
     ATHROW
-   L22
-    LINENUMBER 9 L22
+   L21
+    LINENUMBER 9 L21
    FRAME APPEND [org/spockframework/runtime/ErrorCollector org/spockframework/runtime/ValueRecorder]
     RETURN
-    LOCALVARIABLE this Lapackage/TestSpec; L8 L22 0
-    LOCALVARIABLE $spock_errorCollector Lorg/spockframework/runtime/ErrorCollector; L11 L21 1
-    LOCALVARIABLE $spock_valueRecorder Lorg/spockframework/runtime/ValueRecorder; L12 L21 2
+    LOCALVARIABLE this Lapackage/TestSpec; L8 L21 0
+    LOCALVARIABLE $spock_errorCollector Lorg/spockframework/runtime/ErrorCollector; L11 L20 1
+    LOCALVARIABLE $spock_valueRecorder Lorg/spockframework/runtime/ValueRecorder; L12 L20 2
     LOCALVARIABLE $spock_condition_throwable Ljava/lang/Throwable; L14 L3 3
-    LOCALVARIABLE $spock_ex Ljava/lang/Throwable; L18 L7 5
+    LOCALVARIABLE $spock_ex Ljava/lang/Throwable; L17 L7 5
     MAXSTACK = 9
     MAXLOCALS = 8
 }

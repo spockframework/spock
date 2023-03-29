@@ -55,7 +55,7 @@ publishing {
 }
 
 // ensure all checks pass before publishing
-tasks.withType(AbstractPublishToMaven) {
+tasks.withType(AbstractPublishToMaven).configureEach {
   dependsOn(check)
 }
 

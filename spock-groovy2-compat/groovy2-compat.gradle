@@ -8,7 +8,7 @@ ext.displayName = "Spock Framework - Groovy 2 Compatibility Module"
 
 description = "Spock's Groovy 2 Compatibility Module provides support for using Spock 2 with Groovy 2.5."
 
-jar {
+tasks.named("jar", Jar) {
   manifest {
     attributes(
       'Build-Revision': versioning.info.commit,

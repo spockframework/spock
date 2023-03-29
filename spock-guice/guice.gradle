@@ -10,7 +10,7 @@ dependencies {
   testImplementation "com.google.inject:guice:3.0"
 }
 
-jar {
+tasks.named("jar", Jar) {
   manifest {
     attributes(
       'Build-Revision': versioning.info.commit,

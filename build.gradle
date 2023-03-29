@@ -26,20 +26,20 @@ ext {
     groovyVersion = "2.5.19"
     minGroovyVersion = "2.5.0"
     maxGroovyVersion = "2.9.99"
-      if(javaVersion >= 17) {
-        throw new InvalidUserDataException("Groovy $variant is not compatible with Java $javaVersion")
-      }
-    } else if (variant == 3.0) {
-      groovyGroup = "org.codehaus.groovy"
-      groovyVersion = "3.0.13"
-      minGroovyVersion = "3.0.0"
-      maxGroovyVersion = "3.9.99"
-    }  else if (variant == 4.0) {
-      groovyGroup = "org.apache.groovy"
+    if (javaVersion >= 17) {
+      throw new InvalidUserDataException("Groovy $variant is not compatible with Java $javaVersion")
+    }
+  } else if (variant == 3.0) {
+    groovyGroup = "org.codehaus.groovy"
+    groovyVersion = "3.0.13"
+    minGroovyVersion = "3.0.0"
+    maxGroovyVersion = "3.9.99"
+  } else if (variant == 4.0) {
+    groovyGroup = "org.apache.groovy"
     groovyVersion = "4.0.6"
-      minGroovyVersion = "4.0.0"
-      maxGroovyVersion = "4.9.99"
-    } else {
+    minGroovyVersion = "4.0.0"
+    maxGroovyVersion = "4.9.99"
+  } else {
     throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")
   }
 
@@ -123,7 +123,7 @@ subprojects {
     }
   }
 
-  tasks.withType(JavaCompile) {
+  tasks.withType(JavaCompile).configureEach {
     if (it.name == 'compileJava') {
       javaCompiler = javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(8)
@@ -131,12 +131,12 @@ subprojects {
     }
     options.encoding = 'UTF-8'
   }
-  tasks.withType(GroovyCompile) {
+  tasks.withType(GroovyCompile).configureEach {
     options.encoding = 'UTF-8'
   }
 
   sourceSets.all { ss ->
-    for (gv in variants.findAll { variant <= it } ) {
+    for (gv in variants.findAll { variant <= it }) {
       java {
         srcDir "src/${ss.name}-groovy-le-$gv/java"
       }
@@ -144,7 +144,7 @@ subprojects {
         srcDir "src/${ss.name}-groovy-le-$gv/groovy"
       }
     }
-    for (jv in javaVersions.findAll { javaVersion <= it } ) {
+    for (jv in javaVersions.findAll { javaVersion <= it }) {
       java {
         srcDir "src/${ss.name}-java-le-$jv/java"
       }
@@ -152,7 +152,7 @@ subprojects {
         srcDir "src/${ss.name}-java-le-$jv/groovy"
       }
     }
-    for (gv in variants.findAll { variant >= it } ) {
+    for (gv in variants.findAll { variant >= it }) {
       java {
         srcDir "src/${ss.name}-groovy-ge-$gv/java"
       }
@@ -160,7 +160,7 @@ subprojects {
         srcDir "src/${ss.name}-groovy-ge-$gv/groovy"
       }
     }
-    for (jv in javaVersions.findAll { javaVersion >= it } ) {
+    for (jv in javaVersions.findAll { javaVersion >= it }) {
       java {
         srcDir "src/${ss.name}-java-ge-$jv/java"
       }
@@ -174,24 +174,24 @@ subprojects {
     implementation(project.name == "spock-gradle" ? [] : libs.groovy)
   }
 
-  configureJavadoc(javadoc)
-  configureGroovydoc(groovydoc)
+  configureJavadoc(tasks.named("javadoc"))
+  configureGroovydoc(tasks.named("groovydoc"))
 
-  task sourcesJar(type: Jar) {
+  tasks.register("sourcesJar", Jar) {
     archiveClassifier = "sources"
     from sourceSets.main.allSource
   }
 
-  task javadocJar(type: Jar) {
+  tasks.register("javadocJar", Jar) {
     archiveClassifier = "javadoc"
     from javadoc
   }
 
-  tasks.withType(Jar) {
+  tasks.withType(Jar).configureEach {
     preserveFileTimestamps = false
   }
 
-  tasks.withType(Test) {
+  tasks.withType(Test).configureEach {
     useJUnitPlatform()
     def taskName = name
     reports {
@@ -207,15 +207,18 @@ subprojects {
     jvmArgs '-Xmx512m'
   }
 
+  tasks.register("allDependencyInsight", DependencyInsightReportTask) {}
+
   jacoco {
     toolVersion = jacocoVersion
   }
 }
 
-task collectTestXml (group: 'Test reports') {
+tasks.register("collectTestXml") {
+  group = 'Test reports'
   description = "Collects the test xmls from every subproject into a new directory with subproject as name."
   def reportingProjects = subprojects.findAll()
-  dependsOn(reportingProjects.tasks.collectMany{it.withType(Test)})
+  dependsOn(reportingProjects.tasks.collectMany { it.withType(Test) })
 
 
   doFirst {
@@ -237,7 +240,8 @@ task collectTestXml (group: 'Test reports') {
 }
 
 
-task codeCoverageReport (type: JacocoReport, group: 'Coverage reports') {
+tasks.register("codeCoverageReport", JacocoReport) {
+  group = 'Coverage reports'
   description = "Creates an aggregate coverage for the whole project."
   def reportingProjects = subprojects
   dependsOn(reportingProjects.tasks.collectMany { it.withType(Test) })
@@ -259,14 +263,14 @@ if (gradle.startParameter.taskNames == ["ghActionsBuild"]) {
   gradle.startParameter.taskNames = ["build", "codeCoverageReport"]
 }
 
-if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParameter.taskNames == ["ghActionsDocs"] ) {
+if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParameter.taskNames == ["ghActionsDocs"]) {
   def originalStartParameterTaskNames = gradle.startParameter.taskNames
   gradle.startParameter.taskNames = []
   boolean isMaster = System.getenv("GITHUB_REF") == "refs/heads/master"
   boolean isTag = System.getenv("GITHUB_REF")?.startsWith('refs/tags/spock-')
   if (!(System.getenv("GITHUB_EVENT_NAME") == "push"
-          && (isMaster || isTag)
-          && System.getenv("GITHUB_REPOSITORY") == 'spockframework/spock')) {
+    && (isMaster || isTag)
+    && System.getenv("GITHUB_REPOSITORY") == 'spockframework/spock')) {
     throw new IllegalArgumentException("""ghActionsPublish can only be run on push to branch master or tag in repo spockframework/spock
       event: ${System.getenv("GITHUB_EVENT_NAME")}
       ref: ${System.getenv("GITHUB_REF")}
@@ -285,9 +289,9 @@ if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParam
     } else if (isTag) {
       gradle.startParameter.taskNames += ["publishToSonatype", "closeSonatypeStagingRepository"]
     } // else {
-      // disable tag release for now as this is done with a token, that doesn't trigger other workflows
-      // gradle.startParameter.taskNames += ["tagRelease"]
-      // }
+    // disable tag release for now as this is done with a token, that doesn't trigger other workflows
+    // gradle.startParameter.taskNames += ["tagRelease"]
+    // }
   }
 
   if (originalStartParameterTaskNames == ["ghActionsDocs"] && (snapshotVersion || isTag)) {
@@ -301,10 +305,10 @@ if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParam
   }
 }
 
-task publishJavadoc(type: Exec) {
+tasks.register("publishJavadoc", Exec) {
   dependsOn "javadoc"
   commandLine "sh", "-c",
-"""
+    """
   git config user.email "dev@forum.spockframework.org"
   git config user.name "Spock Framework Robot"
   git fetch origin +gh-pages:gh-pages
@@ -318,10 +322,10 @@ task publishJavadoc(type: Exec) {
   git switch -
 """
 }
-task publishDocs(type: Exec) {
+tasks.register("publishDocs", Exec) {
   dependsOn "asciidoctor"
   commandLine "sh", "-c",
-"""
+    """
   git config user.email "dev@forum.spockframework.org"
   git config user.name "Spock Framework Robot"
   git fetch origin +gh-pages:gh-pages
@@ -335,9 +339,9 @@ task publishDocs(type: Exec) {
   git switch -
 """
 }
-task tagRelease(type: Exec) {
+tasks.register("tagRelease", Exec) {
   commandLine "sh", "-c",
-"""
+    """
   git config user.email "dev@forum.spockframework.org"
   git config user.name "Spock Framework Robot"
   git checkout master
@@ -346,25 +350,25 @@ task tagRelease(type: Exec) {
 """
 }
 
-task javadoc(type: Javadoc) {
+tasks.register("javadoc", Javadoc) {
   title "Spock Framework API Documentation ($variantLessVersion)"
   destinationDir file("build/javadoc/$variantLessVersion")
-  source subprojects.javadoc.source
-  classpath = files(subprojects.javadoc.classpath)
+  source subprojects.collect { project -> project.tasks.named("javadoc").map { it.source } }
+  classpath = files(subprojects.collect { project -> project.tasks.named("javadoc").map { it.classpath } })
 }
 
-configureJavadoc(javadoc, true)
+configureJavadoc(tasks.named("javadoc"), true)
 
-task groovydoc(type: Groovydoc) {
+tasks.register("groovydoc", Groovydoc) {
   docTitle "Spock Framework API Documentation ($variantLessVersion)"
   windowTitle "Spock Framework API Documentation ($variantLessVersion)"
   destinationDir file("build/groovydoc/$variantLessVersion")
-  source subprojects.groovydoc.source
-  classpath = files(subprojects.groovydoc.classpath)
-  groovyClasspath = projects.spockCore.dependencyProject.groovydoc.groovyClasspath
+  source subprojects.collect { project -> project.tasks.named("groovydoc").map { it.source } }
+  classpath = files(subprojects.collect { project -> project.tasks.named("groovydoc").map { it.classpath } })
+  groovyClasspath = files(projects.spockCore.dependencyProject.tasks.named("groovydoc").map { it.groovyClasspath })
 }
 
-configureGroovydoc(groovydoc)
+configureGroovydoc(tasks.named("groovydoc"))
 
 configurations {
   asciidoctorExtensions
@@ -381,7 +385,7 @@ asciidoctorj {
   }
 }
 
-asciidoctor {
+tasks.named("asciidoctor") {
   configurations 'asciidoctorExtensions'
   sourceDir = "docs"
   baseDirFollowsSourceDir()
@@ -432,8 +436,8 @@ File script(String name) {
   project.file("gradle/${name}.gradle")
 }
 
-def configureJavadoc(task, boolean root = false) {
-  configure(task) {
+def configureJavadoc(TaskProvider javadoc, boolean root = false) {
+  javadoc.configure {
     include "spock/**"
     configure(options) {
       options.addStringOption('Xdoclint:none', '-quiet')
@@ -449,12 +453,8 @@ def configureJavadoc(task, boolean root = false) {
   }
 }
 
-def configureGroovydoc(task) {
-  configure(task) {
+def configureGroovydoc(TaskProvider groovydoc) {
+  groovydoc.configure {
     include "spock/**"
   }
-}
-
-subprojects {
-    task allDependencyInsight(type: DependencyInsightReportTask) {}
 }

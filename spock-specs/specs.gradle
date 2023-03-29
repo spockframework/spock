@@ -1,3 +1,5 @@
+import org.spockframework.gradle.JacocoJavaagentProvider
+
 plugins {
   id 'org.spockframework.base'
 }
@@ -34,7 +36,7 @@ dependencies {
 }
 
 boolean isCiServer = System.env["CI"] || System.env["GITHUB_ACTIONS"]
-test {
+tasks.named("test", Test) {
   reports.junitXml.required = true
   reports.html.required = true
 
@@ -57,13 +59,13 @@ test {
   }
 }
 
-task groovyConsole(type: JavaExec) {
+tasks.register("groovyConsole", JavaExec) {
   main = variant == 2.5 ? "groovy.ui.Console" : "groovy.console.ui.Console"
-  classpath = sourceSets.test.runtimeClasspath + configurations.groovyConsole
+  classpath(sourceSets.named("test").map {it.runtimeClasspath }, configurations.named("groovyConsole"))
 }
 
-compileTestGroovy {
-  def jacocoAgent =objects.newInstance(org.spockframework.gradle.JacocoJavaagentProvider)
+tasks.named("compileTestGroovy", GroovyCompile) {
+  def jacocoAgent = objects.newInstance(JacocoJavaagentProvider)
   jacocoAgent.jacocoAgent = file(configurations.jacocoAgentRuntime.asPath)
   jacocoAgent.execResultFile = file("$buildDir/jacoco/compileTestGroovy.exec")
   groovyOptions.forkOptions.jvmArgumentProviders.add(jacocoAgent)

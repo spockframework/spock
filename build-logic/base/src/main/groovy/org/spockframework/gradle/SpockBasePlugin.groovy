@@ -24,7 +24,7 @@ import org.gradle.api.tasks.testing.Test
 @CompileStatic
 class SpockBasePlugin implements Plugin<Project> {
   void apply(Project project) {
-    project.tasks.withType(Test) { Test task ->
+    project.tasks.withType(Test).configureEach { task ->
       def taskName = task.name.capitalize()
       File configFile = project.file("Spock${taskName}Config.groovy")
       if (configFile.exists()) {

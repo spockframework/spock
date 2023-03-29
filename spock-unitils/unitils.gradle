@@ -22,7 +22,7 @@ dependencies {
   testRuntimeOnly libs.log4j
 }
 
-jar {
+tasks.named("jar", Jar) {
   manifest {
     attributes(
       'Build-Revision': versioning.info.commit,

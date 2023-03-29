@@ -41,6 +41,6 @@ idea {
   }
 }
 
-ideaWorkspace {
+tasks.named("ideaWorkspace") {
   outputFile = file(outputFile.path.replace(".iws", "-${variant}.iws"))
 }

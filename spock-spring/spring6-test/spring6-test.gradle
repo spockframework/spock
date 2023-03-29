@@ -6,7 +6,7 @@ java {
   }
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
   javaCompiler = javaToolchains.compilerFor {
     languageVersion = JavaLanguageVersion.of(17)
   }

@@ -42,7 +42,7 @@ dependencies {
 }
 
 
-jar {
+tasks.named("jar", Jar) {
   manifest {
     attributes(
       'Build-Revision': versioning.info.commit,
@@ -74,16 +74,16 @@ jar {
   }
 }
 
-processResources {
+tasks.named("processResources") {
   def tokens = [version: version.toString(), minGroovyVersion: minGroovyVersion, maxGroovyVersion: maxGroovyVersion]
   inputs.property "tokens", tokens
   filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: tokens)
 }
 
-task coreConsole(type: JavaExec,
-                 description: 'Start a groovy Console with Spock Core Classpath, useful for AST-Inspection') {
+tasks.register("coreConsole", JavaExec) {
+  description = 'Start a groovy Console with Spock Core Classpath, useful for AST-Inspection'
   main = variant == 2.5 ? "groovy.ui.Console" : "groovy.console.ui.Console"
-  classpath = sourceSets.main.runtimeClasspath + configurations.coreConsoleRuntime
+  classpath(sourceSets.named("main").map {it.runtimeClasspath }, configurations.named("coreConsoleRuntime"))
   workingDir = file('build/console')
   ignoreExitValue = true
   args file('CoreConsole.groovy').absolutePath

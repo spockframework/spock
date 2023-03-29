@@ -23,12 +23,12 @@ dependencies {
 }
 
 if (!useTapestry54) {
-  tasks.withType(Test) {
+  tasks.withType(Test).configureEach {
     exclude '**/*WithImportModule.class'
   }
 }
 
-jar {
+tasks.named("jar", Jar) {
   manifest {
     attributes(
       'Build-Revision': versioning.info.commit,

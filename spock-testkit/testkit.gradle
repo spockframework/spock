@@ -22,7 +22,7 @@ dependencies {
   testImplementation libs.jupiter
 }
 
-test {
+tasks.named("test", Test) {
   reports.junitXml.required = true
   reports.html.required = false
 
@@ -32,11 +32,11 @@ test {
   include("**/*Test.class", "**/*Tests.class")
 }
 
-task consoleLauncherTest(type: JavaExec) {
+tasks.register("consoleLauncherTest", JavaExec) {
   dependsOn(testClasses)
   def reportsDir = file("$buildDir/test-results")
   outputs.dir(reportsDir)
-  classpath = sourceSets["test"].runtimeClasspath
+  classpath(sourceSets.named("test").map { it.runtimeClasspath })
   main = "org.junit.platform.console.ConsoleLauncher"
 //  jvmArgs "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
 //  args("--select-class", "spock.testkit.testsources.ExampleTestCase")

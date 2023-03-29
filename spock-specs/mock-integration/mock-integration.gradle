@@ -25,15 +25,15 @@ def codeGenerationLibraries = [
 ]
 
 codeGenerationLibraries.each { key, config ->
-  tasks.create("test${key.capitalize()}WithoutObjenesis", Test) {
+  tasks.register("test${key.capitalize()}WithoutObjenesis", Test) {
     systemProperty("org.spockframework.mock.testType", "${key.toLowerCase()} - objenesis")
     classpath += config
   }
-  tasks.create("test${key.capitalize()}WithObjenesis", Test) {
+  tasks.register("test${key.capitalize()}WithObjenesis", Test) {
     systemProperty("org.spockframework.mock.testType", "${key.toLowerCase()} + objenesis")
     classpath += config
     classpath += configurations.objenesis
   }
 }
 
-check.dependsOn(tasks.withType(Test))
+tasks.named("check") { dependsOn(tasks.withType(Test)) }

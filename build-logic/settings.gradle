@@ -1,3 +1,10 @@
+pluginManagement {
+  repositories {
+    mavenCentral()
+    gradlePluginPortal()
+  }
+}
+
 rootProject.buildFileName = 'build-logic.gradle'
 
 dependencyResolutionManagement {

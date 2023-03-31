@@ -35,10 +35,13 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class TimeoutInterceptor implements IMethodInterceptor {
-  private final Timeout timeout;
 
-  public TimeoutInterceptor(Timeout timeout) {
+  private final Timeout timeout;
+  private final TimeoutConfiguration configuration;
+
+  public TimeoutInterceptor(Timeout timeout, TimeoutConfiguration configuration) {
     this.timeout = timeout;
+    this.configuration = configuration;
   }
 
   @Override

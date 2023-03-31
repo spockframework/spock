@@ -361,7 +361,7 @@ task groovydoc(type: Groovydoc) {
   destinationDir file("build/groovydoc/$variantLessVersion")
   source subprojects.groovydoc.source
   classpath = files(subprojects.groovydoc.classpath)
-  groovyClasspath = project(":spock-core").groovydoc.groovyClasspath
+  groovyClasspath = projects.spockCore.dependencyProject.groovydoc.groovyClasspath
 }
 
 configureGroovydoc(groovydoc)

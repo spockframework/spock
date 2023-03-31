@@ -3,8 +3,8 @@ def springVersion = "5.0.2.RELEASE"
 dependencies {
   implementation "org.springframework:spring-core"
 
-  testImplementation project(":spock-core")
-  testImplementation project(":spock-spring")
+  testImplementation projects.spockCore
+  testImplementation projects.spockSpring
   testImplementation libs.junit4
   testImplementation "org.springframework:spring-context"
   testImplementation ("org.springframework:spring-test")

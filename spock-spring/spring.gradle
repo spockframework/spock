@@ -17,7 +17,7 @@ def testSpringVersions = [
 ].findAll { javaVersion in it.value }.keySet()
 
 dependencies {
-  api project(":spock-core")
+  api projects.spockCore
   compileOnly "org.springframework:spring-test:$springVersion"
   compileOnly "org.springframework:spring-beans:$springVersion"
   compileOnly "org.springframework:spring-context:$springVersion"

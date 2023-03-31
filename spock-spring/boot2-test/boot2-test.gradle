@@ -24,8 +24,8 @@ dependencies {
   implementation "org.springframework.boot:spring-boot-starter-web"
 
   testImplementation "org.springframework.boot:spring-boot-starter-test"
-  testImplementation project(":spock-core")
-  testImplementation project(":spock-spring")
+  testImplementation projects.spockCore
+  testImplementation projects.spockSpring
 
   if (javaVersion >= 9) {
     testImplementation libs.jaxb

@@ -3,11 +3,11 @@ def springVersion = "3.2.16.RELEASE"
 dependencies {
   implementation "org.springframework:spring-core"
 
-  testImplementation project(":spock-core")
+  testImplementation projects.spockCore
   testImplementation "org.springframework:spring-context"
   testImplementation ("org.springframework:spring-test")
 
-  testRuntimeOnly project(":spock-spring")
+  testRuntimeOnly projects.spockSpring
 }
 
 

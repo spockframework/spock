@@ -16,7 +16,7 @@ dependencies {
   testCompileOnly libs.jetbrainsAnnotations
   testImplementation libs.junitPlatformTestkit
 
-  testImplementation project(":spock-core")
+  testImplementation projects.spockCore
   testImplementation libs.groovyNio  //for groovy methods on Path
   testImplementation libs.groovySql  //for groovy.sql.Sql
   testImplementation(libs.groovyTest) {  //for groovy.test.NotYetImplemented

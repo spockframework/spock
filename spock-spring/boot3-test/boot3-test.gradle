@@ -37,8 +37,8 @@ dependencies {
   implementation "org.springframework.boot:spring-boot-starter-web"
   implementation "org.springframework.boot:spring-boot-starter-data-jpa"
   testImplementation "org.springframework.boot:spring-boot-starter-test"
-  testImplementation project(":spock-core")
-  testImplementation project(":spock-spring")
+  testImplementation projects.spockCore
+  testImplementation projects.spockSpring
 
   runtimeOnly "com.h2database:h2"
 }

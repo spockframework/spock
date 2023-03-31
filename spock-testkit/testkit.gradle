@@ -9,7 +9,7 @@ ext.displayName = "Spock Framework - Temp Specs for Core Module"
 //}
 
 dependencies {
-  api project(":spock-core")
+  api projects.spockCore
 
   testRuntimeOnly libs.asm
   testRuntimeOnly libs.bytebuddy

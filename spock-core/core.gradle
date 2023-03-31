@@ -26,7 +26,7 @@ dependencies {
   api libs.junitPlatform
   api libs.hamcrest
   if (variant == 2.5) {
-    api project(':spock-groovy2-compat')
+    api projects.spockGroovy2Compat
   }
 
   compileOnly libs.jetbrainsAnnotations

@@ -17,11 +17,14 @@
 package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.SpockTimeoutError;
-import org.spockframework.runtime.extension.*;
+import org.spockframework.runtime.extension.IMethodInterceptor;
+import org.spockframework.runtime.extension.IMethodInvocation;
 import org.spockframework.util.TimeUtil;
 import spock.lang.Timeout;
 
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Times out a method invocation if it takes too long. The method invocation
@@ -43,20 +46,16 @@ public class TimeoutInterceptor implements IMethodInterceptor {
     final Thread mainThread = Thread.currentThread();
     final SynchronousQueue<StackTraceElement[]> sync = new SynchronousQueue<>();
     final CountDownLatch startLatch = new CountDownLatch(2);
+    final String methodName = invocation.getMethod().getName();
 
-    new Thread(String.format("[spock.lang.Timeout] Watcher for method '%s'", invocation.getMethod().getName())) {
+    new Thread(String.format("[spock.lang.Timeout] Watcher for method '%s'", methodName)) {
       @Override
       public void run() {
         StackTraceElement[] stackTrace = new StackTraceElement[0];
         long waitMillis = timeout.unit().toMillis(timeout.value());
         boolean synced = false;
 
-        try {
-          startLatch.countDown();
-          startLatch.await(5, TimeUnit.SECONDS);
-        } catch (InterruptedException ignored) {
-          System.out.printf("[spock.lang.Timeout] Could not sync with Feature for method '%s'", invocation.getMethod().getName());
-        }
+        syncWithThread(startLatch, "feature", methodName);
 
         while (!synced) {
           try {
@@ -72,7 +71,7 @@ public class TimeoutInterceptor implements IMethodInterceptor {
             } else {
               waitMillis *= 2;
               System.out.printf("[spock.lang.Timeout] Method '%s' has not yet returned - interrupting. Next try in %1.2f seconds.\n",
-                  invocation.getMethod().getName(), waitMillis / 1000.);
+                methodName, waitMillis / 1000.);
             }
             mainThread.interrupt();
           }
@@ -80,13 +79,7 @@ public class TimeoutInterceptor implements IMethodInterceptor {
       }
     }.start();
 
-
-    try {
-      startLatch.countDown();
-      startLatch.await(5, TimeUnit.SECONDS);
-    } catch (InterruptedException ignored) {
-      System.out.printf("[spock.lang.Timeout] Could not sync with Watcher for method '%s'", invocation.getMethod().getName());
-    }
+    syncWithThread(startLatch, "watcher", methodName);
 
     Throwable saved = null;
     try {
@@ -121,6 +114,15 @@ public class TimeoutInterceptor implements IMethodInterceptor {
     }
     if (saved != null) {
       throw saved;
+    }
+  }
+
+  private static void syncWithThread(CountDownLatch startLatch, String threadName, String methodName) {
+    try {
+      startLatch.countDown();
+      startLatch.await(5, TimeUnit.SECONDS);
+    } catch (InterruptedException ignored) {
+      System.out.printf("[spock.lang.Timeout] Could not sync with %s thread for method '%s'", threadName, methodName);
     }
   }
 }

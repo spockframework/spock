@@ -2,6 +2,8 @@ package org.spockframework.smoke.ast
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.GroovyRuntimeUtil
+import org.spockframework.specs.extension.Snapshot
+import org.spockframework.specs.extension.Snapshotter
 import org.spockframework.util.GroovyReleaseInfo
 import org.spockframework.util.VersionNumber
 import spock.lang.Requires
@@ -10,7 +12,13 @@ import spock.util.Show
 import org.codehaus.groovy.control.CompilePhase
 
 class AstSpec extends EmbeddedSpecification {
+  @Snapshot(extension = 'groovy')
+  Snapshotter snapshotter
+
   def "astToSourceFeatureBody renders only methods and its annotation by default"() {
+    given:
+    snapshotter.featureBody()
+
     when:
     def result = compiler.transpileFeatureBody('''
     given:
@@ -18,16 +26,14 @@ class AstSpec extends EmbeddedSpecification {
     ''')
 
     then:
-    result.source == '''\
-@org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 1, blocks = [@org.spockframework.runtime.model.BlockMetadata(kind = org.spockframework.runtime.model.BlockKind.SETUP, texts = [])], parameterNames = [])
-public void $spock_feature_0_0() {
-    java.lang.Object nothing = null
-    this.getSpecificationContext().getMockController().leaveScope()
-}'''
+    snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
 
   def "astToSourceSpecBody renders only methods, fields, properties, object initializers and their annotation by default"() {
+    given:
+    snapshotter.specBody()
+
     when:
     def result = compiler.transpileSpecBody('''
     def foo = 'bar'
@@ -39,19 +45,7 @@ public void $spock_feature_0_0() {
     ''')
 
     then:
-    result.source == '''\
-@org.spockframework.runtime.model.FieldMetadata(name = 'foo', ordinal = 0, line = 1, initializer = true)
-private java.lang.Object foo
-
-private java.lang.Object $spock_initializeFields() {
-    foo = 'bar'
-}
-
-@org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 3, blocks = [@org.spockframework.runtime.model.BlockMetadata(kind = org.spockframework.runtime.model.BlockKind.SETUP, texts = [])], parameterNames = [])
-public void $spock_feature_0_0() {
-    java.lang.Object nothing = null
-    this.getSpecificationContext().getMockController().leaveScope()
-}'''
+    snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
 
@@ -65,21 +59,7 @@ public void $spock_feature_0_0() {
     ''', Show.all(), CompilePhase.INSTRUCTION_SELECTION)
 
     then:
-    result.source == '''\
-package apackage
-
-import spock.lang.*
-
-@org.spockframework.runtime.model.SpecMetadata(filename = 'script.groovy', line = 1)
-public class apackage.ASpec extends spock.lang.Specification {
-
-    @org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 1, blocks = [@org.spockframework.runtime.model.BlockMetadata(kind = org.spockframework.runtime.model.BlockKind.SETUP, texts = [])], parameterNames = [])
-    public void $spock_feature_0_0() {
-        java.lang.Object nothing = null
-        this.getSpecificationContext().getMockController().leaveScope()
-    }
-
-}'''
+    snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
   @Requires({ GroovyReleaseInfo.version >= VersionNumber.parse("4.0.2")})
@@ -91,21 +71,7 @@ public class apackage.ASpec extends spock.lang.Specification {
     ''', Show.all(), CompilePhase.INSTRUCTION_SELECTION)
 
     then:
-    result.source == '''\
-package apackage
-
-import spock.lang.*
-
-@org.spockframework.runtime.model.SpecMetadata(filename = 'script.groovy', line = 1)
-public class apackage.ASpec extends spock.lang.Specification implements groovy.lang.GroovyObject {
-
-    @org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 1, blocks = [@org.spockframework.runtime.model.BlockMetadata(kind = org.spockframework.runtime.model.BlockKind.SETUP, texts = [])], parameterNames = [])
-    public void $spock_feature_0_0() {
-        java.lang.Object nothing = null
-        this.getSpecificationContext().getMockController().leaveScope()
-    }
-
-}'''
+    snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
   def "astToSourceFeatureBody shows compile error in source"() {
@@ -117,14 +83,7 @@ public class apackage.ASpec extends spock.lang.Specification implements groovy.l
     ''', Show.all(), CompilePhase.INSTRUCTION_SELECTION)
 
     then:
-    result.source.normalize() == '''\
-Unable to produce AST for this phase due to earlier compilation error:
-startup failed:
-script.groovy: 3: 'expect' is not allowed here; instead, use one of: [and, then] @ line 3, column 13.
-       expect: 'none'
-               ^
-
-1 error'''
+    snapshotter.assertThat(result.source.normalize()).matchesSnapshot()
   }
 
   @Requires({ GroovyRuntimeUtil.groovy3orNewer })
@@ -156,33 +115,7 @@ class Foo {
 }
 ''', EnumSet.of(Show.METHODS))
     then:
-    result.source == '''\
-public void loop() {
-    do {
-        this.println('once')
-    } while (false)
-}
-
-public void methodRef() {
-    [].forEach(java.lang.System::'print')
-}
-
-public void lambdas() {
-    java.lang.Object lambda = ( java.lang.Object x) -> {
-        x * x }
-    java.lang.Object lambdaMultiArg = ( int a, int b) -> {
-        a <=> b }
-    java.lang.Object lambdaNoArg = ( ) -> {
-        throw new java.lang.RuntimeException('bam')
-    }
-}
-
-public void blockStatements() {
-    with_label:
-    {
-        this.println(foo)
-    }
-}'''
+    snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
   def "enums"() {
@@ -196,54 +129,7 @@ public void blockStatements() {
     })
 
     then:
-    result.source == '''\
-public final class Alpha extends java.lang.Enum<Alpha> {
-
-    public static final Alpha A
-    public static final Alpha B
-    public static final Alpha C
-    public static final Alpha MIN_VALUE
-    public static final Alpha MAX_VALUE
-    private static final Alpha[] $VALUES
-
-    public static final Alpha[] values() {
-        return $VALUES.clone()
-    }
-
-    public Alpha next() {
-        java.lang.Object ordinal = this.ordinal().next()
-        if ( ordinal >= $VALUES.size()) {
-            ordinal = 0
-        }
-        return $VALUES.getAt( ordinal )
-    }
-
-    public Alpha previous() {
-        java.lang.Object ordinal = this.ordinal().previous()
-        if ( ordinal < 0) {
-            ordinal = $VALUES.size().minus(1)
-        }
-        return $VALUES.getAt( ordinal )
-    }
-
-    public static Alpha valueOf(java.lang.String name) {
-        return Alpha.valueOf(Alpha, name)
-    }
-
-    public static final Alpha $INIT(java.lang.Object[] para) {
-        return this (* para )
-    }
-
-    static {
-        A = Alpha.$INIT('A', 0)
-        B = Alpha.$INIT('B', 1)
-        C = Alpha.$INIT('C', 2)
-        MIN_VALUE = A
-        MAX_VALUE = C
-        $VALUES = new Alpha[]{A, B, C}
-    }
-
-}'''
+    snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
   def "full feature exercise"() {
@@ -433,237 +319,6 @@ class Ext <T extends Serializable, V extends Cloneable> {
 ''')
 
     then:
-    result.source == '''\
-@apackage.another.Ann
-package apackage.another
-
-import static java.util.Collections.emptyList
-import static java.nio.charset.StandardCharsets.*
-
-@apackage.another.Ann
-import java.text.ParseException as ParseException
-import java.nio.file.*
-
-public abstract class apackage.another.Foo extends java.lang.Object implements java.lang.Comparable {
-
-    private java.util.List<String> x = new java.util.ArrayList<>()
-
-    public apackage.another.Foo(java.lang.String initialValue) {
-        x << initialValue
-    }
-
-}
-@apackage.another.Ann
-package apackage.another
-
-import static java.util.Collections.emptyList
-import static java.nio.charset.StandardCharsets.*
-
-@apackage.another.Ann
-import java.text.ParseException as ParseException
-import java.nio.file.*
-
-public abstract interface apackage.another.Ex extends java.lang.Object {
-
-    public abstract void ex() throws java.io.IOException, java.text.ParseException {
-    }
-
-}
-@apackage.another.Ann
-package apackage.another
-
-import static java.util.Collections.emptyList
-import static java.nio.charset.StandardCharsets.*
-
-@apackage.another.Ann
-import java.text.ParseException as ParseException
-import java.nio.file.*
-
-public abstract interface apackage.another.Ann extends java.lang.Object implements java.lang.annotation.Annotation {
-
-}
-@apackage.another.Ann
-package apackage.another
-
-import static java.util.Collections.emptyList
-import static java.nio.charset.StandardCharsets.*
-
-@apackage.another.Ann
-import java.text.ParseException as ParseException
-import java.nio.file.*
-
-@apackage.another.Ann
-public class apackage.another.Bar extends apackage.another.Foo implements apackage.another.Ex, java.io.Serializable {
-
-    private static final int[] ARR = (([1, 2, 3]) as int[])
-    private static final java.lang.String STR = 'str'
-    private static final char CHR = ' '
-    private static final int INT = 10
-    private static int st
-    private int order
-    private java.lang.String someString = "String with ${STR}"
-    private java.lang.String plainString = 'plain'
-
-    public apackage.another.Bar() {
-        super(apackage.another.Bar.STR)
-    }
-
-    {
-        order = 1
-    }
-
-    static {
-        st = 42
-    }
-
-    public void loops() {
-        outer:
-        for (java.lang.Integer i = 0; i < INT ;( i )++) {
-            if ( i % 2 == 0) {
-                this.print('even')
-                continue outer
-            } else {
-                this.print('odd')
-            }
-            break outer
-        }
-        for (java.lang.String y : x ) {
-            this.print(y)
-        }
-        while (true) {
-            break
-        }
-    }
-
-    @java.lang.Override
-    public void ex() throws java.lang.Exception {
-        try {
-            java.lang.System.getProperty('Foo', STR)?.stripIndent()
-        }
-        catch (java.lang.RuntimeException e) {
-            throw new java.lang.Exception(e)
-        }
-        finally {
-            this.println('executed ex')
-        }
-    }
-
-    public java.lang.String convert(java.lang.String input) {
-        java.lang.String result = ''
-        switch ( input ) {
-            case 'Alpha.A':
-                result = 'a'
-                break
-            case 'Alpha.B':
-            case ~('Alpha.*') :
-                result = 'c'
-                break
-            default:
-            result = 'shrug'
-        }
-        return result
-    }
-
-    public void operators() {
-        java.lang.Integer a = ~( INT )
-        java.lang.Boolean b = !( a )
-        java.lang.Integer c = -( a )
-        java.lang.Integer d = +( c )
-        java.lang.Object e = ['a': b , STR : c ]
-        java.lang.Object f = [*: e , 'foo': 'bar']
-        java.lang.Object g = "a: ${a} and b: ${ e.a.compareTo(c)}"
-        java.lang.Integer h = 1
-        java.lang.Integer i = 2
-        def (java.lang.Object j, java.lang.Object k) = x
-        java.lang.Object l = b ? c : d
-        java.lang.Object m = c ? c : d
-        java.lang.Object n = this.&'convert'
-        java.lang.Object o = this.order
-        java.lang.Object p = (1..5)
-        java.lang.Object q = (1..<5)
-        java.lang.Object r = x*.size()?.intersect([1])
-        java.lang.Object s = { java.lang.Object x ->
-            x * x
-        }
-        java.lang.Object t = [:]
-        java.lang.Object u = ++( c )
-        java.lang.Object v = this."${STR}"(a)
-        java.lang.Object w = { ->
-            this.println(g)
-        }
-        java.lang.Object x = (( c ) as long)
-        java.lang.Object y = ((long) c )
-        java.lang.Object z = [1, 2, 3] [ 0]
-        assert c == d : null
-    }
-
-    public void gstrings() {
-        java.lang.Object a = 'simple'
-        java.lang.Object b = 'normal string \\$a ...'
-        java.lang.Object c = "gstring ${a} ..."
-        java.lang.Object d = "gstring with brackets ${a.size()} ..."
-        java.lang.Object e = "gstring with closure ${ ->
-            a
-        } ... "
-        java.lang.Object f = "with writer ${ java.lang.Object w ->
-            w << a
-        }"
-        java.lang.Object g = 'simple\\nmulti\\nline'
-        java.lang.Object h = "multi line gstring\\n${a}\\n..."
-        java.lang.Object i = "multi line gstring\\n with brackets ${a.size()}\\n with escaped brackets \\${a.size()}\\n ..."
-        java.lang.Object j = "multi line gstring\\n with closure ${ ->
-            a
-        }\\n with escaped closure \\${-> a}\\n ... "
-        java.lang.Object k = "multi line gstring\\n with simple value ${a}\\n with simple escaped value \\$a\\n with brackets ${a.size()}\\n with escaped brackets \\${a.size()}\\n with closure ${ ->
-            a
-        }\\n with escaped closure \\${-> a}\\n with writer ${ java.lang.Object w ->
-            w << a
-        }\\n with writer escaped \\${w -> w << a}\\n..."
-    }
-
-    @java.lang.Override
-    public int compareTo(java.lang.Object o) {
-        synchronized ( o ) {
-            return order <=> (( o ) as apackage.another.Bar).order
-        }
-    }
-
-    public void multix(java.nio.file.Path a, @apackage.another.Ann int b, java.lang.String desc = '') {
-    }
-
-    public void prop(java.util.List l, int[] a) {
-        java.lang.Object x = l*.foo
-        java.lang.Object y = a?.length
-        java.lang.Object z = a."${STR}"
-    }
-
-    public static final void statMethod(java.lang.String a) {
-    }
-
-}
-@apackage.another.Ann
-package apackage.another
-
-import static java.util.Collections.emptyList
-import static java.nio.charset.StandardCharsets.*
-
-@apackage.another.Ann
-import java.text.ParseException as ParseException
-import java.nio.file.*
-
-public class apackage.another.Ext<T extends java.io.Serializable, V extends java.lang.Cloneable> extends java.lang.Object {
-
-    private T[] arr
-    private java.util.List<V> lst = []
-
-    public V foo(java.util.List<? super T> consumer) {
-    }
-
-    @apackage.another.Ann
-    public <X extends java.io.Serializable & java.lang.Comparable<T>> boolean saveCompare(X a, X b) {
-    }
-
-}'''
-
+    snapshotter.assertThat(result.source).matchesSnapshot()
   }
 }

@@ -768,6 +768,9 @@ or your annotations might be handled twice. Be aware that the repeatable annotat
 directly, inside the container annotation or even both if the user added the container annotation manually
 and also attached one annotation directly.
 
+Repeatable annotations are not supported for parameter annotations,
+as they are primarily intended to provide a value and only a singular value is allowed.
+
 `IAnnotationDrivenExtension` has the following nine methods, where in each you can prepare a specification with your
 extension magic, like attaching interceptors to various interception points as described in the chapter
 <<Interceptors>>:
@@ -807,6 +810,10 @@ extension magic, like attaching interceptors to various interception points as d
 `visitFeatureAnnotation(T annotation, FeatureInfo feature)`::
   This is used as singular delegate for `visitFeatureAnnotations` and is otherwise not called by Spock directly.
   The default implementation throws an exception.
+
+`visitParameterAnnotation(T annotation, ParameterInfo parameter)`::
+  This is called once for each parameter of a feature or fixture method where the annotation is applied to.
+  It gets the annotation instance as first parameter and the `ParameterInfo` object as second parameter.
 
 `visitSpec(SpecInfo spec)`::
   This is called once for each specification within which the annotation is applied to at least one of the supported
@@ -917,6 +924,31 @@ featureInfo.featureMethod.addInterceptor new I('feature method')
 ----
 
 ==== Injecting Method Parameters
+
+Starting with Spock 2.4, it is possible to create `IAnnotationDrivenExtension` that target method parameters directly.
+The extension annotation must use the `@Target({ElementType.PARAMETER})` and the extension must implement `IAnnotationDrivenExtension.visitParameterAnnotation(T annotation, ParameterInfo parameter)`.
+In the `visitParameterAnnotation` you can then register a custom interceptor, or use the convenience `ParameterResolver.Interceptor` to handle the parameter injection.
+Parameter injection is supported for fixture methods, such as `setup` and `cleanup`, as well as for feature methods.
+
+
+.Example `ParameterIndex` extension
+[source,groovy]
+----
+include::{sourcedir}/extension/ParameterInjectionSpec.groovy[tag=extension]
+----
+<1> Add the interceptor to the method, which is the `parent` of the `ParameterInfo`.
+<2> The built-in `ParameterResolver.Interceptor` will handle the boilerplate part of parameter injection.
+<3> Pass the `ParameterInfo` to the interceptor, so the interceptor knows which parameter it is handling.
+<4> This is a `Function<IMethodInvocation, Object>`, which is called by the `ParameterResolver.Interceptor` to resolve the parameter value. Here we just return the value of the `ParameterInfo`'s `index` property, but you could also do some more complex logic here.
+
+.Example usage of `ParameterIndex` extension
+[source,groovy]
+----
+include::{sourcedir}/extension/ParameterInjectionSpec.groovy[tag=example]
+----
+
+
+===== For Spock versions prior to 2.4 or for advanced use cases
 
 If your interceptor should support custom method parameters for wrapped methods, this can be done by modifying
 `invocation.arguments`. Two use cases for this would be a mocking framework that can inject method parameters that are

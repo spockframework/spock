@@ -18,6 +18,8 @@ package org.spockframework.util;
 
 import org.jetbrains.annotations.Contract;
 
+import java.util.function.Supplier;
+
 /**
  * Assertions for use within Spock code. Failures indicate internal errors.
  *
@@ -43,6 +45,10 @@ public abstract class Assert {
   @Contract("false, _, _ -> fail")
   public static void that(boolean condition, String msg, Object... values) {
     if (!condition) throw new InternalSpockError(String.format(msg, values));
+  }
+
+  public static void that(boolean condition, Supplier<String> msgSupplier) {
+    if (!condition) throw new InternalSpockError(msgSupplier.get());
   }
 
   @Contract("_, _ -> fail")

@@ -62,7 +62,7 @@ ext {
   jacocoVersion = '0.8.8'
 
   libs = [
-    jetbrainsAnnotations: "org.jetbrains:annotations:20.1.0",
+    jetbrainsAnnotations: "org.jetbrains:annotations:24.0.1",
     asm                 : "org.ow2.asm:asm:9.2",
     bytebuddy           : "net.bytebuddy:byte-buddy:1.12.14",
     cglib               : "cglib:cglib-nodep:3.3.0",

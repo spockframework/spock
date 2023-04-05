@@ -73,7 +73,7 @@ ext {
     groovyJmx           : "$groovyGroup:groovy-jmx:$groovyVersion",  //for triggering jacoco dump via jmx
     h2database          : "com.h2database:h2:1.4.200",
     hamcrest            : "org.hamcrest:hamcrest:2.2",
-    jaxb                : "javax.xml.bind:jaxb-api:2.3.0",
+    jaxb                : "javax.xml.bind:jaxb-api:2.3.1",
     junit4              : "junit:junit:4.13.2",
     junitBom            : "org.junit:junit-bom:5.9.0",
     jupiter             : "org.junit.jupiter:junit-jupiter",

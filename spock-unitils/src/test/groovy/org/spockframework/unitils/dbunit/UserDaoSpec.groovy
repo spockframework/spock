@@ -32,7 +32,7 @@ class UserDaoSpec extends Specification {
   @Shared Sql sql = Sql.newInstance("jdbc:h2:mem:userdb", "org.h2.Driver")
 
   def setupSpec() {
-    sql.execute("create table user (first_name varchar(25), last_name varchar(50), age int)")
+    sql.execute("create table `user` (first_name varchar(25), last_name varchar(50), age int)")
   }
 
   def cleanupSpec() {

@@ -366,6 +366,11 @@ tasks.register("groovydoc", Groovydoc) {
   source subprojects.collect { project -> project.tasks.named("groovydoc").map { it.source } }
   classpath = files(subprojects.collect { project -> project.tasks.named("groovydoc").map { it.classpath } })
   groovyClasspath = files(projects.spockCore.dependencyProject.tasks.named("groovydoc").map { it.groovyClasspath })
+
+  access = GroovydocAccess.PROTECTED
+  processScripts = false
+  includeMainForScripts = false
+  includeAuthor = false
 }
 
 configureGroovydoc(tasks.named("groovydoc"))

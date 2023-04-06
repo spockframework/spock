@@ -75,7 +75,7 @@ ext {
     hamcrest            : "org.hamcrest:hamcrest:2.2",
     jaxb                : "javax.xml.bind:jaxb-api:2.3.1",
     junit4              : "junit:junit:4.13.2",
-    junitBom            : "org.junit:junit-bom:5.9.0",
+    junitBom            : "org.junit:junit-bom:5.9.2",
     jupiter             : "org.junit.jupiter:junit-jupiter",
     junitPlatform       : "org.junit.platform:junit-platform-engine",
     junitPlatformTestkit: "org.junit.platform:junit-platform-testkit",

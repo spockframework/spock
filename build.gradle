@@ -62,18 +62,18 @@ ext {
   jacocoVersion = '0.8.8'
 
   libs = [
-    jetbrainsAnnotations: "org.jetbrains:annotations:20.1.0",
-    asm                 : "org.ow2.asm:asm:9.2",
-    bytebuddy           : "net.bytebuddy:byte-buddy:1.12.14",
+    jetbrainsAnnotations: "org.jetbrains:annotations:24.0.1",
+    asm                 : "org.ow2.asm:asm:9.5",
+    bytebuddy           : "net.bytebuddy:byte-buddy:1.14.3",
     cglib               : "cglib:cglib-nodep:3.3.0",
     groovy              : groovyDependencies,
     groovyNio           : "$groovyGroup:groovy-nio:$groovyVersion", //for groovy methods on Path
     groovySql           : "$groovyGroup:groovy-sql:$groovyVersion", //for some Spring and Unitils tests
     groovyTest          : "$groovyGroup:groovy-test:$groovyVersion", //for @NotYetImplemented
     groovyJmx           : "$groovyGroup:groovy-jmx:$groovyVersion",  //for triggering jacoco dump via jmx
-    h2database          : "com.h2database:h2:1.4.200",
+    h2database          : "com.h2database:h2:2.1.214",
     hamcrest            : "org.hamcrest:hamcrest:2.2",
-    jaxb                : "javax.xml.bind:jaxb-api:2.3.0",
+    jaxb                : "javax.xml.bind:jaxb-api:2.3.1",
     junit4              : "junit:junit:4.13.2",
     junitBom            : "org.junit:junit-bom:5.9.0",
     jupiter             : "org.junit.jupiter:junit-jupiter",

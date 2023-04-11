@@ -6,8 +6,8 @@ import org.spockframework.specs.extension.Snapshotter
 import spock.lang.Issue
 import spock.util.Show
 
+@Snapshot(extension = 'groovy')
 class CleanupBlocksAstSpec extends EmbeddedSpecification {
-  @Snapshot(extension = 'groovy')
   Snapshotter snapshotter
 
   @Issue("https://github.com/spockframework/spock/issues/1266")

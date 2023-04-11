@@ -11,8 +11,8 @@ import spock.util.Show
 
 import org.codehaus.groovy.control.CompilePhase
 
+@Snapshot(extension = 'groovy')
 class AstSpec extends EmbeddedSpecification {
-  @Snapshot(extension = 'groovy')
   Snapshotter snapshotter
 
   def "astToSourceFeatureBody renders only methods and its annotation by default"() {
@@ -28,7 +28,6 @@ class AstSpec extends EmbeddedSpecification {
     then:
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
-
 
   def "astToSourceSpecBody renders only methods, fields, properties, object initializers and their annotation by default"() {
     given:
@@ -47,8 +46,6 @@ class AstSpec extends EmbeddedSpecification {
     then:
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
-
-
 
   @Requires({ GroovyReleaseInfo.version < VersionNumber.parse("4.0.2")})
   def "astToSourceFeatureBody can render everything"() {

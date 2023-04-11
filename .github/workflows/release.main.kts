@@ -84,7 +84,9 @@ workflow(
         )
         uses(
             name = "Upload to Codecov.io",
-            action = CodecovActionV4()
+            action = CodecovActionV4(
+                failCiIfError = true
+            )
         )
     }
     val releaseSpock = job(

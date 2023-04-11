@@ -95,6 +95,8 @@ jobs:
     - id: 'step-4'
       name: 'Upload to Codecov.io'
       uses: 'codecov/codecov-action@v5'
+      with:
+        fail_ci_if_error: 'true'
   release-spock:
     name: 'Release Spock'
     runs-on: '${{ matrix.os }}'

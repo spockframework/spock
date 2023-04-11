@@ -112,3 +112,5 @@ jobs:
     - id: 'step-3'
       name: 'Upload to Codecov.io'
       uses: 'codecov/codecov-action@v5'
+      with:
+        fail_ci_if_error: 'true'

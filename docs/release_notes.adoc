@@ -5,9 +5,9 @@ include::include.adoc[]
 
 == 2.4 (tbd)
 
-* Support for setting execution order (a.k.a. run order) in `SpecInfo`, can be used by extensions
+* Support for setting execution order (a.k.a. run order) in `SpecInfo`, can be used by extensions spockPull:1631[]
 * New built-in `RandomRunOrderExtension` supports run order randomization for specifications, features or a combination of both.
-  See manual section <<extensions#_randomize_run_order,Randomize Run Order>>.
+  See manual section <<extensions#_randomize_run_order,Randomize Run Order>>. spockPull:1631[]
 
 == 2.4-M1 (2022-11-30)
 

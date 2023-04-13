@@ -5,6 +5,8 @@ include::include.adoc[]
 
 == 2.4 (tbd)
 
+* Support for setting execution order (a.k.a. run order) in `SpecInfo`, can be used by extensions
+
 == 2.4-M1 (2022-11-30)
 
 * Fix issues with Spring 6/Spring Boot 3 spockPull:1541[]

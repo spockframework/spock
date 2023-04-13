@@ -5,6 +5,8 @@ import spock.config.RunnerConfiguration;
 
 import org.junit.platform.engine.*;
 
+import static java.util.Comparator.comparingInt;
+
 class SpockEngineDiscoveryPostProcessor {
 
   private static final Object[] EMPTY_ARGS = new Object[0];
@@ -14,6 +16,7 @@ class SpockEngineDiscoveryPostProcessor {
     SpockEngineDescriptor processedEngineDescriptor = new SpockEngineDescriptor(uniqueId, runContext);
     engineDescriptor.getChildren().stream()
       .map(child -> processSpecNode(child, runContext))
+      .sorted(comparingInt(child -> child instanceof SpecNode ? ((SpecNode) child).getNodeInfo().getExecutionOrder() : 0))
       .forEach(processedEngineDescriptor::addChild);
     return processedEngineDescriptor;
   }

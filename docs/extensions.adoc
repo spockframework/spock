@@ -44,6 +44,18 @@ runner {
 
 See the <<parallel_execution.adoc#parallel-execution,Parallel Execution>> section for a detailed description.
 
+=== Random Test Order Configuration
+
+[source,groovy]
+----
+runner {
+  randomizeSpecRunOrder true    // randomize specification run order
+  randomizeFeatureRunOrder true // randomize feature run order within each specification
+}
+----
+
+See the <<#_randomize_run_order>> section for more details.
+
 == Built-In Extensions
 
 Most of Spock's built-in extensions are _annotation-driven_. In other words, they are triggered by annotating a
@@ -706,6 +718,24 @@ This behaviour can be enabled according to the <<spock-configuration-file,Spock 
 ----
 runner {
   optimizeRunOrder true
+}
+----
+
+=== Randomize Run Order
+
+Ideally, automated tests in general and Spock specifications in particular should be independent of each other. The same
+applies to feature methods within a specification. One heuristic way to gain confidence that this is indeed the case, is
+to randomize the order in which specifications and/or features within each specification are executed.
+
+By default, Spock executes both specifications and features in deterministic order, even though users should not rely on
+any particular run order. You can explicitly activate run order randomization separately for specifications and features
+or combine both randomization modes, using the <<spock-configuration-file,Spock Configuration File>>:
+
+[source,groovy]
+----
+runner {
+  randomizeSpecRunOrder true    // randomize specification run order
+  randomizeFeatureRunOrder true // randomize feature run order within each specification
 }
 ----
 

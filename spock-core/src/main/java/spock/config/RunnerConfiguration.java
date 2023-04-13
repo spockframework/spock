@@ -28,7 +28,9 @@ package spock.config;
  *     annotation some.pkg.Slow
  *     baseClass IntegrationSpec
  *   }
- *   filterStackTrace true // this is the default
+ *   filterStackTrace true          // this is the default
+ *   randomizeSpecRunOrder false    // this is the default
+ *   randomizeFeatureRunOrder false // this is the default
  * }
  * </pre>
  */
@@ -39,4 +41,6 @@ public class RunnerConfiguration {
   public ParallelConfiguration parallel = new ParallelConfiguration();
   public boolean filterStackTrace = true;
   public boolean optimizeRunOrder = false;
+  public boolean randomizeSpecRunOrder = false;
+  public boolean randomizeFeatureRunOrder = false;
 }

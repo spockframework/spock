@@ -18,10 +18,13 @@ package org.spockframework.runtime.extension;
 
 import org.spockframework.runtime.model.SpecInfo;
 
+import java.util.Collection;
+
 // TODO: start/stop lifecycle
 // TODO: design threading model
 public interface IGlobalExtension {
-  default void start() {};
-  default void visitSpec(SpecInfo spec){};
-  default void stop(){};
+  default void start() {}
+  default void initSpecs(Collection<SpecInfo> specs) {}
+  default void visitSpec(SpecInfo spec) {}
+  default void stop() {}
 }

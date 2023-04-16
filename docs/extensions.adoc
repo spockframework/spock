@@ -763,13 +763,17 @@ fully-qualified class name in a file `META-INF/services/org.spockframework.runti
 class path. As soon as these two conditions are satisfied, the extension is automatically loaded and used when Spock is
 running.
 
-`IGlobalExtension` has the following three methods:
+`IGlobalExtension` has the following four methods:
 
 `start()`::
   This is called once at the very start of the Spock execution.
 
+`initSpecs(Collection<SpecInfo> specs)`::
+  This is called once, before visiting single specifications later on in `visitSpec`. It enables global extensions to
+  view all specifications as an ensemble, e.g. for iterating over them and rearranging their execution order.
+
 `visitSpec(SpecInfo spec)`::
-  This is called once for each specification. In this method you can prepare a specification with your extension magic,
+  This is called once for each specification. In this method, you can prepare a specification with your extension magic,
   like attaching interceptors to various interception points as described in the chapter <<Interceptors>>.
 
 `stop()`::

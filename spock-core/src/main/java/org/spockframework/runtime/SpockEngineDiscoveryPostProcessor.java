@@ -5,6 +5,8 @@ import spock.config.RunnerConfiguration;
 
 import org.junit.platform.engine.*;
 
+import java.util.Set;
+
 import static java.util.Comparator.comparingInt;
 
 class SpockEngineDiscoveryPostProcessor {
@@ -14,7 +16,9 @@ class SpockEngineDiscoveryPostProcessor {
   SpockEngineDescriptor postProcessEngineDescriptor(UniqueId uniqueId, RunContext runContext,
     SpockEngineDescriptor engineDescriptor) {
     SpockEngineDescriptor processedEngineDescriptor = new SpockEngineDescriptor(uniqueId, runContext);
-    engineDescriptor.getChildren().stream()
+    Set<? extends TestDescriptor> testDescriptors = engineDescriptor.getChildren();
+    initSpecNodes(testDescriptors, runContext);
+    testDescriptors.stream()
       .map(child -> processSpecNode(child, runContext))
       .sorted(comparingInt(child -> child instanceof SpecNode ? ((SpecNode) child).getNodeInfo().getExecutionOrder() : 0))
       .forEach(processedEngineDescriptor::addChild);
@@ -44,6 +48,10 @@ class SpockEngineDiscoveryPostProcessor {
 
   private UniqueId toUniqueId(UniqueId parentId, FeatureInfo feature) {
     return parentId.append("feature", feature.getFeatureMethod().getReflection().getName());
+  }
+
+  private void initSpecNodes(Set<? extends TestDescriptor> testDescriptors, RunContext runContext) {
+    runContext.createExtensionRunner().initGlobalExtensions(testDescriptors);
   }
 
   private TestDescriptor processSpecNode(TestDescriptor child, RunContext runContext) {

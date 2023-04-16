@@ -81,6 +81,10 @@ public class RunContext implements EngineExecutionContext {
     return new ExtensionRunner(spec, globalExtensionRegistry, globalExtensionRegistry);
   }
 
+  public ExtensionRunner createExtensionRunner() {
+    return new ExtensionRunner(globalExtensionRegistry, globalExtensionRegistry);
+  }
+
   public PlatformParameterizedSpecRunner createSpecRunner(SpecInfo spec) {
     return new PlatformParameterizedSpecRunner(
       new MasterRunSupervisor(spec, createStackTraceFilter(spec), diffedObjectRenderer));

@@ -14,6 +14,7 @@
 
 package org.spockframework.runtime;
 
+import org.junit.platform.engine.TestDescriptor;
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.Nullable;
@@ -30,6 +31,8 @@ import static java.util.stream.Collectors.toList;
  */
 @SuppressWarnings("rawtypes")
 public class ExtensionRunner {
+  private static final SpecInfo EMPTY_SPEC = new SpecInfo();
+
   private final SpecInfo spec;
   private final IExtensionRegistry extensionRegistry;
   private final IConfigurationRegistry configurationRegistry;
@@ -40,6 +43,20 @@ public class ExtensionRunner {
     this.spec = spec;
     this.extensionRegistry = extensionRegistry;
     this.configurationRegistry = configurationRegistry;
+  }
+
+  public ExtensionRunner(IExtensionRegistry extensionRegistry, IConfigurationRegistry configurationRegistry) {
+    this(EMPTY_SPEC, extensionRegistry, configurationRegistry);
+  }
+
+  public void initGlobalExtensions(Set<? extends TestDescriptor> testDescriptors) {
+    List<SpecInfo> specs = testDescriptors.stream()
+      .filter(testDescriptor -> testDescriptor instanceof SpecNode)
+      .map(testDescriptor -> ((SpecNode) testDescriptor).getNodeInfo())
+      .collect(toList());
+    for (IGlobalExtension extension : extensionRegistry.getGlobalExtensions()) {
+      extension.initSpecs(specs);
+    }
   }
 
   public void run() {

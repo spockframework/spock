@@ -48,8 +48,6 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
   private ExecutionMode executionMode = null;
   private ExecutionMode childExecutionMode = null;
 
-  private int executionOrder;
-
   private String pkg;
   private String filename;
   private String narrative;
@@ -67,14 +65,6 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
   private final List<MethodInfo> cleanupSpecMethods = new ArrayList<>();
 
   private final List<FeatureInfo> features = new ArrayList<>();
-
-  public int getExecutionOrder() {
-    return executionOrder;
-  }
-
-  public void setExecutionOrder(int executionOrder) {
-    this.executionOrder = executionOrder;
-  }
 
   public String getPackage() {
     return pkg;

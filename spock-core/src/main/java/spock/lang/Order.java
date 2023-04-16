@@ -30,6 +30,8 @@ import java.lang.annotation.Target;
  * runner {
  *   orderer new AnnotatationBasedSpecOrderer()
  * }</pre>
+ * <p>
+ * See the Spock user manual for more details.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })

@@ -6,7 +6,15 @@ import spock.lang.Order;
 
 import java.util.Collection;
 
+/**
+ * Spec orderer for usef-defined, manual specification and/or feature method ordering, to be used in connection with
+ * {@link Order @Order} annotations. See the Spock user manual for more details.
+ */
 public class AnnotatationBasedSpecOrderer extends SpecOrderer {
+  /**
+   * Create an annotation-based spec orderer
+   * @see Order
+   */
   public AnnotatationBasedSpecOrderer() {
     super(true, true);
   }

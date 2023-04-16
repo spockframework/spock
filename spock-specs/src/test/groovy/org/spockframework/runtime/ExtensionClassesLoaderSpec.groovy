@@ -15,7 +15,7 @@ class ExtensionClassesLoaderSpec extends Specification {
     def result = new ExtensionClassesLoader().loadExtensionClassesFromDefaultLocation()
 
     then:
-    result == [IncludeExcludeExtension, OptimizeRunOrderExtension, RandomRunOrderExtension, UnrollExtension]
+    result == [IncludeExcludeExtension, OptimizeRunOrderExtension, OrderExtension, UnrollExtension]
   }
 
   def "loads global ConfigObjects"() {

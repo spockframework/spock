@@ -14,23 +14,26 @@
 
 package spock.config;
 
+import org.spockframework.runtime.extension.builtin.orderer.DefaultSpecOrderer;
+import org.spockframework.runtime.extension.builtin.orderer.SpecOrderer;
+
 /**
  * Configuration settings for the spec runner.
  *
  * <p>Example:
  * <pre>
+ * import org.spockframework.runtime.extension.builtin.orderer.RandomSpecOrderer
  * import some.pkg.Fast
  * import some.pkg.IntegrationSpec
  *
  * runner {
- *   include Fast // could be either an annotation or a (base) class
+ *   include Fast  // could be either an annotation or a (base) class
  *   exclude {
  *     annotation some.pkg.Slow
  *     baseClass IntegrationSpec
  *   }
- *   filterStackTrace true          // this is the default
- *   randomizeSpecRunOrder false    // this is the default
- *   randomizeFeatureRunOrder false // this is the default
+ *   filterStackTrace true            // this is the default
+ *   orderer new RandomSpecOrderer()  // DefaultSpecOrderer (no-op) is the default
  * }
  * </pre>
  */
@@ -39,8 +42,7 @@ public class RunnerConfiguration {
   public IncludeExcludeCriteria include = new IncludeExcludeCriteria();
   public IncludeExcludeCriteria exclude = new IncludeExcludeCriteria();
   public ParallelConfiguration parallel = new ParallelConfiguration();
+  public SpecOrderer orderer = new DefaultSpecOrderer();
   public boolean filterStackTrace = true;
   public boolean optimizeRunOrder = false;
-  public boolean randomizeSpecRunOrder = false;
-  public boolean randomizeFeatureRunOrder = false;
 }

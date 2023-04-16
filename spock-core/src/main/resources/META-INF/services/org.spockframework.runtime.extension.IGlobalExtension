@@ -1,4 +1,4 @@
 org.spockframework.runtime.extension.builtin.IncludeExcludeExtension
 org.spockframework.runtime.extension.builtin.OptimizeRunOrderExtension
-org.spockframework.runtime.extension.builtin.RandomRunOrderExtension
+org.spockframework.runtime.extension.builtin.OrderExtension
 org.spockframework.runtime.extension.builtin.UnrollExtension

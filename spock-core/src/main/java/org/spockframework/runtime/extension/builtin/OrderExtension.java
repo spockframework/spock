@@ -15,28 +15,20 @@
 package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.extension.IGlobalExtension;
-import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.SpecInfo;
 import spock.config.RunnerConfiguration;
 
-import java.util.Random;
+import java.util.Collection;
 
-public class RandomRunOrderExtension implements IGlobalExtension {
-  private static final Random RANDOM = new Random();
-
+public class OrderExtension implements IGlobalExtension {
   private final RunnerConfiguration config;
 
-  public RandomRunOrderExtension(RunnerConfiguration config) {
+  public OrderExtension(RunnerConfiguration config) {
     this.config = config;
   }
 
   @Override
-  public void visitSpec(SpecInfo spec) {
-    if (config.randomizeSpecRunOrder)
-      spec.setExecutionOrder(RANDOM.nextInt());
-    if (config.randomizeFeatureRunOrder) {
-      for (FeatureInfo featureInfo : spec.getAllFeatures())
-        featureInfo.setExecutionOrder(RANDOM.nextInt());
-    }
+  public void initSpecs(Collection<SpecInfo> specs) {
+    config.orderer.process(specs);
   }
 }

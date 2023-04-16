@@ -266,7 +266,7 @@ class FourthSpec extends Specification {
   def 'descending, alphabetical spec and feature order'() {
     runner.configurationScript = {
       runner {
-        orderer new AlphabeticalSpecOrderer(true, true, true)
+        orderer new AlphabeticalSpecOrderer(true, true, false)
       }
     }
     runner.extensionClasses << OrderExtension

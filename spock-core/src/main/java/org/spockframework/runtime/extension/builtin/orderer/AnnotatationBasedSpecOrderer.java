@@ -5,7 +5,6 @@ import org.spockframework.runtime.model.SpecInfo;
 import spock.lang.Order;
 
 import java.util.Collection;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class AnnotatationBasedSpecOrderer extends SpecOrderer {
   public AnnotatationBasedSpecOrderer() {
@@ -21,12 +20,10 @@ public class AnnotatationBasedSpecOrderer extends SpecOrderer {
   }
 
   @Override
-  protected void orderFeatures(Collection<SpecInfo> specs) {
-    for (SpecInfo spec : specs) {
-      for (FeatureInfo feature : spec.getAllFeatures()) {
-        Order orderAnnotation = feature.getFeatureMethod().getAnnotation(Order.class);
-        feature.setExecutionOrder(orderAnnotation == null ? 0 : orderAnnotation.value());
-      }
+  protected void orderFeatures(Collection<FeatureInfo> features) {
+    for (FeatureInfo feature : features) {
+      Order orderAnnotation = feature.getFeatureMethod().getAnnotation(Order.class);
+      feature.setExecutionOrder(orderAnnotation == null ? 0 : orderAnnotation.value());
     }
   }
 }

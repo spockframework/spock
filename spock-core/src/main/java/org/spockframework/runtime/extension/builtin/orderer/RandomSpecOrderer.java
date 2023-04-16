@@ -5,7 +5,6 @@ import org.spockframework.runtime.model.SpecInfo;
 
 import java.util.Collection;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class RandomSpecOrderer extends SpecOrderer {
   private final Random random;
@@ -30,10 +29,8 @@ public class RandomSpecOrderer extends SpecOrderer {
   }
 
   @Override
-  protected void orderFeatures(Collection<SpecInfo> specs) {
-    for (SpecInfo spec : specs) {
-      for (FeatureInfo feature : spec.getAllFeatures())
-        feature.setExecutionOrder(random.nextInt());
-    }
+  protected void orderFeatures(Collection<FeatureInfo> features) {
+    for (FeatureInfo feature : features)
+      feature.setExecutionOrder(random.nextInt());
   }
 }

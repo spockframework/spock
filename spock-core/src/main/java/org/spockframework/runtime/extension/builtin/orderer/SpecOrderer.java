@@ -18,12 +18,15 @@ public abstract class SpecOrderer implements SpecProcessor {
   public void process(Collection<SpecInfo> specs) {
     if (orderSpecs)
       orderSpecs(specs);
-    if (orderFeatures)
-      orderFeatures(specs);
+    if (!orderFeatures)
+      return;
+    for (SpecInfo spec : specs)
+      orderFeatures(spec.getAllFeatures());
   }
 
   protected abstract void orderSpecs(Collection<SpecInfo> specs);
-  protected abstract void orderFeatures(Collection<SpecInfo> specs);
+
+  protected abstract void orderFeatures(Collection<FeatureInfo> features);
 
   public boolean isOrderSpecs() {
     return orderSpecs;

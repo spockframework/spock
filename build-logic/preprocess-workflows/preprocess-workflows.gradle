@@ -1,0 +1,13 @@
+plugins {
+  id 'groovy-gradle-plugin'
+  id 'idea'
+}
+
+gradlePlugin {
+  plugins {
+    preprocessWorkflowsPlugin {
+      id = 'org.spockframework.preprocess-workflows'
+      implementationClass = 'org.spockframework.gradle.PreprocessWorkflowsPlugin'
+    }
+  }
+}

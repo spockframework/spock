@@ -23,6 +23,7 @@ import io.github.typesafegithub.workflows.actions.codecov.CodecovActionV3
 import io.github.typesafegithub.workflows.actions.gradle.GradleBuildActionV2
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType
+import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
 import io.github.typesafegithub.workflows.domain.actions.Action.Outputs
 import io.github.typesafegithub.workflows.domain.actions.LocalAction
 import io.github.typesafegithub.workflows.domain.triggers.PullRequest
@@ -50,6 +51,25 @@ workflow(
         cancelInProgress = true
     )
 ) {
+    job(
+        id = "check_all_workflow_yaml_consistency",
+        name = "Check all Workflow YAML consistency",
+        runsOn = UbuntuLatest
+    ) {
+        uses(
+            name = "Checkout Repository",
+            action = CheckoutV3()
+        )
+        run(
+            name = "Regenerate all workflow YAMLs",
+            command = """find .github/workflows -mindepth 1 -maxdepth 1 -name "*.main.kts" -exec sh -c {} \;"""
+        )
+        run(
+            name = "Check if some file is different after regeneration",
+            command = "git diff --exit-code ."
+        )
+    }
+
     job(
         id = "build-and-verify",
         name = "Build and Verify",

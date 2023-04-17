@@ -1,5 +1,6 @@
 package spock.util
 
+import org.intellij.lang.annotations.Language
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
@@ -240,6 +241,7 @@ enum Show {
 @TupleConstructor
 @CompileStatic
 class TranspileResult {
+  @Language('Groovy')
   final String source
   final List<NodeCapture> nodeCaptures
 }
@@ -1323,7 +1325,7 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     print '['
     visitExpressionsAndCommaSeparate(expression?.sizeExpression)
     print ']'
-    if (expression?.expressions) { // print array initializer
+    if (expression?.expressions != null) { // print array initializer
       print '{'
       visitExpressionsAndCommaSeparate(expression?.expressions)
       print '}'

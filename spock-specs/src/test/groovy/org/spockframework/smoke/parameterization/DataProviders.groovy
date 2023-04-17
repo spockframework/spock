@@ -293,6 +293,29 @@ where: a << b
     b << (1..3).iterator()
   }
 
+  def 'data pipes can be combined'() {
+    when:
+    def results = runner.runSpecBody '''
+      def 'a feature (#a #b)'() {
+        expect:
+        true
+
+        where:
+        a << [3]
+        combined:
+        b << [1, 2]
+      }
+    '''
+
+    then:
+    results.testsStartedCount == 1 + 2
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b)',
+      'a feature (3 1)',
+      'a feature (3 2)'
+    ]
+  }
+
   static class MyIterator implements Iterator {
     def elems = [1, 2, 3]
 
@@ -320,4 +343,3 @@ where: a << b
     }
   }
 }
-

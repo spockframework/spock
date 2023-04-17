@@ -6,6 +6,8 @@ import java.util.*;
 
 import org.jetbrains.annotations.NotNull;
 
+import static java.util.Collections.emptyIterator;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 public class DataIteratorFactory {
@@ -40,6 +42,105 @@ public class DataIteratorFactory {
         return null;
       }
     }
+
+    protected int estimateNumIterations(Object dataProvider) {
+      if (context.getErrorInfoCollector().hasErrors()) {
+        return -1;
+      }
+
+      // unbelievably, DefaultGroovyMethods provides a size() method for Iterators,
+      // although it is of course destructive (i.e. it exhausts the Iterator)
+      if (dataProvider instanceof Iterator) {
+        return -1;
+      }
+
+      Object rawSize = GroovyRuntimeUtil.invokeMethodQuietly(dataProvider, "size");
+      if (!(rawSize instanceof Number)) {
+        return -1;
+      }
+
+      int size = ((Number) rawSize).intValue();
+      if (size < 0) {
+        return -1;
+      }
+
+      return size;
+    }
+
+    protected int estimateNumIterations(Object[] dataProviders) {
+      if (context.getErrorInfoCollector().hasErrors()) {
+        return -1;
+      }
+      if (dataProviders.length == 0) {
+        return 1;
+      }
+
+      int result = Integer.MAX_VALUE;
+      for (Object prov : dataProviders) {
+        int size = estimateNumIterations(prov);
+        if (size < 0 || size >= result) {
+          continue;
+        }
+        result = size;
+      }
+
+      return result == Integer.MAX_VALUE ? -1 : result;
+    }
+
+    protected boolean haveNext(Iterator<?>[] iterators, List<DataProviderInfo> dataProviderInfos) {
+      boolean result = true;
+
+      for (int i = 0; i < iterators.length; i++)
+        try {
+          boolean hasNext = iterators[i].hasNext();
+          if (i == 0) {
+            result = hasNext;
+          } else if (result != hasNext) {
+            DataProviderInfo provider = dataProviderInfos.get(i);
+            supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(provider.getDataProviderMethod(),
+              createDifferentNumberOfDataValuesException(provider, hasNext)));
+            return false;
+          }
+
+        } catch (Throwable t) {
+          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(dataProviderInfos.get(i).getDataProviderMethod(), t));
+          return false;
+        }
+
+      return result;
+    }
+
+    protected Iterator<?> createIterator(Object dataProvider, DataProviderInfo dataProviderInfo) {
+      if (context.getErrorInfoCollector().hasErrors()) {
+        return null;
+      }
+
+      try {
+        Iterator<?> iter = GroovyRuntimeUtil.asIterator(dataProvider);
+        if (iter == null) {
+          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(dataProviderInfo.getDataProviderMethod(),
+            new SpockExecutionException("Data provider's iterator() method returned null")));
+          return null;
+        }
+        return iter;
+      } catch (Throwable t) {
+        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(dataProviderInfo.getDataProviderMethod(), t));
+        return null;
+      }
+    }
+
+    private SpockExecutionException createDifferentNumberOfDataValuesException(DataProviderInfo provider,
+                                                                               boolean hasNext) {
+      String msg = String.format("Data provider for variable '%s' has %s values than previous data provider(s)",
+        provider.getDataVariables().get(0), hasNext ? "more" : "fewer");
+      SpockExecutionException exception = new SpockExecutionException(msg);
+      FeatureInfo feature = provider.getParent();
+      SpecInfo spec = feature.getParent();
+      StackTraceElement elem = new StackTraceElement(spec.getReflection().getName(),
+        feature.getName(), spec.getFilename(), provider.getLine());
+      exception.setStackTrace(new StackTraceElement[]{elem});
+      return exception;
+    }
   }
 
   /**
@@ -51,7 +152,7 @@ public class DataIteratorFactory {
    */
   private static class SingleEmptyIterationDataIterator implements IDataIterator {
 
-    public static final List<Object[]> DEFAULT_PARAMS = Collections.singletonList(new Object[0]);
+    public static final List<Object[]> DEFAULT_PARAMS = singletonList(new Object[0]);
     private final Iterator<Object[]> delegate;
 
     public SingleEmptyIterationDataIterator() {
@@ -140,28 +241,32 @@ public class DataIteratorFactory {
 
   private static class FeatureDataProviderIterator extends BaseDataIterator {
     private final Object[] dataProviders;
-    private final Iterator<?>[] iterators;
+    private final IDataIterator[] dataProviderIterators;
     private final int estimatedNumIterations;
     private final List<String> dataVariableNames;
-    private int iteration = 0;
+    private boolean firstIteration = true;
 
     public FeatureDataProviderIterator(IRunSupervisor supervisor, SpockExecutionContext context) {
       super(supervisor, context);
       // order is important as they rely on each other
-      this.dataVariableNames = dataVariableNames();
-      this.dataProviders = createDataProviders();
-      this.estimatedNumIterations = estimateNumIterations();
-      this.iterators = createIterators();
+      dataVariableNames = dataVariableNames();
+      dataProviders = createDataProviders();
+      estimatedNumIterations = estimateNumIterations(dataProviders);
+      dataProviderIterators = createDataProviderIterators();
     }
 
     @Override
     public void close() {
-      if (dataProviders == null) {
-        return; // there was an error creating the providers
+      if (dataProviders != null) {
+        for (Object provider : dataProviders) {
+          GroovyRuntimeUtil.invokeMethodQuietly(provider, "close");
+        }
       }
 
-      for (Object provider : dataProviders) {
-        GroovyRuntimeUtil.invokeMethodQuietly(provider, "close");
+      if (dataProviderIterators != null) {
+        for (IDataIterator dataProviderIterator : dataProviderIterators) {
+          GroovyRuntimeUtil.invokeMethodQuietly(dataProviderIterator, "close");
+        }
       }
     }
 
@@ -170,31 +275,12 @@ public class DataIteratorFactory {
       if (context.getErrorInfoCollector().hasErrors()) {
         return false;
       }
-      if (iterators.length == 0 && iteration > 0) {
+      if (dataProviderIterators.length == 0 && !firstIteration) {
         // no iterators => no data providers => only derived parameterizations => limit to one iteration
         return false;
       }
 
-      boolean haveNext = true;
-
-      for (int i = 0; i < iterators.length; i++)
-        try {
-          boolean hasNext = iterators[i].hasNext();
-          if (i == 0) {
-            haveNext = hasNext;
-          } else if (haveNext != hasNext) {
-            DataProviderInfo provider = context.getCurrentFeature().getDataProviders().get(i);
-            supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(provider.getDataProviderMethod(),
-              createDifferentNumberOfDataValuesException(provider, hasNext)));
-            return false;
-          }
-
-        } catch (Throwable t) {
-          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProviders().get(i).getDataProviderMethod(), t));
-          return false;
-        }
-
-      return haveNext;
+      return haveNext(dataProviderIterators, context.getCurrentFeature().getDataProviders());
     }
 
     @Override
@@ -202,13 +288,18 @@ public class DataIteratorFactory {
       if (context.getErrorInfoCollector().hasErrors()) {
         return null;
       }
-      iteration++;
+      firstIteration = false;
 
       // advances iterators and computes args
-      Object[] next = new Object[iterators.length];
-      for (int i = 0; i < iterators.length; i++) {
+      Object[] next = new Object[dataProviders.length];
+      for (int i = 0; i < dataProviders.length; ) {
         try {
-          next[i] = iterators[i].next();
+          Object[] nextValues = dataProviderIterators[i].next();
+          if (nextValues == null) {
+            return null;
+          }
+          System.arraycopy(nextValues, 0, next, i, nextValues.length);
+          i += nextValues.length;
         } catch (Throwable t) {
           supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProviders().get(i).getDataProviderMethod(), t));
           return null;
@@ -227,39 +318,6 @@ public class DataIteratorFactory {
       return dataVariableNames;
     }
 
-    private int estimateNumIterations() {
-      if (context.getErrorInfoCollector().hasErrors()) {
-        return -1;
-      }
-      if (dataProviders.length == 0) {
-        return 1;
-      }
-
-      int result = Integer.MAX_VALUE;
-      for (Object prov : dataProviders) {
-        if (prov instanceof Iterator)
-        // unbelievably, DGM provides a size() method for Iterators,
-        // although it is of course destructive (i.e. it exhausts the Iterator)
-        {
-          continue;
-        }
-
-        Object rawSize = GroovyRuntimeUtil.invokeMethodQuietly(prov, "size");
-        if (!(rawSize instanceof Number)) {
-          continue;
-        }
-
-        int size = ((Number) rawSize).intValue();
-        if (size < 0 || size >= result) {
-          continue;
-        }
-
-        result = size;
-      }
-
-      return result == Integer.MAX_VALUE ? -1 : result;
-    }
-
     private Object[] createDataProviders() {
       if (context.getErrorInfoCollector().hasErrors()) {
         return null;
@@ -269,7 +327,6 @@ public class DataIteratorFactory {
       if (dataProviderInfos.isEmpty()) {
         return new Object[0];
       }
-
 
       Object[] dataProviders = new Object[dataProviderInfos.size()];
 
@@ -298,6 +355,98 @@ public class DataIteratorFactory {
       return dataProviders;
     }
 
+    private IDataIterator[] createDataProviderIterators() {
+      if (context.getErrorInfoCollector().hasErrors()) {
+        return null;
+      }
+
+      MethodInfo dataVariableMultiplicationsMethod = context.getCurrentFeature().getDataVariableMultiplicationsMethod();
+      Iterator<DataVariableMultiplication> dataVariableMultiplications;
+      DataVariableMultiplication nextDataVariableMultiplication;
+      if (dataVariableMultiplicationsMethod != null) {
+        try {
+          dataVariableMultiplications = Arrays.stream(((DataVariableMultiplication[]) invokeRaw(null, dataVariableMultiplicationsMethod))).iterator();
+          nextDataVariableMultiplication = dataVariableMultiplications.next();
+        } catch (Throwable t) {
+          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(dataVariableMultiplicationsMethod, t));
+          return null;
+        }
+      } else {
+        dataVariableMultiplications = emptyIterator();
+        nextDataVariableMultiplication = null;
+      }
+
+      List<IDataIterator> dataIterators = new ArrayList<>(dataProviders.length);
+      for (int i = 0; i < dataProviders.length; i++) {
+        String nextDataVariableName = dataVariableNames.get(i);
+        if ((nextDataVariableMultiplication != null)
+          && (nextDataVariableMultiplication.getDataVariables()[0].equals(nextDataVariableName))) {
+
+          // a cross multiplication starts
+          dataIterators.add(createDataProviderMultiplier(nextDataVariableMultiplication, i));
+          // skip processed variables
+          i += nextDataVariableMultiplication.getDataVariables().length - 1;
+          // wait for next cross multiplication
+          nextDataVariableMultiplication = dataVariableMultiplications.hasNext() ? dataVariableMultiplications.next() : null;
+        } else {
+          // not a cross multiplication, just use a data provider iterator
+          dataIterators.add(new DataProviderIterator(
+            supervisor, context, nextDataVariableName,
+            context.getCurrentFeature().getDataProviders().get(i), dataProviders[i]));
+        }
+      }
+      return dataIterators.toArray(new IDataIterator[0]);
+    }
+
+    private DataProviderMultiplier createDataProviderMultiplier(DataVariableMultiplication dataVariableMultiplication, int i) {
+      DataVariableMultiplicationFactor multiplier = dataVariableMultiplication.getMultiplier();
+      DataVariableMultiplicationFactor multiplicand = dataVariableMultiplication.getMultiplicand();
+
+      int multiplierDataVariablesLength = multiplier.getDataVariables().length;
+      int multiplicandDataVariablesLength = multiplicand.getDataVariables().length;
+
+      if (multiplier instanceof DataVariableMultiplication) {
+        DataProviderMultiplier multiplierProvider = createDataProviderMultiplier((DataVariableMultiplication) multiplier, i);
+        Object[] multiplicandProviders = new Object[multiplicandDataVariablesLength];
+        List<DataProviderInfo> multiplicandProviderInfos = new ArrayList<>();
+
+        List<DataProviderInfo> dataProviderInfos = context.getCurrentFeature().getDataProviders();
+        int j = multiplierDataVariablesLength;
+        int j2 = multiplierDataVariablesLength + multiplicandDataVariablesLength;
+        int k = 0;
+        for (; j < j2; j++, k++) {
+          multiplicandProviderInfos.add(dataProviderInfos.get(i + j));
+          multiplicandProviders[k] = dataProviders[i + j];
+        }
+
+        return new DataProviderMultiplier(supervisor, context,
+          Arrays.asList(dataVariableMultiplication.getDataVariables()),
+          multiplicandProviderInfos, multiplierProvider, multiplicandProviders);
+      } else {
+        Object[] multiplierProviders = new Object[multiplierDataVariablesLength];
+        Object[] multiplicandProviders = new Object[multiplicandDataVariablesLength];
+        List<DataProviderInfo> multiplierProviderInfos = new ArrayList<>();
+        List<DataProviderInfo> multiplicandProviderInfos = new ArrayList<>();
+
+        List<DataProviderInfo> dataProviderInfos = context.getCurrentFeature().getDataProviders();
+        int j = 0;
+        int j2 = multiplierDataVariablesLength;
+        for (; j < j2; j++) {
+          multiplierProviderInfos.add(dataProviderInfos.get(i + j));
+          multiplierProviders[j] = dataProviders[i + j];
+        }
+        int k = 0;
+        for (j2 += multiplicandDataVariablesLength; j < j2; j++, k++) {
+          multiplicandProviderInfos.add(dataProviderInfos.get(i + j));
+          multiplicandProviders[k] = dataProviders[i + j];
+        }
+
+        return new DataProviderMultiplier(supervisor, context,
+          Arrays.asList(dataVariableMultiplication.getDataVariables()),
+          multiplierProviderInfos, multiplicandProviderInfos, multiplierProviders, multiplicandProviders);
+      }
+    }
+
     @NotNull
     private List<String> dataVariableNames() {
       return context.getCurrentFeature().getDataProviders()
@@ -324,42 +473,302 @@ public class DataIteratorFactory {
       }
       return result.toArray();
     }
+  }
 
-    private Iterator<?>[] createIterators() {
+  private static class DataProviderIterator extends BaseDataIterator {
+    private final List<String> dataVariableNames;
+    private final DataProviderInfo providerInfo;
+    private final Object provider;
+    private final Iterator<?> iterator;
+    private final int estimatedNumIterations;
+
+    public DataProviderIterator(IRunSupervisor supervisor, SpockExecutionContext context, String dataVariableName,
+                                DataProviderInfo providerInfo, Object provider) {
+      super(supervisor, context);
+      this.dataVariableNames = singletonList(Objects.requireNonNull(dataVariableName));
+      estimatedNumIterations = estimateNumIterations(Objects.requireNonNull(provider));
+      this.providerInfo = Objects.requireNonNull(providerInfo);
+      this.provider = provider;
+      iterator = createIterator(provider, providerInfo);
+    }
+
+    @Override
+    public void close() throws Exception {
+      GroovyRuntimeUtil.invokeMethodQuietly(provider, "close");
+    }
+
+    @Override
+    public boolean hasNext() {
+      if (context.getErrorInfoCollector().hasErrors()) {
+        return false;
+      }
+
+      try {
+        return iterator.hasNext();
+      } catch (Throwable t) {
+        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(providerInfo.getDataProviderMethod(), t));
+        return false;
+      }
+    }
+
+    @Override
+    public Object[] next() {
+      if (context.getErrorInfoCollector().hasErrors()) {
+        return null;
+      }
+
+      try {
+        return new Object[]{iterator.next()};
+      } catch (Throwable t) {
+        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(providerInfo.getDataProviderMethod(), t));
+        return null;
+      }
+    }
+
+    @Override
+    public int getEstimatedNumIterations() {
+      return estimatedNumIterations;
+    }
+
+    @Override
+    public List<String> getDataVariableNames() {
+      return dataVariableNames;
+    }
+  }
+
+  private static class DataProviderMultiplier extends BaseDataIterator {
+    private final List<String> dataVariableNames;
+    private final List<DataProviderInfo> multiplierProviderInfos;
+    private final List<DataProviderInfo> multiplicandProviderInfos;
+    private final DataProviderMultiplier multiplierProvider;
+    private final Object[] multiplierProviders;
+    private final DataProviderMultiplier multiplicandProvider;
+    private final Object[] multiplicandProviders;
+    private final Iterator<?>[] multiplierIterators;
+    private final Iterator<?>[] multiplicandIterators;
+    private boolean factorsSwapped = false;
+    private Object[] currentMultiplierValues = null;
+    private boolean collectMultiplicandValues = true;
+    private final List<List<Object>> collectedMultiplicandValues;
+    private final int estimatedNumIterations;
+
+    public DataProviderMultiplier(IRunSupervisor supervisor, SpockExecutionContext context, List<String> dataVariableNames,
+                                  List<DataProviderInfo> multiplierProviderInfos, List<DataProviderInfo> multiplicandProviderInfos,
+                                  Object[] multiplierProviders, Object[] multiplicandProviders) {
+      super(supervisor, context);
+      this.dataVariableNames = Objects.requireNonNull(dataVariableNames);
+      multiplierProvider = null;
+      multiplicandProvider = null;
+
+      int estimatedMultiplierIterations = estimateNumIterations(Objects.requireNonNull(multiplierProviders));
+      int estimatedMultiplicandIterations = estimateNumIterations(Objects.requireNonNull(multiplicandProviders));
+      estimatedNumIterations = (estimatedMultiplierIterations == -1) || (estimatedMultiplicandIterations == -1)
+        ? -1
+        : estimatedMultiplierIterations * estimatedMultiplicandIterations;
+
+      if ((estimatedMultiplierIterations != -1)
+        && ((estimatedMultiplicandIterations == -1) || (estimatedMultiplicandIterations > estimatedMultiplierIterations))) {
+        // multiplier is not unknown and multiplicand is unknown or larger,
+        // swap factors so that potentially fewer values need to be remembered in memory
+        factorsSwapped = true;
+        this.multiplierProviderInfos = multiplicandProviderInfos;
+        this.multiplicandProviderInfos = multiplierProviderInfos;
+        this.multiplierProviders = multiplicandProviders;
+        this.multiplicandProviders = multiplierProviders;
+      } else {
+        this.multiplierProviderInfos = multiplierProviderInfos;
+        this.multiplicandProviderInfos = multiplicandProviderInfos;
+        this.multiplierProviders = multiplierProviders;
+        this.multiplicandProviders = multiplicandProviders;
+      }
+
+      collectedMultiplicandValues = new ArrayList<>(this.multiplicandProviders.length);
+      for (int i = 0; i < this.multiplicandProviders.length; i++) {
+        collectedMultiplicandValues.add(new ArrayList<>());
+      }
+      multiplierIterators = createIterators(this.multiplierProviders, this.multiplierProviderInfos);
+      multiplicandIterators = createIterators(this.multiplicandProviders, this.multiplicandProviderInfos);
+    }
+
+    public DataProviderMultiplier(IRunSupervisor supervisor, SpockExecutionContext context, List<String> dataVariableNames,
+                                  List<DataProviderInfo> multiplicandProviderInfos,
+                                  DataProviderMultiplier multiplierProvider, Object[] multiplicandProviders) {
+      super(supervisor, context);
+      this.dataVariableNames = Objects.requireNonNull(dataVariableNames);
+
+      int estimatedMultiplierIterations = Objects.requireNonNull(multiplierProvider).getEstimatedNumIterations();
+      int estimatedMultiplicandIterations = estimateNumIterations(Objects.requireNonNull(multiplicandProviders));
+      estimatedNumIterations = (estimatedMultiplierIterations == -1) || (estimatedMultiplicandIterations == -1)
+        ? -1
+        : estimatedMultiplierIterations * estimatedMultiplicandIterations;
+
+      if ((estimatedMultiplierIterations != -1)
+        && ((estimatedMultiplicandIterations == -1) || (estimatedMultiplicandIterations > estimatedMultiplierIterations))) {
+        // multiplier is not unknown and multiplicand is unknown or larger,
+        // swap factors so that potentially fewer values need to be remembered in memory
+        factorsSwapped = true;
+        this.multiplierProviderInfos = multiplicandProviderInfos;
+        this.multiplicandProviderInfos = null;
+        this.multiplierProvider = null;
+        this.multiplierProviders = multiplicandProviders;
+        multiplicandProvider = multiplierProvider;
+        this.multiplicandProviders = null;
+        collectedMultiplicandValues = singletonList(new ArrayList<>());
+        multiplierIterators = createIterators(this.multiplierProviders, this.multiplierProviderInfos);
+        multiplicandIterators = new Iterator[]{multiplierProvider};
+      } else {
+        this.multiplierProviderInfos = null;
+        this.multiplicandProviderInfos = multiplicandProviderInfos;
+        this.multiplierProvider = multiplierProvider;
+        this.multiplierProviders = null;
+        multiplicandProvider = null;
+        this.multiplicandProviders = multiplicandProviders;
+        collectedMultiplicandValues = new ArrayList<>(multiplicandProviders.length);
+        for (int i = 0; i < multiplicandProviders.length; i++) {
+          collectedMultiplicandValues.add(new ArrayList<>());
+        }
+        multiplierIterators = new Iterator[]{multiplierProvider};
+        multiplicandIterators = createIterators(this.multiplicandProviders, this.multiplicandProviderInfos);
+      }
+    }
+
+    @Override
+    public void close() throws Exception {
+      if (multiplierProvider != null) {
+        GroovyRuntimeUtil.invokeMethodQuietly(multiplierProvider, "close");
+      }
+      if (multiplierProviders != null) {
+        for (Object provider : multiplierProviders) {
+          GroovyRuntimeUtil.invokeMethodQuietly(provider, "close");
+        }
+      }
+      if (multiplicandProvider != null) {
+        GroovyRuntimeUtil.invokeMethodQuietly(multiplicandProvider, "close");
+      }
+      if (multiplicandProviders != null) {
+        for (Object provider : multiplicandProviders) {
+          GroovyRuntimeUtil.invokeMethodQuietly(provider, "close");
+        }
+      }
+    }
+
+    @Override
+    public boolean hasNext() {
+      if (context.getErrorInfoCollector().hasErrors()) {
+        return false;
+      }
+      return haveNext(multiplicandIterators, multiplicandProviderInfos)
+        || haveNext(multiplierIterators, multiplierProviderInfos);
+    }
+
+    @Override
+    public Object[] next() {
+      if (context.getErrorInfoCollector().hasErrors()) {
+        return null;
+      }
+
+      // multiplicand is exhausted, start next round
+      if (!haveNext(multiplicandIterators, multiplicandProviderInfos)) {
+        // use the next set of multiplier values
+        currentMultiplierValues = extractNextValues(multiplierIterators, multiplierProviderInfos);
+        if (currentMultiplierValues == null) {
+          return null;
+        }
+        if (multiplierProvider != null) {
+          currentMultiplierValues = ((Object[]) currentMultiplierValues[0]);
+        }
+
+        // stop collecting multiplicand values if still collecting
+        collectMultiplicandValues = false;
+
+        // restart multiplicand values
+        for (int i = 0; i < multiplicandIterators.length; i++) {
+          try {
+            multiplicandIterators[i] = collectedMultiplicandValues.get(i).iterator();
+          } catch (Throwable t) {
+            supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(multiplicandProviderInfos.get(i).getDataProviderMethod(), t));
+            return null;
+          }
+        }
+      }
+
+      // first value overall, get the first set of multiplier values
+      if (currentMultiplierValues == null) {
+        currentMultiplierValues = extractNextValues(multiplierIterators, multiplierProviderInfos);
+        if (currentMultiplierValues == null) {
+          return null;
+        }
+        if (multiplierProvider != null) {
+          currentMultiplierValues = ((Object[]) currentMultiplierValues[0]);
+        }
+      }
+
+      // get the next set of multiplicand values
+      Object[] nextMultiplicandValues = extractNextValues(multiplicandIterators, multiplicandProviderInfos);
+      if (nextMultiplicandValues == null) {
+        return null;
+      }
+      if (collectMultiplicandValues) {
+        for (int i = 0; i < nextMultiplicandValues.length; i++) {
+          collectedMultiplicandValues.get(i).add(nextMultiplicandValues[i]);
+        }
+      }
+      if (multiplicandProvider != null) {
+        nextMultiplicandValues = ((Object[]) nextMultiplicandValues[0]);
+      }
+
+      // prepare result
+      Object[] nextMultiplierValues;
+      if (factorsSwapped) {
+        nextMultiplierValues = nextMultiplicandValues;
+        nextMultiplicandValues = currentMultiplierValues;
+      } else {
+        nextMultiplierValues = currentMultiplierValues;
+      }
+      Object[] next = new Object[nextMultiplierValues.length + nextMultiplicandValues.length];
+      System.arraycopy(nextMultiplierValues, 0, next, 0, nextMultiplierValues.length);
+      System.arraycopy(nextMultiplicandValues, 0, next, nextMultiplierValues.length, nextMultiplicandValues.length);
+      return next;
+    }
+
+    @Override
+    public int getEstimatedNumIterations() {
+      return estimatedNumIterations;
+    }
+
+    @Override
+    public List<String> getDataVariableNames() {
+      return dataVariableNames;
+    }
+
+    private Iterator<?>[] createIterators(Object[] dataProviders, List<DataProviderInfo> dataProviderInfos) {
       if (context.getErrorInfoCollector().hasErrors()) {
         return null;
       }
 
       Iterator<?>[] iterators = new Iterator<?>[dataProviders.length];
-      for (int i = 0; i < dataProviders.length; i++)
-        try {
-          Iterator<?> iter = GroovyRuntimeUtil.asIterator(dataProviders[i]);
-          if (iter == null) {
-            supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProviders().get(i).getDataProviderMethod(),
-              new SpockExecutionException("Data provider's iterator() method returned null")));
-            return null;
-          }
-          iterators[i] = iter;
-        } catch (Throwable t) {
-          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProviders().get(i).getDataProviderMethod(), t));
+      for (int i = 0; i < dataProviders.length; i++) {
+        Iterator<?> iter = createIterator(dataProviders[i], dataProviderInfos.get(i));
+        if (iter == null) {
           return null;
         }
+        iterators[i] = iter;
+      }
 
       return iterators;
     }
 
-    private SpockExecutionException createDifferentNumberOfDataValuesException(DataProviderInfo provider,
-                                                                               boolean hasNext) {
-      String msg = String.format("Data provider for variable '%s' has %s values than previous data provider(s)",
-        provider.getDataVariables().get(0), hasNext ? "more" : "fewer");
-      SpockExecutionException exception = new SpockExecutionException(msg);
-      FeatureInfo feature = provider.getParent();
-      SpecInfo spec = feature.getParent();
-      StackTraceElement elem = new StackTraceElement(spec.getReflection().getName(),
-        feature.getName(), spec.getFilename(), provider.getLine());
-      exception.setStackTrace(new StackTraceElement[]{elem});
-      return exception;
+    protected Object[] extractNextValues(Iterator<?>[] iterators, List<DataProviderInfo> providerInfos) {
+      Object[] result = new Object[iterators.length];
+      for (int i = 0; i < iterators.length; i++) {
+        try {
+          result[i] = iterators[i].next();
+        } catch (Throwable t) {
+          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(providerInfos.get(i).getDataProviderMethod(), t));
+          return null;
+        }
+      }
+      return result;
     }
-
   }
 }

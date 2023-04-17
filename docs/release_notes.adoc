@@ -5,6 +5,10 @@ include::include.adoc[]
 
 == 2.4 (tbd)
 
+=== Highlights
+
+* Add support for combining two or more data providers using cartesian product spockIssue:1062[]
+
 == 2.4-M4 (2024-03-21)
 
 * Fix nested regex finding in conditions spockPull:1931[]

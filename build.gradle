@@ -12,6 +12,7 @@ plugins {
   id "io.github.gradle-nexus.publish-plugin"
   id "com.github.ben-manes.versions"
   id "io.spring.nohttp"
+  id "org.spockframework.preprocess-workflows"
 }
 
 description = "Spock Framework"
@@ -441,48 +442,5 @@ def configureJavadoc(TaskProvider javadoc, boolean root = false) {
 def configureGroovydoc(TaskProvider groovydoc) {
   groovydoc.configure {
     include "spock/**"
-  }
-}
-
-configurations {
-  kotlinCompilerClasspath {
-    canBeConsumed = false
-  }
-  kotlinScriptClasspath {
-    canBeConsumed = false
-  }
-}
-
-dependencies {
-  kotlinCompilerClasspath 'org.jetbrains.kotlin:kotlin-compiler:1.8.20'
-  kotlinCompilerClasspath 'org.jetbrains.kotlin:kotlin-scripting-compiler:1.8.20'
-  kotlinScriptClasspath('org.jetbrains.kotlin:kotlin-main-kts:1.8.20') { transitive = false }
-}
-
-def preprocessWorkflows = tasks.register('preprocessWorkflows')
-file('.github/workflows').eachFileMatch(~/.*\.main\.kts$/) { workflowScript ->
-  def workflowName = workflowScript.name - ~/\.main\.kts$/
-  def pascalCasedWorkflowName = workflowName
-    .replaceAll(/-\w/) { it[1].toUpperCase() }
-    .replaceFirst(/^\w/) { it[0].toUpperCase() }
-  def preprocessWorkflow = tasks.register("preprocess${pascalCasedWorkflowName}Workflow", JavaExec) {
-    inputs
-      .file(workflowScript)
-      .withPropertyName('workflowScript')
-    outputs
-      .file(new File(workflowScript.parent, "${workflowName}.yaml"))
-      .withPropertyName('workflowFile')
-
-    javaLauncher = javaToolchains.launcherFor {
-      languageVersion = JavaLanguageVersion.of(17)
-    }
-    classpath(configurations.kotlinCompilerClasspath)
-    mainClass = 'org.jetbrains.kotlin.cli.jvm.K2JVMCompiler'
-    args('-no-stdlib', '-no-reflect')
-    args('-classpath', configurations.kotlinScriptClasspath.asPath)
-    args('-script', workflowScript.absolutePath)
-  }
-  preprocessWorkflows.configure {
-    dependsOn(preprocessWorkflow)
   }
 }

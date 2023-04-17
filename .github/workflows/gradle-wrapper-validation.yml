@@ -16,10 +16,10 @@ jobs:
       uses: actions/checkout@v3
     - id: step-1
       name: Execute script
-      run: rm '.github/workflows/gradle-wrapper-validation.yaml' && '.github/workflows/gradle-wrapper-validation.main.kts'
+      run: rm '.github/workflows/gradle-wrapper-validation.yml' && '.github/workflows/gradle-wrapper-validation.main.kts'
     - id: step-2
       name: Consistency check
-      run: git diff --exit-code '.github/workflows/gradle-wrapper-validation.yaml'
+      run: git diff --exit-code '.github/workflows/gradle-wrapper-validation.yml'
   validation:
     name: Validation
     runs-on: ubuntu-latest

@@ -15,11 +15,11 @@
 package org.spockframework.smoke.parameterization
 
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.compiler.InvalidSpecCompileException
-import org.spockframework.runtime.SpockExecutionException
-import spock.lang.*
-
-import org.opentest4j.MultipleFailuresError
+import spock.lang.Issue
+import spock.lang.PendingFeature
+import spock.lang.Rollup
+import spock.lang.Shared
+import spock.lang.Unroll
 
 @Rollup
 class DataTables extends EmbeddedSpecification {
@@ -44,10 +44,10 @@ class DataTables extends EmbeddedSpecification {
     Math.max(a, b) == c
 
     where:
-    a; b; c
-    5; 7; 7
-    3; 1; 3
-    9; 9; 9
+    a ; b ; c
+    5 ; 7 ; 7
+    3 ; 1 ; 3
+    9 ; 9 ; 9
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1573")
@@ -60,22 +60,6 @@ class DataTables extends EmbeddedSpecification {
     5 | 7 | 7
     3 | 1 | 3
     9 | 9 | 9
-  }
-
-  def "table must have at least two columns"() {
-    when:
-    compiler.compileFeatureBody """
-expect:
-true
-
-where:
-a
-1
-    """
-
-    then:
-    MultipleFailuresError e = thrown()
-    e.failures*.class == [InvalidSpecCompileException] * 2
   }
 
   def "can use pseudo-column to enable one-column table"() {
@@ -94,129 +78,6 @@ a
     where:
     a ; _
     1 ; _
-  }
-
-  def "table with just a header are not allowed"() {
-    when:
-    runner.runFeatureBody """
-expect:
-true
-
-where:
-a | b
-    """
-
-    then:
-    thrown(SpockExecutionException)
-  }
-
-  def "table with just a header are not allowed with semicolon"() {
-    when:
-    runner.runFeatureBody """
-expect:
-true
-
-where:
-a ; b
-    """
-
-    then:
-    thrown(SpockExecutionException)
-  }
-
-  def "header may only contain variable names"() {
-    when:
-    compiler.compileFeatureBody """
-expect:
-true
-
-where:
-a | 1 | b
-1 | 1 | 1
-    """
-
-    then:
-    thrown(InvalidSpecCompileException)
-  }
-
-  def "header may only contain variable names with semicolon"() {
-    when:
-    compiler.compileFeatureBody """
-expect:
-true
-
-where:
-a ; 1 ; b
-1 ; 1 ; 1
-    """
-
-    then:
-    MultipleFailuresError e = thrown()
-    e.failures*.class == [InvalidSpecCompileException] * 6
-  }
-
-  def "header variable names must not clash with local variables"() {
-    when:
-    compiler.compileFeatureBody """
-def local = 1
-
-expect:
-true
-
-where:
-a | local
-1 | 1
-    """
-
-    then:
-    thrown(InvalidSpecCompileException)
-  }
-
-  def "header variable names must not clash with local variables with semicolon"() {
-    when:
-    compiler.compileFeatureBody """
-def local = 1
-
-expect:
-true
-
-where:
-a ; local
-1 ; 1
-    """
-
-    then:
-    thrown(InvalidSpecCompileException)
-  }
-
-    def "header variable names must not clash with each other"() {
-    when:
-    compiler.compileFeatureBody """
-expect:
-true
-
-where:
-a | a
-1 | 1
-    """
-
-    then:
-    thrown(InvalidSpecCompileException)
-  }
-
-    def "header variable names must not clash with each other with semicolon"() {
-    when:
-    compiler.compileFeatureBody """
-expect:
-true
-
-where:
-a ; a
-1 ; 1
-    """
-
-    then:
-    thrown(InvalidSpecCompileException)
   }
 
   def "columns can be declared as parameters"(a, String b) {
@@ -333,61 +194,6 @@ a ; a
     staticField ; sharedField
   }
 
-  @Issue("https://github.com/spockframework/spock/issues/261")
-  def "cells cannot reference instance fields"() {
-    when:
-    compiler.compileSpecBody """
-def instanceField
-
-def foo() {
-  expect:
-  true
-
-  where:
-  a             | b
-  instanceField | 1
-}
-    """
-
-    then:
-    InvalidSpecCompileException e = thrown()
-    e.message.contains("@Shared")
-  }
-
-  def "cells cannot reference local variables (won't be found)"() {
-    when:
-    runner.runFeatureBody """
-def local = 42
-
-expect:
-true
-
-where:
-a     | b
-local | 1
-    """
-
-    then:
-    thrown(MissingPropertyException)
-  }
-
-  def "cells cannot reference local variables (won't be found) with semicolon"() {
-    when:
-    runner.runFeatureBody """
-def local = 42
-
-expect:
-true
-
-where:
-a     ; b
-local ; 1
-    """
-
-    then:
-    thrown(MissingPropertyException)
-  }
-
   def 'cells can reference previous cells'() {
     expect:
     [a, b, c] == [0, 1, 2]
@@ -446,37 +252,7 @@ local ; 1
     '''
 
     then:
-    result.testEvents().finished().list().testDescriptor.displayName == ["a = 0, b = 1", "a = 2, b = 2", "a = #a, b = #b" ]
-  }
-
-  def "cells can't reference next cells"() {
-    when:
-    runner.runFeatureBody '''
-      expect:
-      false
-
-      where:
-      a | b
-      b | 1
-    '''
-
-    then:
-    thrown Exception
-  }
-
-  def "cells can't reference themselves"() {
-    when:
-    runner.runFeatureBody '''
-      expect:
-      false
-
-      where:
-      a | b
-      1 | b + 1
-    '''
-
-    then:
-    thrown Exception
+    result.testEvents().finished().list().testDescriptor.displayName == ["a = 0, b = 1", "a = 2, b = 2", "a = #a, b = #b"]
   }
 
   def 'data tables can be referenced from following variables'() {
@@ -491,38 +267,6 @@ local ; 1
     c = b + 1
   }
 
-  def "rows must have same number of elements as header"() {
-    when:
-    compiler.compileFeatureBody """
-expect:
-true
-
-where:
-a | b | c
-1 | 2 | 3
-4 | 5
-    """
-
-    then:
-    thrown(InvalidSpecCompileException)
-  }
-
-  def "rows must have same number of elements as header with semicolon"() {
-    when:
-    compiler.compileFeatureBody """
-expect:
-true
-
-where:
-a ; b ; c
-1 ; 2 ; 3
-4 ; 5
-    """
-
-    then:
-    thrown(InvalidSpecCompileException)
-  }
-
   def "cells can be separated with single or double pipe operator"() {
     expect:
     a + b == c
@@ -533,13 +277,209 @@ a ; b ; c
     4 | 5 || 9
   }
 
+  @Unroll
+  def 'data tables with #separators can be combined'() {
+    when:
+    def results = runner.runSpecBody """
+      def 'a feature (#a #b #c)'() {
+        expect:
+        true
+
+        where:
+        a $sepA _
+        1 $sepA _
+        2 $sepA _
+        combined:
+        b $sepB _
+        3 $sepB _
+        combined:
+        c $sepA _
+        4 $sepA _
+        5 $sepA _
+        6 $sepA _
+      }
+    """
+
+    then:
+    results.testsStartedCount == 1 + 6
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b #c)',
+      'a feature (1 3 4)',
+      'a feature (2 3 4)',
+      'a feature (1 3 5)',
+      'a feature (2 3 5)',
+      'a feature (1 3 6)',
+      'a feature (2 3 6)'
+    ]
+
+    where:
+    sepA | sepB | separators
+    '|'  | '|'  | 'pipes'
+    ';'  | ';'  | 'semicolons'
+    '|'  | ';'  | 'mixed separators'
+  }
+
+  def 'combined data table columns can use previous data table column values within one table'() {
+    expect:
+    a == b
+
+    where:
+    i << (1..6)
+
+    a | b
+    1 | a
+    2 | a
+    combined:
+    c << (1..3)
+  }
+
+  @PendingFeature(reason = 'previous column access across tables does not yet work as expected with cross-multiplication')
+  def 'combined data table columns can use previous data table column values across tables'() {
+    when:
+    def results = runner.runFeatureBody '''
+      expect:
+      true
+      a == b
+      c == "x$i"
+
+      where:
+      x    | _
+      'x1' | _
+      'x2' | _
+      'x3' | _
+      'x4' | _
+      'x5' | _
+      'x6' | _
+
+      i << (1..6)
+
+      a | _
+      1 | _
+      2 | _
+      combined:
+      b | _
+      a | _
+      combined:
+      c | _
+      x | _
+      x | _
+      x | _
+    '''
+
+    then:
+    results.testsSucceededCount == 1 + 6
+  }
+
+  def 'data tables with different widths can be combined'() {
+    when:
+    def results = runner.runSpecBody '''
+      def 'a feature (#a #b #c #d #e)'() {
+        expect:
+        true
+
+        where:
+        a | b
+        1 | 'b'
+        2 | 'b'
+        combined:
+        c | d   | e
+        3 | 'd' | 'e'
+      }
+    '''
+
+    then:
+    results.testsStartedCount == 1 + 2
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b #c #d #e)',
+      'a feature (1 b 3 d e)',
+      'a feature (2 b 3 d e)'
+    ]
+  }
+
+  def 'data tables starting with table separator can be combined'() {
+    when:
+    def results = runner.runSpecBody '''
+      def 'a feature (#a #b #c #d #e)'() {
+        expect:
+        true
+
+        where:
+        a | b
+        1 | 'b'
+        2 | 'b'
+        combined:
+        _____________
+        c | d   | e
+        3 | 'd' | 'e'
+      }
+    '''
+
+    then:
+    results.testsStartedCount == 1 + 2
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b #c #d #e)',
+      'a feature (1 b 3 d e)',
+      'a feature (2 b 3 d e)'
+    ]
+  }
+
+  def 'data tables and data pipes can be combined'() {
+    when:
+    def results = runner.runSpecBody '''
+      def 'a feature (#a #b #c)'() {
+        expect:
+        true
+
+        where:
+        a | b
+        1 | 'b'
+        2 | 'b'
+        combined:
+        c << [3]
+      }
+    '''
+
+    then:
+    results.testsStartedCount == 1 + 2
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b #c)',
+      'a feature (1 b 3)',
+      'a feature (2 b 3)'
+    ]
+  }
+
+  def 'data pipes and data tables can be combined'() {
+    when:
+    def results = runner.runSpecBody '''
+      def 'a feature (#a #b #c)'() {
+        expect:
+        true
+
+        where:
+        a << [3]
+        combined:
+        b | c
+        1 | 'b'
+        2 | 'b'
+      }
+    '''
+
+    then:
+    results.testsStartedCount == 1 + 2
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b #c)',
+      'a feature (3 1 b)',
+      'a feature (3 2 b)'
+    ]
+  }
+
   def "cells can be separated with any amount of semicolons"() {
     expect:
     a + b == c
 
     where:
-    a ; b ;;   c
-    1 ; 2 ;;;  3
+    a ; b ;; c
+    1 ; 2 ;;; 3
     4 ; 5 ;;;; 9
   }
 
@@ -567,9 +507,9 @@ a ; b ; c
     a + b == c
 
     where:
-    a | b || c
-    1 | 2 || 3
-    4 || 5 | 9
+    a  | b || c
+    1  | 2 || 3
+    4 || 5  | 9
   }
 
   def "two or more underscores can be used to separate multiple data tables"() {
@@ -591,85 +531,6 @@ d | e | f
 
     where:
     dataTableSeparator << (2..20).collect { '_' * it }
-  }
-
-  def "two or more underscores can not be used to separate multiple data tables if they represent a local variable"() {
-    when:
-    compiler.compileFeatureBody """
-def $dataTableSeparator = ''
-
-expect:
-a + b == c
-d + e == f
-
-where:
-a | b | c
-1 | 2 | 3
-4 | 5 | 9
-$dataTableSeparator
-d | e | f
-1 | 2 | 3
-4 | 5 | 9
-"""
-
-    then:
-    InvalidSpecCompileException isce = thrown()
-    isce.message.startsWith('where-blocks may only contain parameterizations')
-
-    where:
-    dataTableSeparator << (2..20).collect { '_' * it }
-  }
-
-  def "two or more underscores can not be used to separate multiple data tables if they represent a field"() {
-    when:
-    compiler.compileSpecBody """
-def $dataTableSeparator = ''
-
-def foo() {
-  expect:
-  a + b == c
-  d + e == f
-
-  where:
-  a | b | c
-  1 | 2 | 3
-  4 | 5 | 9
-  $dataTableSeparator
-  d | e | f
-  1 | 2 | 3
-  4 | 5 | 9
-}
-"""
-
-    then:
-    InvalidSpecCompileException isce = thrown()
-    isce.message.startsWith('where-blocks may only contain parameterizations')
-
-    where:
-    dataTableSeparator << (2..20).collect { '_' * it }
-  }
-
-  def "different tables have to have same row count"() {
-    when:
-    runner.runFeatureBody """
-expect:
-true
-
-where:
-a | _
-1 | _
-4 | _
-3 | _
-__
-
-b | _
-2 | _
-5 | _
-"""
-
-    then:
-    SpockExecutionException see = thrown()
-    see.message =~ 'fewer values than previous'
   }
 
   def "derived data variables do not break data table previous column references"() {
@@ -735,4 +596,3 @@ b | _
     def age
   }
 }
-

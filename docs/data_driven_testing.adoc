@@ -68,11 +68,11 @@ be further iterations of the first table, including the seemingly header row:
 include::{sourcedir}/datadriven/DataSpec.groovy[tag=multiple-tables]
 ----
 
-This is semantically exactly the same, just as one wider combined data table:
+This is semantically exactly the same, just as one wider joined data table:
 
 [source,groovy,indent=0]
 ----
-include::{sourcedir}/datadriven/DataSpec.groovy[tag=multiple-tables-combined]
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=multiple-tables-joined]
 ----
 
 The sequence of two or more underscores can be used anywhere in the `where` block.
@@ -310,6 +310,35 @@ You can use named deconstruction with nested data pipes, but only on the innermo
     ...
 include::{sourcedir}/datadriven/DataSpec.groovy[tag=nested-and-named-multi-variable-data-pipe]
 ----
+
+== Cross-multiplying Data Providers
+
+Two or more consecutive data providers, be it a data table or a data pipe, can also be combined
+using a cartesian product using the `combined:` label between them. The following will result
+in these four executed tests
+
+- `a feature (1 3 5)`
+- `a feature (2 3 5)`
+- `a feature (1 4 6)`
+- `a feature (2 4 6)`
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=multiple-tables-combined]
+----
+
+Exactly the same result can be achieved using
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=pipe-and-table-combined]
+----
+
+NOTE: Combining with a derived data variable (`x = ...`) makes no sense and thus is forbidden.
+
+NOTE: If a data table takes part in a cross-multiplication, accessing columns of previous
+      data tables would not behave in an intuitive way and thus is currently forbidden. Accessing
+      previous columns within one data table even works while taking part in a cross-multiplication.
 
 == Data Variable Assignment
 

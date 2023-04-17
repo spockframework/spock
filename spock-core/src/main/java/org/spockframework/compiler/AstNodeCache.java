@@ -44,6 +44,8 @@ public class AstNodeCache {
   public final ClassNode SpecInternals = ClassHelper.makeWithoutCaching(SpecInternals.class);
   public final ClassNode MockController = ClassHelper.makeWithoutCaching(MockController.class);
   public final ClassNode SpecificationContext = ClassHelper.makeWithoutCaching(SpecificationContext.class);
+  public final ClassNode DataVariableMultiplication = ClassHelper.makeWithoutCaching(DataVariableMultiplication.class);
+  public final ClassNode DataVariableMultiplicationFactor = ClassHelper.makeWithoutCaching(DataVariableMultiplicationFactor.class);
 
   public final MethodNode SpecInternals_GetSpecificationContext =
       SpecInternals.getDeclaredMethods(Identifiers.GET_SPECIFICATION_CONTEXT).get(0);

@@ -80,7 +80,7 @@ jobs:
       name: Build Spock
       uses: gradle/gradle-build-action@v2
       with:
-        arguments: --no-parallel --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" "-Dscan.tag.main-build"
+        arguments: --no-parallel --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" -Dscan.tag.main-build
       env:
         ORG_GRADLE_PROJECT_spockBuildCacheUsername: ${{ secrets.SPOCK_BUILD_CACHE_USERNAME }}
         ORG_GRADLE_PROJECT_spockBuildCachePassword: ${{ secrets.SPOCK_BUILD_CACHE_PASSWORD }}
@@ -120,7 +120,7 @@ jobs:
       name: Publish Spock
       uses: gradle/gradle-build-action@v2
       with:
-        arguments: --no-parallel --stacktrace ghActionsPublish "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" "-Dscan.tag.main-publish"
+        arguments: --no-parallel --stacktrace ghActionsPublish "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" -Dscan.tag.main-publish
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONATYPE_OSS_USER: ${{ secrets.SONATYPE_OSS_USER }}
@@ -159,7 +159,7 @@ jobs:
       name: Publish Docs
       uses: gradle/gradle-build-action@v2
       with:
-        arguments: --no-parallel --stacktrace ghActionsDocs "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" "-Dscan.tag.main-docs"
+        arguments: --no-parallel --stacktrace ghActionsDocs "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" -Dscan.tag.main-docs
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         ORG_GRADLE_PROJECT_spockBuildCacheUsername: ${{ secrets.SPOCK_BUILD_CACHE_USERNAME }}

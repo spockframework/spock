@@ -32,7 +32,8 @@ workflow(
         Push(),
         PullRequest()
     ),
-    sourceFile = __FILE__.toPath()
+    sourceFile = __FILE__.toPath(),
+    targetFileName = "${__FILE__.name.substringBeforeLast(".main.kts")}.yml"
 ) {
     job(
         id = "validation",

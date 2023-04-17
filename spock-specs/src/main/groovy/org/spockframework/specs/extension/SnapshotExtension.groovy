@@ -28,12 +28,10 @@ class SnapshotExtension implements IAnnotationDrivenExtension<Snapshot> {
   @Override
   void visitFeatureAnnotation(Snapshot annotation, FeatureInfo feature) {
     def snapshotterFields = feature.spec.allFields.findAll {
-      ((it.type == Snapshotter) || (it.type.isAssignableFrom(Snapshotter) && (it.name == 'snapshotter'))) &&
-        !it.static && !it.shared
+      (it.type == Snapshotter) && !it.static && !it.shared
     }
     def snapshotterParameters = feature.featureMethod.parameters.findAll {
-      ((it.reflection.type == Snapshotter) || (it.reflection.type.isAssignableFrom(Snapshotter) && (it.name == 'snapshotter'))) &&
-        !(it.name in feature.dataVariables)
+      (it.reflection.type == Snapshotter) && !(it.name in feature.dataVariables)
     }
     Assert.that(
       (snapshotterFields.size() != 0) || (snapshotterParameters.size() != 0),

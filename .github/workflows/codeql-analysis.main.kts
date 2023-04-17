@@ -16,13 +16,16 @@
  * limitations under the License.
  */
 
-@file:DependsOn("io.github.typesafegithub:github-workflows-kt:0.40.1")
+@file:DependsOn("io.github.typesafegithub:github-workflows-kt:0.41.0")
 
 import io.github.typesafegithub.workflows.actions.actions.CheckoutV3
+import io.github.typesafegithub.workflows.actions.github.CodeqlActionAnalyzeV2
+import io.github.typesafegithub.workflows.actions.github.CodeqlActionInitV2
 import io.github.typesafegithub.workflows.actions.gradle.GradleBuildActionV2
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
-import io.github.typesafegithub.workflows.domain.actions.CustomAction
+import io.github.typesafegithub.workflows.domain.actions.Action
+import io.github.typesafegithub.workflows.domain.actions.LocalAction
 import io.github.typesafegithub.workflows.domain.triggers.Cron
 import io.github.typesafegithub.workflows.domain.triggers.PullRequest
 import io.github.typesafegithub.workflows.domain.triggers.Push
@@ -50,7 +53,7 @@ workflow(
         )
     ),
     sourceFile = __FILE__.toPath(),
-    //# https://stackoverflow.com/a/72408109/16358266
+    // https://stackoverflow.com/a/72408109/16358266
     concurrency = Concurrency(
         group = "${expr { github.workflow }}-${expr("${github.eventPullRequest.pull_request.number} || ${github.ref}")}",
         cancelInProgress = true
@@ -77,39 +80,23 @@ workflow(
         // Manually added: Install and setup JDK
         uses(
             name = "Set up JDKs",
-            action = CustomAction(
-                actionOwner = ".github",
-                actionName = "actions/setup-build-env",
-                actionVersion = "v0",
-                inputs = emptyMap()
-            ),
-            _customArguments = mapOf(
-                "uses" to "./.github/actions/setup-build-env"
-            )
+            action = SetupBuildEnv()
         )
         // Initializes the CodeQL tools for scanning
         uses(
             name = "Initialize CodeQL",
-            action = CustomAction(
-                actionOwner = "github",
-                actionName = "codeql-action/init",
-                actionVersion = "v3",
-                inputs = emptyMap()
+            action = CodeqlActionInitV2(
+                _customVersion = "v3"
                 // Override language selection by uncommenting this and choosing your languages
-                //inputs = mapOf("languages" to "go, javascript, csharp, python, cpp, java")
+                // languages = listOf("go", "javascript", "csharp", "python", "cpp", "java"),
             )
         )
         // Autobuild attempts to build any compiled languages (C/C++, C#, or Java).
         // If this step fails, then you should remove it and run the build manually (see below).
-        //uses(
-        //    name = "Autobuild",
-        //    action = CustomAction(
-        //        actionOwner = "github",
-        //        actionName = "codeql-action/autobuild",
-        //        actionVersion = "v1",
-        //        inputs = emptyMap()
-        //    )
-        //)
+        // uses(
+        //     name = "Autobuild",
+        //     action = CodeqlActionAutobuildV2()
+        // )
         //
         // ℹ️ Command-line programs to run using the OS shell.
         // 📚 https://git.io/JvXDl
@@ -118,12 +105,12 @@ workflow(
         //    three lines and modify them (or add more) to build your code if your
         //    project uses a compiled language
         //
-        //run(
-        //    command = """
-        //        make bootstrap
-        //        make release
-        //    """.trimIndent()
-        //)
+        // run(
+        //     command = """
+        //         make bootstrap
+        //         make release
+        //     """.trimIndent()
+        // )
 
         // Manually added: build
         // we have to disable build cache for now as it seems to be necessary for the compiler to run during the build
@@ -131,17 +118,26 @@ workflow(
         uses(
             name = "Build Spock Classes",
             action = GradleBuildActionV2(
-                arguments = """--stacktrace --no-build-cache testClasses "-Dvariant=${expr("matrix.variant")}""""
+                arguments = listOf(
+                    "--stacktrace",
+                    "--no-build-cache",
+                    "testClasses",
+                    """"-Dvariant=${expr("matrix.variant")}""""
+                ).joinToString(" ")
             )
         )
         uses(
             name = "Perform CodeQL Analysis",
-            action = CustomAction(
-                actionOwner = "github",
-                actionName = "codeql-action/analyze",
-                actionVersion = "v3",
-                inputs = emptyMap()
-            )
+            action = CodeqlActionAnalyzeV2(_customVersion = "v3")
         )
     }
 }.writeToFile()
+
+data class SetupBuildEnv(
+    val additionalJavaVersion: String? = null
+) : LocalAction<Action.Outputs>("./.github/actions/setup-build-env") {
+    override fun toYamlArguments() =
+        additionalJavaVersion?.let { linkedMapOf("additional-java-version" to it) } ?: linkedMapOf()
+
+    override fun buildOutputObject(stepId: String): Outputs = Outputs(stepId)
+}

@@ -16,14 +16,15 @@
  * limitations under the License.
  */
 
-@file:DependsOn("io.github.typesafegithub:github-workflows-kt:0.40.1")
+@file:DependsOn("io.github.typesafegithub:github-workflows-kt:0.41.0")
 
 import io.github.typesafegithub.workflows.actions.actions.CheckoutV3
 import io.github.typesafegithub.workflows.actions.codecov.CodecovActionV3
 import io.github.typesafegithub.workflows.actions.gradle.GradleBuildActionV2
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType
-import io.github.typesafegithub.workflows.domain.actions.CustomAction
+import io.github.typesafegithub.workflows.domain.actions.Action.Outputs
+import io.github.typesafegithub.workflows.domain.actions.LocalAction
 import io.github.typesafegithub.workflows.domain.triggers.PullRequest
 import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.dsl.expressions.Contexts
@@ -43,7 +44,7 @@ workflow(
         PullRequest()
     ),
     sourceFile = __FILE__.toPath(),
-    //# https://stackoverflow.com/a/72408109/16358266
+    // https://stackoverflow.com/a/72408109/16358266
     concurrency = Concurrency(
         group = "${expr { github.workflow }}-${expr("${Contexts.github.eventPullRequest.pull_request.number} || ${Contexts.github.ref}")}",
         cancelInProgress = true
@@ -112,16 +113,8 @@ workflow(
         )
         uses(
             name = "Set up JDKs",
-            action = CustomAction(
-                actionOwner = ".github",
-                actionName = "actions/setup-build-env",
-                actionVersion = "v0",
-                inputs = mapOf(
-                    "additional-java-version" to expr("matrix.java")
-                )
-            ),
-            _customArguments = mapOf(
-                "uses" to "./.github/actions/setup-build-env"
+            action = SetupBuildEnv(
+                additionalJavaVersion = expr("matrix.java")
             )
         )
         val SPOCK_BUILD_CACHE_USERNAME by Contexts.secrets
@@ -130,11 +123,13 @@ workflow(
         uses(
             name = "Build Spock",
             action = GradleBuildActionV2(
-                arguments = """--no-parallel --stacktrace ghActionsBuild "-Dvariant=${expr("matrix.variant")}" "-DjavaVersion=${
-                    expr(
-                        "matrix.java"
-                    )
-                }""""
+                arguments = listOf(
+                    "--no-parallel",
+                    "--stacktrace",
+                    "ghActionsBuild",
+                    """"-Dvariant=${expr("matrix.variant")}"""",
+                    """"-DjavaVersion=${expr("matrix.java")}""""
+                ).joinToString(" ")
             ),
             // secrets are not injected for pull requests
             env = linkedMapOf(
@@ -149,3 +144,12 @@ workflow(
         )
     }
 }.writeToFile()
+
+data class SetupBuildEnv(
+    val additionalJavaVersion: String? = null
+) : LocalAction<Outputs>("./.github/actions/setup-build-env") {
+    override fun toYamlArguments() =
+        additionalJavaVersion?.let { linkedMapOf("additional-java-version" to it) } ?: linkedMapOf()
+
+    override fun buildOutputObject(stepId: String): Outputs = Outputs(stepId)
+}

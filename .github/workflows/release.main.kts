@@ -16,14 +16,15 @@
  * limitations under the License.
  */
 
-@file:DependsOn("io.github.typesafegithub:github-workflows-kt:0.40.1")
+@file:DependsOn("io.github.typesafegithub:github-workflows-kt:0.41.0")
 
 import io.github.typesafegithub.workflows.actions.actions.CheckoutV3
 import io.github.typesafegithub.workflows.actions.actions.CheckoutV3.FetchDepth
 import io.github.typesafegithub.workflows.actions.codecov.CodecovActionV3
 import io.github.typesafegithub.workflows.actions.gradle.GradleBuildActionV2
 import io.github.typesafegithub.workflows.domain.RunnerType
-import io.github.typesafegithub.workflows.domain.actions.CustomAction
+import io.github.typesafegithub.workflows.domain.actions.Action
+import io.github.typesafegithub.workflows.domain.actions.LocalAction
 import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.dsl.expressions.Contexts
 import io.github.typesafegithub.workflows.dsl.expressions.Contexts.github
@@ -113,26 +114,21 @@ workflow(
         )
         uses(
             name = "Set up JDKs",
-            action = CustomAction(
-                actionOwner = ".github",
-                actionName = "actions/setup-build-env",
-                actionVersion = "v0",
-                inputs = mapOf(
-                    "additional-java-version" to expr("matrix.java")
-                )
-            ),
-            _customArguments = mapOf(
-                "uses" to "./.github/actions/setup-build-env"
+            action = SetupBuildEnv(
+                additionalJavaVersion = expr("matrix.java")
             )
         )
         uses(
             name = "Build Spock",
             action = GradleBuildActionV2(
-                arguments = """--no-parallel --stacktrace ghActionsBuild "-Dvariant=${expr("matrix.variant")}" "-DjavaVersion=${
-                    expr(
-                        "matrix.java"
-                    )
-                }" "-Dscan.tag.main-build""""
+                arguments = listOf(
+                    "--no-parallel",
+                    "--stacktrace",
+                    "ghActionsBuild",
+                    """"-Dvariant=${expr("matrix.variant")}"""",
+                    """"-DjavaVersion=${expr("matrix.java")}"""",
+                    "-Dscan.tag.main-build"
+                ).joinToString(" ")
             ),
             env = linkedMapOf(
                 "ORG_GRADLE_PROJECT_spockBuildCacheUsername" to expr(SPOCK_BUILD_CACHE_USERNAME),
@@ -168,26 +164,21 @@ workflow(
         )
         uses(
             name = "Set up JDKs",
-            action = CustomAction(
-                actionOwner = ".github",
-                actionName = "actions/setup-build-env",
-                actionVersion = "v0",
-                inputs = mapOf(
-                    "additional-java-version" to expr("matrix.java")
-                )
-            ),
-            _customArguments = mapOf(
-                "uses" to "./.github/actions/setup-build-env"
+            action = SetupBuildEnv(
+                additionalJavaVersion = expr("matrix.java")
             )
         )
         uses(
             name = "Publish Spock",
             action = GradleBuildActionV2(
-                arguments = """--no-parallel --stacktrace ghActionsPublish "-Dvariant=${expr("matrix.variant")}" "-DjavaVersion=${
-                    expr(
-                        "matrix.java"
-                    )
-                }" "-Dscan.tag.main-publish""""
+                arguments = listOf(
+                    "--no-parallel",
+                    "--stacktrace",
+                    "ghActionsPublish",
+                    """"-Dvariant=${expr("matrix.variant")}"""",
+                    """"-DjavaVersion=${expr("matrix.java")}"""",
+                    "-Dscan.tag.main-publish"
+                ).joinToString(" ")
             ),
             env = linkedMapOf(
                 "GITHUB_TOKEN" to expr(GITHUB_TOKEN),
@@ -219,16 +210,8 @@ workflow(
         )
         uses(
             name = "Set up JDKs",
-            action = CustomAction(
-                actionOwner = ".github",
-                actionName = "actions/setup-build-env",
-                actionVersion = "v0",
-                inputs = mapOf(
-                    "additional-java-version" to expr("matrix.java")
-                )
-            ),
-            _customArguments = mapOf(
-                "uses" to "./.github/actions/setup-build-env"
+            action = SetupBuildEnv(
+                additionalJavaVersion = expr("matrix.java")
             )
         )
         run(
@@ -238,11 +221,14 @@ workflow(
         uses(
             name = "Publish Docs",
             action = GradleBuildActionV2(
-                arguments = """--no-parallel --stacktrace ghActionsDocs "-Dvariant=${expr("matrix.variant")}" "-DjavaVersion=${
-                    expr(
-                        "matrix.java"
-                    )
-                }" "-Dscan.tag.main-docs""""
+                arguments = listOf(
+                    "--no-parallel",
+                    "--stacktrace",
+                    "ghActionsDocs",
+                    """"-Dvariant=${expr("matrix.variant")}"""",
+                    """"-DjavaVersion=${expr("matrix.java")}"""",
+                    "-Dscan.tag.main-docs"
+                ).joinToString(" ")
             ),
             env = linkedMapOf(
                 "GITHUB_TOKEN" to expr(GITHUB_TOKEN),
@@ -253,3 +239,12 @@ workflow(
         )
     }
 }.writeToFile()
+
+data class SetupBuildEnv(
+    val additionalJavaVersion: String? = null
+) : LocalAction<Action.Outputs>("./.github/actions/setup-build-env") {
+    override fun toYamlArguments() =
+        additionalJavaVersion?.let { linkedMapOf("additional-java-version" to it) } ?: linkedMapOf()
+
+    override fun buildOutputObject(stepId: String): Outputs = Outputs(stepId)
+}

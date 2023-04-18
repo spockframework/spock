@@ -51,6 +51,8 @@ workflow(
     val SPOCK_BUILD_CACHE_PASSWORD by Contexts.secrets
     val GRADLE_ENTERPRISE_ACCESS_KEY by Contexts.secrets
 
+    val variants = listOf("2.5", "3.0", "4.0")
+    val javaVersions = listOf("8", "11", "17")
     val buildAndVerify = job(
         id = "build-and-verify",
         name = "Build and Verify",
@@ -61,47 +63,26 @@ workflow(
                 "fail-fast" to false,
                 "matrix" to mapOf(
                     "os" to listOf("ubuntu-latest"),
-                    "variant" to listOf("2.5", "3.0", "4.0"),
-                    "java" to listOf("8", "11", "17"),
-                    "exclude" to listOf(
-                        mapOf(
-                            "os" to "ubuntu-latest",
-                            "variant" to "2.5",
-                            "java" to "17"
-                        )
-                    ),
-                    "include" to listOf(
-                        mapOf(
-                            "os" to "windows-latest",
-                            "variant" to "2.5",
-                            "java" to "8"
-                        ),
-                        mapOf(
-                            "os" to "windows-latest",
-                            "variant" to "3.0",
-                            "java" to "8"
-                        ),
-                        mapOf(
-                            "os" to "windows-latest",
-                            "variant" to "4.0",
-                            "java" to "8"
-                        ),
-                        mapOf(
-                            "os" to "macos-latest",
-                            "variant" to "2.5",
-                            "java" to "8"
-                        ),
-                        mapOf(
-                            "os" to "macos-latest",
-                            "variant" to "3.0",
-                            "java" to "8"
-                        ),
-                        mapOf(
-                            "os" to "macos-latest",
-                            "variant" to "4.0",
-                            "java" to "8"
-                        )
-                    )
+                    "variant" to variants,
+                    "java" to javaVersions,
+                    "exclude" to javaVersions
+                        .filter { it.toInt() >= 17 }
+                        .map { javaVersion ->
+                            mapOf(
+                                "os" to "ubuntu-latest",
+                                "variant" to "2.5",
+                                "java" to javaVersion
+                            )
+                        },
+                    "include" to listOf("windows-latest", "macos-latest")
+                        .flatMap { os -> variants.map { os to it } }
+                        .map { (os, variant) ->
+                            mapOf(
+                                "os" to os,
+                                "variant" to variant,
+                                "java" to javaVersions.first()
+                            )
+                        }
                 )
             )
         )
@@ -154,9 +135,9 @@ workflow(
         strategyMatrix = mapOf(
             "os" to listOf("ubuntu-latest"),
             // publish needs to be done for all versions
-            "variant" to listOf("2.5", "3.0", "4.0"),
+            "variant" to variants,
             // publish needs the min supported java version
-            "java" to listOf("8")
+            "java" to javaVersions.take(1)
         )
     ) {
         uses(
@@ -200,9 +181,9 @@ workflow(
         strategyMatrix = mapOf(
             "os" to listOf("ubuntu-latest"),
             // docs need the highest variant
-            "variant" to listOf("4.0"),
+            "variant" to variants.takeLast(1),
             // docs need the highest java version
-            "java" to listOf("17")
+            "java" to javaVersions.takeLast(1)
         )
     ) {
         uses(

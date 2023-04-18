@@ -44,38 +44,32 @@ class OrderExtensionSpec extends EmbeddedSpecification {
     compiler.addClassMemberImport(OrderExtensionSpec)
     compiler.addClassImport(Order)
     specs = compiler.compileWithImports("""
-class FirstSpec extends Specification {
+abstract class BaseSpec extends Specification {
   @Shared execution = new SpecExecution(spec: this.class.simpleName)
   def setup() { execution.features << specificationContext.currentFeature.name }
   def cleanupSpec() { executionsTL.get() << execution }
+}
+
+class FirstSpec extends BaseSpec {
   def one() { expect: true }
   def two() { expect: true }
   def three() { expect: true }
 }
 
 @Order(-1)
-class SecondSpec extends Specification {
-  @Shared execution = new SpecExecution(spec: this.class.simpleName)
-  def setup() { execution.features << specificationContext.currentFeature.name }
-  def cleanupSpec() { executionsTL.get() << execution }
+class SecondSpec extends BaseSpec {
   def foo() { expect: true }
   @Order(99) def bar() { expect: true }
   @Order(-5) def zot() { expect: true }
 }
 
-class ThirdSpec extends Specification {
-  @Shared execution = new SpecExecution(spec: this.class.simpleName)
-  def setup() { execution.features << specificationContext.currentFeature.name }
-  def cleanupSpec() { executionsTL.get() << execution }
+class ThirdSpec extends BaseSpec {
   def "some feature"() { expect: true }
   @Order(1) def "another feature"() { expect: true }
   def "one more feature"() { expect: true }
 }
 
-class FourthSpec extends Specification {
-  @Shared execution = new SpecExecution(spec: this.class.simpleName)
-  def setup() { execution.features << specificationContext.currentFeature.name }
-  def cleanupSpec() { executionsTL.get() << execution }
+class FourthSpec extends BaseSpec {
   def 'feature X'() { expect: true }
   def 'feature M'() { expect: true }
   @Order(-1) def 'feature D'() { expect: true }

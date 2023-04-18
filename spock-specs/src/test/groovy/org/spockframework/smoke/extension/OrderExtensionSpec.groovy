@@ -103,8 +103,8 @@ class FourthSpec extends Specification {
     ]
   }
 
+  // Retry, if random order accidentally equals default order
   @Retry(count = 50, mode = SETUP_FEATURE_CLEANUP)
-  // if random order == deterministic order
   def 'random spec order'() {
     runner.configurationScript = {
       runner {
@@ -127,8 +127,8 @@ class FourthSpec extends Specification {
     ])
   }
 
+  // Retry, if random order accidentally equals default order
   @Retry(count = 50, mode = SETUP_FEATURE_CLEANUP)
-  // if random order == deterministic order
   def 'random feature order'() {
     runner.configurationScript = {
       runner {
@@ -151,8 +151,8 @@ class FourthSpec extends Specification {
     ])
   }
 
+  // Retry, if random order accidentally equals default order
   @Retry(count = 50, mode = SETUP_FEATURE_CLEANUP)
-  // if random order == deterministic order
   def 'random spec and feature order'() {
     runner.configurationScript = {
       runner {

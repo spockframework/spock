@@ -71,6 +71,8 @@ workflow(
         )
     }
 
+    val variants = listOf("2.5", "3.0", "4.0")
+    val javaVersions = listOf("8", "11", "17")
     job(
         id = "build-and-verify",
         name = "Build and Verify",
@@ -80,47 +82,26 @@ workflow(
                 "fail-fast" to false,
                 "matrix" to mapOf(
                     "os" to listOf("ubuntu-latest"),
-                    "variant" to listOf("2.5", "3.0", "4.0"),
-                    "java" to listOf("8", "11", "17"),
-                    "exclude" to listOf(
-                        mapOf(
-                            "os" to "ubuntu-latest",
-                            "variant" to "2.5",
-                            "java" to "17"
-                        )
-                    ),
-                    "include" to listOf(
-                        mapOf(
-                            "os" to "windows-latest",
-                            "variant" to "2.5",
-                            "java" to "8"
-                        ),
-                        mapOf(
-                            "os" to "windows-latest",
-                            "variant" to "3.0",
-                            "java" to "8"
-                        ),
-                        mapOf(
-                            "os" to "windows-latest",
-                            "variant" to "4.0",
-                            "java" to "8"
-                        ),
-                        mapOf(
-                            "os" to "macos-latest",
-                            "variant" to "2.5",
-                            "java" to "8"
-                        ),
-                        mapOf(
-                            "os" to "macos-latest",
-                            "variant" to "3.0",
-                            "java" to "8"
-                        ),
-                        mapOf(
-                            "os" to "macos-latest",
-                            "variant" to "4.0",
-                            "java" to "8"
-                        )
-                    )
+                    "variant" to variants,
+                    "java" to javaVersions,
+                    "exclude" to javaVersions
+                        .filter { it.toInt() >= 17 }
+                        .map { javaVersion ->
+                            mapOf(
+                                "os" to "ubuntu-latest",
+                                "variant" to "2.5",
+                                "java" to javaVersion
+                            )
+                        },
+                    "include" to listOf("windows-latest", "macos-latest")
+                        .flatMap { os -> variants.map { os to it } }
+                        .map { (os, variant) ->
+                            mapOf(
+                                "os" to os,
+                                "variant" to variant,
+                                "java" to javaVersions.first()
+                            )
+                        }
                 )
             )
         )

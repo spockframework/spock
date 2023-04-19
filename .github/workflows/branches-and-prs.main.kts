@@ -65,12 +65,8 @@ workflow(
             action = CheckoutV3()
         )
         run(
-            name = "Regenerate all workflow YAMLs",
-            command = """find .github/workflows -mindepth 1 -maxdepth 1 -name "*.main.kts" -exec sh -c {} \;"""
-        )
-        run(
-            name = "Check if some file is different after regeneration",
-            command = "git diff --exit-code ."
+            name = "Regenerate all workflow YAMLs and check for modifications",
+            command = """find .github/workflows -mindepth 1 -maxdepth 1 -name "*.main.kts" | xargs -ri sh -c '{} && git diff --exit-code'"""
         )
     }
 

@@ -55,6 +55,13 @@ data class Matrix(
     val exclude: (Element.() -> Boolean)? = null,
     val includes: List<Element>? = null
 ) {
+    val size by lazy {
+        originalElements
+            .filterNot(exclude ?: { true })
+            .size +
+            (includes?.size ?: 0)
+    }
+
     private val originalElements by lazy {
         (operatingSystems ?: listOf(null))
             .map { Element(operatingSystem = it) }

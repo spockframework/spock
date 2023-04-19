@@ -17,7 +17,10 @@
  */
 
 @file:DependsOn("io.github.typesafegithub:github-workflows-kt:0.41.0")
+@file:DependsOn("org.codehaus.groovy:groovy:3.0.15")
 
+import groovy.lang.Binding
+import groovy.lang.GroovyShell
 import io.github.typesafegithub.workflows.actions.actions.CheckoutV3
 import io.github.typesafegithub.workflows.actions.actions.CheckoutV3.FetchDepth
 import io.github.typesafegithub.workflows.actions.codecov.CodecovActionV3
@@ -51,8 +54,7 @@ workflow(
     val SPOCK_BUILD_CACHE_PASSWORD by Contexts.secrets
     val GRADLE_ENTERPRISE_ACCESS_KEY by Contexts.secrets
 
-    val variants = listOf("2.5", "3.0", "4.0")
-    val javaVersions = listOf("8", "11", "17")
+    val (javaVersions, variants) = getMatrixAxes()
     val buildAndVerify = job(
         id = "build-and-verify",
         name = "Build and Verify",
@@ -229,4 +231,20 @@ data class SetupBuildEnv(
         additionalJavaVersion?.let { linkedMapOf("additional-java-version" to it) } ?: linkedMapOf()
 
     override fun buildOutputObject(stepId: String): Outputs = Outputs(stepId)
+}
+
+fun getMatrixAxes(): Pair<List<String>, List<String>> {
+    val binding = object : Binding() {
+        lateinit var javaVersions: List<String>
+        lateinit var variants: List<String>
+
+        override fun setVariable(name: String?, value: Any?) {
+            when (name) {
+                "javaVersions" -> javaVersions = (value as List<Int>).map { it.toString() }
+                "variants" -> variants = value as List<String>
+            }
+        }
+    }
+    GroovyShell(binding).evaluate(__FILE__.parentFile.resolve("../../matrix.groovy"))
+    return binding.javaVersions to binding.variants
 }

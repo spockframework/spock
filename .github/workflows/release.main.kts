@@ -47,13 +47,19 @@ workflow(
     val SONATYPE_OSS_PASSWORD by secrets
     val SIGNING_GPG_PASSWORD by secrets
 
+    val matrix = Matrix.full
+    with(__FILE__.parentFile.resolve("../../codecov.yml")) {
+        readText()
+            .replace("after_n_builds:.*+$".toRegex(), "after_n_builds: ${matrix.size}")
+            .let(::writeText)
+    }
     val buildAndVerify = job(
         id = "build-and-verify",
         name = "Build and Verify",
         runsOn = RunnerType.Custom(expr(Matrix.operatingSystem)),
         condition = "${github.repository} == 'spockframework/spock'",
         strategy = Strategy(
-            matrix = Matrix.full
+            matrix = matrix
         )
     ) {
         uses(

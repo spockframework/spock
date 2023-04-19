@@ -76,12 +76,18 @@ workflow(
         )
     }
 
+    val matrix = Matrix.full
+    with(__FILE__.parentFile.resolve("../../codecov.yml")) {
+        readText()
+            .replace("after_n_builds:.*+$".toRegex(), "after_n_builds: ${matrix.size}")
+            .let(::writeText)
+    }
     job(
         id = "build-and-verify",
         name = "Build and Verify",
         runsOn = RunnerType.Custom(expr(Matrix.operatingSystem)),
         strategy = Strategy(
-            matrix = Matrix.full
+            matrix = matrix
         )
     ) {
         uses(

@@ -233,6 +233,7 @@ class FooSpec extends Specification {
         assert spec
         assert !feature
         assert !iteration
+        assert instance == sharedInstance
       }
     }
 
@@ -241,6 +242,7 @@ class FooSpec extends Specification {
         assert spec
         assert !feature
         assert !iteration
+        assert instance == sharedInstance
       }
     }
 
@@ -249,6 +251,7 @@ class FooSpec extends Specification {
         assert spec
         assert feature
         assert !iteration
+        assert instance == sharedInstance
       }
     }
 
@@ -257,6 +260,7 @@ class FooSpec extends Specification {
         assert spec
         assert feature
         assert iteration
+        assert instance != sharedInstance
       }
     }
 
@@ -265,6 +269,7 @@ class FooSpec extends Specification {
         assert spec
         assert feature
         assert iteration
+        assert instance != sharedInstance
       }
     }
 

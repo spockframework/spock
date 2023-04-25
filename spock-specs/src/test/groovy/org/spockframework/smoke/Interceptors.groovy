@@ -156,102 +156,123 @@ class FooSpec extends Specification {
       specInfo.addSharedInitializerInterceptor {
         it.with {
           assert spec
+          assert !feature
         }
         proceed(it, 'shared initializer', "$it.spec.name")
       }
       specInfo.allSharedInitializerMethods*.addInterceptor {
         it.with {
           assert spec
+          assert !feature
         }
         proceed(it, 'shared initializer method', "$it.spec.name.$it.method.name()")
       }
       specInfo.addInterceptor {
         it.with {
           assert spec
+          assert !feature
         }
         proceed(it, 'specification', "$it.spec.name")
       }
       specInfo.addSetupSpecInterceptor {
         it.with {
           assert spec
+          assert !feature
         }
         proceed(it, 'setup spec', "$it.spec.name")
       }
       specInfo.allSetupSpecMethods*.addInterceptor {
         it.with {
           assert spec
+          assert !feature
         }
         proceed(it, 'setup spec method', "$it.spec.name.$it.method.name()")
       }
       specInfo.allFeatures*.addInterceptor {
         it.with {
           assert spec
+          assert feature
         }
         proceed(it, 'feature', "$it.spec.name.$it.feature.name")
       }
       specInfo.addInitializerInterceptor {
         it.with {
           assert spec
+          assert feature
         }
         proceed(it, 'initializer', "$it.spec.name.$it.feature.name")
       }
       specInfo.allInitializerMethods*.addInterceptor {
         it.with {
           assert spec
+          assert feature
         }
         proceed(it, 'initializer method', "$it.spec.name.$it.feature.name.$it.method.name()")
       }
       specInfo.allFeatures*.addIterationInterceptor {
         it.with {
           assert spec
+          assert feature
         }
         proceed(it, 'iteration', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
       specInfo.addSetupInterceptor {
         it.with {
           assert spec
+          assert feature
         }
         proceed(it, 'setup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
       specInfo.allSetupMethods*.addInterceptor {
         it.with {
           assert spec
+          assert feature
         }
         proceed(it, 'setup method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
       }
       specInfo.allFeatures*.featureMethod*.addInterceptor {
         it.with {
           assert spec
+          assert feature
         }
         proceed(it, 'feature method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
       }
       specInfo.addCleanupInterceptor {
         it.with {
           assert spec
+          assert feature
         }
         proceed(it, 'cleanup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
       specInfo.allCleanupMethods*.addInterceptor {
         it.with {
           assert spec
+          assert feature
         }
         proceed(it, 'cleanup method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
       }
       specInfo.addCleanupSpecInterceptor {
         it.with {
           assert spec
+          assert !feature
         }
         proceed(it, 'cleanup spec', "$it.spec.name")
       }
       specInfo.allCleanupSpecMethods*.addInterceptor {
         it.with {
           assert spec
+          assert !feature
         }
         proceed(it, 'cleanup spec method', "$it.spec.name.$it.method.name()")
       }
       specInfo.allFixtureMethods*.addInterceptor {
         it.with {
           assert spec
+          if (method.name.endsWith('Spec')) {
+            assert !feature
+          } else {
+            assert feature
+          }
         }
         proceed(it, 'fixture method', "$it.spec.name${it.feature?.name?.with { name -> ".$name[#$it.iteration.iterationIndex]" } ?: ''}.$it.method.name()")
       }

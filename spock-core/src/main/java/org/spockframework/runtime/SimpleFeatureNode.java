@@ -1,9 +1,13 @@
 package org.spockframework.runtime;
 
+import org.opentest4j.TestAbortedException;
 import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.util.ExceptionUtil;
 import spock.config.RunnerConfiguration;
 
 import org.junit.platform.engine.*;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A non-parametric feature (test) that only has a single "iteration".
@@ -29,62 +33,34 @@ public class SimpleFeatureNode extends FeatureNode {
 
   @Override
   public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
-    return delegate.prepare(
-      context.withCurrentFeature(getNodeInfo())
-      //.withParentId(getUniqueId())
-    );
-  }
-
-  @Override
-  public SpockExecutionContext before(SpockExecutionContext context) throws Exception {
-    context = super.before(context);
-    ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
-    context = context.withErrorInfoCollector(errorInfoCollector);
-    context.getRunner().runSetup(context);
-    errorInfoCollector.assertEmpty();
-
-    return context;
-  }
-
-  @Override
-  public void around(SpockExecutionContext context, Invocation<SpockExecutionContext> invocation) {
-    // Wrap the Feature invocation around the invocation of the Iteration delegate
-    super.around(context, ctx -> delegate.around(ctx, invocation));
+    context = super.prepare(context);
+    return context.withCurrentFeature(getNodeInfo());
   }
 
   @Override
   public SpockExecutionContext execute(SpockExecutionContext context, DynamicTestExecutor dynamicTestExecutor) throws Exception {
     verifyNotSkipped(getNodeInfo());
-    delegate.execute(context, dynamicTestExecutor);
+
+    AtomicReference<Throwable> result = new AtomicReference<>();
+    EngineExecutionListener executionListener = new EngineExecutionListener() {
+      @Override
+      public void executionSkipped(TestDescriptor testDescriptor, String reason) {
+        result.set(new TestAbortedException(reason));
+      }
+
+      @Override
+      public void executionFinished(TestDescriptor testDescriptor, TestExecutionResult testExecutionResult) {
+        testExecutionResult.getThrowable().ifPresent(result::set);
+      }
+    };
+
+    addChild(delegate);
+    dynamicTestExecutor.execute(delegate, executionListener);
+    dynamicTestExecutor.awaitFinished();
+
+    if (result.get() != null) {
+      ExceptionUtil.sneakyThrow(result.get());
+    }
     return context;
   }
-
-  @Override
-  public void after(SpockExecutionContext context) throws Exception {
-    ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
-    context = context.withErrorInfoCollector(errorInfoCollector);
-    delegate.after(context);
-    // First the iteration node, then the Feature node
-    errorInfoCollector.assertEmpty();
-    super.after(context);
-  }
-
-  @Override
-  public void nodeFinished(SpockExecutionContext context, TestDescriptor testDescriptor, TestExecutionResult result) {
-    delegate.nodeFinished(context, testDescriptor, result);
-    super.nodeFinished(context, testDescriptor, result);
-  }
-
-  @Override
-  public void nodeSkipped(SpockExecutionContext context, TestDescriptor testDescriptor, SkipResult result) {
-    // Skipping this Feature implies that the Iteration is also skipped
-    delegate.nodeSkipped(context, testDescriptor, result);
-    super.nodeSkipped(context, testDescriptor, result);
-  }
-
-  @Override
-  public SkipResult shouldBeSkipped(SpockExecutionContext context) throws Exception {
-    return delegate.shouldBeSkipped(context);
-  }
-
 }

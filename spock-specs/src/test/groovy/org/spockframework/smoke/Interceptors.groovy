@@ -240,6 +240,11 @@ class FooSpec extends Specification {
         assert !method.name
         instance.specificationContext.with {
           assert currentSpec
+          try {
+            currentFeature
+            assert false: 'currentFeature should not be set'
+          } catch (IllegalStateException ise) {
+          }
         }
       }
     }
@@ -256,6 +261,11 @@ class FooSpec extends Specification {
         assert method.name
         instance.specificationContext.with {
           assert currentSpec
+          try {
+            currentFeature
+            assert false: 'currentFeature should not be set'
+          } catch (IllegalStateException ise) {
+          }
         }
       }
     }
@@ -272,6 +282,7 @@ class FooSpec extends Specification {
         assert !method.name
         instance.specificationContext.with {
           assert currentSpec
+          assert currentFeature
         }
       }
     }
@@ -288,6 +299,7 @@ class FooSpec extends Specification {
         assert !method.name
         instance.specificationContext.with {
           assert currentSpec
+          assert currentFeature
         }
       }
     }
@@ -304,6 +316,7 @@ class FooSpec extends Specification {
         assert method.name
         instance.specificationContext.with {
           assert currentSpec
+          assert currentFeature
         }
       }
     }

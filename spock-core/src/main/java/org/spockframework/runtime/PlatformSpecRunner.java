@@ -187,10 +187,13 @@ public class PlatformSpecRunner {
       supervisor.featureSkipped(currentFeature); // todo notify in node isSkipped
       return;
     }
+    getSpecificationContext(context).setCurrentFeature(currentFeature);
 
     supervisor.beforeFeature(currentFeature);
     invoke(context, this, createMethodInfoForDoRunFeature(context, feature));
     supervisor.afterFeature(currentFeature);
+
+    getSpecificationContext(context).setCurrentFeature(null);
   }
 
   private MethodInfo createMethodInfoForDoRunFeature(SpockExecutionContext context, Runnable feature) {
@@ -251,6 +254,7 @@ public class PlatformSpecRunner {
   }
 
   void runInitializer(SpockExecutionContext context) {
+    getSpecificationContext(context).setCurrentFeature(context.getCurrentFeature());
     runInitializer(context, context.getSpec());
   }
 

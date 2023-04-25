@@ -236,6 +236,7 @@ class FooSpec extends Specification {
         assert instance == sharedInstance
         assert target != instance
         assert method
+        assert !method.reflection
       }
     }
 
@@ -247,6 +248,7 @@ class FooSpec extends Specification {
         assert instance == sharedInstance
         assert target == instance
         assert method
+        assert method.reflection
       }
     }
 
@@ -258,6 +260,7 @@ class FooSpec extends Specification {
         assert instance == sharedInstance
         assert target != instance
         assert method
+        assert !method.reflection
       }
     }
 
@@ -269,6 +272,7 @@ class FooSpec extends Specification {
         assert instance != sharedInstance
         assert target != instance
         assert method
+        assert !method.reflection
       }
     }
 
@@ -280,6 +284,7 @@ class FooSpec extends Specification {
         assert instance != sharedInstance
         assert target == instance
         assert method
+        assert method.reflection
       }
     }
 

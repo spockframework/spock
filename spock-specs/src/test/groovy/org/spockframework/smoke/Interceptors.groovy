@@ -157,6 +157,7 @@ class FooSpec extends Specification {
         it.with {
           assert spec
           assert !feature
+          assert !iteration
         }
         proceed(it, 'shared initializer', "$it.spec.name")
       }
@@ -164,6 +165,7 @@ class FooSpec extends Specification {
         it.with {
           assert spec
           assert !feature
+          assert !iteration
         }
         proceed(it, 'shared initializer method', "$it.spec.name.$it.method.name()")
       }
@@ -171,6 +173,7 @@ class FooSpec extends Specification {
         it.with {
           assert spec
           assert !feature
+          assert !iteration
         }
         proceed(it, 'specification', "$it.spec.name")
       }
@@ -178,6 +181,7 @@ class FooSpec extends Specification {
         it.with {
           assert spec
           assert !feature
+          assert !iteration
         }
         proceed(it, 'setup spec', "$it.spec.name")
       }
@@ -185,6 +189,7 @@ class FooSpec extends Specification {
         it.with {
           assert spec
           assert !feature
+          assert !iteration
         }
         proceed(it, 'setup spec method', "$it.spec.name.$it.method.name()")
       }
@@ -192,6 +197,7 @@ class FooSpec extends Specification {
         it.with {
           assert spec
           assert feature
+          assert !iteration
         }
         proceed(it, 'feature', "$it.spec.name.$it.feature.name")
       }
@@ -199,6 +205,7 @@ class FooSpec extends Specification {
         it.with {
           assert spec
           assert feature
+          assert iteration
         }
         proceed(it, 'initializer', "$it.spec.name.$it.feature.name")
       }
@@ -206,6 +213,7 @@ class FooSpec extends Specification {
         it.with {
           assert spec
           assert feature
+          assert iteration
         }
         proceed(it, 'initializer method', "$it.spec.name.$it.feature.name.$it.method.name()")
       }
@@ -213,6 +221,7 @@ class FooSpec extends Specification {
         it.with {
           assert spec
           assert feature
+          assert iteration
         }
         proceed(it, 'iteration', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
@@ -220,6 +229,7 @@ class FooSpec extends Specification {
         it.with {
           assert spec
           assert feature
+          assert iteration
         }
         proceed(it, 'setup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
@@ -227,6 +237,7 @@ class FooSpec extends Specification {
         it.with {
           assert spec
           assert feature
+          assert iteration
         }
         proceed(it, 'setup method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
       }
@@ -234,6 +245,7 @@ class FooSpec extends Specification {
         it.with {
           assert spec
           assert feature
+          assert iteration
         }
         proceed(it, 'feature method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
       }
@@ -241,6 +253,7 @@ class FooSpec extends Specification {
         it.with {
           assert spec
           assert feature
+          assert iteration
         }
         proceed(it, 'cleanup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
@@ -248,6 +261,7 @@ class FooSpec extends Specification {
         it.with {
           assert spec
           assert feature
+          assert iteration
         }
         proceed(it, 'cleanup method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
       }
@@ -255,6 +269,7 @@ class FooSpec extends Specification {
         it.with {
           assert spec
           assert !feature
+          assert !iteration
         }
         proceed(it, 'cleanup spec', "$it.spec.name")
       }
@@ -262,6 +277,7 @@ class FooSpec extends Specification {
         it.with {
           assert spec
           assert !feature
+          assert !iteration
         }
         proceed(it, 'cleanup spec method', "$it.spec.name.$it.method.name()")
       }
@@ -270,8 +286,10 @@ class FooSpec extends Specification {
           assert spec
           if (method.name.endsWith('Spec')) {
             assert !feature
+            assert !iteration
           } else {
             assert feature
+            assert iteration
           }
         }
         proceed(it, 'fixture method', "$it.spec.name${it.feature?.name?.with { name -> ".$name[#$it.iteration.iterationIndex]" } ?: ''}.$it.method.name()")

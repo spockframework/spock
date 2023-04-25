@@ -38,7 +38,7 @@ class Interceptors extends EmbeddedSpecification {
   }
 
   @ResourceLock("LifecycleRecorderAndContextTesterExtension.lifecycleOutline")
-  def "interceptors are called in the correct order"() {
+  def "interceptors are called in the correct order and with the correct context information"() {
     when:
     runner.runWithImports """
 class SuperSpec extends Specification {
@@ -154,54 +154,105 @@ class FooSpec extends Specification {
     @Override
     void visitSpecAnnotation(LifecycleTest annotation, SpecInfo specInfo) {
       specInfo.addSharedInitializerInterceptor {
+        it.with {
+          assert spec
+        }
         proceed(it, 'shared initializer', "$it.spec.name")
       }
       specInfo.allSharedInitializerMethods*.addInterceptor {
+        it.with {
+          assert spec
+        }
         proceed(it, 'shared initializer method', "$it.spec.name.$it.method.name()")
       }
       specInfo.addInterceptor {
+        it.with {
+          assert spec
+        }
         proceed(it, 'specification', "$it.spec.name")
       }
       specInfo.addSetupSpecInterceptor {
+        it.with {
+          assert spec
+        }
         proceed(it, 'setup spec', "$it.spec.name")
       }
       specInfo.allSetupSpecMethods*.addInterceptor {
+        it.with {
+          assert spec
+        }
         proceed(it, 'setup spec method', "$it.spec.name.$it.method.name()")
       }
       specInfo.allFeatures*.addInterceptor {
+        it.with {
+          assert spec
+        }
         proceed(it, 'feature', "$it.spec.name.$it.feature.name")
       }
       specInfo.addInitializerInterceptor {
+        it.with {
+          assert spec
+        }
         proceed(it, 'initializer', "$it.spec.name.$it.feature.name")
       }
       specInfo.allInitializerMethods*.addInterceptor {
+        it.with {
+          assert spec
+        }
         proceed(it, 'initializer method', "$it.spec.name.$it.feature.name.$it.method.name()")
       }
       specInfo.allFeatures*.addIterationInterceptor {
+        it.with {
+          assert spec
+        }
         proceed(it, 'iteration', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
       specInfo.addSetupInterceptor {
+        it.with {
+          assert spec
+        }
         proceed(it, 'setup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
       specInfo.allSetupMethods*.addInterceptor {
+        it.with {
+          assert spec
+        }
         proceed(it, 'setup method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
       }
       specInfo.allFeatures*.featureMethod*.addInterceptor {
+        it.with {
+          assert spec
+        }
         proceed(it, 'feature method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
       }
       specInfo.addCleanupInterceptor {
+        it.with {
+          assert spec
+        }
         proceed(it, 'cleanup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
       specInfo.allCleanupMethods*.addInterceptor {
+        it.with {
+          assert spec
+        }
         proceed(it, 'cleanup method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
       }
       specInfo.addCleanupSpecInterceptor {
+        it.with {
+          assert spec
+        }
         proceed(it, 'cleanup spec', "$it.spec.name")
       }
       specInfo.allCleanupSpecMethods*.addInterceptor {
+        it.with {
+          assert spec
+        }
         proceed(it, 'cleanup spec method', "$it.spec.name.$it.method.name()")
       }
       specInfo.allFixtureMethods*.addInterceptor {
+        it.with {
+          assert spec
+        }
         proceed(it, 'fixture method', "$it.spec.name${it.feature?.name?.with { name -> ".$name[#$it.iteration.iterationIndex]" } ?: ''}.$it.method.name()")
       }
     }

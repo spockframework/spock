@@ -241,6 +241,7 @@ class SubSpec extends SuperSpec {
       invocation.with {
         assert spec
         assert !feature
+        assert !iteration
       }
     }
 
@@ -248,6 +249,7 @@ class SubSpec extends SuperSpec {
       invocation.with {
         assert spec
         assert !feature
+        assert !iteration
       }
     }
 
@@ -255,6 +257,7 @@ class SubSpec extends SuperSpec {
       invocation.with {
         assert spec
         assert feature
+        assert !iteration
       }
     }
 
@@ -262,6 +265,7 @@ class SubSpec extends SuperSpec {
       invocation.with {
         assert spec
         assert feature
+        assert iteration
       }
     }
 
@@ -269,6 +273,7 @@ class SubSpec extends SuperSpec {
       invocation.with {
         assert spec
         assert feature
+        assert iteration
       }
     }
 

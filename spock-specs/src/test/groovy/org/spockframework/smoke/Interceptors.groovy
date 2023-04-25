@@ -246,6 +246,11 @@ class FooSpec extends Specification {
           } catch (IllegalStateException ise) {
             assert ise.message == 'Cannot request current feature in @Shared context'
           }
+          try {
+            currentIteration
+            assert false: 'currentIteration should not be set'
+          } catch (IllegalStateException ise) {
+          }
         }
       }
     }
@@ -268,6 +273,11 @@ class FooSpec extends Specification {
           } catch (IllegalStateException ise) {
             assert ise.message == 'Cannot request current feature in @Shared context'
           }
+          try {
+            currentIteration
+            assert false: 'currentIteration should not be set'
+          } catch (IllegalStateException ise) {
+          }
         }
       }
     }
@@ -285,6 +295,11 @@ class FooSpec extends Specification {
         instance.specificationContext.with {
           assert currentSpec
           assert currentFeature
+          try {
+            currentIteration
+            assert false: 'currentIteration should not be set'
+          } catch (IllegalStateException ise) {
+          }
         }
       }
     }
@@ -302,6 +317,7 @@ class FooSpec extends Specification {
         instance.specificationContext.with {
           assert currentSpec
           assert currentFeature
+          assert currentIteration
         }
       }
     }
@@ -319,6 +335,7 @@ class FooSpec extends Specification {
         instance.specificationContext.with {
           assert currentSpec
           assert currentFeature
+          assert currentIteration
         }
       }
     }

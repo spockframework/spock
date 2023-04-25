@@ -50,7 +50,7 @@ public class SpecificationContext implements ISpecificationContext {
   @Override
   public IterationInfo getCurrentIteration() {
     if (currentIteration == null) {
-      throw new IllegalStateException("Cannot request current iteration in @Shared context");
+      throw new IllegalStateException("Cannot request current iteration in @Shared context, or feature context");
     }
     return currentIteration;
   }

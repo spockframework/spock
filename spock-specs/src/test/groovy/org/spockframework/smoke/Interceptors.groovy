@@ -247,6 +247,9 @@ class SubSpec extends SuperSpec {
         assert method
         assert !method.reflection
         assert !method.name
+        instance.specificationContext.with {
+          assert currentSpec
+        }
       }
     }
 
@@ -260,6 +263,9 @@ class SubSpec extends SuperSpec {
         assert method
         assert method.reflection
         assert method.name
+        instance.specificationContext.with {
+          assert currentSpec
+        }
       }
     }
 
@@ -273,6 +279,9 @@ class SubSpec extends SuperSpec {
         assert method
         assert !method.reflection
         assert !method.name
+        instance.specificationContext.with {
+          assert currentSpec
+        }
       }
     }
 
@@ -286,6 +295,9 @@ class SubSpec extends SuperSpec {
         assert method
         assert !method.reflection
         assert !method.name
+        instance.specificationContext.with {
+          assert currentSpec
+        }
       }
     }
 
@@ -299,6 +311,9 @@ class SubSpec extends SuperSpec {
         assert method
         assert method.reflection
         assert method.name
+        instance.specificationContext.with {
+          assert currentSpec
+        }
       }
     }
 

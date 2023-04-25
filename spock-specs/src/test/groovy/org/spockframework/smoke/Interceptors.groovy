@@ -238,6 +238,9 @@ class FooSpec extends Specification {
         assert method
         assert !method.reflection
         assert !method.name
+        instance.specificationContext.with {
+          assert currentSpec
+        }
       }
     }
 
@@ -251,6 +254,9 @@ class FooSpec extends Specification {
         assert method
         assert method.reflection
         assert method.name
+        instance.specificationContext.with {
+          assert currentSpec
+        }
       }
     }
 
@@ -264,6 +270,9 @@ class FooSpec extends Specification {
         assert method
         assert !method.reflection
         assert !method.name
+        instance.specificationContext.with {
+          assert currentSpec
+        }
       }
     }
 
@@ -277,6 +286,9 @@ class FooSpec extends Specification {
         assert method
         assert !method.reflection
         assert !method.name
+        instance.specificationContext.with {
+          assert currentSpec
+        }
       }
     }
 
@@ -290,6 +302,9 @@ class FooSpec extends Specification {
         assert method
         assert method.reflection
         assert method.name
+        instance.specificationContext.with {
+          assert currentSpec
+        }
       }
     }
 

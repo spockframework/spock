@@ -231,30 +231,35 @@ class FooSpec extends Specification {
     static assertSpecContext(IMethodInvocation invocation) {
       invocation.with {
         assert spec
+        assert !feature
       }
     }
 
     static assertSpecMethodContext(IMethodInvocation invocation) {
       invocation.with {
         assert spec
+        assert !feature
       }
     }
 
     static assertFeatureContext(IMethodInvocation invocation) {
       invocation.with {
         assert spec
+        assert feature
       }
     }
 
     static assertIterationContext(IMethodInvocation invocation) {
       invocation.with {
         assert spec
+        assert feature
       }
     }
 
     static assertIterationMethodContext(IMethodInvocation invocation) {
       invocation.with {
         assert spec
+        assert feature
       }
     }
 

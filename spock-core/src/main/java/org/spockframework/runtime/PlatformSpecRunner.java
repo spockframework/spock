@@ -255,6 +255,7 @@ public class PlatformSpecRunner {
 
   void runInitializer(SpockExecutionContext context) {
     getSpecificationContext(context).setCurrentFeature(context.getCurrentFeature());
+    getSpecificationContext(context).setCurrentIteration(context.getCurrentIteration());
     runInitializer(context, context.getSpec());
   }
 

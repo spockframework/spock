@@ -170,6 +170,11 @@ class FooSpec extends Specification {
               assert false: 'currentFeature should not be set'
             } catch (IllegalStateException ise) {
             }
+            try {
+              currentIteration
+              assert false: 'currentIteration should not be set'
+            } catch (IllegalStateException ise) {
+            }
           }
         }
         proceed(it, 'shared initializer', "$it.spec.name")
@@ -189,6 +194,11 @@ class FooSpec extends Specification {
             try {
               currentFeature
               assert false: 'currentFeature should not be set'
+            } catch (IllegalStateException ise) {
+            }
+            try {
+              currentIteration
+              assert false: 'currentIteration should not be set'
             } catch (IllegalStateException ise) {
             }
           }
@@ -212,6 +222,11 @@ class FooSpec extends Specification {
               assert false: 'currentFeature should not be set'
             } catch (IllegalStateException ise) {
             }
+            try {
+              currentIteration
+              assert false: 'currentIteration should not be set'
+            } catch (IllegalStateException ise) {
+            }
           }
         }
         proceed(it, 'specification', "$it.spec.name")
@@ -231,6 +246,11 @@ class FooSpec extends Specification {
             try {
               currentFeature
               assert false: 'currentFeature should not be set'
+            } catch (IllegalStateException ise) {
+            }
+            try {
+              currentIteration
+              assert false: 'currentIteration should not be set'
             } catch (IllegalStateException ise) {
             }
           }
@@ -254,6 +274,11 @@ class FooSpec extends Specification {
               assert false: 'currentFeature should not be set'
             } catch (IllegalStateException ise) {
             }
+            try {
+              currentIteration
+              assert false: 'currentIteration should not be set'
+            } catch (IllegalStateException ise) {
+            }
           }
         }
         proceed(it, 'setup spec method', "$it.spec.name.$it.method.name()")
@@ -271,6 +296,11 @@ class FooSpec extends Specification {
           instance.specificationContext.with {
             assert currentSpec
             assert currentFeature
+            try {
+              currentIteration
+              assert false: 'currentIteration should not be set'
+            } catch (IllegalStateException ise) {
+            }
           }
         }
         proceed(it, 'feature', "$it.spec.name.$it.feature.name")
@@ -288,6 +318,7 @@ class FooSpec extends Specification {
           instance.specificationContext.with {
             assert currentSpec
             assert currentFeature
+            assert currentIteration
           }
         }
         proceed(it, 'initializer', "$it.spec.name.$it.feature.name")
@@ -305,6 +336,7 @@ class FooSpec extends Specification {
           instance.specificationContext.with {
             assert currentSpec
             assert currentFeature
+            assert currentIteration
           }
         }
         proceed(it, 'initializer method', "$it.spec.name.$it.feature.name.$it.method.name()")
@@ -322,6 +354,7 @@ class FooSpec extends Specification {
           instance.specificationContext.with {
             assert currentSpec
             assert currentFeature
+            assert currentIteration
           }
         }
         proceed(it, 'iteration', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
@@ -339,6 +372,7 @@ class FooSpec extends Specification {
           instance.specificationContext.with {
             assert currentSpec
             assert currentFeature
+            assert currentIteration
           }
         }
         proceed(it, 'setup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
@@ -356,6 +390,7 @@ class FooSpec extends Specification {
           instance.specificationContext.with {
             assert currentSpec
             assert currentFeature
+            assert currentIteration
           }
         }
         proceed(it, 'setup method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
@@ -373,6 +408,7 @@ class FooSpec extends Specification {
           instance.specificationContext.with {
             assert currentSpec
             assert currentFeature
+            assert currentIteration
           }
         }
         proceed(it, 'feature method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
@@ -390,6 +426,7 @@ class FooSpec extends Specification {
           instance.specificationContext.with {
             assert currentSpec
             assert currentFeature
+            assert currentIteration
           }
         }
         proceed(it, 'cleanup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
@@ -407,6 +444,7 @@ class FooSpec extends Specification {
           instance.specificationContext.with {
             assert currentSpec
             assert currentFeature
+            assert currentIteration
           }
         }
         proceed(it, 'cleanup method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
@@ -428,6 +466,11 @@ class FooSpec extends Specification {
               assert false: 'currentFeature should not be set'
             } catch (IllegalStateException ise) {
             }
+            try {
+              currentIteration
+              assert false: 'currentIteration should not be set'
+            } catch (IllegalStateException ise) {
+            }
           }
         }
         proceed(it, 'cleanup spec', "$it.spec.name")
@@ -447,6 +490,11 @@ class FooSpec extends Specification {
             try {
               currentFeature
               assert false: 'currentFeature should not be set'
+            } catch (IllegalStateException ise) {
+            }
+            try {
+              currentIteration
+              assert false: 'currentIteration should not be set'
             } catch (IllegalStateException ise) {
             }
           }
@@ -478,8 +526,14 @@ class FooSpec extends Specification {
                 assert false: 'currentFeature should not be set'
               } catch (IllegalStateException ise) {
               }
+              try {
+                currentIteration
+                assert false: 'currentIteration should not be set'
+              } catch (IllegalStateException ise) {
+              }
             } else {
               assert currentFeature
+              assert currentIteration
             }
           }
         }

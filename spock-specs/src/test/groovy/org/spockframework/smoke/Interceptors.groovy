@@ -161,6 +161,7 @@ class FooSpec extends Specification {
           assert instance == sharedInstance
           assert target != instance
           assert method
+          assert !method.reflection
         }
         proceed(it, 'shared initializer', "$it.spec.name")
       }
@@ -172,6 +173,7 @@ class FooSpec extends Specification {
           assert instance == sharedInstance
           assert target == instance
           assert method
+          assert method.reflection
         }
         proceed(it, 'shared initializer method', "$it.spec.name.$it.method.name()")
       }
@@ -183,6 +185,7 @@ class FooSpec extends Specification {
           assert instance == sharedInstance
           assert target != instance
           assert method
+          assert !method.reflection
         }
         proceed(it, 'specification', "$it.spec.name")
       }
@@ -194,6 +197,7 @@ class FooSpec extends Specification {
           assert instance == sharedInstance
           assert target != instance
           assert method
+          assert !method.reflection
         }
         proceed(it, 'setup spec', "$it.spec.name")
       }
@@ -205,6 +209,7 @@ class FooSpec extends Specification {
           assert instance == sharedInstance
           assert target == instance
           assert method
+          assert method.reflection
         }
         proceed(it, 'setup spec method', "$it.spec.name.$it.method.name()")
       }
@@ -216,6 +221,7 @@ class FooSpec extends Specification {
           assert instance == sharedInstance
           assert target != instance
           assert method
+          assert !method.reflection
         }
         proceed(it, 'feature', "$it.spec.name.$it.feature.name")
       }
@@ -227,6 +233,7 @@ class FooSpec extends Specification {
           assert instance != sharedInstance
           assert target != instance
           assert method
+          assert !method.reflection
         }
         proceed(it, 'initializer', "$it.spec.name.$it.feature.name")
       }
@@ -238,6 +245,7 @@ class FooSpec extends Specification {
           assert instance != sharedInstance
           assert target == instance
           assert method
+          assert method.reflection
         }
         proceed(it, 'initializer method', "$it.spec.name.$it.feature.name.$it.method.name()")
       }
@@ -249,6 +257,7 @@ class FooSpec extends Specification {
           assert instance != sharedInstance
           assert target != instance
           assert method
+          assert !method.reflection
         }
         proceed(it, 'iteration', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
@@ -260,6 +269,7 @@ class FooSpec extends Specification {
           assert instance != sharedInstance
           assert target != instance
           assert method
+          assert !method.reflection
         }
         proceed(it, 'setup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
@@ -271,6 +281,7 @@ class FooSpec extends Specification {
           assert instance != sharedInstance
           assert target == instance
           assert method
+          assert method.reflection
         }
         proceed(it, 'setup method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
       }
@@ -282,6 +293,7 @@ class FooSpec extends Specification {
           assert instance != sharedInstance
           assert target == instance
           assert method
+          assert method.reflection
         }
         proceed(it, 'feature method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
       }
@@ -293,6 +305,7 @@ class FooSpec extends Specification {
           assert instance != sharedInstance
           assert target != instance
           assert method
+          assert !method.reflection
         }
         proceed(it, 'cleanup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
@@ -304,6 +317,7 @@ class FooSpec extends Specification {
           assert instance != sharedInstance
           assert target == instance
           assert method
+          assert method.reflection
         }
         proceed(it, 'cleanup method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
       }
@@ -315,6 +329,7 @@ class FooSpec extends Specification {
           assert instance == sharedInstance
           assert target != instance
           assert method
+          assert !method.reflection
         }
         proceed(it, 'cleanup spec', "$it.spec.name")
       }
@@ -326,6 +341,7 @@ class FooSpec extends Specification {
           assert instance == sharedInstance
           assert target == instance
           assert method
+          assert method.reflection
         }
         proceed(it, 'cleanup spec method', "$it.spec.name.$it.method.name()")
       }
@@ -343,6 +359,7 @@ class FooSpec extends Specification {
           }
           assert target == instance
           assert method
+          assert method.reflection
         }
         proceed(it, 'fixture method', "$it.spec.name${it.feature?.name?.with { name -> ".$name[#$it.iteration.iterationIndex]" } ?: ''}.$it.method.name()")
       }

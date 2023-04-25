@@ -237,6 +237,7 @@ class FooSpec extends Specification {
         assert target != instance
         assert method
         assert !method.reflection
+        assert !method.name
       }
     }
 
@@ -249,6 +250,7 @@ class FooSpec extends Specification {
         assert target == instance
         assert method
         assert method.reflection
+        assert method.name
       }
     }
 
@@ -261,6 +263,7 @@ class FooSpec extends Specification {
         assert target != instance
         assert method
         assert !method.reflection
+        assert !method.name
       }
     }
 
@@ -273,6 +276,7 @@ class FooSpec extends Specification {
         assert target != instance
         assert method
         assert !method.reflection
+        assert !method.name
       }
     }
 
@@ -285,6 +289,7 @@ class FooSpec extends Specification {
         assert target == instance
         assert method
         assert method.reflection
+        assert method.name
       }
     }
 

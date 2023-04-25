@@ -249,6 +249,11 @@ class SubSpec extends SuperSpec {
         assert !method.name
         instance.specificationContext.with {
           assert currentSpec
+          try {
+            currentFeature
+            assert false: 'currentFeature should not be set'
+          } catch (IllegalStateException ise) {
+          }
         }
       }
     }
@@ -265,6 +270,11 @@ class SubSpec extends SuperSpec {
         assert method.name
         instance.specificationContext.with {
           assert currentSpec
+          try {
+            currentFeature
+            assert false: 'currentFeature should not be set'
+          } catch (IllegalStateException ise) {
+          }
         }
       }
     }
@@ -281,6 +291,7 @@ class SubSpec extends SuperSpec {
         assert !method.name
         instance.specificationContext.with {
           assert currentSpec
+          assert currentFeature
         }
       }
     }
@@ -297,6 +308,7 @@ class SubSpec extends SuperSpec {
         assert !method.name
         instance.specificationContext.with {
           assert currentSpec
+          assert currentFeature
         }
       }
     }
@@ -313,6 +325,7 @@ class SubSpec extends SuperSpec {
         assert method.name
         instance.specificationContext.with {
           assert currentSpec
+          assert currentFeature
         }
       }
     }

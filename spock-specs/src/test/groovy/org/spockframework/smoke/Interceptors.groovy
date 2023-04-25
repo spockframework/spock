@@ -165,6 +165,11 @@ class FooSpec extends Specification {
           assert !method.name
           instance.specificationContext.with {
             assert currentSpec
+            try {
+              currentFeature
+              assert false: 'currentFeature should not be set'
+            } catch (IllegalStateException ise) {
+            }
           }
         }
         proceed(it, 'shared initializer', "$it.spec.name")
@@ -181,6 +186,11 @@ class FooSpec extends Specification {
           assert method.name
           instance.specificationContext.with {
             assert currentSpec
+            try {
+              currentFeature
+              assert false: 'currentFeature should not be set'
+            } catch (IllegalStateException ise) {
+            }
           }
         }
         proceed(it, 'shared initializer method', "$it.spec.name.$it.method.name()")
@@ -197,6 +207,11 @@ class FooSpec extends Specification {
           assert !method.name
           instance.specificationContext.with {
             assert currentSpec
+            try {
+              currentFeature
+              assert false: 'currentFeature should not be set'
+            } catch (IllegalStateException ise) {
+            }
           }
         }
         proceed(it, 'specification', "$it.spec.name")
@@ -213,6 +228,11 @@ class FooSpec extends Specification {
           assert !method.name
           instance.specificationContext.with {
             assert currentSpec
+            try {
+              currentFeature
+              assert false: 'currentFeature should not be set'
+            } catch (IllegalStateException ise) {
+            }
           }
         }
         proceed(it, 'setup spec', "$it.spec.name")
@@ -229,6 +249,11 @@ class FooSpec extends Specification {
           assert method.name
           instance.specificationContext.with {
             assert currentSpec
+            try {
+              currentFeature
+              assert false: 'currentFeature should not be set'
+            } catch (IllegalStateException ise) {
+            }
           }
         }
         proceed(it, 'setup spec method', "$it.spec.name.$it.method.name()")
@@ -245,6 +270,7 @@ class FooSpec extends Specification {
           assert !method.name
           instance.specificationContext.with {
             assert currentSpec
+            assert currentFeature
           }
         }
         proceed(it, 'feature', "$it.spec.name.$it.feature.name")
@@ -261,6 +287,7 @@ class FooSpec extends Specification {
           assert !method.name
           instance.specificationContext.with {
             assert currentSpec
+            assert currentFeature
           }
         }
         proceed(it, 'initializer', "$it.spec.name.$it.feature.name")
@@ -277,6 +304,7 @@ class FooSpec extends Specification {
           assert method.name
           instance.specificationContext.with {
             assert currentSpec
+            assert currentFeature
           }
         }
         proceed(it, 'initializer method', "$it.spec.name.$it.feature.name.$it.method.name()")
@@ -293,6 +321,7 @@ class FooSpec extends Specification {
           assert !method.name
           instance.specificationContext.with {
             assert currentSpec
+            assert currentFeature
           }
         }
         proceed(it, 'iteration', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
@@ -309,6 +338,7 @@ class FooSpec extends Specification {
           assert !method.name
           instance.specificationContext.with {
             assert currentSpec
+            assert currentFeature
           }
         }
         proceed(it, 'setup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
@@ -325,6 +355,7 @@ class FooSpec extends Specification {
           assert method.name
           instance.specificationContext.with {
             assert currentSpec
+            assert currentFeature
           }
         }
         proceed(it, 'setup method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
@@ -341,6 +372,7 @@ class FooSpec extends Specification {
           assert method.name
           instance.specificationContext.with {
             assert currentSpec
+            assert currentFeature
           }
         }
         proceed(it, 'feature method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
@@ -357,6 +389,7 @@ class FooSpec extends Specification {
           assert !method.name
           instance.specificationContext.with {
             assert currentSpec
+            assert currentFeature
           }
         }
         proceed(it, 'cleanup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
@@ -373,6 +406,7 @@ class FooSpec extends Specification {
           assert method.name
           instance.specificationContext.with {
             assert currentSpec
+            assert currentFeature
           }
         }
         proceed(it, 'cleanup method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
@@ -389,6 +423,11 @@ class FooSpec extends Specification {
           assert !method.name
           instance.specificationContext.with {
             assert currentSpec
+            try {
+              currentFeature
+              assert false: 'currentFeature should not be set'
+            } catch (IllegalStateException ise) {
+            }
           }
         }
         proceed(it, 'cleanup spec', "$it.spec.name")
@@ -405,6 +444,11 @@ class FooSpec extends Specification {
           assert method.name
           instance.specificationContext.with {
             assert currentSpec
+            try {
+              currentFeature
+              assert false: 'currentFeature should not be set'
+            } catch (IllegalStateException ise) {
+            }
           }
         }
         proceed(it, 'cleanup spec method', "$it.spec.name.$it.method.name()")
@@ -412,7 +456,8 @@ class FooSpec extends Specification {
       specInfo.allFixtureMethods*.addInterceptor {
         it.with {
           assert spec
-          if (method.name.endsWith('Spec')) {
+          def specFixture = method.name.endsWith('Spec')
+          if (specFixture) {
             assert !feature
             assert !iteration
             assert instance == sharedInstance
@@ -427,6 +472,15 @@ class FooSpec extends Specification {
           assert method.name
           instance.specificationContext.with {
             assert currentSpec
+            if (specFixture) {
+              try {
+                currentFeature
+                assert false: 'currentFeature should not be set'
+              } catch (IllegalStateException ise) {
+              }
+            } else {
+              assert currentFeature
+            }
           }
         }
         proceed(it, 'fixture method', "$it.spec.name${it.feature?.name?.with { name -> ".$name[#$it.iteration.iterationIndex]" } ?: ''}.$it.method.name()")

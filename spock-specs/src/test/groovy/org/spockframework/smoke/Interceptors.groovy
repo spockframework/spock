@@ -245,6 +245,7 @@ class SubSpec extends SuperSpec {
         assert instance == sharedInstance
         assert target != instance
         assert method
+        assert !method.reflection
       }
     }
 
@@ -256,6 +257,7 @@ class SubSpec extends SuperSpec {
         assert instance == sharedInstance
         assert target == instance
         assert method
+        assert method.reflection
       }
     }
 
@@ -267,6 +269,7 @@ class SubSpec extends SuperSpec {
         assert instance == sharedInstance
         assert target != instance
         assert method
+        assert !method.reflection
       }
     }
 
@@ -278,6 +281,7 @@ class SubSpec extends SuperSpec {
         assert instance != sharedInstance
         assert target != instance
         assert method
+        assert !method.reflection
       }
     }
 
@@ -289,6 +293,7 @@ class SubSpec extends SuperSpec {
         assert instance != sharedInstance
         assert target == instance
         assert method
+        assert method.reflection
       }
     }
 

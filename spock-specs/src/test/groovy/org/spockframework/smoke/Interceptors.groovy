@@ -232,6 +232,7 @@ class FooSpec extends Specification {
       invocation.with {
         assert spec
         assert !feature
+        assert !iteration
       }
     }
 
@@ -239,6 +240,7 @@ class FooSpec extends Specification {
       invocation.with {
         assert spec
         assert !feature
+        assert !iteration
       }
     }
 
@@ -246,6 +248,7 @@ class FooSpec extends Specification {
       invocation.with {
         assert spec
         assert feature
+        assert !iteration
       }
     }
 
@@ -253,6 +256,7 @@ class FooSpec extends Specification {
       invocation.with {
         assert spec
         assert feature
+        assert iteration
       }
     }
 
@@ -260,6 +264,7 @@ class FooSpec extends Specification {
       invocation.with {
         assert spec
         assert feature
+        assert iteration
       }
     }
 

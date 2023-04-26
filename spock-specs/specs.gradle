@@ -46,7 +46,7 @@ tasks.named("test", Test) {
   testLogging.events 'standard_out'
   testLogging.events 'standard_error'
   maxParallelForks = 1
-  systemProperty "spock.snapshots.rootPath", "${projectDir}/src/test/resources"
+  systemProperty "spock.snapshots.rootPath", "src/test/resources"
   if (project.hasProperty("updateSnapshots")) {
     systemProperty("spock.snapshots.updateSnapshots", "true")
   }

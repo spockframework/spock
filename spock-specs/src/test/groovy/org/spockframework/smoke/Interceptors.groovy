@@ -166,7 +166,7 @@ class SubSpec extends SuperSpec {
       specInfo.specsBottomToTop*.addSetupSpecInterceptor {
         proceed(it, 'setup spec', "$it.spec.name")
       }
-      specInfo.specsBottomToTop.collectMany { it.setupSpecMethods }*.addInterceptor {
+      specInfo.allSetupSpecMethods*.addInterceptor {
         proceed(it, 'setup spec method', "$it.spec.name.$it.method.name()")
       }
       specInfo.allFeatures*.addInterceptor {

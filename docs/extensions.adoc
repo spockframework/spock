@@ -918,7 +918,7 @@ specInfo.specsBottomToTop*.addSharedInitializerInterceptor new I('shared initial
 specInfo.allSharedInitializerMethods*.addInterceptor new I('shared initializer method')
 specInfo.addInterceptor new I('specification')
 specInfo.specsBottomToTop*.addSetupSpecInterceptor new I('setup spec')
-specInfo.specsBottomToTop.collectMany { it.setupSpecMethods }*.addInterceptor new I('setup spec method')
+specInfo.allSetupSpecMethods*.addInterceptor new I('setup spec method')
 specInfo.allFeatures*.addInterceptor new I('feature')
 specInfo.specsBottomToTop*.addInitializerInterceptor new I('initializer')
 specInfo.specsBottomToTop*.initializerMethod*.addInterceptor new I('initializer method')

@@ -14,10 +14,12 @@
 
 package org.spockframework.junit4.junit
 
+import org.intellij.lang.annotations.Language
+import org.spockframework.runtime.model.parallel.ExecutionMode
+import spock.lang.Execution
 import spock.lang.Unroll
 
-import org.intellij.lang.annotations.Language
-
+@Execution(value = ExecutionMode.SAME_THREAD, reason = 'Uses static state to communicate with embedded specifications')
 class JUnitFixtureMethods extends JUnitBaseSpec {
   static invocations = []
   static RECORD_INVOCATION_METHOD = "static record(methodName) { JUnitFixtureMethods.invocations << methodName }"

@@ -196,6 +196,12 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     return setupMethods;
   }
 
+  public Iterable<MethodInfo> getAllSetupMethods() {
+    if (superSpec == null) return getSetupMethods();
+
+    return CollectionUtil.concat(superSpec.getAllSetupMethods(), getSetupMethods());
+  }
+
   public void addSetupMethod(MethodInfo setupMethod) {
     setupMethods.add(setupMethod);
   }

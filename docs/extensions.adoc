@@ -913,7 +913,7 @@ specInfo.allFeatures*.featureMethod*.addInterceptor new I('feature method')
 specInfo.addCleanupInterceptor new I('cleanup')
 specInfo.allCleanupMethods*.addInterceptor new I('cleanup method')
 specInfo.addCleanupSpecInterceptor new I('cleanup spec')
-specInfo.specsBottomToTop.collectMany { it.cleanupSpecMethods }*.addInterceptor new I('cleanup spec method')
+specInfo.allCleanupSpecMethods*.addInterceptor new I('cleanup spec method')
 specInfo.allFixtureMethods*.addInterceptor new I('fixture method')
 
 // on FeatureInfo

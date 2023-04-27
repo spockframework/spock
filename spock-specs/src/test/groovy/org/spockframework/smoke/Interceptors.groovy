@@ -196,7 +196,7 @@ class FooSpec extends Specification {
       specInfo.addCleanupSpecInterceptor {
         proceed(it, 'cleanup spec', "$it.spec.name")
       }
-      specInfo.specsBottomToTop.collectMany { it.cleanupSpecMethods }*.addInterceptor {
+      specInfo.allCleanupSpecMethods*.addInterceptor {
         proceed(it, 'cleanup spec method', "$it.spec.name.$it.method.name()")
       }
       specInfo.allFixtureMethods*.addInterceptor {

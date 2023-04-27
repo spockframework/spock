@@ -238,6 +238,12 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     return cleanupSpecMethods;
   }
 
+  public Iterable<MethodInfo> getAllCleanupSpecMethods() {
+    if (superSpec == null) return getCleanupSpecMethods();
+
+    return CollectionUtil.concat(superSpec.getAllCleanupSpecMethods(), getCleanupSpecMethods());
+  }
+
   public void addCleanupSpecMethod(MethodInfo cleanupSpecMethod) {
     cleanupSpecMethods.add(cleanupSpecMethod);
   }

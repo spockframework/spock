@@ -172,7 +172,7 @@ class FooSpec extends Specification {
       specInfo.addInitializerInterceptor {
         proceed(it, 'initializer', "$it.spec.name.$it.feature.name")
       }
-      specInfo.specsBottomToTop*.initializerMethod*.addInterceptor {
+      specInfo.allInitializerMethods*.addInterceptor {
         proceed(it, 'initializer method', "$it.spec.name.$it.feature.name.$it.method.name()")
       }
       specInfo.allFeatures*.addIterationInterceptor {

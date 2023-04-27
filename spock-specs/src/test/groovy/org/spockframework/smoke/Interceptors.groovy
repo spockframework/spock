@@ -181,7 +181,7 @@ class FooSpec extends Specification {
       specInfo.addSetupInterceptor {
         proceed(it, 'setup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
-      specInfo.specsBottomToTop.collectMany { it.setupMethods }*.addInterceptor {
+      specInfo.allSetupMethods*.addInterceptor {
         proceed(it, 'setup method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
       }
       specInfo.allFeatures*.featureMethod*.addInterceptor {

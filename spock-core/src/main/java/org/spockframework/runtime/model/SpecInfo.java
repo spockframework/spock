@@ -168,6 +168,12 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     return initializerMethod;
   }
 
+  public Iterable<MethodInfo> getAllInitializerMethods() {
+    if (superSpec == null) return CollectionUtil.listOf(getInitializerMethod());
+
+    return CollectionUtil.concat(superSpec.getAllInitializerMethods(), CollectionUtil.listOf(getInitializerMethod()));
+  }
+
   public void setInitializerMethod(MethodInfo initializerMethod) {
     this.initializerMethod = initializerMethod;
   }

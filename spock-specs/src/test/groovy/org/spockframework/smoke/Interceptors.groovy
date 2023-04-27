@@ -177,7 +177,7 @@ class SubSpec extends SuperSpec {
           proceed(it, 'initializer', "$it.spec.name.$it.feature.name / $spec.name")
         }
       }
-      specInfo.specsBottomToTop*.initializerMethod*.addInterceptor {
+      specInfo.allInitializerMethods*.addInterceptor {
         proceed(it, 'initializer method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
       specInfo.allFeatures*.addIterationInterceptor {

@@ -188,7 +188,7 @@ class SubSpec extends SuperSpec {
           proceed(it, 'setup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex] / $spec.name")
         }
       }
-      specInfo.specsBottomToTop.collectMany { it.setupMethods }*.addInterceptor {
+      specInfo.allSetupMethods*.addInterceptor {
         proceed(it, 'setup method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
       specInfo.allFeatures*.featureMethod*.addInterceptor {

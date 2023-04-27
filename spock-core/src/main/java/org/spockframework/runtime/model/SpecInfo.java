@@ -176,6 +176,12 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     return sharedInitializerMethod;
   }
 
+  public Iterable<MethodInfo> getAllSharedInitializerMethods() {
+    if (superSpec == null) return CollectionUtil.listOf(getSharedInitializerMethod());
+
+    return CollectionUtil.concat(superSpec.getAllSharedInitializerMethods(), CollectionUtil.listOf(getSharedInitializerMethod()));
+  }
+
   public void setSharedInitializerMethod(MethodInfo sharedInitializerMethod) {
     this.sharedInitializerMethod = sharedInitializerMethod;
   }

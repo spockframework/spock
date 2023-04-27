@@ -157,7 +157,7 @@ class SubSpec extends SuperSpec {
       specInfo.specsBottomToTop*.addSharedInitializerInterceptor {
         proceed(it, 'shared initializer', "$it.spec.name")
       }
-      specInfo.specsBottomToTop*.sharedInitializerMethod*.addInterceptor {
+      specInfo.allSharedInitializerMethods*.addInterceptor {
         proceed(it, 'shared initializer method', "$it.spec.name.$it.method.name()")
       }
       specInfo.addInterceptor {

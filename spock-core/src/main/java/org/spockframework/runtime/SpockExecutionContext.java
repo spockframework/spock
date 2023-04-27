@@ -1,11 +1,14 @@
 package org.spockframework.runtime;
 
-import org.spockframework.runtime.model.*;
+import org.junit.platform.engine.EngineExecutionListener;
+import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
+import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.runtime.model.IterationInfo;
+import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.util.IThrowableConsumer;
 import org.spockframework.util.InternalSpockError;
 import spock.lang.Specification;
-
-import org.junit.platform.engine.*;
-import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 
 public class SpockExecutionContext implements EngineExecutionContext, Cloneable {
   private EngineExecutionListener engineExecutionListener;
@@ -124,6 +127,12 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
 
   public SpockExecutionContext withErrorInfoCollector(ErrorInfoCollector errorInfoCollector) {
     return clone().setErrorInfoCollector(errorInfoCollector);
+  }
+
+  public <E extends Throwable> void runAndAssertWithNewErrorCollector(IThrowableConsumer<SpockExecutionContext, E> consumer) throws E {
+    ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
+    consumer.accept(withErrorInfoCollector(errorInfoCollector));
+    errorInfoCollector.assertEmpty();
   }
 
   public SpockExecutionContext withParentId(UniqueId uniqueId) {

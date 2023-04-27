@@ -29,10 +29,7 @@ public class SimpleFeatureNode extends FeatureNode {
 
   @Override
   public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
-    return delegate.prepare(
-      context.withCurrentFeature(getNodeInfo())
-      //.withParentId(getUniqueId())
-    );
+    return context.withCurrentFeature(getNodeInfo());
   }
 
   @Override
@@ -49,7 +46,10 @@ public class SimpleFeatureNode extends FeatureNode {
   @Override
   public void around(SpockExecutionContext context, Invocation<SpockExecutionContext> invocation) {
     // Wrap the Feature invocation around the invocation of the Iteration delegate
-    super.around(context, ctx -> delegate.around(ctx, invocation));
+    super.around(context, ctx -> {
+      ctx = delegate.prepare(ctx);
+      delegate.around(ctx, invocation);
+    });
   }
 
   @Override

@@ -23,7 +23,6 @@ import org.spockframework.runtime.StackTraceFilter
 import org.spockframework.runtime.WrongExceptionThrownError
 import org.spockframework.runtime.model.ExpressionInfo
 import org.spockframework.util.Identifiers
-
 import spock.lang.Issue
 import spock.lang.Unroll
 
@@ -161,7 +160,6 @@ def foo() { expect: true }
     ConditionNotSatisfiedError e = thrown()
     stackTraceLooksLike e, """
 apackage.ASpec|\$spock_initializeFields_closure1|1
-apackage.ASpec|\$spock_initializeFields_closure1|-
 apackage.ASpec|\$spock_initializeFields|1
     """
   }

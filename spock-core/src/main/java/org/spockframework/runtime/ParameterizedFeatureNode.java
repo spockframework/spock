@@ -1,13 +1,16 @@
 package org.spockframework.runtime;
 
+import org.junit.platform.engine.TestExecutionResult.Status;
+import org.junit.platform.engine.UniqueId;
+import org.opentest4j.MultipleFailuresError;
+import org.opentest4j.TestAbortedException;
 import org.spockframework.runtime.model.FeatureInfo;
 import spock.config.RunnerConfiguration;
 
-import java.util.*;
-
-import org.junit.platform.engine.TestExecutionResult.Status;
-import org.junit.platform.engine.UniqueId;
-import org.opentest4j.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Queue;
 
 import static java.util.stream.Collectors.toList;
 import static org.junit.platform.engine.TestExecutionResult.Status.*;
@@ -34,11 +37,8 @@ public class ParameterizedFeatureNode extends FeatureNode {
   @Override
   public SpockExecutionContext execute(SpockExecutionContext context, DynamicTestExecutor dynamicTestExecutor) throws Exception {
     verifyNotSkipped(getNodeInfo());
-    ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
-    context = context.withErrorInfoCollector(errorInfoCollector);
     ParameterizedFeatureChildExecutor childExecutor = new ParameterizedFeatureChildExecutor(this, dynamicTestExecutor, context.getEngineExecutionListener());
-    context.getRunner().runParameterizedFeature(context, childExecutor);
-    errorInfoCollector.assertEmpty();
+    context.runAndAssertWithNewErrorCollector(ctx -> ctx.getRunner().runParameterizedFeature(ctx, childExecutor));
     if (childExecutor.getExecutionCount() < 1) {
      throw new SpockExecutionException("Data provider has no data");
     }

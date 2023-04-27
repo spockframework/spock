@@ -1,12 +1,11 @@
 package org.spockframework.runtime;
 
+import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.descriptor.ClassSource;
 import org.spockframework.runtime.model.SpecInfo;
 import spock.config.RunnerConfiguration;
 
 import java.util.Optional;
-
-import org.junit.platform.engine.UniqueId;
-import org.junit.platform.engine.support.descriptor.ClassSource;
 
 public class SpecNode extends SpockNode<SpecInfo> {
 
@@ -41,27 +40,18 @@ public class SpecNode extends SpockNode<SpecInfo> {
 
   @Override
   public SpockExecutionContext before(SpockExecutionContext context) throws Exception {
-    ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
-    context = context.withErrorInfoCollector(errorInfoCollector);
-    context.getRunner().runSetupSpec(context);
-    errorInfoCollector.assertEmpty();
+    context.runAndAssertWithNewErrorCollector(context.getRunner()::runSetupSpec);
     return context;
   }
 
   @Override
   public void after(SpockExecutionContext context) throws Exception {
-    ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
-    context = context.withErrorInfoCollector(errorInfoCollector);
-    context.getRunner().runCleanupSpec(context);
-    errorInfoCollector.assertEmpty();
+    context.runAndAssertWithNewErrorCollector(context.getRunner()::runCleanupSpec);
   }
 
   @Override
   public void around(SpockExecutionContext context, Invocation<SpockExecutionContext> invocation) throws Exception {
-    ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
-    SpockExecutionContext ctx = context.withErrorInfoCollector(errorInfoCollector);
-    ctx.getRunner().runSpec(ctx, () -> sneakyInvoke(invocation, ctx));
-    errorInfoCollector.assertEmpty();
+    context.runAndAssertWithNewErrorCollector(ctx -> ctx.getRunner().runSpec(ctx, () -> sneakyInvoke(invocation, ctx)));
   }
 
   @Override

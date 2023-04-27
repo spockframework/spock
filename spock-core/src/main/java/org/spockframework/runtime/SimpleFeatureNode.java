@@ -1,9 +1,10 @@
 package org.spockframework.runtime;
 
+import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.TestExecutionResult;
+import org.junit.platform.engine.UniqueId;
 import org.spockframework.runtime.model.FeatureInfo;
 import spock.config.RunnerConfiguration;
-
-import org.junit.platform.engine.*;
 
 /**
  * A non-parametric feature (test) that only has a single "iteration".
@@ -35,11 +36,7 @@ public class SimpleFeatureNode extends FeatureNode {
   @Override
   public SpockExecutionContext before(SpockExecutionContext context) throws Exception {
     context = super.before(context);
-    ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
-    context = context.withErrorInfoCollector(errorInfoCollector);
-    context.getRunner().runSetup(context);
-    errorInfoCollector.assertEmpty();
-
+    context.runAndAssertWithNewErrorCollector(context.getRunner()::runSetup);
     return context;
   }
 
@@ -61,11 +58,8 @@ public class SimpleFeatureNode extends FeatureNode {
 
   @Override
   public void after(SpockExecutionContext context) throws Exception {
-    ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
-    context = context.withErrorInfoCollector(errorInfoCollector);
-    delegate.after(context);
+    context.runAndAssertWithNewErrorCollector(delegate::after);
     // First the iteration node, then the Feature node
-    errorInfoCollector.assertEmpty();
     super.after(context);
   }
 

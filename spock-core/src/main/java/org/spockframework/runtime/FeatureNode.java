@@ -1,9 +1,11 @@
 package org.spockframework.runtime;
 
+import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.TestSource;
+import org.junit.platform.engine.TestTag;
+import org.junit.platform.engine.UniqueId;
 import org.spockframework.runtime.model.FeatureInfo;
 import spock.config.RunnerConfiguration;
-
-import org.junit.platform.engine.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -41,10 +43,7 @@ public abstract class FeatureNode extends SpockNode<FeatureInfo> {
 
   @Override
   public void around(SpockExecutionContext context, Invocation<SpockExecutionContext> invocation) {
-    ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
-    final SpockExecutionContext innerContext = context.withErrorInfoCollector(errorInfoCollector);
-    context.getRunner().runFeature(innerContext, () -> sneakyInvoke(invocation, innerContext));
-    errorInfoCollector.assertEmpty();
+    context.runAndAssertWithNewErrorCollector(ctx -> context.getRunner().runFeature(ctx, () -> sneakyInvoke(invocation, ctx)));
   }
 
   @Override

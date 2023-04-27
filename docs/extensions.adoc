@@ -905,7 +905,7 @@ class I extends AbstractMethodInterceptor { I(def s) {} }
 
 // on SpecInfo
 specInfo.addSharedInitializerInterceptor new I('shared initializer')
-specInfo.specsBottomToTop*.sharedInitializerMethod*.addInterceptor new I('shared initializer method')
+specInfo.allSharedInitializerMethods*.addInterceptor new I('shared initializer method')
 specInfo.addInterceptor new I('specification')
 specInfo.addSetupSpecInterceptor new I('setup spec')
 specInfo.specsBottomToTop.collectMany { it.setupSpecMethods }*.addInterceptor new I('setup spec method')

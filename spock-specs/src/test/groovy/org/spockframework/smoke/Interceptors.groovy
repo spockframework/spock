@@ -190,7 +190,7 @@ class FooSpec extends Specification {
       specInfo.addCleanupInterceptor {
         proceed(it, 'cleanup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
-      specInfo.specsBottomToTop.collectMany { it.cleanupMethods }*.addInterceptor {
+      specInfo.allCleanupMethods*.addInterceptor {
         proceed(it, 'cleanup method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
       }
       specInfo.addCleanupSpecInterceptor {

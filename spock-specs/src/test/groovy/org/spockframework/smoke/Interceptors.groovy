@@ -199,7 +199,7 @@ class SubSpec extends SuperSpec {
           proceed(it, 'cleanup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex] / $spec.name")
         }
       }
-      specInfo.specsBottomToTop.collectMany { it.cleanupMethods }*.addInterceptor {
+      specInfo.allCleanupMethods*.addInterceptor {
         proceed(it, 'cleanup method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
       specInfo.specsBottomToTop*.addCleanupSpecInterceptor {

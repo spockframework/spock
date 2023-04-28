@@ -20,7 +20,7 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.IStandardStreamsListener
 import org.spockframework.runtime.SpockTimeoutError
 import org.spockframework.runtime.StandardStreamsCapturer
-import org.spockframework.runtime.extension.builtin.ThreadDumpCapturingUtil
+import org.spockframework.runtime.extension.builtin.ThreadDumpUtilityType
 import spock.lang.*
 
 import java.util.concurrent.TimeUnit
@@ -198,7 +198,7 @@ class TimeoutExtension extends EmbeddedSpecification {
     given:
     runner.configurationScript {
       timeout {
-        threadDumpCapturingUtil ThreadDumpCapturingUtil.JSTACK
+        threadDumpUtilityType ThreadDumpUtilityType.JSTACK
       }
     }
 
@@ -207,7 +207,7 @@ class TimeoutExtension extends EmbeddedSpecification {
 
     then:
     thrown SpockTimeoutError
-    assertThreadDumpsCaptured(3, 3, false, ThreadDumpCapturingUtil.JSTACK)
+    assertThreadDumpsCaptured(3, 3, false, ThreadDumpUtilityType.JSTACK)
   }
 
   def "notifies custom interrupt listeners"() {
@@ -277,7 +277,7 @@ class TimeoutExtension extends EmbeddedSpecification {
     """
   }
 
-  private void assertThreadDumpsCaptured(int interruptAttempts, int threadDumps, boolean exceededCaptureLimit, ThreadDumpCapturingUtil util = ThreadDumpCapturingUtil.JCMD) {
+  private void assertThreadDumpsCaptured(int interruptAttempts, int threadDumps, boolean exceededCaptureLimit, ThreadDumpUtilityType util = ThreadDumpUtilityType.JCMD) {
     with(outputListener) {
       count("Method 'foo' timed out") == 1
       count("Method 'foo' has not stopped") == interruptAttempts - 1

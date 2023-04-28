@@ -48,7 +48,7 @@ public class TimeoutInterceptor implements IMethodInterceptor {
   public TimeoutInterceptor(Timeout timeout, TimeoutConfiguration configuration) {
     this.timeout = timeout;
     this.configuration = configuration;
-    this.threadDumpCollector = JavaProcessThreadDumpCollector.create(configuration.threadDumpCapturingUtil);
+    this.threadDumpCollector = JavaProcessThreadDumpCollector.create(configuration.threadDumpUtilityType);
   }
 
   @Override

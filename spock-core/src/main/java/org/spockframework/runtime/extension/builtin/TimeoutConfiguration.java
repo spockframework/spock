@@ -16,8 +16,8 @@ import java.util.List;
  *   printThreadDumpOnInterruptAttempt true
  *   // integer, default 3
  *   maxInterruptAttemptsWithThreadDump 5
- *   // org.spockframework.runtime.extension.builtin.ThreadDumpCapturingUtil, default JCMD
- *   threadDumpCapturingUtil ThreadDumpCapturingUtil.JSTACK
+ *   // org.spockframework.runtime.extension.builtin.ThreadDumpUtilityType, default JCMD
+ *   threadDumpUtilityType threadDumpUtilityType.JSTACK
  *   // list of java.lang.Runnable, default []
  *   interruptAttemptListeners.add({ println('Timeout occurred!') })
  * }
@@ -40,9 +40,9 @@ public class TimeoutConfiguration {
   public int maxInterruptAttemptsWithThreadDump = 3;
 
   /**
-   * Utility used to capture thread dumps, default {@link ThreadDumpCapturingUtil#JCMD}.
+   * Utility used to capture thread dumps, default {@link ThreadDumpUtilityType#JCMD}.
    */
-  public ThreadDumpCapturingUtil threadDumpCapturingUtil = ThreadDumpCapturingUtil.JCMD;
+  public ThreadDumpUtilityType threadDumpUtilityType = ThreadDumpUtilityType.JCMD;
 
   /**
    * Listeners to be invoked on method timeout or unsuccessful interrupt attempts, default empty.

@@ -17,8 +17,7 @@
 package org.spockframework.util;
 
 import org.spockframework.runtime.SpockException;
-import org.spockframework.runtime.extension.builtin.ThreadDumpCapturingUtil;
-import spock.util.environment.OperatingSystem;
+import org.spockframework.runtime.extension.builtin.ThreadDumpUtilityType;
 
 import java.io.*;
 import java.lang.management.ManagementFactory;
@@ -33,7 +32,7 @@ public interface JavaProcessThreadDumpCollector {
 
   void appendThreadDumpOfCurrentJvm(StringBuilder builder) throws IOException, InterruptedException;
 
-  static JavaProcessThreadDumpCollector create(ThreadDumpCapturingUtil utility) {
+  static JavaProcessThreadDumpCollector create(ThreadDumpUtilityType utility) {
     try {
       return new FunctionalJavaProcessThreadDumpCollector(utility);
     } catch (Exception e) {
@@ -51,15 +50,15 @@ public interface JavaProcessThreadDumpCollector {
 
     private static final String JAVA_HOME_SYS_PROP = "java.home";
 
-    private final ThreadDumpCapturingUtil utility;
+    private final ThreadDumpUtilityType utility;
     private final List<String> command;
 
-    public FunctionalJavaProcessThreadDumpCollector(ThreadDumpCapturingUtil utility) {
+    public FunctionalJavaProcessThreadDumpCollector(ThreadDumpUtilityType utility) {
       long pid = currentProcessId();
       Path utilityPath = getUtilityCommandPath(utility);
 
       this.utility = utility;
-      this.command = utility == ThreadDumpCapturingUtil.JSTACK
+      this.command = utility == ThreadDumpUtilityType.JSTACK
         ? Arrays.asList(utilityPath.toString(), Long.toString(pid))
         : Arrays.asList(utilityPath.toString(), Long.toString(pid), "Thread.print");
     }
@@ -89,21 +88,11 @@ public interface JavaProcessThreadDumpCollector {
       }
     }
 
-    private static Path getUtilityCommandPath(ThreadDumpCapturingUtil utility) {
-      Path javaHome = getJavaHome();
-      String utilityFileName = utility.getFileName(OperatingSystem.getCurrent());
-
-      Path utilityPath;
-      if ("jre".equals(javaHome.getParent().getFileName().toString())) {
-        utilityPath = javaHome.resolve("../../bin").resolve(utilityFileName).normalize();
-      } else {
-        utilityPath = javaHome.resolve("../bin").resolve(utilityFileName).normalize();
-      }
-
+    private static Path getUtilityCommandPath(ThreadDumpUtilityType utility) {
+      Path utilityPath = utility.getPath(getJavaHome());
       if (!Files.exists(utilityPath)) {
         throw new SpockException("Could not find requested thread dump capturing utility '" + utility.name() + "' under expected path '" + utilityPath.toString() + "'");
       }
-
       return utilityPath;
     }
 

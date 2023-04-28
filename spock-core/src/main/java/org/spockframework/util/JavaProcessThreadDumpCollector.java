@@ -38,7 +38,7 @@ public interface JavaProcessThreadDumpCollector {
     } catch (Exception e) {
       ByteArrayOutputStream stream = new ByteArrayOutputStream();
       e.printStackTrace(new PrintStream(stream));
-      System.err.printf("Thread dump capturing is not available: " + stream);
+      System.out.printf("Thread dump capturing is not available: " + stream);
       return NO_OP;
     }
   }
@@ -92,7 +92,7 @@ public interface JavaProcessThreadDumpCollector {
     private static Path getUtilityCommandPath(ThreadDumpUtilityType utility) {
       Path utilityPath = utility.getPath(getJavaHome());
       if (!Files.exists(utilityPath)) {
-        throw new SpockException("Could not find requested thread dump capturing utility '" + utility.name() + "' under expected path '" + utilityPath.toString() + "'");
+        throw new SpockException("Could not find requested thread dump capturing utility '" + utility.name().toLowerCase() + "' under expected path '" + utilityPath + "'");
       }
       return utilityPath;
     }

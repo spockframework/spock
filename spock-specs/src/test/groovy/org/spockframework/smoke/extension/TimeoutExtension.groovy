@@ -22,7 +22,9 @@ import org.spockframework.runtime.SpockTimeoutError
 import org.spockframework.runtime.StandardStreamsCapturer
 import org.spockframework.runtime.extension.builtin.ThreadDumpUtilityType
 import spock.lang.*
+import spock.util.environment.RestoreSystemProperties
 
+import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS
@@ -41,6 +43,9 @@ class TimeoutExtension extends EmbeddedSpecification {
   @AutoCleanup("stop")
   StandardStreamsCapturer outputCapturer = new StandardStreamsCapturer()
   OutputListener outputListener = new OutputListener()
+
+  @TempDir
+  Path tempDir
 
   def setup() {
     runner.addClassMemberImport TimeUnit
@@ -246,6 +251,38 @@ class TimeoutExtension extends EmbeddedSpecification {
     thrown SpockTimeoutError
     outputListener.count("Thread dump of current JVM") == 1
     outputListener.count(/"[spock.lang.Timeout] Watcher for method 'foo'" #/) == 0
+  }
+
+  @RestoreSystemProperties
+  def "does not fail if thread dump capturing util is not available"() {
+    given:
+    System.setProperty('java.home', tempDir.toString())
+
+    when:
+    runSpecWithInterrupts(2)
+
+    then:
+    thrown SpockTimeoutError
+    with(outputListener) {
+      count("Could not find requested thread dump capturing utility") == 1
+      count("Thread dump of current JVM") == 0
+    }
+  }
+
+  @RestoreSystemProperties
+  def "does not fail if java home is not set"() {
+    given:
+    System.clearProperty('java.home')
+
+    when:
+    runSpecWithInterrupts(2)
+
+    then:
+    thrown SpockTimeoutError
+    with(outputListener) {
+      count("Could not determine java home directory") == 1
+      count("Thread dump of current JVM") == 0
+    }
   }
 
   @Timeout(1)

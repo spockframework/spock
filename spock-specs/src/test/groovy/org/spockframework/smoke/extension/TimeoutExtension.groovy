@@ -159,7 +159,7 @@ class TimeoutExtension extends EmbeddedSpecification {
     thrown SpockTimeoutError
 
     and: 'thread dumps are captured on each interrupt attempt'
-    assertThreadDumpsCaptured(3, 3, false)
+    assertThreadDumpsCaptured(2, 2, false)
   }
 
   def "can disable thread dump capturing on interrupt attempts"() {
@@ -175,7 +175,7 @@ class TimeoutExtension extends EmbeddedSpecification {
 
     then:
     thrown SpockTimeoutError
-    assertThreadDumpsCaptured(2, 1, false)
+    assertThreadDumpsCaptured(1, 0, false)
   }
 
   def "can set the maximum number of interrupt attempts with thread dump captured"() {
@@ -191,7 +191,7 @@ class TimeoutExtension extends EmbeddedSpecification {
 
     then:
     thrown SpockTimeoutError
-    assertThreadDumpsCaptured(3, 2, true)
+    assertThreadDumpsCaptured(2, 1, true)
   }
 
   def "can capture thread dumps using jstack"() {
@@ -207,7 +207,7 @@ class TimeoutExtension extends EmbeddedSpecification {
 
     then:
     thrown SpockTimeoutError
-    assertThreadDumpsCaptured(3, 3, false, ThreadDumpUtilityType.JSTACK)
+    assertThreadDumpsCaptured(2, 2, false, ThreadDumpUtilityType.JSTACK)
   }
 
   def "notifies custom interrupt listeners"() {
@@ -228,7 +228,7 @@ class TimeoutExtension extends EmbeddedSpecification {
 
     then:
     thrown SpockTimeoutError
-    assertThreadDumpsCaptured(3, 2, true)
+    assertThreadDumpsCaptured(2, 1, true)
 
     and:
     someListeners.each {
@@ -240,12 +240,7 @@ class TimeoutExtension extends EmbeddedSpecification {
 
   def "excludes watcher thread from thread dump"() {
     when:
-    runner.runSpecBody """
-      @Timeout(value = 100, unit = MILLISECONDS)
-      def foo() {
-        setup: Thread.sleep 250
-      }
-    """
+    runSpecWithInterrupts(2)
 
     then:
     thrown SpockTimeoutError
@@ -277,10 +272,9 @@ class TimeoutExtension extends EmbeddedSpecification {
     """
   }
 
-  private void assertThreadDumpsCaptured(int interruptAttempts, int threadDumps, boolean exceededCaptureLimit, ThreadDumpUtilityType util = ThreadDumpUtilityType.JCMD) {
+  private void assertThreadDumpsCaptured(int unsuccessfulInterruptAttempts, int threadDumps, boolean exceededCaptureLimit, ThreadDumpUtilityType util = ThreadDumpUtilityType.JCMD) {
     with(outputListener) {
-      count("Method 'foo' timed out") == 1
-      count("Method 'foo' has not stopped") == interruptAttempts - 1
+      count("Method 'foo' has not stopped") == unsuccessfulInterruptAttempts
       count("Thread dump of current JVM (${util.name()})") == threadDumps
       (count('No further thread dumps will be logged and no timeout listeners will be run') == 1) == exceededCaptureLimit
     }

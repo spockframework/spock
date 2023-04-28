@@ -54,7 +54,7 @@ public class TimeoutInterceptor implements IMethodInterceptor {
   @Override
   public void intercept(final IMethodInvocation invocation) throws Throwable {
     final Thread mainThread = Thread.currentThread();
-    final SynchronousQueue<Boolean> sync = new SynchronousQueue<>();
+    final SynchronousQueue<StackTraceElement[]> sync = new SynchronousQueue<>();
     final CountDownLatch startLatch = new CountDownLatch(2);
     final String methodName = invocation.getMethod().getName();
     final double timeoutSeconds = TimeUtil.toSeconds(timeout.value(), timeout.unit());
@@ -62,7 +62,7 @@ public class TimeoutInterceptor implements IMethodInterceptor {
     new Thread(String.format("[spock.lang.Timeout] Watcher for method '%s'", methodName)) {
       @Override
       public void run() {
-        boolean timedOut = false;
+        StackTraceElement[] stackTrace = new StackTraceElement[0];
         long waitMillis = timeout.unit().toMillis(timeout.value());
         boolean synced = false;
         long timeoutAt = 0;
@@ -72,16 +72,16 @@ public class TimeoutInterceptor implements IMethodInterceptor {
 
         while (!synced) {
           try {
-            synced = sync.offer(timedOut, waitMillis, TimeUnit.MILLISECONDS);
+            synced = sync.offer(stackTrace, waitMillis, TimeUnit.MILLISECONDS);
           } catch (InterruptedException ignored) {
             // The mission of this thread is to repeatedly interrupt the main thread until
             // the latter returns. Once this mission has been accomplished, this thread will die quickly
           }
           if (!synced) {
             long now = System.nanoTime();
-            if (!timedOut) {
+            if (stackTrace.length == 0) {
               logMethodTimeout(methodName, timeoutSeconds);
-              timedOut = true;
+              stackTrace = mainThread.getStackTrace();
               waitMillis = 250;
               timeoutAt = now;
             } else {
@@ -102,10 +102,10 @@ public class TimeoutInterceptor implements IMethodInterceptor {
     } catch (Throwable t) {
       saved = t;
     }
-    Boolean timedOut = null;
-    while (timedOut == null) {
+    StackTraceElement[] stackTrace = null;
+    while (stackTrace == null) {
       try {
-        timedOut = sync.take();
+        stackTrace = sync.take();
       } catch (InterruptedException e) {
         // There is a small chance that this came from the watcher thread,
         // i.e. the two threads narrowly missed each other at the sync point.
@@ -116,16 +116,14 @@ public class TimeoutInterceptor implements IMethodInterceptor {
         saved = e;
       }
     }
-    if (timedOut) {
+    if (stackTrace.length > 0) {
       // We know that this thread got timed out (and interrupted) by the watcher thread and
       // act accordingly. We gloss over the fact that some other thread might also have tried to
       // interrupt this thread. This shouldn't be a problem in practice, in particular because
       // throwing an InterruptedException wouldn't abort the whole test run anyway.
       String msg = String.format("Method timed out after %1.2f seconds", timeoutSeconds);
       SpockTimeoutError error = new SpockTimeoutError(timeoutSeconds, msg);
-
-      // The trace was already logged when timeout occurred, so don't repeat it
-      error.setStackTrace(new StackTraceElement[]{});
+      error.setStackTrace(stackTrace);
       throw error;
     }
     if (saved != null) {
@@ -142,7 +140,7 @@ public class TimeoutInterceptor implements IMethodInterceptor {
     );
 
     if (unsuccessfulAttempts <= configuration.maxInterruptAttemptsWithThreadDumps) {
-      logThreadDumpOfCurrentJvm(configuration.printThreadDumpsOnInterruptAttempts);
+      logThreadDumpOfCurrentJvm();
       configuration.interruptAttemptListeners.forEach(Runnable::run);
 
       if (unsuccessfulAttempts == configuration.maxInterruptAttemptsWithThreadDumps) {
@@ -158,12 +156,11 @@ public class TimeoutInterceptor implements IMethodInterceptor {
       timeoutSeconds
     );
 
-    logThreadDumpOfCurrentJvm(true);
     configuration.interruptAttemptListeners.forEach(Runnable::run);
   }
 
-  private void logThreadDumpOfCurrentJvm(boolean printThreadDump) {
-    if (printThreadDump) {
+  private void logThreadDumpOfCurrentJvm() {
+    if (configuration.printThreadDumpsOnInterruptAttempts) {
       StringBuilder sb = new StringBuilder();
       try {
         threadDumpCollector.appendThreadDumpOfCurrentJvm(sb);

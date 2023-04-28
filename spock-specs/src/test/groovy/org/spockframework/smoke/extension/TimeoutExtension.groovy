@@ -238,6 +238,21 @@ class TimeoutExtension extends EmbeddedSpecification {
     outputListener.count('inline interrupt listener') == 2
   }
 
+  def "excludes watcher thread from thread dump"() {
+    when:
+    runner.runSpecBody """
+      @Timeout(value = 100, unit = MILLISECONDS)
+      def foo() {
+        setup: Thread.sleep 250
+      }
+    """
+
+    then:
+    thrown SpockTimeoutError
+    outputListener.count("Thread dump of current JVM") == 1
+    outputListener.count("\"[spock.lang.Timeout] Watcher for method 'foo'\" #") == 0
+  }
+
   @Timeout(1)
   def "watcher thread has descriptive name"() {
     def group = Thread.currentThread().threadGroup

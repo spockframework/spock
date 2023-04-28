@@ -16,18 +16,106 @@
 
 package org.spockframework.util;
 
-public class JavaProcessThreadDumpCollector {
+import org.spockframework.runtime.SpockException;
+import org.spockframework.runtime.extension.builtin.ThreadDumpCapturingUtil;
+import spock.util.environment.OperatingSystem;
 
-  private JavaProcessThreadDumpCollector() {
+import java.io.*;
+import java.lang.management.ManagementFactory;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+public interface JavaProcessThreadDumpCollector {
+
+  void appendThreadDumpOfCurrentJvm(StringBuilder builder) throws IOException, InterruptedException;
+
+  static JavaProcessThreadDumpCollector create(ThreadDumpCapturingUtil utility) {
+    try {
+      return new FunctionalJavaProcessThreadDumpCollector(utility);
+    } catch (Exception e) {
+      ByteArrayOutputStream stream = new ByteArrayOutputStream();
+      e.printStackTrace(new PrintStream(stream));
+      System.err.printf("Thread dump capturing is not available: " + stream);
+      return NO_OP;
+    }
   }
 
-  public static CharSequence getThreadDumpOfCurrentJvm() {
-    // TODO pshevche: actually capture thread dumps
-    return new StringBuilder();
-  }
+  JavaProcessThreadDumpCollector NO_OP = __ -> {
+  };
 
-  public static CharSequence getThreadDumpsOfExternalSuspiciousDaemons() {
-    // TODO pshevche: actually capture thread dumps
-    return new StringBuilder();
+  class FunctionalJavaProcessThreadDumpCollector implements JavaProcessThreadDumpCollector {
+
+    private static final String JAVA_HOME_SYS_PROP = "java.home";
+
+    private final List<String> command;
+
+    public FunctionalJavaProcessThreadDumpCollector(ThreadDumpCapturingUtil utility) {
+      long pid = currentProcessId();
+      Path utilityPath = getUtilityCommandPath(utility);
+
+      this.command = utility == ThreadDumpCapturingUtil.JSTACK
+        ? Arrays.asList(utilityPath.toString(), Long.toString(pid))
+        : Arrays.asList(utilityPath.toString(), Long.toString(pid), "Thread.print");
+    }
+
+    @Override
+    public void appendThreadDumpOfCurrentJvm(StringBuilder builder) throws IOException, InterruptedException {
+      builder.append("Thread dump of current JVM:\n");
+      builder.append("---------------------------\n");
+
+      Process process = new ProcessBuilder(command)
+        .redirectErrorStream(true)
+        .start();
+
+      captureProcessOutput(process, builder);
+      process.waitFor();
+    }
+
+    private void captureProcessOutput(Process process, StringBuilder builder) throws IOException {
+      try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+          builder.append(line);
+          builder.append("\n");
+        }
+      }
+    }
+
+    private static Path getUtilityCommandPath(ThreadDumpCapturingUtil utility) {
+      Path javaHome = getJavaHome();
+      String utilityFileName = utility.getFileName(OperatingSystem.getCurrent());
+
+      Path utilityPath;
+      if ("jre".equals(javaHome.getParent().getFileName().toString())) {
+        utilityPath = javaHome.resolve("../../bin").resolve(utilityFileName).normalize();
+      } else {
+        utilityPath = javaHome.resolve("../bin").resolve(utilityFileName).normalize();
+      }
+
+      if (!Files.exists(utilityPath)) {
+        throw new SpockException("Could not find requested thread dump capturing utility '" + utility.name() + "' under expected path '" + utilityPath.toString() + "'");
+      }
+
+      return utilityPath;
+    }
+
+    private static Path getJavaHome() {
+      return Optional.ofNullable(System.getProperty(JAVA_HOME_SYS_PROP))
+        .map(Paths::get)
+        .orElseThrow(() -> new SpockException("Could not determine java home directory, as 'java.home' system property is not set"));
+    }
+
+    private static long currentProcessId() {
+      try {
+        String jvmName = ManagementFactory.getRuntimeMXBean().getName();
+        return Long.parseLong(jvmName.split("@")[0]);
+      } catch (Exception e) {
+        throw new SpockException("Could not determine the current process ID", e);
+      }
+    }
   }
 }

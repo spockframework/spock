@@ -19,13 +19,14 @@ package org.spockframework.runtime.extension.builtin;
 import org.spockframework.runtime.SpockTimeoutError;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.extension.IMethodInvocation;
-import org.spockframework.util.JavaProcessThreadDumpCollector;
-import org.spockframework.util.TimeUtil;
+import org.spockframework.util.*;
 import spock.lang.Timeout;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
@@ -42,10 +43,12 @@ public class TimeoutInterceptor implements IMethodInterceptor {
 
   private final Timeout timeout;
   private final TimeoutConfiguration configuration;
+  private final JavaProcessThreadDumpCollector threadDumpCollector;
 
   public TimeoutInterceptor(Timeout timeout, TimeoutConfiguration configuration) {
     this.timeout = timeout;
     this.configuration = configuration;
+    this.threadDumpCollector = JavaProcessThreadDumpCollector.create(configuration.threadDumpCapturingUtil);
   }
 
   @Override
@@ -139,7 +142,7 @@ public class TimeoutInterceptor implements IMethodInterceptor {
     );
 
     if (unsuccessfulAttempts <= configuration.maxInterruptAttemptsWithThreadDump) {
-      System.err.println("\n" + threadDumps());
+      logThreadDumpOfCurrentJvm(configuration.printThreadDump);
       configuration.onTimeoutListeners.forEach(Runnable::run);
 
       if (unsuccessfulAttempts == configuration.maxInterruptAttemptsWithThreadDump) {
@@ -149,35 +152,67 @@ public class TimeoutInterceptor implements IMethodInterceptor {
   }
 
   private void logMethodTimeout(String methodName, double timeoutSeconds) {
-    String msg = String.format(
-      "[spock.lang.Timeout] Method '%s' timed out after %1.2f seconds.",
+    System.err.printf(
+      "[spock.lang.Timeout] Method '%s' timed out after %1.2f seconds.%n",
       methodName,
       timeoutSeconds
     );
 
-    if (configuration.printThreadDumps) {
-      System.err.println(msg + "\n" + threadDumps());
-    }
+    logThreadDumpOfCurrentJvm(true);
     configuration.onTimeoutListeners.forEach(Runnable::run);
   }
 
-  private String threadDumps() {
-    StringBuilder sb = new StringBuilder();
+  private void logThreadDumpOfCurrentJvm(boolean printThreadDump) {
+    if (printThreadDump) {
+      StringBuilder sb = new StringBuilder();
+      try {
+        threadDumpCollector.appendThreadDumpOfCurrentJvm(sb);
+        System.err.println(removeThisThread(sb.toString()));
+      } catch (Throwable e) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        e.printStackTrace(new PrintStream(stream));
 
-    try {
-      sb.append(JavaProcessThreadDumpCollector.getThreadDumpOfCurrentJvm());
-      return sb.toString();
-    } catch (Throwable e) {
-      ByteArrayOutputStream stream = new ByteArrayOutputStream();
-      e.printStackTrace(new PrintStream(stream));
-
-      String result = "Error in attempt to fetch thread dumps: " + stream;
-      if (sb.length() > 0) {
-        result += "\n\nPartial thread dumps:\n" + sb;
+        String result = "Error in attempt to fetch thread dumps: " + stream;
+        if (sb.length() > 0) {
+          result += "\n\nPartial thread dumps:\n" + sb;
+        }
+        System.err.println(result);
       }
-
-      return result;
     }
+  }
+
+  private static String removeThisThread(String jcmdThreadDumpOutput) {
+    Thread thisThread = Thread.currentThread();
+    String threadName = thisThread.getName();
+    long threadId = thisThread.getId();
+
+    List<String> lines = Arrays.asList(jcmdThreadDumpOutput.split("\n"));
+    Pair<Integer, Integer> thisThreadSection = findThreadSection(lines, threadName, threadId);
+    if (thisThreadSection == null) {
+      return jcmdThreadDumpOutput;
+    }
+
+    String start = TextUtil.join("\n", lines.subList(0, thisThreadSection.first()));
+    int thisThreadSectionStop = thisThreadSection.second();
+    if (thisThreadSectionStop == lines.size()) {
+      return start;
+    } else {
+      return start + TextUtil.join("\n", lines.subList(thisThreadSectionStop + 1, lines.size() - 1));
+    }
+  }
+
+  @Nullable
+  private static Pair<Integer, Integer> findThreadSection(List<String> lines, String threadName, long threadId) {
+    int threadSectionStart = -1;
+    for (int i = 0; i < lines.size(); ++i) {
+      if (lines.get(i).startsWith(String.format("\"%s\" #%d", threadName, threadId))) {
+        threadSectionStart = i;
+      } else if (threadSectionStart > 0 && lines.get(i).isEmpty()) {
+        return Pair.of(threadSectionStart, i);
+      }
+    }
+
+    return null;
   }
 
   private static void syncWithThread(CountDownLatch startLatch, String threadName, String methodName) {

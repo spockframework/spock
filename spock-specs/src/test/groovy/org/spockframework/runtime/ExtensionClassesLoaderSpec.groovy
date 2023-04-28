@@ -1,8 +1,10 @@
 package org.spockframework.runtime
 
 import org.spockframework.report.log.ReportLogConfiguration
-
-import org.spockframework.runtime.extension.builtin.*
+import org.spockframework.runtime.extension.builtin.IncludeExcludeExtension
+import org.spockframework.runtime.extension.builtin.OptimizeRunOrderExtension
+import org.spockframework.runtime.extension.builtin.TimeoutConfiguration
+import org.spockframework.runtime.extension.builtin.UnrollExtension
 import org.spockframework.specs.extension.SnapshotConfig
 import org.spockframework.tempdir.TempDirConfiguration
 import spock.config.RunnerConfiguration
@@ -23,6 +25,6 @@ class ExtensionClassesLoaderSpec extends Specification {
     def result = new ExtensionClassesLoader().loadConfigClassesFromDefaultLocation()
 
     then:
-    result == [SnapshotConfig, RunnerConfiguration, ReportLogConfiguration, TempDirConfiguration]
+    result == [SnapshotConfig, RunnerConfiguration, ReportLogConfiguration, TempDirConfiguration, TimeoutConfiguration]
   }
 }

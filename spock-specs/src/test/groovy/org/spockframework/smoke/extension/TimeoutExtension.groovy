@@ -314,7 +314,7 @@ class TimeoutExtension extends EmbeddedSpecification {
       count("Method 'foo' has not stopped") == unsuccessfulInterruptAttempts
       count("Thread dump of current JVM (${util.name()})") == threadDumps
       // just some thread that is always there
-      count(/"ForkJoinPool-1-worker-1" #/) == threadDumps
+      count(/"Signal Dispatcher" #/) == threadDumps
       (count('No further thread dumps will be logged and no timeout listeners will be run') == 1) == exceededCaptureLimit
     }
   }

@@ -17,13 +17,16 @@
 package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.IStandardStreamsListener
 import org.spockframework.runtime.SpockTimeoutError
+import org.spockframework.runtime.StandardStreamsCapturer
 import spock.lang.*
 
 import java.util.concurrent.TimeUnit
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS
 import static org.spockframework.runtime.model.parallel.ExecutionMode.SAME_THREAD
+
 /**
  * @author Peter Niederwieser
  */
@@ -31,32 +34,43 @@ import static org.spockframework.runtime.model.parallel.ExecutionMode.SAME_THREA
 @Execution(SAME_THREAD)
 @Retry
 class TimeoutExtension extends EmbeddedSpecification {
-  @Shared Thread testFrameworkThread = Thread.currentThread()
+  @Shared
+  Thread testFrameworkThread = Thread.currentThread()
+
+  @AutoCleanup("stop")
+  StandardStreamsCapturer outputCapturer = new StandardStreamsCapturer()
+  OutputListener outputListener = new OutputListener()
 
   def setup() {
     runner.addClassMemberImport TimeUnit
+    outputCapturer.addStandardStreamsListener(outputListener)
+    outputCapturer.start()
   }
 
   @Timeout(1)
   def "method that completes in time"() {
-    setup: Thread.sleep 500
+    setup:
+    Thread.sleep 500
   }
 
   @FailsWith(SpockTimeoutError)
   @Timeout(1)
   def "method that doesn't complete in time"() {
-    setup: Thread.sleep 1100
+    setup:
+    Thread.sleep 1100
   }
 
   @Timeout(value = 500, unit = MILLISECONDS)
   def "method that completes in time (millis)"() {
-    setup: Thread.sleep 250
+    setup:
+    Thread.sleep 250
   }
 
   @FailsWith(SpockTimeoutError)
   @Timeout(value = 250, unit = MILLISECONDS)
   def "method that doesn't complete in time (millis)"() {
-    setup: Thread.sleep 500
+    setup:
+    Thread.sleep 500
   }
 
   @Issue("https://github.com/spockframework/spock/issues/352")
@@ -138,22 +152,61 @@ class TimeoutExtension extends EmbeddedSpecification {
 
   def "repeatedly interrupts timed out method until it returns"() {
     when:
-    runner.runSpecBody """
-      @Timeout(value = 100, unit = MILLISECONDS)
-      def foo() {
-        when: Thread.sleep 99999999999
-        then: thrown InterruptedException
+    runSpecWithInterrupts(3)
 
-        when: Thread.sleep 99999999999
-        then: thrown InterruptedException
+    then: 'timeout is propagated'
+    thrown SpockTimeoutError
 
-        when: Thread.sleep 99999999999
-        then: thrown InterruptedException
+    and: 'thread dumps are captured on each interrupt attempt'
+    assertThreadDumpsCaptured(3, 3, false)
+  }
+
+  def "can disable thread dump capturing on interrupt attempts"() {
+    given:
+    runner.configurationScript {
+      timeout {
+        printThreadDumpOnInterruptAttempt false
       }
-    """
+    }
+
+    when:
+    runSpecWithInterrupts(2)
 
     then:
     thrown SpockTimeoutError
+    assertThreadDumpsCaptured(2, 1, false)
+  }
+
+  def "can set the maximum number of interrupt attempts with thread dump captured"() {
+    given:
+    runner.configurationScript {
+      timeout {
+        maxInterruptAttemptsWithThreadDump 1
+      }
+    }
+
+    when:
+    runSpecWithInterrupts(3)
+
+    then:
+    thrown SpockTimeoutError
+    assertThreadDumpsCaptured(3, 2, true)
+  }
+
+  def "can capture thread dumps using jstack"() {
+    given:
+    runner.configurationScript {
+      timeout {
+        threadDumpCapturingUtil = 'jstack'
+      }
+    }
+
+    when:
+    runSpecWithInterrupts(3)
+
+    then:
+    thrown SpockTimeoutError
+    assertThreadDumpsCaptured(3, 3, false)
   }
 
   @Timeout(1)
@@ -164,5 +217,51 @@ class TimeoutExtension extends EmbeddedSpecification {
 
     expect:
     threads.find { it.name == "[spock.lang.Timeout] Watcher for method 'watcher thread has descriptive name'" }
+  }
+
+  private void runSpecWithInterrupts(int interruptAttempts) {
+    runner.runSpecBody """
+      @Timeout(value = 100, unit = MILLISECONDS)
+      def foo() {
+        ${(1..interruptAttempts).collect {
+      """
+        when: Thread.sleep 99999999999
+        then: thrown InterruptedException
+      """
+    }.join()}
+      }
+    """
+  }
+
+  private void assertThreadDumpsCaptured(int interruptAttempts, int threadDumps, boolean exceededCaptureLimit) {
+    with(outputListener) {
+      count("Method 'foo' timed out") == 1
+      count("Method 'foo' has not stopped") == interruptAttempts - 1
+      count('Thread dump of current JVM') == threadDumps
+      (count('No further thread dumps will be logged and no timeout listeners will be run') == 1) == exceededCaptureLimit
+    }
+  }
+
+  private class OutputListener implements IStandardStreamsListener {
+
+    private final StringBuilder messages = new StringBuilder()
+
+    @Override
+    void standardOut(String message) {
+      messages.append(message)
+    }
+
+    @Override
+    void standardErr(String message) {
+      messages.append(message)
+    }
+
+    private List<String> getLines() {
+      messages.toString().readLines()
+    }
+
+    int count(String sequence) {
+      lines.count { it.contains(sequence) }
+    }
   }
 }

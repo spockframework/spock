@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-@file:DependsOn("io.github.typesafegithub:github-workflows-kt:0.41.0")
+@file:DependsOn("io.github.typesafegithub:github-workflows-kt:0.44.0")
 @file:DependsOn("org.codehaus.groovy:groovy:3.0.15")
 
 import groovy.lang.Binding

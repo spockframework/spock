@@ -51,12 +51,14 @@ public interface JavaProcessThreadDumpCollector {
 
     private static final String JAVA_HOME_SYS_PROP = "java.home";
 
+    private final ThreadDumpCapturingUtil utility;
     private final List<String> command;
 
     public FunctionalJavaProcessThreadDumpCollector(ThreadDumpCapturingUtil utility) {
       long pid = currentProcessId();
       Path utilityPath = getUtilityCommandPath(utility);
 
+      this.utility = utility;
       this.command = utility == ThreadDumpCapturingUtil.JSTACK
         ? Arrays.asList(utilityPath.toString(), Long.toString(pid))
         : Arrays.asList(utilityPath.toString(), Long.toString(pid), "Thread.print");
@@ -64,8 +66,10 @@ public interface JavaProcessThreadDumpCollector {
 
     @Override
     public void appendThreadDumpOfCurrentJvm(StringBuilder builder) throws IOException, InterruptedException {
-      builder.append("Thread dump of current JVM:\n");
-      builder.append("---------------------------\n");
+      builder.append("Thread dump of current JVM (").append(utility.name()).append("):\n");
+      builder.append("------------------------------")
+        .append(TextUtil.repeatChar('-', utility.name().length()))
+        .append("\n");
 
       Process process = new ProcessBuilder(command)
         .redirectErrorStream(true)

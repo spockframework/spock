@@ -20,6 +20,7 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.IStandardStreamsListener
 import org.spockframework.runtime.SpockTimeoutError
 import org.spockframework.runtime.StandardStreamsCapturer
+import org.spockframework.runtime.extension.builtin.ThreadDumpCapturingUtil
 import spock.lang.*
 
 import java.util.concurrent.TimeUnit
@@ -197,7 +198,7 @@ class TimeoutExtension extends EmbeddedSpecification {
     given:
     runner.configurationScript {
       timeout {
-        threadDumpCapturingUtil = 'jstack'
+        threadDumpCapturingUtil ThreadDumpCapturingUtil.JSTACK
       }
     }
 
@@ -206,7 +207,7 @@ class TimeoutExtension extends EmbeddedSpecification {
 
     then:
     thrown SpockTimeoutError
-    assertThreadDumpsCaptured(3, 3, false)
+    assertThreadDumpsCaptured(3, 3, false, ThreadDumpCapturingUtil.JSTACK)
   }
 
   @Timeout(1)
@@ -233,11 +234,11 @@ class TimeoutExtension extends EmbeddedSpecification {
     """
   }
 
-  private void assertThreadDumpsCaptured(int interruptAttempts, int threadDumps, boolean exceededCaptureLimit) {
+  private void assertThreadDumpsCaptured(int interruptAttempts, int threadDumps, boolean exceededCaptureLimit, ThreadDumpCapturingUtil util = ThreadDumpCapturingUtil.JCMD) {
     with(outputListener) {
       count("Method 'foo' timed out") == 1
       count("Method 'foo' has not stopped") == interruptAttempts - 1
-      count('Thread dump of current JVM') == threadDumps
+      count("Thread dump of current JVM (${util.name()})") == threadDumps
       (count('No further thread dumps will be logged and no timeout listeners will be run') == 1) == exceededCaptureLimit
     }
   }

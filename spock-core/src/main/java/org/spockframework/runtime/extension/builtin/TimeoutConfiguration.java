@@ -16,7 +16,7 @@ import java.util.List;
  *   printThreadDumpOnInterruptAttempt true
  *   // integer, default 3
  *   maxInterruptAttemptsWithThreadDump 5
- *   // ThreadDumpCapturingUtil, default JCMD
+ *   // org.spockframework.runtime.extension.builtin.ThreadDumpCapturingUtil, default JCMD
  *   threadDumpCapturingUtil ThreadDumpCapturingUtil.JSTACK
  *   // list of java.lang.Runnable, default []
  *   onInterruptAttemptListeners.add({ println('Timeout occurred!') })

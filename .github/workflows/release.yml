@@ -2,166 +2,166 @@
 # If you want to modify the workflow, please change the Kotlin file and regenerate this YAML file.
 # Generated with https://github.com/typesafegithub/github-workflows-kt
 
-name: Build and Release Spock
+name: 'Build and Release Spock'
 on:
   push:
     branches:
-    - master
+    - 'master'
     tags:
-    - spock-*
+    - 'spock-*'
 jobs:
   check_yaml_consistency:
-    name: Check YAML consistency
-    runs-on: ubuntu-latest
+    name: 'Check YAML consistency'
+    runs-on: 'ubuntu-latest'
     steps:
-    - id: step-0
-      name: Check out
-      uses: actions/checkout@v3
-    - id: step-1
-      name: Execute script
-      run: rm '.github/workflows/release.yml' && '.github/workflows/release.main.kts'
-    - id: step-2
-      name: Consistency check
-      run: git diff --exit-code '.github/workflows/release.yml'
+    - id: 'step-0'
+      name: 'Check out'
+      uses: 'actions/checkout@v3'
+    - id: 'step-1'
+      name: 'Execute script'
+      run: 'rm ''.github/workflows/release.yml'' && ''.github/workflows/release.main.kts'''
+    - id: 'step-2'
+      name: 'Consistency check'
+      run: 'git diff --exit-code ''.github/workflows/release.yml'''
   build-and-verify:
-    name: Build and Verify
-    runs-on: ${{ matrix.os }}
+    name: 'Build and Verify'
+    runs-on: '${{ matrix.os }}'
     needs:
-    - check_yaml_consistency
-    if: github.repository == 'spockframework/spock'
+    - 'check_yaml_consistency'
+    if: 'github.repository == ''spockframework/spock'''
     strategy:
       fail-fast: false
       matrix:
         os:
-        - ubuntu-latest
+        - 'ubuntu-latest'
         variant:
-        - 2.5
-        - 3.0
-        - 4.0
+        - '2.5'
+        - '3.0'
+        - '4.0'
         java:
-        - 8
-        - 11
-        - 17
+        - '8'
+        - '11'
+        - '17'
         exclude:
-        - os: ubuntu-latest
-          variant: 2.5
-          java: 17
+        - os: 'ubuntu-latest'
+          variant: '2.5'
+          java: '17'
         include:
-        - os: windows-latest
-          variant: 2.5
-          java: 8
-        - os: windows-latest
-          variant: 3.0
-          java: 8
-        - os: windows-latest
-          variant: 4.0
-          java: 8
-        - os: macos-latest
-          variant: 2.5
-          java: 8
-        - os: macos-latest
-          variant: 3.0
-          java: 8
-        - os: macos-latest
-          variant: 4.0
-          java: 8
+        - os: 'windows-latest'
+          variant: '2.5'
+          java: '8'
+        - os: 'windows-latest'
+          variant: '3.0'
+          java: '8'
+        - os: 'windows-latest'
+          variant: '4.0'
+          java: '8'
+        - os: 'macos-latest'
+          variant: '2.5'
+          java: '8'
+        - os: 'macos-latest'
+          variant: '3.0'
+          java: '8'
+        - os: 'macos-latest'
+          variant: '4.0'
+          java: '8'
     steps:
-    - id: step-0
-      name: Checkout Repository
-      uses: actions/checkout@v3
+    - id: 'step-0'
+      name: 'Checkout Repository'
+      uses: 'actions/checkout@v3'
       with:
-        fetch-depth: 2
-    - id: step-1
-      name: Set up JDKs
-      uses: ./.github/actions/setup-build-env
+        fetch-depth: '2'
+    - id: 'step-1'
+      name: 'Set up JDKs'
+      uses: './.github/actions/setup-build-env'
       with:
-        additional-java-version: ${{ matrix.java }}
-    - id: step-2
-      name: Build Spock
-      uses: gradle/gradle-build-action@v2
+        additional-java-version: '${{ matrix.java }}'
+    - id: 'step-2'
+      name: 'Build Spock'
+      uses: 'gradle/gradle-build-action@v2'
       with:
-        arguments: --no-parallel --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" -Dscan.tag.main-build
+        arguments: '--no-parallel --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" -Dscan.tag.main-build'
       env:
-        ORG_GRADLE_PROJECT_spockBuildCacheUsername: ${{ secrets.SPOCK_BUILD_CACHE_USERNAME }}
-        ORG_GRADLE_PROJECT_spockBuildCachePassword: ${{ secrets.SPOCK_BUILD_CACHE_PASSWORD }}
-        GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
-    - id: step-3
-      name: Stop Daemon
-      run: ./gradlew --stop
-    - id: step-4
-      name: Upload to Codecov.io
-      uses: codecov/codecov-action@v3
+        ORG_GRADLE_PROJECT_spockBuildCacheUsername: '${{ secrets.SPOCK_BUILD_CACHE_USERNAME }}'
+        ORG_GRADLE_PROJECT_spockBuildCachePassword: '${{ secrets.SPOCK_BUILD_CACHE_PASSWORD }}'
+        GRADLE_ENTERPRISE_ACCESS_KEY: '${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}'
+    - id: 'step-3'
+      name: 'Stop Daemon'
+      run: './gradlew --stop'
+    - id: 'step-4'
+      name: 'Upload to Codecov.io'
+      uses: 'codecov/codecov-action@v3'
   release-spock:
-    name: Release Spock
-    runs-on: ${{ matrix.os }}
+    name: 'Release Spock'
+    runs-on: '${{ matrix.os }}'
     needs:
-    - build-and-verify
-    - check_yaml_consistency
+    - 'build-and-verify'
+    - 'check_yaml_consistency'
     strategy:
       matrix:
         os:
-        - ubuntu-latest
+        - 'ubuntu-latest'
         variant:
-        - 2.5
-        - 3.0
-        - 4.0
+        - '2.5'
+        - '3.0'
+        - '4.0'
         java:
-        - 8
+        - '8'
     steps:
-    - id: step-0
-      name: Checkout Repository
-      uses: actions/checkout@v3
-    - id: step-1
-      name: Set up JDKs
-      uses: ./.github/actions/setup-build-env
+    - id: 'step-0'
+      name: 'Checkout Repository'
+      uses: 'actions/checkout@v3'
+    - id: 'step-1'
+      name: 'Set up JDKs'
+      uses: './.github/actions/setup-build-env'
       with:
-        additional-java-version: ${{ matrix.java }}
-    - id: step-2
-      name: Publish Spock
-      uses: gradle/gradle-build-action@v2
+        additional-java-version: '${{ matrix.java }}'
+    - id: 'step-2'
+      name: 'Publish Spock'
+      uses: 'gradle/gradle-build-action@v2'
       with:
-        arguments: --no-parallel --stacktrace ghActionsPublish "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" -Dscan.tag.main-publish
+        arguments: '--no-parallel --stacktrace ghActionsPublish "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" -Dscan.tag.main-publish'
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONATYPE_OSS_USER: ${{ secrets.SONATYPE_OSS_USER }}
-        SONATYPE_OSS_PASSWORD: ${{ secrets.SONATYPE_OSS_PASSWORD }}
-        SIGNING_PASSWORD: ${{ secrets.SIGNING_GPG_PASSWORD }}
-        ORG_GRADLE_PROJECT_spockBuildCacheUsername: ${{ secrets.SPOCK_BUILD_CACHE_USERNAME }}
-        ORG_GRADLE_PROJECT_spockBuildCachePassword: ${{ secrets.SPOCK_BUILD_CACHE_PASSWORD }}
-        GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
+        GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        SONATYPE_OSS_USER: '${{ secrets.SONATYPE_OSS_USER }}'
+        SONATYPE_OSS_PASSWORD: '${{ secrets.SONATYPE_OSS_PASSWORD }}'
+        SIGNING_PASSWORD: '${{ secrets.SIGNING_GPG_PASSWORD }}'
+        ORG_GRADLE_PROJECT_spockBuildCacheUsername: '${{ secrets.SPOCK_BUILD_CACHE_USERNAME }}'
+        ORG_GRADLE_PROJECT_spockBuildCachePassword: '${{ secrets.SPOCK_BUILD_CACHE_PASSWORD }}'
+        GRADLE_ENTERPRISE_ACCESS_KEY: '${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}'
   publish-release-docs:
-    name: Publish Release Docs
-    runs-on: ${{ matrix.os }}
+    name: 'Publish Release Docs'
+    runs-on: '${{ matrix.os }}'
     needs:
-    - release-spock
-    - check_yaml_consistency
+    - 'release-spock'
+    - 'check_yaml_consistency'
     strategy:
       matrix:
         os:
-        - ubuntu-latest
+        - 'ubuntu-latest'
         variant:
-        - 4.0
+        - '4.0'
         java:
-        - 17
+        - '17'
     steps:
-    - id: step-0
-      name: Checkout Repository
-      uses: actions/checkout@v3
-    - id: step-1
-      name: Set up JDKs
-      uses: ./.github/actions/setup-build-env
+    - id: 'step-0'
+      name: 'Checkout Repository'
+      uses: 'actions/checkout@v3'
+    - id: 'step-1'
+      name: 'Set up JDKs'
+      uses: './.github/actions/setup-build-env'
       with:
-        additional-java-version: ${{ matrix.java }}
-    - id: step-2
-      name: Create Temporary Branch
-      run: git checkout -b "docs-$GITHUB_SHA"
-    - id: step-3
-      name: Publish Docs
-      uses: gradle/gradle-build-action@v2
+        additional-java-version: '${{ matrix.java }}'
+    - id: 'step-2'
+      name: 'Create Temporary Branch'
+      run: 'git checkout -b "docs-$GITHUB_SHA"'
+    - id: 'step-3'
+      name: 'Publish Docs'
+      uses: 'gradle/gradle-build-action@v2'
       with:
-        arguments: --no-parallel --stacktrace ghActionsDocs "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" -Dscan.tag.main-docs
+        arguments: '--no-parallel --stacktrace ghActionsDocs "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" -Dscan.tag.main-docs'
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        ORG_GRADLE_PROJECT_spockBuildCacheUsername: ${{ secrets.SPOCK_BUILD_CACHE_USERNAME }}
-        ORG_GRADLE_PROJECT_spockBuildCachePassword: ${{ secrets.SPOCK_BUILD_CACHE_PASSWORD }}
-        GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
+        GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        ORG_GRADLE_PROJECT_spockBuildCacheUsername: '${{ secrets.SPOCK_BUILD_CACHE_USERNAME }}'
+        ORG_GRADLE_PROJECT_spockBuildCachePassword: '${{ secrets.SPOCK_BUILD_CACHE_PASSWORD }}'
+        GRADLE_ENTERPRISE_ACCESS_KEY: '${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}'

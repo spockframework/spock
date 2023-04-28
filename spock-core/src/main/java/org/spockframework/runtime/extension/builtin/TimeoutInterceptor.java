@@ -140,8 +140,10 @@ public class TimeoutInterceptor implements IMethodInterceptor {
 
     if (unsuccessfulAttempts <= configuration.maxInterruptAttemptsWithThreadDump) {
       System.err.println("\n" + threadDumps());
+      configuration.onTimeoutListeners.forEach(Runnable::run);
+
       if (unsuccessfulAttempts == configuration.maxInterruptAttemptsWithThreadDump) {
-        System.out.println("[spock.lang.Timeout] No further thread dumps will be logged, as the number of unsuccessful interrupt attempts exceeds configured maximum of logged attempts");
+        System.out.println("[spock.lang.Timeout] No further thread dumps will be logged and no timeout listeners will be run, as the number of unsuccessful interrupt attempts exceeds configured maximum of logged attempts");
       }
     }
   }
@@ -155,9 +157,8 @@ public class TimeoutInterceptor implements IMethodInterceptor {
 
     if (configuration.printThreadDumps) {
       System.err.println(msg + "\n" + threadDumps());
-    } else {
-      System.err.println(msg + "\n" + threadDumps());
     }
+    configuration.onTimeoutListeners.forEach(Runnable::run);
   }
 
   private String threadDumps() {
@@ -165,9 +166,6 @@ public class TimeoutInterceptor implements IMethodInterceptor {
 
     try {
       sb.append(JavaProcessThreadDumpCollector.getThreadDumpOfCurrentJvm());
-      if (configuration.captureExternalThreadDumps) {
-        sb.append(JavaProcessThreadDumpCollector.getThreadDumpsOfExternalSuspiciousDaemons());
-      }
       return sb.toString();
     } catch (Throwable e) {
       ByteArrayOutputStream stream = new ByteArrayOutputStream();

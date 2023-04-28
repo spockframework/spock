@@ -3,6 +3,9 @@ package org.spockframework.runtime.extension.builtin;
 import org.spockframework.util.Beta;
 import spock.config.ConfigurationObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Configuration settings for the Timeout extension.
  *
@@ -11,10 +14,11 @@ import spock.config.ConfigurationObject;
  * timeout {
  *   // boolean, default true
  *   printThreadDumps true
- *   // boolean, default false
- *   captureExternalThreadDumps true
  *   // integer, default 3
- *   maxInterruptAttemptsWithThreadDump 3
+ *   maxInterruptAttemptsWithThreadDump 5
+ *   // TODO pshevche: check if this will work
+ *   // list of java.lang.Runnable, default []
+ *   onTimeoutListeners.add({ println('Timeout occurred!') })
  * }
  * </pre>
  *
@@ -30,13 +34,12 @@ public class TimeoutConfiguration {
   public boolean printThreadDumps = true;
 
   /**
-   * Determines whether thread dumps of external Java processes should be captured and logged,
-   * default false meaning that only the thread dump of current JVM is captured and logged.
-   */
-  public boolean captureExternalThreadDumps = false;
-
-  /**
    * Maximum number of unsuccessful interrupts to log the thread dumps for, default 3.
    */
   public int maxInterruptAttemptsWithThreadDump = 3;
+
+  /**
+   * Listeners to be invoked on method timeout or unsuccessful interrupt attempts, default empty.
+   */
+  public List<Runnable> onTimeoutListeners = new ArrayList<>();
 }

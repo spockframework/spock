@@ -238,14 +238,14 @@ class TimeoutExtension extends EmbeddedSpecification {
     outputListener.count('inline interrupt listener') == 2
   }
 
-  def "excludes watcher thread from thread dump"() {
+  def "excludes dump-capturing thread from thread dumps"() {
     when:
     runSpecWithInterrupts(2)
 
     then:
     thrown SpockTimeoutError
     outputListener.count("Thread dump of current JVM") == 1
-    outputListener.count("\"[spock.lang.Timeout] Watcher for method 'foo'\" #") == 0
+    outputListener.count(/"[spock.lang.Timeout] Watcher for method 'foo'" #/) == 0
   }
 
   @Timeout(1)
@@ -276,6 +276,8 @@ class TimeoutExtension extends EmbeddedSpecification {
     with(outputListener) {
       count("Method 'foo' has not stopped") == unsuccessfulInterruptAttempts
       count("Thread dump of current JVM (${util.name()})") == threadDumps
+      // just some thread that is always there
+      count(/"ForkJoinPool-1-worker-1" #/) == threadDumps
       (count('No further thread dumps will be logged and no timeout listeners will be run') == 1) == exceededCaptureLimit
     }
   }

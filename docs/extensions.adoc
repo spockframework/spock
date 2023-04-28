@@ -327,7 +327,7 @@ class TimedSpec extends Specification {
 
 When applied to a fixture method, the timeout is per execution of the fixture method.
 
-When a timeout is reported to the user, the test output contains a thread dump reflecting the execution stack of the test framework when the timeout was exceeded. By default, the thread dump is also captured on all unsuccessful interrupt attempts.
+When a timeout is reported to the user, the test output contains thread dumps reflecting the execution stack of the test framework when the timeout was exceeded. By default, thread dumps are also captured on all unsuccessful interrupt attempts.
 
 If you want to customize the thread dump capturing behavior, you can use the <<spock-configuration-file,Spock Configuration File>>.
 
@@ -336,9 +336,9 @@ If you want to customize the thread dump capturing behavior, you can use the <<s
 ----
 timeout {
   // boolean, default true
-  printThreadDumpOnInterruptAttempt true
+  printThreadDumpsOnInterruptAttempts true
   // integer, default 3
-  maxInterruptAttemptsWithThreadDump 5
+  maxInterruptAttemptsWithThreadDumps 5
   // org.spockframework.runtime.extension.builtin.ThreadDumpUtilityType, default JCMD
   threadDumpUtilityType threadDumpUtilityType.JSTACK
   // list of java.lang.Runnable, default []

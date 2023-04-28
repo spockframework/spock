@@ -166,7 +166,7 @@ class TimeoutExtension extends EmbeddedSpecification {
     given:
     runner.configurationScript {
       timeout {
-        printThreadDumpOnInterruptAttempt false
+        printThreadDumpsOnInterruptAttempts false
       }
     }
 
@@ -182,7 +182,7 @@ class TimeoutExtension extends EmbeddedSpecification {
     given:
     runner.configurationScript {
       timeout {
-        maxInterruptAttemptsWithThreadDump 1
+        maxInterruptAttemptsWithThreadDumps 1
       }
     }
 
@@ -216,7 +216,7 @@ class TimeoutExtension extends EmbeddedSpecification {
     Runnable anotherListener = Mock()
     runner.configurationScript {
       timeout {
-        maxInterruptAttemptsWithThreadDump 1
+        maxInterruptAttemptsWithThreadDumps 1
         interruptAttemptListeners.addAll(someListeners)
         interruptAttemptListeners.add(anotherListener)
         interruptAttemptListeners.add({ println("inline interrupt listener") })

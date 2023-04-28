@@ -13,9 +13,9 @@ import java.util.List;
  * <pre>
  * timeout {
  *   // boolean, default true
- *   printThreadDumpOnInterruptAttempt true
+ *   printThreadDumpsOnInterruptAttempts true
  *   // integer, default 3
- *   maxInterruptAttemptsWithThreadDump 5
+ *   maxInterruptAttemptsWithThreadDumps 5
  *   // org.spockframework.runtime.extension.builtin.ThreadDumpUtilityType, default JCMD
  *   threadDumpUtilityType threadDumpUtilityType.JSTACK
  *   // list of java.lang.Runnable, default []
@@ -32,12 +32,12 @@ public class TimeoutConfiguration {
   /**
    * Determines whether thread dumps will be captured and logged on feature timeout or unsuccessful interrupt attempts, default true.
    */
-  public boolean printThreadDumpOnInterruptAttempt = true;
+  public boolean printThreadDumpsOnInterruptAttempts = true;
 
   /**
    * Maximum number of unsuccessful interrupts to log the thread dumps for, default 3.
    */
-  public int maxInterruptAttemptsWithThreadDump = 3;
+  public int maxInterruptAttemptsWithThreadDumps = 3;
 
   /**
    * Utility used to capture thread dumps, default {@link ThreadDumpUtilityType#JCMD}.

@@ -65,7 +65,9 @@ public interface JavaProcessThreadDumpCollector {
 
     @Override
     public void appendThreadDumpOfCurrentJvm(StringBuilder builder) throws IOException, InterruptedException {
-      builder.append("Thread dump of current JVM (").append(utility.name()).append("):\n");
+      builder.append("Thread dump of current JVM (")
+        .append(utility.name())
+        .append("):\n");
       builder.append("------------------------------")
         .append(TextUtil.repeatChar('-', utility.name().length()))
         .append("\n");
@@ -82,8 +84,7 @@ public interface JavaProcessThreadDumpCollector {
       try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
         String line;
         while ((line = reader.readLine()) != null) {
-          builder.append(line);
-          builder.append("\n");
+          builder.append(line).append("\n");
         }
       }
     }

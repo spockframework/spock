@@ -141,11 +141,11 @@ public class TimeoutInterceptor implements IMethodInterceptor {
       waitMillis / 1000.
     );
 
-    if (unsuccessfulAttempts <= configuration.maxInterruptAttemptsWithThreadDump) {
-      logThreadDumpOfCurrentJvm(configuration.printThreadDumpOnInterruptAttempt);
+    if (unsuccessfulAttempts <= configuration.maxInterruptAttemptsWithThreadDumps) {
+      logThreadDumpOfCurrentJvm(configuration.printThreadDumpsOnInterruptAttempts);
       configuration.interruptAttemptListeners.forEach(Runnable::run);
 
-      if (unsuccessfulAttempts == configuration.maxInterruptAttemptsWithThreadDump) {
+      if (unsuccessfulAttempts == configuration.maxInterruptAttemptsWithThreadDumps) {
         System.out.println("[spock.lang.Timeout] No further thread dumps will be logged and no timeout listeners will be run, as the number of unsuccessful interrupt attempts exceeds configured maximum of logged attempts");
       }
     }

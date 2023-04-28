@@ -19,7 +19,7 @@ import java.util.List;
  *   // org.spockframework.runtime.extension.builtin.ThreadDumpCapturingUtil, default JCMD
  *   threadDumpCapturingUtil ThreadDumpCapturingUtil.JSTACK
  *   // list of java.lang.Runnable, default []
- *   onInterruptAttemptListeners.add({ println('Timeout occurred!') })
+ *   interruptAttemptListeners.add({ println('Timeout occurred!') })
  * }
  * </pre>
  *
@@ -47,5 +47,5 @@ public class TimeoutConfiguration {
   /**
    * Listeners to be invoked on method timeout or unsuccessful interrupt attempts, default empty.
    */
-  public List<Runnable> onInterruptAttemptListeners = new ArrayList<>();
+  public List<Runnable> interruptAttemptListeners = new ArrayList<>();
 }

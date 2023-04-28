@@ -210,6 +210,34 @@ class TimeoutExtension extends EmbeddedSpecification {
     assertThreadDumpsCaptured(3, 3, false, ThreadDumpCapturingUtil.JSTACK)
   }
 
+  def "notifies custom interrupt listeners"() {
+    given:
+    List<Runnable> someListeners = [Mock(Runnable), Mock(Runnable)]
+    Runnable anotherListener = Mock()
+    runner.configurationScript {
+      timeout {
+        maxInterruptAttemptsWithThreadDump 1
+        interruptAttemptListeners.addAll(someListeners)
+        interruptAttemptListeners.add(anotherListener)
+        interruptAttemptListeners.add({ println("inline interrupt listener") })
+      }
+    }
+
+    when:
+    runSpecWithInterrupts(3)
+
+    then:
+    thrown SpockTimeoutError
+    assertThreadDumpsCaptured(3, 2, true)
+
+    and:
+    someListeners.each {
+      2 * it._
+    }
+    2 * anotherListener._
+    outputListener.count('inline interrupt listener') == 2
+  }
+
   @Timeout(1)
   def "watcher thread has descriptive name"() {
     def group = Thread.currentThread().threadGroup

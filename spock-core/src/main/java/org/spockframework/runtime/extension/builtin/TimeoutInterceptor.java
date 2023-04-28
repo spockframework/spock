@@ -143,7 +143,7 @@ public class TimeoutInterceptor implements IMethodInterceptor {
 
     if (unsuccessfulAttempts <= configuration.maxInterruptAttemptsWithThreadDump) {
       logThreadDumpOfCurrentJvm(configuration.printThreadDumpOnInterruptAttempt);
-      configuration.onInterruptAttemptListeners.forEach(Runnable::run);
+      configuration.interruptAttemptListeners.forEach(Runnable::run);
 
       if (unsuccessfulAttempts == configuration.maxInterruptAttemptsWithThreadDump) {
         System.out.println("[spock.lang.Timeout] No further thread dumps will be logged and no timeout listeners will be run, as the number of unsuccessful interrupt attempts exceeds configured maximum of logged attempts");
@@ -159,7 +159,7 @@ public class TimeoutInterceptor implements IMethodInterceptor {
     );
 
     logThreadDumpOfCurrentJvm(true);
-    configuration.onInterruptAttemptListeners.forEach(Runnable::run);
+    configuration.interruptAttemptListeners.forEach(Runnable::run);
   }
 
   private void logThreadDumpOfCurrentJvm(boolean printThreadDump) {

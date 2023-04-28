@@ -13,13 +13,13 @@ import java.util.List;
  * <pre>
  * timeout {
  *   // boolean, default true
- *   printThreadDump true
+ *   printThreadDumpOnInterruptAttempt true
  *   // integer, default 3
  *   maxInterruptAttemptsWithThreadDump 5
  *   // ThreadDumpCapturingUtil, default JCMD
  *   threadDumpCapturingUtil ThreadDumpCapturingUtil.JSTACK
  *   // list of java.lang.Runnable, default []
- *   onTimeoutListeners.add({ println('Timeout occurred!') })
+ *   onInterruptAttemptListeners.add({ println('Timeout occurred!') })
  * }
  * </pre>
  *
@@ -32,7 +32,7 @@ public class TimeoutConfiguration {
   /**
    * Determines whether thread dumps will be captured and logged on feature timeout or unsuccessful interrupt attempts, default true.
    */
-  public boolean printThreadDump = true;
+  public boolean printThreadDumpOnInterruptAttempt = true;
 
   /**
    * Maximum number of unsuccessful interrupts to log the thread dumps for, default 3.
@@ -47,5 +47,5 @@ public class TimeoutConfiguration {
   /**
    * Listeners to be invoked on method timeout or unsuccessful interrupt attempts, default empty.
    */
-  public List<Runnable> onTimeoutListeners = new ArrayList<>();
+  public List<Runnable> onInterruptAttemptListeners = new ArrayList<>();
 }

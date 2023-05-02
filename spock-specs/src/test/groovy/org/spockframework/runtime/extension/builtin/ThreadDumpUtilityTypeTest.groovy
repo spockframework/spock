@@ -16,7 +16,9 @@
 
 package org.spockframework.runtime.extension.builtin
 
+import spock.lang.Requires
 import spock.lang.Specification
+import spock.util.environment.OperatingSystem
 
 import java.nio.file.Paths
 
@@ -25,6 +27,7 @@ import static org.spockframework.runtime.extension.builtin.ThreadDumpUtilityType
 
 class ThreadDumpUtilityTypeTest extends Specification {
 
+  @Requires({ !OperatingSystem.current.windows })
   def 'can locate #utility on Unix'() {
     expect:
     utility.getPath(Paths.get(javaHome)) == Paths.get(utilityPath)
@@ -35,6 +38,19 @@ class ThreadDumpUtilityTypeTest extends Specification {
     JSTACK  | '/opt/jdk/oracle-jdk-8/jre' | '/opt/jdk/oracle-jdk-8/bin/jstack'
     JCMD    | '/opt/jdk/oracle-jdk-8'     | '/opt/jdk/oracle-jdk-8/bin/jcmd'
     JCMD    | '/opt/jdk/oracle-jdk-8/jre' | '/opt/jdk/oracle-jdk-8/bin/jcmd'
+  }
+
+  @Requires({ OperatingSystem.current.windows })
+  def 'can locate #utility on Windows'() {
+    expect:
+    utility.getPath(Paths.get(javaHome)) == Paths.get(utilityPath)
+
+    where:
+    utility | javaHome                           | utilityPath
+    JSTACK  | /C:\Program Files\Java\jdk1.8/     | /C:\Program Files\Java\jdk1.8\bin\jstack.exe/
+    JSTACK  | /C:\Program Files\Java\jdk1.8\jre/ | /C:\Program Files\Java\jdk1.8\bin\jstack.exe/
+    JCMD    | /C:\Program Files\Java\jdk1.8/     | /C:\Program Files\Java\jdk1.8\bin\jcmd.exe/
+    JCMD    | /C:\Program Files\Java\jdk1.8\jre/ | /C:\Program Files\Java\jdk1.8\bin\jcmd.exe/
   }
 
 }

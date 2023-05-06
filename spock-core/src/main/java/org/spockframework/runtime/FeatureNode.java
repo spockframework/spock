@@ -48,6 +48,12 @@ public abstract class FeatureNode extends SpockNode<FeatureInfo> {
   }
 
   @Override
+  public void nodeSkipped(SpockExecutionContext context, TestDescriptor testDescriptor, SkipResult result) {
+    FeatureInfo featureInfo = getNodeInfo();
+    featureInfo.getSpec().getListeners().forEach(iRunListener -> iRunListener.featureSkipped(featureInfo));
+  }
+
+  @Override
   public boolean mayRegisterTests() {
     return getNodeInfo().isParameterized();
   }

@@ -51,6 +51,8 @@ public class PlatformSpecRunner {
     if (context.getErrorInfoCollector().hasErrors()) return;
 
     SpecInfo spec = context.getSpec();
+    if (spec.isExcluded()) return;
+
     supervisor.beforeSpec(spec);
     invoke(context, this, createMethodInfoForDoRunSpec(context, specRunner));
     supervisor.afterSpec(spec);
@@ -182,11 +184,6 @@ public class PlatformSpecRunner {
 
     FeatureInfo currentFeature = context.getCurrentFeature();
     if (currentFeature.isExcluded()) return;
-
-    if (currentFeature.isSkipped()) {
-      supervisor.featureSkipped(currentFeature); // todo notify in node isSkipped
-      return;
-    }
 
     supervisor.beforeFeature(currentFeature);
     invoke(context, this, createMethodInfoForDoRunFeature(context, feature));

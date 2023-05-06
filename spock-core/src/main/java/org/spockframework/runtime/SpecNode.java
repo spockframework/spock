@@ -1,5 +1,6 @@
 package org.spockframework.runtime;
 
+import org.junit.platform.engine.TestDescriptor;
 import org.spockframework.runtime.model.SpecInfo;
 import spock.config.RunnerConfiguration;
 
@@ -62,6 +63,12 @@ public class SpecNode extends SpockNode<SpecInfo> {
     SpockExecutionContext ctx = context.withErrorInfoCollector(errorInfoCollector);
     ctx.getRunner().runSpec(ctx, () -> sneakyInvoke(invocation, ctx));
     errorInfoCollector.assertEmpty();
+  }
+
+  @Override
+  public void nodeSkipped(SpockExecutionContext context, TestDescriptor testDescriptor, SkipResult result) {
+    SpecInfo specInfo = getNodeInfo();
+    specInfo.getListeners().forEach(iRunListener -> iRunListener.specSkipped(specInfo));
   }
 
   @Override

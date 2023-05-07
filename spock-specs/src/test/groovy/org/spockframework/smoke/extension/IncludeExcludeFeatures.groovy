@@ -36,6 +36,18 @@ def feature2() {
 def feature3() {
   expect: true
 }
+
+def feature4(@Fast def param) {
+  expect: true
+  where:
+  param << [1]
+}
+
+def feature4(@Slow def param) {
+  expect: true
+  where:
+  param << [1]
+}
   """)
   }
 
@@ -43,6 +55,7 @@ def feature3() {
     runner.configurationScript = {
       runner {
         include(*annotationTypes)
+        scanParametersForIncludeExcludeAnnotationCriteria = scanParameters
       }
     }
 
@@ -55,8 +68,14 @@ def feature3() {
     result.testsSkippedCount == 0
 
     where:
-    annotationTypes << [[Slow], [Fast], [Slow, Fast]]
-    runCount        << [1,      1,      2           ]
+    annotationTypes | scanParameters | runCount
+    [Slow]          | false          | 1
+    [Fast]          | false          | 1
+    [Slow, Fast]    | false          | 2
+    [Slow]          | true           | 3
+    [Fast]          | true           | 3
+    [Slow, Fast]    | true           | 6
+
   }
 
   def "include methods based on annotations using different configuration style"() {
@@ -79,14 +98,17 @@ def feature3() {
     result.testsSkippedCount == 0
 
     where:
-    annotationTypes << [[Slow], [Fast], [Slow, Fast]]
-    runCount        << [1,      1,      2           ]
+    annotationTypes | runCount
+    [Slow]          | 1
+    [Fast]          | 1
+    [Slow, Fast]    | 2
   }
 
   def "exclude methods based on annotations"() {
     runner.configurationScript = {
       runner {
         exclude(*annotationTypes)
+        scanParametersForIncludeExcludeAnnotationCriteria = scanParameters
       }
     }
 
@@ -99,15 +121,21 @@ def feature3() {
     result.testsSkippedCount == 0
 
     where:
-    annotationTypes << [[Slow], [Fast], [Slow, Fast]]
-    runCount        << [2,      2,      1           ]
+    annotationTypes | scanParameters | runCount
+    [Slow]          | false          | 6
+    [Fast]          | false          | 6
+    [Slow, Fast]    | false          | 5
+    [Slow]          | true           | 4
+    [Fast]          | true           | 4
+    [Slow, Fast]    | true           | 1
   }
 
   def "include and exclude features based on annotations"() {
     runner.configurationScript = {
       runner {
-        include(*annTypes1)
-        exclude(*annTypes2)
+        include(*annInclude)
+        exclude(*annExclude)
+        scanParametersForIncludeExcludeAnnotationCriteria = scanParameters
       }
     }
 
@@ -120,13 +148,25 @@ def feature3() {
     result.testsSkippedCount == 0
 
     where:
-    annTypes1   << [[Slow], [Slow], [Slow],       [Fast], [Fast], [Fast],       [Slow, Fast], [Slow, Fast], [Slow, Fast]]
-    annTypes2   << [[Slow], [Fast], [Slow, Fast], [Slow], [Fast], [Slow, Fast], [Slow],       [Fast],       [Slow, Fast]]
-    runCount    << [0,      1,      0,            1,      0,      0,            1,            1,            0           ]
+    annInclude   | annExclude   | scanParameters | runCount
+    [Slow]       | [Slow]       | false          | 0
+    [Slow]       | [Fast]       | false          | 1
+    [Slow]       | [Slow, Fast] | false          | 0
+    [Fast]       | [Slow]       | false          | 1
+    [Fast]       | [Fast]       | false          | 0
+    [Fast]       | [Slow, Fast] | false          | 0
+    [Slow, Fast] | [Slow]       | false          | 1
+    [Slow, Fast] | [Fast]       | false          | 1
+    [Slow, Fast] | [Slow, Fast] | false          | 0
+
+    [Slow]       | [Slow]       | true           | 0
+    [Slow]       | [Fast]       | true           | 3
+    [Slow]       | [Slow, Fast] | true           | 0
+    [Fast]       | [Slow]       | true           | 3
+    [Fast]       | [Fast]       | true           | 0
+    [Fast]       | [Slow, Fast] | true           | 0
+    [Slow, Fast] | [Slow]       | true           | 3
+    [Slow, Fast] | [Fast]       | true           | 3
+    [Slow, Fast] | [Slow, Fast] | true           | 0
   }
 }
-
-
-
-
-

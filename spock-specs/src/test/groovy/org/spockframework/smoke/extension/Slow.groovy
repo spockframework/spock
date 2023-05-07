@@ -20,6 +20,6 @@ import java.lang.annotation.ElementType
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 
-@Target([ElementType.TYPE, ElementType.METHOD])
+@Target([ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER])
 @Retention(RetentionPolicy.RUNTIME)
 @interface Slow {}

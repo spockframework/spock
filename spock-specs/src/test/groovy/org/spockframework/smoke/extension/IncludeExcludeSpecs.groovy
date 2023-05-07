@@ -42,6 +42,21 @@ class Spec3 extends Specification {
     expect: true
   }
 }
+class Spec4 extends Specification {
+  @Fast
+  def field = 1
+
+  def feature() {
+    expect: true
+  }
+}
+class Spec5 extends Specification {
+  def setup(@Fast def param) {}
+
+  def feature() {
+    expect: true
+  }
+}
   """)
   }
 
@@ -49,6 +64,8 @@ class Spec3 extends Specification {
     runner.configurationScript = {
       runner {
         include(*annotationTypes)
+        scanParametersForIncludeExcludeAnnotationCriteria = scanParameters
+        scanFieldsForIncludeExcludeAnnotationCriteria = scanFields
       }
     }
 
@@ -61,14 +78,30 @@ class Spec3 extends Specification {
     result.testsSkippedCount == 0
 
     where:
-    annotationTypes << [[Slow], [Fast], [Slow, Fast]]
-    runCount        << [1,      1,      2           ]
+    annotationTypes | scanParameters | scanFields | runCount
+    [Slow]          | false          | false      | 1
+    [Fast]          | false          | false      | 1
+    [Slow, Fast]    | false          | false      | 2
+
+    [Slow]          | true           | false      | 1
+    [Fast]          | true           | false      | 2
+    [Slow, Fast]    | true           | false      | 3
+
+    [Slow]          | false          | true       | 1
+    [Fast]          | false          | true       | 2
+    [Slow, Fast]    | false          | true       | 3
+
+    [Slow]          | true           | true       | 1
+    [Fast]          | true           | true       | 3
+    [Slow, Fast]    | true           | true       | 4
   }
 
   def "exclude specs based on annotations"() {
     runner.configurationScript = {
       runner {
         exclude(*annotationTypes)
+        scanParametersForIncludeExcludeAnnotationCriteria = scanParameters
+        scanFieldsForIncludeExcludeAnnotationCriteria = scanFields
       }
     }
 
@@ -81,15 +114,31 @@ class Spec3 extends Specification {
     result.testsSkippedCount == 0
 
     where:
-    annotationTypes << [[Slow], [Fast], [Slow, Fast]]
-    runCount        << [2,      2,      1           ]
+    annotationTypes | scanParameters | scanFields | runCount
+    [Slow]          | false          | false      | 4
+    [Fast]          | false          | false      | 4
+    [Slow, Fast]    | false          | false      | 3
+
+    [Slow]          | true           | false      | 4
+    [Fast]          | true           | false      | 3
+    [Slow, Fast]    | true           | false      | 2
+
+    [Slow]          | false          | true       | 4
+    [Fast]          | false          | true       | 3
+    [Slow, Fast]    | false          | true       | 2
+
+    [Slow]          | true           | true       | 4
+    [Fast]          | true           | true       | 2
+    [Slow, Fast]    | true           | true       | 1
   }
 
   def "include and exclude specs based on annotations"() {
     runner.configurationScript = {
       runner {
-        include(*annTypes1)
-        exclude(*annTypes2)
+        include(*annInclude)
+        exclude(*annExclude)
+        scanParametersForIncludeExcludeAnnotationCriteria = scanParameters
+        scanFieldsForIncludeExcludeAnnotationCriteria = scanFields
       }
     }
 
@@ -102,8 +151,45 @@ class Spec3 extends Specification {
     result.testsSkippedCount == 0
 
     where:
-    annTypes1   << [[Slow], [Slow], [Slow],       [Fast], [Fast], [Fast],       [Slow, Fast], [Slow, Fast], [Slow, Fast]]
-    annTypes2   << [[Slow], [Fast], [Slow, Fast], [Slow], [Fast], [Slow, Fast], [Slow],       [Fast],       [Slow, Fast]]
-    runCount    << [0,      1,      0,            1,      0,      0,            1,            1,            0           ]
+    annInclude   | annExclude   | scanParameters | scanFields | runCount
+    [Slow]       | [Slow]       | false          | false      | 0
+    [Slow]       | [Fast]       | false          | false      | 1
+    [Slow]       | [Slow, Fast] | false          | false      | 0
+    [Fast]       | [Slow]       | false          | false      | 1
+    [Fast]       | [Fast]       | false          | false      | 0
+    [Fast]       | [Slow, Fast] | false          | false      | 0
+    [Slow, Fast] | [Slow]       | false          | false      | 1
+    [Slow, Fast] | [Fast]       | false          | false      | 1
+    [Slow, Fast] | [Slow, Fast] | false          | false      | 0
+
+    [Slow]       | [Slow]       | true           | false      | 0
+    [Slow]       | [Fast]       | true           | false      | 1
+    [Slow]       | [Slow, Fast] | true           | false      | 0
+    [Fast]       | [Slow]       | true           | false      | 2
+    [Fast]       | [Fast]       | true           | false      | 0
+    [Fast]       | [Slow, Fast] | true           | false      | 0
+    [Slow, Fast] | [Slow]       | true           | false      | 2
+    [Slow, Fast] | [Fast]       | true           | false      | 1
+    [Slow, Fast] | [Slow, Fast] | true           | false      | 0
+
+    [Slow]       | [Slow]       | false          | true       | 0
+    [Slow]       | [Fast]       | false          | true       | 1
+    [Slow]       | [Slow, Fast] | false          | true       | 0
+    [Fast]       | [Slow]       | false          | true       | 2
+    [Fast]       | [Fast]       | false          | true       | 0
+    [Fast]       | [Slow, Fast] | false          | true       | 0
+    [Slow, Fast] | [Slow]       | false          | true       | 2
+    [Slow, Fast] | [Fast]       | false          | true       | 1
+    [Slow, Fast] | [Slow, Fast] | false          | true       | 0
+
+    [Slow]       | [Slow]       | true           | true       | 0
+    [Slow]       | [Fast]       | true           | true       | 1
+    [Slow]       | [Slow, Fast] | true           | true       | 0
+    [Fast]       | [Slow]       | true           | true       | 3
+    [Fast]       | [Fast]       | true           | true       | 0
+    [Fast]       | [Slow, Fast] | true           | true       | 0
+    [Slow, Fast] | [Slow]       | true           | true       | 3
+    [Slow, Fast] | [Fast]       | true           | true       | 1
+    [Slow, Fast] | [Slow, Fast] | true           | true       | 0
   }
 }

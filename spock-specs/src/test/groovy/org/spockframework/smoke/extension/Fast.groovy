@@ -15,11 +15,43 @@
  */
 package org.spockframework.smoke.extension
 
+import org.spockframework.runtime.extension.ExtensionAnnotation
+import org.spockframework.runtime.extension.IAnnotationDrivenExtension
+import org.spockframework.runtime.extension.ParameterResolver
+import org.spockframework.runtime.model.FeatureInfo
+import org.spockframework.runtime.model.FieldInfo
+import org.spockframework.runtime.model.MethodInfo
+import org.spockframework.runtime.model.ParameterInfo
+import org.spockframework.runtime.model.SpecInfo
+
 import java.lang.annotation.Target
 import java.lang.annotation.ElementType
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 
-@Target([ElementType.TYPE, ElementType.METHOD])
+@Target([ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER])
 @Retention(RetentionPolicy.RUNTIME)
+@ExtensionAnnotation(FastStubExtension)
 @interface Fast {}
+
+class FastStubExtension implements IAnnotationDrivenExtension<Fast> {
+  @Override
+  void visitParameterAnnotation(Fast annotation, ParameterInfo parameter) {
+    parameter.parent?.addInterceptor(new ParameterResolver.Interceptor(parameter, { 42 }))
+  }
+
+  @Override
+  void visitSpecAnnotations(List<Fast> annotations, SpecInfo spec) {
+    // do nothing
+  }
+
+  @Override
+  void visitFieldAnnotations(List<Fast> annotations, FieldInfo field) {
+    // do nothing
+  }
+
+  @Override
+  void visitFeatureAnnotations(List<Fast> annotations, FeatureInfo feature) {
+    // do nothing
+  }
+}

@@ -14,9 +14,10 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.*;
+import org.spockframework.runtime.extension.IGlobalExtension;
 import org.spockframework.runtime.model.*;
-import spock.config.*;
+import spock.config.IncludeExcludeCriteria;
+import spock.config.RunnerConfiguration;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -46,7 +47,12 @@ public class IncludeExcludeExtension implements IGlobalExtension {
     if (criteria.isEmpty()) return;
 
     if (!hasAnyAnnotation(spec, criteria.annotations)
-      && !hasAnyBaseClass(spec, criteria.baseClasses))
+      && !hasAnyBaseClass(spec, criteria.baseClasses)
+      && (!config.scanFieldsForIncludeExcludeAnnotationCriteria
+      || !hasAnyFieldAnnotation(spec, criteria.annotations))
+      && (!config.scanParametersForIncludeExcludeAnnotationCriteria
+      || !hasAnyParameterAnnotation(spec, criteria.annotations))
+    )
       spec.setExcluded(true);
   }
 
@@ -54,7 +60,11 @@ public class IncludeExcludeExtension implements IGlobalExtension {
     if (criteria.isEmpty()) return;
 
     if (hasAnyAnnotation(spec, criteria.annotations)
-      || hasAnyBaseClass(spec, criteria.baseClasses))
+      || hasAnyBaseClass(spec, criteria.baseClasses)
+      || (config.scanFieldsForIncludeExcludeAnnotationCriteria
+      && hasAnyFieldAnnotation(spec, criteria.annotations))
+      || (config.scanParametersForIncludeExcludeAnnotationCriteria
+      && hasAnyParameterAnnotation(spec, criteria.annotations)))
       spec.setExcluded(true);
   }
 
@@ -63,7 +73,9 @@ public class IncludeExcludeExtension implements IGlobalExtension {
     if (criteria.isEmpty()) return;
 
     for (FeatureInfo feature : spec.getAllFeatures())
-      if (hasAnyAnnotation(feature.getFeatureMethod(), criteria.annotations))
+      if (hasAnyAnnotation(feature.getFeatureMethod(), criteria.annotations)
+        || (config.scanParametersForIncludeExcludeAnnotationCriteria
+        && hasAnyParameterAnnotation(feature, criteria.annotations)))
         feature.setExcluded(false);
   }
 
@@ -71,7 +83,9 @@ public class IncludeExcludeExtension implements IGlobalExtension {
     if (criteria.isEmpty()) return;
 
     for (FeatureInfo feature : spec.getAllFeatures())
-      if (hasAnyAnnotation(feature.getFeatureMethod(), criteria.annotations))
+      if (hasAnyAnnotation(feature.getFeatureMethod(), criteria.annotations)
+        || (config.scanParametersForIncludeExcludeAnnotationCriteria
+        && hasAnyParameterAnnotation(feature, criteria.annotations)))
         feature.setExcluded(true);
   }
 
@@ -85,6 +99,41 @@ public class IncludeExcludeExtension implements IGlobalExtension {
       if (!feature.isExcluded()) return false;
 
     return true;
+  }
+
+  private boolean hasAnyFieldAnnotation(SpecInfo specInfo, List<Class<? extends Annotation>> annotationClasses) {
+    if (annotationClasses.isEmpty())
+      return false;
+
+    for (FieldInfo field : specInfo.getAllFields())
+      if (hasAnyAnnotation(field, annotationClasses))
+        return true;
+
+    return false;
+  }
+
+  private boolean hasAnyParameterAnnotation(SpecInfo specInfo, List<Class<? extends Annotation>> annotationClasses) {
+    if (annotationClasses.isEmpty())
+      return false;
+
+    for (MethodInfo method : specInfo.getAllFixtureMethods())
+      for (ParameterInfo param : method.getParameters())
+        if (hasAnyAnnotation(param, annotationClasses))
+          return true;
+
+    return false;
+  }
+
+
+  private boolean hasAnyParameterAnnotation(FeatureInfo featureInfo, List<Class<? extends Annotation>> annotationClasses) {
+    if (annotationClasses.isEmpty())
+      return false;
+
+    for (ParameterInfo param : featureInfo.getFeatureMethod().getParameters())
+      if (hasAnyAnnotation(param, annotationClasses))
+        return true;
+
+    return false;
   }
 
   private boolean hasAnyAnnotation(NodeInfo<?, ?> node, List<Class<? extends Annotation>> annotationClasses) {

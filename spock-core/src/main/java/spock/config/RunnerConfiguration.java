@@ -39,4 +39,6 @@ public class RunnerConfiguration {
   public ParallelConfiguration parallel = new ParallelConfiguration();
   public boolean filterStackTrace = true;
   public boolean optimizeRunOrder = false;
+  public boolean scanFieldsForIncludeExcludeAnnotationCriteria = false;
+  public boolean scanParametersForIncludeExcludeAnnotationCriteria = false;
 }

@@ -135,8 +135,8 @@ public class TimeoutInterceptor implements IMethodInterceptor {
     System.err.printf(
       "[spock.lang.Timeout] Method '%s' has not stopped after timing out %1.2f seconds ago - interrupting. Next try in %1.2f seconds.\n%n",
       methodName,
-      Duration.ofNanos(now - timeoutAt).toMillis() / 1000.,
-      waitMillis / 1000.
+      Duration.ofNanos(now - timeoutAt).toMillis() / 1000d,
+      waitMillis / 1000d
     );
 
     if (unsuccessfulAttempts <= configuration.maxInterruptAttemptsWithThreadDumps) {
@@ -200,9 +200,10 @@ public class TimeoutInterceptor implements IMethodInterceptor {
 
   @Nullable
   private static Pair<Integer, Integer> findThreadSection(List<String> lines, String threadName, long threadId) {
+    String lineFormat = "\"%s\" #%d";
     int threadSectionStart = -1;
     for (int i = 0; i < lines.size(); ++i) {
-      if (lines.get(i).startsWith(String.format("\"%s\" #%d", threadName, threadId))) {
+      if (lines.get(i).startsWith(String.format(lineFormat, threadName, threadId))) {
         threadSectionStart = i;
       } else if (threadSectionStart > 0 && lines.get(i).isEmpty()) {
         return Pair.of(threadSectionStart, i);

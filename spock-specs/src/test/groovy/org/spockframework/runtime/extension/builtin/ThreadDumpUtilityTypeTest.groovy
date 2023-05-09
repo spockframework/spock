@@ -16,6 +16,7 @@
 
 package org.spockframework.runtime.extension.builtin
 
+import spock.lang.IgnoreIf
 import spock.lang.Requires
 import spock.lang.Specification
 import spock.util.environment.OperatingSystem
@@ -27,8 +28,8 @@ import static org.spockframework.runtime.extension.builtin.ThreadDumpUtilityType
 
 class ThreadDumpUtilityTypeTest extends Specification {
 
-  @Requires({ !OperatingSystem.current.windows })
-  def 'can locate #utility on Unix'() {
+  @IgnoreIf({ OperatingSystem.current.windows })
+  def 'can locate #utility on Unix or MacOS'() {
     expect:
     utility.getPath(Paths.get(javaHome)) == Paths.get(utilityPath)
 

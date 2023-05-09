@@ -31,6 +31,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
 
+import static org.spockframework.util.ExceptionUtil.rethrowIfUnrecoverable;
+
 /**
  * Times out a method invocation if it takes too long. The method invocation
  * will occur on the regular test framework thread. This can be important
@@ -166,6 +168,8 @@ public class TimeoutInterceptor implements IMethodInterceptor {
         threadDumpCollector.appendThreadDumpOfCurrentJvm(sb);
         System.err.println(removeThisThread(sb.toString()));
       } catch (Throwable e) {
+        rethrowIfUnrecoverable(e);
+
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         e.printStackTrace(new PrintStream(stream));
 

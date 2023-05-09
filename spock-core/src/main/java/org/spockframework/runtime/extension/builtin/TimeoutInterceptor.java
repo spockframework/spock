@@ -182,15 +182,15 @@ public class TimeoutInterceptor implements IMethodInterceptor {
     }
   }
 
-  private static String removeThisThread(String jcmdThreadDumpOutput) {
+  private static String removeThisThread(String threadDumpOutput) {
     Thread thisThread = Thread.currentThread();
     String threadName = thisThread.getName();
     long threadId = thisThread.getId();
 
-    List<String> lines = Arrays.asList(jcmdThreadDumpOutput.split("\n"));
+    List<String> lines = Arrays.asList(threadDumpOutput.split("\n"));
     Pair<Integer, Integer> thisThreadSection = findThreadSection(lines, threadName, threadId);
     if (thisThreadSection == null) {
-      return jcmdThreadDumpOutput;
+      return threadDumpOutput;
     }
 
     String start = TextUtil.join("\n", lines.subList(0, thisThreadSection.first()));

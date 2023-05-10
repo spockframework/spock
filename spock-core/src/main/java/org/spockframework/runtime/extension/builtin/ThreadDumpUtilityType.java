@@ -16,26 +16,60 @@
 
 package org.spockframework.runtime.extension.builtin;
 
+import org.spockframework.runtime.SpockException;
 import spock.util.environment.OperatingSystem;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
-public enum ThreadDumpUtilityType {
-  JSTACK("jstack"),
-  JCMD("jcmd");
+import static org.spockframework.util.CollectionUtil.listOf;
 
-  private final String fileName;
+public enum ThreadDumpUtilityType implements ThreadDumpUtility {
 
-  ThreadDumpUtilityType(String fileName) {
-    this.fileName = fileName;
+  JSTACK {
+    @Override
+    String getFileName() {
+      return OperatingSystem.getCurrent().isWindows() ? "jstack.exe" : "jstack";
+    }
+
+    @Override
+    public List<String> getCommand(Path javaHome, long pid) {
+      return listOf(getUtilityPath(javaHome).toString(), Long.toString(pid));
+    }
+  },
+
+  JCMD {
+    @Override
+    String getFileName() {
+      return OperatingSystem.getCurrent().isWindows() ? "jcmd.exe" : "jcmd";
+    }
+
+    @Override
+    public List<String> getCommand(Path javaHome, long pid) {
+      return listOf(getUtilityPath(javaHome).toString(), Long.toString(pid), "Thread.print");
+    }
+  };
+
+  @Override
+  public String getName() {
+    return name();
   }
 
-  public Path getPath(Path javaHome) {
-    String commandFile = OperatingSystem.getCurrent().isWindows() ? fileName + ".exe" : fileName;
+  abstract String getFileName();
+
+  protected Path getUtilityPath(Path javaHome) {
+    Path utilityPath;
     if ("jre".equals(javaHome.getFileName().toString())) {
-      return javaHome.resolve("../bin").resolve(commandFile).normalize();
+      utilityPath = javaHome.resolve("../bin").resolve(getFileName()).normalize();
     } else {
-      return javaHome.resolve("bin").resolve(commandFile).normalize();
+      utilityPath = javaHome.resolve("bin").resolve(getFileName()).normalize();
     }
+
+    if (!Files.exists(utilityPath)) {
+      throw new SpockException("Could not find requested thread dump capturing utility '" + name().toLowerCase() + "' under expected path '" + utilityPath + "'");
+    }
+
+    return utilityPath;
   }
 }

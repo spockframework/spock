@@ -17,14 +17,13 @@
 package org.spockframework.util;
 
 import org.spockframework.runtime.SpockException;
+import org.spockframework.runtime.extension.builtin.ThreadDumpUtility;
 import org.spockframework.runtime.extension.builtin.ThreadDumpUtilityType;
 
 import java.io.*;
 import java.lang.management.ManagementFactory;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,26 +49,21 @@ public interface JavaProcessThreadDumpCollector {
 
     private static final String JAVA_HOME_SYS_PROP = "java.home";
 
-    private final ThreadDumpUtilityType utility;
+    private final String utilityName;
     private final List<String> command;
 
-    public FunctionalJavaProcessThreadDumpCollector(ThreadDumpUtilityType utility) {
-      long pid = currentProcessId();
-      Path utilityPath = getUtilityCommandPath(utility);
-
-      this.utility = utility;
-      this.command = utility == ThreadDumpUtilityType.JSTACK
-        ? Arrays.asList(utilityPath.toString(), Long.toString(pid))
-        : Arrays.asList(utilityPath.toString(), Long.toString(pid), "Thread.print");
+    public FunctionalJavaProcessThreadDumpCollector(ThreadDumpUtility utility) {
+      this.utilityName = utility.getName();
+      this.command = utility.getCommand(getJavaHome(), currentProcessId());
     }
 
     @Override
     public void appendThreadDumpOfCurrentJvm(StringBuilder builder) throws IOException, InterruptedException {
       builder.append("Thread dump of current JVM (")
-        .append(utility.name())
+        .append(utilityName)
         .append("):\n");
       builder.append("------------------------------")
-        .append(TextUtil.repeatChar('-', utility.name().length()))
+        .append(TextUtil.repeatChar('-', utilityName.length()))
         .append("\n");
 
       Process process = new ProcessBuilder(command)
@@ -87,14 +81,6 @@ public interface JavaProcessThreadDumpCollector {
           builder.append(line).append("\n");
         }
       }
-    }
-
-    private static Path getUtilityCommandPath(ThreadDumpUtilityType utility) {
-      Path utilityPath = utility.getPath(getJavaHome());
-      if (!Files.exists(utilityPath)) {
-        throw new SpockException("Could not find requested thread dump capturing utility '" + utility.name().toLowerCase() + "' under expected path '" + utilityPath + "'");
-      }
-      return utilityPath;
     }
 
     private static Path getJavaHome() {

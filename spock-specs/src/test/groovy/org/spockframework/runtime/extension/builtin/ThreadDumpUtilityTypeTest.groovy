@@ -16,42 +16,46 @@
 
 package org.spockframework.runtime.extension.builtin
 
-import spock.lang.IgnoreIf
-import spock.lang.Requires
+import spock.lang.Shared
 import spock.lang.Specification
-import spock.util.environment.OperatingSystem
+import spock.lang.TempDir
 
-import java.nio.file.Paths
+import java.nio.file.Files
+import java.nio.file.Path
 
 import static org.spockframework.runtime.extension.builtin.ThreadDumpUtilityType.JCMD
 import static org.spockframework.runtime.extension.builtin.ThreadDumpUtilityType.JSTACK
 
 class ThreadDumpUtilityTypeTest extends Specification {
 
-  @IgnoreIf({ OperatingSystem.current.windows })
-  def 'can locate #utility on Unix or MacOS'() {
-    expect:
-    utility.getPath(Paths.get(javaHome)) == Paths.get(utilityPath)
+  private static final long PID = 42
 
-    where:
-    utility | javaHome                    | utilityPath
-    JSTACK  | '/opt/jdk/oracle-jdk-8'     | '/opt/jdk/oracle-jdk-8/bin/jstack'
-    JSTACK  | '/opt/jdk/oracle-jdk-8/jre' | '/opt/jdk/oracle-jdk-8/bin/jstack'
-    JCMD    | '/opt/jdk/oracle-jdk-8'     | '/opt/jdk/oracle-jdk-8/bin/jcmd'
-    JCMD    | '/opt/jdk/oracle-jdk-8/jre' | '/opt/jdk/oracle-jdk-8/bin/jcmd'
+  @Shared
+  @TempDir
+  Path tempDir
+
+  def setupSpec() {
+    // create expected paths
+    def baseUtilPath = tempDir.resolve('bin')
+    Files.createDirectories(baseUtilPath)
+    ThreadDumpUtilityType.values().each {
+      Files.createFile(baseUtilPath.resolve(it.fileName))
+    }
   }
 
-  @Requires({ OperatingSystem.current.windows })
-  def 'can locate #utility on Windows'() {
+  def '#utility utility provides correct command arguments'() {
+    given:
     expect:
-    utility.getPath(Paths.get(javaHome)) == Paths.get(utilityPath)
+    utility.getCommand(javaHome, PID) == [utilityPath.toString(), PID.toString()] + additionalArgs
 
     where:
-    utility | javaHome                           | utilityPath
-    JSTACK  | /C:\Program Files\Java\jdk1.8/     | /C:\Program Files\Java\jdk1.8\bin\jstack.exe/
-    JSTACK  | /C:\Program Files\Java\jdk1.8\jre/ | /C:\Program Files\Java\jdk1.8\bin\jstack.exe/
-    JCMD    | /C:\Program Files\Java\jdk1.8/     | /C:\Program Files\Java\jdk1.8\bin\jcmd.exe/
-    JCMD    | /C:\Program Files\Java\jdk1.8\jre/ | /C:\Program Files\Java\jdk1.8\bin\jcmd.exe/
+    utility | javaHome               | additionalArgs
+    JSTACK  | tempDir                | []
+    JSTACK  | tempDir.resolve('jre') | []
+    JCMD    | tempDir                | ['Thread.print']
+    JCMD    | tempDir.resolve('jre') | ['Thread.print']
+
+    utilityPath = tempDir.resolve('bin').resolve(utility.fileName)
   }
 
 }

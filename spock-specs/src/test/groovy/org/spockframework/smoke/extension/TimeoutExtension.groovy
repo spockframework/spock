@@ -164,29 +164,30 @@ class TimeoutExtension extends EmbeddedSpecification {
     thrown SpockTimeoutError
 
     and: 'thread dumps are captured on each interrupt attempt'
-    assertThreadDumpsCaptured(2, 2, false)
+    assertThreadDumpsCaptured(2, 0, false)
   }
 
-  def "can disable thread dump capturing on interrupt attempts"() {
+  def "can capture thread dumps on interrupt attempts"() {
     given:
     runner.configurationScript {
       timeout {
-        printThreadDumpsOnInterruptAttempts false
+        printThreadDumpsOnInterruptAttempts true
       }
     }
 
     when:
-    runSpecWithInterrupts(2)
+    runSpecWithInterrupts(3)
 
     then:
     thrown SpockTimeoutError
-    assertThreadDumpsCaptured(1, 0, false)
+    assertThreadDumpsCaptured(2, 2, false)
   }
 
   def "can set the maximum number of interrupt attempts with thread dump captured"() {
     given:
     runner.configurationScript {
       timeout {
+        printThreadDumpsOnInterruptAttempts true
         maxInterruptAttemptsWithThreadDumps 1
       }
     }
@@ -203,6 +204,7 @@ class TimeoutExtension extends EmbeddedSpecification {
     given:
     runner.configurationScript {
       timeout {
+        printThreadDumpsOnInterruptAttempts true
         threadDumpUtilityType ThreadDumpUtilityType.JSTACK
       }
     }
@@ -221,6 +223,7 @@ class TimeoutExtension extends EmbeddedSpecification {
     Runnable anotherListener = Mock()
     runner.configurationScript {
       timeout {
+        printThreadDumpsOnInterruptAttempts true
         maxInterruptAttemptsWithThreadDumps 1
         interruptAttemptListeners.addAll(someListeners)
         interruptAttemptListeners.add(anotherListener)
@@ -244,6 +247,13 @@ class TimeoutExtension extends EmbeddedSpecification {
   }
 
   def "excludes dump-capturing thread from thread dumps"() {
+    given:
+    runner.configurationScript {
+      timeout {
+        printThreadDumpsOnInterruptAttempts true
+      }
+    }
+
     when:
     runSpecWithInterrupts(2)
 
@@ -257,6 +267,13 @@ class TimeoutExtension extends EmbeddedSpecification {
   def "does not fail if thread dump capturing util is not available"() {
     given:
     System.setProperty('java.home', tempDir.toString())
+
+    and:
+    runner.configurationScript {
+      timeout {
+        printThreadDumpsOnInterruptAttempts true
+      }
+    }
 
     when:
     runSpecWithInterrupts(2)
@@ -273,6 +290,13 @@ class TimeoutExtension extends EmbeddedSpecification {
   def "does not fail if java home is not set"() {
     given:
     System.clearProperty('java.home')
+
+    and:
+    runner.configurationScript {
+      timeout {
+        printThreadDumpsOnInterruptAttempts true
+      }
+    }
 
     when:
     runSpecWithInterrupts(2)

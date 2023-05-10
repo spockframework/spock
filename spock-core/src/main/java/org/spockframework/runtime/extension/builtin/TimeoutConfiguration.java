@@ -28,7 +28,7 @@ import java.util.List;
  * <p>Example:
  * <pre>
  * timeout {
- *   // boolean, default true
+ *   // boolean, default false
  *   printThreadDumpsOnInterruptAttempts true
  *   // integer, default 3
  *   maxInterruptAttemptsWithThreadDumps 5
@@ -46,9 +46,9 @@ import java.util.List;
 public class TimeoutConfiguration {
 
   /**
-   * Determines whether thread dumps will be captured and logged on feature timeout or unsuccessful interrupt attempts, default true.
+   * Determines whether thread dumps will be captured and logged on feature timeout or unsuccessful interrupt attempts, default false.
    */
-  public boolean printThreadDumpsOnInterruptAttempts = true;
+  public boolean printThreadDumpsOnInterruptAttempts = false;
 
   /**
    * Maximum number of unsuccessful interrupts to log the thread dumps for, default 3.

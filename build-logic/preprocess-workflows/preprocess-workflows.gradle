@@ -3,6 +3,10 @@ plugins {
   id 'idea'
 }
 
+dependencies {
+  implementation('org.jetbrains.kotlin:kotlin-compiler-embeddable:1.8.20')
+}
+
 gradlePlugin {
   plugins {
     preprocessWorkflowsPlugin {

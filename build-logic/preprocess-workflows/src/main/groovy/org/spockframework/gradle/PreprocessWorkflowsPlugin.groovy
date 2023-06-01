@@ -23,6 +23,19 @@ import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.tasks.JavaExec
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainService
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.com.intellij.openapi.vfs.local.CoreLocalFileSystem
+import org.jetbrains.kotlin.com.intellij.openapi.vfs.local.CoreLocalVirtualFile
+import org.jetbrains.kotlin.com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+
+import static org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY
+import static org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles.JVM_CONFIG_FILES
 
 @CompileStatic
 class PreprocessWorkflowsPlugin implements Plugin<Project> {
@@ -47,6 +60,9 @@ class PreprocessWorkflowsPlugin implements Plugin<Project> {
         it.inputs
           .file(workflowScript)
           .withPropertyName('workflowScript')
+        it.inputs
+          .files(getImportedFiles(project.file(workflowScript)))
+          .withPropertyName("importedFiles")
         it.outputs
           .file(new File(workflowScript.parent, "${workflowName}.yml"))
           .withPropertyName('workflowFile')
@@ -64,5 +80,46 @@ class PreprocessWorkflowsPlugin implements Plugin<Project> {
         it.dependsOn(preprocessWorkflow)
       }
     }
+  }
+
+  private List<File> getImportedFiles(File workflowScript) {
+    if (!workflowScript.file) {
+      return []
+    }
+
+    return PsiManager
+      .getInstance(
+        KotlinCoreEnvironment
+          .createForProduction(
+            Disposer.newDisposable(),
+            new CompilerConfiguration().tap {
+              it.put(MESSAGE_COLLECTOR_KEY, MessageCollector.@Companion.NONE)
+            },
+            JVM_CONFIG_FILES
+          )
+          .project
+      )
+      .findFile(
+        new CoreLocalVirtualFile(
+          new CoreLocalFileSystem(),
+          workflowScript
+        )
+      )
+      .with { it as KtFile }
+      .fileAnnotationList
+      ?.annotationEntries
+      ?.findAll { it.shortName?.asString() == "Import" }
+      *.valueArgumentList
+      ?.collectMany { it?.arguments ?: [] }
+      *.argumentExpression
+      ?.findAll { it instanceof KtStringTemplateExpression }
+      ?.collect { it as KtStringTemplateExpression }
+      *.entries
+      *.first()
+      ?.findAll { it instanceof KtLiteralStringTemplateEntry }
+      ?.collect { it as KtLiteralStringTemplateEntry }
+      ?.collect { new File(workflowScript.parentFile, it.text) }
+      ?.collectMany { getImportedFiles(it) + it }
+      ?: []
   }
 }

@@ -16,21 +16,16 @@
  * limitations under the License.
  */
 
-@file:DependsOn("io.github.typesafegithub:github-workflows-kt:0.44.0")
-@file:DependsOn("org.codehaus.groovy:groovy:3.0.15")
+@file:Import("common.main.kts")
 
-import groovy.lang.Binding
-import groovy.lang.GroovyShell
 import io.github.typesafegithub.workflows.actions.actions.CheckoutV3
 import io.github.typesafegithub.workflows.actions.actions.CheckoutV3.FetchDepth
 import io.github.typesafegithub.workflows.actions.codecov.CodecovActionV3
 import io.github.typesafegithub.workflows.actions.gradle.GradleBuildActionV2
 import io.github.typesafegithub.workflows.domain.RunnerType
-import io.github.typesafegithub.workflows.domain.actions.Action
-import io.github.typesafegithub.workflows.domain.actions.LocalAction
 import io.github.typesafegithub.workflows.domain.triggers.Push
-import io.github.typesafegithub.workflows.dsl.expressions.Contexts
 import io.github.typesafegithub.workflows.dsl.expressions.Contexts.github
+import io.github.typesafegithub.workflows.dsl.expressions.Contexts.secrets
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
 import io.github.typesafegithub.workflows.yaml.writeToFile
@@ -46,47 +41,18 @@ workflow(
     sourceFile = __FILE__.toPath(),
     targetFileName = "${__FILE__.name.substringBeforeLast(".main.kts")}.yml"
 ) {
-    val GITHUB_TOKEN by Contexts.secrets
-    val SONATYPE_OSS_USER by Contexts.secrets
-    val SONATYPE_OSS_PASSWORD by Contexts.secrets
-    val SIGNING_GPG_PASSWORD by Contexts.secrets
-    val SPOCK_BUILD_CACHE_USERNAME by Contexts.secrets
-    val SPOCK_BUILD_CACHE_PASSWORD by Contexts.secrets
-    val GRADLE_ENTERPRISE_ACCESS_KEY by Contexts.secrets
+    val GITHUB_TOKEN by secrets
+    val SONATYPE_OSS_USER by secrets
+    val SONATYPE_OSS_PASSWORD by secrets
+    val SIGNING_GPG_PASSWORD by secrets
 
-    val (javaVersions, variants) = getMatrixAxes()
     val buildAndVerify = job(
         id = "build-and-verify",
         name = "Build and Verify",
-        runsOn = RunnerType.Custom(expr("matrix.os")),
+        runsOn = RunnerType.Custom(expr(Matrix.operatingSystem)),
         condition = "${github.repository} == 'spockframework/spock'",
-        _customArguments = mapOf(
-            "strategy" to mapOf(
-                "fail-fast" to false,
-                "matrix" to mapOf(
-                    "os" to listOf("ubuntu-latest"),
-                    "variant" to variants,
-                    "java" to javaVersions,
-                    "exclude" to javaVersions
-                        .filter { it.toInt() >= 17 }
-                        .map { javaVersion ->
-                            mapOf(
-                                "os" to "ubuntu-latest",
-                                "variant" to "2.5",
-                                "java" to javaVersion
-                            )
-                        },
-                    "include" to listOf("windows-latest", "macos-latest")
-                        .flatMap { os -> variants.map { os to it } }
-                        .map { (os, variant) ->
-                            mapOf(
-                                "os" to os,
-                                "variant" to variant,
-                                "java" to javaVersions.first()
-                            )
-                        }
-                )
-            )
+        strategy = Strategy(
+            matrix = Matrix.full
         )
     ) {
         uses(
@@ -99,7 +65,7 @@ workflow(
         uses(
             name = "Set up JDKs",
             action = SetupBuildEnv(
-                additionalJavaVersion = expr("matrix.java")
+                additionalJavaVersion = expr(Matrix.java)
             )
         )
         uses(
@@ -109,16 +75,12 @@ workflow(
                     "--no-parallel",
                     "--stacktrace",
                     "ghActionsBuild",
-                    """"-Dvariant=${expr("matrix.variant")}"""",
-                    """"-DjavaVersion=${expr("matrix.java")}"""",
+                    """"-Dvariant=${expr(Matrix.variant)}"""",
+                    """"-DjavaVersion=${expr(Matrix.java)}"""",
                     "-Dscan.tag.main-build"
                 ).joinToString(" ")
             ),
-            env = linkedMapOf(
-                "ORG_GRADLE_PROJECT_spockBuildCacheUsername" to expr(SPOCK_BUILD_CACHE_USERNAME),
-                "ORG_GRADLE_PROJECT_spockBuildCachePassword" to expr(SPOCK_BUILD_CACHE_PASSWORD),
-                "GRADLE_ENTERPRISE_ACCESS_KEY" to expr(GRADLE_ENTERPRISE_ACCESS_KEY)
-            )
+            env = commonCredentials
         )
         run(
             name = "Stop Daemon",
@@ -132,14 +94,14 @@ workflow(
     val releaseSpock = job(
         id = "release-spock",
         name = "Release Spock",
-        runsOn = RunnerType.Custom(expr("matrix.os")),
+        runsOn = RunnerType.Custom(expr(Matrix.operatingSystem)),
         needs = listOf(buildAndVerify),
         strategyMatrix = mapOf(
             "os" to listOf("ubuntu-latest"),
             // publish needs to be done for all versions
-            "variant" to variants,
+            "variant" to Matrix.axes.variants,
             // publish needs the min supported java version
-            "java" to javaVersions.take(1)
+            "java" to Matrix.axes.javaVersions.take(1)
         )
     ) {
         uses(
@@ -149,7 +111,7 @@ workflow(
         uses(
             name = "Set up JDKs",
             action = SetupBuildEnv(
-                additionalJavaVersion = expr("matrix.java")
+                additionalJavaVersion = expr(Matrix.java)
             )
         )
         uses(
@@ -159,8 +121,8 @@ workflow(
                     "--no-parallel",
                     "--stacktrace",
                     "ghActionsPublish",
-                    """"-Dvariant=${expr("matrix.variant")}"""",
-                    """"-DjavaVersion=${expr("matrix.java")}"""",
+                    """"-Dvariant=${expr(Matrix.variant)}"""",
+                    """"-DjavaVersion=${expr(Matrix.java)}"""",
                     "-Dscan.tag.main-publish"
                 ).joinToString(" ")
             ),
@@ -168,24 +130,21 @@ workflow(
                 "GITHUB_TOKEN" to expr(GITHUB_TOKEN),
                 "SONATYPE_OSS_USER" to expr(SONATYPE_OSS_USER),
                 "SONATYPE_OSS_PASSWORD" to expr(SONATYPE_OSS_PASSWORD),
-                "SIGNING_PASSWORD" to expr(SIGNING_GPG_PASSWORD),
-                "ORG_GRADLE_PROJECT_spockBuildCacheUsername" to expr(SPOCK_BUILD_CACHE_USERNAME),
-                "ORG_GRADLE_PROJECT_spockBuildCachePassword" to expr(SPOCK_BUILD_CACHE_PASSWORD),
-                "GRADLE_ENTERPRISE_ACCESS_KEY" to expr(GRADLE_ENTERPRISE_ACCESS_KEY)
-            )
+                "SIGNING_PASSWORD" to expr(SIGNING_GPG_PASSWORD)
+            ).apply { putAll(commonCredentials) }
         )
     }
     job(
         id = "publish-release-docs",
         name = "Publish Release Docs",
-        runsOn = RunnerType.Custom(expr("matrix.os")),
+        runsOn = RunnerType.Custom(expr(Matrix.operatingSystem)),
         needs = listOf(releaseSpock),
         strategyMatrix = mapOf(
             "os" to listOf("ubuntu-latest"),
             // docs need the highest variant
-            "variant" to variants.takeLast(1),
+            "variant" to Matrix.axes.variants.takeLast(1),
             // docs need the highest java version
-            "java" to javaVersions.takeLast(1)
+            "java" to Matrix.axes.javaVersions.takeLast(1)
         )
     ) {
         uses(
@@ -195,7 +154,7 @@ workflow(
         uses(
             name = "Set up JDKs",
             action = SetupBuildEnv(
-                additionalJavaVersion = expr("matrix.java")
+                additionalJavaVersion = expr(Matrix.java)
             )
         )
         run(
@@ -209,42 +168,14 @@ workflow(
                     "--no-parallel",
                     "--stacktrace",
                     "ghActionsDocs",
-                    """"-Dvariant=${expr("matrix.variant")}"""",
-                    """"-DjavaVersion=${expr("matrix.java")}"""",
+                    """"-Dvariant=${expr(Matrix.variant)}"""",
+                    """"-DjavaVersion=${expr(Matrix.java)}"""",
                     "-Dscan.tag.main-docs"
                 ).joinToString(" ")
             ),
             env = linkedMapOf(
-                "GITHUB_TOKEN" to expr(GITHUB_TOKEN),
-                "ORG_GRADLE_PROJECT_spockBuildCacheUsername" to expr(SPOCK_BUILD_CACHE_USERNAME),
-                "ORG_GRADLE_PROJECT_spockBuildCachePassword" to expr(SPOCK_BUILD_CACHE_PASSWORD),
-                "GRADLE_ENTERPRISE_ACCESS_KEY" to expr(GRADLE_ENTERPRISE_ACCESS_KEY)
-            )
+                "GITHUB_TOKEN" to expr(GITHUB_TOKEN)
+            ).apply { putAll(commonCredentials) }
         )
     }
 }.writeToFile()
-
-data class SetupBuildEnv(
-    val additionalJavaVersion: String? = null
-) : LocalAction<Action.Outputs>("./.github/actions/setup-build-env") {
-    override fun toYamlArguments() =
-        additionalJavaVersion?.let { linkedMapOf("additional-java-version" to it) } ?: linkedMapOf()
-
-    override fun buildOutputObject(stepId: String): Outputs = Outputs(stepId)
-}
-
-fun getMatrixAxes(): Pair<List<String>, List<String>> {
-    val binding = object : Binding() {
-        lateinit var javaVersions: List<String>
-        lateinit var variants: List<String>
-
-        override fun setVariable(name: String?, value: Any?) {
-            when (name) {
-                "javaVersions" -> javaVersions = (value as List<Int>).map { it.toString() }
-                "variants" -> variants = value as List<String>
-            }
-        }
-    }
-    GroovyShell(binding).evaluate(__FILE__.parentFile.resolve("../../matrix.groovy"))
-    return binding.javaVersions to binding.variants
-}

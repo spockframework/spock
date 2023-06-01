@@ -16,22 +16,17 @@
  * limitations under the License.
  */
 
-@file:DependsOn("io.github.typesafegithub:github-workflows-kt:0.44.0")
-@file:DependsOn("org.codehaus.groovy:groovy:3.0.15")
+@file:Import("common.main.kts")
 
-import groovy.lang.Binding
-import groovy.lang.GroovyShell
 import io.github.typesafegithub.workflows.actions.actions.CheckoutV3
 import io.github.typesafegithub.workflows.actions.codecov.CodecovActionV3
 import io.github.typesafegithub.workflows.actions.gradle.GradleBuildActionV2
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
-import io.github.typesafegithub.workflows.domain.actions.Action.Outputs
-import io.github.typesafegithub.workflows.domain.actions.LocalAction
 import io.github.typesafegithub.workflows.domain.triggers.PullRequest
 import io.github.typesafegithub.workflows.domain.triggers.Push
-import io.github.typesafegithub.workflows.dsl.expressions.Contexts
+import io.github.typesafegithub.workflows.dsl.expressions.Contexts.github
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
 import io.github.typesafegithub.workflows.yaml.writeToFile
@@ -51,7 +46,7 @@ workflow(
     targetFileName = "${__FILE__.name.substringBeforeLast(".main.kts")}.yml",
     // https://stackoverflow.com/a/72408109/16358266
     concurrency = Concurrency(
-        group = "${expr { github.workflow }}-${expr("${Contexts.github.eventPullRequest.pull_request.number} || ${Contexts.github.ref}")}",
+        group = "${expr { github.workflow }}-${expr("${github.eventPullRequest.pull_request.number} || ${github.ref}")}",
         cancelInProgress = true
     )
 ) {
@@ -70,38 +65,12 @@ workflow(
         )
     }
 
-    val (javaVersions, variants) = getMatrixAxes()
     job(
         id = "build-and-verify",
         name = "Build and Verify",
-        runsOn = RunnerType.Custom(expr("matrix.os")),
-        _customArguments = mapOf(
-            "strategy" to mapOf(
-                "fail-fast" to false,
-                "matrix" to mapOf(
-                    "os" to listOf("ubuntu-latest"),
-                    "variant" to variants,
-                    "java" to javaVersions,
-                    "exclude" to javaVersions
-                        .filter { it.toInt() >= 17 }
-                        .map { javaVersion ->
-                            mapOf(
-                                "os" to "ubuntu-latest",
-                                "variant" to "2.5",
-                                "java" to javaVersion
-                            )
-                        },
-                    "include" to listOf("windows-latest", "macos-latest")
-                        .flatMap { os -> variants.map { os to it } }
-                        .map { (os, variant) ->
-                            mapOf(
-                                "os" to os,
-                                "variant" to variant,
-                                "java" to javaVersions.first()
-                            )
-                        }
-                )
-            )
+        runsOn = RunnerType.Custom(expr(Matrix.operatingSystem)),
+        strategy = Strategy(
+            matrix = Matrix.full
         )
     ) {
         uses(
@@ -114,12 +83,9 @@ workflow(
         uses(
             name = "Set up JDKs",
             action = SetupBuildEnv(
-                additionalJavaVersion = expr("matrix.java")
+                additionalJavaVersion = expr(Matrix.java)
             )
         )
-        val SPOCK_BUILD_CACHE_USERNAME by Contexts.secrets
-        val SPOCK_BUILD_CACHE_PASSWORD by Contexts.secrets
-        val GRADLE_ENTERPRISE_ACCESS_KEY by Contexts.secrets
         uses(
             name = "Build Spock",
             action = GradleBuildActionV2(
@@ -127,16 +93,12 @@ workflow(
                     "--no-parallel",
                     "--stacktrace",
                     "ghActionsBuild",
-                    """"-Dvariant=${expr("matrix.variant")}"""",
-                    """"-DjavaVersion=${expr("matrix.java")}""""
+                    """"-Dvariant=${expr(Matrix.variant)}"""",
+                    """"-DjavaVersion=${expr(Matrix.java)}""""
                 ).joinToString(" ")
             ),
             // secrets are not injected for pull requests
-            env = linkedMapOf(
-                "ORG_GRADLE_PROJECT_spockBuildCacheUsername" to expr(SPOCK_BUILD_CACHE_USERNAME),
-                "ORG_GRADLE_PROJECT_spockBuildCachePassword" to expr(SPOCK_BUILD_CACHE_PASSWORD),
-                "GRADLE_ENTERPRISE_ACCESS_KEY" to expr(GRADLE_ENTERPRISE_ACCESS_KEY)
-            )
+            env = commonCredentials
         )
         uses(
             name = "Upload to Codecov.io",
@@ -144,28 +106,3 @@ workflow(
         )
     }
 }.writeToFile()
-
-data class SetupBuildEnv(
-    val additionalJavaVersion: String? = null
-) : LocalAction<Outputs>("./.github/actions/setup-build-env") {
-    override fun toYamlArguments() =
-        additionalJavaVersion?.let { linkedMapOf("additional-java-version" to it) } ?: linkedMapOf()
-
-    override fun buildOutputObject(stepId: String): Outputs = Outputs(stepId)
-}
-
-fun getMatrixAxes(): Pair<List<String>, List<String>> {
-    val binding = object : Binding() {
-        lateinit var javaVersions: List<String>
-        lateinit var variants: List<String>
-
-        override fun setVariable(name: String?, value: Any?) {
-            when (name) {
-                "javaVersions" -> javaVersions = (value as List<Int>).map { it.toString() }
-                "variants" -> variants = value as List<String>
-            }
-        }
-    }
-    GroovyShell(binding).evaluate(__FILE__.parentFile.resolve("../../matrix.groovy"))
-    return binding.javaVersions to binding.variants
-}

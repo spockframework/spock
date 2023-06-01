@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-@file:DependsOn("io.github.typesafegithub:github-workflows-kt:0.44.0")
+@file:Import("common.main.kts")
 
 import io.github.typesafegithub.workflows.actions.actions.CheckoutV3
 import io.github.typesafegithub.workflows.actions.github.CodeqlActionAnalyzeV2
@@ -24,8 +24,6 @@ import io.github.typesafegithub.workflows.actions.github.CodeqlActionInitV2
 import io.github.typesafegithub.workflows.actions.gradle.GradleBuildActionV2
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
-import io.github.typesafegithub.workflows.domain.actions.Action
-import io.github.typesafegithub.workflows.domain.actions.LocalAction
 import io.github.typesafegithub.workflows.domain.triggers.Cron
 import io.github.typesafegithub.workflows.domain.triggers.PullRequest
 import io.github.typesafegithub.workflows.domain.triggers.Push
@@ -65,12 +63,9 @@ workflow(
         name = "CodeQL-Build",
         // CodeQL runs on UbuntuLatest, WindowsLatest, and MacOSLatest
         runsOn = UbuntuLatest,
-        _customArguments = mapOf(
-            "strategy" to mapOf(
-                "fail-fast" to false,
-                "matrix" to mapOf(
-                    "variant" to listOf("2.5", "3.0", "4.0")
-                )
+        strategy = Strategy(
+            matrix = Matrix(
+                variants = Matrix.axes.variants
             )
         )
     ) {
@@ -123,7 +118,7 @@ workflow(
                     "--stacktrace",
                     "--no-build-cache",
                     "testClasses",
-                    """"-Dvariant=${expr("matrix.variant")}""""
+                    """"-Dvariant=${expr(Matrix.variant)}""""
                 ).joinToString(" ")
             )
         )
@@ -133,12 +128,3 @@ workflow(
         )
     }
 }.writeToFile()
-
-data class SetupBuildEnv(
-    val additionalJavaVersion: String? = null
-) : LocalAction<Action.Outputs>("./.github/actions/setup-build-env") {
-    override fun toYamlArguments() =
-        additionalJavaVersion?.let { linkedMapOf("additional-java-version" to it) } ?: linkedMapOf()
-
-    override fun buildOutputObject(stepId: String): Outputs = Outputs(stepId)
-}

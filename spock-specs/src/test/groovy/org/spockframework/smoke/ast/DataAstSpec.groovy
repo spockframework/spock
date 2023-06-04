@@ -4,8 +4,8 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.specs.extension.Snapshot
 import org.spockframework.specs.extension.Snapshotter
 
-@Snapshot(extension = 'groovy')
 class DataAstSpec extends EmbeddedSpecification {
+  @Snapshot(extension = 'groovy')
   Snapshotter snapshotter
 
   def "multi-parameterization"() {

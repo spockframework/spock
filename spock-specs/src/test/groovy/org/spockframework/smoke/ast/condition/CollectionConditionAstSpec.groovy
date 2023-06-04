@@ -4,8 +4,8 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.specs.extension.Snapshot
 import org.spockframework.specs.extension.Snapshotter
 
-@Snapshot(extension = 'groovy')
 class CollectionConditionAstSpec extends EmbeddedSpecification {
+  @Snapshot(extension = 'groovy')
   Snapshotter snapshotter
 
   def "collection condition matchCollectionsAsSet is transformed correctly"() {

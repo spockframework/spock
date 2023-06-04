@@ -4,10 +4,9 @@ import groovy.transform.CompileStatic
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension
 import org.spockframework.runtime.extension.IMethodInterceptor
 import org.spockframework.runtime.extension.IMethodInvocation
+import org.spockframework.runtime.extension.ParameterResolver
 import org.spockframework.runtime.model.FeatureInfo
 import org.spockframework.runtime.model.FieldInfo
-import org.spockframework.runtime.model.MethodInfo
-import org.spockframework.runtime.model.ParameterInfo
 import org.spockframework.runtime.model.SpecInfo
 import org.spockframework.util.Assert
 
@@ -38,8 +37,18 @@ class SnapshotExtension implements IAnnotationDrivenExtension<Snapshot> {
       'There must be at least one Snapshotter parameter that is not a data variable or one Snapshotter field that is neither static nor @Shared'
     )
 
-    feature.addIterationInterceptor(new SnapshotFieldInterceptor(annotation, snapshotterFields))
-    feature.featureMethod.addInterceptor(new SnapshotParameterInterceptor(annotation, snapshotterParameters))
+    if (snapshotterFields.size() != 0) {
+      feature.addIterationInterceptor(new SnapshotFieldInterceptor(annotation, snapshotterFields))
+    }
+    snapshotterParameters.each { parameter ->
+      feature.featureMethod.addInterceptor(
+        new ParameterResolver.Interceptor(
+          parameter,
+          { IMethodInvocation invocation ->
+            new Snapshotter(invocation.iteration, config.rootPath, config.updateSnapshots, annotation.extension())
+          }
+        ))
+    }
   }
 
   @CompileStatic
@@ -54,28 +63,16 @@ class SnapshotExtension implements IAnnotationDrivenExtension<Snapshot> {
 
     @Override
     void intercept(IMethodInvocation invocation) throws Throwable {
-      fields
-        .findAll { it.readValue(invocation.instance) == null }
-        .each { it.writeValue(invocation.instance, new Snapshotter(invocation.iteration, config.rootPath, config.updateSnapshots, annotation.extension())) }
-      invocation.proceed()
-    }
-  }
+      def fields = fields.groupBy { it.readValue(invocation.instance) == null }
 
-  @CompileStatic
-  class SnapshotParameterInterceptor implements IMethodInterceptor {
-    private final List<ParameterInfo> parameters
-    private final Snapshot annotation
+      fields[false]?.first()?.tap {
+        throw new IllegalStateException("Field $it.name is already set")
+      }
 
-    SnapshotParameterInterceptor(Snapshot annotation, List<ParameterInfo> parameters) {
-      this.parameters = parameters
-      this.annotation = annotation
-    }
+      fields[true]?.each {
+        it.writeValue(invocation.instance, new Snapshotter(invocation.iteration, config.rootPath, config.updateSnapshots, annotation.extension()))
+      }
 
-    @Override
-    void intercept(IMethodInvocation invocation) throws Throwable {
-      parameters
-        .findAll { invocation.arguments[it.index] == MethodInfo.MISSING_ARGUMENT }
-        .each { invocation.arguments[it.index] = new Snapshotter(invocation.iteration, config.rootPath, config.updateSnapshots, annotation.extension()) }
       invocation.proceed()
     }
   }

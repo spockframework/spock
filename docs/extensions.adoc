@@ -868,6 +868,7 @@ be multiple interceptors added by arbitrary Spock extensions (shipped or 3rd par
 on the order they are added, but there should not be made any order assumptions within one interception point.
 
 .Spock Interceptors
+[#spock-interceptors]
 image::images/spock_interceptors.png[Spock Interceptors, align=center]
 
 An ellipsis in the figure means that the block before it can be repeated an arbitrary amount of times.
@@ -1159,3 +1160,24 @@ include::{sourcedir}/extension/FancyMockMaker.java[tag=fancy-mock-maker]
 ----
 include::{sourcedir}/extension/FancyMockMakerDocSpec.groovy[tag=fancy-mock-maker-usage]
 ----
+
+[#extension-store]
+==== Keeping state in Extensions
+
+Prior to Spock 2.4, extensions could only store state either in their own instances or their interceptor instances.
+Often, the state can be kept locally in the `intercept(IMethodInvocation)` method around the `IMethodInvocation.proceed()` call. However, there are cases where this is not possible, for example when using initializer interceptors.
+
+Spock 2.4 adds a new `org.spockframework.runtime.extension.IStore` interface that allows extensions to store and retrieve data during the execution of a specification.
+
+The store is available from the `org.spockframework.runtime.extension.IMethodInvocation` interface via the `getStore(IStore.Namespace namespace)` method.
+
+The stores are hierarchical and follow roughly the same hierarchy as shown in the <<spock-interceptors>> figure. The hierarchy is as follows:
+
+1. Root
+2. Specification (shared)
+3. Feature
+4. Iteration
+
+If an item is not found in the current store, the parent store is searched, and so on until the root store is reached. For more information see the Javadoc of the `org.spockframework.runtime.extension.IStore`.
+
+NOTE: If an object stored in the store implements `java.lang.AutoCloseable`, then the `close()` method will be called when the store is closed.

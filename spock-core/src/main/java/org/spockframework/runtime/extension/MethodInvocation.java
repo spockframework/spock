@@ -17,7 +17,7 @@
 package org.spockframework.runtime.extension;
 
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.Assert;
+import org.spockframework.util.Checks;
 
 import java.util.Iterator;
 
@@ -91,16 +91,13 @@ public class MethodInvocation implements IMethodInvocation {
 
   @Override
   public void setArguments(Object[] arguments) {
-    if (arguments.length != this.arguments.length) {
-      throw new IllegalArgumentException(
-        "length of arguments array must not change from " + this.arguments.length + " to " + arguments.length);
-    }
+    Checks.checkArgument(arguments.length != this.arguments.length, () -> "length of arguments array must not change from " + this.arguments.length + " to " + arguments.length);
     this.arguments = arguments;
   }
 
   @Override
   public void resolveArgument(int index, Object value) {
-    Assert.that(arguments[index] == MISSING_ARGUMENT, () -> "Parameter " + method.getParameters().get(index).getName() + " is already set");
+    Checks.checkState(arguments[index] == MISSING_ARGUMENT, () -> "Parameter " + method.getParameters().get(index).getName() + " is already set");
     arguments[index] = value;
   }
 

@@ -16,6 +16,7 @@
 
 package org.spockframework.runtime.extension;
 
+import org.spockframework.runtime.StoreProvider;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.Checks;
 
@@ -37,10 +38,13 @@ public class MethodInvocation implements IMethodInvocation {
   private Object[] arguments;
   private final Iterator<IMethodInterceptor> interceptors;
 
-  public MethodInvocation(FeatureInfo feature, IterationInfo iteration, Object sharedInstance,
-      Object instance, Object target, MethodInfo method, Object[] arguments) {
+  private final StoreProvider storeProvider;
+
+  public MethodInvocation(FeatureInfo feature, IterationInfo iteration, StoreProvider storeProvider, Object sharedInstance,
+                          Object instance, Object target, MethodInfo method, Object[] arguments) {
     this.feature = feature;
     this.iteration = iteration;
+    this.storeProvider = storeProvider;
     this.sharedInstance = sharedInstance;
     this.instance = instance;
     this.target = target;
@@ -91,7 +95,7 @@ public class MethodInvocation implements IMethodInvocation {
 
   @Override
   public IStore getStore(IStore.Namespace namespace) {
-    throw new UnsupportedOperationException("getStore");
+    return storeProvider.getStore(namespace);
   }
 
   @Override

@@ -410,7 +410,7 @@ public class PlatformSpecRunner {
 
     // slow lane
     MethodInvocation invocation = new MethodInvocation(context.getCurrentFeature(),
-      context.getCurrentIteration(), context.getSharedInstance(), context.getCurrentInstance(), target, method, methodArguments);
+      context.getCurrentIteration(), context.getStoreProvider(), context.getSharedInstance(), context.getCurrentInstance(), target, method, methodArguments);
     try {
       invocation.proceed();
     } catch (Throwable throwable) {

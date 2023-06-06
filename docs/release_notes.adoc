@@ -335,7 +335,7 @@ setupSpec, beforeClass, setup, before, cleanup, after, setup, before, cleanup, a
 
 which should not be a problem in the majority of cases.
 
-At the same time, using JUnit 4's annotations is discouraged (and considered `deprecated`), the same using the other elements of JUnit 4 (as `(Class)Rule`s).
+At the same time, using JUnit 4's annotations is discouraged (and considered `deprecated`), the same using the other elements of JUnit 4 (as `(Class)Rule`&#8203;s).
 
 // tag::breaking-change-spock-core-reduced-dependencies[]
 ==== Reduce spock-core direct groovy dependencies

@@ -19,6 +19,9 @@ plugins {
   id 'groovy'
 }
 
+// Spring dependency management downgrades the jupiter version to 5.7.2 otherwise
+ext['junit-jupiter.version'] = libs.versions.junit.get()
+
 java {
   toolchain {
     languageVersion = JavaLanguageVersion.of(17)
@@ -46,6 +49,3 @@ dependencies {
 tasks.named('test') {
   useJUnitPlatform()
 }
-
-
-

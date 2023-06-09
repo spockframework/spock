@@ -65,7 +65,7 @@ workflow(
         uses(
             name = "Set up JDKs",
             action = SetupBuildEnv(
-                additionalJavaVersion = expr(Matrix.java)
+                additionalJavaVersion = expr(Matrix.javaVersion)
             )
         )
         uses(
@@ -76,7 +76,7 @@ workflow(
                     "--stacktrace",
                     "ghActionsBuild",
                     """"-Dvariant=${expr(Matrix.variant)}"""",
-                    """"-DjavaVersion=${expr(Matrix.java)}"""",
+                    """"-DjavaVersion=${expr(Matrix.javaVersion)}"""",
                     "-Dscan.tag.main-build"
                 ).joinToString(" ")
             ),
@@ -111,7 +111,7 @@ workflow(
         uses(
             name = "Set up JDKs",
             action = SetupBuildEnv(
-                additionalJavaVersion = expr(Matrix.java)
+                additionalJavaVersion = expr(Matrix.javaVersion)
             )
         )
         uses(
@@ -122,7 +122,7 @@ workflow(
                     "--stacktrace",
                     "ghActionsPublish",
                     """"-Dvariant=${expr(Matrix.variant)}"""",
-                    """"-DjavaVersion=${expr(Matrix.java)}"""",
+                    """"-DjavaVersion=${expr(Matrix.javaVersion)}"""",
                     "-Dscan.tag.main-publish"
                 ).joinToString(" ")
             ),
@@ -154,7 +154,7 @@ workflow(
         uses(
             name = "Set up JDKs",
             action = SetupBuildEnv(
-                additionalJavaVersion = expr(Matrix.java)
+                additionalJavaVersion = expr(Matrix.javaVersion)
             )
         )
         run(
@@ -169,7 +169,7 @@ workflow(
                     "--stacktrace",
                     "ghActionsDocs",
                     """"-Dvariant=${expr(Matrix.variant)}"""",
-                    """"-DjavaVersion=${expr(Matrix.java)}"""",
+                    """"-DjavaVersion=${expr(Matrix.javaVersion)}"""",
                     "-Dscan.tag.main-docs"
                 ).joinToString(" ")
             ),

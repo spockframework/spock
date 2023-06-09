@@ -75,6 +75,9 @@ class PreprocessWorkflowsPlugin implements Plugin<Project> {
         it.args('-no-stdlib', '-no-reflect')
         it.args('-classpath', kotlinScriptClasspath.asPath)
         it.args('-script', workflowScript.absolutePath)
+
+        // work-around for https://youtrack.jetbrains.com/issue/KT-42101
+        it.systemProperty('kotlin.main.kts.compiled.scripts.cache.dir', '')
       }
       preprocessWorkflows.configure {
         it.dependsOn(preprocessWorkflow)

@@ -18,7 +18,8 @@ the consistency of all the YAML files as not all are run for pull requests.
 
 == Ways to generate the YAML workflow files
 
-There are multiple ways to generate the YAML files and all of them are fine:
+There are multiple ways to generate the YAML files and all of them are fine,
+but be aware of the last one of the caveats below if you are not using the Gradle method:
 
 * If you are in a `sh` derivate like e.g. `bash` and Kotlin is installed and
   available in the `PATH`, you can just call the `*.main.kts` script like any
@@ -89,3 +90,9 @@ you either need to also change the importing file, or to properly execute the sc
 you need to delete the stale entry from the compilation cache which can be found at for example
 `~/.cache/main.kts.compiled.cache/` on Linux and `%LOCALAPPDATA%\main.kts.compiled.cache\`
 on Windows. Alternatively, you can also delete the whole cache directory.
++
+Another option is to disable the compilation cache for the execution by setting the
+environment variable `KOTLIN_MAIN_KTS_COMPILED_SCRIPTS_CACHE_DIR` or the system property
+`kotlin.main.kts.compiled.scripts.cache.dir` to an empty value, depending on the run
+method you chose. The Gradle tasks already do that, so when using the Gradle tasks you
+do not have this problem and it just works.

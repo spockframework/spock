@@ -55,16 +55,27 @@ data class Matrix(
     val operatingSystems: List<String>? = null,
     val variants: List<String>? = null,
     val javaVersions: List<String>? = null,
-    val excludes: List<Map<String, String>>? = null,
-    val includes: List<Map<String, String>>? = null
+    val exclude: (Element.() -> Boolean)? = null,
+    val includes: List<Element>? = null
 ) {
+    private val originalElements by lazy {
+        (operatingSystems ?: listOf(null))
+            .map { Element(operatingSystem = it) }
+            .flatMap { element -> (variants ?: listOf(null)).map { element.copy(variant = it) } }
+            .flatMap { element -> (javaVersions ?: listOf(null)).map { element.copy(javaVersion = it) } }
+    }
+
     fun toCustomArguments() = mapOf(
         *listOfNotNull(
             operatingSystems?.let { "os" to operatingSystems },
             variants?.let { "variant" to variants },
             javaVersions?.let { "java" to javaVersions },
-            excludes?.let { "exclude" to excludes },
-            includes?.let { "include" to includes }
+            exclude?.let {
+                "exclude" to originalElements
+                    .filter(exclude)
+                    .map { it.toCustomArguments() }
+            },
+            includes?.let { "include" to includes.map { it.toCustomArguments() } }
         ).toTypedArray()
     )
 
@@ -73,10 +84,24 @@ data class Matrix(
         val variants: List<String>
     )
 
+    data class Element(
+        val operatingSystem: String? = null,
+        val variant: String? = null,
+        val javaVersion: String? = null
+    ) {
+        fun toCustomArguments() = mapOf(
+            *listOfNotNull(
+                operatingSystem?.let { "os" to operatingSystem },
+                variant?.let { "variant" to variant },
+                javaVersion?.let { "java" to javaVersion }
+            ).toTypedArray()
+        )
+    }
+
     companion object {
         val operatingSystem = "matrix.os"
         val variant = "matrix.variant"
-        val java = "matrix.java"
+        val javaVersion = "matrix.java"
     }
 }
 
@@ -109,24 +134,15 @@ val Matrix.Companion.full
         operatingSystems = listOf("ubuntu-latest"),
         variants = axes.variants,
         javaVersions = axes.javaVersions,
-        excludes = axes.javaVersions
-            .filter { it.toInt() >= 17 }
-            .map { javaVersion ->
-                mapOf(
-                    "os" to "ubuntu-latest",
-                    "variant" to "2.5",
-                    "java" to javaVersion
-                )
-            },
+        exclude = { (variant == "2.5") && (javaVersion!!.toInt() >= 17) },
         includes = listOf("windows-latest", "macos-latest")
-            .flatMap { os -> axes.variants.map { os to it } }
-            .map { (os, variant) ->
-                mapOf(
-                    "os" to os,
-                    "variant" to variant,
-                    "java" to axes.javaVersions.first()
+            .map {
+                Matrix.Element(
+                    operatingSystem = it,
+                    javaVersion = axes.javaVersions.first()
                 )
             }
+            .flatMap { element -> axes.variants.map { element.copy(variant = it) } }
     )
 
 val Matrix.Companion.axes by lazy {

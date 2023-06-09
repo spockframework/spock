@@ -83,7 +83,7 @@ workflow(
         uses(
             name = "Set up JDKs",
             action = SetupBuildEnv(
-                additionalJavaVersion = expr(Matrix.java)
+                additionalJavaVersion = expr(Matrix.javaVersion)
             )
         )
         uses(
@@ -94,7 +94,7 @@ workflow(
                     "--stacktrace",
                     "ghActionsBuild",
                     """"-Dvariant=${expr(Matrix.variant)}"""",
-                    """"-DjavaVersion=${expr(Matrix.java)}""""
+                    """"-DjavaVersion=${expr(Matrix.javaVersion)}""""
                 ).joinToString(" ")
             ),
             // secrets are not injected for pull requests

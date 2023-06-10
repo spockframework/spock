@@ -31,6 +31,7 @@ public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> imple
   private String displayName;
 
   public IterationInfo(FeatureInfo feature, int iterationIndex, Object[] dataValues, int estimatedNumIterations) {
+    setUniqueId(String.format("%s[%d]", feature.getUniqueId(), iterationIndex));
     setParent(feature);
     this.iterationIndex = iterationIndex;
     this.dataValues = dataValues;

@@ -76,6 +76,7 @@ public class SpecInfoBuilder {
     SpecUtil.checkIsSpec(clazz);
 
     SpecMetadata metadata = clazz.getAnnotation(SpecMetadata.class);
+    spec.setUniqueId(clazz.getName());
     spec.setParent(null);
     spec.setPackage(ReflectionUtil.getPackageName(clazz));
     spec.setName(clazz.getSimpleName());
@@ -115,6 +116,7 @@ public class SpecInfoBuilder {
 
   private FeatureInfo createFeature(Method method, FeatureMetadata featureMetadata) {
     FeatureInfo feature = new FeatureInfo();
+    feature.setUniqueId(String.format("%s.%s", spec.getUniqueId(), method.getName()));
     feature.setParent(spec);
     feature.setName(featureMetadata.name());
     feature.setLine(featureMetadata.line());

@@ -17,10 +17,14 @@
 package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.extension.*;
+import org.spockframework.runtime.model.IterationInfo;
 import org.spockframework.runtime.model.MethodInfo;
 import spock.lang.Retry;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import groovy.lang.Closure;
 import org.opentest4j.MultipleFailuresError;
@@ -40,11 +44,10 @@ public class RetryIterationInterceptor extends RetryBaseInterceptor implements I
 
   @Override
   public void intercept(IMethodInvocation invocation) throws Throwable {
-    iterationState.startIteration();
     for (int i = 0; i <= retry.count(); i++) {
-      iterationState.setRetryAttempt(i);
+      iterationState.setRetryAttempt(invocation.getIteration(), i);
       invocation.proceed();
-      if (iterationState.notFailed()) {
+      if (iterationState.notFailed(invocation.getIteration())) {
         break;
       } else {
         if (retry.delay() > 0) Thread.sleep(retry.delay());
@@ -62,10 +65,10 @@ public class RetryIterationInterceptor extends RetryBaseInterceptor implements I
     public void intercept(IMethodInvocation invocation) throws Throwable {
       try {
         invocation.proceed();
-        iterationState.startIteration();
+        iterationState.resetFailures(invocation.getIteration());
       } catch (Throwable e) {
         if (isExpected(invocation, e)) {
-          iterationState.failIteration(e);
+          iterationState.failIteration(invocation.getIteration(), e);
         } else {
           throw e;
         }
@@ -74,26 +77,32 @@ public class RetryIterationInterceptor extends RetryBaseInterceptor implements I
   }
 
   private class IterationState {
-    private final ThreadLocal<Boolean> finalIteration = ThreadLocal.withInitial(() -> false);
-    private final ThreadLocal<List<Throwable>> throwables = new ThreadLocal<>();
+    private final Map<IterationInfo, AtomicBoolean> finalIteration = new ConcurrentHashMap<>();
+    private final Map<IterationInfo, List<Throwable>> throwables = new ConcurrentHashMap<>();
 
-    void startIteration() {
-      throwables.set(new ArrayList<>());
+    void resetFailures(IterationInfo iteration) {
+      this.throwables.computeIfPresent(iteration, (key, throwables) -> {
+        throwables.clear();
+        return throwables;
+      });
     }
 
-    void setRetryAttempt(int retryAttempt) {
-      finalIteration.set(retryAttempt == retry.count());
+    void setRetryAttempt(IterationInfo iteration, int retryAttempt) {
+      finalIteration
+        .computeIfAbsent(iteration, key -> new AtomicBoolean(false))
+        .set(retryAttempt == retry.count());
     }
 
-    void failIteration(Throwable failure) {
-      throwables.get().add(failure);
-      if (finalIteration.get()) {
-        throw new MultipleFailuresError("Retries exhausted", throwables.get());
+    void failIteration(IterationInfo iteration, Throwable failure) {
+      List<Throwable> throwables = this.throwables.computeIfAbsent(iteration, key -> new CopyOnWriteArrayList<>());
+      throwables.add(failure);
+      if (finalIteration.containsKey(iteration) && finalIteration.get(iteration).get()) {
+        throw new MultipleFailuresError("Retries exhausted", throwables);
       }
     }
 
-    boolean notFailed() {
-      return throwables.get().isEmpty();
+    boolean notFailed(IterationInfo iteration) {
+      return !throwables.containsKey(iteration) || throwables.get(iteration).isEmpty();
     }
   }
 }

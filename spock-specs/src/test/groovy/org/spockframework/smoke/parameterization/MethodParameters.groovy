@@ -263,6 +263,7 @@ def foo() {
         assert it.arguments.size() == 1
         assert it.arguments.first() == MISSING_ARGUMENT
         it.arguments[0] = 'foo'
+        it.proceed()
       }
     }
   }

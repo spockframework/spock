@@ -331,18 +331,9 @@ When a timeout is reported to the user, the stack trace shown reflects the execu
 the timeout was exceeded. Additionally, thread dumps can be captured and logged on unsuccessful interrupt attempts if configured using the <<spock-configuration-file,Spock Configuration File>>.
 
 .Timeout Configuration
-[source,groovy]
+[source,groovy,indent=0]
 ----
-timeout {
-  // boolean, default false
-  printThreadDumpsOnInterruptAttempts true
-  // integer, default 3
-  maxInterruptAttemptsWithThreadDumps 5
-  // org.spockframework.runtime.extension.builtin.ThreadDumpUtilityType, default JCMD
-  threadDumpUtilityType threadDumpUtilityType.JSTACK
-  // list of java.lang.Runnable, default []
-  interruptAttemptListeners.add({ println('Timeout occurred!') })
-}
+include::{sourcedir}/timeout/TimeoutConfigurationDoc.groovy[tag=example]
 ----
 
 === Retry

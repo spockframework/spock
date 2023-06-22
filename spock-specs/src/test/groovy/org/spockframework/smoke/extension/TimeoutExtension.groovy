@@ -16,16 +16,14 @@
 
 package org.spockframework.smoke.extension
 
-import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.IStandardStreamsListener
 import org.spockframework.runtime.SpockTimeoutError
-import org.spockframework.runtime.StandardStreamsCapturer
 import org.spockframework.runtime.extension.builtin.ThreadDumpUtilityType
 import spock.lang.*
+import spock.timeout.BaseTimeoutExtensionSpecification
 import spock.util.environment.RestoreSystemProperties
 
 import java.nio.file.Path
-import java.util.concurrent.TimeUnit
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS
 import static org.spockframework.runtime.model.parallel.ExecutionMode.SAME_THREAD
@@ -36,22 +34,12 @@ import static org.spockframework.runtime.model.parallel.ExecutionMode.SAME_THREA
 @Isolated("The timings are quite tight and it can get flaky on weak machines if run in parallel.")
 @Execution(SAME_THREAD)
 @Retry
-class TimeoutExtension extends EmbeddedSpecification {
+class TimeoutExtension extends BaseTimeoutExtensionSpecification {
   @Shared
   Thread testFrameworkThread = Thread.currentThread()
 
-  @AutoCleanup("stop")
-  StandardStreamsCapturer outputCapturer = new StandardStreamsCapturer()
-  OutputListener outputListener = new OutputListener()
-
   @TempDir
   Path tempDir
-
-  def setup() {
-    runner.addClassMemberImport TimeUnit
-    outputCapturer.addStandardStreamsListener(outputListener)
-    outputCapturer.start()
-  }
 
   @Timeout(1)
   def "method that completes in time"() {
@@ -317,52 +305,5 @@ class TimeoutExtension extends EmbeddedSpecification {
 
     expect:
     threads.find { it.name == "[spock.lang.Timeout] Watcher for method 'watcher thread has descriptive name'" }
-  }
-
-  private void runSpecWithInterrupts(int interruptAttempts) {
-    runner.runSpecBody """
-      @Timeout(value = 100, unit = MILLISECONDS)
-      def foo() {
-        ${(1..interruptAttempts).collect {
-      """
-        when: Thread.sleep 99999999999
-        then: thrown InterruptedException
-      """
-    }.join()}
-      }
-    """
-  }
-
-  private void assertThreadDumpsCaptured(int unsuccessfulInterruptAttempts, int threadDumps, boolean exceededCaptureLimit, ThreadDumpUtilityType util = ThreadDumpUtilityType.JCMD) {
-    with(outputListener) {
-      count("Method 'foo' has not stopped") == unsuccessfulInterruptAttempts
-      count("Thread dump of current JVM (${util.name()})") == threadDumps
-      // just some thread that is always there
-      count(/"Signal Dispatcher" #/) == threadDumps
-      (count('No further thread dumps will be logged and no timeout listeners will be run') == 1) == exceededCaptureLimit
-    }
-  }
-
-  private class OutputListener implements IStandardStreamsListener {
-
-    private final StringBuilder messages = new StringBuilder()
-
-    @Override
-    void standardOut(String message) {
-      messages.append(message)
-    }
-
-    @Override
-    void standardErr(String message) {
-      messages.append(message)
-    }
-
-    private List<String> getLines() {
-      messages.toString().readLines()
-    }
-
-    int count(String sequence) {
-      lines.count { it.contains(sequence) }
-    }
   }
 }

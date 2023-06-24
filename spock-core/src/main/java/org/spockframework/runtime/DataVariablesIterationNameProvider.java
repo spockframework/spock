@@ -14,12 +14,12 @@
 
 package org.spockframework.runtime;
 
-import static java.lang.String.format;
-import static org.spockframework.util.RenderUtil.toStringOrDump;
-
 import org.spockframework.runtime.model.*;
+import org.spockframework.util.RenderUtil;
 
 import java.util.*;
+
+import static java.lang.String.format;
 
 public class DataVariablesIterationNameProvider implements NameProvider<IterationInfo> {
   private final boolean includeFeatureNameForIterations;
@@ -51,7 +51,11 @@ public class DataVariablesIterationNameProvider implements NameProvider<Iteratio
       dataVariables.forEach((name, value) -> {
         String valueString;
         try {
-          valueString = toStringOrDump(value);
+          valueString = RenderUtil.toStringOrDump(value);
+          int maxDataValueStringLength = 1024;
+          if (valueString.length() > maxDataValueStringLength) {
+            valueString = valueString.substring(0, maxDataValueStringLength) + "…";
+          }
         } catch (Exception e) {
           valueString = format("#Error:%s during rendering", e.getClass().getSimpleName());
         }

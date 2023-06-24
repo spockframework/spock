@@ -106,7 +106,7 @@ class DataVariablesIterationNameProviderSpec extends Specification {
   def 'renders data variables with limited length'() {
     given:
     testee = new DataVariablesIterationNameProvider(false)
-    def tooLongArray = (1..10_000_000).toArray() as int[]
+    def tooLongArray = (1..1_000_000).toArray() as int[]
     iteration.getDataVariables() >> [x: tooLongArray]
 
     expect:

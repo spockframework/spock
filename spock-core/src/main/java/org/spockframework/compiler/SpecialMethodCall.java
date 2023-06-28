@@ -266,11 +266,17 @@ public class SpecialMethodCall implements ISpecialMethodCall {
     ClassNode targetType = methodCallExpr.getObjectExpression().getType();
     String methodName = methodCallExpr.getMethodAsString();
 
-    List<MethodNode> methods = targetType.getMethods(methodName);
-    for (MethodNode method : methods) {
-      for (AnnotationNode annotation : method.getAnnotations()) {
-        if (annotation.getClassNode().getName().equals(ConditionBlock.class.getName())) return true;
+    try {
+      // if targetType has any method with a parameter type that is not in the
+      // compile classpath this call will fail with a NoClassDefFoundError
+      List<MethodNode> methods = targetType.getMethods(methodName);
+      for (MethodNode method : methods) {
+        for (AnnotationNode annotation : method.getAnnotations()) {
+          if (annotation.getClassNode().getName().equals(ConditionBlock.class.getName())) return true;
+        }
       }
+    } catch (NoClassDefFoundError e) {
+      // just assume there is no condition block and return false
     }
 
     return false;

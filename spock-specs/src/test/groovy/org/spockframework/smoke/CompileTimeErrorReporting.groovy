@@ -14,6 +14,7 @@
 
 package org.spockframework.smoke
 
+import org.codehaus.groovy.ast.ClassNode
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
 
@@ -79,5 +80,25 @@ println "hi"
 
     then:
     thrown(InvalidSpecCompileException)
+  }
+
+  def "compiling with missing dependencies does not fail"() {
+    compiler.addClassImport('club.minnced.discord.webhook.WebhookClientBuilder')
+
+    when:
+    new ClassNode(Class.forName('club.minnced.discord.webhook.WebhookClientBuilder'))
+      .getMethods('setWait')
+
+    then:
+    thrown(NoClassDefFoundError)
+
+    when:
+    compiler.compileFeatureBody """
+expect:
+new WebhookClientBuilder(1, "").setWait(false)
+    """
+
+    then:
+    noExceptionThrown()
   }
 }

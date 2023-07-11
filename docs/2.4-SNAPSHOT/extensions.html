@@ -516,7 +516,22 @@ with <code>Timeout</code>, excluding time spent in fixtures:</p>
 </div>
 <div class="paragraph">
 <p>When a timeout is reported to the user, the stack trace shown reflects the execution stack of the test framework when
-the timeout was exceeded.</p>
+the timeout was exceeded. Additionally, thread dumps can be captured and logged on unsuccessful interrupt attempts if configured using the <a href="#spock-configuration-file">Spock Configuration File</a>.</p>
+</div>
+<div class="listingblock">
+<div class="title">Timeout Configuration</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">timeout {
+  <span class="comment">// boolean, default false</span>
+  printThreadDumpsOnInterruptAttempts <span class="predefined-constant">true</span>
+  <span class="comment">// integer, default 3</span>
+  maxInterruptAttemptsWithThreadDumps <span class="integer">1</span>
+  <span class="comment">// org.spockframework.runtime.extension.builtin.ThreadDumpUtilityType, default JCMD</span>
+  threadDumpUtilityType ThreadDumpUtilityType.JSTACK
+  <span class="comment">// list of java.lang.Runnable, default []</span>
+  interruptAttemptListeners.add({ println(<span class="string"><span class="delimiter">'</span><span class="content">Unsuccessful interrupt occurred!</span><span class="delimiter">'</span></span>) })
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -1594,7 +1609,7 @@ assignments happen before the method interceptor is called</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2023-06-13 12:58:38 UTC
+Last updated 2023-07-11 15:55:16 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

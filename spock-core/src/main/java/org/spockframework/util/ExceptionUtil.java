@@ -14,9 +14,10 @@
 
 package org.spockframework.util;
 
-import java.io.*;
-
 import org.jetbrains.annotations.Contract;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * @author Peter Niederwieser
@@ -57,6 +58,17 @@ public class ExceptionUtil {
     if (b != null) {
       sneakyThrow(b);
     }
+  }
+
+  public static void rethrowIfUnrecoverable(Throwable t) {
+    if (t instanceof OutOfMemoryError) {
+      throwAsUncheckedException(t);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private static <T extends Throwable> void throwAsUncheckedException(Throwable t) throws T {
+    throw (T) t;
   }
 
 }

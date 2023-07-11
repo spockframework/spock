@@ -328,7 +328,13 @@ class TimedSpec extends Specification {
 When applied to a fixture method, the timeout is per execution of the fixture method.
 
 When a timeout is reported to the user, the stack trace shown reflects the execution stack of the test framework when
-the timeout was exceeded.
+the timeout was exceeded. Additionally, thread dumps can be captured and logged on unsuccessful interrupt attempts if configured using the <<spock-configuration-file,Spock Configuration File>>.
+
+.Timeout Configuration
+[source,groovy,indent=0]
+----
+include::{sourcedir}/timeout/TimeoutConfigurationDoc.groovy[tag=example]
+----
 
 === Retry
 

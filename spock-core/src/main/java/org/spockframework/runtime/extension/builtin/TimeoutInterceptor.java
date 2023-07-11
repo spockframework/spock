@@ -17,11 +17,21 @@
 package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.SpockTimeoutError;
-import org.spockframework.runtime.extension.*;
-import org.spockframework.util.TimeUtil;
+import org.spockframework.runtime.extension.IMethodInterceptor;
+import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.util.*;
 import spock.lang.Timeout;
 
-import java.util.concurrent.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeUnit;
+
+import static org.spockframework.util.ExceptionUtil.rethrowIfUnrecoverable;
 
 /**
  * Times out a method invocation if it takes too long. The method invocation
@@ -32,10 +42,15 @@ import java.util.concurrent.*;
  */
 
 public class TimeoutInterceptor implements IMethodInterceptor {
-  private final Timeout timeout;
 
-  public TimeoutInterceptor(Timeout timeout) {
+  private final Timeout timeout;
+  private final TimeoutConfiguration configuration;
+  private final JavaProcessThreadDumpCollector threadDumpCollector;
+
+  public TimeoutInterceptor(Timeout timeout, TimeoutConfiguration configuration) {
     this.timeout = timeout;
+    this.configuration = configuration;
+    this.threadDumpCollector = JavaProcessThreadDumpCollector.create(configuration.threadDumpUtilityType);
   }
 
   @Override
@@ -43,20 +58,19 @@ public class TimeoutInterceptor implements IMethodInterceptor {
     final Thread mainThread = Thread.currentThread();
     final SynchronousQueue<StackTraceElement[]> sync = new SynchronousQueue<>();
     final CountDownLatch startLatch = new CountDownLatch(2);
+    final String methodName = invocation.getMethod().getName();
+    final double timeoutSeconds = TimeUtil.toSeconds(timeout.value(), timeout.unit());
 
-    new Thread(String.format("[spock.lang.Timeout] Watcher for method '%s'", invocation.getMethod().getName())) {
+    new Thread(String.format("[spock.lang.Timeout] Watcher for method '%s'", methodName)) {
       @Override
       public void run() {
         StackTraceElement[] stackTrace = new StackTraceElement[0];
         long waitMillis = timeout.unit().toMillis(timeout.value());
         boolean synced = false;
+        long timeoutAt = 0;
+        int unsuccessfulInterruptAttempts = 0;
 
-        try {
-          startLatch.countDown();
-          startLatch.await(5, TimeUnit.SECONDS);
-        } catch (InterruptedException ignored) {
-          System.out.printf("[spock.lang.Timeout] Could not sync with Feature for method '%s'", invocation.getMethod().getName());
-        }
+        syncWithThread(startLatch, "feature", methodName);
 
         while (!synced) {
           try {
@@ -66,13 +80,15 @@ public class TimeoutInterceptor implements IMethodInterceptor {
             // the latter returns. Once this mission has been accomplished, this thread will die quickly
           }
           if (!synced) {
+            long now = System.nanoTime();
             if (stackTrace.length == 0) {
+              logMethodTimeout(methodName, timeoutSeconds);
               stackTrace = mainThread.getStackTrace();
               waitMillis = 250;
+              timeoutAt = now;
             } else {
               waitMillis *= 2;
-              System.out.printf("[spock.lang.Timeout] Method '%s' has not yet returned - interrupting. Next try in %1.2f seconds.\n",
-                  invocation.getMethod().getName(), waitMillis / 1000.);
+              logUnsuccessfulInterrupt(methodName, now, timeoutAt, waitMillis, ++unsuccessfulInterruptAttempts);
             }
             mainThread.interrupt();
           }
@@ -80,13 +96,7 @@ public class TimeoutInterceptor implements IMethodInterceptor {
       }
     }.start();
 
-
-    try {
-      startLatch.countDown();
-      startLatch.await(5, TimeUnit.SECONDS);
-    } catch (InterruptedException ignored) {
-      System.out.printf("[spock.lang.Timeout] Could not sync with Watcher for method '%s'", invocation.getMethod().getName());
-    }
+    syncWithThread(startLatch, "watcher", methodName);
 
     Throwable saved = null;
     try {
@@ -113,7 +123,6 @@ public class TimeoutInterceptor implements IMethodInterceptor {
       // act accordingly. We gloss over the fact that some other thread might also have tried to
       // interrupt this thread. This shouldn't be a problem in practice, in particular because
       // throwing an InterruptedException wouldn't abort the whole test run anyway.
-      double timeoutSeconds = TimeUtil.toSeconds(timeout.value(), timeout.unit());
       String msg = String.format("Method timed out after %1.2f seconds", timeoutSeconds);
       SpockTimeoutError error = new SpockTimeoutError(timeoutSeconds, msg);
       error.setStackTrace(stackTrace);
@@ -121,6 +130,99 @@ public class TimeoutInterceptor implements IMethodInterceptor {
     }
     if (saved != null) {
       throw saved;
+    }
+  }
+
+  private void logUnsuccessfulInterrupt(String methodName, long now, long timeoutAt, long waitMillis, int unsuccessfulAttempts) {
+    System.err.printf(
+      "[spock.lang.Timeout] Method '%s' has not stopped after timing out %1.2f seconds ago - interrupting. Next try in %1.2f seconds.\n%n",
+      methodName,
+      Duration.ofNanos(now - timeoutAt).toMillis() / 1000d,
+      waitMillis / 1000d
+    );
+
+    if (unsuccessfulAttempts <= configuration.maxInterruptAttemptsWithThreadDumps) {
+      logThreadDumpOfCurrentJvm();
+      configuration.interruptAttemptListeners.forEach(Runnable::run);
+
+      if (unsuccessfulAttempts == configuration.maxInterruptAttemptsWithThreadDumps) {
+        System.out.println("[spock.lang.Timeout] No further thread dumps will be logged and no timeout listeners will be run, as the number of unsuccessful interrupt attempts exceeds configured maximum of logged attempts");
+      }
+    }
+  }
+
+  private void logMethodTimeout(String methodName, double timeoutSeconds) {
+    System.err.printf(
+      "[spock.lang.Timeout] Method '%s' timed out after %1.2f seconds.%n",
+      methodName,
+      timeoutSeconds
+    );
+
+    configuration.interruptAttemptListeners.forEach(Runnable::run);
+  }
+
+  private void logThreadDumpOfCurrentJvm() {
+    if (configuration.printThreadDumpsOnInterruptAttempts) {
+      StringBuilder sb = new StringBuilder();
+      try {
+        threadDumpCollector.appendThreadDumpOfCurrentJvm(sb);
+        System.err.println(removeThisThread(sb.toString()));
+      } catch (Throwable e) {
+        rethrowIfUnrecoverable(e);
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        e.printStackTrace(new PrintStream(stream));
+
+        String result = "Error in attempt to fetch thread dumps: " + stream;
+        if (sb.length() > 0) {
+          result += "\n\nPartial thread dumps:\n" + sb;
+        }
+        System.err.println(result);
+      }
+    }
+  }
+
+  private static String removeThisThread(String threadDumpOutput) {
+    Thread thisThread = Thread.currentThread();
+    String threadName = thisThread.getName();
+    long threadId = thisThread.getId();
+
+    List<String> lines = Arrays.asList(threadDumpOutput.split("\n"));
+    Pair<Integer, Integer> thisThreadSection = findThreadSection(lines, threadName, threadId);
+    if (thisThreadSection == null) {
+      return threadDumpOutput;
+    }
+
+    String start = TextUtil.join("\n", lines.subList(0, thisThreadSection.first()));
+    int thisThreadSectionStop = thisThreadSection.second();
+    if (thisThreadSectionStop == lines.size()) {
+      return start;
+    } else {
+      return start + TextUtil.join("\n", lines.subList(thisThreadSectionStop + 1, lines.size() - 1));
+    }
+  }
+
+  @Nullable
+  private static Pair<Integer, Integer> findThreadSection(List<String> lines, String threadName, long threadId) {
+    String lineFormat = "\"%s\" #%d";
+    int threadSectionStart = -1;
+    for (int i = 0; i < lines.size(); ++i) {
+      if (lines.get(i).startsWith(String.format(lineFormat, threadName, threadId))) {
+        threadSectionStart = i;
+      } else if (threadSectionStart > 0 && lines.get(i).isEmpty()) {
+        return Pair.of(threadSectionStart, i);
+      }
+    }
+
+    return null;
+  }
+
+  private static void syncWithThread(CountDownLatch startLatch, String threadName, String methodName) {
+    try {
+      startLatch.countDown();
+      startLatch.await(5, TimeUnit.SECONDS);
+    } catch (InterruptedException ignored) {
+      System.out.printf("[spock.lang.Timeout] Could not sync with %s thread for method '%s'", threadName, methodName);
     }
   }
 }

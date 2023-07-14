@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Contract;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author Peter Niederwieser
@@ -66,5 +67,16 @@ public class ExceptionUtil {
     }
   }
 
-}
+  public static Throwable getUnderlyingCause(Throwable t) {
+    if (t instanceof InvocationTargetException) {
+      return getUnderlyingCause(((InvocationTargetException) t).getTargetException());
+    }
+    return t;
+  }
 
+  @SuppressWarnings("unchecked")
+  private static <T extends Throwable> void throwAsUncheckedException(Throwable t) throws T {
+    throw (T) t;
+  }
+
+}

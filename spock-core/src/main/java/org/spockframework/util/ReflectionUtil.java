@@ -287,27 +287,25 @@ public abstract class ReflectionUtil {
   }
 
   public static <T> T newInstance(Class<T> clazz, Object... args) {
-    Preconditions.notNull(clazz, "Class must not be null");
-    Preconditions.notNull(args, "Argument array must not be null");
-    Preconditions.containsNoNullElements(args, "Individual arguments must not be null");
+    Checks.notNull(clazz, () -> "Class must not be null");
+    Checks.notNull(args, () -> "Argument array must not be null");
+    Checks.containsNoNullElements(args, () -> "Individual arguments must not be null");
 
     try {
       Class<?>[] parameterTypes = Arrays.stream(args).map(Object::getClass).toArray(Class[]::new);
       return newInstance(clazz.getDeclaredConstructor(parameterTypes), args);
-    }
-    catch (Throwable t) {
-      throw ExceptionUtils.throwAsUncheckedException(getUnderlyingCause(t));
+    } catch (Throwable t) {
+      return ExceptionUtil.sneakyThrow(ExceptionUtil.getUnderlyingCause(t));
     }
   }
 
   public static <T> T newInstance(Constructor<T> constructor, Object... args) {
-    Preconditions.notNull(constructor, "Constructor must not be null");
+    Checks.notNull(constructor, () -> "Constructor must not be null");
 
     try {
       return makeAccessible(constructor).newInstance(args);
-    }
-    catch (Throwable t) {
-      throw ExceptionUtils.throwAsUncheckedException(getUnderlyingCause(t));
+    } catch (Throwable t) {
+      return ExceptionUtil.sneakyThrow(ExceptionUtil.getUnderlyingCause(t));
     }
   }
 
@@ -317,12 +315,5 @@ public abstract class ReflectionUtil {
       object.setAccessible(true);
     }
     return object;
-  }
-
-  private static Throwable getUnderlyingCause(Throwable t) {
-    if (t instanceof InvocationTargetException) {
-      return getUnderlyingCause(((InvocationTargetException) t).getTargetException());
-    }
-    return t;
   }
 }

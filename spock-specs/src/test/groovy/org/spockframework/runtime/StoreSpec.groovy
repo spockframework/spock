@@ -182,29 +182,30 @@ class StoreSpec extends EmbeddedSpecification {
 
     when:
     runner.runWithImports("""
-    @FailingStoreUsage([${methodKind.join(', ')}])
+    @FailingStoreUsage([${methodKinds.join(', ')}])
     class ASpec extends Specification {
       def "a feature"() {
         expect: true
       }
     }
 """)
+
     then:
     InternalSpockError e = thrown()
     e.message.startsWith("Failing at ")
     FailingValue.HACKY_SHARED_LIST_OF_CLEANUPS ==~ supportedMethodKinds
 
     where:
-    methodKind << supportedMethodKinds.subsequences()
+    methodKinds << supportedMethodKinds.subsequences()
   }
 }
 
 @Retention(RetentionPolicy.RUNTIME)
-@ExtensionAnnotation(StoreExtension)
+@ExtensionAnnotation(LogStoreExtension)
 @interface LogStoreUsage {
 }
 
-class StoreExtension implements IAnnotationDrivenExtension<LogStoreUsage> {
+class LogStoreExtension implements IAnnotationDrivenExtension<LogStoreUsage> {
   @Override
   void visitSpecAnnotation(LogStoreUsage annotation, SpecInfo spec) {
     def specInfo = spec.bottomSpec
@@ -232,7 +233,7 @@ class LoggingStoreInterceptor implements IMethodInterceptor {
   static final IStore.Namespace NAMESPACE = IStore.Namespace.create(LoggingStoreInterceptor.class)
   static final LoggingStoreInterceptor INSTANCE = new LoggingStoreInterceptor()
 
-  static List<MethodKind> HACKY_SHARED_LIST_OF_ACTIONS = []
+  static List<String> HACKY_SHARED_LIST_OF_ACTIONS = []
 
   @Override
   void intercept(IMethodInvocation invocation) throws Throwable {

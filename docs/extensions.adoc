@@ -1162,7 +1162,7 @@ include::{sourcedir}/extension/FancyMockMakerDocSpec.groovy[tag=fancy-mock-maker
 ----
 
 [#extension-store]
-==== Keeping state in Extensions
+==== Keeping State in Extensions
 
 Prior to Spock 2.4, extensions could only store state either in their own instances or their interceptor instances.
 Often, the state can be kept locally in the `intercept(IMethodInvocation)` method around the `IMethodInvocation.proceed()` call. However, there are cases where this is not possible, for example when using initializer interceptors.
@@ -1178,6 +1178,6 @@ The stores are hierarchical and follow roughly the same hierarchy as shown in th
 3. Feature
 4. Iteration
 
-If an item is not found in the current store, the parent store is searched, and so on until the root store is reached. For more information see the Javadoc of the `org.spockframework.runtime.extension.IStore`.
+If an item is not found in the current store, the parent store is searched, and so on until the root store is reached. For more information see the JavaDoc of `org.spockframework.runtime.extension.IStore`.
 
 NOTE: If an object stored in the store implements `java.lang.AutoCloseable`, then the `close()` method will be called when the store is closed.

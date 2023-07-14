@@ -377,6 +377,7 @@ public class PlatformSpecRunner {
     MethodInfo methodInfo = createMethodInfoForCloseContextStore(context, kind);
     invokeRaw(context, context.getStoreProvider(), methodInfo);
   }
+
   private MethodInfo createMethodInfoForCloseContextStore(SpockExecutionContext context, MethodKind kind) {
     MethodInfo result = new MethodInfo((Object target, Object... arguments) -> {
         context.getStoreProvider().close();

@@ -99,9 +99,8 @@ public interface IMethodInvocation {
    */
   Object[] getArguments();
 
-
   /**
-   * Get the {@link IStore} for the supplied {@link Class namespace}.
+   * Get the {@link IStore} for the supplied {@linkplain IStore.Namespace namespace}.
    *
    * <p>Use {@code getStore(Namespace.GLOBAL)} to get the default, global.
    *

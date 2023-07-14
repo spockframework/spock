@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
- * A hierarchical store key-value pairs.
+ * A hierarchical store of key-value pairs.
  * @since 2.4
  */
 @Beta
@@ -244,7 +244,7 @@ public interface IStore {
      */
     public static Namespace create(Object... parts) {
       Checks.notEmpty(parts, () -> "parts array must not be null or empty");
-      Checks.containsNoNullElements(parts, () -> "individual parts must not be null: "+ Arrays.toString(parts));
+      Checks.containsNoNullElements(parts, () -> "individual parts must not be null: " + Arrays.toString(parts));
       return new Namespace(new ArrayList<>(Arrays.asList(parts)));
     }
 
@@ -279,7 +279,7 @@ public interface IStore {
      */
     public Namespace append(Object... parts) {
       Checks.notEmpty(parts, () -> "parts array must not be null or empty");
-      Checks.containsNoNullElements(parts, () -> "individual parts must not be null: "+ Arrays.toString(parts));
+      Checks.containsNoNullElements(parts, () -> "individual parts must not be null: " + Arrays.toString(parts));
       ArrayList<Object> newParts = new ArrayList<>(this.parts.size() + parts.length);
       newParts.addAll(this.parts);
       Collections.addAll(newParts, parts);

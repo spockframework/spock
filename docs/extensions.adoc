@@ -860,6 +860,7 @@ extension. If the configuration object is only used in an annotation driven loca
 when then configuration object is to be injected into the extension, and you will also get an error when the
 configuration file is evaluated, and it contains the section, as the configuration object is not properly registered yet.
 
+[#interceptors]
 === Interceptors
 
 For applying the magic of your extension, there are various interception points, where you can attach interceptors from
@@ -1162,22 +1163,61 @@ include::{sourcedir}/extension/FancyMockMakerDocSpec.groovy[tag=fancy-mock-maker
 ----
 
 [#extension-store]
-==== Keeping State in Extensions
+=== Keeping State in Extensions
 
 Prior to Spock 2.4, extensions could only store state either in their own instances or their interceptor instances.
 Often, the state can be kept locally in the `intercept(IMethodInvocation)` method around the `IMethodInvocation.proceed()` call. However, there are cases where this is not possible, for example when using initializer interceptors.
 
 Spock 2.4 adds a new `org.spockframework.runtime.extension.IStore` interface that allows extensions to store and retrieve data during the execution of a specification.
 
-The store is available from the `org.spockframework.runtime.extension.IMethodInvocation` interface via the `getStore(IStore.Namespace namespace)` method.
+The store is available from the `org.spockframework.runtime.extension.IMethodInvocation` interface via the `getStore(IStore.Namespace namespace)` method. Currently, it is possible to access the store directly from an extension, only via a registering an <<#interceptors,interceptor>>.
 
 The stores are hierarchical and follow roughly the same hierarchy as shown in the <<spock-interceptors>> figure. The hierarchy is as follows:
 
-1. Root
-2. Specification (shared)
-3. Feature
-4. Iteration
+[source]
+----
+Root
+┗ Specification
+  ┗ Feature
+    ┗ Iteration
+----
 
-If an item is not found in the current store, the parent store is searched, and so on until the root store is reached. For more information see the JavaDoc of `org.spockframework.runtime.extension.IStore`.
+.Store hierarchy
+[plantuml,images/extension-store,svg]
+....
+@startuml
+state Root #88CCEE {
+    state ASpec #DDCC77 {
+        state AFeature1 #44AA99 {
+            state "AFeature1[1]" #CC6677
+            state "AFeature1[2]" #CC6677
+        }
+        state AFeature2 #44AA99 {
+            state "AFeature2[1]" #CC6677
+            state "AFeature2[2]" #CC6677
+        }
+    }
+    state BSpec #DDCC77{
+        state BFeature1 #44AA99 {
+            state "BFeature1[1]" #CC6677
+            state "BFeature1[2]" #CC6677
+        }
+        state BFeature2 #44AA99 {
+            state "BFeature2[1]" #CC6677
+            state "BFeature2[2]" #CC6677
+        }
+    }
+}
+
+'// color palette is TOL from https://davidmathlogic.com/colorblind/
+'// https://personal.sron.nl/~pault/ muted variant
+@enduml
+....
+
+If an item is not found in the current store, its parent store is searched, and so on until the root store is reached. For more information see the JavaDoc of `org.spockframework.runtime.extension.IStore`.
+
+.Example
+If an interceptor adds a `Macguffin` to the store via a `sharedInitializerInterceptor`  for `ASpec` it will be available to all features (`AFeature1` and `AFeature2`) and iterations (`AFeature1[1]`, `AFeature1[2]`, `AFeature2[1]`, `AFeature2[2]`) of that specification, but not to `BSpec` or its features. Conversely, if a feature interceptor adds a `Thingmajig` to the store for `AFeature1` it will be available to all its iterations (`AFeature1[1]`, `AFeature1[2]`), but not to sibling features (`AFeature2`) or to the specification (`ASpec`).
+
 
 NOTE: If an object stored in the store implements `java.lang.AutoCloseable`, then the `close()` method will be called when the store is closed.

@@ -5,9 +5,12 @@ import org.spockframework.runtime.extension.*
 import org.spockframework.runtime.model.MethodKind
 import org.spockframework.runtime.model.SpecInfo
 import org.spockframework.runtime.model.parallel.ExecutionMode
+import org.spockframework.specs.extension.Snapshot
+import org.spockframework.specs.extension.Snapshotter
 import org.spockframework.util.Assert
 import org.spockframework.util.InternalSpockError
 import spock.lang.Execution
+import spock.lang.ResourceLock
 import spock.lang.Shared
 
 import java.lang.annotation.Retention
@@ -15,15 +18,19 @@ import java.lang.annotation.RetentionPolicy
 
 class StoreSpec extends EmbeddedSpecification {
 
+  @Snapshot
+  Snapshotter snapshotter
+
   def setup() {
     runner.addClassImport(LogStoreUsage)
     runner.addClassImport(FailingStoreUsage)
     runner.addClassMemberImport(MethodKind)
   }
 
+  @ResourceLock("org.spockframework.runtime.LogStoreUsage")
   def "store is created and cleaned for each level"() {
     given:
-    LoggingStoreInterceptor.HACKY_SHARED_LIST_OF_ACTIONS.clear()
+    LoggingStoreInterceptor.reset()
 
     when:
     runner.runWithImports('''
@@ -42,140 +49,13 @@ class StoreSpec extends EmbeddedSpecification {
 ''')
 
     then:
-    LoggingStoreInterceptor.HACKY_SHARED_LIST_OF_ACTIONS == [
-      'before SHARED_INITIALIZER - null',
-      '	prev:     null',
-      '	replaced: null',
-      '	put:      Stored at SHARED_INITIALIZER - null',
-      'after SHARED_INITIALIZER - null',
-      'before SPEC_EXECUTION - null',
-      '	prev:     Stored at SHARED_INITIALIZER - null',
-      '	replaced: Stored at SHARED_INITIALIZER - null',
-      '	put:      Stored at SPEC_EXECUTION - null',
-      'before SETUP_SPEC - null',
-      '	prev:     Stored at SPEC_EXECUTION - null',
-      '	replaced: Stored at SPEC_EXECUTION - null',
-      '	put:      Stored at SETUP_SPEC - null',
-      'after SETUP_SPEC - null',
-      'before INITIALIZER - null',
-      '	prev:     Stored at SETUP_SPEC - null',
-      '	replaced: null',
-      '	put:      Stored at INITIALIZER - null',
-      'after INITIALIZER - null',
-      'before FEATURE_EXECUTION - null',
-      '	prev:     Stored at INITIALIZER - null',
-      '	replaced: Stored at INITIALIZER - null',
-      '	put:      Stored at FEATURE_EXECUTION - null',
-      'before ITERATION_EXECUTION - null',
-      '	prev:     Stored at FEATURE_EXECUTION - null',
-      '	replaced: Stored at FEATURE_EXECUTION - null',
-      '	put:      Stored at ITERATION_EXECUTION - null',
-      'before SETUP - null',
-      '	prev:     Stored at ITERATION_EXECUTION - null',
-      '	replaced: Stored at ITERATION_EXECUTION - null',
-      '	put:      Stored at SETUP - null',
-      'after SETUP - null',
-      'before FEATURE - a feature',
-      '	prev:     Stored at SETUP - null',
-      '	replaced: Stored at SETUP - null',
-      '	put:      Stored at FEATURE - a feature',
-      'after FEATURE - a feature',
-      'before CLEANUP - null',
-      '	prev:     Stored at FEATURE - a feature',
-      '	replaced: Stored at FEATURE - a feature',
-      '	put:      Stored at CLEANUP - null',
-      'after CLEANUP - null',
-      '# closing Stored at CLEANUP - null',
-      '# closing Stored at FEATURE - a feature',
-      '# closing Stored at SETUP - null',
-      '# closing Stored at ITERATION_EXECUTION - null',
-      '# closing Stored at FEATURE_EXECUTION - null',
-      '# closing Stored at INITIALIZER - null',
-      'after ITERATION_EXECUTION - null',
-      'after FEATURE_EXECUTION - null',
-      'before FEATURE_EXECUTION - null',
-      '	prev:     Stored at SETUP_SPEC - null',
-      '	replaced: Stored at SETUP_SPEC - null',
-      '	put:      Stored at FEATURE_EXECUTION - null',
-      'before INITIALIZER - null',
-      '	prev:     Stored at FEATURE_EXECUTION - null',
-      '	replaced: null',
-      '	put:      Stored at INITIALIZER - null',
-      'after INITIALIZER - null',
-      'before ITERATION_EXECUTION - null',
-      '	prev:     Stored at INITIALIZER - null',
-      '	replaced: Stored at INITIALIZER - null',
-      '	put:      Stored at ITERATION_EXECUTION - null',
-      'before SETUP - null',
-      '	prev:     Stored at ITERATION_EXECUTION - null',
-      '	replaced: Stored at ITERATION_EXECUTION - null',
-      '	put:      Stored at SETUP - null',
-      'after SETUP - null',
-      'before FEATURE - data driven feature',
-      '	prev:     Stored at SETUP - null',
-      '	replaced: Stored at SETUP - null',
-      '	put:      Stored at FEATURE - data driven feature',
-      'after FEATURE - data driven feature',
-      'before CLEANUP - null',
-      '	prev:     Stored at FEATURE - data driven feature',
-      '	replaced: Stored at FEATURE - data driven feature',
-      '	put:      Stored at CLEANUP - null',
-      'after CLEANUP - null',
-      '# closing Stored at CLEANUP - null',
-      '# closing Stored at FEATURE - data driven feature',
-      '# closing Stored at SETUP - null',
-      '# closing Stored at ITERATION_EXECUTION - null',
-      '# closing Stored at INITIALIZER - null',
-      'after ITERATION_EXECUTION - null',
-      'before INITIALIZER - null',
-      '	prev:     Stored at FEATURE_EXECUTION - null',
-      '	replaced: null',
-      '	put:      Stored at INITIALIZER - null',
-      'after INITIALIZER - null',
-      'before ITERATION_EXECUTION - null',
-      '	prev:     Stored at INITIALIZER - null',
-      '	replaced: Stored at INITIALIZER - null',
-      '	put:      Stored at ITERATION_EXECUTION - null',
-      'before SETUP - null',
-      '	prev:     Stored at ITERATION_EXECUTION - null',
-      '	replaced: Stored at ITERATION_EXECUTION - null',
-      '	put:      Stored at SETUP - null',
-      'after SETUP - null',
-      'before FEATURE - data driven feature',
-      '	prev:     Stored at SETUP - null',
-      '	replaced: Stored at SETUP - null',
-      '	put:      Stored at FEATURE - data driven feature',
-      'after FEATURE - data driven feature',
-      'before CLEANUP - null',
-      '	prev:     Stored at FEATURE - data driven feature',
-      '	replaced: Stored at FEATURE - data driven feature',
-      '	put:      Stored at CLEANUP - null',
-      'after CLEANUP - null',
-      '# closing Stored at CLEANUP - null',
-      '# closing Stored at FEATURE - data driven feature',
-      '# closing Stored at SETUP - null',
-      '# closing Stored at ITERATION_EXECUTION - null',
-      '# closing Stored at INITIALIZER - null',
-      'after ITERATION_EXECUTION - null',
-      'after FEATURE_EXECUTION - null',
-      'before CLEANUP_SPEC - null',
-      '	prev:     Stored at FEATURE_EXECUTION - null',
-      '	replaced: Stored at FEATURE_EXECUTION - null',
-      '	put:      Stored at CLEANUP_SPEC - null',
-      'after CLEANUP_SPEC - null',
-      '# closing Stored at CLEANUP_SPEC - null',
-      '# closing Stored at FEATURE_EXECUTION - null',
-      '# closing Stored at SETUP_SPEC - null',
-      '# closing Stored at SPEC_EXECUTION - null',
-      '# closing Stored at SHARED_INITIALIZER - null',
-      'after SPEC_EXECUTION - null'
-    ]
+    snapshotter.assertThat(LoggingStoreInterceptor.HACKY_SHARED_LIST_OF_ACTIONS.join("\n")).matchesSnapshot()
   }
 
   @Shared
   def supportedMethodKinds = ((MethodKind.values() as List) - [MethodKind.DATA_PROCESSOR, MethodKind.DATA_PROVIDER])
 
-  @Execution(ExecutionMode.SAME_THREAD)
+  @ResourceLock("org.spockframework.runtime.FailingStoreUsage")
   def "store cleanup fails"() {
     given:
     FailingValue.HACKY_SHARED_LIST_OF_CLEANUPS.clear()
@@ -234,11 +114,17 @@ class LoggingStoreInterceptor implements IMethodInterceptor {
   static final LoggingStoreInterceptor INSTANCE = new LoggingStoreInterceptor()
 
   static List<String> HACKY_SHARED_LIST_OF_ACTIONS = []
+  static int counter
+
+  static void reset() {
+    HACKY_SHARED_LIST_OF_ACTIONS.clear()
+    counter = 0
+  }
 
   @Override
   void intercept(IMethodInvocation invocation) throws Throwable {
     def store = invocation.getStore(NAMESPACE)
-    String message = "Stored at $invocation.method.kind - $invocation.method.name"
+    String message = "Stored at $invocation.method.kind - $invocation.method.name [${counter++}]"
     def prev = store.get("message", String)
     def replaced = store.put("message", message)
 

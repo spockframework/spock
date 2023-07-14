@@ -32,12 +32,11 @@ public abstract class Checks {
    * Assert that the supplied {@link Object} is not {@code null}.
    *
    * @param object the object to check
-   * @param messageProvider precondition violation message
+   * @param messageProvider violation message
    * @return the supplied object as a convenience
-   * @throws PreconditionViolationException if the supplied object is {@code null}
-   * @see #notNull(Object, Supplier)
+   * @throws IllegalArgumentException if the supplied object is {@code null}
    */
-  public static <T> T notNull(T object, Supplier<String> messageProvider) throws PreconditionViolationException {
+  public static <T> T notNull(T object, Supplier<String> messageProvider) {
     checkArgument(object != null, messageProvider);
     return object;
   }
@@ -45,12 +44,13 @@ public abstract class Checks {
   /**
    * Assert that the supplied array is neither {@code null} nor <em>empty</em>.
    *
-   * <p><strong>WARNING</strong>: this method does NOT check if the supplied
+   * This method does NOT check if the supplied
    * array contains any {@code null} elements.
    *
    * @param array the array to check
-   * @param messageProvider precondition violation message
+   * @param messageProvider violation message
    * @return the supplied array as a convenience
+   * @throws IllegalArgumentException if the supplied array is {@code null} or contains no elements.
    * @see #containsNoNullElements(Object[], Supplier)
    */
   public static <T> T[] notEmpty(T[] array, Supplier<String> messageProvider) {
@@ -61,15 +61,15 @@ public abstract class Checks {
   /**
    * Assert that the supplied array contains no {@code null} elements.
    *
-   * <p><strong>WARNING</strong>: this method does NOT check if the supplied
+   * This method does NOT check if the supplied
    * array is {@code null} or <em>empty</em>.
    *
    * @param array the array to check
-   * @param messageProvider precondition violation message
+   * @param messageProvider violation message
    * @return the supplied array as a convenience
    * @see #notNull(Object, Supplier)
    */
-  public static <T> T[] containsNoNullElements(T[] array, Supplier<String> messageProvider) throws PreconditionViolationException {
+  public static <T> T[] containsNoNullElements(T[] array, Supplier<String> messageProvider) {
     if (array != null) {
       Arrays.stream(array).forEach(object -> notNull(object, messageProvider));
     }

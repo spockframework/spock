@@ -321,6 +321,28 @@ By using `notThrown()`, we make it clear that in particular a `NullPointerExcept
 contract of `Map.put()`, this would be the right thing to do for a map that doesn't support `null` keys.) However,
 the method will also fail if any other exception is thrown.
 
+===== Methods Accepting Implicit Conditions as Code Blocks
+
+Methods annotated with `@ConditionBlock` will treat `Closure` arguments as code blocks containing
+conditions allowing to leave off the `assert` keyword. As in `expect`-blocks and `then`-blocks, variable declarations
+and void method invocations will not be considered conditions.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/utilities/ConditionBlockSpec.groovy[tag=ConditionBlock-usage]
+----
+
+NOTE: The `@ConditionBlock` only works, if the types involved are known at compile time (no `def` keyword). See below for more details.
+
+The `@ConditionBlock` annotation only takes effect if:
+
+* the `Closures` are passed as literals,
+and the Groovy compiler can (at compilation time) determine the target type of the method invocation
+referencing the annotated method,
+* the annotated method is called on object of type known at compilation time (no `def`).
+
+If the annotated method is overloaded, the closure arguments of all overloads are considered code blocks.
+
 ===== Interactions
 
 Whereas conditions describe an object's state, interactions describe how objects communicate with each other.

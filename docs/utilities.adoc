@@ -90,3 +90,23 @@ include::{sourcedir}/utilities/FileSystemFixtureSpec.groovy[tag=fs-fixture-usage
 ----
 
 TIP: To get the nice Groovy methods for `Path`, you need to add a dependency on `groovy-nio`.
+
+[[old-method]]
+== Capture Values for Assertions with `old()`
+
+It can be helpful to know the old value of an expression before the `when:` was executed.
+This allows you to compare the changes made by a `when:` block.
+
+You can capture the old value of an expression with `old(<expr>)` in a `then:` block,
+which will return the value of the `<expr>` before the previous `when:` block is executed.
+
+The usage of the `old()` method makes a test less fragile, because you can assert the difference,
+which was made by the `when:` block.
+
+=== Example
+
+.Using `old()` to capture the old value of `x`
+[source,groovy,indent=0]
+----
+include::{sourcedir}/utilities/OldMethodSpec.groovy[tag=old-usage-spec]
+----

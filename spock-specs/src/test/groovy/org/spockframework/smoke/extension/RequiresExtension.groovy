@@ -24,6 +24,7 @@ import spock.lang.FailsWith
 import spock.lang.IgnoreIf
 import spock.lang.Issue
 import spock.lang.Requires
+import spock.lang.Shared
 import spock.lang.Specification
 
 class RequiresExtension extends EmbeddedSpecification {
@@ -426,6 +427,9 @@ class Test extends Bar {
 
   static class RequiresExtensionExamples extends Specification {
 
+    @Shared
+    def shouldRun = false
+
     @Requires({ 1 < 2 })
     def "runs feature if precondition is satisfied"() {
       expect: true
@@ -474,6 +478,13 @@ class Test extends Bar {
 
     @Requires({ false })
     def 'can skip data providers completely if no data variables are accessed'() {
+      expect: false
+      where:
+      a = { throw new RuntimeException() }.call()
+    }
+    @Issue("https://github.com/spockframework/spock/issues/1710")
+    @Requires({ shared.shouldRun })
+    def 'can skip data providers completely if no data variables are accessed by checking a `shared.` field'() {
       expect: false
       where:
       a = { throw new RuntimeException() }.call()

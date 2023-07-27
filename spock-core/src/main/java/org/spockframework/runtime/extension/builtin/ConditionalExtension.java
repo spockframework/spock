@@ -80,7 +80,12 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
       Object result = evaluateCondition(condition, feature.getSpec().getReflection());
       featureConditionResult(GroovyRuntimeUtil.isTruthy(result), annotation, feature);
     } catch (ExtensionException ee) {
-      if (ee.getCause() instanceof PreconditionContextException) {
+      if (ee.getCause() instanceof SharedContextException) {
+        // check before instantiating the data providers
+        feature.addInterceptor(new SharedCondition(condition, annotation));
+        // we still need to check each iteration as the shared field might be modified
+        feature.getFeatureMethod().addInterceptor(new IterationCondition(condition, annotation));
+      } else if (ee.getCause() instanceof PreconditionContextException) {
         if (ee.getCause() instanceof DataVariableContextException
         && !feature.getDataVariables().contains(((DataVariableContextException)ee.getCause()).getDataVariable())) {
           throw ee;

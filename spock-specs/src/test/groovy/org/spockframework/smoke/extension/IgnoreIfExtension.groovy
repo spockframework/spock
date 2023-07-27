@@ -23,8 +23,12 @@ import org.spockframework.runtime.extension.builtin.PreconditionContext
 import spock.lang.IgnoreIf
 import spock.lang.Issue
 import spock.lang.Requires
+import spock.lang.Shared
 
 class IgnoreIfExtension extends EmbeddedSpecification {
+  @Shared
+  def shouldIgnore = true
+
   @IgnoreIf({ 1 < 2 })
   def "basic usage"() {
     expect: false
@@ -68,6 +72,14 @@ class IgnoreIfExtension extends EmbeddedSpecification {
 
   @IgnoreIf({ true })
   def 'can skip data providers completely if no data variables are accessed'() {
+    expect: false
+    where:
+    a = { throw new RuntimeException() }.call()
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1710")
+  @IgnoreIf({ shared.shouldIgnore })
+  def 'can skip data providers completely if no data variables are accessed by checking a `shared.` field'() {
     expect: false
     where:
     a = { throw new RuntimeException() }.call()

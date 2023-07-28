@@ -457,6 +457,61 @@ the method will also fail if any other exception is thrown.</p>
 </div>
 </div>
 <div class="sect4">
+<h5 id="_methods_accepting_implicit_conditions_as_code_blocks"><a class="anchor" href="#_methods_accepting_implicit_conditions_as_code_blocks"></a><a class="link" href="#_methods_accepting_implicit_conditions_as_code_blocks">Methods Accepting Implicit Conditions as Code Blocks</a></h5>
+<div class="paragraph">
+<p>Methods annotated with <code>@ConditionBlock</code> will treat <code>Closure</code> arguments as code blocks containing
+conditions allowing to leave off the <code>assert</code> keyword. As in <code>expect</code>-blocks and <code>then</code>-blocks, variable declarations
+and void method invocations will not be considered conditions.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">AsyncConditions conds = <span class="keyword">new</span> AsyncConditions()
+
+<span class="key">when</span>:
+<span class="predefined-type">Thread</span>.start {
+  <span class="comment">//The method AsyncConditions.evaluate() is annotated with @ConditionBlock</span>
+  conds.evaluate {
+    <span class="comment">//There is an implicit assert here</span>
+    <span class="predefined-constant">false</span>
+  }
+}
+
+<span class="key">then</span>:
+conds.await()</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The <code>@ConditionBlock</code> only works, if the types involved are known at compile time (no <code>def</code> keyword). See below for more details.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>@ConditionBlock</code> annotation only takes effect if:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the <code>Closures</code> are passed as literals,
+and the Groovy compiler can (at compilation time) determine the target type of the method invocation
+referencing the annotated method,</p>
+</li>
+<li>
+<p>the annotated method is called on object of type known at compilation time (no <code>def</code>).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If the annotated method is overloaded, the closure arguments of all overloads are considered code blocks.</p>
+</div>
+</div>
+<div class="sect4">
 <h5 id="_interactions"><a class="anchor" href="#_interactions"></a><a class="link" href="#_interactions">Interactions</a></h5>
 <div class="paragraph">
 <p>Whereas conditions describe an object&#8217;s state, interactions describe how objects communicate with each other.
@@ -975,7 +1030,7 @@ used (like specifying the behavior of exception conditions). In all other cases,
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2023-07-28 13:21:25 UTC
+Last updated 2023-07-28 13:32:56 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

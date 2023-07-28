@@ -243,11 +243,46 @@ To get the nice Groovy methods for <code>Path</code>, you need to add a dependen
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="old-method"><a class="anchor" href="#old-method"></a><a class="link" href="#old-method">Capture Values for Assertions with <code>old()</code></a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It can be helpful to know the old value of an expression before the <code>when:</code> was executed.
+This allows you to compare the changes made by a <code>when:</code> block.</p>
+</div>
+<div class="paragraph">
+<p>You can capture the old value of an expression with <code>old(&lt;expr&gt;)</code> in a <code>then:</code> block,
+which will return the value of the <code>&lt;expr&gt;</code> before the previous <code>when:</code> block is executed.</p>
+</div>
+<div class="paragraph">
+<p>The usage of the <code>old()</code> method makes a test less fragile, because you can assert the difference,
+which was made by the <code>when:</code> block.</p>
+</div>
+<div class="sect2">
+<h3 id="_example_2"><a class="anchor" href="#_example_2"></a><a class="link" href="#_example_2">Example</a></h3>
+<div class="listingblock">
+<div class="title">Using <code>old()</code> to capture the old value of <code>x</code></div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Usage of the old() method</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">given</span>:
+  <span class="keyword">def</span> x = <span class="integer">0</span>
+
+  <span class="key">when</span>:
+  x++
+
+  <span class="key">then</span>:
+  x == old(x) + <span class="integer">1</span>
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2023-07-28 13:55:57 UTC
+Last updated 2023-07-28 14:48:18 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

@@ -495,10 +495,15 @@ per JVM, keep in mind that Spock cannot enforce this.
 
 NOTE: This will acquire a `READ_WRITE` lock for `Resources.SYSTEM_PROPERTIES`, see <<parallel-execution.adoc#parallel-execution, Parallel Execution>> for more information.
 
+[[AutoAttach]]
 === AutoAttach
 
-Automatically attaches a detached mock to the current `Specification`. Use this if there is no direct framework
-support available. Spring and Guice dependency injection is automatically handled by the
+Automatically attaches a detached mock to the current `Specification`.
+The `@AutoAttach` can only be used on non-shared/non-static fields.
+Use this if there is no direct framework support available.
+To create detached mocks, see <<interaction_based_testing.adoc#DetachedMockFactory,Create Mock Objects outside Specifications>>
+
+Spring and Guice dependency injection is automatically handled by the
 <<module_spring.adoc#_spring_module,Spring Module>> and <<modules.adoc#_guice_module,Guice Module>> respectively.
 
 === AutoCleanup

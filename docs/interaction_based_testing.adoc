@@ -1090,6 +1090,44 @@ mock.type == List
 mock.nature == MockNature.MOCK
 ----
 
+[[DetachedMockFactory]]
+=== Create Mock Objects outside Specifications
+
+It can be sometimes helpful to create mock, stub or spy objects outside a `Specification`, but use them in a `Specification`.
+The `spock.mock.DetachedMockFactory` provides API to create such mock objects. See <<module_spring.adoc#SpringMocks,Spring Mocks>> for a usage sample.
+
+NOTE: Mocks created by the `DetachedMockFactory` must be manually attached to the `Specification`
+      using `MockUtil.attachMock(Object, Specification)` and detached afterwards using `MockUtil.detachMock(Object)`.
+      +
+      You could also use the `@AutoAttach` annotation on fields, see <<extensions.adoc#AutoAttach,AutoAttach>>.
+
+NOTE: Although the mocks can be created outside of a specification, they only work properly inside the scope of a `Specification`.
+      All interactions with them until they are attached to a `Specification`, are handled by the default behavior and **not** recorded.
+      +
+      Furthermore, mocks can only be attached to one `Specification` instance at a time so keep that in mind when using multi-threaded executions.
+
+To create a mock you use the `DetachedMockFactory`:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tag=DetachedMockFactory-usage-spec]
+----
+
+In the `Specification` you can use the mock, after you attached it:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tag=attach-usage]
+----
+
+You could also change the default behavior of a detached mock with your own implementation of an `IDefaultResponse`.
+This allows you to control the default response also outside of a `Specification`.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tag=defaultResponse-usage]
+----
+
 == Further Reading
 
 If you would like to dive deeper into interaction-based testing, we recommend the following resources:

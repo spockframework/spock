@@ -86,5 +86,17 @@ class GroovyRuntimeUtilSpec extends Specification {
     expect:
     GroovyRuntimeUtil.instantiateClosure(cl.getClass(), owner, thisObject).call(3) == 6
   }
+
+  def "asArgumentList"() {
+    when:
+    def l = GroovyRuntimeUtil.asArgumentList(null)
+    then:
+    l.isEmpty()
+    when:
+    l = GroovyRuntimeUtil.asArgumentList("A")
+    then:
+    l.size() == 1
+    l == ["A"]
+  }
 }
 

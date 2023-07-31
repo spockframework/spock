@@ -279,9 +279,9 @@ class GroovyMocksForGroovyClasses extends Specification {
     when: "query via property syntax"
     def result = mockData.active ? "Data is current" : "Data is not current"
 
-    then: "calls mock, preferring 'get' to 'is' for boolean getters (surprise!)"
-    1 * mockData.getActive() >> true
-    0 * mockData.isActive()
+    then: "calls mock, preferring 'is' to 'get' for boolean getters"
+    1 * mockData.isActive() >> true
+    0 * mockData.getActive()
 
     and:
     result == "Data is current"

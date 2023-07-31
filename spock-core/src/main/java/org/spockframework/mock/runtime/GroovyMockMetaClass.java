@@ -53,7 +53,11 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
 
   @Override
   public Object getProperty(Object target, String property) {
-    String methodName = GroovyRuntimeUtil.propertyToMethodName("get", property);
+    String methodName = GroovyRuntimeUtil.propertyToMethodName("is", property);
+    MetaMethod metaMethod = delegate.getMetaMethod(methodName, GroovyRuntimeUtil.EMPTY_ARGUMENTS);
+    if (metaMethod == null || metaMethod.getReturnType() != boolean.class) {
+      methodName = GroovyRuntimeUtil.propertyToMethodName("get", property);
+    }
     return invokeMethod(target, methodName, GroovyRuntimeUtil.EMPTY_ARGUMENTS);
   }
 

@@ -22,14 +22,13 @@ public abstract class BaseMockInterceptor implements IProxyBasedMockInterceptor 
       //go.getProperty("foo") is treated as is (to allow for its stubbing)
       String propertyName = (String)args[0];
       MetaClass metaClass = target.getMetaClass();
-      methodName = GroovyRuntimeUtil.propertyToMethodName("get", propertyName);
-      MetaMethod metaMethod = metaClass.getMetaMethod(methodName, GroovyRuntimeUtil.EMPTY_ARGUMENTS);
-      if (metaMethod == null) {
-        MetaMethod booleanVariant = metaClass
-          .getMetaMethod(GroovyRuntimeUtil.propertyToMethodName("is", propertyName), GroovyRuntimeUtil.EMPTY_ARGUMENTS);
-        if (booleanVariant != null && booleanVariant.getReturnType() == boolean.class) {
-          methodName = booleanVariant.getName();
-        }
+      //First try the isXXX before getXXX, because this is the expected behavior, if it is boolean property.
+      MetaMethod booleanVariant = metaClass
+        .getMetaMethod(GroovyRuntimeUtil.propertyToMethodName("is", propertyName), GroovyRuntimeUtil.EMPTY_ARGUMENTS);
+      if (booleanVariant != null && booleanVariant.getReturnType() == boolean.class) {
+        methodName = booleanVariant.getName();
+      } else {
+        methodName = GroovyRuntimeUtil.propertyToMethodName("get", propertyName);
       }
     }
     return methodName;

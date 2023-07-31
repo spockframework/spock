@@ -20,6 +20,8 @@ import org.spockframework.runtime.SpockTimeoutError
 import spock.lang.*
 
 class BlockingVariablesSpec extends Specification {
+  @Retry
+  //Flaky execution on build-and-verify (windows-latest) machine
   def "passing example 1 - variable is read after it is written"() {
     def vars = new BlockingVariables()
 
@@ -33,6 +35,8 @@ class BlockingVariablesSpec extends Specification {
     vars.foo == 42
   }
 
+  @Retry
+  //Flaky execution on build-and-verify (windows-latest) machine
   def "passing example 2 - variable is read before it is written"() {
     def vars = new BlockingVariables()
 

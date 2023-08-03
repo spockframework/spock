@@ -17,6 +17,7 @@
 package org.spockframework.runtime;
 
 import static java.util.stream.Collectors.toList;
+import static org.spockframework.util.ReflectionUtil.isArray;
 
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
@@ -241,7 +242,8 @@ public abstract class SpockRuntime {
       int idxActual = values.indexOf(left);
       int idxExpected = values.indexOf(right);
 
-      if (left instanceof Iterable && right instanceof Iterable) {
+
+      if (isIterableOrArray(left) && isIterableOrArray(right)) {
         if (SpockRuntime.MATCH_COLLECTIONS_AS_SET.equals(method)) {
           Set<?> actual = GroovyRuntimeUtil.coerce(left, LinkedHashSet.class);
           Set<?> expected = GroovyRuntimeUtil.coerce(right, LinkedHashSet.class);
@@ -253,11 +255,13 @@ public abstract class SpockRuntime {
           values.set(idxExpected, expected);
 
         } else {
-          Matcher<?> matcher = StreamSupport.stream(((Iterable<?>)right).spliterator(), false)
+          Object localLeft = convertArrayToCollectionIfNecessary(left);
+          Object localRight = convertArrayToCollectionIfNecessary(right);
+          Matcher<?> matcher = StreamSupport.stream(((Iterable<?>)localRight).spliterator(), false)
             .map(CoreMatchers::equalTo)
             .collect(Collectors.collectingAndThen(toList(), IsIterableContainingInAnyOrder::containsInAnyOrder));
 
-          if (HamcrestFacade.matches(matcher, left)) {
+          if (HamcrestFacade.matches(matcher, localLeft)) {
             return;
           }
           description = HamcrestFacade.getFailureDescription(matcher, left, message);
@@ -302,5 +306,15 @@ public abstract class SpockRuntime {
       }
       return null;
     }
+  }
+  private static boolean isIterableOrArray(Object o) {
+    return o instanceof Iterable || isArray(o);
+  }
+
+  private static Object convertArrayToCollectionIfNecessary(Object o) {
+    if (isArray(o)) {
+      return  GroovyRuntimeUtil.coerce(o, List.class);
+    }
+    return o;
   }
 }

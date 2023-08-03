@@ -71,7 +71,7 @@ include::{sourcedir}/utilities/CollectionConditions.groovy[tag=strict-matcher]
 include::{sourcedir}/utilities/CollectionConditions.groovy[tag=strict-matcher-result]
 ----
 
-NOTE: Both operands must be `Iterable` for this to work.
+NOTE: Both operands must either be `Iterable` or an array for this to work.
 Otherwise, it will be treated like the standard groovy https://groovy-lang.org/operators.html#_find_operator[find operator] or https://groovy-lang.org/operators.html#_match_operator[match operators].
 
 [[file-stystem-fixture]]

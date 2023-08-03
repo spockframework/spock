@@ -71,6 +71,9 @@ public abstract class ReflectionUtil {
 
     return false;
   }
+  public static boolean isArray(Object obj) {
+    return (obj != null && obj.getClass().isArray());
+  }
 
   public static boolean isAnnotationPresentRecursive(Class<?> cls, Class<? extends Annotation> annotationClass) {
     return cls.isAnnotationPresent(annotationClass) ||

@@ -14,7 +14,11 @@
 
 package org.spockframework.util
 
+import org.junit.platform.commons.annotation.Testable
 import spock.lang.*
+
+import java.lang.annotation.Annotation
+import java.lang.reflect.Method
 
 class ReflectionUtilSpec extends Specification {
   def "get package name"() {
@@ -42,6 +46,7 @@ class ReflectionUtilSpec extends Specification {
     expect:
     ReflectionUtil.isMethodAvailable("java.util.List", "size")
     !ReflectionUtil.isMethodAvailable("java.util.List", "mice")
+    !ReflectionUtil.isMethodAvailable("not.AvailableClass", "size")
   }
 
   def "check if annotation of certain type is present"() {
@@ -199,5 +204,127 @@ class ReflectionUtilSpec extends Specification {
 
   static class Generics<T> {
     void foo(T one, List<T> two, List<String> three) {}
+  }
+
+  def "isAnnotationPresentRecursive"(Class<?> clazz, Class<? extends Annotation> annotation, boolean expectedResult) {
+    expect:
+    ReflectionUtil.isAnnotationPresentRecursive(clazz, annotation) == expectedResult
+    where:
+    clazz              | annotation | expectedResult
+    Object             | Nullable   | false
+    Specification      | Testable   | true
+    ReflectionUtilSpec | Testable   | true
+    ReflectionUtilSpec | Nullable   | false
+    TypeWithAnno       | Narrative  | true
+    SubTypeNoAnno      | Narrative  | true
+  }
+
+  def "getAnnotationRecursive expecting annotation"(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+    when:
+    def anno = ReflectionUtil.getAnnotationRecursive(clazz, annotationClass)
+    then:
+    clazz && annotationClass && anno != null
+    where:
+    clazz              | annotationClass
+    Specification      | Testable
+    ReflectionUtilSpec | Testable
+    TypeWithAnno       | Narrative
+    SubTypeNoAnno      | Narrative
+  }
+
+  def "getAnnotationRecursive expecting none"(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+    when:
+    def anno = ReflectionUtil.getAnnotationRecursive(clazz, annotationClass)
+    then:
+    clazz && annotationClass && anno == null
+    where:
+    clazz              | annotationClass
+    Object             | Nullable
+    ReflectionUtilSpec | Nullable
+  }
+
+  def "collectAnnotationRecursive"(Class<?> clazz, Class<? extends Annotation> annotationClass, int expectedCount) {
+    expect:
+    ReflectionUtil.collectAnnotationRecursive(clazz, annotationClass).size() == expectedCount
+    where:
+    clazz              | annotationClass | expectedCount
+    Object             | Nullable        | 0
+    Specification      | Testable        | 1
+    ReflectionUtilSpec | Testable        | 2
+    ReflectionUtilSpec | Nullable        | 0
+    TypeWithAnno       | Narrative       | 1
+    SubTypeNoAnno      | Narrative       | 1
+    SubTypeWithAnno    | Narrative       | 2
+  }
+
+  @Narrative
+  private static class TypeWithAnno {}
+
+  @Narrative
+  private static class SubTypeWithAnno extends TypeWithAnno {}
+
+  private static class SubTypeNoAnno extends TypeWithAnno {}
+
+  def "validateArguments - wrong argument count"() {
+    when:
+    ReflectionUtil.validateArguments(lookupMethod("methodNoArgs"), "Str")
+    then:
+    IllegalArgumentException ex = thrown()
+    ex.message == "Method 'methodNoArgs([])' can't be called with parameters '[Str]'!"
+  }
+
+  def "validateArguments - incompatible type"() {
+    when: "Incompatible type"
+    ReflectionUtil.validateArguments(lookupMethod("methodOneArg"), 1)
+    then:
+    IllegalArgumentException ex = thrown()
+    ex.message == "Method 'methodOneArg([class java.lang.String])' can't be called with parameters '[1]'!"
+  }
+
+  def "validateArguments - null value on primitive type"() {
+    when: "Null value on primitive type"
+    ReflectionUtil.validateArguments(lookupMethod("methodPrimitiveArg"), [null] as Object[])
+    then:
+    thrown(IllegalArgumentException)
+  }
+
+  def "validateArguments - Correct types"() {
+    when: "Correct types"
+    ReflectionUtil.validateArguments(lookupMethod("methodOneArg"), "Str")
+    then:
+    noExceptionThrown()
+  }
+
+  private Method lookupMethod(String name) {
+    return Objects.requireNonNull(ReflectionUtilSpec.class.getMethods().find { it.name == name })
+  }
+
+  @SuppressWarnings('unused')
+  static void methodNoArgs() {}
+
+  @SuppressWarnings('unused')
+  static void methodOneArg(String s) {}
+
+  @SuppressWarnings('unused')
+  static void methodPrimitiveArg(int value) {}
+
+  def "deepCopyFields errors"() {
+    when:
+    ReflectionUtil.deepCopyFields("Str", 10)
+    then:
+    IllegalArgumentException ex = thrown()
+    ex.message == "source and target are not compatible."
+  }
+
+  def "getClassFile"() {
+    expect:
+    ReflectionUtil.getClassFile(String) == null
+    ReflectionUtil.getClassFile(Specification) == null
+    ReflectionUtil.getClassFile(ReflectionUtilSpec) != null
+  }
+
+  def "isToStringOverridden error"() {
+    expect:
+    !ReflectionUtil.isToStringOverridden(int.class)
   }
 }

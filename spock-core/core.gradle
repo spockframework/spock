@@ -21,17 +21,17 @@ configurations {
 }
 
 dependencies {
-  api libs.groovy // easiest way to add Groovy dependency to POM
-  api platform(libs.junitBom)
-  api libs.junitPlatform
+  api groovylibs.groovy // easiest way to add Groovy dependency to POM
+  api platform(libs.junit.bom)
+  api 'org.junit.platform:junit-platform-engine'
   api libs.hamcrest
   if (variant == 2.5) {
     api projects.spockGroovy2Compat
   }
 
-  compileOnly libs.jetbrainsAnnotations
+  compileOnly libs.jetbrains.annotations
 
-  compileOnly libs.junitPlatformTestkit
+  compileOnly libs.junit.platform.testkit
   compileOnly libs.asm
   compileOnly libs.bytebuddy
   compileOnly libs.cglib
@@ -122,4 +122,3 @@ def verifyOSGi = tasks.register('verifyOSGi', Resolve) {
 tasks.named('check') {
   dependsOn(verifyOSGi)
 }
-

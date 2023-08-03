@@ -1,0 +1,24 @@
+[versions]
+groovy2 = '2.5.19'
+groovy3 = '3.0.13'
+groovy4 = '4.0.6'
+jacoco = '0.8.8'
+
+[libraries]
+jetbrains-annotations = "org.jetbrains:annotations:24.0.1"
+asm = "org.ow2.asm:asm:9.5"
+bytebuddy = "net.bytebuddy:byte-buddy:1.14.5"
+cglib = "cglib:cglib-nodep:3.3.0"
+h2database = "com.h2database:h2:2.2.220"
+hamcrest = "org.hamcrest:hamcrest:2.2"
+jaxb = "javax.xml.bind:jaxb-api:2.3.1"
+junit4 = "junit:junit:4.13.2"
+log4j = "log4j:log4j:1.2.17"
+objenesis = "org.objenesis:objenesis:3.3"
+# This needs a classifier, but is has to be specified on the usage end https://melix.github.io/blog/2021/03/version-catalogs-faq.html#_why_can_t_i_use_excludes_or_classifiers
+jacoco-agent = { module = "org.jacoco:org.jacoco.agent", version.ref = "jacoco" }
+junit-bom = "org.junit:junit-bom:5.10.0"
+# to omit the version we have to use this syntax, the version is managed by the junit-bom
+junit-jupiter.module = "org.junit.jupiter:junit-jupiter"
+junit-platform-testkit.module = "org.junit.platform:junit-platform-testkit"
+junit-platform-console.module = "org.junit.platform:junit-platform-console"

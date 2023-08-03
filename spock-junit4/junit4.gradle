@@ -12,9 +12,9 @@ dependencies {
   api projects.spockCore
   api libs.junit4
 
-  testCompileOnly libs.jetbrainsAnnotations
-  testImplementation libs.junitPlatformTestkit
-  testImplementation libs.groovyTest  //for @NotYetImplemented
+  testCompileOnly libs.jetbrains.annotations
+  testImplementation libs.junit.platform.testkit
+  testImplementation groovylibs.groovyTest  //for @NotYetImplemented
 }
 
 tasks.named("jar", Jar) {

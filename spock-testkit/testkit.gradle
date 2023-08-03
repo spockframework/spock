@@ -16,10 +16,10 @@ dependencies {
   testRuntimeOnly libs.cglib
   testRuntimeOnly libs.objenesis
   testRuntimeOnly libs.h2database
-  testRuntimeOnly libs.junitPlatformConsole
-  testImplementation libs.junitPlatformTestkit
+  testRuntimeOnly libs.junit.platform.console
+  testImplementation libs.junit.platform.testkit
 
-  testImplementation libs.jupiter
+  testImplementation libs.junit.jupiter
 }
 
 tasks.named("test", Test) {

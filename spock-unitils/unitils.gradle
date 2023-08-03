@@ -16,7 +16,7 @@ dependencies {
   testImplementation "org.unitils:unitils-database:${unitilsVersion}",  {
     exclude module: "jta"
   }
-  testImplementation libs.groovySql // for groovy.sql.Sql
+  testImplementation groovylibs.groovySql // for groovy.sql.Sql
 
   testRuntimeOnly libs.h2database
   testRuntimeOnly libs.log4j

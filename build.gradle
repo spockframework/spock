@@ -23,7 +23,7 @@ ext {
   buildScan.tag "groovy-$variant"
   if (variant == 2.5) {
     groovyGroup = "org.codehaus.groovy"
-    groovyVersion = "2.5.19"
+    groovyVersion = libs.versions.groovy2.get()
     minGroovyVersion = "2.5.0"
     maxGroovyVersion = "2.9.99"
     if (javaVersion >= 17) {
@@ -31,12 +31,12 @@ ext {
     }
   } else if (variant == 3.0) {
     groovyGroup = "org.codehaus.groovy"
-    groovyVersion = "3.0.13"
+    groovyVersion = libs.versions.groovy3.get()
     minGroovyVersion = "3.0.0"
     maxGroovyVersion = "3.9.99"
   } else if (variant == 4.0) {
     groovyGroup = "org.apache.groovy"
-    groovyVersion = "4.0.6"
+    groovyVersion = libs.versions.groovy4.get()
     minGroovyVersion = "4.0.0"
     maxGroovyVersion = "4.9.99"
   } else {
@@ -59,30 +59,12 @@ ext {
   variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : (milestone ? "-M$milestone" : ""))
   buildScan.tag "Java $javaVersion"
 
-  jacocoVersion = '0.8.8'
-
-  libs = [
-    jetbrainsAnnotations: "org.jetbrains:annotations:24.0.1",
-    asm                 : "org.ow2.asm:asm:9.5",
-    bytebuddy           : "net.bytebuddy:byte-buddy:1.14.5",
-    cglib               : "cglib:cglib-nodep:3.3.0",
+  groovylibs = [
     groovy              : groovyDependencies,
     groovyNio           : "$groovyGroup:groovy-nio:$groovyVersion", //for groovy methods on Path
     groovySql           : "$groovyGroup:groovy-sql:$groovyVersion", //for some Spring and Unitils tests
     groovyTest          : "$groovyGroup:groovy-test:$groovyVersion", //for @NotYetImplemented
     groovyJmx           : "$groovyGroup:groovy-jmx:$groovyVersion",  //for triggering jacoco dump via jmx
-    h2database          : "com.h2database:h2:2.2.220",
-    hamcrest            : "org.hamcrest:hamcrest:2.2",
-    jaxb                : "javax.xml.bind:jaxb-api:2.3.1",
-    junit4              : "junit:junit:4.13.2",
-    junitBom            : "org.junit:junit-bom:5.10.0",
-    jupiter             : "org.junit.jupiter:junit-jupiter",
-    junitPlatform       : "org.junit.platform:junit-platform-engine",
-    junitPlatformTestkit: "org.junit.platform:junit-platform-testkit",
-    junitPlatformConsole: "org.junit.platform:junit-platform-console",
-    log4j               : "log4j:log4j:1.2.17",
-    objenesis           : "org.objenesis:objenesis:3.3",
-    jacocoAgent         : "org.jacoco:org.jacoco.agent:$jacocoVersion:runtime"
   ]
 }
 
@@ -171,7 +153,7 @@ subprojects {
   }
 
   dependencies {
-    implementation(project.name == "spock-gradle" ? [] : libs.groovy)
+    implementation(project.name == "spock-gradle" ? [] : groovylibs.groovy)
   }
 
   configureJavadoc(tasks.named("javadoc"))
@@ -210,7 +192,7 @@ subprojects {
   tasks.register("allDependencyInsight", DependencyInsightReportTask) {}
 
   jacoco {
-    toolVersion = jacocoVersion
+    toolVersion = libs.versions.jacoco.get()
   }
 }
 

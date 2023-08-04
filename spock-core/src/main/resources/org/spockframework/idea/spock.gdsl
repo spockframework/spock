@@ -45,3 +45,14 @@ contributor(ctx, {
 })
 
 
+// From https://issues.apache.org/jira/browse/GROOVY-9510
+// Properly resolve the delegatesTo for the closures of these extensions
+def conditionalExtensions = ['spock.lang.Requires', 'spock.lang.IgnoreIf', 'spock.lang.PendingFeatureIf']
+        .collect { annot -> context(ctype: "spock.lang.Specification", scope: closureScope(annotationName: annot))}
+contributor(conditionalExtensions, {
+    delegatesTo(findClass('org.spockframework.runtime.extension.builtin.PreconditionContext'))
+})
+
+contributor(context(ctype: "spock.lang.Specification", scope: closureScope(annotationName: 'spock.lang.Retry')), {
+    delegatesTo(findClass('org.spockframework.runtime.extension.builtin.RetryConditionContext'))
+})

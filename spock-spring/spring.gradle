@@ -9,7 +9,7 @@ ext.displayName = "Spock Framework - Spring Module"
 description = "Spock's Spring Module makes it possible to use Spring's TestContext framework together with Spock. \
 Supports Spring 2.5.x, 3.x, and 4.x."
 
-def springVersion = "4.3.5.RELEASE"
+def springVersion = "6.0.11"
 def testSpringVersions = [
   (springVersion): (8..11),
   "5.0.2.RELEASE": (8..11),

@@ -292,7 +292,6 @@ class ConditionEvaluation extends EmbeddedSpecification {
   def "NotExpression"() {
     expect:
     !false
-    !!true
     !(true && false)
   }
 
@@ -425,6 +424,8 @@ class ConditionEvaluation extends EmbeddedSpecification {
   def "opt-out only works for the outermost expression"() {
     expect:
     !!(true && false)
+    !!true
+    !!false
   }
 
   /*

@@ -6,8 +6,8 @@ description = "Spock's Guice Module provides support for testing Guice 2/3 based
 
 dependencies {
   api projects.spockCore
-  compileOnly "com.google.inject:guice:3.0"
-  testImplementation "com.google.inject:guice:3.0"
+  compileOnly "com.google.inject:guice:7.0.0"
+  testImplementation "com.google.inject:guice:7.0.0"
 }
 
 tasks.named("jar", Jar) {

@@ -4,7 +4,7 @@ ext.displayName = "Spock Framework - Tapestry Module"
 
 description = "Spock's Tapestry Module provides support for testing Tapestry 5 based applications."
 
-def tapestryVersion54 = "5.4.3"
+def tapestryVersion54 = "5.8.3"
 
 def useTapestry54 = javaVersion >= 8
 

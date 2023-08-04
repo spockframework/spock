@@ -359,6 +359,38 @@ class ConditionEvaluation extends EmbeddedSpecification {
 
   }
 
+  def "collection conditions work with various types"() {
+    when:
+    runner.runFeatureBody("""
+        given:
+        def a = [1,1,2,2,3,3] as ${aType}
+        def b = [1,2,3] as ${bType}
+        expect:
+        a =~ b
+        """)
+    then:
+    noExceptionThrown()
+
+    where:
+    [aType, bType] << ['int[]', 'Integer[]', 'List', 'Set', 'Queue', 'Deque'].with { [it, it] }.combinations()
+  }
+
+  def "strict collection conditions work with various types"() {
+    when:
+    runner.runFeatureBody("""
+        given:
+        def a = [1,1,2,2,3,3] as ${aType}
+        def b = [1,2,3,3,2,1] as ${bType}
+        expect:
+        a ==~ b
+        """)
+    then:
+    noExceptionThrown()
+
+    where:
+    [aType, bType] << ['int[]', 'Integer[]', 'List', 'Queue', 'Deque'].with { [it, it] }.combinations()
+  }
+
   /*
   def "MapEntryExpression"() {
       // tested as part of testMapExpression

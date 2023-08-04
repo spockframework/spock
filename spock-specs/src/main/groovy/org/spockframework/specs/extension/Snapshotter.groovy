@@ -2,7 +2,11 @@ package org.spockframework.specs.extension
 
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+import org.opentest4j.AssertionFailedError
+import org.spockframework.runtime.Condition
+import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.model.IterationInfo
+import org.spockframework.runtime.model.TextPosition
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -67,13 +71,14 @@ class Snapshotter {
 
     void matchesSnapshot() {
       String snapshotValue = loadSnapshot()
-      try {
-        assert value == snapshotValue
-      } catch (AssertionError e) {
+      if (!Objects.equals(value, snapshotValue)) {
         if (updateSnapshots) {
           saveSnapshot(value)
         } else {
-          throw e
+          // manually construct a ConditionNotSatisfiedError, as the native groovy assert doesn't get properly rendered by Intellij
+          throw new ConditionNotSatisfiedError(
+            new Condition([value, snapshotValue] as List<Object>, 'value == snapshotValue', TextPosition.create(-1, -1), null, null, null)
+          )
         }
       }
     }

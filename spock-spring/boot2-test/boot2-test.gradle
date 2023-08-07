@@ -15,7 +15,7 @@
  */
 
 plugins {
-  id "io.spring.dependency-management" version "1.0.5.RELEASE"
+  id "io.spring.dependency-management" version "1.1.2"
   id 'org.springframework.boot' version "2.5.3"
 }
 

@@ -59,7 +59,7 @@ ext {
   variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : (milestone ? "-M$milestone" : ""))
   buildScan.tag "Java $javaVersion"
 
-  jacocoVersion = '0.8.8'
+  jacocoVersion = '0.8.10'
 
   libs = [
     jetbrainsAnnotations: "org.jetbrains:annotations:24.0.1",

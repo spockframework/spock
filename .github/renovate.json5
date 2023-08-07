@@ -5,5 +5,15 @@
   ],
   // Don't manage versions in spock modules
   // we want to keep low versions for baseline compatibility
-  "ignorePaths": ["spock-*/**"]
+  "ignorePaths": ["spock-*/**"],
+  "packageRules": [
+    // Disable major version upgrades for Groovy versions
+    // as we want to keep one for each major version
+    {
+      "matchPackagePrefixes": ["org.codehaus.groovy:", "org.apache.groovy:"],
+      "matchManagers": ["regex"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    }
+  ]
 }

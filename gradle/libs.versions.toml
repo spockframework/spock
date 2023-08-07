@@ -22,3 +22,8 @@ junit-bom = "org.junit:junit-bom:5.10.0"
 junit-jupiter.module = "org.junit.jupiter:junit-jupiter"
 junit-platform-testkit.module = "org.junit.platform:junit-platform-testkit"
 junit-platform-console.module = "org.junit.platform:junit-platform-console"
+
+# just here so that renovate can figure out the dependencies
+groovy-v2 = { module = "org.codehaus.groovy:groovy", version.ref="groovy2" }
+groovy-v3 = { module = "org.codehaus.groovy:groovy", version.ref="groovy3" }
+groovy-v4 = { module = "org.apache.groovy:groovy", version.ref="groovy4" }

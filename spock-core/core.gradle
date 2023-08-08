@@ -69,7 +69,12 @@ tasks.named("jar", Jar) {
       ].join(','),
       '-noclassforname': 'true',
       '-noextraheaders': 'true',
-      '-removeheaders': 'Private-Package'
+      '-removeheaders': 'Private-Package',
+      /*
+       * Ensure the bundle can be built in a reproducible manner, This shall prevent build cache misses, when different variants are tested.
+       * https://bnd.bndtools.org/instructions/reproducible.html
+       */
+      '-reproducible': 'true',
     )
   }
 }

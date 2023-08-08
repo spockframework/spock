@@ -29,8 +29,8 @@ testing {
       useJUnitJupiter()
       dependencies {
         implementation "javax.inject:javax.inject:1"
-        implementation libs.groovySql // for groovy.sql.Sql
-        implementation libs.junitPlatformTestkit
+        implementation groovylibs.groovySql // for groovy.sql.Sql
+        implementation libs.junit.platform.testkit
         runtimeOnly libs.h2database
         runtimeOnly libs.log4j
         runtimeOnly libs.bytebuddy

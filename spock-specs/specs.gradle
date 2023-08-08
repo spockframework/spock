@@ -15,14 +15,14 @@ configurations {
 
 dependencies {
   implementation projects.spockCore
-  implementation libs.groovyJmx
-  implementation libs.groovyNio  //for groovy methods on Path
+  implementation groovylibs.groovyJmx
+  implementation groovylibs.groovyNio  //for groovy methods on Path
 
-  testCompileOnly libs.jetbrainsAnnotations
-  testImplementation libs.junitPlatformTestkit
+  testCompileOnly libs.jetbrains.annotations
+  testImplementation libs.junit.platform.testkit
 
-  testImplementation libs.groovySql  //for groovy.sql.Sql
-  testImplementation(libs.groovyTest) {  //for groovy.test.NotYetImplemented
+  testImplementation groovylibs.groovySql  //for groovy.sql.Sql
+  testImplementation(groovylibs.groovyTest) {  //for groovy.test.NotYetImplemented
     exclude group: 'junit'
   }
 
@@ -33,7 +33,9 @@ dependencies {
   testRuntimeOnly libs.h2database
 
   groovyConsole groovyConsoleExtraDependencies
-  jacocoAgentRuntime libs.jacocoAgent
+
+  // https://melix.github.io/blog/2021/03/version-catalogs-faq.html#_why_can_t_i_use_excludes_or_classifiers
+  jacocoAgentRuntime variantOf(libs.jacoco.agent) { classifier('runtime') }
 }
 
 boolean isCiServer = System.env["CI"] || System.env["GITHUB_ACTIONS"]

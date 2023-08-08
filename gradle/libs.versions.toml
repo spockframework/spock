@@ -2,7 +2,7 @@
 groovy2 = '2.5.19'
 groovy3 = '3.0.13'
 groovy4 = '4.0.6'
-jacoco = '0.8.8'
+jacoco = '0.8.10'
 
 [libraries]
 jetbrains-annotations = "org.jetbrains:annotations:24.0.1"

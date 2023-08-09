@@ -78,6 +78,7 @@ class JavaMocksForGroovyClasses extends Specification {
 
     then:
     1 * mockMe.getProperty("bar") >> "value"
+    0 * mockMe._
     value == "value"
 
     when:
@@ -85,6 +86,7 @@ class JavaMocksForGroovyClasses extends Specification {
 
     then:
     1 * mockMe.getProperty("bar") >> "value2"
+    0 * mockMe._
     value2 == "value2"
   }
 

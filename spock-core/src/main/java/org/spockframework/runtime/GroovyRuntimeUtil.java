@@ -311,4 +311,15 @@ public abstract class GroovyRuntimeUtil {
     //Having isGroovy3() with just "startsWith("3.") there could be (in the future) no tests executed at all for Groovy 4
     return !isGroovy2();
   }
+
+  @Internal
+  public static boolean isGroovy3orOlder() {
+    return isGroovy2() || GroovySystem.getVersion().startsWith("3.");
+  }
+
+  @Internal
+  public static boolean isGroovy4orNewer() {
+    //Having isGroovy4() with just "startsWith("4.") there could be (in the future) no tests executed at all for Groovy 5
+    return !isGroovy3orOlder();
+  }
 }

@@ -1,6 +1,6 @@
 [versions]
 groovy2 = '2.5.19'
-groovy3 = '3.0.13'
+groovy3 = '3.0.17'
 groovy4 = '4.0.6'
 jacoco = '0.8.10'
 

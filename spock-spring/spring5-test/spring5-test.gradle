@@ -19,3 +19,12 @@ configurations.all {
     }
   }
 }
+
+tasks.named("test", Test).configure {
+  if (rootProject.ext.javaVersion >= 17) {
+    jvmArgs(
+      //Spring Framework requires access to java.lang.ClassLoader.defineClass() from org.springframework.cglib.core.ReflectUtils
+      "--add-opens=java.base/java.lang=ALL-UNNAMED"
+    )
+  }
+}

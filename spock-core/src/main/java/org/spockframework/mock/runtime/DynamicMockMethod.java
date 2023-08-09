@@ -14,7 +14,7 @@
 
 package org.spockframework.mock.runtime;
 
-import org.spockframework.gentyref.GenericTypeReflector;
+import org.spockframework.util.GenericTypeReflectorUtil;
 import org.spockframework.mock.IMockMethod;
 import org.spockframework.util.ReflectionUtil;
 
@@ -55,7 +55,7 @@ public class DynamicMockMethod implements IMockMethod {
 
   @Override
   public Class<?> getReturnType() {
-    return GenericTypeReflector.erase(returnType);
+    return GenericTypeReflectorUtil.erase(returnType);
   }
 
   @Override

@@ -28,6 +28,8 @@ dependencies {
   if (variant == 2.5) {
     api projects.spockGroovy2Compat
   }
+  
+  implementation libs.geantyref
 
   compileOnly libs.jetbrains.annotations
 

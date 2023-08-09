@@ -16,8 +16,6 @@ package org.spockframework.util;
 
 import static java.util.Arrays.asList;
 
-import org.spockframework.gentyref.GenericTypeReflector;
-
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
@@ -241,7 +239,7 @@ public abstract class ReflectionUtil {
   public static List<Class<?>> eraseTypes(List<Type> types) {
     List<Class<?>> result = new ArrayList<>();
     for (Type type : types) {
-      result.add(GenericTypeReflector.erase(type));
+      result.add(GenericTypeReflectorUtil.erase(type));
     }
     return result;
   }

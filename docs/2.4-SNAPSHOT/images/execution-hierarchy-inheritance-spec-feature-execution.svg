@@ -57,7 +57,7 @@
     <line style='stroke: #A80036; stroke-width: 1.5;' x1='264.5' x2='264.5' y1='243.8125' y2='324.7656'/>
     <line style='stroke: #A80036; stroke-width: 1.5;' x1='224' x2='224' y1='131.9063' y2='226.8281'/>
     <line style='stroke: #A80036; stroke-width: 1.5;' x1='39.5' x2='224' y1='63.9688' y2='63.9688'/>
-    <!--MD5=[ecc862ef56e7470785338ef9f8c8955a]
+    <!--MD5=[b9fff2be4c5d5364f308ec603b83239d]
 @startwbs
 <style>
 wbsDiagram {
@@ -88,7 +88,7 @@ PlantUML version 1.2020.06(Sun Apr 05 12:38:32 UTC 2020)
 (APACHE source distribution)
 Java Runtime: OpenJDK Runtime Environment
 JVM: OpenJDK 64-Bit Server VM
-Java Version: 17.0.7+7
+Java Version: 17.0.8+7
 Operating System: Linux
 Default Encoding: UTF-8
 Language: en

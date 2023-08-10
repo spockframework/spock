@@ -14,7 +14,6 @@
 
 package org.spockframework.mock.runtime;
 
-import org.spockframework.gentyref.GenericTypeReflector;
 import org.spockframework.mock.*;
 import org.spockframework.util.*;
 
@@ -67,7 +66,7 @@ public class MockConfiguration implements IMockConfiguration {
 
   @Override
   public Class<?> getType() {
-    return GenericTypeReflector.erase(type);
+    return GenericTypeReflectorUtil.erase(type);
   }
 
   @Override

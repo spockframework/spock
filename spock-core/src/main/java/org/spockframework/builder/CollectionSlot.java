@@ -14,7 +14,6 @@
 
 package org.spockframework.builder;
 
-import org.spockframework.gentyref.GenericTypeReflector;
 import org.spockframework.util.*;
 
 import java.lang.reflect.*;
@@ -45,10 +44,10 @@ public class CollectionSlot implements ISlot {
 
   private Type getCollectionType() {
      Method getter = MopUtil.getterFor(property);
-    if (getter != null) return GenericTypeReflector.getExactReturnType(getter, ownerType);
+    if (getter != null) return GenericTypeReflectorUtil.getReturnType(getter, ownerType);
 
     Field field = MopUtil.fieldFor(property);
-    if (field != null) return GenericTypeReflector.getExactFieldType(field, ownerType);
+    if (field != null) return GenericTypeReflectorUtil.getExactFieldType(field, ownerType);
 
     throw new UnreachableCodeError();
   }

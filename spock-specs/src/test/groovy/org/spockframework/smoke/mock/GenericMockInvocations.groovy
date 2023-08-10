@@ -16,7 +16,7 @@
 
 package org.spockframework.smoke.mock
 
-import org.spockframework.gentyref.TypeToken
+import io.leangen.geantyref.TypeToken
 import org.spockframework.mock.IMockInvocation
 import spock.lang.Ignore
 import spock.lang.Specification

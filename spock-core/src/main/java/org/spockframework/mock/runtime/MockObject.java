@@ -14,7 +14,7 @@
 
 package org.spockframework.mock.runtime;
 
-import org.spockframework.gentyref.GenericTypeReflector;
+import org.spockframework.util.GenericTypeReflectorUtil;
 import org.spockframework.lang.Wildcard;
 import org.spockframework.mock.*;
 import org.spockframework.runtime.InvalidSpecException;
@@ -54,7 +54,7 @@ public class MockObject implements IMockObject {
 
   @Override
   public Class<?> getType() {
-    return GenericTypeReflector.erase(type);
+    return GenericTypeReflectorUtil.erase(type);
   }
 
   @Override

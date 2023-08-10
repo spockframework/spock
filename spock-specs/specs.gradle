@@ -20,6 +20,7 @@ dependencies {
 
   testCompileOnly libs.jetbrains.annotations
   testImplementation libs.junit.platform.testkit
+  testImplementation libs.geantyref
 
   testImplementation groovylibs.groovySql  //for groovy.sql.Sql
   testImplementation(groovylibs.groovyTest) {  //for groovy.test.NotYetImplemented

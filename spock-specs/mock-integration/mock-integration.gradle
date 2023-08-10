@@ -28,11 +28,29 @@ codeGenerationLibraries.each { key, config ->
   tasks.register("test${key.capitalize()}WithoutObjenesis", Test) {
     systemProperty("org.spockframework.mock.testType", "${key.toLowerCase()} - objenesis")
     classpath += config
+
+    if (key == "cglib") {
+      if (rootProject.ext.javaVersion >= 17) {
+        jvmArgs(
+          //cglib requires access to java.lang.ClassLoader.defineClass() from net.sf.cglib.core.ReflectUtils
+          "--add-opens=java.base/java.lang=ALL-UNNAMED"
+        )
+      }
+    }
   }
   tasks.register("test${key.capitalize()}WithObjenesis", Test) {
     systemProperty("org.spockframework.mock.testType", "${key.toLowerCase()} + objenesis")
     classpath += config
     classpath += configurations.objenesis
+
+    if (key == "cglib") {
+      if (rootProject.ext.javaVersion >= 17) {
+        jvmArgs(
+          //cglib requires access to java.lang.ClassLoader.defineClass() from net.sf.cglib.core.ReflectUtils
+          "--add-opens=java.base/java.lang=ALL-UNNAMED"
+        )
+      }
+    }
   }
 }
 

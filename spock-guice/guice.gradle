@@ -24,3 +24,12 @@ tasks.named("jar", Jar) {
     )
   }
 }
+
+tasks.named("test", Test).configure {
+  if (rootProject.ext.javaVersion >= 17) {
+    jvmArgs(
+      //Guice Framework requires access to java.lang.ClassLoader.defineClass() from com.google.inject.internal.cglib.core.$ReflectUtils
+      "--add-opens=java.base/java.lang=ALL-UNNAMED"
+    )
+  }
+}

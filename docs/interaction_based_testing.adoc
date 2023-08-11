@@ -1091,41 +1091,65 @@ mock.nature == MockNature.MOCK
 ----
 
 [[DetachedMockFactory]]
-=== Create Mock Objects outside Specifications
+=== Create Mocks Outside Specifications
 
-It can be sometimes helpful to create mock, stub or spy objects outside a `Specification`, but use them in a `Specification`.
-The `spock.mock.DetachedMockFactory` provides API to create such mock objects. See <<module_spring.adoc#SpringMocks,Spring Mocks>> for a usage sample.
+Sometimes, it can be helpful to create and possibly preconfigure mock, stub or spy objects outside specifications, especially if you want to factor out duplicate or similar code from there.
+Use `DetachedMockFactory` to create such mock objects.
 
-NOTE: Mocks created by the `DetachedMockFactory` must be manually attached to the `Specification`
-      using `MockUtil.attachMock(Object, Specification)` and detached afterwards using `MockUtil.detachMock(Object)`.
-      +
-      You could also use the `@AutoAttach` annotation on fields, see <<extensions.adoc#AutoAttach,AutoAttach>>.
+NOTE: Detached mocks, as the name implies, must be attached to a specification to make them functional.
+      This either happens manually by calling `MockUtil.attachMock(Object, Specification)` or automatically by declaring the mock as an instance field with an `@AutoAttach` annotation, see <<extensions.adoc#AutoAttach,AutoAttach>>.
+      While auto-attached mocks will also be auto-detached during specification clean-up, you need to take care of manually attached mocks by yourself, calling `MockUtil.detachMock(Object)` when they are no longer in use.
 
-NOTE: Although the mocks can be created outside of a specification, they only work properly inside the scope of a `Specification`.
-      All interactions with them until they are attached to a `Specification`, are handled by the default behavior and **not** recorded.
-      +
-      Furthermore, mocks can only be attached to one `Specification` instance at a time so keep that in mind when using multi-threaded executions.
-
-To create a mock you use the `DetachedMockFactory`:
+Assuming that we have an application class `Car` and each car has an `Engine`:
 
 [source,groovy,indent=0]
 ----
-include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tag=DetachedMockFactory-usage-spec]
+include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=engine;car]
 ----
 
-In the `Specification` you can use the mock, after you attached it:
-
-[source,groovy,indent=0]
-----
-include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tag=attach-usage]
-----
-
-You could also change the default behavior of a detached mock with your own implementation of an `IDefaultResponse`.
-This allows you to control the default response also outside of a `Specification`.
+In our specification, we declare a detached mock factory and a mock util, either inside a feature method or, if we need them for multiple features, as shared or static instances:
 
 [source,groovy,indent=0]
 ----
-include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tag=defaultResponse-usage]
+include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=declare-static]
+----
+
+==== Manually attach / detach
+
+Now in our feature, we create a detached `Engine` mock, stub its `isStarted()` method, attach the mock to the specification manually, inject the mock into a `Car` subject under specification, use the subject and finally detach the mock again after use:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=attach-manually]
+----
+
+==== Use @AutoAttach
+
+Same situation, different approach: We let Spock take care of automatically attaching the detached mock when starting the feature method and detaching it again after running the feature.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=auto-attach]
+----
+
+==== Pre-configure detached mock with default response
+
+This advanced use case might only be of interest to a minority of users, you may skip it for now if you just want to learn Spock basics.
+
+Usually, you would simply create your detached mock outside of Spock, but then define interactions (stubbed method results, method call verifications) inside the feature method itself. Sometimes however, you might want to define some (user-overridable) default behaviour right in the detached mock definition itself and even make it somewhat configurable. This is possible using a combination of Spock's mocking API and custom `IDefaultResponse` implementations.
+
+A custom detached mock creator could look like this (please figure out by yourself what it does and how it works):
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=custom-mock-creator]
+----
+
+A parametrized feature method showcasing a set of usage scenarios goes as follows:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=use-custom-mock-creator]
 ----
 
 == Further Reading

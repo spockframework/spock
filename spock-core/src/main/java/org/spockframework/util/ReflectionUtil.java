@@ -19,6 +19,7 @@ import static java.util.Arrays.asList;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
+import java.security.CodeSource;
 import java.util.*;
 
 import org.codehaus.groovy.runtime.MetaClassHelper;
@@ -155,8 +156,13 @@ public abstract class ReflectionUtil {
    * Returns the class file for the given class (which has been verified to exist in the returned location),
    * or null if the class file could not be found (e.g. because it is contained in a Jar).
    */
+  @Nullable
   public static File getClassFile(Class<?> clazz) {
-    File dir = new File(clazz.getProtectionDomain().getCodeSource().getLocation().getPath());
+    CodeSource source = clazz.getProtectionDomain().getCodeSource();
+    if (source == null) {
+      return null;
+    }
+    File dir = new File(source.getLocation().getPath());
     if (!dir.isDirectory()) return null; // class file might be contained in Jar
     File clazzFile = new File(dir, clazz.getName().replace('.', File.separatorChar) + ".class");
     return clazzFile.isFile() ? clazzFile : null;

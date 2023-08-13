@@ -4,10 +4,14 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.IStandardStreamsListener
 import org.spockframework.runtime.StandardStreamsCapturer
 import org.spockframework.runtime.extension.builtin.ThreadDumpUtilityType
+import org.spockframework.runtime.model.parallel.Resources
 import spock.lang.AutoCleanup
+import spock.lang.ResourceLock
 
 import java.util.concurrent.TimeUnit
 
+@ResourceLock(Resources.SYSTEM_OUT)
+@ResourceLock(Resources.SYSTEM_ERR)
 abstract class BaseTimeoutExtensionSpecification extends EmbeddedSpecification {
 
   @AutoCleanup("stop")

@@ -30,7 +30,22 @@ import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 import static java.util.Collections.emptyList;
 
 public class RunContext implements EngineExecutionContext {
-  private static final ThreadLocal<LinkedList<RunContext>> contextStacks = ThreadLocal.withInitial(LinkedList::new);
+  private static final InheritableThreadLocal<LinkedList<RunContext>> contextStacks = new InheritableThreadLocal<LinkedList<RunContext>>() {
+
+    @Override
+    protected LinkedList<RunContext> initialValue() {
+      return new LinkedList<>();
+    }
+
+    @Override
+    protected LinkedList<RunContext> childValue(LinkedList<RunContext> parentValue) {
+      if (parentValue == null) {
+        return new LinkedList<>();
+      }
+      // fork the parent list
+      return new LinkedList<>(parentValue);
+    }
+  };
 
   private final String name;
   private final File spockUserHome;

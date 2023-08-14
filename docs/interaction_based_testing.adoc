@@ -1097,7 +1097,7 @@ Sometimes, it can be helpful to create and possibly preconfigure mock, stub or s
 Use `DetachedMockFactory` to create such mock objects.
 
 NOTE: Detached mocks, as the name implies, must be attached to a specification to make them functional.
-      This either happens manually by calling `MockUtil.attachMock(Object, Specification)` or automatically by declaring the mock as an instance field with an `@AutoAttach` annotation, see <<extensions.adoc#AutoAttach,AutoAttach>>.
+      This either happens manually by calling `MockUtil.attachMock(Object, Specification)` or automatically by declaring the mock as an instance field with an `@AutoAttach` annotation, see <<extensions.adoc#_autoattach,AutoAttach>>.
       While auto-attached mocks will also be auto-detached during specification clean-up, you need to take care of manually attached mocks by yourself, calling `MockUtil.detachMock(Object)` when they are no longer in use.
 
 Assuming that we have an application class `Car` and each car has an `Engine`:

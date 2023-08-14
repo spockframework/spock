@@ -16,6 +16,7 @@ package org.spockframework.util;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.function.BiPredicate;
 
 import static java.util.Arrays.asList;
 
@@ -208,5 +209,19 @@ public abstract class CollectionUtil {
       index++;
     }
     return -1;
+  }
+
+  public static <T> boolean areListsEqual(List<T> l1, List<T> l2, BiPredicate<T, T> equalFunction) {
+    if (l1.size() != l2.size()) {
+      return false;
+    }
+    for (int i = 0; i < l1.size(); i++) {
+      T e1 = l1.get(i);
+      T e2 = l2.get(i);
+      if (!equalFunction.test(e1, e2)) {
+        return false;
+      }
+    }
+    return true;
   }
 }

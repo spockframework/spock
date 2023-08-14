@@ -16,6 +16,7 @@
 
 package org.spockframework.mock.runtime;
 
+import org.jetbrains.annotations.NotNull;
 import org.spockframework.mock.*;
 import org.spockframework.util.ExceptionUtil;
 
@@ -36,7 +37,22 @@ public class InteractionScope implements IInteractionScope {
 
   @Override
   public void addInteraction(final IMockInteraction interaction) {
-    interactions.add(new MockInteractionDecorator(interaction) {
+    MockInteractionDecorator decorator = createMockInteractionDecorator(interaction);
+    ListIterator<IMockInteraction> it = interactions.listIterator();
+    while (it.hasNext()) {
+      IMockInteraction next = it.next();
+      if (next.isThisInteractionOverridableBy(decorator)) {
+        it.set(decorator);
+        return;
+      }
+    }
+
+    interactions.add(decorator);
+  }
+
+  @NotNull
+  private MockInteractionDecorator createMockInteractionDecorator(IMockInteraction interaction) {
+    return new MockInteractionDecorator(interaction) {
       final int myRegistrationZone = currentRegistrationZone;
 
       @Override
@@ -66,7 +82,7 @@ public class InteractionScope implements IInteractionScope {
       public String describeMismatch(IMockInvocation invocation) {
         return interaction.describeMismatch(invocation);
       }
-    });
+    };
   }
 
   @Override

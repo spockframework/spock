@@ -20,6 +20,8 @@ import org.spockframework.mock.IArgumentConstraint;
 import org.spockframework.runtime.Condition;
 import org.spockframework.util.CollectionUtil;
 
+import java.util.Objects;
+
 /**
  *
  * @author Peter Niederwieser
@@ -31,6 +33,16 @@ public class TypeArgumentConstraint implements IArgumentConstraint {
   public TypeArgumentConstraint(Class<?> type, IArgumentConstraint constraint) {
     this.type = type;
     this.constraint = constraint;
+  }
+
+  @Override
+  public boolean isDeclarationEqualTo(IArgumentConstraint other) {
+    if (other instanceof TypeArgumentConstraint) {
+      TypeArgumentConstraint o = (TypeArgumentConstraint) other;
+      return Objects.equals(this.type, o.type) &&
+        this.constraint.isDeclarationEqualTo(o.constraint);
+    }
+    return false;
   }
 
   @Override

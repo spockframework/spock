@@ -20,6 +20,7 @@ import org.spockframework.mock.*;
 import org.spockframework.runtime.Condition;
 import org.spockframework.util.CollectionUtil;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -31,6 +32,15 @@ public class RegexMethodNameConstraint implements IInvocationConstraint {
 
   public RegexMethodNameConstraint(String regex) {
     pattern = Pattern.compile(regex);
+  }
+
+  @Override
+  public boolean isDeclarationEqualTo(IInvocationConstraint other) {
+    if (other instanceof RegexMethodNameConstraint) {
+      RegexMethodNameConstraint o = (RegexMethodNameConstraint) other;
+      return Objects.equals(this.pattern.toString(), o.pattern.toString());
+    }
+    return false;
   }
 
   @Override

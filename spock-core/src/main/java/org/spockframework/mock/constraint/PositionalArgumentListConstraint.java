@@ -38,6 +38,15 @@ public class PositionalArgumentListConstraint implements IInvocationConstraint {
   }
 
   @Override
+  public boolean isDeclarationEqualTo(IInvocationConstraint other) {
+    if (other instanceof PositionalArgumentListConstraint) {
+      PositionalArgumentListConstraint o = (PositionalArgumentListConstraint) other;
+      return CollectionUtil.areListsEqual(this.argConstraints, o.argConstraints, IArgumentConstraint::isDeclarationEqualTo);
+    }
+    return false;
+  }
+
+  @Override
   public boolean isSatisfiedBy(IMockInvocation invocation) {
     List<Object> args = invocation.getArguments();
 

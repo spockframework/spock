@@ -32,6 +32,15 @@ public class EqualArgumentConstraint implements IArgumentConstraint {
   }
 
   @Override
+  public boolean isDeclarationEqualTo(IArgumentConstraint other) {
+    if (other instanceof EqualArgumentConstraint) {
+      EqualArgumentConstraint o = (EqualArgumentConstraint) other;
+      return this.expected == o.expected;
+    }
+    return false;
+  }
+
+  @Override
   public boolean isSatisfiedBy(Object arg) {
     if (HamcrestFacade.isMatcher(expected)) {
       return HamcrestFacade.matches(expected, arg);

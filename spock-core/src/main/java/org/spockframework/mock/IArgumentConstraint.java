@@ -22,6 +22,11 @@ package org.spockframework.mock;
  * @author Peter Niederwieser
  */
 public interface IArgumentConstraint {
+  /**
+   * @param other the other element
+   * @return {@code true}, if both elements represent the same {@link IArgumentConstraint} from the declaration point of view
+   */
+  boolean isDeclarationEqualTo(IArgumentConstraint other);
   boolean isSatisfiedBy(Object arg);
   String describeMismatch(Object arg);
 }

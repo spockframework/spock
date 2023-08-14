@@ -3,6 +3,7 @@ package org.spockframework.docs.interaction
 import org.spockframework.mock.TooFewInvocationsError
 import spock.lang.*
 
+import java.util.function.Supplier
 import java.util.regex.Pattern
 
 import static org.hamcrest.CoreMatchers.endsWith
@@ -53,6 +54,30 @@ class InteractionDocSpec extends Specification {
 
     then:
     2 * _.receive(_)
+  }
+
+  def "Mock two interactions with cardinality"() {
+    // tag::two-interactions-cardinality[]
+    given:
+    Supplier supplier = Mock()
+    1 * supplier.get() >> "First"
+    1 * supplier.get() >> "Second"
+    expect:
+    supplier.get() == "First"
+    supplier.get() == "Second"
+    // end::two-interactions-cardinality[]
+  }
+
+  def "Mock two interactions without cardinality"() {
+    // tag::two-interactions-without-cardinality[]
+    given:
+    Supplier supplier = Mock()
+    supplier.get() >> "First"
+    supplier.get() >> "Second"
+    expect:
+    supplier.get() == "Second"
+    supplier.get() == "Second"
+    // end::two-interactions-without-cardinality[]
   }
 }
 

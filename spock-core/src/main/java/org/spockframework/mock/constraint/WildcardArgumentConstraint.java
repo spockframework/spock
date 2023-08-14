@@ -28,6 +28,11 @@ public class WildcardArgumentConstraint implements IArgumentConstraint {
   private WildcardArgumentConstraint() {}
 
   @Override
+  public boolean isDeclarationEqualTo(IArgumentConstraint other) {
+    return this == other;
+  }
+
+  @Override
   public boolean isSatisfiedBy(Object arg) {
     return true;
   }

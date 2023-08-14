@@ -20,6 +20,8 @@ import org.spockframework.mock.*;
 import org.spockframework.runtime.Condition;
 import org.spockframework.util.CollectionUtil;
 
+import java.util.Objects;
+
 /**
  *
  * @author Peter Niederwieser
@@ -29,6 +31,15 @@ public class EqualMethodNameConstraint implements IInvocationConstraint {
 
   public EqualMethodNameConstraint(String methodName) {
     this.methodName = methodName;
+  }
+
+  @Override
+  public boolean isDeclarationEqualTo(IInvocationConstraint other) {
+    if (other instanceof EqualMethodNameConstraint) {
+      EqualMethodNameConstraint o = (EqualMethodNameConstraint) other;
+      return Objects.equals(this.methodName, o.methodName);
+    }
+    return false;
   }
 
   @Override

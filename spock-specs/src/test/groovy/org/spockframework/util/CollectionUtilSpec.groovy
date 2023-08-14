@@ -16,6 +16,8 @@ package org.spockframework.util
 
 import spock.lang.*
 
+import java.util.function.BiPredicate
+
 class CollectionUtilSpec extends Specification {
   def "copy an array"() {
     def array = [1, 2, 3] as Object[]
@@ -124,5 +126,24 @@ class CollectionUtilSpec extends Specification {
     CollectionUtil.addLastElement(l, 2)
     then:
     l == [1, 2]
+  }
+
+  private static final Closure<Boolean> EQUALS = { Object x, Object y -> x == y }
+
+  def "areListsEqual"(List l1, List l2, BiPredicate func, boolean expected) {
+    expect:
+    CollectionUtil.areListsEqual(l1, l2, func) == expected
+    where:
+    l1         | l2         | func              | expected
+    []         | []         | EQUALS            | true
+    ["A"]      | []         | EQUALS            | false
+    ["A"]      | ["B"]      | EQUALS            | false
+    ["A", "B"] | ["A", "B"] | EQUALS            | true
+    []         | ["A"]      | EQUALS            | false
+    ["A"]      | ["A"]      | EQUALS            | true
+    [1]        | [1]        | EQUALS            | true
+    []         | []         | { x, y -> false } | true
+    [1]        | [1]        | { x, y -> false } | false
+    [1, 2]     | [1]        | { x, y -> true }  | false
   }
 }

@@ -30,6 +30,15 @@ public class NegatingArgumentConstraint implements IArgumentConstraint {
   }
 
   @Override
+  public boolean isDeclarationEqualTo(IArgumentConstraint other) {
+    if (other instanceof NegatingArgumentConstraint) {
+      NegatingArgumentConstraint o = (NegatingArgumentConstraint) other;
+      return this.constraint.isDeclarationEqualTo(o.constraint);
+    }
+    return false;
+  }
+
+  @Override
   public boolean isSatisfiedBy(Object arg) {
     return !constraint.isSatisfiedBy(arg);
   }

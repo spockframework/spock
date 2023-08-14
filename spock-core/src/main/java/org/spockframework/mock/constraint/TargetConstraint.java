@@ -34,6 +34,15 @@ public class TargetConstraint implements IInvocationConstraint, IInteractionAwar
   }
 
   @Override
+  public boolean isDeclarationEqualTo(IInvocationConstraint other) {
+    if (other instanceof TargetConstraint) {
+      TargetConstraint o = (TargetConstraint) other;
+      return this.target == o.target;
+    }
+    return false;
+  }
+
+  @Override
   public boolean isSatisfiedBy(IMockInvocation invocation) {
     return invocation.getMockObject().matches(target, interaction);
   }

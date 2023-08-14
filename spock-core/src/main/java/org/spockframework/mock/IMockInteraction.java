@@ -32,6 +32,27 @@ public interface IMockInteraction {
 
   String getText();
 
+  /**
+   * @return {@code true}, if the user had specified cardinality
+   */
+  boolean isCardinalitySpecified();
+
+  List<IInvocationConstraint> getConstraints();
+
+  /**
+   * Returns {@code true}, if this interaction, can be overridden by the {@link IMockInteraction} {@code toCheck}.
+   *
+   * <p>This is possible if:
+   * <ul>
+   * <li>Both have no specified cardinality</li>
+   * <li>Both have the same {@link IInvocationConstraint}s, see {@link IInvocationConstraint#isDeclarationEqualTo(IInvocationConstraint)}</li>
+   * </ul>
+   *
+   * @param toCheck the element, which wants to override this.
+   * @return {@code true}, if this can be overridden.
+   */
+  boolean isThisInteractionOverridableBy(IMockInteraction toCheck);
+
   boolean matches(IMockInvocation invocation);
 
   @Nullable

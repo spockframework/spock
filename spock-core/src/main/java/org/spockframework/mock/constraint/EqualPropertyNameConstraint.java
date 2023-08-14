@@ -14,9 +14,12 @@
 
 package org.spockframework.mock.constraint;
 
+import org.spockframework.mock.IInvocationConstraint;
 import org.spockframework.mock.IMockInvocation;
 import org.spockframework.runtime.Condition;
 import org.spockframework.util.CollectionUtil;
+
+import java.util.Objects;
 
 /**
  *
@@ -27,6 +30,15 @@ public class EqualPropertyNameConstraint extends PropertyNameConstraint {
 
   public EqualPropertyNameConstraint(String propertyName) {
     this.propertyName = propertyName;
+  }
+
+  @Override
+  public boolean isDeclarationEqualTo(IInvocationConstraint other) {
+    if (other instanceof EqualPropertyNameConstraint) {
+      EqualPropertyNameConstraint o = (EqualPropertyNameConstraint) other;
+      return Objects.equals(this.propertyName, o.propertyName);
+    }
+    return false;
   }
 
   @Override

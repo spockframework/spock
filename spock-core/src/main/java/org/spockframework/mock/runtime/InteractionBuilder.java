@@ -34,8 +34,11 @@ public class InteractionBuilder {
   private final int line;
   private final int column;
   private final String text;
-
-  private int minCount = 0;
+  /**
+   * Constant to mark if the user has specified a count/cardinality
+   */
+  private static final int COUNT_NOT_SPECIFIED = Integer.MIN_VALUE;
+  private int minCount = COUNT_NOT_SPECIFIED;
   private int maxCount = Integer.MAX_VALUE;
   private List<IInvocationConstraint> invConstraints = new ArrayList<>();
   private List<Object> argNames;
@@ -183,7 +186,12 @@ public class InteractionBuilder {
 
   public static final String BUILD = "build";
   public IMockInteraction build() {
-    return new MockInteraction(line, column, text, minCount, maxCount, invConstraints,
+    boolean hasCardinality = true;
+    if (minCount == COUNT_NOT_SPECIFIED) {
+      hasCardinality = false;
+      minCount = 0;
+    }
+    return new MockInteraction(line, column, text, hasCardinality, minCount, maxCount, invConstraints,
         responseGeneratorChain.isEmpty() ? new DefaultResponseGenerator() : responseGeneratorChain);
   }
 

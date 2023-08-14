@@ -39,6 +39,17 @@ public class NamedArgumentListConstraint implements IInvocationConstraint {
   }
 
   @Override
+  public boolean isDeclarationEqualTo(IInvocationConstraint other) {
+    if (other instanceof NamedArgumentListConstraint) {
+      NamedArgumentListConstraint o = (NamedArgumentListConstraint) other;
+      return Objects.equals(this.argNames, o.argNames) &&
+        CollectionUtil.areListsEqual(this.argConstraints, o.argConstraints, IArgumentConstraint::isDeclarationEqualTo) &&
+        this.isMixed == o.isMixed;
+    }
+    return false;
+  }
+
+  @Override
   @SuppressWarnings("unchecked")
   public boolean isSatisfiedBy(IMockInvocation invocation) {
     List<Object> args = invocation.getArguments();

@@ -15,9 +15,26 @@ package org.spockframework.mock;
 
 import org.spockframework.util.UnreachableCodeError;
 
+import java.util.Collections;
 import java.util.List;
 
 abstract class DefaultInteraction implements IMockInteraction {
+
+  @Override
+  public boolean isCardinalitySpecified() {
+    return false;
+  }
+
+  @Override
+  public List<IInvocationConstraint> getConstraints() {
+    return Collections.emptyList();
+  }
+
+  @Override
+  public boolean isThisInteractionOverridableBy(IMockInteraction toCheck) {
+    return false;
+  }
+
   @Override
   public int getLine() {
     return -1;

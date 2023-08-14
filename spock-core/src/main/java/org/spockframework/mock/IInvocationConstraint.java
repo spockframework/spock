@@ -21,6 +21,11 @@ package org.spockframework.mock;
  * @author Peter Niederwieser
  */
 public interface IInvocationConstraint {
+  /**
+   * @param other the other element
+   * @return {@code true}, if both elements represent the same {@link IInvocationConstraint} from the declaration point of view
+   */
+  boolean isDeclarationEqualTo(IInvocationConstraint other);
   boolean isSatisfiedBy(IMockInvocation invocation);
   String describeMismatch(IMockInvocation invocation);
 }

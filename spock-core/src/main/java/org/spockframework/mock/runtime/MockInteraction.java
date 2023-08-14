@@ -17,6 +17,7 @@
 package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
+import org.spockframework.util.CollectionUtil;
 import org.spockframework.util.TextUtil;
 
 import java.util.*;
@@ -32,17 +33,24 @@ public class MockInteraction implements IMockInteraction {
   private final String text;
   private final int minCount;
   private final int maxCount;
+  private final boolean cardinalitySpecified;
   private final List<IInvocationConstraint> constraints;
   private final IResponseGenerator responseGenerator;
 
   private final List<IMockInvocation> acceptedInvocations = new ArrayList<>();
 
-  public MockInteraction(int line, int column, String text, int minCount,
-      int maxCount, List<IInvocationConstraint> constraints,
+  public MockInteraction(int line,
+                         int column,
+                         String text,
+                         boolean cardinalitySpecified,
+                         int minCount,
+                         int maxCount,
+                         List<IInvocationConstraint> constraints,
       IResponseGenerator responseGenerator) {
     this.line = line;
     this.column = column;
     this.text = text;
+    this.cardinalitySpecified = cardinalitySpecified;
     this.minCount = minCount;
     this.maxCount = maxCount;
     this.constraints = constraints;
@@ -53,6 +61,24 @@ public class MockInteraction implements IMockInteraction {
         ((IInteractionAware) constraint).setInteraction(this);
       }
     }
+  }
+
+  @Override
+  public boolean isCardinalitySpecified() {
+    return cardinalitySpecified;
+  }
+
+  @Override
+  public List<IInvocationConstraint> getConstraints() {
+    return Collections.unmodifiableList(constraints);
+  }
+
+  @Override
+  public boolean isThisInteractionOverridableBy(IMockInteraction toCheck) {
+    if (this.isCardinalitySpecified() || toCheck.isCardinalitySpecified()) {
+      return false;
+    }
+    return CollectionUtil.areListsEqual(this.constraints, toCheck.getConstraints(), IInvocationConstraint::isDeclarationEqualTo);
   }
 
   @Override

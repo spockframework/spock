@@ -21,15 +21,26 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
 
 import groovy.lang.Closure;
 
+import java.util.Objects;
+
 /**
  *
  * @author Peter Niederwieser
  */
 public class CodeArgumentConstraint implements IArgumentConstraint {
-  private final Closure code;
+  private final Closure<?> code;
 
-  public CodeArgumentConstraint(Closure code) {
+  public CodeArgumentConstraint(Closure<?> code) {
     this.code = code;
+  }
+
+  @Override
+  public boolean isDeclarationEqualTo(IArgumentConstraint other) {
+    if (other instanceof CodeArgumentConstraint) {
+      CodeArgumentConstraint o = (CodeArgumentConstraint) other;
+      return Objects.equals(this.code, o.code);
+    }
+    return false;
   }
 
   @Override

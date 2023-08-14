@@ -155,6 +155,38 @@ _ * subscriber.receive("hello")      // any number of calls, including zero
                                      // (rarely needed; see 'Strict Mocking')
 ----
 
+==== Interactions with Cardinality
+
+Interactions with cardinality are additive, this means if you specify two interactions with cardinality (with same target, method and argument)
+they are processed after each other:
+
+.Interactions with Cardinality are additive
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=two-interactions-cardinality]
+----
+
+==== Interactions without Cardinality
+
+Interactions without cardinality are **not** additive.
+If you specify multiple interactions without cardinality (with same target, method and argument)
+only the last interaction is respected.
+
+That allows you to specify default interactions in the `setup` method, but override it in
+some of the `feature` methods.
+
+
+.Interactions without Cardinality are **not** additive
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=two-interactions-without-cardinality]
+----
+
+NOTE: An interaction without cardinality will **not** override an interaction with cardinality and vice versa.
+
+CAUTION: Interactions in `then` blocks have always precedence over any other interactions regardless of their cardinality.
+         So an interaction in a `then` block will apply regardless what was specified in `setup`, `given` or the `when`.
+
 === Target Constraint
 
 The target constraint of an interaction describes which mock object is expected to receive the method call:

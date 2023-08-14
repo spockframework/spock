@@ -41,6 +41,21 @@ public abstract class MockInteractionDecorator implements IMockInteraction {
   }
 
   @Override
+  public boolean isCardinalitySpecified() {
+    return decorated.isCardinalitySpecified();
+  }
+
+  @Override
+  public List<IInvocationConstraint> getConstraints() {
+    return decorated.getConstraints();
+  }
+
+  @Override
+  public boolean isThisInteractionOverridableBy(IMockInteraction toCheck) {
+    return decorated.isThisInteractionOverridableBy(toCheck);
+  }
+
+  @Override
   public boolean matches(IMockInvocation invocation) {
     return decorated.matches(invocation);
   }

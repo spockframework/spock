@@ -92,12 +92,13 @@ class DetachedMockFactoryDocSpec extends Specification {
     when:
     mockUtil.attachMock(preconfiguredEngine, this)
     preconfiguredEngine.isStarted() >> true
-
+    then:
+    preconfiguredEngine.isStarted()
     // The attached now behaves differently. Because it has been attached to the
     // spec, we can also verify interactions using '1 * ...' or similar, which
     // would not be possible before attaching it.
 
-    and:
+    when:
     car.drive()
     then:
     1 * preconfiguredEngine.start()

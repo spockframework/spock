@@ -122,6 +122,42 @@ class DetachedMockFactoryDocSpec extends Specification {
   }
   // end::use-custom-mock-creator[]
 
+  def "When block interaction still active after when block without verification"() {
+    given:
+    def m = Mock(Engine)
+    when:
+    m.isStarted() >> true
+    def result = m.isStarted()
+    m.start()
+    then:
+    m.isStarted()
+    result
+    when: "Here the isStarted() still reflect the when block above"
+    result = m.isStarted()
+    then:
+    m.isStarted()
+    result
+  }
+
+  def "When block interactions are only active during the when block, if verification present"() {
+    given:
+    def m = Mock(Engine)
+    when:
+    m.isStarted() >> true
+    def result = m.isStarted()
+    m.start()
+    then:
+    //If you remove the next line the behavior of isStarted() is different
+    1 * m.start()
+    !m.isStarted()
+    result
+    when: "Now the isStarted() does not reflect the when block"
+    result = m.isStarted()
+    then:
+    !m.isStarted()
+    !result
+  }
+
   static
   // tag::engine[]
   class Engine {

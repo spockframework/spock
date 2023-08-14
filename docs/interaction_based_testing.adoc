@@ -935,8 +935,10 @@ it is only used to describe the interaction.
 NOTE: A global mock can only be created for a class type. It effectively replaces
 all instances of that type for the duration from mock creation up until the end of the feature method.
 
-CAUTION: The order of declaration global mocks is relevant.
-         The `GroovySpy(global:true)` must come before all creations of new mocked/spied objects.
+CAUTION: The declaration order of global mocks is relevant.
+         The `GroovySpy(global:true, <type>)` must come before all creations of new mocked/spied objects of `<type>`.
+         The global spies will only take effect on objects of that type, if the `GroovySpy(global:true, <type>)` was
+         executed before the `new <type>`.
 
 Since global mocks have a somewhat, well, global effect, it's often convenient
 to use them together with `GroovySpy`. This leads to the real code getting
@@ -946,6 +948,7 @@ in on objects and change their behavior just where needed.
 CAUTION: When using `GroovyMock(global:true)` it will also replace constructor calls, which will return `null` by default.
          If you want working real constructors, please use `GroovySpy` instead.
 
+.GroovyMock(global) will also replace constructors
 [source,groovy,indent=0]
 ----
 include::{sourcedir}/interaction/GlobalMockDocSpec.groovy[tag=global-mock-constructor]

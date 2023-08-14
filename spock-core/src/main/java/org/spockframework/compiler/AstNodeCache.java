@@ -96,6 +96,9 @@ public class AstNodeCache {
   public final MethodNode MockController_LeaveScope =
       MockController.getDeclaredMethods(org.spockframework.mock.runtime.MockController.LEAVE_SCOPE).get(0);
 
+  public final MethodNode MockController_FreezeScope =
+    MockController.getDeclaredMethods(org.spockframework.mock.runtime.MockController.FREEZE_SCOPE).get(0);
+
   public final MethodNode SpecificationContext_GetMockController =
       SpecificationContext.getDeclaredMethods(org.spockframework.runtime.SpecificationContext.GET_MOCK_CONTROLLER).get(0);
 

@@ -17,6 +17,7 @@
 package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
+import org.spockframework.util.InternalSpockError;
 
 import java.util.*;
 
@@ -26,6 +27,7 @@ import java.util.*;
 public class MockController implements IMockController {
   private final Deque<IInteractionScope> scopes = new LinkedList<>();
   private final List<InteractionNotSatisfiedError> errors = new ArrayList<>();
+  private boolean firstScopeFrozen;
 
   public MockController() {
     scopes.addFirst(new InteractionScope());
@@ -53,7 +55,20 @@ public class MockController implements IMockController {
   public static final String ADD_INTERACTION = "addInteraction";
 
   public synchronized void addInteraction(IMockInteraction interaction) {
-    scopes.getFirst().addInteraction(interaction);
+    IInteractionScope scope;
+    if (firstScopeFrozen) {
+      //We shall skip the first scope and use the next one, because the current first scope was frozen for interactions
+      //See Ticket #1759: Interactions in when blocks are not preserved if the then block contains an interaction
+      if (scopes.size() <= 1) {
+        throw new InternalSpockError();
+      }
+      Iterator<IInteractionScope> it = scopes.iterator();
+      it.next();
+      scope = it.next();
+    } else {
+      scope = scopes.getFirst();
+    }
+    scope.addInteraction(interaction);
   }
 
   public static final String ADD_BARRIER = "addBarrier";
@@ -66,13 +81,25 @@ public class MockController implements IMockController {
 
   public synchronized void enterScope() {
     throwAnyPreviousError();
+    firstScopeFrozen = false;
     scopes.addFirst(new InteractionScope());
+  }
+
+  public static final String FREEZE_SCOPE = "freezeScope";
+
+  /**
+   * Freeze the currently first scope, which means no more iterations can be added with {@link #addInteraction(IMockInteraction)}.
+   * The interactions added after that, are then added to the next scope in the {@code scopes}.
+   */
+  public synchronized void freezeScope() {
+    firstScopeFrozen = true;
   }
 
   public static final String LEAVE_SCOPE = "leaveScope";
 
   public synchronized void leaveScope() {
     throwAnyPreviousError();
+    firstScopeFrozen = false;
     IInteractionScope scope = scopes.removeFirst();
     scope.verifyInteractions();
   }

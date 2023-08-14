@@ -24,7 +24,7 @@ class GlobalMockDocSpec extends Specification {
     // end::global-spy[]
   }
 
-  def "Global mock mocks also constructor"() {
+  def "Global GroovyMock mocks also constructor"() {
     // tag::global-mock-constructor[]
     given:
     GroovyMock(global: true, RealSubscriber)
@@ -35,7 +35,7 @@ class GlobalMockDocSpec extends Specification {
     // end::global-mock-constructor[]
   }
 
-  def "Global mock mocks also constructor2"() {
+  def "Global GroovyMock but with real constructor"() {
     // tag::global-mock-constructor-real[]
     given:
     GroovyMock(global: true, RealSubscriber) {

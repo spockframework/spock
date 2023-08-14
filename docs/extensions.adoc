@@ -495,7 +495,6 @@ per JVM, keep in mind that Spock cannot enforce this.
 
 NOTE: This will acquire a `READ_WRITE` lock for `Resources.SYSTEM_PROPERTIES`, see <<parallel-execution.adoc#parallel-execution, Parallel Execution>> for more information.
 
-[[AutoAttach]]
 === AutoAttach
 
 Automatically attaches a detached mock to the current specification.

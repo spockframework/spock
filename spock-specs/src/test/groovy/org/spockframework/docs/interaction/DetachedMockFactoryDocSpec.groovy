@@ -4,25 +4,28 @@ import org.spockframework.mock.IDefaultResponse
 import org.spockframework.mock.IMockInvocation
 import org.spockframework.mock.MockUtil
 import org.spockframework.mock.ZeroOrNullResponse
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 import spock.mock.AutoAttach
 import spock.mock.DetachedMockFactory
 
+import java.util.concurrent.ThreadLocalRandom
+
 import static org.spockframework.docs.interaction.DetachedMockFactoryDocSpec.EngineMockCreator.StartMode.*
 
 class DetachedMockFactoryDocSpec extends Specification {
-  // tag::declare-static[]
-  static mockFactory = new DetachedMockFactory()
-  static mockUtil = new MockUtil()
-  // end::declare-static[]
+  // tag::declare-shared[]
+  @Shared mockFactory = new DetachedMockFactory()
+  @Shared mockUtil = new MockUtil()
+  // end::declare-shared[]
 
   // tag::attach-manually[]
   def "Manually attach detached mock"() {
     given:
     def manuallyAttachedEngine = mockFactory.Mock(Engine)
-    manuallyAttachedEngine.isStarted() >> true
     mockUtil.attachMock(manuallyAttachedEngine, this)
+    manuallyAttachedEngine.isStarted() >> true
     def car = new Car(engine: manuallyAttachedEngine)
 
     when:
@@ -69,20 +72,42 @@ class DetachedMockFactoryDocSpec extends Specification {
   @Unroll("Engine state #engineStateResponseType")
   def "Manually attach detached mock with preconfigured engine state"() {
     given:
-    mockUtil.attachMock(preconfiguredEngine, this)
     def car = new Car(engine: preconfiguredEngine)
+
+    // The preconfigured mock with default behaviour behaves as defined,
+    // even *without* attaching it to the spec.
 
     when:
     car.drive()
     then:
-    1 * preconfiguredEngine.start()
     possibleResponsesAfterStart.contains(preconfiguredEngine.isStarted())
 
     when:
     car.park()
     then:
-    1 * preconfiguredEngine.stop()
     possibleResponsesAfterStop.contains(preconfiguredEngine.isStarted())
+
+    // Now, let's attach the mock to the spec and override its default behaviour.
+
+    when:
+    mockUtil.attachMock(preconfiguredEngine, this)
+    preconfiguredEngine.isStarted() >> true
+
+    // The attached now behaves differently. Because it has been attached to the
+    // spec, we can also verify interactions using '1 * ...' or similar, which
+    // would not be possible before attaching it.
+
+    and:
+    car.drive()
+    then:
+    1 * preconfiguredEngine.start()
+    preconfiguredEngine.isStarted()
+
+    when:
+    car.park()
+    then:
+    1 * preconfiguredEngine.stop()
+    preconfiguredEngine.isStarted()
 
     cleanup:
     mockUtil.detachMock(preconfiguredEngine)
@@ -126,6 +151,8 @@ class DetachedMockFactoryDocSpec extends Specification {
       ALWAYS_STARTED, ALWAYS_STOPPED, RANDOMLY_STARTED, REAL_RESPONSE
     }
 
+    static DetachedMockFactory mockFactory = new DetachedMockFactory()
+
     static class EngineStateResponse implements IDefaultResponse {
       StartMode startMode
 
@@ -134,7 +161,7 @@ class DetachedMockFactoryDocSpec extends Specification {
         if (invocation.method.name != 'isStarted')
           return ZeroOrNullResponse.INSTANCE.respond(invocation)
         startMode == RANDOMLY_STARTED
-          ? new Random().nextBoolean()
+          ? ThreadLocalRandom.current().nextBoolean()
           : startMode == ALWAYS_STARTED
       }
     }

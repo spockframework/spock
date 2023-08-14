@@ -35,6 +35,20 @@ class GlobalMockDocSpec extends Specification {
     // end::global-mock-constructor[]
   }
 
+  def "Global mock mocks also constructor2"() {
+    // tag::global-mock-constructor-real[]
+    given:
+    GroovyMock(global: true, RealSubscriber) {
+      //Allow that the real constructor is called
+      new RealSubscriber(*_) >> { callRealMethod() }
+    }
+    when:
+    def sub = new RealSubscriber()
+    then:
+    sub instanceof RealSubscriber
+    // end::global-mock-constructor-real[]
+  }
+
   static class RealSubscriber implements Subscriber {
     @Override
     void receive(String message) {

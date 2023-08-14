@@ -954,6 +954,14 @@ CAUTION: When using `GroovyMock(global:true)` it will also replace constructor c
 include::{sourcedir}/interaction/GlobalMockDocSpec.groovy[tag=global-mock-constructor]
 ----
 
+If you want, that the real constructors are called:
+
+.GroovyMock(global), but using the real constructors
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/GlobalMockDocSpec.groovy[tag=global-mock-constructor-real]
+----
+
 When `Specifications` or `Features` are executed concurrently you have to make sure that the `Features` which create
 global mocks on the same types are properly guarded against each other, because a global mock changes the global state
 for the mocked `Class` during execution.

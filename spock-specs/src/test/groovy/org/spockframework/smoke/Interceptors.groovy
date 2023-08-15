@@ -253,6 +253,7 @@ class SubSpec extends SuperSpec {
             currentFeature
             assert false: 'currentFeature should not be set'
           } catch (IllegalStateException ise) {
+            assert ise.message == 'Cannot request current feature in @Shared context'
           }
         }
       }
@@ -274,6 +275,7 @@ class SubSpec extends SuperSpec {
             currentFeature
             assert false: 'currentFeature should not be set'
           } catch (IllegalStateException ise) {
+            assert ise.message == 'Cannot request current feature in @Shared context'
           }
         }
       }

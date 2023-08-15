@@ -32,7 +32,6 @@ dependencies {
   testRuntimeOnly libs.cglib
   testRuntimeOnly libs.objenesis
   testRuntimeOnly libs.h2database
-  testRuntimeOnly libs.discordWebhooks
 
   groovyConsole groovyConsoleExtraDependencies
 

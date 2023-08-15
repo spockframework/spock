@@ -267,7 +267,7 @@ public class SpecialMethodCall implements ISpecialMethodCall {
     String methodName = methodCallExpr.getMethodAsString();
 
     try {
-      // if targetType has any method with a parameter type that is not in the
+      // if targetType has any method with a parameter or return type that is not in the
       // compile classpath this call will fail with a NoClassDefFoundError
       List<MethodNode> methods = targetType.getMethods(methodName);
       for (MethodNode method : methods) {

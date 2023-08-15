@@ -15,6 +15,7 @@
 package org.spockframework.smoke
 
 import org.codehaus.groovy.ast.ClassNode
+import org.jetbrains.annotations.Debug
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
 
@@ -82,20 +83,32 @@ println "hi"
     thrown(InvalidSpecCompileException)
   }
 
+  static class Foo {
+    Debug getDebug() { return null }
+    void bar() {}
+  }
+
   def "compiling with missing dependencies does not fail"() {
-    compiler.addClassImport('club.minnced.discord.webhook.WebhookClientBuilder')
+    given:
+    compiler.addClassImport('org.spockframework.smoke.CompileTimeErrorReporting.Foo')
 
     when:
-    new ClassNode(Class.forName('club.minnced.discord.webhook.WebhookClientBuilder'))
-      .getMethods('setWait')
+    new ClassNode(Class.forName('org.spockframework.smoke.CompileTimeErrorReporting$Foo'))
+      .getMethods('bar')
 
-    then:
-    thrown(NoClassDefFoundError)
+    then: 'make sure it would fail for the right reason, this might change if `Debug` makes it into the runtime classpath'
+    NoClassDefFoundError ncdfe = thrown()
+    println(ncdfe.message)
+    ncdfe.message.contains('org.spockframework.smoke.CompileTimeErrorReporting$Foo')
+    ncdfe.message.contains('org/jetbrains/annotations/Debug')
 
     when:
     compiler.compileFeatureBody """
-expect:
-new WebhookClientBuilder(1, "").setWait(false)
+when:
+new Foo().bar()
+
+then:
+noExceptionThrown()
     """
 
     then:

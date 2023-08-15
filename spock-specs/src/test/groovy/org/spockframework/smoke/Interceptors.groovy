@@ -120,7 +120,6 @@ class SubSpec extends SuperSpec {
 """
 
     then:
-    noExceptionThrown()
     snapshotter.assertThat(LifecycleRecorderAndContextTesterExtension.lifecycleOutline).matchesSnapshot()
   }
 
@@ -143,7 +142,6 @@ class FooSpec extends Specification {
 """
 
     then:
-    noExceptionThrown()
     snapshotter.assertThat(LifecycleRecorderAndContextTesterExtension.lifecycleOutline).matchesSnapshot()
   }
 

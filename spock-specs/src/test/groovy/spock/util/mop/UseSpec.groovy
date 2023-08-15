@@ -23,6 +23,7 @@ import spock.lang.Requires
 import spock.lang.Specification
 
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 class UseOnMethods extends Specification {
   // can be applied to a fixture method
@@ -90,6 +91,7 @@ class IsolatedUseSpec extends EmbeddedSpecification {
     runner.addClassImport(CountDownLatch)
     runner.addClassImport(StringExtensions)
     runner.addClassImport(ExecutionMode)
+    runner.addClassImport(TimeUnit)
     runner.configurationScript {
       runner {
         parallel {
@@ -100,9 +102,11 @@ class IsolatedUseSpec extends EmbeddedSpecification {
     }
   }
 
-  def "executing iterations in parallel works with annotated specification if enabled"() {
+  def "executing iterations in parallel is prevented with annotated specification"() {
+    given:
+    runner.throwFailure = false
+
     when:
-    getSpecificationContext()
     def result = runner.runWithImports '''
       @Use(StringExtensions)
       class ASpec extends Specification {
@@ -113,10 +117,9 @@ class IsolatedUseSpec extends EmbeddedSpecification {
         def feature() {
           given:
           latch.countDown()
-          latch.await()
 
           expect:
-          "foo".duplicate() == "foofoo"
+          !latch.await(10, TimeUnit.SECONDS)
 
           where:
           i << (1..2)
@@ -125,12 +128,14 @@ class IsolatedUseSpec extends EmbeddedSpecification {
     '''
 
     then:
-    result.testsSucceededCount + result.testsAbortedCount == 3
+    verifyAll {
+      result.testsSucceededCount == 1
+      result.testsAbortedCount == 2
+    }
   }
 
   def "executing iterations in parallel works with annotated feature"() {
     when:
-    getSpecificationContext()
     def result = runner.runSpecBody '''
       @Shared
       CountDownLatch latch = new CountDownLatch(2)
@@ -139,9 +144,9 @@ class IsolatedUseSpec extends EmbeddedSpecification {
       def feature() {
         given:
         latch.countDown()
-        latch.await()
 
         expect:
+        latch.await(10, TimeUnit.SECONDS)
         "foo".duplicate() == "foofoo"
 
         where:
@@ -150,7 +155,7 @@ class IsolatedUseSpec extends EmbeddedSpecification {
     '''
 
     then:
-    result.testsSucceededCount + result.testsAbortedCount == 3
+    result.testsSucceededCount == 3
   }
 }
 

@@ -25,6 +25,7 @@ import io.github.typesafegithub.workflows.actions.gradle.GradleBuildActionV2
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
 import io.github.typesafegithub.workflows.domain.triggers.Cron
+import io.github.typesafegithub.workflows.domain.triggers.MergeGroup
 import io.github.typesafegithub.workflows.domain.triggers.PullRequest
 import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.domain.triggers.Schedule
@@ -40,6 +41,7 @@ workflow(
             branches = listOf("!dependabot/**")
         ),
         PullRequest(),
+        MergeGroup(),
         Schedule(
             listOf(
                 Cron(

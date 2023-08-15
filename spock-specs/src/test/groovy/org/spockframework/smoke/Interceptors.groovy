@@ -155,112 +155,115 @@ class SubSpec extends SuperSpec {
     @Override
     void visitSpecAnnotation(LifecycleTest annotation, SpecInfo specInfo) {
       specInfo.specsBottomToTop*.addSharedInitializerInterceptor {
-        it.with {
-          assert spec
-        }
+        assertSpecContext(it)
         proceed(it, 'shared initializer', "$it.spec.name")
       }
       specInfo.allSharedInitializerMethods*.addInterceptor {
-        it.with {
-          assert spec
-        }
+        assertSpecMethodContext(it)
         proceed(it, 'shared initializer method', "$it.spec.name.$it.method.name()")
       }
       specInfo.addInterceptor {
-        it.with {
-          assert spec
-        }
+        assertSpecContext(it)
         proceed(it, 'specification', "$it.spec.name")
       }
       specInfo.specsBottomToTop*.addSetupSpecInterceptor {
-        it.with {
-          assert spec
-        }
+        assertSpecContext(it)
         proceed(it, 'setup spec', "$it.spec.name")
       }
       specInfo.allSetupSpecMethods*.addInterceptor {
-        it.with {
-          assert spec
-        }
+        assertSpecMethodContext(it)
         proceed(it, 'setup spec method', "$it.spec.name.$it.method.name()")
       }
       specInfo.allFeatures*.addInterceptor {
-        it.with {
-          assert spec
-        }
+        assertFeatureContext(it)
         proceed(it, 'feature', "$it.spec.name.$it.feature.name")
       }
       specInfo.specsBottomToTop.each { spec ->
         spec.addInitializerInterceptor {
-          it.with {
-            assert spec
-          }
+          assertIterationContext(it)
           proceed(it, 'initializer', "$it.spec.name.$it.feature.name / $spec.name")
         }
       }
       specInfo.allInitializerMethods*.addInterceptor {
-        it.with {
-          assert spec
-        }
+        assertIterationMethodContext(it)
         proceed(it, 'initializer method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
       specInfo.allFeatures*.addIterationInterceptor {
-        it.with {
-          assert spec
-        }
+        assertIterationContext(it)
         proceed(it, 'iteration', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
       specInfo.specsBottomToTop.each { spec ->
         spec.addSetupInterceptor {
-          it.with {
-            assert spec
-          }
+          assertIterationContext(it)
           proceed(it, 'setup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex] / $spec.name")
         }
       }
       specInfo.allSetupMethods*.addInterceptor {
-        it.with {
-          assert spec
-        }
+        assertIterationMethodContext(it)
         proceed(it, 'setup method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
       specInfo.allFeatures*.featureMethod*.addInterceptor {
-        it.with {
-          assert spec
-        }
+        assertIterationMethodContext(it)
         proceed(it, 'feature method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
       specInfo.specsBottomToTop.each { spec ->
         spec.addCleanupInterceptor {
-          it.with {
-            assert spec
-          }
+          assertIterationContext(it)
           proceed(it, 'cleanup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex] / $spec.name")
         }
       }
       specInfo.allCleanupMethods*.addInterceptor {
-        it.with {
-          assert spec
-        }
+        assertIterationMethodContext(it)
         proceed(it, 'cleanup method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
       specInfo.specsBottomToTop*.addCleanupSpecInterceptor {
-        it.with {
-          assert spec
-        }
+        assertSpecContext(it)
         proceed(it, 'cleanup spec', "$it.spec.name")
       }
       specInfo.allCleanupSpecMethods*.addInterceptor {
-        it.with {
-          assert spec
-        }
+        assertSpecMethodContext(it)
         proceed(it, 'cleanup spec method', "$it.spec.name.$it.method.name()")
       }
       specInfo.allFixtureMethods*.addInterceptor {
         it.with {
-          assert spec
+          def specFixture = method.name.endsWith('Spec')
+          if (specFixture) {
+            assertSpecMethodContext(it)
+          } else {
+            assertIterationMethodContext(it)
+          }
         }
         proceed(it, 'fixture method', "${it.feature?.with { feature -> "$feature.parent.name.$feature.name[#$it.iteration.iterationIndex] / " } ?: ''}$it.spec.name.$it.method.name()")
+      }
+    }
+
+    static assertSpecContext(IMethodInvocation invocation) {
+      invocation.with {
+        assert spec
+      }
+    }
+
+    static assertSpecMethodContext(IMethodInvocation invocation) {
+      invocation.with {
+        assert spec
+      }
+    }
+
+    static assertFeatureContext(IMethodInvocation invocation) {
+      invocation.with {
+        assert spec
+      }
+    }
+
+    static assertIterationContext(IMethodInvocation invocation) {
+      invocation.with {
+        assert spec
+      }
+    }
+
+    static assertIterationMethodContext(IMethodInvocation invocation) {
+      invocation.with {
+        assert spec
       }
     }
 

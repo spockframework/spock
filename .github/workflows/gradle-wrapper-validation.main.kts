@@ -21,6 +21,7 @@
 import io.github.typesafegithub.workflows.actions.actions.CheckoutV3
 import io.github.typesafegithub.workflows.actions.gradle.WrapperValidationActionV1
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
+import io.github.typesafegithub.workflows.domain.triggers.MergeGroup
 import io.github.typesafegithub.workflows.domain.triggers.PullRequest
 import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.dsl.workflow
@@ -30,7 +31,8 @@ workflow(
     name = "Validate Gradle Wrapper",
     on = listOf(
         Push(),
-        PullRequest()
+        PullRequest(),
+        MergeGroup()
     ),
     sourceFile = __FILE__.toPath(),
     targetFileName = "${__FILE__.name.substringBeforeLast(".main.kts")}.yml"

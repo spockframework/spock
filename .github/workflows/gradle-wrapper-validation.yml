@@ -6,6 +6,7 @@ name: 'Validate Gradle Wrapper'
 on:
   push: {}
   pull_request: {}
+  merge_group: {}
 jobs:
   check_yaml_consistency:
     name: 'Check YAML consistency'

@@ -259,6 +259,7 @@ class SubSpec extends SuperSpec {
             currentIteration
             assert false: 'currentIteration should not be set'
           } catch (IllegalStateException ise) {
+            assert ise.message == 'Cannot request current iteration in @Shared context, or feature context'
           }
         }
       }
@@ -286,6 +287,7 @@ class SubSpec extends SuperSpec {
             currentIteration
             assert false: 'currentIteration should not be set'
           } catch (IllegalStateException ise) {
+            assert ise.message == 'Cannot request current iteration in @Shared context, or feature context'
           }
         }
       }
@@ -308,6 +310,7 @@ class SubSpec extends SuperSpec {
             currentIteration
             assert false: 'currentIteration should not be set'
           } catch (IllegalStateException ise) {
+            assert ise.message == 'Cannot request current iteration in @Shared context, or feature context'
           }
         }
       }

@@ -37,8 +37,8 @@ public class ExceptionUtil {
    * @throws T unconditionally
    */
   @SuppressWarnings("unchecked")
-  public static <R, T extends Throwable> R sneakyThrow(Throwable t) throws T {
-    throw (T) t;
+  public static <R, T extends Throwable> R sneakyThrow(Throwable throwable) throws T {
+    throw (T) throwable;
   }
 
   public static String printStackTrace(Throwable t) {
@@ -62,13 +62,8 @@ public class ExceptionUtil {
 
   public static void rethrowIfUnrecoverable(Throwable t) {
     if (t instanceof OutOfMemoryError) {
-      throwAsUncheckedException(t);
+      sneakyThrow(t);
     }
-  }
-
-  @SuppressWarnings("unchecked")
-  private static <T extends Throwable> void throwAsUncheckedException(Throwable t) throws T {
-    throw (T) t;
   }
 
 }

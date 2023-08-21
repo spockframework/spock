@@ -368,6 +368,100 @@ To use conditions in other places, you need to designate them with Groovy&#8217;
 <div class="paragraph">
 <p>If an explicit condition is violated, it will produce the same nice diagnostic message as an implicit condition.</p>
 </div>
+<div class="sect5">
+<h6 id="_opt_out_of_condition_handling"><a class="anchor" href="#_opt_out_of_condition_handling"></a><a class="link" href="#_opt_out_of_condition_handling">Opt-out of condition handling</a></h6>
+<div class="paragraph">
+<p>Sometimes, you may want to use a top-level expression that is not treated as a condition.</p>
+</div>
+<div class="paragraph">
+<p>For example, you may want to loop over a list with <code>each</code> and do assertions on its items.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">expect</span>:
+aList.each { <span class="keyword">assert</span> <span class="local-variable">it</span> &gt; <span class="integer">0</span> }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>However, this will fail if the list is empty, as <code>each</code> returns the list again and an empty list is falsy according to Groovy-truth.</p>
+</div>
+<div class="paragraph">
+<p>To avoid this, you can use the <code>!!</code> operator to opt-out of condition handling:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">expect</span>:
+!!aList.each { <span class="keyword">assert</span> <span class="local-variable">it</span> &gt; <span class="integer">0</span> }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>!!</code> operator can also be used to hide the contents of an expression in an explicit assertion statement.
+This can be helpful, if the rendered expression is too long to be readable, or if you want to hide the data itself.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> foo = <span class="string"><span class="delimiter">'</span><span class="content">very long foo</span><span class="delimiter">'</span></span>
+<span class="keyword">def</span> bar = <span class="string"><span class="delimiter">'</span><span class="content">very long bar</span><span class="delimiter">'</span></span>
+<span class="keyword">assert</span> !!(foo == bar) : <span class="string"><span class="delimiter">&quot;</span><span class="content">foobar</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>will be rendered as</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>(foo == bar)
+
+foobar</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>as opposed to</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>foo == bar
+|   |  |
+|   |  very long bar
+|   false
+|   3 differences (76% similarity)
+|   very long (foo)
+|   very long (bar)
+very long foo
+
+foobar</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and you can even leave out the message, although it is not recommended, to get this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">assert</span> !!(foo == bar)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>will be rendered as</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>(foo == bar)</pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+The <code>!!</code> must be the outermost expression, see <a href="https://groovy-lang.org/operators.html#_operator_precedence">Groovy&#8217;s docs on Operator Precedence</a>.
+           If in doubt use parentheses, <code>!!(expression)</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 <div class="sect4">
 <h5 id="_exception_conditions"><a class="anchor" href="#_exception_conditions"></a><a class="link" href="#_exception_conditions">Exception Conditions</a></h5>
@@ -1030,7 +1124,7 @@ used (like specifying the behavior of exception conditions). In all other cases,
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2023-08-21 12:42:45 UTC
+Last updated 2023-08-21 15:33:15 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

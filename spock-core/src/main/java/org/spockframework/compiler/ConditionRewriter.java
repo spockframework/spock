@@ -596,6 +596,13 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
   }
 
   private Statement rewriteCondition(Expression expr, Expression message, boolean explicit) {
+    boolean optOut = isOptOutExpression(expr);
+    if (optOut) {
+      expr = removeOptOutPrefix(expr);
+      if (!explicit) {
+        return new ExpressionStatement(expr);
+      }
+    }
     if (isSpecialCollectionCondition(expr)) { // todo check if we can better integrate it
       expr = transformSpecialCollectionCondition(expr);
     }
@@ -606,21 +613,37 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
       if ((Identifiers.WITH.equals(methodName) || Identifiers.VERIFY_ALL.equals(methodName))) {
         return surroundSpecialTryCatch(expr);
       }
-      return rewriteMethodCondition(methodCallExpression, message, explicit);
+      return rewriteMethodCondition(methodCallExpression, message, explicit, optOut);
     }
 
     if (expr instanceof StaticMethodCallExpression)
-      return rewriteStaticMethodCondition((StaticMethodCallExpression) expr, message, explicit);
+      return rewriteStaticMethodCondition((StaticMethodCallExpression) expr, message, explicit, optOut);
 
-    return rewriteOtherCondition(expr, message);
+    return rewriteOtherCondition(expr, message, optOut);
   }
 
-  private Statement rewriteMethodCondition(MethodCallExpression condition, Expression message, boolean explicit) {
+  /**
+   * Treat the nonsensical `!!` prefix as opt-out from implicit conditions
+   */
+  private boolean isOptOutExpression(Expression expr) {
+    return expr instanceof NotExpression && ((NotExpression) expr).getExpression() instanceof NotExpression;
+  }
+
+  private Expression removeOptOutPrefix(Expression expr) {
+    return ((NotExpression)((NotExpression)expr).getExpression()).getExpression();
+  }
+
+  private Statement rewriteMethodCondition(MethodCallExpression condition, Expression message, boolean explicit, boolean optOut) {
     MethodCallExpression rewritten;
     int lastVariableNum;
-    final Expression converted = convert(condition);
-    rewritten = (MethodCallExpression) unrecord(converted);
-    lastVariableNum = extractVariableNumber(converted);
+    if (explicit && optOut) {
+      rewritten = condition;
+      lastVariableNum = -1;
+    } else {
+      final Expression converted = convert(condition);
+      rewritten = (MethodCallExpression) unrecord(converted);
+      lastVariableNum = extractVariableNumber(converted);
+    }
 
     List<Expression> args = new ArrayList<>();
     args.add(rewritten.getObjectExpression());
@@ -638,16 +661,21 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
             resources.getAstNodeCache().SpockRuntime_VerifyMethodCondition,
             condition,
             message,
-            args));
+            args, optOut), optOut);
   }
 
   private Statement rewriteStaticMethodCondition(StaticMethodCallExpression condition, Expression message,
-      boolean explicit) {
+                                                 boolean explicit, boolean optOut) {
     StaticMethodCallExpression rewritten;
     int lastVariableNum;
-    final Expression converted = convert(condition);
-    rewritten = (StaticMethodCallExpression) unrecord(converted);
-    lastVariableNum = extractVariableNumber(converted);
+    if (explicit && optOut) {
+      rewritten = condition;
+      lastVariableNum = -1;
+    } else {
+      final Expression converted = convert(condition);
+      rewritten = (StaticMethodCallExpression) unrecord(converted);
+      lastVariableNum = extractVariableNumber(converted);
+    }
 
     List<Expression> args = new ArrayList<>();
     args.add(new ClassExpression(rewritten.getOwnerType()));
@@ -665,16 +693,18 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
             resources.getAstNodeCache().SpockRuntime_VerifyMethodCondition,
             condition,
             message,
-            args));
+            args,
+            optOut),
+        optOut);
   }
 
-  private Statement rewriteOtherCondition(Expression condition, Expression message) {
-    Expression rewritten = convert(condition);
+  private Statement rewriteOtherCondition(Expression condition, Expression message, boolean optOut) {
+    Expression rewritten = optOut ? condition : convert(condition);
 
     final Expression executeAndVerify = rewriteToSpockRuntimeCall(resources.getAstNodeCache().SpockRuntime_VerifyCondition,
-        condition, message, singletonList(rewritten));
+        condition, message, singletonList(rewritten), optOut);
 
-    return surroundWithTryCatch(condition, message, executeAndVerify);
+    return surroundWithTryCatch(condition, message, executeAndVerify, optOut);
   }
 
   private Expression transformSpecialCollectionCondition(Expression condition) {
@@ -725,7 +755,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
     return false;
   }
 
-  private TryCatchStatement surroundWithTryCatch(Expression condition, Expression message, Expression executeAndVerify) {
+  private TryCatchStatement surroundWithTryCatch(Expression condition, Expression message, Expression executeAndVerify, boolean optOut) {
     final TryCatchStatement tryCatchStatement = new TryCatchStatement(
         new ExpressionStatement(executeAndVerify),
         EmptyStatement.INSTANCE
@@ -740,7 +770,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
                     resources.getAstNodeCache().SpockRuntime_ConditionFailedWithException,
                     new ArgumentListExpression(asList(
                         new VariableExpression(errorCollectorName),
-                      new VariableExpression(valueRecorderName),                      // recorder
+                        optOut ? ConstantExpression.NULL : new VariableExpression(valueRecorderName),  // recorder
                         new ConstantExpression(resources.getSourceText(condition)),   // text
                         new ConstantExpression(condition.getLineNumber()),            // line
                         new ConstantExpression(condition.getColumnNumber()),          // column
@@ -779,7 +809,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
   }
 
   private Expression rewriteToSpockRuntimeCall(MethodNode method, Expression condition, Expression message,
-      List<Expression> additionalArgs) {
+      List<Expression> additionalArgs, boolean optOut) {
     List<Expression> args = new ArrayList<>();
 
     MethodCallExpression result = createDirectMethodCall(
@@ -787,7 +817,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
         new ArgumentListExpression(args));
 
     args.add(new VariableExpression(errorCollectorName, resources.getAstNodeCache().ErrorCollector));
-    args.add(createDirectMethodCall(
+    args.add(createDirectMethodCall(optOut ? ConstantExpression.NULL :
             new VariableExpression(valueRecorderName),
             resources.getAstNodeCache().ValueRecorder_Reset,
             ArgumentListExpression.EMPTY_ARGUMENTS));

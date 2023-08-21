@@ -14,6 +14,8 @@
 
 package org.spockframework.smoke
 
+import org.codehaus.groovy.ast.ClassNode
+import org.jetbrains.annotations.Debug
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
 
@@ -79,5 +81,37 @@ println "hi"
 
     then:
     thrown(InvalidSpecCompileException)
+  }
+
+  static class Foo {
+    Debug getDebug() { return null }
+    void bar() {}
+  }
+
+  def "compiling with missing dependencies does not fail"() {
+    given:
+    compiler.addClassImport('org.spockframework.smoke.CompileTimeErrorReporting.Foo')
+
+    when:
+    new ClassNode(Class.forName('org.spockframework.smoke.CompileTimeErrorReporting$Foo'))
+      .getMethods('bar')
+
+    then: 'make sure it would fail for the right reason, this might change if `Debug` makes it into the runtime classpath'
+    NoClassDefFoundError ncdfe = thrown()
+    println(ncdfe.message)
+    ncdfe.message.contains('org.spockframework.smoke.CompileTimeErrorReporting$Foo')
+    ncdfe.message.contains('org/jetbrains/annotations/Debug')
+
+    when:
+    compiler.compileFeatureBody """
+when:
+new Foo().bar()
+
+then:
+noExceptionThrown()
+    """
+
+    then:
+    noExceptionThrown()
   }
 }

@@ -50,13 +50,17 @@ class PreprocessWorkflowsPlugin implements Plugin<Project> {
       }
     )
 
-    def preprocessWorkflows = project.tasks.register('preprocessWorkflows')
+    def preprocessWorkflows = project.tasks.register('preprocessWorkflows') {
+      it.group = 'github actions'
+    }
     project.file('.github/workflows').eachFileMatch(~/.*\.main\.kts$/) { workflowScript ->
       def workflowName = workflowScript.name - ~/\.main\.kts$/
       def pascalCasedWorkflowName = workflowName
         .replaceAll(/-\w/) { String it -> it[1].toUpperCase() }
         .replaceFirst(/^\w/) { String it -> it[0].toUpperCase() }
       def preprocessWorkflow = project.tasks.register("preprocess${pascalCasedWorkflowName}Workflow", JavaExec) {
+        it.group = 'github actions'
+
         it.inputs
           .file(workflowScript)
           .withPropertyName('workflowScript')

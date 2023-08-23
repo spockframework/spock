@@ -323,7 +323,7 @@ class Ext <T extends Serializable, V extends Cloneable> {
   }
 
   @Requires({ GroovyRuntimeUtil.groovy4orNewer })
-  def "Primitive types are use in AST transformation Groovy >= 4"() {
+  def "Primitive types are used in AST transformation Groovy >= 4"() {
     when:
     def result = compiler.transpileWithImports('''
 class TestSpec extends Specification {
@@ -345,7 +345,7 @@ class TestSpec extends Specification {
   }
 
   @Requires({ GroovyRuntimeUtil.groovy3orOlder })
-  def "Primitive types are use in AST transformation Groovy <= 3"() {
+  def "Primitive types are used in AST transformation Groovy <= 3"() {
     when:
     def result = compiler.transpileWithImports('''
 class TestSpec extends Specification {

@@ -1,5 +1,6 @@
 package spock.util
 
+import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.FieldVisitor
@@ -123,7 +124,7 @@ class FilteringClassVisitor extends ClassVisitor {
   }
 
   @Override
-  org.objectweb.asm.AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
+  AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
     if (showSet.contains(Show.ANNOTATIONS)) {
       return super.visitAnnotation(descriptor, visible)
     }
@@ -167,7 +168,7 @@ class FilteringMethodVisitor extends MethodVisitor {
   }
 
   @Override
-  org.objectweb.asm.AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
+  AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
     if (showSet.contains(Show.ANNOTATIONS)) {
       return super.visitAnnotation(descriptor, visible)
     }

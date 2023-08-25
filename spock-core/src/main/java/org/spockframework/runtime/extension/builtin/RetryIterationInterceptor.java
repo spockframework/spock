@@ -19,10 +19,12 @@ package org.spockframework.runtime.extension.builtin;
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.IterationInfo;
 import org.spockframework.runtime.model.MethodInfo;
+import org.spockframework.util.ThreadSafe;
 import spock.lang.Retry;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -76,12 +78,13 @@ public class RetryIterationInterceptor extends RetryBaseInterceptor implements I
     }
   }
 
+  @ThreadSafe
   private class IterationState {
-    private final Map<IterationInfo, AtomicBoolean> finalIteration = new ConcurrentHashMap<>();
-    private final Map<IterationInfo, List<Throwable>> throwables = new ConcurrentHashMap<>();
+    private final ConcurrentMap<IterationInfo, AtomicBoolean> finalIteration = new ConcurrentHashMap<>();
+    private final ConcurrentMap<IterationInfo, CopyOnWriteArrayList<Throwable>> throwablesByIteration = new ConcurrentHashMap<>();
 
     void resetFailures(IterationInfo iteration) {
-      this.throwables.computeIfPresent(iteration, (key, throwables) -> {
+      this.throwablesByIteration.computeIfPresent(iteration, (key, throwables) -> {
         throwables.clear();
         return throwables;
       });
@@ -94,15 +97,17 @@ public class RetryIterationInterceptor extends RetryBaseInterceptor implements I
     }
 
     void failIteration(IterationInfo iteration, Throwable failure) {
-      List<Throwable> throwables = this.throwables.computeIfAbsent(iteration, key -> new CopyOnWriteArrayList<>());
+      List<Throwable> throwables = this.throwablesByIteration.computeIfAbsent(iteration, key -> new CopyOnWriteArrayList<>());
       throwables.add(failure);
-      if (finalIteration.containsKey(iteration) && finalIteration.get(iteration).get()) {
+      AtomicBoolean finalIterationValue = finalIteration.get(iteration);
+      if ((finalIterationValue != null) && finalIterationValue.get()) {
         throw new MultipleFailuresError("Retries exhausted", throwables);
       }
     }
 
     boolean notFailed(IterationInfo iteration) {
-      return !throwables.containsKey(iteration) || throwables.get(iteration).isEmpty();
+      List<Throwable> throwables = throwablesByIteration.get(iteration);
+      return (throwables == null) || throwables.isEmpty();
     }
   }
 }

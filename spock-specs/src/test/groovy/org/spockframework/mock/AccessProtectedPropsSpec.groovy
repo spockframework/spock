@@ -33,7 +33,7 @@ class AccessProtectedPropsSpec extends Specification {
   @Issue("https://github.com/spockframework/spock/issues/1608")
   def "Access protected const should be accessible in Groovy 3&4 Issue #1501"() {
     when:
-    AccessProtectedSubClass mySpy = Spy(AccessProtectedSubClass)
+    AccessProtectedSubClass mySpy = Spy()
     then:
     mySpy.accessStaticFlag()
   }

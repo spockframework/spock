@@ -70,7 +70,7 @@ class AccessProtectedPropsSpec extends Specification {
   @Issue("https://github.com/spockframework/spock/issues/1452")
   def "Access protected fields Issue #1452"() {
     when:
-    AccessProtectedSubClass mySpy = Spy(AccessProtectedSubClass)
+    AccessProtectedSubClass mySpy = Spy()
     then:
     mySpy.nonStaticFlag
     mySpy.staticFlag

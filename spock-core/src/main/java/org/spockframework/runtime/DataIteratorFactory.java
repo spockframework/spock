@@ -5,12 +5,15 @@ import org.spockframework.runtime.model.*;
 import java.util.*;
 
 import org.jetbrains.annotations.NotNull;
+import org.spockframework.util.Nullable;
 
 import static java.util.Collections.emptyIterator;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
+import static org.spockframework.runtime.GroovyRuntimeUtil.closeQuietly;
 
 public class DataIteratorFactory {
+  public static final int UNKNOWN_ITERATIONS = -1;
 
   protected final IRunSupervisor supervisor;
 
@@ -43,25 +46,25 @@ public class DataIteratorFactory {
       }
     }
 
-    protected int estimateNumIterations(Object dataProvider) {
+    protected int estimateNumIterations(@Nullable Object dataProvider) {
       if (context.getErrorInfoCollector().hasErrors()) {
-        return -1;
+        return UNKNOWN_ITERATIONS;
       }
 
       // unbelievably, DefaultGroovyMethods provides a size() method for Iterators,
       // although it is of course destructive (i.e. it exhausts the Iterator)
       if (dataProvider instanceof Iterator) {
-        return -1;
+        return UNKNOWN_ITERATIONS;
       }
 
       Object rawSize = GroovyRuntimeUtil.invokeMethodQuietly(dataProvider, "size");
       if (!(rawSize instanceof Number)) {
-        return -1;
+        return UNKNOWN_ITERATIONS;
       }
 
       int size = ((Number) rawSize).intValue();
       if (size < 0) {
-        return -1;
+        return UNKNOWN_ITERATIONS;
       }
 
       return size;
@@ -69,7 +72,7 @@ public class DataIteratorFactory {
 
     protected int estimateNumIterations(Object[] dataProviders) {
       if (context.getErrorInfoCollector().hasErrors()) {
-        return -1;
+        return UNKNOWN_ITERATIONS;
       }
       if (dataProviders.length == 0) {
         return 1;
@@ -84,7 +87,7 @@ public class DataIteratorFactory {
         result = size;
       }
 
-      return result == Integer.MAX_VALUE ? -1 : result;
+      return result == Integer.MAX_VALUE ? UNKNOWN_ITERATIONS : result;
     }
 
     protected boolean haveNext(Iterator<?>[] iterators, List<DataProviderInfo> dataProviderInfos) {
@@ -257,17 +260,8 @@ public class DataIteratorFactory {
 
     @Override
     public void close() {
-      if (dataProviders != null) {
-        for (Object provider : dataProviders) {
-          GroovyRuntimeUtil.invokeMethodQuietly(provider, "close");
-        }
-      }
-
-      if (dataProviderIterators != null) {
-        for (IDataIterator dataProviderIterator : dataProviderIterators) {
-          GroovyRuntimeUtil.invokeMethodQuietly(dataProviderIterator, "close");
-        }
-      }
+      closeQuietly(dataProviders);
+      closeQuietly((Object[]) dataProviderIterators);
     }
 
     @Override
@@ -398,6 +392,13 @@ public class DataIteratorFactory {
       return dataIterators.toArray(new IDataIterator[0]);
     }
 
+    /**
+     * Creates a multiplier that is backed by data providers and on-the-fly multiplies them as they are processed.
+     *
+     * @param dataVariableMultiplication the multiplication for which to create the multiplier
+     * @param i the index of the first data variable for the given multiplication
+     * @return the data provider multiplier
+     */
     private DataProviderMultiplier createDataProviderMultiplier(DataVariableMultiplication dataVariableMultiplication, int i) {
       DataVariableMultiplicationFactor multiplier = dataVariableMultiplication.getMultiplier();
       DataVariableMultiplicationFactor multiplicand = dataVariableMultiplication.getMultiplicand();
@@ -406,9 +407,19 @@ public class DataIteratorFactory {
       int multiplicandDataVariablesLength = multiplicand.getDataVariables().length;
 
       if (multiplier instanceof DataVariableMultiplication) {
+        // recursively dive into the multiplication depth-first
+        // if you combined a with b with c with d, the multiplication is represented as
+        // (((a * b) * c) * d), where each character can represent multiple data providers
+        // this path handles all multiplications except (a * b) which is handled in the else path
+        // through this depth-first recursion ultimately (a * b) is handled first,
+        // then (ab * c), then (abc * d).
+        //
+        // here we first build the data provider multiplier for the multiplier
+        // then we collect the data provider infos and data providers for the multiplicand
+        // and then create the data provider multiplier for them
         DataProviderMultiplier multiplierProvider = createDataProviderMultiplier((DataVariableMultiplication) multiplier, i);
-        Object[] multiplicandProviders = new Object[multiplicandDataVariablesLength];
         List<DataProviderInfo> multiplicandProviderInfos = new ArrayList<>();
+        Object[] multiplicandProviders = new Object[multiplicandDataVariablesLength];
 
         List<DataProviderInfo> dataProviderInfos = context.getCurrentFeature().getDataProviders();
         int j = multiplierDataVariablesLength;
@@ -423,10 +434,14 @@ public class DataIteratorFactory {
           Arrays.asList(dataVariableMultiplication.getDataVariables()),
           multiplicandProviderInfos, multiplierProvider, multiplicandProviders);
       } else {
-        Object[] multiplierProviders = new Object[multiplierDataVariablesLength];
-        Object[] multiplicandProviders = new Object[multiplicandDataVariablesLength];
+        // this path handles the innermost multiplication (a * b)
+        //
+        // it collects the data provider infos and data providers for a and b
+        // and then creates a data provider multiplier for them
         List<DataProviderInfo> multiplierProviderInfos = new ArrayList<>();
         List<DataProviderInfo> multiplicandProviderInfos = new ArrayList<>();
+        Object[] multiplierProviders = new Object[multiplierDataVariablesLength];
+        Object[] multiplicandProviders = new Object[multiplicandDataVariablesLength];
 
         List<DataProviderInfo> dataProviderInfos = context.getCurrentFeature().getDataProviders();
         int j = 0;
@@ -494,7 +509,7 @@ public class DataIteratorFactory {
 
     @Override
     public void close() throws Exception {
-      GroovyRuntimeUtil.invokeMethodQuietly(provider, "close");
+      closeQuietly(provider);
     }
 
     @Override
@@ -537,21 +552,129 @@ public class DataIteratorFactory {
   }
 
   private static class DataProviderMultiplier extends BaseDataIterator {
+    /**
+     * The names of the data variables for which values are produced
+     * by this data provider multiplier.
+     */
     private final List<String> dataVariableNames;
+
+    /**
+     * The provider infos for the multiplier data providers.
+     * These are only used for constructing meaningful errors.
+     * If {@link #multiplierProviders} is set, this will be set too,
+     * if it is {@code null}, this will be {@code null} too.
+     */
     private final List<DataProviderInfo> multiplierProviderInfos;
+
+    /**
+     * The provider infos for the multiplicand data providers.
+     * These are only used for constructing meaningful errors.
+     * If {@link #multiplicandProviders} is set, this will be set too,
+     * if it is {@code null}, this will be {@code null} too.
+     */
     private final List<DataProviderInfo> multiplicandProviderInfos;
+
+    /**
+     * The data provider multiplier that is used as multiplier
+     * in this multiplication, if it represents in an
+     * {@code ((a * b) * c)} multiplication the {@code (ab * c)} part
+     * or otherwise {@code null}.
+     * Outside the constructor it is only used as condition
+     * and for the final cleanup,
+     */
     private final DataProviderMultiplier multiplierProvider;
+
+    /**
+     * The data providers that are used as multiplier
+     * in this multiplication, if it represents in an
+     * {@code (a * (b * c))} multiplication the {@code (a * bc)}
+     * or the {@code (b * c)} part or otherwise {@code null}.
+     * Outside the constructor it is only used for the final cleanup,
+     */
     private final Object[] multiplierProviders;
+
+    /**
+     * The data provider multiplier that is used as multiplicand
+     * in this multiplication, if it represents in an
+     * {@code (a * (b * c))} multiplication the {@code (a * bc)} part
+     * or otherwise {@code null}.
+     * Outside the constructor it is only used as condition
+     * and for the final cleanup,
+     */
     private final DataProviderMultiplier multiplicandProvider;
+
+    /**
+     * The data providers that are used as multiplicand
+     * in this multiplication, if it represents in an
+     * {@code ((a * b) * c)} multiplication the {@code (ab * b)}
+     * or the {@code (a * b)} part or otherwise {@code null}.
+     * Outside the constructor it is only used for the final cleanup,
+     */
     private final Object[] multiplicandProviders;
+
+    /**
+     * The iterators that were built from the final multiplier providers,
+     * which are used for providing the actual values.
+     */
     private final Iterator<?>[] multiplierIterators;
+
+    /**
+     * During the first set of multiplier values, i.e. the first value of the {@link #multiplierIterators},
+     * this contains the iterators that were built from the final multiplicand providers,
+     * which are used for providing the actual values. These values are recorded and then replied for each
+     * multiplier value by filling this array with iterators over the recorded values to achieve the multiplication.
+     * To minimize the necessary caching and decrease the chance to get an {@code OutOfMemoryError},
+     * the constructors try to determine whether the multiplier or multiplicand has fewer values, or whether the
+     * size of one of them can be determined while the other can not and swaps around the factors if necessary to
+     * have the smaller or at least the defined number in the multiplicand position.
+     */
     private final Iterator<?>[] multiplicandIterators;
+
+    /**
+     * A flag that remembers whether the factors were swapped for optimization, so that the result values can be
+     * swapped back for expected, consistent, and reproducible results.
+     */
     private boolean factorsSwapped = false;
+
+    /**
+     * The current set of multiplier values that is combined with each set of multiplicand values,
+     * before the next multiplier value is calculated.
+     */
     private Object[] currentMultiplierValues = null;
+
+    /**
+     * A flag that is {@code true} during the processing of the first set of multiplier values
+     * during which the multiplier values get recorded for subsequent replay for the remaining
+     * sets of multiplier values.
+     */
     private boolean collectMultiplicandValues = true;
+
+    /**
+     * The complete list of sets of multiplicand values, which were recorded while processing the first
+     * set of multiplier values that is then replayed for each remaining set of multiplier values.
+     */
     private final List<List<Object>> collectedMultiplicandValues;
+
+    /**
+     * The estimated amount of iterations coming out of this multiplication. If either of the factors size is
+     * unknown, the size of the multiplication is unknown, otherwise it is the actual product of the sizes.
+     */
     private final int estimatedNumIterations;
 
+    /**
+     * Creates a new data provider multiplier that handles two sets of plain data providers as factors.
+     * If the sizes of the providers in at least one of the sets can be estimated,
+     * the factors of the multiplication are possibly swapped around to store as few values as possible
+     * in memory for the multiplication.
+     *
+     * @param supervisor the supervisor that is notified in case of errors
+     * @param context the execution context that for example contains the error collector
+     * @param dataVariableNames the names of the data variables for which values are produced by this multiplier
+     * @param multiplierProviderInfos the provider infos for the multiplier for constructing meaningful errors
+     * @param multiplicandProviderInfos the provider infos for the multiplicand for constructing meaningful errors
+     * @param multiplierProviders the actual providers for the sets of multiplier values
+     * @param multiplicandProviders the actual providers for the sets of multiplicand values
+     */
     public DataProviderMultiplier(IRunSupervisor supervisor, SpockExecutionContext context, List<String> dataVariableNames,
                                   List<DataProviderInfo> multiplierProviderInfos, List<DataProviderInfo> multiplicandProviderInfos,
                                   Object[] multiplierProviders, Object[] multiplicandProviders) {
@@ -562,12 +685,13 @@ public class DataIteratorFactory {
 
       int estimatedMultiplierIterations = estimateNumIterations(Objects.requireNonNull(multiplierProviders));
       int estimatedMultiplicandIterations = estimateNumIterations(Objects.requireNonNull(multiplicandProviders));
-      estimatedNumIterations = (estimatedMultiplierIterations == -1) || (estimatedMultiplicandIterations == -1)
-        ? -1
-        : estimatedMultiplierIterations * estimatedMultiplicandIterations;
+      estimatedNumIterations =
+        (estimatedMultiplierIterations == UNKNOWN_ITERATIONS) || (estimatedMultiplicandIterations == UNKNOWN_ITERATIONS)
+          ? UNKNOWN_ITERATIONS
+          : estimatedMultiplierIterations * estimatedMultiplicandIterations;
 
-      if ((estimatedMultiplierIterations != -1)
-        && ((estimatedMultiplicandIterations == -1) || (estimatedMultiplicandIterations > estimatedMultiplierIterations))) {
+      if ((estimatedMultiplierIterations != UNKNOWN_ITERATIONS)
+        && ((estimatedMultiplicandIterations == UNKNOWN_ITERATIONS) || (estimatedMultiplicandIterations > estimatedMultiplierIterations))) {
         // multiplier is not unknown and multiplicand is unknown or larger,
         // swap factors so that potentially fewer values need to be remembered in memory
         factorsSwapped = true;
@@ -582,14 +706,24 @@ public class DataIteratorFactory {
         this.multiplicandProviders = multiplicandProviders;
       }
 
-      collectedMultiplicandValues = new ArrayList<>(this.multiplicandProviders.length);
-      for (int i = 0; i < this.multiplicandProviders.length; i++) {
-        collectedMultiplicandValues.add(new ArrayList<>());
-      }
+      collectedMultiplicandValues = createMultiplicandStorage();
       multiplierIterators = createIterators(this.multiplierProviders, this.multiplierProviderInfos);
       multiplicandIterators = createIterators(this.multiplicandProviders, this.multiplicandProviderInfos);
     }
 
+    /**
+     * Creates a new data provider multiplier that handles one data provider multiplier
+     * and a set of plain data providers as factors. If the sizes of the providers in at least
+     * one of these can be estimated, the factors of the multiplication are possibly swapped around
+     * to store as few values as possible in memory for the multiplication.
+     *
+     * @param supervisor the supervisor that is notified in case of errors
+     * @param context the execution context that for example contains the error collector
+     * @param dataVariableNames the names of the data variables for which values are produced by this multiplier
+     * @param multiplicandProviderInfos the provider infos for the multiplicand for constructing meaningful errors
+     * @param multiplierProvider the data provider multiplier that produces the multiplier values
+     * @param multiplicandProviders the actual providers for the sets of multiplicand values
+     */
     public DataProviderMultiplier(IRunSupervisor supervisor, SpockExecutionContext context, List<String> dataVariableNames,
                                   List<DataProviderInfo> multiplicandProviderInfos,
                                   DataProviderMultiplier multiplierProvider, Object[] multiplicandProviders) {
@@ -598,58 +732,51 @@ public class DataIteratorFactory {
 
       int estimatedMultiplierIterations = Objects.requireNonNull(multiplierProvider).getEstimatedNumIterations();
       int estimatedMultiplicandIterations = estimateNumIterations(Objects.requireNonNull(multiplicandProviders));
-      estimatedNumIterations = (estimatedMultiplierIterations == -1) || (estimatedMultiplicandIterations == -1)
-        ? -1
-        : estimatedMultiplierIterations * estimatedMultiplicandIterations;
+      estimatedNumIterations =
+        (estimatedMultiplierIterations == UNKNOWN_ITERATIONS) || (estimatedMultiplicandIterations == UNKNOWN_ITERATIONS)
+          ? UNKNOWN_ITERATIONS
+          : estimatedMultiplierIterations * estimatedMultiplicandIterations;
 
-      if ((estimatedMultiplierIterations != -1)
-        && ((estimatedMultiplicandIterations == -1) || (estimatedMultiplicandIterations > estimatedMultiplierIterations))) {
+      if ((estimatedMultiplierIterations != UNKNOWN_ITERATIONS)
+        && ((estimatedMultiplicandIterations == UNKNOWN_ITERATIONS) || (estimatedMultiplicandIterations > estimatedMultiplierIterations))) {
         // multiplier is not unknown and multiplicand is unknown or larger,
         // swap factors so that potentially fewer values need to be remembered in memory
         factorsSwapped = true;
-        this.multiplierProviderInfos = multiplicandProviderInfos;
+        multiplierProviderInfos = multiplicandProviderInfos;
         this.multiplicandProviderInfos = null;
         this.multiplierProvider = null;
-        this.multiplierProviders = multiplicandProviders;
+        multiplierProviders = multiplicandProviders;
         multiplicandProvider = multiplierProvider;
         this.multiplicandProviders = null;
         collectedMultiplicandValues = singletonList(new ArrayList<>());
-        multiplierIterators = createIterators(this.multiplierProviders, this.multiplierProviderInfos);
+        multiplierIterators = createIterators(multiplierProviders, multiplierProviderInfos);
         multiplicandIterators = new Iterator[]{multiplierProvider};
       } else {
-        this.multiplierProviderInfos = null;
+        multiplierProviderInfos = null;
         this.multiplicandProviderInfos = multiplicandProviderInfos;
         this.multiplierProvider = multiplierProvider;
-        this.multiplierProviders = null;
+        multiplierProviders = null;
         multiplicandProvider = null;
         this.multiplicandProviders = multiplicandProviders;
-        collectedMultiplicandValues = new ArrayList<>(multiplicandProviders.length);
-        for (int i = 0; i < multiplicandProviders.length; i++) {
-          collectedMultiplicandValues.add(new ArrayList<>());
-        }
+        collectedMultiplicandValues = createMultiplicandStorage();
         multiplierIterators = new Iterator[]{multiplierProvider};
         multiplicandIterators = createIterators(this.multiplicandProviders, this.multiplicandProviderInfos);
       }
     }
 
+    private List<List<Object>> createMultiplicandStorage() {
+      List<List<Object>> result = new ArrayList<>(this.multiplicandProviders.length);
+      for (int i = 0; i < this.multiplicandProviders.length; i++) {
+        result.add(new ArrayList<>());
+      }
+      return result;
+    }
+
     @Override
     public void close() throws Exception {
-      if (multiplierProvider != null) {
-        GroovyRuntimeUtil.invokeMethodQuietly(multiplierProvider, "close");
-      }
-      if (multiplierProviders != null) {
-        for (Object provider : multiplierProviders) {
-          GroovyRuntimeUtil.invokeMethodQuietly(provider, "close");
-        }
-      }
-      if (multiplicandProvider != null) {
-        GroovyRuntimeUtil.invokeMethodQuietly(multiplicandProvider, "close");
-      }
-      if (multiplicandProviders != null) {
-        for (Object provider : multiplicandProviders) {
-          GroovyRuntimeUtil.invokeMethodQuietly(provider, "close");
-        }
-      }
+      closeQuietly(multiplierProvider, multiplicandProvider);
+      closeQuietly(multiplierProviders);
+      closeQuietly(multiplicandProviders);
     }
 
     @Override

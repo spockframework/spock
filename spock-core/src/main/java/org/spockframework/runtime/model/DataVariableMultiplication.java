@@ -18,6 +18,8 @@ package org.spockframework.runtime.model;
 
 import org.spockframework.util.Beta;
 
+import java.util.Objects;
+
 @Beta
 public class DataVariableMultiplication extends DataVariableMultiplicationFactor {
   private final DataVariableMultiplicationFactor multiplier;
@@ -27,8 +29,8 @@ public class DataVariableMultiplication extends DataVariableMultiplicationFactor
                                     DataVariableMultiplicationFactor multiplier,
                                     DataVariableMultiplicationFactor multiplicand) {
     super(dataVariables);
-    this.multiplier = multiplier;
-    this.multiplicand = multiplicand;
+    this.multiplier = Objects.requireNonNull(multiplier);
+    this.multiplicand = Objects.requireNonNull(multiplicand);
   }
 
   public DataVariableMultiplicationFactor getMultiplier() {

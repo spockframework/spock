@@ -50,6 +50,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
 
   private MethodInfo featureMethod;
   private MethodInfo dataProcessorMethod;
+  @Nullable
   private MethodInfo dataVariableMultiplicationsMethod;
   private NameProvider<IterationInfo> iterationNameProvider;
   private IDataDriver dataDriver = IDataDriver.DEFAULT;
@@ -242,11 +243,12 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
     dataProviders.add(dataProvider);
   }
 
+  @Nullable
   public MethodInfo getDataVariableMultiplicationsMethod() {
     return dataVariableMultiplicationsMethod;
   }
 
-  public void setDataVariableMultiplicationsMethod(MethodInfo method) {
+  public void setDataVariableMultiplicationsMethod(@Nullable MethodInfo method) {
     this.dataVariableMultiplicationsMethod = method;
   }
 

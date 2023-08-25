@@ -21,11 +21,16 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
 import org.spockframework.runtime.SpockExecutionException
 import spock.lang.Issue
+import spock.lang.Snapshot
+import spock.lang.Snapshotter
 
 /**
  * @author Peter Niederwieser
  */
 class InvalidWhereBlocks extends EmbeddedSpecification {
+  @Snapshot
+  Snapshotter snapshotter
+
   def "data variable collides with local variable"() {
     when:
     compiler.compileFeatureBody """
@@ -40,7 +45,8 @@ y << [1, 2]
     """
 
     then:
-    thrown(InvalidSpecCompileException)
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("A variable named 'x' already exists in this scope")
   }
 
   def "data variable hides (but doesn't collide with) instance field"() {
@@ -91,7 +97,8 @@ x << 2
     """
 
     then:
-    thrown(InvalidSpecCompileException)
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("Duplicate declaration of data variable 'x'")
   }
 
   @Issue("https://github.com/spockframework/spock/issues/285")
@@ -109,7 +116,8 @@ def foo(x) {
     """
 
     then:
-    thrown(InvalidSpecCompileException)
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("Duplicate declaration of data variable 'x'")
   }
 
   @Issue("https://github.com/spockframework/spock/issues/137")
@@ -124,7 +132,8 @@ where:
     """
 
     then:
-    thrown(InvalidSpecCompileException)
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("Duplicate declaration of data variable 'x'")
   }
 
   @Issue("https://github.com/spockframework/spock/issues/261")
@@ -188,7 +197,8 @@ y << x
 """
 
     then:
-    thrown(MissingPropertyException)
+    MissingPropertyException e = thrown()
+    e.message.startsWith('No such property: x for class: apackage.ASpec')
   }
 
   def 'referencing a data variable in a closure in a data provider is not allowed'() {
@@ -203,7 +213,8 @@ y << { x }()
 """
 
     then:
-    thrown(MissingPropertyException)
+    MissingPropertyException e = thrown()
+    e.message.startsWith('No such property: x for class: apackage.ASpec')
   }
 
   def 'referencing a data table variable in a data table like data provider is not allowed'() {
@@ -221,7 +232,8 @@ c << [a, 5]
 """
 
     then:
-    thrown(MissingPropertyException)
+    MissingPropertyException e = thrown()
+    e.message.startsWith('No such property: a for class: apackage.ASpec')
   }
 
   def 'referencing a data table parameter in a data table cell is not allowed'() {
@@ -236,7 +248,8 @@ a | b
 '''
 
     then:
-    thrown(InvalidSpecCompileException)
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith('You should not try to use Spock internals')
   }
 
   def 'referencing a data table parameter in a closure in a data table cell is not allowed'() {
@@ -251,7 +264,8 @@ a | b
 '''
 
     then:
-    thrown(InvalidSpecCompileException)
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith('You should not try to use Spock internals')
   }
 
   def 'referencing a data table parameter in a data provider is not allowed'() {
@@ -268,7 +282,8 @@ c << $spock_p_a
 '''
 
     then:
-    thrown(MissingPropertyException)
+    MissingPropertyException e = thrown()
+    e.message == 'No such property: $spock_p_a for class: apackage.ASpec'
   }
 
   def "table must have at least two columns"() {
@@ -285,6 +300,7 @@ a
     then:
     MultipleFailuresError e = thrown()
     e.failures*.class == [InvalidSpecCompileException] * 2
+    e.failures*.message.every { it.startsWith('where-blocks may only contain parameterizations') }
   }
 
   def "table with just a header is not allowed"() {
@@ -365,7 +381,8 @@ a | 1 | b
     """
 
     then:
-    thrown(InvalidSpecCompileException)
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith('Header of data table may only contain variable names')
   }
 
   def "header may only contain variable names with semicolon"() {
@@ -398,7 +415,8 @@ a | local
     """
 
     then:
-    thrown(InvalidSpecCompileException)
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("A variable named 'local' already exists in this scope")
   }
 
   def "header variable names must not clash with local variables with semicolon"() {
@@ -415,7 +433,8 @@ a ; local
     """
 
     then:
-    thrown(InvalidSpecCompileException)
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("A variable named 'local' already exists in this scope")
   }
 
   def "header variable names must not clash with each other"() {
@@ -430,7 +449,8 @@ a | a
     """
 
     then:
-    thrown(InvalidSpecCompileException)
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("Duplicate declaration of data variable 'a'")
   }
 
   def "header variable names must not clash with each other with semicolon"() {
@@ -445,7 +465,8 @@ a ; a
     """
 
     then:
-    thrown(InvalidSpecCompileException)
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("Duplicate declaration of data variable 'a'")
   }
 
   @Issue("https://github.com/spockframework/spock/issues/261")
@@ -483,7 +504,8 @@ local | 1
     """
 
     then:
-    thrown(MissingPropertyException)
+    MissingPropertyException e = thrown()
+    e.message == 'No such property: local for class: apackage.ASpec'
   }
 
   def "cells cannot reference local variables (won't be found) with semicolon"() {
@@ -500,7 +522,8 @@ local ; 1
     """
 
     then:
-    thrown(MissingPropertyException)
+    MissingPropertyException e = thrown()
+    e.message == 'No such property: local for class: apackage.ASpec'
   }
 
   def "cells can't reference next cells"() {
@@ -515,7 +538,8 @@ local ; 1
     '''
 
     then:
-    thrown Exception
+    MissingPropertyException e = thrown()
+    e.message.startsWith('No such property: b for class: apackage.ASpec')
   }
 
   def "cells can't reference themselves"() {
@@ -530,7 +554,8 @@ local ; 1
     '''
 
     then:
-    thrown Exception
+    MissingPropertyException e = thrown()
+    e.message.startsWith('No such property: b for class: apackage.ASpec')
   }
 
   def "rows must have same number of elements as header"() {
@@ -546,7 +571,8 @@ a | b | c
     """
 
     then:
-    thrown(InvalidSpecCompileException)
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith('Row in data table has wrong number of elements (2 instead of 3)')
   }
 
   def "rows must have same number of elements as header with semicolon"() {
@@ -562,7 +588,8 @@ a ; b ; c
     """
 
     then:
-    thrown(InvalidSpecCompileException)
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith('Row in data table has wrong number of elements (2 instead of 3)')
   }
 
   def "two or more underscores can not be used to separate multiple data tables if they represent a local variable"() {
@@ -659,15 +686,7 @@ b | _
     '''
 
     then:
-    result.source.normalize() == '''
-      |Unable to produce AST for this phase due to earlier compilation error:
-      |startup failed:
-      |script.groovy: 2: 'combined' is not allowed here; instead, use one of: [setup, given, expect, when, cleanup, where, end-of-method] @ line 2, column 7.
-      |         true
-      |         ^
-      |
-      |1 error
-    '''.stripMargin().trim()
+    snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
   def 'using combined label between data table and derived data variable is not allowed'() {
@@ -684,15 +703,7 @@ b | _
     '''
 
     then:
-    result.source.normalize() == '''
-      |Unable to produce AST for this phase due to earlier compilation error:
-      |startup failed:
-      |script.groovy: 8: Derived data variables cannot be combined @ line 8, column 7.
-      |         b = 1
-      |         ^
-      |
-      |1 error
-    '''.stripMargin().trim()
+    snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
   def 'using combined label between derived data variable and data table is not allowed'() {
@@ -709,15 +720,7 @@ b | _
     '''
 
     then:
-    result.source.normalize() == '''
-      |Unable to produce AST for this phase due to earlier compilation error:
-      |startup failed:
-      |script.groovy: 5: Derived data variables cannot be combined @ line 5, column 7.
-      |         a = 1
-      |         ^
-      |
-      |1 error
-    '''.stripMargin().trim()
+    snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
   def 'using combined label between data pipe and derived data variable is not allowed'() {
@@ -733,15 +736,7 @@ b | _
     '''
 
     then:
-    result.source.normalize() == '''
-      |Unable to produce AST for this phase due to earlier compilation error:
-      |startup failed:
-      |script.groovy: 7: Derived data variables cannot be combined @ line 7, column 7.
-      |         b = 1
-      |         ^
-      |
-      |1 error
-    '''.stripMargin().trim()
+    snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
   def 'using combined label between data pipe and derived data variable is not allowed even with separator'() {
@@ -758,15 +753,7 @@ b | _
     '''
 
     then:
-    result.source.normalize() == '''
-      |Unable to produce AST for this phase due to earlier compilation error:
-      |startup failed:
-      |script.groovy: 8: Derived data variables cannot be combined @ line 8, column 7.
-      |         b = 1
-      |         ^
-      |
-      |1 error
-    '''.stripMargin().trim()
+    snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
   def 'using combined label between data pipe and derived data variable is not allowed even with separator in front'() {
@@ -783,15 +770,7 @@ b | _
     '''
 
     then:
-    result.source.normalize() == '''
-      |Unable to produce AST for this phase due to earlier compilation error:
-      |startup failed:
-      |script.groovy: 8: Derived data variables cannot be combined @ line 8, column 7.
-      |         b = 1
-      |         ^
-      |
-      |1 error
-    '''.stripMargin().trim()
+    snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
   def 'using combined label between derived data variable and data pipe is not allowed'() {
@@ -807,15 +786,7 @@ b | _
     '''
 
     then:
-    result.source.normalize() == '''
-      |Unable to produce AST for this phase due to earlier compilation error:
-      |startup failed:
-      |script.groovy: 5: Derived data variables cannot be combined @ line 5, column 7.
-      |         a = 1
-      |         ^
-      |
-      |1 error
-    '''.stripMargin().trim()
+    snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
   def 'using combined label between derived data variable and data pipe is not allowed even with separator'() {
@@ -832,15 +803,7 @@ b | _
     '''
 
     then:
-    result.source.normalize() == '''
-      |Unable to produce AST for this phase due to earlier compilation error:
-      |startup failed:
-      |script.groovy: 5: Derived data variables cannot be combined @ line 5, column 7.
-      |         a = 1
-      |         ^
-      |
-      |1 error
-    '''.stripMargin().trim()
+    snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
   def 'using combined label between derived data variable and data pipe is not allowed even with separator in front'() {
@@ -858,15 +821,7 @@ b | _
     '''
 
     then:
-    result.source.normalize() == '''
-      |Unable to produce AST for this phase due to earlier compilation error:
-      |startup failed:
-      |script.groovy: 5: Derived data variables cannot be combined @ line 5, column 7.
-      |         a = 1
-      |         ^
-      |
-      |1 error
-    '''.stripMargin().trim()
+    snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
   def 'using combined label within semicolon data table row is not allowed'() {
@@ -881,18 +836,6 @@ b | _
     '''
 
     then:
-    result.source.normalize() == '''
-      |Unable to produce AST for this phase due to earlier compilation error:
-      |startup failed:
-      |script.groovy: 5: Columns in data tables must not be labeled @ line 5, column 21.
-      |         a ; combined: b
-      |                       ^
-      |
-      |script.groovy: 6: Data table must have more than just the header row @ line 6, column 7.
-      |         1 ; 2
-      |         ^
-      |
-      |2 errors
-    '''.stripMargin().trim()
+    snapshotter.assertThat(result.source).matchesSnapshot()
   }
 }

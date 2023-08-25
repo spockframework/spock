@@ -191,6 +191,19 @@ public abstract class GroovyRuntimeUtil {
     }
   }
 
+  public static void closeQuietly(@Nullable Object... objects) {
+    closeQuietly("close", objects);
+  }
+
+  public static void closeQuietly(String closeMethod, @Nullable Object... objects) {
+    if (objects != null) {
+      Arrays
+        .stream(objects)
+        .filter(Objects::nonNull)
+        .forEach(object -> invokeMethodQuietly(object, closeMethod));
+    }
+  }
+
   /**
    * Note: This method may throw checked exceptions although it doesn't say so.
    */

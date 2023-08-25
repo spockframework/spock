@@ -317,10 +317,10 @@ Two or more consecutive data providers, be it a data table or a data pipe, can a
 using a cartesian product using the `combined:` label between them. The following will result
 in these four executed tests
 
-- `a feature (1 3 5)`
-- `a feature (2 3 5)`
-- `a feature (1 4 6)`
-- `a feature (2 4 6)`
+- `feature [a: 1, b: 3, c: 5]`
+- `feature [a: 1, b: 4, c: 6]`
+- `feature [a: 2, b: 3, c: 5]`
+- `feature [a: 2, b: 4, c: 6]`
 
 [source,groovy,indent=0]
 ----

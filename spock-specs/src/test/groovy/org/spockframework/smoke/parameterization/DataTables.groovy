@@ -277,6 +277,7 @@ class DataTables extends EmbeddedSpecification {
     4 | 5 || 9
   }
 
+  @Issue('https://github.com/spockframework/spock/issues/1062')
   @Unroll
   def 'data tables with #separators can be combined'() {
     when:

@@ -78,10 +78,10 @@ class AccessProtectedPropsSpec extends Specification {
 
   def "Access protected fields without spy"() {
     when:
-    AccessProtectedSubClass mySpy = new AccessProtectedSubClass()
+    AccessProtectedSubClass myNonSpy = new AccessProtectedSubClass()
     then:
-    mySpy.nonStaticFlag
-    mySpy.staticFlag
+    myNonSpy.nonStaticFlag
+    myNonSpy.staticFlag
   }
 }
 

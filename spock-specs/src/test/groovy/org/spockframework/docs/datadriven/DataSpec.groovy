@@ -103,14 +103,14 @@ class DataSpec extends EmbeddedSpecification {
   def "multiple data provider combined"() {
     given:
     def expected = '''
-      // tag::data-providers-combined-result[]
-      - `feature [a: 1, b: 3, c: 5, d: 1, #0]`
-      - `feature [a: 1, b: 4, c: 6, d: 1, #1]`
-      - `feature [a: 2, b: 3, c: 5, d: 1, #2]`
-      - `feature [a: 2, b: 4, c: 6, d: 1, #3]`
-      // end::data-providers-combined-result[]
+      |// tag::data-providers-combined-result[]
+      |- `feature [a: 1, b: 3, c: 5, d: 1, #0]`
+      |- `feature [a: 1, b: 4, c: 6, d: 1, #1]`
+      |- `feature [a: 2, b: 3, c: 5, d: 1, #2]`
+      |- `feature [a: 2, b: 4, c: 6, d: 1, #3]`
+      |// end::data-providers-combined-result[]
     '''
-      .stripIndent()
+      .stripMargin()
       .readLines()
       .findAll {it.startsWith('-') }
       .join('\n')

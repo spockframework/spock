@@ -24,7 +24,7 @@ class MockMapDelegateSpec extends Specification {
   @Issue("https://github.com/spockframework/spock/issues/1145")
   def "Mock a Map delegate Issue #1145"() {
     given:
-    def ctx = Mock(MapDelegate)
+    MapDelegate ctx = Mock()
 
     expect:
     ctx.size() == 0

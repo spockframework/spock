@@ -53,10 +53,10 @@ class AccessProtectedPropsSpec extends Specification {
    */
   def "Access protected fields via access methods without spy"() {
     when:
-    AccessProtectedSubClass mySpy = new AccessProtectedSubClass()
+    AccessProtectedSubClass myNonSpy = new AccessProtectedSubClass()
     then:
-    mySpy.accessNonStaticFlag()
-    mySpy.accessStaticFlag()
+    myNonSpy.accessNonStaticFlag()
+    myNonSpy.accessStaticFlag()
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1501")

@@ -62,7 +62,7 @@ class AccessProtectedPropsSpec extends Specification {
   @Issue("https://github.com/spockframework/spock/issues/1501")
   def "Access protected fields should be accessible in Groovy 3&4 with Java class Issue #1501"() {
     when:
-    AccessProtectedJavaSubClass mySpy = Spy(AccessProtectedJavaSubClass)
+    AccessProtectedJavaSubClass mySpy = Spy()
     then:
     mySpy.accessNonStaticFlag()
   }

@@ -315,12 +315,9 @@ include::{sourcedir}/datadriven/DataSpec.groovy[tag=nested-and-named-multi-varia
 
 Two or more consecutive data providers, be it a data table or a data pipe, can also be combined
 using a cartesian product using the `combined:` label between them. The following will result
-in these four executed tests
+in these executed tests:
 
-- `feature [a: 1, b: 3, c: 5]`
-- `feature [a: 1, b: 4, c: 6]`
-- `feature [a: 2, b: 3, c: 5]`
-- `feature [a: 2, b: 4, c: 6]`
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=data-providers-combined-result]
 
 [source,groovy,indent=0]
 ----

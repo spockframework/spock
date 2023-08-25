@@ -5,6 +5,8 @@ import groovy.transform.ToString
 import org.spockframework.EmbeddedSpecification
 import spock.lang.Shared
 
+import static org.junit.platform.engine.TestDescriptor.Type.TEST
+
 class DataSpec extends EmbeddedSpecification {
 
 // tag::datasource[]
@@ -98,36 +100,88 @@ class DataSpec extends EmbeddedSpecification {
 // end::multiple-tables-with-top-border[]
   }
 
-  def "multiple tables combined"() {
-    expect:
-    a >= 0
-    b < c
+  def "multiple data provider combined"() {
+    given:
+    def expected = '''
+      // tag::data-providers-combined-result[]
+      - `feature [a: 1, b: 3, c: 5, d: 1, #0]`
+      - `feature [a: 1, b: 4, c: 6, d: 1, #1]`
+      - `feature [a: 2, b: 3, c: 5, d: 1, #2]`
+      - `feature [a: 2, b: 4, c: 6, d: 1, #3]`
+      // end::data-providers-combined-result[]
+    '''
+      .stripIndent()
+      .readLines()
+      .findAll {it.startsWith('-') }
+      .join('\n')
+      .trim()
 
-// tag::multiple-tables-combined[]
-    where:
-    a | _
-    1 | _
-    2 | _
-    combined:
-    b | c
-    3 | 5
-    4 | 6
-// end::multiple-tables-combined[]
-  }
+    when:
+    def result = runner.runSpecBody '''
+      def feature() {
+        expect:
+        a >= 0
+        b < c
 
-  def "pipe and table combined"() {
-    expect:
-    a >= 0
-    b < c
+        // tag::multiple-tables-combined[]
+        where:
+        a | _
+        1 | _
+        2 | _
+        combined:
+        b | c
+        3 | 5
+        4 | 6
+        combined:
+        d | _
+        1 | _
+        // end::multiple-tables-combined[]
+      }
+    '''
 
-// tag::pipe-and-table-combined[]
-    where:
-    a << [1, 2]
-    combined:
-    b | c
-    3 | 5
-    4 | 6
-// end::pipe-and-table-combined[]
+    then:
+    """- `${
+      result
+        .testEvents()
+        .succeeded()
+        .list()
+        *.testDescriptor
+        .findAll { it.type == TEST }
+        *.displayName
+        .join('`\n- `')
+    }`""" == expected
+
+    when:
+    result = runner.runSpecBody '''
+      def feature() {
+        expect:
+        a >= 0
+        b < c
+
+        // tag::pipe-and-table-combined[]
+        where:
+        a << [1, 2]
+        combined:
+        b | c
+        3 | 5
+        4 | 6
+
+        d = 1
+        // end::pipe-and-table-combined[]
+      }
+    '''
+
+    then:
+    """- `${
+      result
+        .testEvents()
+        .succeeded()
+        .list()
+        *.testDescriptor
+        .findAll { it.type == TEST }
+        *.displayName
+        .join('`\n- `')
+    }`""" == expected
   }
 
 // tag::sql-data-pipe[]

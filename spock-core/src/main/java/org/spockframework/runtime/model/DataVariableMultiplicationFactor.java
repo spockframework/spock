@@ -18,12 +18,14 @@ package org.spockframework.runtime.model;
 
 import org.spockframework.util.Beta;
 
+import java.util.Objects;
+
 @Beta
 public class DataVariableMultiplicationFactor {
   private final String[] dataVariables;
 
   public DataVariableMultiplicationFactor(String[] dataVariables) {
-    this.dataVariables = dataVariables;
+    this.dataVariables = Objects.requireNonNull(dataVariables);
   }
 
   public String[] getDataVariables() {

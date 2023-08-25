@@ -146,13 +146,17 @@ public class WhereBlockRewriter {
     createDataVariableMultiplicationsMethod();
   }
 
+  private static boolean isMultiplicand(Statement stat) {
+    return COMBINED.equals(stat.getStatementLabel());
+  }
+
   private boolean combineWithNext(ListIterator<Statement> stats) {
     if (!stats.hasNext()) {
       return false;
     }
     Statement next = stats.next();
     stats.previous();
-    return COMBINED.equals(next.getStatementLabel());
+    return isMultiplicand(next);
   }
 
   private ConstructorCallExpression createDataVariableMultiplicationFactor(List<String> dataVariables) {
@@ -213,19 +217,23 @@ public class WhereBlockRewriter {
     if (isDataTableSeparator(stat)) {
       // transplant statement labels like "combined"
       // to the following statement if present
-      if (stats.hasNext()) {
-        Statement next = stats.next();
-        List<String> statementLabels = stat.getStatementLabels();
-        if (statementLabels != null) {
-          statementLabels.forEach(next::addStatementLabel);
-        }
-        stats.previous();
-      }
+      transplantStatementLabelsToNext(stats, stat);
       return;
     }
 
     // otherwise => not a parameterization
     throw notAParameterization(stat);
+  }
+
+  private static void transplantStatementLabelsToNext(ListIterator<Statement> stats, Statement source) {
+    if (stats.hasNext()) {
+      Statement next = stats.next();
+      List<String> statementLabels = source.getStatementLabels();
+      if (statementLabels != null) {
+        statementLabels.forEach(next::addStatementLabel);
+      }
+      stats.previous();
+    }
   }
 
   private void rewriteBinaryWhereStat(ListIterator<Statement> stats) throws InvalidSpecCompileException {
@@ -263,30 +271,7 @@ public class WhereBlockRewriter {
         // neither of the other two
         throw notAParameterization(stat);
       }
-      // if derived data variable is multiplicand => error
-      if (COMBINED.equals(stat.getStatementLabel())) {
-        throw derivedDataVariablesCannotBeCombined(stat);
-      }
-      // if derived data variable is multiplier => error
-      int i = 0;
-      try {
-        while (stats.hasNext()) {
-          Statement next = stats.next();
-          i++;
-          if (COMBINED.equals(next.getStatementLabel())) {
-            throw derivedDataVariablesCannotBeCombined(stat);
-          }
-          // if not data table separator, we are done
-          // otherwise check next statement for combined label
-          if (!isDataTableSeparator(next)) {
-            break;
-          }
-        }
-      } finally {
-        for (int j = 0; j < i; j++) {
-          stats.previous();
-        }
-      }
+      verifyDerivedDataVariableIsNotCombined(stats, stat);
     } else if (getOrExpression(binExpr) != null) {
       // header line of data table like:
       // x | y || z
@@ -299,6 +284,34 @@ public class WhereBlockRewriter {
     } else {
       // binary expression is neither of type left-shift, nor assign and not a data table
       throw notAParameterization(stat);
+    }
+  }
+
+  private void verifyDerivedDataVariableIsNotCombined(ListIterator<Statement> stats, Statement stat) throws InvalidSpecCompileException {
+    // if derived data variable is multiplicand => error
+    if (isMultiplicand(stat)) {
+      throw derivedDataVariablesCannotBeCombined(stat);
+    }
+
+    // if derived data variable is multiplier => error
+    int i = 0;
+    try {
+      while (stats.hasNext()) {
+        Statement next = stats.next();
+        i++;
+        if (isMultiplicand(next)) {
+          throw derivedDataVariablesCannotBeCombined(stat);
+        }
+        // if not data table separator, we are done
+        // otherwise check next statement for combined label
+        if (!isDataTableSeparator(next)) {
+          break;
+        }
+      }
+    } finally {
+      for (int j = 0; j < i; j++) {
+        stats.previous();
+      }
     }
   }
 
@@ -539,9 +552,9 @@ public class WhereBlockRewriter {
       if (rows.size() > 0) {
         // or the next statement is combined-labeled after the table has started already, i.e. a new data table
         // or data pipe starts that should be cross-multiplied so the current table is finished
-        boolean combinedLabeled = COMBINED.equals(stats.next().getStatementLabel());
+        boolean nextIsMultiplicand = isMultiplicand(stats.next());
         stats.previous();
-        if (combinedLabeled) {
+        if (nextIsMultiplicand) {
           break;
         }
       }

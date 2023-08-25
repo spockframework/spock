@@ -16,6 +16,8 @@
 
 package org.spockframework.util
 
+import org.spockframework.runtime.GroovyRuntimeUtil
+
 class GroovyUtil {
   static void tryAll(Closure... blocks) {
     Exception exception = null
@@ -34,11 +36,7 @@ class GroovyUtil {
   }
 
   static void closeQuietly(String closeMethod = "close", Object... objects) {
-    for (obj in objects) {
-      try {
-        obj?."$closeMethod"()
-      } catch (Exception ignored) {}
-    }
+    GroovyRuntimeUtil.closeQuietly(closeMethod, objects)
   }
 
   static Map filterNullValues(Map input) {

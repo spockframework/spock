@@ -7,7 +7,7 @@ jacoco = '0.8.10'
 [libraries]
 jetbrains-annotations = "org.jetbrains:annotations:24.0.1"
 asm = "org.ow2.asm:asm:9.5"
-bytebuddy = "net.bytebuddy:byte-buddy:1.14.5"
+bytebuddy = "net.bytebuddy:byte-buddy:1.14.7"
 cglib = "cglib:cglib-nodep:3.3.0"
 geantyref = "io.leangen.geantyref:geantyref:1.3.14"
 h2database = "com.h2database:h2:2.2.220"

@@ -1060,22 +1060,24 @@ The following mock makers are built-in, and are selected in this order:
 * `java-proxy`: Uses the `java.lang.reflect.Proxy` API to create mocks of interfaces.
 * `byte-buddy`: Uses https://bytebuddy.net/[Byte Buddy] to create mock objects.
 ** Requires `net.bytebuddy:byte-buddy` 1.9+ on the class path.
+* `mockito`: Uses https://site.mockito.org/[Mockito] to create mocks of classes.
+** Can be configured to use additional Mockito feature like mock `Serializable`
+** Requires `org.mockito:mockito-core` 4.11+ on the class path.
 * `cglib`: Deprecated: Uses https://github.com/cglib/cglib[CGLIB] to create mock objects.
 ** Requires `cglib:cglib-nodep` 3.2.0+ on the class path.
 
-
 .Capabilities of the different built-in mock makers
-[cols=".^~h,^.^15,^.^15,^.^15"]
+[cols=".^~h,^.^15,^.^15,^.^15,^.^18"]
 |===
-^|          Capability           | `java-proxy` | `byte-buddy` | `cglib`
+^|          Capability           | `java-proxy` | `byte-buddy` | `cglib` | `mockito`
 
-| Interface                      |      ✔       |      ✔       |    ✔
-| Class                          |      ✘       |      ✔       |    ✔
-| Additional Interfaces          |      ✔       |      ✔       |    ✔
-| Explicit Constructor Arguments |      ✘       |      ✔       |    ✔
-| Final Class                    |      ✘       |      ✘       |    ✘
-| Final Method                   |      ✘       |      ✘       |    ✘
-| Static Method                  |      ✘       |      ✘       |    ✘
+| Interface                      |      ✔       |      ✔       |    ✔   |    ✔
+| Class                          |      ✘       |      ✔       |    ✔   |    ✔
+| Additional Interfaces          |      ✔       |      ✔       |    ✔   |    ✔
+| Explicit Constructor Arguments |      ✘       |      ✔       |    ✔   |    ✔
+| Final Class                    |      ✘       |      ✘       |    ✘   |    ✔
+| Final Method                   |      ✘       |      ✘       |    ✘   |    ✔
+| Static Method                  |      ✘       |      ✘       |    ✘   |    ✘
 |===
 
 The class `spock.mock.MockMakers` provides constants and methods for the built-in mock makers.
@@ -1089,6 +1091,35 @@ The preferred mock maker will be used globally, if no mock maker is explicitly s
 ----
 include::{sourcedir}/extension/MockMakerConfigurationDocSpec.groovy[tag=mock-maker-preferredMockMaker]
 ----
+
+==== Mockito Mock Maker
+
+The `mockito` Mock Maker provides the ability to mock final types, enums and final methods.
+The mocking of final classes is automatically enabled, if `org.mockito:mockito-core` 4.11+ is on the class path.
+
+For mocking of final methods, you need to select `mockito` during mock construction,
+like:
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/MockMakerDocSpec.groovy[tag=mockito]
+----
+
+If you want to make final method mockable by default, you can select this mock maker as the preferred mock maker.
+It can't mock `native` methods, see Mockito for details.
+
+CAUTION: If you try to mock a final method without a Mock Maker supporting it.
+         It will silently fail, without honoring your specified interactions.
+
+You can configure the created mocks with the `org.mockito.MockSettings` during construction to use features provided by Mockito:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/MockMakerDocSpec.groovy[tag=mock-serializable]
+----
+
+The `mockito` uses the `org.mockito.MockMakers.INLINE` under the hood,
+please see the Mockito manual "Mocking final types, enums and final methods" for all pros and cons,
+when using `org.mockito.MockMakers.INLINE`.
 
 ==== Custom Mock Maker
 

@@ -18,6 +18,7 @@ package org.spockframework.mock.runtime
 
 import org.spockframework.mock.CannotCreateMockException
 import org.spockframework.mock.IMockObject
+import org.spockframework.mock.runtime.mockito.MockitoMockMaker
 import org.spockframework.runtime.RunContext
 import org.spockframework.util.InternalSpockError
 import spock.lang.Shared
@@ -190,7 +191,8 @@ class MockMakerRegistrySpec extends Specification {
     then:
     makers[0] instanceof JavaProxyMockMaker
     makers[1] instanceof ByteBuddyMockMaker
-    makers[2] instanceof CglibMockMaker
+    makers[2] instanceof MockitoMockMaker
+    makers[3] instanceof CglibMockMaker
   }
 
   def "Mock with unknown MockMaker"() {
@@ -215,18 +217,6 @@ class MockMakerRegistrySpec extends Specification {
     registry.asMockOrNull(obj)
     then:
     1 * maker.asMockOrNull(obj) >> mockObj
-  }
-
-  def "Mock final class shall currently fail"() {
-    when:
-    Mock(StringBuilder)
-    then:
-    CannotCreateMockException ex = thrown()
-    ex.message == """Cannot create mock for class java.lang.StringBuilder.
-java-proxy: Cannot mock classes.
-byte-buddy: Cannot mock final classes.
-cglib: Cannot mock final classes.
-fancy: Cannot mock final classes."""
   }
 
   def "Test the default IMockabilityResult.MOCKABLE"() {
@@ -271,6 +261,7 @@ fancy: Cannot mock final classes."""
     ex.message == """Cannot create mock for class java.io.File.
 java-proxy: Cannot mock classes.
 byte-buddy: Cannot mock static methods.
+mockito: Cannot mock static methods.
 cglib: Cannot mock static methods.
 fancy: Cannot mock static methods."""
   }

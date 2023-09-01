@@ -14,15 +14,12 @@
 
 package org.spockframework.smoke.mock
 
-import org.spockframework.runtime.ConditionNotSatisfiedError
-import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.runtime.InvalidSpecException
 import org.spockframework.mock.CannotCreateMockException
 import spock.lang.Issue
-import spock.lang.PendingFeatureIf
-import spock.lang.Requires
 import spock.lang.Specification
 import spock.lang.FailsWith
+import spock.mock.MockMakers
 
 class JavaStubs extends Specification {
   def person = Stub(IPerson)
@@ -127,17 +124,33 @@ class JavaStubs extends Specification {
     person.getName() == "default"
   }
 
-  def "cannot stub final classes"() {
+  def "can stub final classes"() {
     when:
-    Stub(FinalPerson)
+    def person = Stub(FinalPerson)
+    person.phoneNumber >> 6789
 
     then:
-    CannotCreateMockException e = thrown()
-    e.message.contains("final")
+    person.phoneNumber == "6789"
   }
 
-  def "cannot stub final methods"() {
-    def person = Stub(FinalMethodPerson)
+  def "can stub final methods with mockito"() {
+    FinalMethodPerson person = Stub(mockMaker: MockMakers.mockito)
+    person.phoneNumber >> 6789
+
+    expect:
+    person.phoneNumber == "6789"
+  }
+
+  def "cannot stub final methods with byteBuddy"() {
+    FinalMethodPerson person = Stub(mockMaker: MockMakers.byteBuddy)
+    person.phoneNumber >> 6789
+
+    expect:
+    person.phoneNumber == "12345"
+  }
+
+  def "cannot stub final methods without specifying mockMaker"() {
+    FinalMethodPerson person = Stub()
     person.phoneNumber >> 6789
 
     expect:
@@ -155,7 +168,9 @@ class JavaStubs extends Specification {
 
   interface IPerson {
     String getName()
+
     int getAge()
+
     List<String> getChildren()
   }
 
@@ -165,7 +180,9 @@ class JavaStubs extends Specification {
     List<String> children
   }
 
-  static final class FinalPerson extends Person {}
+  static final class FinalPerson extends Person {
+    String getPhoneNumber() { "12345" }
+  }
 
   static class FinalMethodPerson extends Person {
     final String getPhoneNumber() { "12345" }

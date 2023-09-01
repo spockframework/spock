@@ -14,26 +14,42 @@
  * limitations under the License.
  */
 
-package org.spockframework.mock.runtime;
+package org.spockframework.mock.runtime.mockito;
 
 import org.spockframework.mock.CannotCreateMockException;
+import org.spockframework.mock.IMockObject;
+import org.spockframework.mock.runtime.IMockMaker;
 import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.ThreadSafe;
 
+import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.Set;
 
 @ThreadSafe
-public class CglibMockMaker implements IMockMaker {
-  public static final MockMakerId ID = new MockMakerId("cglib");
-  private static final boolean cglibAvailable = ReflectionUtil.isClassAvailable("net.sf.cglib.proxy.Enhancer");
+public class MockitoMockMaker implements IMockMaker {
+  public static final MockMakerId ID = new MockMakerId("mockito");
+  private static final boolean mockitoAvailable = ReflectionUtil.isClassAvailable("org.mockito.Mockito");
   private static final Set<MockMakerCapability> CAPABILITIES = Collections.unmodifiableSet(EnumSet.of(
     MockMakerCapability.INTERFACE,
     MockMakerCapability.CLASS,
     MockMakerCapability.ADDITIONAL_INTERFACES,
-    MockMakerCapability.EXPLICIT_CONSTRUCTOR_ARGUMENTS
+    MockMakerCapability.EXPLICIT_CONSTRUCTOR_ARGUMENTS,
+    MockMakerCapability.FINAL_CLASS,
+    MockMakerCapability.FINAL_METHOD
   ));
+
+  private final MockitoMockMakerImpl impl;
+
+  public MockitoMockMaker() {
+    if (mockitoAvailable) {
+      this.impl = new MockitoMockMakerImpl();
+    } else {
+      this.impl = null;
+    }
+  }
 
   @Override
   public MockMakerId getId() {
@@ -47,19 +63,31 @@ public class CglibMockMaker implements IMockMaker {
 
   @Override
   public int getPriority() {
-    return 400;
+    return 300;
+  }
+
+  @Override
+  public IMockObject asMockOrNull(Object object) {
+    if (impl == null) {
+      return null;
+    }
+    return impl.asMockOrNull(object);
   }
 
   @Override
   public Object makeMock(IMockCreationSettings settings) throws CannotCreateMockException {
-    return CglibMockFactory.createMock(settings);
+    return Objects.requireNonNull(impl).makeMock(settings);
   }
 
   @Override
   public IMockabilityResult getMockability(IMockCreationSettings settings) {
-    if (!cglibAvailable) {
-      return () -> "The cglib-nodep library is missing on the class path.";
+    Class<?> mockType = settings.getMockType();
+    if (Modifier.isFinal(mockType.getModifiers()) && !settings.getAdditionalInterface().isEmpty()) {
+      return () -> "Cannot mock final classes with additional interfaces.";
     }
-    return IMockabilityResult.MOCKABLE;
+    if (!mockitoAvailable) {
+      return () -> "The mockito-core library >= 4.11 is missing on the class path.";
+    }
+    return Objects.requireNonNull(impl).isMockable(settings.getMockType());
   }
 }

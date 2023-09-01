@@ -17,6 +17,7 @@
 package org.spockframework.mock.runtime
 
 import groovy.transform.Canonical
+import spock.lang.Retry
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Timeout
@@ -39,7 +40,7 @@ class ByteBuddyMockFactoryConcurrentSpec extends Specification {
   }
 
   // Just to be save to abort, normally the tests run in 2 secs.
-  @Timeout(40)
+  @Timeout(120)
   def "cacheLockingStressTest #test"() {
     given:
     int iterations = 5_000

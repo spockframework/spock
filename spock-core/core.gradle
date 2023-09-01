@@ -39,6 +39,7 @@ dependencies {
   compileOnly libs.bytebuddy
   compileOnly libs.cglib
   compileOnly libs.objenesis
+  compileOnly libs.mockito4
 
 
   coreConsoleRuntime groovyConsoleExtraDependencies
@@ -68,6 +69,7 @@ tasks.named("jar", Jar) {
         'net.bytebuddy.*;resolution:=optional',
         'net.sf.cglib.*;resolution:=optional',
         'org.objectweb.asm.*;resolution:=optional',
+        'org.mockito.*;resolution:=optional',
         '*'
       ].join(','),
       '-noclassforname': 'true',

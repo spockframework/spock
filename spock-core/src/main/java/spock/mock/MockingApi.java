@@ -717,9 +717,14 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a spy with the specified interactions wrapping the provided instance
    */
   @Beta
-  public <T> T Spy(T obj, Closure interactions) {
-      invalidMockCreation();
-      return null;
+  public <T> T Spy(
+    @DelegatesTo.Target
+      T obj,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST)
+    @ClosureParams(FirstParam.class)
+      Closure interactions) {
+    invalidMockCreation();
+    return null;
   }
 
   /**

@@ -14,36 +14,76 @@
 
 package org.spockframework.idea
 
-import com.intellij.psi.PsiVariable
-
 // only tested with 11.1, so play it safe and bail out on earlier version
-if (!supportsVersion("11.1")) return
+if (!supportsVersion('11.1')) return
 
-def ctx = context(ctype: "spock.lang.Specification", scope: closureScope(isArg: true))
+def ctx = context(ctype: 'spock.mock.MockingApi', scope: closureScope(isArg: true))
 
 // Mock(Foo) { /* delegates to instance of type Foo */ }
 // Foo x = Mock { /* delegates to instance of type Foo */ }
-contributor(ctx, {
-  def call = enclosingCall("Mock") ?: enclosingCall("Stub") ?: enclosingCall("Spy") ?:
-    enclosingCall("GroovyMock") ?: enclosingCall("GroovyStub") ?: enclosingCall("GroovySpy")
-  if (call) {
-    def method = call.bind()
-    def clazz = method?.containingClass
-    if (clazz?.qualName == "spock.mock.MockingApi") {
-      def mockType = call.arguments.find { it.type?.className == "Class" }
-      if (mockType) {
-        def typeParameter = mockType.type.parameters[0]
-        delegatesTo(typeParameter.resolve())
-        return
-      }
-      def callContext = call.context
-      if (callContext instanceof PsiVariable) {
-        delegatesTo(callContext.typeGroovy.resolve())
-      }
+contributor(ctx) {
+  def call = enclosingCall('Mock') ?: enclosingCall('Stub') ?: enclosingCall('Spy') ?:
+      enclosingCall('GroovyMock') ?: enclosingCall('GroovyStub') ?: enclosingCall('GroovySpy')
+
+  if (!call) return
+  if (!respondsToParameterless(call, 'bind')) return
+
+  def calledMethod = call.bind()
+
+  if (!calledMethod) return
+  if (!respondsToProperty(calledMethod, 'containingClass')) return
+
+  def clazz = calledMethod.containingClass
+
+  if (!clazz) return
+  if (!respondsToProperty(clazz, 'qualName')) return
+  if (clazz.qualName != 'spock.mock.MockingApi') return
+
+  def delegateTo = { type ->
+    if (respondsToProperty(type, 'boxedTypeName')) {
+      delegatesTo(findClass(type.boxedTypeName))
+    } else if (respondsToParameterless(type, 'resolve')) {
+      delegatesTo(type.resolve())
+    } else {
+      delegatesTo(type)
     }
   }
-})
 
+  if (respondsToProperty(call, 'arguments')) {
+    def explicitType = call.arguments.find {
+      respondsToProperty(it, 'classType')
+          && respondsToProperty(it.classType, 'name')
+          && (it.classType.name == 'Class')
+    }
+    if (explicitType) {
+      if (!respondsToProperty(explicitType, 'type')) return
+      if (!respondsToProperty(explicitType.type, 'parameters')) return
+
+      delegateTo(explicitType.type.parameters[0])
+      return
+    }
+  }
+
+  if (!respondsToProperty(call, 'context')) return
+
+  def callContext = call.context
+  if (respondsToProperty(callContext, 'typeGroovy')) {
+    delegateTo(callContext.typeGroovy)
+  } else if (respondsToProperty(callContext, 'LValue')) {
+    delegateTo(callContext.LValue)
+  }
+}
+
+List<MetaMethod> respondsToParameterless(Object target, String name) {
+  return target.respondsTo(name, [] as Object[])
+}
+
+boolean respondsToProperty(target, String name) {
+  def nameCapitalized = name.capitalize()
+  return respondsToParameterless(target, "get$nameCapitalized")
+      || respondsToParameterless(target, "is$nameCapitalized")*.returnType == [boolean]
+      || target.hasProperty(name)
+}
 
 // From https://issues.apache.org/jira/browse/GROOVY-9510
 // Properly resolve the delegatesTo for the closures of these extensions

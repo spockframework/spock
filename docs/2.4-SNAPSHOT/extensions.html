@@ -1603,13 +1603,256 @@ assignments happen before the method interceptor is called</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="mock-makers"><a class="anchor" href="#mock-makers"></a><a class="link" href="#mock-makers">Mock Maker Extensions</a></h3>
+<div class="paragraph">
+<p>Spock creates mock objects via the <code>IMockMaker</code> interface.
+When Spock is creating a mock, it will ask the available mock makers in order of priority,
+if it can mock the requested type. Spock will use the first mock maker which is capable to mock the requested type.</p>
+</div>
+<div class="paragraph">
+<p>The following mock makers are built-in, and are selected in this order:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>java-proxy</code>: Uses the <code>java.lang.reflect.Proxy</code> API to create mocks of interfaces.</p>
+</li>
+<li>
+<p><code>byte-buddy</code>: Uses <a href="https://bytebuddy.net/">Byte Buddy</a> to create mock objects.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Requires <code>net.bytebuddy:byte-buddy</code> 1.9+ on the class path.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>cglib</code>: Deprecated: Uses <a href="https://github.com/cglib/cglib">CGLIB</a> to create mock objects.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Requires <code>cglib:cglib-nodep</code> 3.2.0+ on the class path.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Capabilities of the different built-in mock makers</caption>
+<colgroup>
+<col>
+<col style="width: 15%;">
+<col style="width: 15%;">
+<col style="width: 15%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-middle">Capability</th>
+<th class="tableblock halign-center valign-middle"><code>java-proxy</code></th>
+<th class="tableblock halign-center valign-middle"><code>byte-buddy</code></th>
+<th class="tableblock halign-center valign-middle"><code>cglib</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-middle"><p class="tableblock">Interface</p></th>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-middle"><p class="tableblock">Class</p></th>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-middle"><p class="tableblock">Additional Interfaces</p></th>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-middle"><p class="tableblock">Explicit Constructor Arguments</p></th>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-middle"><p class="tableblock">Final Class</p></th>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-middle"><p class="tableblock">Final Method</p></th>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-middle"><p class="tableblock">Static Method</p></th>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The class <code>spock.mock.MockMakers</code> provides constants and methods for the built-in mock makers.</p>
+</div>
+<div class="paragraph">
+<p>You can select your preferred mock maker, by defining the <code>preferredMockMaker</code> property
+in the <a href="#spock-configuration-file">Spock Configuration File</a>.
+The preferred mock maker will be used globally, if no mock maker is explicitly specified for a given mock.</p>
+</div>
+<div class="listingblock">
+<div class="title">Mock Maker settings in the Spock Configuration file</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">mockMaker {
+  preferredMockMaker spock.mock.MockMakers.byteBuddy
+}</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_custom_mock_maker"><a class="anchor" href="#_custom_mock_maker"></a><a class="link" href="#_custom_mock_maker">Custom Mock Maker</a></h4>
+<div class="paragraph">
+<p>Spock provides an extension point to plug in your own mock maker for creating mock objects.
+To create a mock maker you need to create a class that implements the interface <code>IMockMaker</code> and put its
+fully-qualified class name in a file <code>META-INF/services/org.spockframework.mock.runtime.IMockMaker</code> in the
+class path. As soon as these two conditions are satisfied, your mock maker is automatically loaded and used when Spock is
+running.</p>
+</div>
+<div class="paragraph">
+<p>You should provide a constant class containing the mock maker ID or a method for creating <code>IMockMakerSettings</code> to your users,
+that your mock maker can be easily selected.</p>
+</div>
+<div class="paragraph">
+<p>The <code>IMockMakerSettings</code> can be used by a custom <code>IMockMaker</code> to provide mock maker specific API settings in a type-safe way.
+The custom mock maker may subclass <code>IMockMakerSettings</code> to transport custom data from the declaration site to the mock
+creation. The custom mock maker then provides a static method to create an instance of that subclass and the parameters
+are then used during mock creation.</p>
+</div>
+<div class="listingblock">
+<div class="title">Custom Mock Maker Example</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="directive">final</span> <span class="type">class</span> <span class="class">FancyMockMaker</span> <span class="directive">implements</span> IMockMaker {
+  <span class="directive">static</span> <span class="directive">final</span> MockMakerId ID = <span class="keyword">new</span> MockMakerId(<span class="string"><span class="delimiter">&quot;</span><span class="content">fancy</span><span class="delimiter">&quot;</span></span>);
+
+  <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">Set</span>&lt;MockMakerCapability&gt; CAPABILITIES = <span class="predefined-type">EnumSet</span>.of(
+    MockMakerCapability.CLASS,
+    MockMakerCapability.EXPLICIT_CONSTRUCTOR_ARGUMENTS);
+
+  <span class="directive">public</span> FancyMockMaker() {
+  }
+
+  <span class="annotation">@Override</span>
+  <span class="directive">public</span> MockMakerId getId() {
+    <span class="keyword">return</span> ID;
+  }
+
+  <span class="annotation">@Override</span>
+  <span class="directive">public</span> <span class="predefined-type">Set</span>&lt;MockMakerCapability&gt; getCapabilities() {
+    <span class="keyword">return</span> CAPABILITIES;
+  }
+
+  <span class="annotation">@Override</span>
+  <span class="directive">public</span> <span class="type">int</span> getPriority() {
+    <span class="keyword">return</span> <span class="integer">5000</span>;
+  }
+
+  <span class="annotation">@Override</span>
+  <span class="directive">public</span> <span class="predefined-type">Object</span> makeMock(IMockCreationSettings settings) {
+    FancyMockMakerSettings fancySettings = settings.getMockMakerSettings();
+    <span class="keyword">return</span> makeMockInternal(fancySettings);
+  }
+
+  <span class="annotation">@Override</span>
+  <span class="directive">public</span> IMockabilityResult getMockability(IMockCreationSettings settings) {
+    FancyMockMakerSettings fancySettings = settings.getMockMakerSettings();
+    <span class="keyword">if</span> (fancySettings != <span class="predefined-constant">null</span> &amp;&amp;
+      fancySettings.isSerialization() &amp;&amp;
+      !fancySettings.getFancyTypes().isEmpty()) {
+      <span class="keyword">return</span> () -&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">Mock with serialization and fancy types is not supported.</span><span class="delimiter">&quot;</span></span>;
+    }
+    <span class="keyword">return</span> IMockabilityResult.MOCKABLE;
+  }
+
+  <span class="predefined-type">Object</span> makeMockInternal(FancyMockMakerSettings settings) {
+    <span class="comment">//Implementation omitted ...</span>
+    <span class="keyword">return</span> <span class="predefined-constant">null</span>;
+  }
+}
+
+<span class="directive">final</span> <span class="type">class</span> <span class="class">FancyMockMakerSettings</span> <span class="directive">implements</span> IMockMaker.IMockMakerSettings {
+  <span class="directive">private</span> <span class="type">boolean</span> serialization;
+  <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">List</span>&lt;<span class="predefined-type">Type</span>&gt; specialTypes = <span class="keyword">new</span> <span class="predefined-type">ArrayList</span>&lt;&gt;();
+
+  FancyMockMakerSettings() {
+  }
+
+  <span class="type">boolean</span> isSerialization() {
+    <span class="keyword">return</span> serialization;
+  }
+
+  <span class="predefined-type">List</span>&lt;<span class="predefined-type">Type</span>&gt; getFancyTypes() {
+    <span class="keyword">return</span> specialTypes;
+  }
+
+  <span class="annotation">@Override</span>
+  <span class="directive">public</span> IMockMaker.MockMakerId getMockMakerId() {
+    <span class="keyword">return</span> FancyMockMaker.ID;
+  }
+
+  <span class="directive">public</span> <span class="type">void</span> withSerialization() {
+    serialization = <span class="predefined-constant">true</span>;
+  }
+
+  <span class="directive">public</span> <span class="type">void</span> fancyTypes(<span class="predefined-type">Type</span>... types) {
+    <span class="local-variable">this</span>.specialTypes.addAll(<span class="predefined-type">Arrays</span>.asList(types));
+  }
+}
+
+<span class="directive">final</span> <span class="type">class</span> <span class="class">FancyMockMakers</span> {
+  <span class="comment">/**
+   * Public static entry point for the User.
+   */</span>
+  <span class="directive">public</span> <span class="directive">static</span> IMockMaker.IMockMakerSettings fancyMock(
+    <span class="annotation">@DelegatesTo</span>(FancyMockMakerSettings.class)
+    Closure&lt;?&gt; code) {
+    FancyMockMakerSettings settings = <span class="keyword">new</span> FancyMockMakerSettings();
+    code.setDelegate(settings);
+    code.call();
+    <span class="keyword">return</span> settings;
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Custom Mock Maker Usage Example</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">when</span>:
+Mock(<span class="predefined-type">ArrayList</span>, <span class="key">mockMaker</span>: FancyMockMakers.fancyMock {
+  fancyTypes(<span class="predefined-type">List</span>.class, <span class="predefined-type">String</span>.class)
+  withSerialization()
+})
+<span class="key">then</span>:
+CannotCreateMockException ex = thrown()
+ex.message == <span class="string"><span class="delimiter">&quot;</span><span class="content">Cannot create mock for class java.util.ArrayList. fancy: Mock with serialization and fancy types is not supported.</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2023-09-15 18:54:23 UTC
+Last updated 2023-09-15 20:41:46 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

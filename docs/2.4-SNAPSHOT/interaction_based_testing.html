@@ -794,10 +794,14 @@ is only meant for documentation purposes and doesn&#8217;t carry any semantics.
 <div class="sect2">
 <h3 id="_mocking_classes"><a class="anchor" href="#_mocking_classes"></a><a class="link" href="#_mocking_classes">Mocking Classes</a></h3>
 <div class="paragraph">
-<p>Besides interfaces, Spock also supports mocking of classes. Mocking classes works
-just like mocking interfaces; the only additional requirement is to put <code>byte-buddy</code> 1.9+ or
-<code>cglib-nodep</code> 3.2.0+ on the class path.</p>
+<p>Besides interfaces, Spock also supports mocking of classes and interfaces with
+different <a href="extensions.html#mock-makers">mock makers</a>.
+Mocking classes works just like mocking interfaces, but you may need to put
+additional runtime dependencies on the class path, depending on the used mock maker.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_mock_instance_construction"><a class="anchor" href="#_mock_instance_construction"></a><a class="link" href="#_mock_instance_construction">Mock Instance Construction</a></h3>
 <div class="paragraph">
 <p>When using for example</p>
 </div>
@@ -815,12 +819,31 @@ just like mocking interfaces; the only additional requirement is to put <code>by
 </ul>
 </div>
 <div class="paragraph">
-<p>it is also necessary to put <code>objenesis</code> 3.0+ on the class path, except for classes with accessible
+<p>it is necessary to put <code>org.objenesis:objenesis</code> 3.0+ on the class path, except for classes with accessible
 no-arg constructor or configured <code>constructorArgs</code> unless the constructor call should not be done,
 for example to avoid unwanted side effects.</p>
 </div>
 <div class="paragraph">
-<p>If either of these libraries is missing from the class path, Spock will gently let you know.</p>
+<p>If the library is missing from the class path, Spock will gently let you know.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_selecting_a_mock_maker"><a class="anchor" href="#_selecting_a_mock_maker"></a><a class="link" href="#_selecting_a_mock_maker">Selecting a Mock Maker</a></h3>
+<div class="paragraph">
+<p>The different <a href="extensions.html#mock-makers">mock makers</a> have different capabilities and drawbacks.
+You can manually select the used mock maker for the mocked object,
+by specifying an <code>IMockMakerSettings</code> instance as the <code>mockMaker</code> mock option.</p>
+</div>
+<div class="paragraph">
+<p>The class <code>spock.mock.MockMakers</code> provides constants and methods for the built-in mock makers.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> subscriber = Mock(<span class="key">mockMaker</span>: MockMakers.byteBuddy, Subscriber)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will use the <code>byte-buddy</code> mock maker to create the <code>subscriber</code>.</p>
 </div>
 </div>
 </div>
@@ -1601,7 +1624,7 @@ mock.nature == MockNature.MOCK</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2023-09-15 18:54:23 UTC
+Last updated 2023-09-15 20:41:46 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

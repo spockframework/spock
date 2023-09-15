@@ -19,7 +19,6 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
 import spock.lang.Specification;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 import groovy.lang.*;
 
@@ -29,12 +28,11 @@ public class JavaMockInterceptor extends BaseMockInterceptor {
   private final IMockConfiguration mockConfiguration;
   private Specification specification;
   private MockController fallbackMockController;
-  private final MetaClass mockMetaClass;
 
   public JavaMockInterceptor(IMockConfiguration mockConfiguration, Specification specification, MetaClass mockMetaClass) {
+    super(mockMetaClass);
     this.mockConfiguration = mockConfiguration;
     this.specification = specification;
-    this.mockMetaClass = mockMetaClass;
   }
 
   @Override
@@ -56,7 +54,7 @@ public class JavaMockInterceptor extends BaseMockInterceptor {
 
     if (target instanceof GroovyObject) {
       if (isMethod(method, "getMetaClass")) {
-        return mockMetaClass;
+        return getMockMetaClass();
       }
       if (isMethod(method, "setProperty", String.class, Object.class)) {
         Throwable throwable = new Throwable();

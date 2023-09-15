@@ -4,11 +4,26 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Objects;
 
 import groovy.lang.*;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseMockInterceptor implements IProxyBasedMockInterceptor {
+  private MetaClass mockMetaClass;
+
+  BaseMockInterceptor(MetaClass mockMetaClass) {
+    this.mockMetaClass = mockMetaClass;
+  }
+
+  protected MetaClass getMockMetaClass() {
+    return mockMetaClass;
+  }
+
+  public void setMetaClass(MetaClass mockMetaClass) {
+    this.mockMetaClass = Objects.requireNonNull(mockMetaClass);
+  }
+
   @Nullable
   protected String handleGetProperty(GroovyObject target, Object[] args) {
     // Another hack It should be replaced with something more reliable: https://github.com/spockframework/spock/issues/1076

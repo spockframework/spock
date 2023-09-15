@@ -338,7 +338,7 @@ class TestSpec extends Specification {
 }
 ''',
         EnumSet.of(Show.METHODS),
-        CompilePhase.CLASS_GENERATION)
+        CompilePhase.OUTPUT)
 
     then:
     snapshotter.assertThat(result.source).matchesSnapshot()
@@ -360,7 +360,7 @@ class TestSpec extends Specification {
 }
 ''',
         EnumSet.of(Show.METHODS),
-        CompilePhase.CLASS_GENERATION)
+        CompilePhase.OUTPUT)
 
     then:
     snapshotter.assertThat(result.source).matchesSnapshot()

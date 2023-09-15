@@ -44,6 +44,10 @@ class SourceToAstNodeAndSourceTranspiler {
   /**
    * This method takes source code, compiles it, then reverses it back to source.
    *
+   * When using {@link CompilePhase#OUTPUT} or later, then the output will by the bytecode instructions,
+   * but internal phase that will be used internally will be {@link CompilePhase#CLASS_GENERATION} to
+   * avoid creating class files.
+   *
    * @param script
    *    the source code to be compiled. If invalid, a compile error occurs
    * @param compilePhase
@@ -70,7 +74,11 @@ class SourceToAstNodeAndSourceTranspiler {
     cu.addPhaseOperation(captureVisitor, compilePhase)
     cu.addSource(codeSource.name, script)
 
-    boolean shallTraceBytecode = compilePhase >= CompilePhase.CLASS_GENERATION.phaseNumber
+    boolean shallTraceBytecode = false
+    if ( compilePhase > CompilePhase.CLASS_GENERATION.phaseNumber) {
+      shallTraceBytecode = true
+      compilePhase = CompilePhase.CLASS_GENERATION.phaseNumber
+    }
     if (shallTraceBytecode) {
       cu.setClassgenCallback(createClassgenCallback(writer, showSet))
     } else {

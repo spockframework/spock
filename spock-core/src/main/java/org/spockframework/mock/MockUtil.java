@@ -15,6 +15,7 @@
 package org.spockframework.mock;
 
 import org.spockframework.mock.runtime.*;
+import org.spockframework.runtime.RunContext;
 import org.spockframework.util.*;
 import spock.lang.Specification;
 
@@ -34,7 +35,11 @@ public class MockUtil {
    * @return whether the given object is a (Spock) mock object
    */
   public boolean isMock(Object object) {
-    return object instanceof ISpockMockObject;
+    return getMockMakerRegistry().asMockOrNull(object) != null;
+  }
+
+  private static MockMakerRegistry getMockMakerRegistry() {
+    return RunContext.get().getMockMakerRegistry();
   }
 
   /**
@@ -47,12 +52,11 @@ public class MockUtil {
    * @throws IllegalArgumentException if the given object is not a mock object
    */
   public IMockObject asMock(Object object) {
-    if (!isMock(object)) {
+    IMockObject mockOrNull = getMockMakerRegistry().asMockOrNull(object);
+    if (mockOrNull == null) {
       throw new IllegalArgumentException("Not a mock object: " + object.toString());
     }
-
-    ISpockMockObject handle = (ISpockMockObject) object;
-    return handle.$spock_get();
+    return mockOrNull;
   }
 
   /**

@@ -55,6 +55,13 @@ tasks.named("test", Test) {
     systemProperty("spock.snapshots.updateSnapshots", "true")
   }
 
+  if (javaVersion.isCompatibleWith(JavaVersion.VERSION_17)) {
+    jvmArgs(
+      //CglibMockMaker requires access to java.lang.ClassLoader.defineClass() from net.sf.cglib.core.ReflectUtils
+      "--add-opens=java.base/java.lang=ALL-UNNAMED"
+    )
+  }
+
   if (isCiServer) {
     retry {
       maxRetries = 2

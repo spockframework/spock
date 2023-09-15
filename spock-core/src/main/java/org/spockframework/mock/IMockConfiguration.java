@@ -1,5 +1,6 @@
 package org.spockframework.mock;
 
+import org.spockframework.mock.runtime.IMockMaker;
 import org.spockframework.util.*;
 import spock.mock.MockingApi;
 
@@ -87,6 +88,14 @@ public interface IMockConfiguration {
    * @return the default response strategy for the mock object
    */
   IDefaultResponse getDefaultResponse();
+
+  /**
+   * Returns the custom settings for the selected {@link IMockMaker} to use for the creation of the proxy object.
+   *
+   * @return the custom settings to use for the creation of the mock, or {@code null}
+   */
+  @Nullable
+  IMockMaker.IMockMakerSettings getMockMaker();
 
   /**
    * Tells whether a mock object stands in for all objects of the mocked type, or just for itself.

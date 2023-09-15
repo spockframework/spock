@@ -15,6 +15,8 @@
 package org.spockframework.runtime;
 
 import org.spockframework.builder.DelegatingScript;
+import org.spockframework.mock.runtime.MockMakerRegistry;
+import org.spockframework.mock.runtime.MockMakerConfiguration;
 import org.spockframework.runtime.condition.*;
 import org.spockframework.runtime.extension.IGlobalExtension;
 import org.spockframework.runtime.model.SpecInfo;
@@ -53,8 +55,9 @@ public class RunContext implements EngineExecutionContext {
   private final List<Class<? extends IGlobalExtension>> globalExtensionClasses;
   private final List<Class<?>> globalConfigClasses;
   private final GlobalExtensionRegistry globalExtensionRegistry;
-
   private final IObjectRenderer<Object> diffedObjectRenderer = createDiffedObjectRenderer();
+  @Nullable
+  private volatile MockMakerRegistry mockMakerRegistry;
 
   private RunContext(String name, File spockUserHome,
                      @Nullable DelegatingScript configurationScript,
@@ -75,8 +78,13 @@ public class RunContext implements EngineExecutionContext {
       ConfigurationBuilder builder = new ConfigurationBuilder();
       builder.build(globalExtensionRegistry, configurationScript);
     }
-
+    initMockMakerRegistry();
     globalExtensionRegistry.startGlobalExtensions();
+  }
+
+  private void initMockMakerRegistry() {
+    MockMakerConfiguration configuration = globalExtensionRegistry.getConfigurationByType(MockMakerConfiguration.class);
+    this.mockMakerRegistry = MockMakerRegistry.createFromServiceLoader(configuration);
   }
 
   void stop() {
@@ -94,6 +102,10 @@ public class RunContext implements EngineExecutionContext {
 
   public ExtensionRunner createExtensionRunner(SpecInfo spec) {
     return new ExtensionRunner(spec, globalExtensionRegistry, globalExtensionRegistry);
+  }
+
+  public MockMakerRegistry getMockMakerRegistry() {
+    return Objects.requireNonNull(mockMakerRegistry);
   }
 
   public PlatformParameterizedSpecRunner createSpecRunner(SpecInfo spec) {

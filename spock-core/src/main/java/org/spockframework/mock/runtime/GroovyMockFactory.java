@@ -16,12 +16,12 @@ package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.runtime.RunContext;
 import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.SpockDocLinks;
 import spock.lang.Specification;
 
 import java.lang.reflect.Modifier;
-import java.util.*;
 
 import groovy.lang.*;
 
@@ -70,11 +70,11 @@ public class GroovyMockFactory implements IMockFactory {
     }
 
     IProxyBasedMockInterceptor mockInterceptor = new GroovyMockInterceptor(configuration, specification, newMetaClass);
-    List<Class<?>> additionalInterfaces = new ArrayList<>(configuration.getAdditionalInterfaces());
-    additionalInterfaces.add(GroovyObject.class);
-    Object proxy = ProxyBasedMockFactory.INSTANCE.create(type, additionalInterfaces,
-      configuration.getConstructorArgs(), mockInterceptor, specification.getClass().getClassLoader(),
-      configuration.isUseObjenesis());
+    IMockMaker.IMockCreationSettings mockCreationSettings = MockCreationSettings.settingsFromMockConfiguration(configuration,
+      mockInterceptor,
+      specification.getClass().getClassLoader());
+    mockCreationSettings.getAdditionalInterface().add(GroovyObject.class);
+    Object proxy = RunContext.get().getMockMakerRegistry().makeMock(mockCreationSettings);
     if ((configuration.getNature() == MockNature.SPY) && (configuration.getInstance() != null)) {
       try {
         ReflectionUtil.deepCopyFields(configuration.getInstance(), proxy);

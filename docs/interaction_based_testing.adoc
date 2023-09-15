@@ -538,9 +538,12 @@ is only meant for documentation purposes and doesn't carry any semantics.
 
 === Mocking Classes
 
-Besides interfaces, Spock also supports mocking of classes. Mocking classes works
-just like mocking interfaces; the only additional requirement is to put `byte-buddy` 1.9+ or
-`cglib-nodep` 3.2.0+ on the class path.
+Besides interfaces, Spock also supports mocking of classes and interfaces with
+different <<extensions.adoc#mock-makers,mock makers>>.
+Mocking classes works just like mocking interfaces, but you may need to put
+additional runtime dependencies on the class path, depending on the used mock maker.
+
+=== Mock Instance Construction
 
 When using for example
 
@@ -548,11 +551,25 @@ When using for example
 - ``Spy``s that are configured with `useObjenesis: true` or
 - ``Spy``s that spy on a concrete instance like `Spy(myInstance)`
 
-it is also necessary to put `objenesis` 3.0+ on the class path, except for classes with accessible
+it is necessary to put `org.objenesis:objenesis` 3.0+ on the class path, except for classes with accessible
 no-arg constructor or configured `constructorArgs` unless the constructor call should not be done,
 for example to avoid unwanted side effects.
 
-If either of these libraries is missing from the class path, Spock will gently let you know.
+If the library is missing from the class path, Spock will gently let you know.
+
+=== Selecting a Mock Maker
+
+The different <<extensions.adoc#mock-makers,mock makers>> have different capabilities and drawbacks.
+You can manually select the used mock maker for the mocked object,
+by specifying an `IMockMakerSettings` instance as the `mockMaker` mock option.
+
+The class `spock.mock.MockMakers` provides constants and methods for the built-in mock makers.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/MockMakerDocSpec.groovy[tag=mock1]
+----
+This will use the `byte-buddy` mock maker to create the `subscriber`.
 
 == Stubbing
 

@@ -1,5 +1,6 @@
 package org.spockframework.runtime
 
+import org.spockframework.mock.runtime.MockMakerConfiguration
 import org.spockframework.report.log.ReportLogConfiguration
 import org.spockframework.runtime.extension.builtin.IncludeExcludeExtension
 import org.spockframework.runtime.extension.builtin.OptimizeRunOrderExtension
@@ -25,6 +26,12 @@ class ExtensionClassesLoaderSpec extends Specification {
     def result = new ExtensionClassesLoader().loadConfigClassesFromDefaultLocation()
 
     then:
-    result == [SnapshotConfig, RunnerConfiguration, ReportLogConfiguration, TempDirConfiguration, TimeoutConfiguration]
+    result == [SnapshotConfig,
+               RunnerConfiguration,
+               ReportLogConfiguration,
+               TempDirConfiguration,
+               TimeoutConfiguration,
+               MockMakerConfiguration
+    ]
   }
 }

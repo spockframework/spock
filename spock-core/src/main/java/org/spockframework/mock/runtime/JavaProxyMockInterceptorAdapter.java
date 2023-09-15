@@ -19,10 +19,10 @@ import org.spockframework.util.ReflectionUtil;
 
 import java.lang.reflect.*;
 
-public class DynamicProxyMockInterceptorAdapter implements InvocationHandler {
+public class JavaProxyMockInterceptorAdapter implements InvocationHandler {
   private final IProxyBasedMockInterceptor interceptor;
 
-  public DynamicProxyMockInterceptorAdapter(IProxyBasedMockInterceptor interceptor) {
+  public JavaProxyMockInterceptorAdapter(IProxyBasedMockInterceptor interceptor) {
     this.interceptor = interceptor;
   }
 

@@ -46,10 +46,14 @@ public abstract class ObjectUtil {
     return false;
   }
 
-  @Nullable
   @SuppressWarnings("unchecked")
+  public static <T> T uncheckedCast(final Object object) {
+    return (T) object;
+  }
+
+  @Nullable
   public static <T> T asInstance(Object obj, Class<T> type) {
-    return type.isInstance(obj) ? (T) obj : null;
+    return type.isInstance(obj) ? uncheckedCast(obj) : null;
   }
 
   public static <T extends Comparable<T>> int compare(@Nullable T comparable1, @Nullable T comparable2) {

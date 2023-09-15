@@ -97,14 +97,8 @@ class ByteBuddyMockFactoryConcurrentSpec extends Specification {
   }
 
   private Class<?> mockClass(ByteBuddyMockFactory mockFactory, ClassLoader cl, MockFeatures feature) {
-    return mockFactory.createMock(
-      feature.mockType,
-      feature.interfaces,
-      null,
-      interceptor,
-      cl,
-      false)
-      .getClass()
+    def settings = MockCreationSettings.settings(feature.mockType, feature.interfaces, interceptor, cl, false)
+    return mockFactory.createMock(settings).getClass()
   }
 
   private static MockSpec mockSpec(String mockedType, String... interfaces) {

@@ -83,14 +83,10 @@ class ByteBuddyMockFactory {
     }
   }
 
-  Object createMock(final Class<?> type,
-                           final List<Class<?>> additionalInterfaces,
-                           @Nullable List<Object> constructorArgs,
-                           IProxyBasedMockInterceptor interceptor,
-                           final ClassLoader classLoader,
-                           boolean useObjenesis) {
-
-    TypeCache.SimpleKey key = new TypeCache.SimpleKey(type, additionalInterfaces);
+  Object createMock(IMockMaker.IMockCreationSettings settings) {
+    final Class<?> type = settings.getMockType();
+    TypeCache.SimpleKey key = new TypeCache.SimpleKey(type, settings.getAdditionalInterface());
+    ClassLoader classLoader = settings.getClassLoader();
 
     Class<?> enhancedType = CACHE.findOrInsert(classLoader,
       key,
@@ -109,7 +105,7 @@ class ByteBuddyMockFactory {
           .ignore(none())
           .subclass(type)
           .name(name)
-          .implement(additionalInterfaces)
+          .implement(settings.getAdditionalInterface())
           .implement(ISpockMockObject.class)
           .method(m -> isGroovyMOPMethod(type, m))
           .intercept(mockInterceptor())
@@ -126,8 +122,8 @@ class ByteBuddyMockFactory {
           .getLoaded();
       }, getCacheLockForKey(key));
 
-    Object proxy = MockInstantiator.instantiate(type, enhancedType, constructorArgs, useObjenesis);
-    ((ByteBuddyInterceptorAdapter.InterceptorAccess) proxy).$spock_set(interceptor);
+    Object proxy = MockInstantiator.instantiate(type, enhancedType, settings.getConstructorArgs(), settings.isUseObjenesis());
+    ((ByteBuddyInterceptorAdapter.InterceptorAccess) proxy).$spock_set(settings.getMockInterceptor());
     return proxy;
   }
 

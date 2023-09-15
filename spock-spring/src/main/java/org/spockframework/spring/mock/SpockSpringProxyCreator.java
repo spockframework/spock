@@ -16,10 +16,11 @@
 
 package org.spockframework.spring.mock;
 
-import org.spockframework.mock.runtime.ProxyBasedMockFactory;
+import org.spockframework.mock.runtime.MockCreationSettings;
+import org.spockframework.runtime.RunContext;
 import org.spockframework.runtime.model.FieldInfo;
 
-import java.util.*;
+import java.util.List;
 
 import static java.util.Collections.singletonList;
 
@@ -28,9 +29,13 @@ abstract class SpockSpringProxyCreator {
   static Object create(FieldInfo fieldInfo) {
     List<Class<?>> additionalInterfaces = singletonList(SpockSpringProxy.class);
     DelegatingInterceptor delegatingInterceptor = new DelegatingInterceptor(fieldInfo);
-    Object proxy = ProxyBasedMockFactory.INSTANCE.create(fieldInfo.getType(), additionalInterfaces, null,
-      delegatingInterceptor, SpockSpringProxyCreator.class.getClassLoader(), true);
-
+    MockCreationSettings settings = MockCreationSettings.settings(
+      fieldInfo.getType(),
+      additionalInterfaces,
+      delegatingInterceptor,
+      SpockSpringProxyCreator.class.getClassLoader(),
+      true);
+    Object proxy = RunContext.get().getMockMakerRegistry().makeMock(settings);
     return proxy;
   }
 }

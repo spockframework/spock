@@ -1,7 +1,7 @@
 [versions]
-groovy2 = '2.5.22'
-groovy3 = '3.0.18'
-groovy4 = '4.0.13'
+groovy2 = '2.5.23'
+groovy3 = '3.0.19'
+groovy4 = '4.0.15'
 jacoco = '0.8.10'
 asm = '9.5'
 

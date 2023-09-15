@@ -35,13 +35,9 @@ public class GroovyMockFactory implements IMockFactory {
 
   @Override
   public Object create(IMockConfiguration configuration, Specification specification) throws CannotCreateMockException {
-    final Class<?> type = configuration.getType();
     final MetaClass oldMetaClass = GroovyRuntimeUtil.getMetaClass(configuration.getType());
-    if (oldMetaClass instanceof GroovyMockMetaClass) {
-      throw new CannotCreateMockException(type,
-        ". The given type is already mocked by Spock.");
-    }
     GroovyMockMetaClass newMetaClass = new GroovyMockMetaClass(configuration, specification, oldMetaClass);
+    final Class<?> type = configuration.getType();
 
     if (configuration.isGlobal()) {
       if (type.isInterface()) {

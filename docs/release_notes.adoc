@@ -5,6 +5,12 @@ include::include.adoc[]
 
 == 2.4 (tbd)
 
+* New lifecycle method `IGlobalExtension.initSpecs` spockPull:1631[]
+* Support for setting execution order (a.k.a. run order) in `SpecInfo`, can be used by extensions spockPull:1631[]
+* New built-in `OrderExtension` supports run order modification for specifications, features or a combination of both.
+  Built-in orderers can create random, alphabetical or user-defined ordering, the latter using the new `@Order(int)`
+  annotation. See manual section <<extensions#_run_order,Run Order>>. spockPull:1631[]
+
 == 2.4-M1 (2022-11-30)
 
 * Fix issues with Spring 6/Spring Boot 3 spockPull:1541[]

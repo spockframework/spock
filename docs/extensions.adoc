@@ -44,6 +44,18 @@ runner {
 
 See the <<parallel_execution.adoc#parallel-execution,Parallel Execution>> section for a detailed description.
 
+=== Test Order Configuration
+
+[source,groovy]
+----
+runner {
+  orderer new RandomSpecOrderer()  // randomize specification run order
+}
+----
+
+Instead of the default run order, you can configure Spock to execute specifications and/or features e.g. in random,
+alphabetical or manually assigned, annotation-based order. See the <<#_run_order>> section for more details.
+
 == Built-In Extensions
 
 Most of Spock's built-in extensions are _annotation-driven_. In other words, they are triggered by annotating a
@@ -715,6 +727,114 @@ runner {
 }
 ----
 
+=== Run Order
+
+Ideally, automated tests in general and Spock specifications in particular should be independent of each other. The same
+applies to feature methods within a specification. Therefore, you should not rely on any specific order of execution
+(run order).
+
+Nevertheless, you have options to influence the run order, using the <<spock-configuration-file>> and a set of built-in
+orderers derived from super class `SpecOrderer`. Please check the Javadocs for package
+`org.spockframework.runtime.extension.builtin.orderer` for more details. You can also write your own `SpecOrderer`, if
+none of the built-in ones satisfies your needs.
+
+Please note that `@Stepwise` always trumps any run order you might have configured, i.e. `@Stepwise` "wins" against
+`SpecOrderer`.
+
+==== Random Run Order
+
+One helpful way to heuristically increase your confidence that your tests are indeed independent of each other, is to
+explicitly say goodbye to deterministic run order by randomizing it.
+
+[source,groovy]
+----
+import org.spockframework.runtime.extension.builtin.orderer.RandomSpecOrderer
+
+runner {
+  orderer new RandomSpecOrderer(
+    true,                       // Randomize overall specification run order
+    true,                       // Randomize the run order of feature methods within specifications
+    System.currentTimeMillis()  // Set a fixed value, if you want repeatable pseudo-random numbers.
+                                // This might be helpful for reproducing issues when debugging your tests.
+  )
+}
+----
+
+==== Alphabetical Run Order
+
+Less useful than random run order, but available anyway, is a way to execute specifications and/or features
+alphabetically, based on their display names and a simple `String.compareTo(String)` (no fancy locale-based collation).
+The default sorting direction is ascending, optionally you can also sort elements in descending order.
+
+[source,groovy]
+----
+import org.spockframework.runtime.extension.builtin.orderer.AlphabeticalSpecOrderer
+
+runner {
+  orderer new AlphabeticalSpecOrderer(
+    true,  // Run specifications in alphabetical order by display name
+    true,  // Run feature methods within specifications in alphabetical order by display name
+    false  // Sort in ascending order (use 'true' for descending order)
+   )
+}
+----
+
+==== Annotation-Based Run Order
+
+If you want to basically retain Spock's default run order for most or at least some of your specifications and/or
+feature methods, but modify it for particular specs/features, or take it to the extreme and manually assign run orders
+everywhere, use the `@Order(int)` annotation in combination with the annotation-based orderer:
+
+[source,groovy]
+----
+import org.spockframework.runtime.extension.builtin.orderer.AnnotatationBasedSpecOrderer
+
+runner {
+  orderer new AnnotatationBasedSpecOrderer()
+}
+----
+
+Please note, that `@Order` annotations have no effect whatsoever, if `AnnotatationBasedSpecOrderer` is not configured
+as the active orderer. E.g., you cannot expect to be able to use random ordering in combination with manually assigning
+run orders via annotations for some exceptions. Annotation-based ordering must be explicitly activated and is only
+available as a modification of Spock's default run order.
+
+Using `@Order`, the basic idea is to assume unannotated specifications and features to all carry an implicit `@Order(0)`
+annotation. If you wish to run some specs/features before others, assign them a lower (negative) run order. If you want
+to run them after the default-ordered elements, assign them a higher (positive) order number:
+
+[source,groovy]
+----
+@Order(1)  // Execute after default-ordered specs
+class FirstSpec extends Specification {
+  // Execute features in order 'three', 'one', 'two' in ascending order of assigned @Order values
+  @Order(2) def one() { expect: true }
+  @Order(3) def two() { expect: true }
+  @Order(1) def three() { expect: true }
+}
+
+@Order(-1)  // Execute before default-ordered specs
+class SecondSpec extends Specification {
+  def foo() { expect: true }                          // Default order
+  @Order(99) def bar() { expect: true }               // Execute after default-ordered features
+  @Order(-5) def zot() { expect: true }               // Execute before default-ordered features
+}
+
+// Default order
+class ThirdSpec extends Specification {
+  def "some feature"() { expect: true }               // Default order
+  @Order(1) def "another feature"() { expect: true }  // Execute after default-ordered features
+  def "one more feature"() { expect: true }           // Default order
+}
+
+// Default order
+class FourthSpec extends Specification {
+  def 'feature X'() { expect: true }                  // Default order
+  def 'feature M'() { expect: true }                  // Default order
+  @Order(-1) def 'feature D'() { expect: true }       // Execute before default-ordered features
+}
+----
+
 == Third-Party Extensions
 
 You can find a list of third-party extensions in the https://github.com/spockframework/spock/wiki/Third-Party-Extensions[Spock Wiki].
@@ -739,13 +859,17 @@ fully-qualified class name in a file `META-INF/services/org.spockframework.runti
 class path. As soon as these two conditions are satisfied, the extension is automatically loaded and used when Spock is
 running.
 
-`IGlobalExtension` has the following three methods:
+`IGlobalExtension` has the following four methods:
 
 `start()`::
   This is called once at the very start of the Spock execution.
 
+`initSpecs(Collection<SpecInfo> specs)`::
+  This is called once, before visiting single specifications later on in `visitSpec`. It enables global extensions to
+  view all specifications as an ensemble, e.g. for iterating over them and rearranging their execution order.
+
 `visitSpec(SpecInfo spec)`::
-  This is called once for each specification. In this method you can prepare a specification with your extension magic,
+  This is called once for each specification. In this method, you can prepare a specification with your extension magic,
   like attaching interceptors to various interception points as described in the chapter <<Interceptors>>.
 
 `stop()`::

@@ -31,9 +31,11 @@ public abstract class SpecElementInfo<P extends NodeInfo, R extends AnnotatedEle
   private String displayName;
 
   private boolean excluded = false;
+  private int executionOrder;
   private final List<Tag> tags = new ArrayList<>();
   private final List<Attachment> attachments = new ArrayList<>();
   private final List<IMethodInterceptor> interceptors = new ArrayList<>();
+
   @Override
   public boolean isSkipped() {
     return skipped;
@@ -73,6 +75,14 @@ public abstract class SpecElementInfo<P extends NodeInfo, R extends AnnotatedEle
   @Override
   public void setExcluded(boolean excluded) {
     this.excluded = excluded;
+  }
+
+  public int getExecutionOrder() {
+    return executionOrder;
+  }
+
+  public void setExecutionOrder(int executionOrder) {
+    this.executionOrder = executionOrder;
   }
 
   @Override

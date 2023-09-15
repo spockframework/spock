@@ -14,7 +14,6 @@ import java.util.*;
  */
 public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> implements ITestTaggable {
   private int declarationOrder; // per spec class
-  private int executionOrder;   // per spec inheritance chain
 
   private final List<String> parameterNames = new ArrayList<>();
   private final List<String> dataVariables = new ArrayList<>();
@@ -57,14 +56,6 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
 
   public void setDeclarationOrder(int declarationOrder) {
     this.declarationOrder = declarationOrder;
-  }
-
-  public int getExecutionOrder() {
-    return executionOrder;
-  }
-
-  public void setExecutionOrder(int executionOrder) {
-    this.executionOrder = executionOrder;
   }
 
   public List<String> getParameterNames() {

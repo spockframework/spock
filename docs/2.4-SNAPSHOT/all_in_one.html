@@ -3896,17 +3896,18 @@ dynamic methods as if they were physically declared methods:</p>
 <div class="paragraph">
 <p>Usually, Groovy mocks need to be injected into the code under specification just like regular mocks.
 However, when a Groovy mock is created as <em>global</em>, it automagically replaces all real instances
-of the mocked type for the duration of the feature method:<sup class="footnote">[<a id="_footnoteref_6" class="footnote" href="#_footnotedef_6" title="View footnote.">6</a>]</sup></p>
+of the mocked type for the duration from mock creation up until the end of the feature method:<sup class="footnote">[<a id="_footnoteref_6" class="footnote" href="#_footnotedef_6" title="View footnote.">6</a>]</sup></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> publisher = <span class="keyword">new</span> Publisher()
-publisher &lt;&lt; <span class="keyword">new</span> RealSubscriber() &lt;&lt; <span class="keyword">new</span> RealSubscriber()
-
-RealSubscriber anySubscriber = GroovyMock(<span class="key">global</span>: <span class="predefined-constant">true</span>)
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">given</span>:
+<span class="keyword">def</span> publisher = <span class="keyword">new</span> Publisher()
+<span class="keyword">def</span> anySubscriber = GroovySpy(<span class="key">global</span>: <span class="predefined-constant">true</span>, RealSubscriber)
+publisher.subscribers.add(<span class="keyword">new</span> RealSubscriber())
+publisher.subscribers.add(<span class="keyword">new</span> RealSubscriber())
 
 <span class="key">when</span>:
-publisher.publish(<span class="string"><span class="delimiter">&quot;</span><span class="content">message</span><span class="delimiter">&quot;</span></span>)
+publisher.send(<span class="string"><span class="delimiter">&quot;</span><span class="content">message</span><span class="delimiter">&quot;</span></span>)
 
 <span class="key">then</span>:
 <span class="integer">2</span> * anySubscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">message</span><span class="delimiter">&quot;</span></span>)</code></pre>
@@ -3926,7 +3927,22 @@ it is only used to describe the interaction.</p>
 </td>
 <td class="content">
 A global mock can only be created for a class type. It effectively replaces
-all instances of that type for the duration of the feature method.
+all instances of that type for the duration from mock creation up until the end of the feature method.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
+The declaration order of global mocks is relevant.
+         The <code>GroovySpy(global:true, &lt;type&gt;)</code> must come before all creations of new mocked/spied objects of <code>&lt;type&gt;</code>.
+         The global spies will only take effect on objects of that type, if the <code>GroovySpy(global:true, &lt;type&gt;)</code> was
+         executed before the <code>new &lt;type&gt;</code>.
 </td>
 </tr>
 </table>
@@ -3937,13 +3953,59 @@ to use them together with <code>GroovySpy</code>. This leads to the real code ge
 executed <em>unless</em> an interaction matches, allowing you to selectively listen
 in on objects and change their behavior just where needed.</p>
 </div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
+When using <code>GroovyMock(global:true)</code> it will also replace constructor calls, which will return <code>null</code> by default.
+         If you want working real constructors, please use <code>GroovySpy</code> instead.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">GroovyMock(global) will also replace constructors</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">given</span>:
+GroovyMock(<span class="key">global</span>: <span class="predefined-constant">true</span>, RealSubscriber)
+<span class="key">when</span>:
+<span class="keyword">def</span> sub = <span class="keyword">new</span> RealSubscriber()
+<span class="key">then</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">The GroovyMock(global: true) will also mock the constructor</span><span class="delimiter">&quot;</span></span>
+sub == <span class="predefined-constant">null</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you want, that the real constructors are called:</p>
+</div>
+<div class="listingblock">
+<div class="title">GroovyMock(global), but using the real constructors</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">given</span>:
+GroovyMock(<span class="key">global</span>: <span class="predefined-constant">true</span>, RealSubscriber) {
+  <span class="comment">//Allow that the real constructor is called</span>
+  <span class="keyword">new</span> RealSubscriber(*_) &gt;&gt; { callRealMethod() }
+}
+<span class="key">when</span>:
+<span class="keyword">def</span> sub = <span class="keyword">new</span> RealSubscriber()
+<span class="key">then</span>:
+sub <span class="keyword">instanceof</span> RealSubscriber</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When <code>Specifications</code> or <code>Features</code> are executed concurrently you have to make sure that the <code>Features</code> which create
+global mocks on the same types are properly guarded against each other, because a global mock changes the global state
+for the mocked <code>Class</code> during execution.</p>
+</div>
 <div class="sidebarblock">
 <div class="content">
 <div class="title">How Are Global Groovy Mocks Implemented?</div>
 <div class="paragraph">
 <p>Global Groovy mocks get their super powers from Groovy meta-programming. To be more precise,
-every globally mocked type is assigned a custom meta class for the duration of the feature method.
-Since a global Groovy mock is still based on a CGLIB proxy, it will retain its general mocking capabilities
+every globally mocked type is assigned a custom <code>MetaClass</code> for the duration of the feature method.
+Since a global Groovy mock is still based on a proxy class, it will retain its general mocking capabilities
 (but not its super powers) when called from Java code.</p>
 </div>
 </div>
@@ -9898,7 +9960,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <a href="#_footnoteref_5">5</a>. The destructuring semantics for closure arguments come straight from Groovy.
 </div>
 <div class="footnote" id="_footnotedef_6">
-<a href="#_footnoteref_6">6</a>. You may know this behavior from Groovy&#8217;s <a href="https://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/MockFor.html">MockFor</a> and <a href="https://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/StubFor.html">StubFor</a> facilities.
+<a href="#_footnoteref_6">6</a>. You may know this behavior from Groovy&#8217;s <a href="https://docs.groovy-lang.org/docs/groovy-4.0.13/html/gapi/groovy/mock/interceptor/MockFor.html">MockFor</a> and <a href="https://docs.groovy-lang.org/docs/groovy-4.0.13/html/gapi/groovy/mock/interceptor/StubFor.html">StubFor</a> facilities.
 </div>
 <div class="footnote" id="_footnotedef_7">
 <a href="#_footnoteref_7">7</a>. Because mock configurations are immutable, the interface contains just the properties' getters.
@@ -9907,7 +9969,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2023-09-15 11:06:04 UTC
+Last updated 2023-09-15 15:33:52 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

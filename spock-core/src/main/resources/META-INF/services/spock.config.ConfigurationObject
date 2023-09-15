@@ -2,3 +2,4 @@ spock.config.RunnerConfiguration
 org.spockframework.report.log.ReportLogConfiguration
 org.spockframework.tempdir.TempDirConfiguration
 org.spockframework.runtime.extension.builtin.TimeoutConfiguration
+org.spockframework.mock.runtime.MockMakerConfiguration

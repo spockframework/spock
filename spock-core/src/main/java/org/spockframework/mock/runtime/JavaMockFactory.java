@@ -18,11 +18,10 @@ package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.runtime.RunContext;
 import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.SpockDocLinks;
 import spock.lang.Specification;
-
-import java.lang.reflect.Modifier;
 
 import groovy.lang.MetaClass;
 
@@ -45,10 +44,6 @@ public class JavaMockFactory implements IMockFactory {
 	}
 
   private Object createInternal(IMockConfiguration configuration, Specification specification, ClassLoader classLoader) {
-    if (Modifier.isFinal(configuration.getType().getModifiers())) {
-      throw new CannotCreateMockException(configuration.getType(),
-          " because Java mocks cannot mock final classes. If the code under test is written in Groovy, use a Groovy mock.");
-    }
     if (configuration.isGlobal()) {
       throw new CannotCreateMockException(configuration.getType(),
           " because Java mocks cannot mock globally. If the code under test is written in Groovy, use a Groovy mock.");
@@ -56,9 +51,7 @@ public class JavaMockFactory implements IMockFactory {
 
     MetaClass mockMetaClass = GroovyRuntimeUtil.getMetaClass(configuration.getType());
     IProxyBasedMockInterceptor interceptor = new JavaMockInterceptor(configuration, specification, mockMetaClass);
-    Object proxy = ProxyBasedMockFactory.INSTANCE.create(configuration.getType(), configuration.getAdditionalInterfaces(),
-      configuration.getConstructorArgs(), interceptor, classLoader,
-      configuration.isUseObjenesis());
+    Object proxy = RunContext.get().getMockMakerRegistry().makeMock(MockCreationSettings.settingsFromMockConfiguration(configuration, interceptor, classLoader));
     if ((configuration.getNature() == MockNature.SPY) && (configuration.getInstance() != null)) {
       try {
         ReflectionUtil.deepCopyFields(configuration.getInstance(), proxy);

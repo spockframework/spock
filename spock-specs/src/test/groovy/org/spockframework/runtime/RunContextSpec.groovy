@@ -16,6 +16,7 @@
 
 package org.spockframework.runtime
 
+import org.spockframework.mock.runtime.MockMakerConfiguration
 import org.spockframework.util.IThrowableFunction
 import spock.lang.Isolated
 import spock.lang.Specification
@@ -41,7 +42,7 @@ class RunContextSpec extends Specification {
     def dir = new File("new", "home")
 
     expect:
-    RunContext.withNewContext("new name", dir, null, [], [], false, {
+    RunContext.withNewContext("new name", dir, null, [], [MockMakerConfiguration], false, {
       def context = RunContext.get()
       assert context.name == "new name"
       assert context.spockUserHome == dir

@@ -36,6 +36,7 @@ public class MockConfiguration implements IMockConfiguration {
   private final boolean global;
   private final boolean verified;
   private final boolean useObjenesis;
+  private final IMockMaker.IMockMakerSettings mockMakerSettings;
 
   public MockConfiguration(@Nullable String name, Type type, MockNature nature,
       MockImplementation implementation, Map<String, Object> options) {
@@ -56,6 +57,7 @@ public class MockConfiguration implements IMockConfiguration {
     this.global = getOption(options, "global", Boolean.class, false);
     this.verified = getOption(options, "verified", Boolean.class, this.nature.isVerified());
     this.useObjenesis = getOption(options, "useObjenesis", Boolean.class, this.nature.isUseObjenesis());
+    this.mockMakerSettings = getOption(options, "mockMaker", IMockMaker.IMockMakerSettings.class, null);
   }
 
   @Override
@@ -118,6 +120,11 @@ public class MockConfiguration implements IMockConfiguration {
   @Override
   public boolean isUseObjenesis() {
     return useObjenesis;
+  }
+
+  @Override
+  public IMockMaker.IMockMakerSettings getMockMaker() {
+    return mockMakerSettings;
   }
 
   private <T> T getOption(Map<String, Object> options, String key, Class<T> type, T defaultValue) {

@@ -21,6 +21,7 @@ import org.spockframework.mock.MockImplementation
 import org.spockframework.mock.IDefaultResponse
 
 import spock.lang.Specification
+import spock.mock.MockMakers
 
 class MockConfigurationSpec extends Specification {
   def "defaults for Mock nature"() {
@@ -64,8 +65,18 @@ class MockConfigurationSpec extends Specification {
 
   def "set options via map"() {
     def defaultResponse = [:] as IDefaultResponse
-    def map = [name: "foo", type: List, nature: MockNature.SPY, implementation: MockImplementation.GROOVY,
-      constructorArgs: ["foo", "bar"], defaultResponse: defaultResponse, global: true, verified: false, useObjenesis: true]
+    def map = [
+      name           : "foo",
+      type           : List,
+      nature         : MockNature.SPY,
+      implementation : MockImplementation.GROOVY,
+      constructorArgs: ["foo", "bar"],
+      defaultResponse: defaultResponse,
+      global         : true,
+      verified       : false,
+      useObjenesis   : true,
+      mockMaker      : MockMakers.javaProxy
+    ]
 
     def options = new MockConfiguration("bar", Map, MockNature.MOCK, MockImplementation.JAVA, map)
 
@@ -80,6 +91,7 @@ class MockConfigurationSpec extends Specification {
       global == true
       verified == false
       useObjenesis == true
+      mockMaker == MockMakers.javaProxy
     }
   }
 }

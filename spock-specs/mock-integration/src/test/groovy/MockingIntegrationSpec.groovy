@@ -2,6 +2,7 @@ import org.spockframework.mock.CannotCreateMockException
 import spock.lang.IgnoreIf
 import spock.lang.Requires
 import spock.lang.Specification
+import spock.mock.MockMakers
 
 class MockingIntegrationSpec extends Specification {
 
@@ -59,6 +60,26 @@ class MockingIntegrationSpec extends Specification {
 
     then:
     thrown(CannotCreateMockException)
+  }
+
+  @Requires({ TEST_TYPE == "plain" })
+  def "cannot Mock explicitly with byte-buddy, if it is not on the classpath"() {
+    when:
+    Mock(mockMaker: MockMakers.byteBuddy, Runnable)
+
+    then:
+    CannotCreateMockException ex = thrown()
+    ex.message == "Cannot create mock for interface java.lang.Runnable. byte-buddy: The byte-buddy library is missing on the class path."
+  }
+
+  @Requires({ TEST_TYPE == "plain" })
+  def "cannot Mock explicitly with cglib, if it is not on the classpath"() {
+    when:
+    Mock(mockMaker: MockMakers.cglib, Runnable)
+
+    then:
+    CannotCreateMockException ex = thrown()
+    ex.message == "Cannot create mock for interface java.lang.Runnable. cglib: The cglib-nodep library is missing on the class path."
   }
 
 }

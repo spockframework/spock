@@ -67,4 +67,11 @@ class ObjectUtilSpec extends Specification {
     ObjectUtil.compare(3, 4) < 0
     ObjectUtil.compare(4, 3) > 0
   }
+
+  def "uncheckedCast"() {
+    expect:
+    ObjectUtil.uncheckedCast(null) == null
+    ObjectUtil.uncheckedCast(3) == 3
+    ObjectUtil.uncheckedCast("foo") == "foo"
+  }
 }

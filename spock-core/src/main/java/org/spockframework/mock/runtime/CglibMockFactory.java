@@ -7,7 +7,6 @@ import net.sf.cglib.proxy.Factory;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.NoOp;
 import org.spockframework.mock.ISpockMockObject;
-import org.spockframework.util.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -19,20 +18,25 @@ class CglibMockFactory {
 
   private static final Class<?>[] CLASSES = new Class<?>[0];
 
-  static Object createMock(Class<?> type, List<Class<?>> additionalInterfaces, @Nullable List<Object> constructorArgs,
-                           IProxyBasedMockInterceptor interceptor, ClassLoader classLoader, boolean useObjenesis) {
+  static Object createMock(IMockMaker.IMockCreationSettings settings) {
+    Class<?> type = settings.getMockType();
     Enhancer enhancer = new ConstructorFriendlyEnhancer();
-    enhancer.setClassLoader(classLoader);
-    enhancer.setSuperclass(type);
-    List<Class<?>> interfaces = new ArrayList<>(additionalInterfaces);
+    enhancer.setClassLoader(settings.getClassLoader());
+    List<Class<?>> interfaces = new ArrayList<>(settings.getAdditionalInterface());
     interfaces.add(ISpockMockObject.class);
+    //We must handle the case, if someone uses cglib for an interface with mockMaker.
+    if (!type.isInterface()) {
+      enhancer.setSuperclass(type);
+    } else {
+      interfaces.add(type);
+    }
     enhancer.setInterfaces(interfaces.toArray(CLASSES));
     enhancer.setCallbackFilter(BridgeMethodAwareCallbackFilter.INSTANCE);
-    MethodInterceptor cglibInterceptor = new CglibMockInterceptorAdapter(interceptor);
+    MethodInterceptor cglibInterceptor = new CglibMockInterceptorAdapter(settings.getMockInterceptor());
     enhancer.setCallbackTypes(new Class[] {cglibInterceptor.getClass(), NoOp.class});
 
     Class<?> enhancedType = enhancer.createClass();
-    Object proxy = MockInstantiator.instantiate(type, enhancedType, constructorArgs, useObjenesis);
+    Object proxy = MockInstantiator.instantiate(type, enhancedType, settings.getConstructorArgs(), settings.isUseObjenesis());
     ((Factory) proxy).setCallbacks(new Callback[] {cglibInterceptor, NoOp.INSTANCE});
     return proxy;
   }

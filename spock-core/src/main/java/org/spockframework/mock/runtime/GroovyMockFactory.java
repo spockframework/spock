@@ -17,15 +17,28 @@ package org.spockframework.mock.runtime;
 import org.spockframework.mock.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.RunContext;
+import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.runtime.model.IterationInfo;
+import org.spockframework.runtime.model.parallel.ExclusiveResource;
+import org.spockframework.runtime.model.parallel.ResourceAccessMode;
+import org.spockframework.runtime.model.parallel.Resources;
 import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.SpockDocLinks;
+import spock.config.RunnerConfiguration;
 import spock.lang.Specification;
 
 import java.lang.reflect.Modifier;
+import java.util.Set;
 
 import groovy.lang.*;
 
 public class GroovyMockFactory implements IMockFactory {
+
+  private static final ExclusiveResource META_CLASS_REGISTRY_RW = new ExclusiveResource(Resources.META_CLASS_REGISTRY,
+    ResourceAccessMode.READ_WRITE);
+  private static final ExclusiveResource GLOBAL_LOCK = new ExclusiveResource(
+    org.junit.platform.engine.support.hierarchical.ExclusiveResource.GLOBAL_KEY, ResourceAccessMode.READ_WRITE);
+
   public static final GroovyMockFactory INSTANCE = new GroovyMockFactory();
 
   @Override
@@ -35,12 +48,23 @@ public class GroovyMockFactory implements IMockFactory {
 
   @Override
   public Object create(IMockConfiguration configuration, Specification specification) throws CannotCreateMockException {
-    final MetaClass oldMetaClass = GroovyRuntimeUtil.getMetaClass(configuration.getType());
-    GroovyMockMetaClass newMetaClass = new GroovyMockMetaClass(configuration, specification, oldMetaClass);
     final Class<?> type = configuration.getType();
+    final MetaClass oldMetaClass = GroovyRuntimeUtil.getMetaClass(configuration.getType());
+    if (oldMetaClass instanceof GroovyMockMetaClass) {
+      throw new CannotCreateMockException(type,
+        ". The given type is already mocked by Spock.");
+    }
+    GroovyMockMetaClass newMetaClass = new GroovyMockMetaClass(configuration, specification, oldMetaClass);
 
     boolean hasAdditionalInterfaces = !configuration.getAdditionalInterfaces().isEmpty();
     if (configuration.isGlobal()) {
+      if (!isIsolatedOrHasMetaClassRegistryReadWriteLock(specification)) {
+        throw new CannotCreateMockException(type,
+          ". Global mocking in parallel execution mode is only possible, when the specification is @Isolated, " +
+            "or the specification or feature is annotated with " +
+            "@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY).");
+      }
+
       if (type.isInterface()) {
         throw new CannotCreateMockException(type,
             ". Global mocking is only possible for classes, but not for interfaces.");
@@ -91,6 +115,20 @@ public class GroovyMockFactory implements IMockFactory {
       }
     }
     return proxy;
+  }
+
+  private boolean isIsolatedOrHasMetaClassRegistryReadWriteLock(Specification specification) {
+    if (!RunContext.get().getConfiguration(RunnerConfiguration.class).parallel.enabled) {
+      // we don't have a problem in single threaded execution
+      return true;
+    }
+    FeatureInfo feature = specification.getSpecificationContext().getCurrentIteration().getFeature();
+    Set<ExclusiveResource> specExclusiveResources = feature.getSpec().getExclusiveResources();
+    if (specExclusiveResources.contains(GLOBAL_LOCK) || specExclusiveResources.contains(META_CLASS_REGISTRY_RW)) {
+      return true;
+    }
+    // GLOBAL_LOCK can't be declared on the feature
+    return feature.getExclusiveResources().contains(META_CLASS_REGISTRY_RW);
   }
 
   private boolean isFinalClass(Class<?> type) {

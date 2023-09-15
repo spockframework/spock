@@ -1,10 +1,13 @@
 package org.spockframework.docs.interaction
 
+import org.spockframework.runtime.model.parallel.Resources
 import spock.lang.Issue
+import spock.lang.ResourceLock
 import spock.lang.Specification
 import spock.lang.Stepwise
 
 @Stepwise
+@ResourceLock(Resources.META_CLASS_REGISTRY)
 class GlobalMockDocSpec extends Specification {
 
   @Issue("https://github.com/spockframework/spock/issues/785")

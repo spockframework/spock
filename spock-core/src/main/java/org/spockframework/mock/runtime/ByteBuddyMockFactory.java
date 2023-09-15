@@ -16,8 +16,12 @@
 
 package org.spockframework.mock.runtime;
 
+import groovy.lang.GroovyObject;
+import groovy.transform.Internal;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.TypeCache;
+import net.bytebuddy.description.annotation.AnnotationDescription;
+import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.description.modifier.SynchronizationState;
 import net.bytebuddy.description.modifier.SyntheticState;
 import net.bytebuddy.description.modifier.Visibility;
@@ -28,6 +32,7 @@ import net.bytebuddy.dynamic.scaffold.TypeValidation;
 import net.bytebuddy.implementation.FieldAccessor;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.implementation.bind.annotation.Morph;
+import org.codehaus.groovy.runtime.callsite.AbstractCallSite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 import org.spockframework.mock.ISpockMockObject;
@@ -39,7 +44,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static net.bytebuddy.matcher.ElementMatchers.any;
 import static net.bytebuddy.matcher.ElementMatchers.none;
 
 class ByteBuddyMockFactory {
@@ -55,6 +59,7 @@ class ByteBuddyMockFactory {
 
   private static final Class<?> CODEGEN_TARGET_CLASS = Target.class;
   private static final String CODEGEN_PACKAGE = CODEGEN_TARGET_CLASS.getPackage().getName();
+  private static final AnnotationDescription INTERNAL_ANNOTATION = AnnotationDescription.Builder.ofType(Internal.class).build();
 
   /**
    * This array contains {@link TypeCachingLock} instances, which are used as java monitor locks for
@@ -106,11 +111,13 @@ class ByteBuddyMockFactory {
           .name(name)
           .implement(additionalInterfaces)
           .implement(ISpockMockObject.class)
-          .method(any())
-          .intercept(MethodDelegation.withDefaultConfiguration()
-            .withBinders(Morph.Binder.install(ByteBuddyInvoker.class))
-            .to(ByteBuddyInterceptorAdapter.class))
-          .transform(Transformer.ForMethod.withModifiers(SynchronizationState.PLAIN, Visibility.PUBLIC)) // Overridden methods should be public and non-synchronized.
+          .method(m -> isGroovyMOPMethod(type, m))
+          .intercept(mockInterceptor())
+          .transform(mockTransformer())
+          .annotateMethod(INTERNAL_ANNOTATION) //Annotate the Groovy MOP methods with @Internal
+          .method(m -> !isGroovyMOPMethod(type, m))
+          .intercept(mockInterceptor())
+          .transform(mockTransformer())
           .implement(ByteBuddyInterceptorAdapter.InterceptorAccess.class)
           .intercept(FieldAccessor.ofField("$spock_interceptor"))
           .defineField("$spock_interceptor", IProxyBasedMockInterceptor.class, Visibility.PRIVATE, SyntheticState.SYNTHETIC)
@@ -122,6 +129,34 @@ class ByteBuddyMockFactory {
     Object proxy = MockInstantiator.instantiate(type, enhancedType, constructorArgs, useObjenesis);
     ((ByteBuddyInterceptorAdapter.InterceptorAccess) proxy).$spock_set(interceptor);
     return proxy;
+  }
+
+  private static Transformer<MethodDescription> mockTransformer() {
+    return Transformer.ForMethod.withModifiers(SynchronizationState.PLAIN, Visibility.PUBLIC); //Overridden methods should be public and non-synchronized.
+  }
+
+  private static MethodDelegation mockInterceptor() {
+    return MethodDelegation.withDefaultConfiguration()
+      .withBinders(Morph.Binder.install(ByteBuddyInvoker.class))
+      .to(ByteBuddyInterceptorAdapter.class);
+  }
+
+  /**
+   * Checks if the passed method, is a Groovy MOP method from {@link GroovyObject}.
+   *
+   * <p>{@code GroovyObject} defined MOP methods {@code getProperty()}, {@code setProperty()} and {@code invokeMethod()},
+   * because these methods are handled in a special way in the {@link AbstractCallSite} when marked with {@link Internal @Internal}.
+   * See also {@link GroovyObject} comments.
+   * So we need to mark the method with {@link Internal @Internal} annotation, if we intercept it.
+   *
+   * @param type   the type the mock
+   * @param method the method to intercept
+   * @return {@code true}, if the method is a Groovy MOP method
+   */
+  private static boolean isGroovyMOPMethod(Class<?> type, MethodDescription method) {
+    return GroovyObject.class.isAssignableFrom(type) &&
+      method.getDeclaredAnnotations().isAnnotationPresent(Internal.class) &&
+      method.isDefaultMethod();
   }
 
   /**

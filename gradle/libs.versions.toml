@@ -3,10 +3,12 @@ groovy2 = '2.5.22'
 groovy3 = '3.0.18'
 groovy4 = '4.0.13'
 jacoco = '0.8.10'
+asm = '9.5'
 
 [libraries]
 jetbrains-annotations = "org.jetbrains:annotations:24.0.1"
-asm = "org.ow2.asm:asm:9.5"
+asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
+asmUtil = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
 bytebuddy = "net.bytebuddy:byte-buddy:1.14.5"
 cglib = "cglib:cglib-nodep:3.3.0"
 geantyref = "io.leangen.geantyref:geantyref:1.3.14"

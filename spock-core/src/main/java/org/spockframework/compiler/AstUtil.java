@@ -239,7 +239,7 @@ public abstract class AstUtil {
       Expression arg = argList.get(i);
       if (arg instanceof SpreadExpression) {
         spreadArgs.add(((SpreadExpression) arg).getExpression());
-        spreadPositions.add(new ConstantExpression(i));
+        spreadPositions.add(primitiveConstExpression(i));
       } else {
         normalArgs.add(arg);
       }
@@ -364,16 +364,30 @@ public abstract class AstUtil {
   }
 
   public static MethodCallExpression createGetAtMethodCall(Expression expression, int index) {
-    return createMethodCall(expression, GET_AT_METHOD_NAME, new ConstantExpression(index));
+    return createMethodCall(expression, GET_AT_METHOD_NAME, primitiveConstExpression(index));
   }
+
   public static MethodCallExpression createGetAtMethodCall(Expression expression, String key) {
     return createMethodCall(expression, GET_AT_METHOD_NAME, new ConstantExpression(key));
   }
+
   public static Expression createGetAtWithMapSupportMethodCall(Expression expression, int index, String key) {
     return new TernaryExpression(
-      new BooleanExpression(new BinaryExpression(expression, Token.newKeyword("instanceof", -1, -1), new ClassExpression(ClassHelper.MAP_TYPE))),
-      createMethodCall(expression, GET_AT_METHOD_NAME, new ConstantExpression(key)),
-      createMethodCall(expression, GET_AT_METHOD_NAME, new ConstantExpression(index))
+      new BooleanExpression(
+        new BinaryExpression(
+          expression,
+          Token.newKeyword("instanceof", -1, -1),
+          new ClassExpression(ClassHelper.MAP_TYPE))),
+      createGetAtMethodCall(expression, key),
+      createGetAtMethodCall(expression, index)
     );
+  }
+
+  public static ConstantExpression primitiveConstExpression(int value) {
+    return new ConstantExpression(value, true);
+  }
+
+  public static ConstantExpression primitiveConstExpression(boolean value) {
+    return new ConstantExpression(value, true);
   }
 }

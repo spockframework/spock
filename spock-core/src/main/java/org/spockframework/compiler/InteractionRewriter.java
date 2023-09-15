@@ -28,6 +28,7 @@ import org.codehaus.groovy.syntax.Types;
 
 import static java.util.Arrays.asList;
 import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
+import static org.spockframework.compiler.AstUtil.primitiveConstExpression;
 
 /**
  * Creates the AST representation of an InteractionBuilder build sequence.
@@ -166,9 +167,9 @@ public class InteractionRewriter {
         resources.getAstNodeCache().InteractionBuilder,
         new ArgumentListExpression(
             asList(
-                new ConstantExpression(expr.getLineNumber()),
-                new ConstantExpression(expr.getColumnNumber()),
-                new ConstantExpression(resources.getSourceText(expr)))));
+              primitiveConstExpression(expr.getLineNumber()),
+              primitiveConstExpression(expr.getColumnNumber()),
+              new ConstantExpression(resources.getSourceText(expr)))));
   }
 
   private void setCount() {
@@ -177,9 +178,9 @@ public class InteractionRewriter {
     if (count instanceof RangeExpression) {
       RangeExpression range = (RangeExpression)count;
       call(resources.getAstNodeCache().InteractionBuilder_SetRangeCount,
-          range.getFrom(),
-          range.getTo(),
-          new ConstantExpression(range.isInclusive()));
+        range.getFrom(),
+        range.getTo(),
+        primitiveConstExpression(range.isInclusive()));
 
       return;
     }
@@ -311,11 +312,11 @@ public class InteractionRewriter {
   }
 
   private void useNamedArgs(boolean isMixed) {
-    call(resources.getAstNodeCache().InteractionBuilder_SetArgListKind_boolean_boolean, ConstantExpression.PRIM_FALSE, new ConstantExpression(isMixed,true));
+    call(resources.getAstNodeCache().InteractionBuilder_SetArgListKind_boolean_boolean, ConstantExpression.PRIM_FALSE, primitiveConstExpression(isMixed));
   }
 
   private void usePositionalArgs(boolean isMixed) {
-    call(resources.getAstNodeCache().InteractionBuilder_SetArgListKind_boolean_boolean, ConstantExpression.PRIM_TRUE, new ConstantExpression(isMixed, true));
+    call(resources.getAstNodeCache().InteractionBuilder_SetArgListKind_boolean_boolean, ConstantExpression.PRIM_TRUE, primitiveConstExpression(isMixed));
   }
 
   private void addName(Expression name) {

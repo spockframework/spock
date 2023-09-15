@@ -33,13 +33,24 @@ public class ProxyBasedMockFactory {
 
   public static ProxyBasedMockFactory INSTANCE = new ProxyBasedMockFactory();
 
+  @Nullable
+  private final ByteBuddyMockFactory byteBuddyMockFactory;
+
+  private ProxyBasedMockFactory() {
+    if (byteBuddyAvailable && !ignoreByteBuddy) {
+      byteBuddyMockFactory = new ByteBuddyMockFactory();
+    } else {
+      byteBuddyMockFactory = null;
+    }
+  }
+
   public Object create(Class<?> mockType, List<Class<?>> additionalInterfaces, @Nullable List<Object> constructorArgs,
       IProxyBasedMockInterceptor mockInterceptor, ClassLoader classLoader, boolean useObjenesis) throws CannotCreateMockException {
     if (mockType.isInterface()) {
       return DynamicProxyMockFactory.createMock(mockType, additionalInterfaces, constructorArgs, mockInterceptor, classLoader);
     }
-    if (byteBuddyAvailable && !ignoreByteBuddy) {
-      return ByteBuddyMockFactory.createMock(mockType, additionalInterfaces, constructorArgs, mockInterceptor, classLoader, useObjenesis);
+    if (byteBuddyMockFactory != null) {
+      return byteBuddyMockFactory.createMock(mockType, additionalInterfaces, constructorArgs, mockInterceptor, classLoader, useObjenesis);
     }
     if (cglibAvailable) {
       return CglibMockFactory.createMock(mockType, additionalInterfaces, constructorArgs, mockInterceptor, classLoader, useObjenesis);

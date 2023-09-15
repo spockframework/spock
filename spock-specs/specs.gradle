@@ -28,6 +28,7 @@ dependencies {
   }
 
   testRuntimeOnly libs.asm
+  testRuntimeOnly libs.asmUtil
   testRuntimeOnly libs.bytebuddy
   testRuntimeOnly libs.cglib
   testRuntimeOnly libs.objenesis

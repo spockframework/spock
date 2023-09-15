@@ -242,6 +242,62 @@ def setup() {
 
 If an explicit condition is violated, it will produce the same nice diagnostic message as an implicit condition.
 
+====== Opt-out of condition handling
+
+Sometimes, you may want to use a top-level expression that is not treated as a condition.
+
+For example, you may want to loop over a list with `each` and do assertions on its items.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/primer/ConditionsSpec.groovy[tag=each-assert-normal]
+----
+
+However, this will fail if the list is empty, as `each` returns the list again and an empty list is falsy according to Groovy-truth.
+
+To avoid this, you can use the `!!` operator to opt-out of condition handling:
+[source,groovy,indent=0]
+----
+include::{sourcedir}/primer/ConditionsSpec.groovy[tag=each-assert-opt-out-operator]
+----
+
+The `!!` operator can also be used to hide the contents of an expression in an explicit assertion statement.
+This can be helpful, if the rendered expression is too long to be readable, or if you want to hide the data itself.
+
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/primer/ConditionsSpec.groovy[tag=explicit-with-opt-out-operator-and-message]
+----
+
+will be rendered as
+
+----
+include::{sourcedir}/primer/ConditionsSpec.groovy[tag=explicit-with-opt-out-operator-and-message-result]
+----
+
+as opposed to
+
+----
+include::{sourcedir}/primer/ConditionsSpec.groovy[tag=normal-condition-result]
+----
+
+and you can even leave out the message, although it is not recommended, to get this:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/primer/ConditionsSpec.groovy[tag=explicit-with-opt-out-operator]
+----
+
+will be rendered as
+
+----
+include::{sourcedir}/primer/ConditionsSpec.groovy[tag=explicit-with-opt-out-operator-result]
+----
+
+IMPORTANT: The `!!` must be the outermost expression, see https://groovy-lang.org/operators.html#_operator_precedence[Groovy's docs on Operator Precedence].
+           If in doubt use parentheses, `!!(expression)`.
+
 ===== Exception Conditions
 
 Exception conditions are used to describe that a `when` block should throw an exception. They are defined using the

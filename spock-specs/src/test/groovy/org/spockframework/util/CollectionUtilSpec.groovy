@@ -84,4 +84,45 @@ class CollectionUtilSpec extends Specification {
   private toList(iterable) {
     iterable.collect { it }
   }
+
+  def "asSet"() {
+    when:
+    def s = CollectionUtil.asSet(1, 3, 3, 4)
+    then:
+    s instanceof HashSet
+    s.size() == 3
+    s.contains(1)
+    s.contains(3)
+    s.contains(4)
+  }
+
+  def "getFirstElement"() {
+    expect:
+    CollectionUtil.getFirstElement([1, 2, 3]) == 1
+    when:
+    CollectionUtil.getFirstElement([])
+    then:
+    thrown(InternalSpockError)
+  }
+
+  def "getLastElement"() {
+    expect:
+    CollectionUtil.getLastElement([1, 2, 3]) == 3
+    when:
+    CollectionUtil.getLastElement([])
+    then:
+    thrown(InternalSpockError)
+  }
+
+  def "addLastElement"() {
+    when:
+    def l = []
+    CollectionUtil.addLastElement(l, 1)
+    then:
+    l == [1]
+    when:
+    CollectionUtil.addLastElement(l, 2)
+    then:
+    l == [1, 2]
+  }
 }

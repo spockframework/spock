@@ -1,5 +1,12 @@
 package spock.util
 
+import org.objectweb.asm.AnnotationVisitor
+import org.objectweb.asm.ClassReader
+import org.objectweb.asm.ClassVisitor
+import org.objectweb.asm.FieldVisitor
+import org.objectweb.asm.MethodVisitor
+import org.objectweb.asm.Opcodes
+import org.objectweb.asm.util.TraceClassVisitor
 import org.spockframework.compat.groovy2.GroovyCodeVisitorCompat
 
 import java.lang.reflect.Modifier
@@ -12,7 +19,6 @@ import org.codehaus.groovy.ast.expr.*
 import org.codehaus.groovy.ast.stmt.*
 import org.codehaus.groovy.classgen.*
 import org.codehaus.groovy.control.*
-import org.codehaus.groovy.control.customizers.ImportCustomizer
 import org.codehaus.groovy.syntax.Types
 
 import static java.util.Collections.disjoint
@@ -38,6 +44,10 @@ class SourceToAstNodeAndSourceTranspiler {
   /**
    * This method takes source code, compiles it, then reverses it back to source.
    *
+   * When using {@link CompilePhase#OUTPUT} or later, then the output will by the bytecode instructions,
+   * but internal phase that will be used internally will be {@link CompilePhase#CLASS_GENERATION} to
+   * avoid creating class files.
+   *
    * @param script
    *    the source code to be compiled. If invalid, a compile error occurs
    * @param compilePhase
@@ -51,7 +61,6 @@ class SourceToAstNodeAndSourceTranspiler {
    *    optional compiler configuration
    * @returns the source code from the AST state and the captured ast nodes
    */
-
   TranspileResult compileScript(String script, int compilePhase, Set<Show> showSet, ClassLoader classLoader = null, CompilerConfiguration config = null) {
 
     def writer = new StringBuilderWriter()
@@ -63,8 +72,19 @@ class SourceToAstNodeAndSourceTranspiler {
     CompilationUnit cu = new CompilationUnit((CompilerConfiguration)(config ?: CompilerConfiguration.DEFAULT), (CodeSource)codeSource.codeSource, (GroovyClassLoader)classLoader)
     def captureVisitor = new AstNodeCaptureVisitor()
     cu.addPhaseOperation(captureVisitor, compilePhase)
-    cu.addPhaseOperation(new AstNodeToScriptVisitor(writer, showSet), compilePhase)
     cu.addSource(codeSource.name, script)
+
+    boolean shallTraceBytecode = false
+    if ( compilePhase > CompilePhase.CLASS_GENERATION.phaseNumber) {
+      shallTraceBytecode = true
+      compilePhase = CompilePhase.CLASS_GENERATION.phaseNumber
+    }
+    if (shallTraceBytecode) {
+      cu.setClassgenCallback(createClassgenCallback(writer, showSet))
+    } else {
+      cu.addPhaseOperation(new AstNodeToScriptVisitor(writer, showSet), compilePhase)
+    }
+
     try {
       cu.compile(compilePhase)
     } catch (CompilationFailedException cfe) {
@@ -74,7 +94,93 @@ class SourceToAstNodeAndSourceTranspiler {
         writer.println it
       }
     }
+
     return new TranspileResult(writer.toString(), captureVisitor.nodeCaptures)
+  }
+
+  @CompileDynamic
+  private static CompilationUnit.ClassgenCallback createClassgenCallback(Writer writer, Set<Show> showSet) {
+    return { classVisitor, classNode ->
+      //We need here @CompileDynamic that we can access the toByteArray() method from classVisitor
+      byte[] data = classVisitor.toByteArray()
+      disassembleByteCodeForClass(writer, data, showSet)
+    }
+  }
+
+  private static void disassembleByteCodeForClass(Writer writer, byte[] bytes, Set<Show> showSet) {
+    def traceVisitor = new FilteringClassVisitor(new TraceClassVisitor(new PrintWriter(writer)), showSet)
+    new ClassReader(new ByteArrayInputStream(bytes)).accept(traceVisitor, 0)
+  }
+}
+
+@CompileStatic
+@PackageScope
+class FilteringClassVisitor extends ClassVisitor {
+  private static final int JAVA8_CLASS_VERSION = 52
+
+  private final Set<Show> showSet
+
+  FilteringClassVisitor(ClassVisitor cv, Set<Show> showSet) {
+    super(Opcodes.ASM9, cv)
+    this.showSet = showSet
+  }
+
+  @Override
+  void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+    //Override class file version to Java 8 as a default, because otherwise different Groovy/Java combinations will create different outputs.
+    super.visit(JAVA8_CLASS_VERSION, access, name, signature, superName, interfaces)
+  }
+
+  @Override
+  AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
+    if (showSet.contains(Show.ANNOTATIONS)) {
+      return super.visitAnnotation(descriptor, visible)
+    }
+    return null
+  }
+
+  @Override
+  MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
+    if (name == "<init>") {
+      if (showSet.contains(Show.CONSTRUCTORS)) {
+        return new FilteringMethodVisitor(super.visitMethod(access, name, descriptor, signature, exceptions), showSet)
+      }
+    } else {
+      if (showSet.contains(Show.METHODS) &&
+          (access & Opcodes.ACC_SYNTHETIC) == 0 &&
+          name != "setMetaClass" &&
+          name != "getMetaClass") {
+        return new FilteringMethodVisitor(super.visitMethod(access, name, descriptor, signature, exceptions), showSet)
+      }
+    }
+    return null
+  }
+
+  @Override
+  FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
+    if (showSet.contains(Show.FIELDS)) {
+      return super.visitField(access, name, descriptor, signature, value)
+    }
+    return null
+  }
+}
+
+@CompileStatic
+@PackageScope
+class FilteringMethodVisitor extends MethodVisitor {
+  private final Set<Show> showSet
+
+  FilteringMethodVisitor(MethodVisitor cv, Set<Show> showSet) {
+    super(Opcodes.ASM9, cv)
+    this.showSet = showSet
+  }
+
+  @Override
+  AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
+    if (showSet.contains(Show.ANNOTATIONS)) {
+      return super.visitAnnotation(descriptor, visible)
+    }
+    return null
   }
 }
 

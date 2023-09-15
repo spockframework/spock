@@ -183,19 +183,7 @@ class JavaMocksForGroovyClasses extends Specification {
   }
 
   // TODO: swallowed when mocking static inner class because the latter implements methodMissing/propertyMissing
-  @Requires({ GroovyRuntimeUtil.isGroovy2() }) //different exception in Groovy 2 and 3
   @FailsWith(MissingPropertyException)
-  def "dynamic properties are considered to not exist (Groovy 2)"() {
-    when:
-    mockMe.someProperty
-
-    then:
-    1 * mockMe.someProperty
-  }
-
-  // TODO: swallowed when mocking static inner class because the latter implements methodMissing/propertyMissing
-  @Requires({ GroovyRuntimeUtil.isGroovy3orNewer() })
-  @FailsWith(MissingMethodException)
   def "dynamic properties are considered to not exist"() {
     when:
     mockMe.someProperty
@@ -299,19 +287,57 @@ class JavaMocksForGroovyClasses extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1256")
-  def "Mock object boolean (get + is) accessor via dot-notation" () {
+  @Requires({ GroovyRuntimeUtil.isGroovy3orOlder() })
+  def "Mock object boolean (get + is) accessor via dot-notation (Groovy 2&3)"() {
     given:
     ExampleData mockData = Mock(ExampleData)
 
     when: "query via property syntax"
     def result = mockData.active ? "Data is current" : "Data is not current"
 
-    then: "calls mock, preferring 'get' to 'is' for boolean getters (surprise!)"
+    then: "calls mock, preferring 'get' to 'is' for boolean getters (surprise!) in Groovy <=3"
     1 * mockData.getActive() >> true
     0 * mockData.isActive()
 
     and:
     result == "Data is current"
+  }
+
+  /**
+   * The resolution of properties changed in Groovy 4 for the ExampleData.active Groovy 4 resolves the 'is'
+   * whereas Groovy 2 & 3 resolved the 'get'.
+   */
+  @Issue("https://github.com/spockframework/spock/issues/1256")
+  @Requires({ GroovyRuntimeUtil.isGroovy4orNewer() })
+  def "Mock object boolean (get + is) accessor via dot-notation (Groovy 4)"() {
+    given:
+    ExampleData mockData = Mock(ExampleData)
+
+    when: "query via property syntax"
+    def result = mockData.active ? "Data is current" : "Data is not current"
+
+    then: "calls mock, preferring 'is' for boolean getters in Groovy >=4"
+    1 * mockData.isActive() >> true
+    0 * mockData.getActive()
+
+    and:
+    result == "Data is current"
+  }
+
+  @Requires({ GroovyRuntimeUtil.isGroovy3orOlder() })
+  def "Real object boolean (get + is) accessor via dot-notation (Groovy 2&3)"() {
+    given:
+    def data = new ExampleData()
+    expect: 'The getActive() method returns true'
+    data.active
+  }
+
+  @Requires({ GroovyRuntimeUtil.isGroovy4orNewer() })
+  def "Real object boolean (get + is) accessor via dot-notation (Groovy 4)"() {
+    given:
+    def data = new ExampleData()
+    expect: 'The isActive() method returns false'
+    !data.active
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1256")
@@ -399,7 +425,7 @@ class ExampleData {
   }
 
   boolean getActive() {
-    false
+    true
   }
 
   String isName() {

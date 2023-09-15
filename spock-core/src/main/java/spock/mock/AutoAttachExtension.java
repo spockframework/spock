@@ -20,7 +20,7 @@ import org.spockframework.runtime.model.*;
 import spock.lang.Specification;
 
 public class AutoAttachExtension implements IAnnotationDrivenExtension<AutoAttach> {
-  private static MockUtil MOCK_UTIL = new MockUtil();
+  private static final MockUtil MOCK_UTIL = new MockUtil();
 
   @Override
   public void visitFieldAnnotation(AutoAttach annotation, FieldInfo field) {

@@ -9,4 +9,5 @@
 ^http://www.spockframework.org/spring$
 
 // Spring schemas from the Spring library classpath
+^http://www.springframework.org/schema/beans/spring-beans.xsd$
 ^http://www.springframework.org/schema/beans/spring-beans-2.5.xsd$

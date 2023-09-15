@@ -918,22 +918,13 @@ Subscriber subscriber = GroovyMock()
 
 Usually, Groovy mocks need to be injected into the code under specification just like regular mocks.
 However, when a Groovy mock is created as _global_, it automagically replaces all real instances
-of the mocked type for the duration of the feature method:footnote:[You may know this behavior from Groovy's
-https://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/MockFor.html[MockFor] and
-https://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/StubFor.html[StubFor] facilities.]
+of the mocked type for the duration from mock creation up until the end of the feature method:footnote:[You may know this behavior from Groovy's
+https://docs.groovy-lang.org/docs/groovy-4.0.13/html/gapi/groovy/mock/interceptor/MockFor.html[MockFor] and
+https://docs.groovy-lang.org/docs/groovy-4.0.13/html/gapi/groovy/mock/interceptor/StubFor.html[StubFor] facilities.]
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-def publisher = new Publisher()
-publisher << new RealSubscriber() << new RealSubscriber()
-
-RealSubscriber anySubscriber = GroovyMock(global: true)
-
-when:
-publisher.publish("message")
-
-then:
-2 * anySubscriber.receive("message")
+include::{sourcedir}/interaction/GlobalMockDocSpec.groovy[tag=global-spy]
 ----
 
 Here, we set up the publisher with two instances of a real subscriber implementation.
@@ -942,18 +933,44 @@ real subscribers to the mock object. The mock object's instance isn't ever passe
 it is only used to describe the interaction.
 
 NOTE: A global mock can only be created for a class type. It effectively replaces
-all instances of that type for the duration of the feature method.
+all instances of that type for the duration from mock creation up until the end of the feature method.
+
+CAUTION: The declaration order of global mocks is relevant.
+         The `GroovySpy(global:true, <type>)` must come before all creations of new mocked/spied objects of `<type>`.
+         The global spies will only take effect on objects of that type, if the `GroovySpy(global:true, <type>)` was
+         executed before the `new <type>`.
 
 Since global mocks have a somewhat, well, global effect, it's often convenient
 to use them together with `GroovySpy`. This leads to the real code getting
 executed _unless_ an interaction matches, allowing you to selectively listen
 in on objects and change their behavior just where needed.
 
+CAUTION: When using `GroovyMock(global:true)` it will also replace constructor calls, which will return `null` by default.
+         If you want working real constructors, please use `GroovySpy` instead.
+
+.GroovyMock(global) will also replace constructors
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/GlobalMockDocSpec.groovy[tag=global-mock-constructor]
+----
+
+If you want, that the real constructors are called:
+
+.GroovyMock(global), but using the real constructors
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/GlobalMockDocSpec.groovy[tag=global-mock-constructor-real]
+----
+
+When `Specifications` or `Features` are executed concurrently you have to make sure that the `Features` which create
+global mocks on the same types are properly guarded against each other, because a global mock changes the global state
+for the mocked `Class` during execution.
+
 .How Are Global Groovy Mocks Implemented?
 ****
 Global Groovy mocks get their super powers from Groovy meta-programming. To be more precise,
-every globally mocked type is assigned a custom meta class for the duration of the feature method.
-Since a global Groovy mock is still based on a CGLIB proxy, it will retain its general mocking capabilities
+every globally mocked type is assigned a custom `MetaClass` for the duration of the feature method.
+Since a global Groovy mock is still based on a proxy class, it will retain its general mocking capabilities
 (but not its super powers) when called from Java code.
 ****
 

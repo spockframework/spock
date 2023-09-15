@@ -33,6 +33,7 @@ import org.codehaus.groovy.syntax.Types;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
+import static org.spockframework.compiler.AstUtil.primitiveConstExpression;
 
 // NOTE: currently some conversions reference old expression objects rather than copying them;
 // this can potentially lead to aliasing problems (e.g. for Condition.originalExpression)
@@ -514,7 +515,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
         createDirectMethodCall(
           new VariableExpression(valueRecorderName),
           resources.getAstNodeCache().ValueRecorder_StartRecordingValue,
-          new ArgumentListExpression(new ConstantExpression(recordCount++))
+          new ArgumentListExpression(primitiveConstExpression(recordCount++))
         ),
         expr));
 
@@ -529,9 +530,9 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
 
   private Expression realizeNas(Expression expr) {
     return createDirectMethodCall(
-        new VariableExpression(valueRecorderName),
-        resources.getAstNodeCache().ValueRecorder_RealizeNas,
-        new ArgumentListExpression(new ConstantExpression(recordCount), expr));
+      new VariableExpression(valueRecorderName),
+      resources.getAstNodeCache().ValueRecorder_RealizeNas,
+      new ArgumentListExpression(primitiveConstExpression(recordCount), expr));
   }
 
   private <T> T recordNa(T expr) {
@@ -650,9 +651,9 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
     args.add(rewritten.getMethod());
     args.add(AstUtil.toArgumentArray(AstUtil.getArgumentList(rewritten), resources));
     // rewriting has produced N/A's that haven't been realized yet, so do that now
-    args.add(realizeNas(new ConstantExpression(rewritten.isSafe())));
-    args.add(new ConstantExpression(explicit));
-    args.add(new ConstantExpression(lastVariableNum));
+    args.add(realizeNas(primitiveConstExpression(rewritten.isSafe())));
+    args.add(primitiveConstExpression(explicit));
+    args.add(primitiveConstExpression(lastVariableNum));
 
     return surroundWithTryCatch(
         condition,
@@ -682,9 +683,9 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
     args.add(new ConstantExpression(rewritten.getMethod()));
     args.add(AstUtil.toArgumentArray(AstUtil.getArgumentList(rewritten), resources));
     // rewriting has produced N/A's that haven't been realized yet, so do that now
-    args.add(realizeNas(ConstantExpression.FALSE));
-    args.add(new ConstantExpression(explicit));
-    args.add(new ConstantExpression(lastVariableNum));
+    args.add(realizeNas(ConstantExpression.PRIM_FALSE));
+    args.add(primitiveConstExpression(explicit));
+    args.add(primitiveConstExpression(lastVariableNum));
 
     return surroundWithTryCatch(
         condition,
@@ -757,29 +758,29 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
 
   private TryCatchStatement surroundWithTryCatch(Expression condition, Expression message, Expression executeAndVerify, boolean optOut) {
     final TryCatchStatement tryCatchStatement = new TryCatchStatement(
-        new ExpressionStatement(executeAndVerify),
-        EmptyStatement.INSTANCE
+      new ExpressionStatement(executeAndVerify),
+      EmptyStatement.INSTANCE
     );
 
     tryCatchStatement.addCatch(
-        new CatchStatement(
-            new Parameter(new ClassNode(Throwable.class), THROWABLE),
-            new ExpressionStatement(
-                createDirectMethodCall(
-                    new ClassExpression(resources.getAstNodeCache().SpockRuntime),
-                    resources.getAstNodeCache().SpockRuntime_ConditionFailedWithException,
-                    new ArgumentListExpression(asList(
-                        new VariableExpression(errorCollectorName),
-                        optOut ? ConstantExpression.NULL : new VariableExpression(valueRecorderName),  // recorder
-                        new ConstantExpression(resources.getSourceText(condition)),   // text
-                        new ConstantExpression(condition.getLineNumber()),            // line
-                        new ConstantExpression(condition.getColumnNumber()),          // column
-                        message == null ? ConstantExpression.NULL : message,          // message
-                        new VariableExpression(THROWABLE)                             // throwable
-                    ))
-                )
-            )
+      new CatchStatement(
+        new Parameter(new ClassNode(Throwable.class), THROWABLE),
+        new ExpressionStatement(
+          createDirectMethodCall(
+            new ClassExpression(resources.getAstNodeCache().SpockRuntime),
+            resources.getAstNodeCache().SpockRuntime_ConditionFailedWithException,
+            new ArgumentListExpression(asList(
+              new VariableExpression(errorCollectorName),
+              optOut ? ConstantExpression.NULL : new VariableExpression(valueRecorderName),  // recorder
+              new ConstantExpression(resources.getSourceText(condition)),                    // text
+              primitiveConstExpression(condition.getLineNumber()),                           // line
+              primitiveConstExpression(condition.getColumnNumber()),                         // column
+              message == null ? ConstantExpression.NULL : message,                           // message
+              new VariableExpression(THROWABLE)                                              // throwable
+            ))
+          )
         )
+      )
     );
     return tryCatchStatement;
   }
@@ -822,8 +823,8 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
             resources.getAstNodeCache().ValueRecorder_Reset,
             ArgumentListExpression.EMPTY_ARGUMENTS));
     args.add(new ConstantExpression(resources.getSourceText(condition)));
-    args.add(new ConstantExpression(condition.getLineNumber()));
-    args.add(new ConstantExpression(condition.getColumnNumber()));
+    args.add(primitiveConstExpression(condition.getLineNumber()));
+    args.add(primitiveConstExpression(condition.getColumnNumber()));
     // the following means that "assert x, exprEvaluatingToNull" will be
     // treated the same as "assert x"; but probably it doesn't matter too much
     args.add(message == null ? ConstantExpression.NULL : message);

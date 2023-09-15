@@ -35,6 +35,7 @@ dependencies {
 
   compileOnly libs.junit.platform.testkit
   compileOnly libs.asm
+  compileOnly libs.asmUtil
   compileOnly libs.bytebuddy
   compileOnly libs.cglib
   compileOnly libs.objenesis

@@ -60,7 +60,7 @@ public class SpecAnnotator extends AbstractSpecVisitor {
     String pathname = spec.getAst().getModule().getContext().getName();
     String filename = new File(pathname).getName();
     ann.setMember(SpecMetadata.FILENAME, new ConstantExpression(filename));
-    ann.setMember(SpecMetadata.LINE, new ConstantExpression(spec.getAst().getLineNumber()));
+    ann.setMember(SpecMetadata.LINE, primitiveConstExpression(spec.getAst().getLineNumber()));
     spec.getAst().addAnnotation(ann);
   }
 
@@ -73,9 +73,9 @@ public class SpecAnnotator extends AbstractSpecVisitor {
   private void addFieldMetadata(Field field) {
     AnnotationNode ann = new AnnotationNode(nodeCache.FieldMetadata);
     ann.setMember(FieldMetadata.NAME, new ConstantExpression(field.getName()));
-    ann.setMember(FieldMetadata.ORDINAL, new ConstantExpression(field.getOrdinal()));
-    ann.setMember(FieldMetadata.LINE, new ConstantExpression(field.getAst().getLineNumber()));
-    ann.setMember(FieldMetadata.INITIALIZER, new ConstantExpression(field.hasInitialExpression()));
+    ann.setMember(FieldMetadata.ORDINAL, primitiveConstExpression(field.getOrdinal()));
+    ann.setMember(FieldMetadata.LINE, primitiveConstExpression(field.getAst().getLineNumber()));
+    ann.setMember(FieldMetadata.INITIALIZER, primitiveConstExpression(field.hasInitialExpression()));
     field.getAst().addAnnotation(ann);
   }
 
@@ -185,8 +185,8 @@ public class SpecAnnotator extends AbstractSpecVisitor {
   private void addFeatureMetadata(FeatureMethod feature) {
     AnnotationNode ann = new AnnotationNode(nodeCache.FeatureMetadata);
     ann.setMember(FeatureMetadata.NAME, new ConstantExpression(feature.getName()));
-    ann.setMember(FeatureMetadata.ORDINAL, new ConstantExpression(feature.getOrdinal()));
-    ann.setMember(FeatureMetadata.LINE, new ConstantExpression(feature.getAst().getLineNumber()));
+    ann.setMember(FeatureMetadata.ORDINAL, primitiveConstExpression(feature.getOrdinal()));
+    ann.setMember(FeatureMetadata.LINE, primitiveConstExpression(feature.getAst().getLineNumber()));
     ann.setMember(FeatureMetadata.BLOCKS, blockAnnElems = new ListExpression());
 
     ListExpression paramNames = new ListExpression();

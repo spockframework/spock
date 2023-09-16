@@ -68,12 +68,11 @@ class DetachedMockFactoryDocSpec extends Specification {
   }
   // end::auto-attach[]
 
-  // tag::use-custom-mock-creator[]
+  // tag::use-custom-mock-creator-no-attach[]
   @Unroll("Engine state #engineStateResponseType")
-  def "Manually attach detached mock with preconfigured engine state"() {
+  def "Mock usage without manually attach detach with preconfigured engine state"() {
     given:
     def car = new Car(engine: preconfiguredEngine)
-
     // The preconfigured mock with default behaviour behaves as defined,
     // even *without* attaching it to the spec.
 
@@ -87,16 +86,31 @@ class DetachedMockFactoryDocSpec extends Specification {
     then:
     possibleResponsesAfterStop.contains(preconfiguredEngine.isStarted())
 
-    // Now, let's attach the mock to the spec and override its default behaviour.
+    where:
+    engineStateResponseType | possibleResponsesAfterStart | possibleResponsesAfterStop
+    ALWAYS_STARTED          | [true]                      | [true]
+    ALWAYS_STOPPED          | [false]                     | [false]
+    RANDOMLY_STARTED        | [true, false]               | [true, false]
+    REAL_RESPONSE           | [true]                      | [false]
+    preconfiguredEngine = EngineMockCreator.getMock(engineStateResponseType)
+  }
+  // end::use-custom-mock-creator-no-attach[]
 
-    when:
+
+  // tag::use-custom-mock-creator-attach[]
+  @Unroll("Engine state #engineStateResponseType")
+  def "Manually attach detached mock with preconfigured engine state"() {
+    given:
+    def car = new Car(engine: preconfiguredEngine)
+    //Now, let's attach the mock to the spec and override its default behaviour.
     mockUtil.attachMock(preconfiguredEngine, this)
     preconfiguredEngine.isStarted() >> true
-    then:
+
+    expect:
     preconfiguredEngine.isStarted()
-    // The attached now behaves differently. Because it has been attached to the
+    // The attached mock now behaves differently. Because it has been attached to the
     // spec, we can also verify interactions using '1 * ...' or similar, which
-    // would not be possible before attaching it.
+    // would not be possible without attaching it.
 
     when:
     car.drive()
@@ -121,7 +135,7 @@ class DetachedMockFactoryDocSpec extends Specification {
     REAL_RESPONSE           | [true]                      | [false]
     preconfiguredEngine = EngineMockCreator.getMock(engineStateResponseType)
   }
-  // end::use-custom-mock-creator[]
+  // end::use-custom-mock-creator-attach[]
 
   static
   // tag::engine[]

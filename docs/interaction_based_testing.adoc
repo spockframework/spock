@@ -1151,11 +1151,19 @@ A custom detached mock creator could look like this (please figure out by yourse
 include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=custom-mock-creator]
 ----
 
-A parametrized feature method showcasing a set of usage scenarios goes as follows:
+The first parametrized feature uses the mock without attach:
 
 [source,groovy,indent=0]
 ----
-include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=use-custom-mock-creator]
+include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=use-custom-mock-creator-no-attach]
+----
+
+The next parametrized feature method showcasing a set of usage scenarios when a detached mock
+is attached to a spec before usage:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=use-custom-mock-creator-attach]
 ----
 
 == Further Reading

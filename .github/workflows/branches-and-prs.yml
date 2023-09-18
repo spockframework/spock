@@ -46,7 +46,7 @@ jobs:
             variant: '4.0'
             java: '8'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           # Codecov needs fetch-depth > 1
           fetch-depth: 2

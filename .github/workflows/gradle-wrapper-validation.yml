@@ -14,7 +14,7 @@ jobs:
     steps:
     - id: 'step-0'
       name: 'Check out'
-      uses: 'actions/checkout@v3'
+      uses: 'actions/checkout@v4'
     - id: 'step-1'
       name: 'Execute script'
       run: 'rm ''.github/workflows/gradle-wrapper-validation.yml'' && ''.github/workflows/gradle-wrapper-validation.main.kts'''
@@ -29,7 +29,7 @@ jobs:
     steps:
     - id: 'step-0'
       name: 'Checkout Repository'
-      uses: 'actions/checkout@v3'
+      uses: 'actions/checkout@v4'
     - id: 'step-1'
       name: 'Validate Wrapper'
       uses: 'gradle/wrapper-validation-action@v1'

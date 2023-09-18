@@ -21,7 +21,7 @@ jobs:
     steps:
     - id: 'step-0'
       name: 'Check out'
-      uses: 'actions/checkout@v3'
+      uses: 'actions/checkout@v4'
     - id: 'step-1'
       name: 'Execute script'
       run: 'rm ''.github/workflows/codeql-analysis.yml'' && ''.github/workflows/codeql-analysis.main.kts'''
@@ -43,7 +43,7 @@ jobs:
     steps:
     - id: 'step-0'
       name: 'Checkout Repository'
-      uses: 'actions/checkout@v3'
+      uses: 'actions/checkout@v4'
     - id: 'step-1'
       name: 'Set up JDKs'
       uses: './.github/actions/setup-build-env'

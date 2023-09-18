@@ -18,8 +18,8 @@
 
 @file:Import("common.main.kts")
 
-import io.github.typesafegithub.workflows.actions.actions.CheckoutV3
-import io.github.typesafegithub.workflows.actions.actions.CheckoutV3.FetchDepth
+import io.github.typesafegithub.workflows.actions.actions.CheckoutV4
+import io.github.typesafegithub.workflows.actions.actions.CheckoutV4.FetchDepth
 import io.github.typesafegithub.workflows.actions.codecov.CodecovActionV3
 import io.github.typesafegithub.workflows.actions.gradle.GradleBuildActionV2
 import io.github.typesafegithub.workflows.domain.RunnerType
@@ -57,7 +57,7 @@ workflow(
     ) {
         uses(
             name = "Checkout Repository",
-            action = CheckoutV3(
+            action = CheckoutV4(
                 // Codecov needs fetch-depth > 1
                 fetchDepth = FetchDepth.Value(2)
             )
@@ -106,7 +106,7 @@ workflow(
     ) {
         uses(
             name = "Checkout Repository",
-            action = CheckoutV3()
+            action = CheckoutV4()
         )
         uses(
             name = "Set up JDKs",
@@ -149,7 +149,7 @@ workflow(
     ) {
         uses(
             name = "Checkout Repository",
-            action = CheckoutV3()
+            action = CheckoutV4()
         )
         uses(
             name = "Set up JDKs",

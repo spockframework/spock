@@ -18,7 +18,7 @@
 
 @file:Import("common.main.kts")
 
-import io.github.typesafegithub.workflows.actions.actions.CheckoutV3
+import io.github.typesafegithub.workflows.actions.actions.CheckoutV4
 import io.github.typesafegithub.workflows.actions.codecov.CodecovActionV3
 import io.github.typesafegithub.workflows.actions.gradle.GradleBuildActionV2
 import io.github.typesafegithub.workflows.domain.Concurrency
@@ -59,7 +59,7 @@ workflow(
     ) {
         uses(
             name = "Checkout Repository",
-            action = CheckoutV3()
+            action = CheckoutV4()
         )
         run(
             name = "Regenerate all workflow YAMLs and check for modifications",
@@ -77,9 +77,9 @@ workflow(
     ) {
         uses(
             name = "Checkout Repository",
-            action = CheckoutV3(
+            action = CheckoutV4(
                 // Codecov needs fetch-depth > 1
-                fetchDepth = CheckoutV3.FetchDepth.Value(2)
+                fetchDepth = CheckoutV4.FetchDepth.Value(2)
             )
         )
         uses(

@@ -18,7 +18,7 @@
 
 @file:Import("common.main.kts")
 
-import io.github.typesafegithub.workflows.actions.actions.CheckoutV3
+import io.github.typesafegithub.workflows.actions.actions.CheckoutV4
 import io.github.typesafegithub.workflows.actions.gradle.WrapperValidationActionV1
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
 import io.github.typesafegithub.workflows.domain.triggers.MergeGroup
@@ -44,7 +44,7 @@ workflow(
     ) {
         uses(
             name = "Checkout Repository",
-            action = CheckoutV3()
+            action = CheckoutV4()
         )
         uses(
             name = "Validate Wrapper",

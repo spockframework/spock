@@ -18,7 +18,7 @@
 
 @file:Import("common.main.kts")
 
-import io.github.typesafegithub.workflows.actions.actions.CheckoutV3
+import io.github.typesafegithub.workflows.actions.actions.CheckoutV4
 import io.github.typesafegithub.workflows.actions.github.CodeqlActionAnalyzeV2
 import io.github.typesafegithub.workflows.actions.github.CodeqlActionInitV2
 import io.github.typesafegithub.workflows.actions.gradle.GradleBuildActionV2
@@ -73,7 +73,7 @@ workflow(
     ) {
         uses(
             name = "Checkout Repository",
-            action = CheckoutV3()
+            action = CheckoutV4()
         )
         // Manually added: Install and setup JDK
         uses(

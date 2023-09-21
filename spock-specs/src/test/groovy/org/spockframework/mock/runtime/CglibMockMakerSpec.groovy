@@ -17,6 +17,8 @@
 package org.spockframework.mock.runtime
 
 import org.spockframework.mock.CannotCreateMockException
+import org.spockframework.runtime.extension.builtin.PreconditionContext
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 import spock.mock.MockMakers
@@ -24,6 +26,10 @@ import spock.mock.MockMakers
 import java.lang.reflect.Proxy
 import java.util.concurrent.Callable
 
+@IgnoreIf(
+  value = { jvm.java21Compatible },
+  reason = "Cglib doesn't support running on Java 21+"
+)
 class CglibMockMakerSpec extends Specification {
 
   def "Verify ID and IMockMakerSettings"() {

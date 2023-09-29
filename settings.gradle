@@ -100,6 +100,8 @@ include "spock-junit4"
 include "spock-testkit"
 
 def variant = System.getProperty("variant") as BigDecimal ?: 2.5
+def javaVersion = (System.getProperty("javaVersion") ?: 8) as int
+
 if (variant == 2.5) {
   //Remove once Groovy 2.5 support is dropped
   include "spock-groovy2-compat"
@@ -110,13 +112,15 @@ if (variant == 2.5) {
 }
 
 // https://issues.apache.org/jira/projects/TAP5/issues/TAP5-2588
-if (((System.getProperty("javaVersion") ?: 8) as int) == 8) {
+if (javaVersion == 8) {
   include "spock-tapestry"
 }
 
 include "spock-unitils"
 
-include "spock-spring:boot2-test"
+if (javaVersion <= 17) {
+  include "spock-spring:boot2-test"
+}
 include "spock-spring:spring3-test"
 include "spock-spring:spring5-test"
 

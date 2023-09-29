@@ -11,7 +11,7 @@ runs:
       uses: actions/setup-java@v3
       if: inputs.additional-java-version != 8 && inputs.additional-java-version != 17
       with:
-        distribution: 'temurin'
+        distribution: ${{ inputs.additional-java-version == 21 && 'liberica' || 'temurin' }}
         java-version: ${{ inputs.additional-java-version }}
     - name: 'Prepare JDK${{ inputs.additional-java-version }} env var'
       shell: bash

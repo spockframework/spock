@@ -168,6 +168,59 @@ thrown() == e
     e.message.startsWith("Exception conditions are only allowed as top-level statements")
   }
 
+  def "thrown condition with neither inferred nor explicit type"() {
+    when:
+    runner.runFeatureBody """
+when:
+true
+
+then:
+thrown()
+    """
+
+    then:
+    InvalidSpecException e = thrown()
+    e.message == "Thrown exception type cannot be inferred automatically. Please specify a type explicitly (e.g. 'thrown(MyException)')."
+  }
+
+  def "thrown condition with only explicit type null"() {
+    when:
+    runner.runFeatureBody """
+when:
+true
+
+then:
+thrown(null)
+    """
+
+    then:
+    InvalidSpecException e = thrown()
+    e.message == "Thrown exception type cannot be inferred automatically. Please specify a type explicitly (e.g. 'thrown(MyException)')."
+  }
+
+  def "thrown condition with explicit type null and inferred type"() {
+    when:
+    throw new Exception()
+
+    then:
+    Exception e = thrown(null)
+  }
+
+  def "thrown condition with explicit and inferred type"() {
+    when:
+    runner.runFeatureBody """
+when:
+throw new Exception()
+
+then:
+Exception e = thrown(IOException)
+    """
+
+    then:
+    WrongExceptionThrownError e = thrown()
+    e.message == "Expected exception of type 'java.io.IOException', but got 'java.lang.Exception'"
+  }
+
   @Issue("https://github.com/spockframework/spock/issues/260")
   @FailsWith(InvalidSpecException)
   def "(Java-style) exception condition must specify a type that is-a java.lang.Throwable"() {

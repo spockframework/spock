@@ -1,3 +1,19 @@
+/*
+ * Copyright 2023 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.spockframework.util
 
 import groovy.transform.Canonical
@@ -14,6 +30,7 @@ import java.util.function.Function
 class GenericTypeReflectorUtilSpec extends Specification {
   private static final Type FUNC_STRING_INT_TYPE = new TypeToken<Function<String, Integer>>() {}.type
   private static final Type LIST_STRING_TYPE = new TypeToken<List<String>>() {}.type
+  private static final Type ARRAY_LIST_STRING_TYPE = new TypeToken<ArrayList<String>>() {}.type
   private static final Type LIST_LIST_STRING_TYPE = new TypeToken<List<List<String>>>() {}.type
   private static final Type CLASS_SERIALIZABLE = new TypeToken<Class<Serializable>>() {}.type
 
@@ -28,6 +45,22 @@ class GenericTypeReflectorUtilSpec extends Specification {
     FUNC_STRING_INT_TYPE  | Function
     LIST_STRING_TYPE      | List
     LIST_LIST_STRING_TYPE | List
+  }
+
+  def "getExactSuperType"(Type inputSubType, Class<?> inputSuperClass, @Nullable Type expectedType) {
+    expect:
+    GenericTypeReflectorUtil.getExactSuperType(inputSubType, inputSuperClass) == expectedType
+
+    where:
+    inputSubType           | inputSuperClass | expectedType
+    Object                 | Object          | Object
+    StringBuilder          | StringBuilder   | StringBuilder
+    StringBuilder          | Appendable      | Appendable
+    Runnable               | ArrayList       | null
+    ArrayList              | AbstractList    | AbstractList
+    List                   | AbstractList    | null
+    LIST_STRING_TYPE       | AbstractList    | null
+    ARRAY_LIST_STRING_TYPE | List            | LIST_STRING_TYPE
   }
 
   def "getTypeName"(Type inputType, String expectedName) {

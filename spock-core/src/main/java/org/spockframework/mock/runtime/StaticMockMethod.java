@@ -29,7 +29,12 @@ public class StaticMockMethod implements IMockMethod {
 
   public StaticMockMethod(Method method, Type mockType) {
     this.method = method;
-    this.mockType = mockType;
+    if (isMethodFromAdditionalInterfaces(mockType, method)) {
+      //We need to switch the mockType to the additional interface type, because otherwise the type resolution will fail with NPE
+      this.mockType = method.getDeclaringClass();
+    } else {
+      this.mockType = mockType;
+    }
   }
 
   @Override
@@ -60,5 +65,15 @@ public class StaticMockMethod implements IMockMethod {
   @Override
   public boolean isStatic() {
     return Modifier.isStatic(method.getModifiers());
+  }
+
+  /**
+   * @param mockType the mocked type
+   * @param method   the intercepted method
+   * @return <code>true</code>, if the method is not part of the hierarchy of the mocked type.
+   */
+  private static boolean isMethodFromAdditionalInterfaces(Type mockType, Method method) {
+    //We have a method from additional interfaces of the mock, because there was no common type found.
+    return GenericTypeReflectorUtil.getExactSuperType(mockType, method.getDeclaringClass()) == null;
   }
 }

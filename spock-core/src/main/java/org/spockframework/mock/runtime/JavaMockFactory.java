@@ -16,12 +16,15 @@
 
 package org.spockframework.mock.runtime;
 
+import groovy.lang.GroovyObject;
 import org.spockframework.mock.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.RunContext;
 import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.SpockDocLinks;
 import spock.lang.Specification;
+
+import java.util.List;
 
 import groovy.lang.MetaClass;
 
@@ -44,19 +47,27 @@ public class JavaMockFactory implements IMockFactory {
 	}
 
   private Object createInternal(IMockConfiguration configuration, Specification specification, ClassLoader classLoader) {
+    Class<?> type = configuration.getType();
     if (configuration.isGlobal()) {
-      throw new CannotCreateMockException(configuration.getType(),
+      throw new CannotCreateMockException(type,
           " because Java mocks cannot mock globally. If the code under test is written in Groovy, use a Groovy mock.");
     }
 
-    MetaClass mockMetaClass = GroovyRuntimeUtil.getMetaClass(configuration.getType());
-    IProxyBasedMockInterceptor interceptor = new JavaMockInterceptor(configuration, specification, mockMetaClass);
+    MetaClass mockMetaClass = GroovyRuntimeUtil.getMetaClass(type);
+    JavaMockInterceptor interceptor = new JavaMockInterceptor(configuration, specification, mockMetaClass);
     Object proxy = RunContext.get().getMockMakerRegistry().makeMock(MockCreationSettings.settingsFromMockConfiguration(configuration, interceptor, classLoader));
+    List<Class<?>> additionalInterfaces = configuration.getAdditionalInterfaces();
+    if (!additionalInterfaces.isEmpty() && GroovyObject.class.isAssignableFrom(type)) {
+      //Issue #1405: We need to update the mockMetaClass to reflect the methods of the additional interfaces
+      //             The MetaClass of the mock is a bit too much, but we do not have a class representing the hierarchy without the internal Spock interfaces like ISpockMockObject
+      interceptor.setMetaClass(GroovyRuntimeUtil.getMetaClass(proxy.getClass()));
+    }
+
     if ((configuration.getNature() == MockNature.SPY) && (configuration.getInstance() != null)) {
       try {
         ReflectionUtil.deepCopyFields(configuration.getInstance(), proxy);
       } catch (Exception e) {
-        throw new CannotCreateMockException(configuration.getType(),
+        throw new CannotCreateMockException(type,
           ". Cannot copy fields.\n" + SpockDocLinks.SPY_ON_JAVA_17.getLink(),
           e);
       }

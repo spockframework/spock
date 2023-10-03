@@ -39,12 +39,13 @@ public class GroovyMockFactory implements IMockFactory {
     GroovyMockMetaClass newMetaClass = new GroovyMockMetaClass(configuration, specification, oldMetaClass);
     final Class<?> type = configuration.getType();
 
+    boolean hasAdditionalInterfaces = !configuration.getAdditionalInterfaces().isEmpty();
     if (configuration.isGlobal()) {
       if (type.isInterface()) {
         throw new CannotCreateMockException(type,
             ". Global mocking is only possible for classes, but not for interfaces.");
       }
-      if (!configuration.getAdditionalInterfaces().isEmpty()) {
+      if (hasAdditionalInterfaces) {
         throw new CannotCreateMockException(type,
           ". Global cannot add additionalInterfaces.");
       }
@@ -54,7 +55,7 @@ public class GroovyMockFactory implements IMockFactory {
     }
 
     if (isFinalClass(type)) {
-      if (!configuration.getAdditionalInterfaces().isEmpty()) {
+      if (hasAdditionalInterfaces) {
         throw new CannotCreateMockException(type,
           ". Cannot add additionalInterfaces to final classes.");
       }
@@ -65,12 +66,21 @@ public class GroovyMockFactory implements IMockFactory {
       return instance;
     }
 
-    IProxyBasedMockInterceptor mockInterceptor = new GroovyMockInterceptor(configuration, specification, newMetaClass);
+    GroovyMockInterceptor mockInterceptor = new GroovyMockInterceptor(configuration, specification, newMetaClass);
     IMockMaker.IMockCreationSettings mockCreationSettings = MockCreationSettings.settingsFromMockConfiguration(configuration,
       mockInterceptor,
       specification.getClass().getClassLoader());
     mockCreationSettings.getAdditionalInterface().add(GroovyObject.class);
     Object proxy = RunContext.get().getMockMakerRegistry().makeMock(mockCreationSettings);
+
+    if (hasAdditionalInterfaces) {
+      //Issue #1405: We need to update the mockMetaClass to reflect the methods of the additional interfaces
+      //             The MetaClass of the mock is a bit too much, but we do not have a class representing the hierarchy without the internal Spock interfaces like ISpockMockObject
+      MetaClass oldMetaClassOfProxy = GroovyRuntimeUtil.getMetaClass(proxy.getClass());
+      GroovyMockMetaClass mockMetaClass = new GroovyMockMetaClass(configuration, specification, oldMetaClassOfProxy);
+      mockInterceptor.setMetaClass(mockMetaClass);
+    }
+
     if ((configuration.getNature() == MockNature.SPY) && (configuration.getInstance() != null)) {
       try {
         ReflectionUtil.deepCopyFields(configuration.getInstance(), proxy);

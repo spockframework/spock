@@ -58,8 +58,8 @@ public class JavaMockFactory implements IMockFactory {
     Object proxy = RunContext.get().getMockMakerRegistry().makeMock(MockCreationSettings.settingsFromMockConfiguration(configuration, interceptor, classLoader));
     List<Class<?>> additionalInterfaces = configuration.getAdditionalInterfaces();
     if (!additionalInterfaces.isEmpty() && GroovyObject.class.isAssignableFrom(type)) {
-      //Ticket #1405: We need to update the mockMetaClass to reflect the methods of the additional interfaces
-      //              The MetaClass of the mock is a bit too much, but we do not have a class representing the hierarchy without the internal Spock interfaces like ISpockMockObject
+      //Issue #1405: We need to update the mockMetaClass to reflect the methods of the additional interfaces
+      //             The MetaClass of the mock is a bit too much, but we do not have a class representing the hierarchy without the internal Spock interfaces like ISpockMockObject
       interceptor.setMetaClass(GroovyRuntimeUtil.getMetaClass(proxy.getClass()));
     }
 

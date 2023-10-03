@@ -24,7 +24,7 @@ import java.util.function.IntSupplier
 class AdditionalInterfaceResponseSpec extends Specification {
 
   @Issue("https://github.com/spockframework/spock/issues/1405")
-  def "Defining responses for additionalInterfaces for Groovy class Ticket #1405"() {
+  def "Defining responses for additionalInterfaces for Groovy class"() {
     given:
     A a = Stub(additionalInterfaces: [B]) {
       it.methodFromA() >> { "MockedA" }
@@ -61,7 +61,7 @@ class AdditionalInterfaceResponseSpec extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1405")
-  def "Defining responses for additionalInterfaces for Groovy interface Ticket #1405"() {
+  def "Defining responses for additionalInterfaces for Groovy interface"() {
     given:
     C c = Stub(additionalInterfaces: [B]) {
       it.methodFromIfC() >> { "ResultC" }
@@ -98,7 +98,7 @@ class AdditionalInterfaceResponseSpec extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1405")
-  def "Defining responses for additionalInterfaces for Java classes Ticket #1405"() {
+  def "Defining responses for additionalInterfaces for Java classes"() {
     given:
     ArrayList a = Stub(additionalInterfaces: [IntSupplier]) {
       it.getAsInt() >> { 5 }

@@ -25,72 +25,85 @@ class AdditionalInterfaceResponseSpec extends Specification {
 
   @Issue("https://github.com/spockframework/spock/issues/1405")
   def "Defining responses for additionalInterfaces for Groovy class Ticket #1405"() {
-    setup:
+    given:
     A a = Stub(additionalInterfaces: [B]) {
       it.methodFromA() >> { "MockedA" }
       it.methodFromIf() >> { "Result" }
     }
+
     expect:
     a instanceof A
     a.methodFromA() == "MockedA"
     a instanceof B
+
+    and:
     B ifType = a as B
     ifType.methodFromIf() == "Result"
     a.methodFromIf() == "Result"
   }
 
   def "Defining responses for additionalInterfaces for Groovy class with GroovyStub"() {
-    setup:
+    given:
     A a = GroovyStub(additionalInterfaces: [B]) {
       it.methodFromA() >> { "MockedA" }
       it.methodFromIf() >> { "Result" }
     }
+
     expect:
     a instanceof A
     a.methodFromA() == "MockedA"
     a instanceof B
     a.methodFromIf() == "Result"
+
+    and:
     B ifType = (B) a
     ifType.methodFromIf() == "Result"
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1405")
   def "Defining responses for additionalInterfaces for Groovy interface Ticket #1405"() {
-    setup:
+    given:
     C c = Stub(additionalInterfaces: [B]) {
       it.methodFromIfC() >> { "ResultC" }
       it.methodFromIf() >> { "ResultB" }
     }
+
     expect:
     c instanceof C
     (c as C).methodFromIfC() == "ResultC"
     c instanceof B
+
+    and:
     B ifType = c as B
     ifType.methodFromIf() == "ResultB"
     c.methodFromIf() == "ResultB"
   }
 
   def "Defining responses for additionalInterfaces for Groovy interface with GroovyStub"() {
-    setup:
+    given:
     C c = GroovyStub(additionalInterfaces: [B]) {
       it.methodFromIfC() >> { "ResultC" }
       it.methodFromIf() >> { "ResultB" }
     }
+
     expect:
     c instanceof C
     c.methodFromIfC() == "ResultC"
     c instanceof B
     c.methodFromIf() == "ResultB"
+
+    and:
     B ifType = (B) c
     ifType.methodFromIf() == "ResultB"
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1405")
   def "Defining responses for additionalInterfaces for Java classes Ticket #1405"() {
-    setup:
+    given:
     ArrayList a = Stub(additionalInterfaces: [IntSupplier]) {
       it.getAsInt() >> { 5 }
     }
+
     expect:
     a instanceof ArrayList
     a instanceof IntSupplier

@@ -19,6 +19,7 @@ package org.spockframework.mock.runtime
 import org.spockframework.mock.CannotCreateMockException
 import org.spockframework.runtime.extension.builtin.PreconditionContext
 import spock.lang.IgnoreIf
+import spock.lang.Requires
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 import spock.mock.MockMakers
@@ -82,5 +83,22 @@ class CglibMockMakerSpec extends Specification {
     then:
     def ex = thrown(CannotCreateMockException)
     ex.message == "Cannot create mock for class java.lang.StringBuilder. cglib: Cannot mock final classes."
+  }
+
+
+  @Requires(
+    value = { jvm.java21Compatible },
+    reason = "Cglib doesn't support running on Java 21+"
+  )
+  static class CglibMockMakerUnsupportedSpec extends Specification {
+
+    def "Mocking with cglib on Java 21+ will be rejected with useful error message."() {
+      when:
+      Mock(mockMaker: MockMakers.cglib, List)
+      then:
+      def ex = thrown(CannotCreateMockException)
+      ex.message == "Cannot create mock for interface java.util.List. cglib: Mocking with cglib is not supported on Java 21 or newer."
+    }
+
   }
 }

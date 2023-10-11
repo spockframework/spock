@@ -20,6 +20,10 @@ class MockingIntegrationSpec extends Specification {
   }
 
   @IgnoreIf({ TEST_TYPE == "plain" })
+  @IgnoreIf(
+    value = { jvm.java21Compatible && TEST_TYPE.contains("cglib") },
+    reason = "Cglib doesn't support running on Java 21+"
+  )
   def "can mock class when cglib or byte-buddy are present"() {
     given:
     def list = Mock(ArrayList)
@@ -32,6 +36,10 @@ class MockingIntegrationSpec extends Specification {
   }
 
   @Requires({ TEST_TYPE == "plain" })
+  @IgnoreIf(
+    value = { jvm.java21Compatible && TEST_TYPE.contains("cglib") },
+    reason = "Cglib doesn't support running on Java 21+"
+  )
   def "cannot mock class without cglib and byte-buddy"() {
     when:
     Mock(ArrayList)
@@ -41,6 +49,10 @@ class MockingIntegrationSpec extends Specification {
   }
 
   @IgnoreIf({ TEST_TYPE == "plain" })
+  @IgnoreIf(
+    value = { jvm.java21Compatible && TEST_TYPE.contains("cglib") },
+    reason = "Cglib doesn't support running on Java 21+"
+  )
   def "can spy on class when cglib or byte-buddy are present"() {
     given:
     def list = Spy(ArrayList)

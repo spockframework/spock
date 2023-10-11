@@ -47,6 +47,7 @@ codeGenerationLibraries.each { key, config ->
           "--add-opens=java.base/java.lang=ALL-UNNAMED"
         )
       }
+      onlyIf { rootProject.ext.javaVersion < 21}
     }
   }
   tasks.register("test${key.capitalize()}WithObjenesis", Test) {
@@ -61,6 +62,7 @@ codeGenerationLibraries.each { key, config ->
           "--add-opens=java.base/java.lang=ALL-UNNAMED"
         )
       }
+      onlyIf { rootProject.ext.javaVersion < 21}
     }
   }
 }

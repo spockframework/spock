@@ -1629,6 +1629,19 @@ if it can mock the requested type. Spock will use the first mock maker which is 
 </div>
 </li>
 <li>
+<p><code>mockito</code>: Uses <a href="https://site.mockito.org/">Mockito</a> to create mocks of classes.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Can be configured to use additional Mockito feature like mock <code>Serializable</code></p>
+</li>
+<li>
+<p>Requires <code>org.mockito:mockito-core</code> 4.11+ on the class path.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
 <p><code>cglib</code>: Deprecated: Uses <a href="https://github.com/cglib/cglib">CGLIB</a> to create mock objects.</p>
 <div class="ulist">
 <ul>
@@ -1647,6 +1660,7 @@ if it can mock the requested type. Spock will use the first mock maker which is 
 <col style="width: 15%;">
 <col style="width: 15%;">
 <col style="width: 15%;">
+<col style="width: 18%;">
 </colgroup>
 <thead>
 <tr>
@@ -1654,11 +1668,13 @@ if it can mock the requested type. Spock will use the first mock maker which is 
 <th class="tableblock halign-center valign-middle"><code>java-proxy</code></th>
 <th class="tableblock halign-center valign-middle"><code>byte-buddy</code></th>
 <th class="tableblock halign-center valign-middle"><code>cglib</code></th>
+<th class="tableblock halign-center valign-middle"><code>mockito</code></th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th class="tableblock halign-left valign-middle"><p class="tableblock">Interface</p></th>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
@@ -1668,9 +1684,11 @@ if it can mock the requested type. Spock will use the first mock maker which is 
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
 </tr>
 <tr>
 <th class="tableblock halign-left valign-middle"><p class="tableblock">Additional Interfaces</p></th>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
@@ -1680,21 +1698,25 @@ if it can mock the requested type. Spock will use the first mock maker which is 
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
 </tr>
 <tr>
 <th class="tableblock halign-left valign-middle"><p class="tableblock">Final Class</p></th>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
 </tr>
 <tr>
 <th class="tableblock halign-left valign-middle"><p class="tableblock">Final Method</p></th>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
 </tr>
 <tr>
 <th class="tableblock halign-left valign-middle"><p class="tableblock">Static Method</p></th>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
@@ -1715,6 +1737,54 @@ The preferred mock maker will be used globally, if no mock maker is explicitly s
 <pre class="CodeRay highlight"><code data-lang="groovy">mockMaker {
   preferredMockMaker spock.mock.MockMakers.byteBuddy
 }</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_mockito_mock_maker"><a class="anchor" href="#_mockito_mock_maker"></a><a class="link" href="#_mockito_mock_maker">Mockito Mock Maker</a></h4>
+<div class="paragraph">
+<p>The <code>mockito</code> Mock Maker provides the ability to mock final types, enums and final methods.
+The mocking of final classes is automatically enabled, if <code>org.mockito:mockito-core</code> 4.11+ is on the class path.</p>
+</div>
+<div class="paragraph">
+<p>For mocking of final methods, you need to select <code>mockito</code> during mock construction,
+like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Subscriber subscriber = Mock(<span class="key">mockMaker</span>: MockMakers.mockito)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you want to make final method mockable by default, you can select this mock maker as the preferred mock maker.
+It can&#8217;t mock <code>native</code> methods, see Mockito for details.</p>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
+If you try to mock a final method without a Mock Maker supporting it.
+         It will silently fail, without honoring your specified interactions.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can configure the created mocks with the <code>org.mockito.MockSettings</code> during construction to use features provided by Mockito:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Subscriber subscriber = Mock(<span class="key">mockMaker</span>: MockMakers.mockito { org.mockito.MockSettings settings -&gt;
+  settings.serializable()
+})</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>mockito</code> uses the <code>org.mockito.MockMakers.INLINE</code> under the hood,
+please see the Mockito manual "Mocking final types, enums and final methods" for all pros and cons,
+when using <code>org.mockito.MockMakers.INLINE</code>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1852,7 +1922,7 @@ ex.message == <span class="string"><span class="delimiter">&quot;</span><span cl
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2023-10-06 13:48:19 UTC
+Last updated 2023-10-11 12:53:06 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

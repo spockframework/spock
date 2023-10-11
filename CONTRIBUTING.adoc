@@ -34,7 +34,7 @@ A good way to familiarize yourself with the codebase and contribution process is
 Before embarking on a more ambitious contribution, please quickly <<Communication,get in touch>> with us.
 This will help to make sure that the contribution is aligned with Spock's overall direction and goals, and gives us a chance to guide design and implementation where needed.
 
-*We appreciate your effort, and want to avoid a situation where a contribution requires extensive rework (by you or by us), sits in the queue for a long time, or cannot be accepted at all!*
+IMPORTANT: *We appreciate your effort, and want to avoid a situation where a contribution requires extensive rework (by you or by us), sits in the queue for a long time, or cannot be accepted at all!*
 
 === What Makes a Good Pull Request
 
@@ -97,7 +97,7 @@ To generate an IDEA project configuration:
 * `File -&gt; Open` in Intellij, then
 * select the appropriate `spock-2.5.ipr`.
 
-Note: You can provide an optional 'variant' flag to the gradle build `-Dvariant=[2.5|3.0|4.0]` that specifies the version of groovy you wish to use.
+NOTE: You can provide an optional 'variant' flag to the gradle build `-Dvariant=[2.5|3.0|4.0]` that specifies the version of groovy you wish to use.
 For example, if we wish to use groovy 3.0, we would run `./gradlew cleanIdea idea -Dvariant=3.0` and import the generated `spock-3.0.ipr` into Intellij.
 
 This should result in a fully functional IDE setup where:

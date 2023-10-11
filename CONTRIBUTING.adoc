@@ -59,8 +59,9 @@ As a general guideline, use the same language as the surrounding code.
 
 === Compatibility
 
-Spock supports JRE 1.6 and higher.
-Therefore, language features and APIs that are only available in Java 1.7 or higher cannot be used. Exceptions to this rule need to be discussed beforehand.
+Spock supports JRE 8 and higher.
+Therefore, language features and APIs that are only available in Java 9 or higher cannot be used.
+Exceptions to this rule need to be discussed beforehand.
 The same goes for changes to user-visible behavior.
 
 === Tests
@@ -74,7 +75,7 @@ Functional tests for `spock-core` are located under https://github.spockframewor
 === Command Line Build
 
 Spock is built with https://www.gradle.org[Gradle].
-The only prerequisite for executing the build is an installation of JDK 8 and JDK 11.
+The only prerequisite for executing the build is an installation of JDK 8 and JDK 17.
 After cloning the https://github.com/spockframework/spock[GitHub repository], cd into the top directory and execute `./gradlew build` (Windows: `gradlew build`). The build should succeed without any errors. `gradlew tasks` lists the available tasks.
 Always use the Gradle Wrapper (`gradlew` command) rather than your own Gradle installation.
 
@@ -99,6 +100,7 @@ To generate an IDEA project configuration:
 
 NOTE: You can provide an optional 'variant' flag to the gradle build `-Dvariant=[2.5|3.0|4.0]` that specifies the version of groovy you wish to use.
 For example, if we wish to use groovy 3.0, we would run `./gradlew cleanIdea idea -Dvariant=3.0` and import the generated `spock-3.0.ipr` into Intellij.
+You can also use the helper script `allVariants`, e.g., `./allVariants idea` will create or update the project for all three variants.
 
 This should result in a fully functional IDE setup where:
 

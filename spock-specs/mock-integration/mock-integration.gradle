@@ -49,6 +49,10 @@ codeGenerationLibraries.each { key, config ->
       }
       onlyIf { rootProject.ext.javaVersion < 21}
     }
+    if (key == "mockito4") {
+      // mockito4 only supports up to Java 20
+      onlyIf { rootProject.ext.javaVersion < 21}
+    }
   }
   tasks.register("test${key.capitalize()}WithObjenesis", Test) {
     systemProperty("org.spockframework.mock.testType", "${key.toLowerCase()} + objenesis")
@@ -62,6 +66,10 @@ codeGenerationLibraries.each { key, config ->
           "--add-opens=java.base/java.lang=ALL-UNNAMED"
         )
       }
+      onlyIf { rootProject.ext.javaVersion < 21}
+    }
+    if (key == "mockito4") {
+      // mockito4 only supports up to Java 20
       onlyIf { rootProject.ext.javaVersion < 21}
     }
   }

@@ -19,6 +19,7 @@ package org.spockframework.mock.runtime.mockito;
 import groovy.lang.Closure;
 import org.mockito.MockSettings;
 import org.spockframework.mock.runtime.IMockMaker;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 import spock.mock.MockMakers;
 
 import static java.util.Objects.requireNonNull;
@@ -40,20 +41,15 @@ public final class MockitoMockMakerSettings implements IMockMaker.IMockMakerSett
     return MockMakers.mockito.getMockMakerId();
   }
 
-  void applySettings(MockSettings mockSettings) {
-    requireNonNull(mockSettings);
-    callClosure(mockitoCode, mockSettings);
-  }
-
-  private static void callClosure(Closure<?> closure, Object delegate) {
-    Closure<?> settingsClosure = (Closure<?>) closure.clone();
-    settingsClosure.setResolveStrategy(Closure.DELEGATE_FIRST);
-    settingsClosure.setDelegate(delegate);
-    settingsClosure.call(delegate);
+  void applySettings(MockSettings mockitoSettings) {
+    requireNonNull(mockitoSettings);
+    mockitoCode.setResolveStrategy(Closure.DELEGATE_FIRST);
+    mockitoCode.setDelegate(mockitoSettings);
+    GroovyRuntimeUtil.invokeClosure(mockitoCode, mockitoSettings);
   }
 
   @Override
   public String toString() {
-    return getMockMakerId().toString();
+    return getMockMakerId() + " mock maker settings";
   }
 }

@@ -32,9 +32,7 @@ import org.spockframework.mock.ISpockMockObject;
 import org.spockframework.mock.MockNature;
 import org.spockframework.mock.runtime.IMockMaker;
 import org.spockframework.mock.runtime.IProxyBasedMockInterceptor;
-import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.ExceptionUtil;
-import org.spockframework.util.ObjectUtil;
 import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.ThreadSafe;
 
@@ -71,7 +69,7 @@ class MockitoMockMakerImpl {
         mockitoSettings.extraInterfaces(settings.getAdditionalInterface().toArray(CLASS_ARRAY));
       }
       if (settings.getConstructorArgs() != null) {
-        mockitoSettings.useConstructor(settings.getConstructorArgs().toArray(GroovyRuntimeUtil.EMPTY_ARGUMENTS));
+        mockitoSettings.useConstructor(settings.getConstructorArgs().toArray());
       } else if (settings.getMockNature() == MockNature.SPY) {
         //We need to say Mockito it shall use the constructor otherwise it will not initialize fields of the spy, see org.mockito.Mockito.spy(java.lang.Class<T>), which does the same
         mockitoSettings.useConstructor();
@@ -82,7 +80,7 @@ class MockitoMockMakerImpl {
 
       applyMockMakerSettingsFromUser(settings, mockitoSettings);
 
-      MockCreationSettings<Object> mockitoCreationSettings = ObjectUtil.uncheckedCast(mockitoSettings.build(settings.getMockType()));
+      MockCreationSettings<?> mockitoCreationSettings = mockitoSettings.build(settings.getMockType());
       SpockMockHandler handler = new SpockMockHandler(settings.getMockInterceptor());
 
       return inlineMockMaker.createMock(mockitoCreationSettings, handler);

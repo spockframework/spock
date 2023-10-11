@@ -48,7 +48,7 @@ public class CglibMockMaker implements IMockMaker {
 
   @Override
   public int getPriority() {
-    return 400;
+    return 300;
   }
 
   @Override

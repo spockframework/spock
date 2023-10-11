@@ -19,7 +19,8 @@ package spock.mock;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import groovy.transform.stc.ClosureParams;
-import groovy.transform.stc.FromString;
+import groovy.transform.stc.SimpleType;
+import org.mockito.MockSettings;
 import org.spockframework.mock.runtime.ByteBuddyMockMaker;
 import org.spockframework.mock.runtime.CglibMockMaker;
 import org.spockframework.mock.runtime.IMockMaker;
@@ -79,8 +80,10 @@ public final class MockMakers {
    * </ul>
    */
   public static final IMockMaker.IMockMakerSettings javaProxy = simple(JavaProxyMockMaker.ID);
+
   /**
-   * Uses <a href="https://site.mockito.org/">mockito</a> to create mocks of final classes, enums and final methods.
+   * Uses <a href="https://site.mockito.org/">Mockito</a> to create mocks,
+   * which also supports final classes, enums and final methods.
    *
    * <p>The supported mocking features are:
    * <ul>
@@ -91,13 +94,14 @@ public final class MockMakers {
    * <li>{@code FINAL_CLASS}</li>
    * <li>{@code FINAL_METHOD}</li>
    *
-   * <p>It uses the mockito {@code org.mockito.MockMakers.INLINE} under the hood,
-   * please see the mockito manual for all pros and cons, when using {@code MockMakers.INLINE}.
+   * <p>It uses {@link org.mockito.MockMakers#INLINE} under the hood,
+   * please see the Mockito manual for all pros and cons, when using {@code MockMakers.INLINE}.
    */
   public static final IMockMaker.IMockMakerSettings mockito = simple(MockitoMockMaker.ID);
 
   /**
-   * Uses <a href="https://site.mockito.org/">mockito</a> to create mocks of final classes, enums and final methods.
+   * Uses <a href="https://site.mockito.org/">Mockito</a> to create mocks,
+   * which also supports final classes, enums and final methods.
    *
    * <p>The supported mocking features are:
    * <ul>
@@ -108,13 +112,13 @@ public final class MockMakers {
    * <li>{@code FINAL_CLASS}</li>
    * <li>{@code FINAL_METHOD}</li>
    *
-   * <p>It uses the mockito {@code org.mockito.MockMakers.INLINE} under the hood,
-   * please see the mockito manual for all pros and cons, when using {@code MockMakers.INLINE}.
+   * <p>It uses {@link org.mockito.MockMakers#INLINE} under the hood,
+   * please see the Mockito manual for all pros and cons, when using {@code MockMakers.INLINE}.
    *
-   * @param settingsCode the code to execute to configure {@code org.mockito.MockSettings} for further configuration of the mock to create
+   * @param settingsCode the code to execute to configure {@link MockSettings} for further configuration of the mock to create
    */
   public static IMockMaker.IMockMakerSettings mockito(@DelegatesTo(type = "org.mockito.MockSettings", strategy = Closure.DELEGATE_FIRST)
-                                                      @ClosureParams(value = FromString.class, options = "org.mockito.MockSettings")
+                                                      @ClosureParams(value = SimpleType.class, options = "org.mockito.MockSettings")
                                                             Closure<?> settingsCode) {
     return MockitoMockMakerSettings.createSettings(settingsCode);
   }

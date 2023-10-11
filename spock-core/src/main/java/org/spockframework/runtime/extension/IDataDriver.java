@@ -50,14 +50,14 @@ public interface IDataDriver {
    *
    * @param dataIterator the data iterator giving access to the data from the data providers. The data iterator is not to be closed by this method.
    * @param iterationRunner the iteration runner that will be used to run the test method for each iteration.
-   * @param parameters the parameters of the test method
+   * @param parameters the parameters of the test method representing data variables
    */
   void runIterations(IDataIterator dataIterator, IIterationRunner iterationRunner, List<ParameterInfo> parameters);
 
   /**
-   * Prepares the arguments for invocation of the test method.
+   * Prepares the arguments for the data variables for invocation of the test method.
    * <p>
-   * It is possible to have fewer arguments produced by the data driver than the number of parameters.
+   * It is possible to have fewer arguments produced by the data driver than the number of data variables.
    * In this case, the missing arguments are filled with {@link MethodInfo#MISSING_ARGUMENT}.
    * <p>
    * Custom implementations of IDataDriver should use this method to prepare the argument array.

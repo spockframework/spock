@@ -21,8 +21,8 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpockExecutionException
 import org.spockframework.runtime.extension.ExtensionAnnotation
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension
+import org.spockframework.runtime.model.FeatureInfo
 import org.spockframework.runtime.model.MethodInfo
-import org.spockframework.runtime.model.MethodKind
 import spock.lang.Issue
 import spock.lang.Rollup
 import spock.lang.Unroll
@@ -256,6 +256,28 @@ def foo() {
     ]
   }
 
+  @Foo
+  def "method arguments in data driven feature methods can be provided by extensions"(a) {
+    expect:
+    x == 1
+    y == 2
+    a == 'foo'
+
+    where:
+    x = 1
+    y = 2
+  }
+
+  @Foo
+  def "additional method arguments do not influence data values in iteration info"(a) {
+    expect:
+    specificationContext.currentIteration.dataValues == [1, 2]
+
+    where:
+    x = 1
+    y = 2
+  }
+
   static class FooExtension implements IAnnotationDrivenExtension<Foo> {
     @Override
     void visitFixtureAnnotation(Foo annotation, MethodInfo fixtureMethod) {
@@ -263,6 +285,16 @@ def foo() {
         assert it.arguments.size() == 1
         assert it.arguments.first() == MISSING_ARGUMENT
         it.arguments[0] = 'foo'
+        it.proceed()
+      }
+    }
+
+    @Override
+    void visitFeatureAnnotation(Foo annotation, FeatureInfo feature) {
+      feature.featureMethod.addInterceptor {
+        assert it.arguments.size() == 3
+        assert it.arguments[2] == MISSING_ARGUMENT
+        it.arguments[2] = 'foo'
         it.proceed()
       }
     }

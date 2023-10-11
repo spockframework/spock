@@ -51,6 +51,31 @@ Don't be intimidated by these words.
 Pull requests that satisfy Spock's overall direction and goals (see above), are crafted carefully, and aren't aiming too high, have a good chance of getting accepted.
 Before doing so, we may ask for some concrete improvements to be made, in which case we hope for your cooperation.
 
+=== Guiding Principles
+
+==== Try to avoid breaking stuff
+
+Spock has been around for a long time and people have built a large suite of tests that rely on Spock.
+People want their tests to fail if they made an error, they don't want to update their tests because their testing framework broke stuff.
+
+Unless there is a compelling reason to break something don't do it.
+The potential impact also has to be considered, if the change only affects a niche use-case then it is easier to include than something that breaks every use-case.
+
+If a behavior has been around long enough it might become a https://xkcd.com/1172/[feature], even if that was never intend or was even a bug.
+In some cases we will decide to keep the existing behavior, even if we'd do it differently when starting from a blank slate.
+
+==== Can it be solved with an extension instead?
+
+Don't add specialized code to `spock-core` if it can be achieved by Spock's powerful extension system.
+
+If it is not possible at the moment, can the extension system be improved, so that it can cover this use-case instead.
+
+===== Can it be a third-party extension?
+
+Spock has a fair number of built-in extensions, and we want to keep this number limited as each extension will increase the maintenance burden.
+
+You can find a list of third-party extensions in the https://github.com/spockframework/spock/wiki/Third-Party-Extensions[Spock Wiki], and it is easy to get yours added as well.
+
 === Code Standards
 
 A non-exhaustive list :

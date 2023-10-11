@@ -51,6 +51,43 @@ Don't be intimidated by these words.
 Pull requests that satisfy Spock's overall direction and goals (see above), are crafted carefully, and aren't aiming too high, have a good chance of getting accepted.
 Before doing so, we may ask for some concrete improvements to be made, in which case we hope for your cooperation.
 
+=== Code Standards
+
+A non-exhaustive list :
+
+* Indent with 2 spaces (should be already be set by `.editorconfig`)
+* One-line `if` expression can only be used as a `return` guard, e.g., `if (!ok) return;`.
+  For other cases put the body in the next line and add braces.
+* Prefer to use `Type mock = Mock()` instead of `def mock = Mock(Type)`, unless you are explicitly testing the other syntax.
+* Add a blank line before a block label, excluding the first block in a feature.
++
+[source,groovy]
+----
+def "a feature"() {
+  given:
+  def a = 1
+
+  expect:
+  a == 1
+}
+----
+* Don't put code in the same line as a block label.
+* Use `given` instead of `setup`
+* Don't add `noExceptionThrown()` if there are other assertions present.
+* Use explicit parameter types when using non-primitive data variables, unless you are explicitly testing the other syntax.
+* If you use unroll patterns, prefer to have a feature name describing the general use case and use the `@Unroll` extension to provide the pattern for the iteration.
++
+[source,groovy]
+----
+@Unroll("adding #a and #b gives #c")
+def "testing addition"() {
+  // ...
+}
+----
++
+This pattern gives a better test report, as the intermediate node will be the non-templated feature name.
+
+
 === Implementation Language
 
 The implementation language for the https://github.spockframework.org/spock/tree/master/spock-core[spock-core] module is Java.
@@ -76,6 +113,10 @@ Functional tests for `spock-core` are located under https://github.spockframewor
 
 Spock is built with https://www.gradle.org[Gradle].
 The only prerequisite for executing the build is an installation of JDK 8 and JDK 17.
+The build itself must be run with JDK 17, but JDK 8 must be available via toolchain.
+You can check if Gradle can locate the necessary JDKs by running `./gradlew javaToolchains`.
+If gradle can't locate your JDK 8, you can make the location of the JDK 8 available via an environment variable called `JDK8`.
+
 After cloning the https://github.com/spockframework/spock[GitHub repository], cd into the top directory and execute `./gradlew build` (Windows: `gradlew build`). The build should succeed without any errors. `gradlew tasks` lists the available tasks.
 Always use the Gradle Wrapper (`gradlew` command) rather than your own Gradle installation.
 
@@ -87,11 +128,11 @@ Pull requests are built as well.
 === IDE Setup
 
 Using an IDE is recommended but not mandatory.
-Whether or not you use an IDE, please make sure that `gradlew build` succeeds before submitting a pull request.
+Whether or not you use an IDE, please make sure that `./gradlew build` (even better `./allVariants build`) succeeds before submitting a pull request.
 
 ==== IntelliJ IDEA
 
-The latest IntelliJ IDEA (Community Edition) is the preferred IDE for developing Spock.
+The latest IntelliJ IDEA (Community Edition) is the *preferred* IDE for developing Spock.
 To generate an IDEA project configuration:
 
 * `./gradlew cleanIdea idea`, followed by

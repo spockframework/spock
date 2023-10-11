@@ -1,9 +1,11 @@
 package org.spockframework.runtime.extension.builtin;
 
+import spock.lang.Specification;
+
 /**
  * The context (delegate) for a {@link spock.lang.Retry} condition.
  */
-public class RetryConditionContext {
+public class RetryConditionContext<S extends Specification> {
 
   private final Object instance;
   private final Throwable failure;
@@ -27,8 +29,8 @@ public class RetryConditionContext {
    *
    * @return the current {@code Specification} instance
    */
-  public Object getInstance() {
-    return instance;
+  public S getInstance() {
+    return (S) instance;
   }
 
 }

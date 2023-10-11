@@ -24,13 +24,14 @@ import java.util.*;
 import spock.lang.IgnoreIf;
 import spock.lang.PendingFeatureIf;
 import spock.lang.Requires;
+import spock.lang.Specification;
 import spock.util.environment.Jvm;
 import spock.util.environment.OperatingSystem;
 
 /**
  * The context (delegate) for a {@link Requires}, {@link IgnoreIf} or {@link PendingFeatureIf} condition.
  */
-public class PreconditionContext {
+public class PreconditionContext<S extends Specification> {
   private final Object theSharedInstance;
   private final Object theInstance;
   private final Map<String, Object> dataVariables;
@@ -88,11 +89,11 @@ public class PreconditionContext {
    * @since 2.0
    * @return the test instance
    */
-  public Object getInstance() {
+  public S getInstance() {
     if (theInstance == null) {
       throw new InstanceContextException();
     }
-    return theInstance;
+    return (S) theInstance;
   }
 
   /**
@@ -103,11 +104,11 @@ public class PreconditionContext {
    * @since 2.1
    * @return the shared instance
    */
-  public Object getShared() {
+  public S getShared() {
     if (theSharedInstance == null) {
       throw new SharedContextException();
     }
-    return theSharedInstance;
+    return (S) theSharedInstance;
   }
 
   /**

@@ -6,6 +6,8 @@ configurations {
   cglib
   bytebuddy
   objenesis
+  mockito4
+  mockito5
 }
 
 dependencies {
@@ -13,16 +15,25 @@ dependencies {
     exclude group: "cglib"
     exclude group: "net.bytebuddy"
     exclude group: "org.objenesis"
+    exclude group: "org.mockito"
   }
   cglib libs.cglib
   bytebuddy libs.bytebuddy
   objenesis libs.objenesis
+  mockito4 libs.mockito4
+  mockito5 libs.mockito5
 }
 
 def codeGenerationLibraries = [
   cglib: configurations.cglib,
-  ByteBuddy: configurations.bytebuddy
+  ByteBuddy: configurations.bytebuddy,
+  mockito4 : configurations.mockito4
 ]
+
+if (rootProject.ext.javaVersion >= 11) {
+  //Mockito 5 requires at least Java 11 to run
+  codeGenerationLibraries.put("mockito5", configurations.mockito5)
+}
 
 codeGenerationLibraries.each { key, config ->
   tasks.register("test${key.capitalize()}WithoutObjenesis", Test) {

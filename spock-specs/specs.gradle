@@ -19,6 +19,7 @@ dependencies {
   implementation groovylibs.groovyNio  //for groovy methods on Path
 
   testCompileOnly libs.jetbrains.annotations
+  testCompileOnly libs.mockito4
   testImplementation libs.junit.platform.testkit
   testImplementation libs.geantyref
 
@@ -33,6 +34,12 @@ dependencies {
   testRuntimeOnly libs.cglib
   testRuntimeOnly libs.objenesis
   testRuntimeOnly libs.h2database
+
+  if (rootProject.ext.javaVersion >= 11) {
+    testRuntimeOnly libs.mockito5
+  } else {
+    testRuntimeOnly libs.mockito4
+  }
 
   groovyConsole groovyConsoleExtraDependencies
 

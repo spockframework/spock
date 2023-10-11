@@ -1,3 +1,4 @@
 org.spockframework.mock.runtime.JavaProxyMockMaker
 org.spockframework.mock.runtime.ByteBuddyMockMaker
 org.spockframework.mock.runtime.CglibMockMaker
+org.spockframework.mock.runtime.mockito.MockitoMockMaker

@@ -77,4 +77,72 @@ class ByteBuddyMockMakerSpec extends Specification {
     def ex = thrown(CannotCreateMockException)
     ex.message == "Cannot create mock for class java.lang.StringBuilder. byte-buddy: Cannot mock final classes."
   }
+
+  def "Mock class"() {
+    when:
+    DataClass s = Mock(mockMaker: MockMakers.byteBuddy)
+    then:
+    !s.boolField
+    s.stringField == null
+  }
+
+  def "Stub class"() {
+    when:
+    DataClass s = Stub(mockMaker: MockMakers.byteBuddy)
+    then:
+    !s.boolField
+    s.stringField == ""
+  }
+
+  def "Spy class"() {
+    when:
+    DataClass s = Spy(mockMaker: MockMakers.byteBuddy)
+    then:
+    s.boolField
+    s.stringField == "data"
+  }
+
+  def "Spy class with empty constructorArgs"() {
+    when:
+    DataClass s = Spy(mockMaker: MockMakers.byteBuddy, constructorArgs: [])
+    then:
+    s.boolField
+    s.stringField == "data"
+  }
+
+  def "Spy class with constructorArgs"() {
+    when:
+    DataClass s = Spy(mockMaker: MockMakers.byteBuddy, constructorArgs: [false, "data2"])
+    then:
+    !s.boolField
+    s.stringField == "data2"
+  }
+
+  def "Spy class without default constructor does work"() {
+    when:
+    ClassWithoutDefaultConstructor s = Spy(mockMaker: MockMakers.byteBuddy)
+    then:
+    s.stringField == "data"
+  }
+}
+
+@SuppressWarnings('unused')
+class DataClass {
+  boolean boolField = true
+  String stringField = "data"
+
+  DataClass() {}
+
+  DataClass(boolean boolValue, String stringValue) {
+    this.boolField = boolValue
+    this.stringField = stringValue
+  }
+}
+
+class ClassWithoutDefaultConstructor {
+  String stringField = "data"
+
+  @SuppressWarnings('unused')
+  ClassWithoutDefaultConstructor(String arg) {
+  }
 }

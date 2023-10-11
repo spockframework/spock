@@ -42,10 +42,14 @@ jobs:
         - '8'
         - '11'
         - '17'
+        - '21'
         exclude:
         - os: 'ubuntu-latest'
           variant: '2.5'
           java: '17'
+        - os: 'ubuntu-latest'
+          variant: '2.5'
+          java: '21'
         include:
         - os: 'windows-latest'
           variant: '2.5'
@@ -142,7 +146,7 @@ jobs:
         variant:
         - '4.0'
         java:
-        - '17'
+        - '21'
     steps:
     - id: 'step-0'
       name: 'Checkout Repository'

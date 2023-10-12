@@ -40,6 +40,11 @@ public abstract class FeatureNode extends SpockNode<FeatureInfo> {
   }
 
   @Override
+  public void nodeSkipped(SpockExecutionContext context, TestDescriptor testDescriptor, SkipResult result) {
+    context.getRunner().supervisor.featureSkipped(getNodeInfo());
+  }
+
+  @Override
   public void around(SpockExecutionContext context, Invocation<SpockExecutionContext> invocation) {
     ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
     final SpockExecutionContext innerContext = context.withErrorInfoCollector(errorInfoCollector);

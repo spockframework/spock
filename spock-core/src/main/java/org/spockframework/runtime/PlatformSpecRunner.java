@@ -184,8 +184,7 @@ public class PlatformSpecRunner {
     if (currentFeature.isExcluded()) return;
 
     if (currentFeature.isSkipped()) {
-      supervisor.featureSkipped(currentFeature); // todo notify in node isSkipped
-      return;
+      throw new InternalSpockError("Invalid state, feature is executed although it should have been skipped");
     }
 
     supervisor.beforeFeature(currentFeature);

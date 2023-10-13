@@ -142,7 +142,7 @@ The build itself must be run with JDK 17, but JDK 8 must be available via toolch
 You can check if Gradle can locate the necessary JDKs by running `./gradlew javaToolchains`.
 If gradle can't locate your JDK 8, you can make the location of the JDK 8 available via an environment variable called `JDK8`.
 
-After cloning the https://github.com/spockframework/spock[GitHub repository], cd into the top directory and execute `./gradlew build` (Windows: `gradlew build`). The build should succeed without any errors. `gradlew tasks` lists the available tasks.
+After cloning the https://github.com/spockframework/spock[GitHub repository], cd into the top directory and execute `./gradlew build`. The build should succeed without any errors. `./gradlew tasks` lists the available tasks.
 Always use the Gradle Wrapper (`gradlew` command) rather than your own Gradle installation.
 
 === CI Build
@@ -184,14 +184,14 @@ Please use the method described above rather than importing the top-level `build
 ==== Eclipse
 
 Eclipse 3.7+ with the latest https://github.com/groovy/groovy-eclipse/wiki[Groovy plugin] should work reasonably well for developing Spock.
-To import the Gradle build into Eclipse, either run `gradlew eclipse` and import the generated Eclipse projects via `File-&gt;Import-&gt;General-&gt;Existing Project into Workspace`, or install the https://github.com/spring-projects/eclipse-integration-gradle/[Eclipse Gradle Tooling] and import via `File-&gt;Import-&gt;Gradle-&gt;Gradle Project`.
+To import the Gradle build into Eclipse, either run `./gradlew eclipse` and import the generated Eclipse projects via `File-&gt;Import-&gt;General-&gt;Existing Project into Workspace`, or install the https://github.com/spring-projects/eclipse-integration-gradle/[Eclipse Gradle Tooling] and import via `File-&gt;Import-&gt;Gradle-&gt;Gradle Project`.
 Either method should result in an IDE setup where:
 
 * Both Java and Groovy code compiles without problems
 * All tests can be run without problems
 
 From time to time (e.g. when someone has added a new dependency), it may be necessary to resync the Eclipse project with the Gradle build.
-Depending on the method of import (see above), this is done by re-running `gradlew [cleanEclipse] eclipse` and then refreshing all Eclipse projects (F5), or by selecting `Gradle-&gt;Refresh All` in the Package Explorer's context menu.
+Depending on the method of import (see above), this is done by re-running `./gradlew [cleanEclipse] eclipse` and then refreshing all Eclipse projects (F5), or by selecting `Gradle-&gt;Refresh All` in the Package Explorer's context menu.
 
 If you encounter any problems with the IDE setup, or want to make some improvements to it, please <<Communication,get in touch>> with us.
 

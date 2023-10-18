@@ -128,6 +128,11 @@ public class PollingConditions {
     this.factor = factor;
   }
 
+  // TODO: add documentation.
+  public void onTimeout(Closure<String> timeoutMessage) {
+    // TODO: implement.
+  }
+
   /**
    * Repeatedly evaluates the specified conditions until they are satisfied or the timeout has elapsed.
    *

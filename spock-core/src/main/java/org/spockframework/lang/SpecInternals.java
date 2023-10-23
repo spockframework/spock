@@ -301,6 +301,20 @@ public abstract class SpecInternals {
     return createMockImpl(inferredName, inferredType, MockNature.SPY, MockImplementation.GROOVY, options, specifiedType, closure);
   }
 
+  <T> T GroovySpyImpl(String inferredName, Class<?> inferredType, T instance) {
+    return GroovySpyImpl(inferredName, inferredType, instance, null);
+  }
+
+  <T> T GroovySpyImpl(String inferredName, Class<?> inferredType, T instance, Closure<?> closure) {
+    if (instance == null) {
+      throw new SpockException("GroovySpy instance may not be null");
+    }
+    if (MOCK_UTIL.isMock(instance)) {
+      throw new SpockException("GroovySpy instance may not be another mock object.");
+    }
+    return createMockImpl(inferredName, instance.getClass(), instance, MockNature.SPY, MockImplementation.GROOVY, singletonMap("useObjenesis", true), null, closure);
+  }
+
   private <T> T createMockImpl(String inferredName, Class<?> inferredType, MockNature nature,
       MockImplementation implementation, Map<String, Object> options, Class<?> specifiedType, Closure<?> closure) {
     return createMockImpl(inferredName, inferredType, null, nature, implementation, options, specifiedType, closure);

@@ -252,7 +252,11 @@
 </li>
 <li><a href="#_release_notes">Release Notes</a>
 <ul class="sectlevel2">
-<li><a href="#_2_4_tbd">2.4 (tbd)</a></li>
+<li><a href="#_2_4_tbd">2.4 (tbd)</a>
+<ul class="sectlevel3">
+<li><a href="#_breaking_changes">Breaking Changes</a></li>
+</ul>
+</li>
 <li><a href="#_2_4_m1_2022_11_30">2.4-M1 (2022-11-30)</a></li>
 <li><a href="#_2_3_2022_09_29">2.3 (2022-09-29)</a></li>
 <li><a href="#_2_2_2022_08_31">2.2 (2022-08-31)</a></li>
@@ -266,7 +270,7 @@
 <li><a href="#_2_1_m1_2021_11_12">2.1-M1 (2021-11-12)</a>
 <ul class="sectlevel3">
 <li><a href="#_highlights">Highlights</a></li>
-<li><a href="#_breaking_changes">Breaking Changes</a></li>
+<li><a href="#_breaking_changes_2">Breaking Changes</a></li>
 <li><a href="#_misc_2">Misc</a></li>
 </ul>
 </li>
@@ -280,27 +284,27 @@
 </li>
 <li><a href="#_2_0_m5_2021_03_23">2.0-M5 (2021-03-23)</a>
 <ul class="sectlevel3">
-<li><a href="#_breaking_changes_2">Breaking Changes</a></li>
+<li><a href="#_breaking_changes_3">Breaking Changes</a></li>
 <li><a href="#_misc_4">Misc</a></li>
 </ul>
 </li>
 <li><a href="#_2_0_m4_2020_11_01">2.0-M4 (2020-11-01)</a></li>
 <li><a href="#_2_0_m3_2020_06_11">2.0-M3 (2020-06-11)</a>
 <ul class="sectlevel3">
-<li><a href="#_breaking_changes_3">Breaking Changes</a></li>
+<li><a href="#_breaking_changes_4">Breaking Changes</a></li>
 <li><a href="#_misc_5">Misc</a></li>
 </ul>
 </li>
 <li><a href="#_2_0_m2_2020_02_10">2.0-M2 (2020-02-10)</a>
 <ul class="sectlevel3">
 <li><a href="#_groovy_3_0_support">Groovy-3.0 Support</a></li>
-<li><a href="#_breaking_changes_4">Breaking Changes</a></li>
+<li><a href="#_breaking_changes_5">Breaking Changes</a></li>
 <li><a href="#_misc_6">Misc</a></li>
 </ul>
 </li>
 <li><a href="#_2_0_m1_2019_12_31">2.0-M1 (2019-12-31)</a>
 <ul class="sectlevel3">
-<li><a href="#_breaking_changes_5">Breaking Changes</a></li>
+<li><a href="#_breaking_changes_6">Breaking Changes</a></li>
 </ul>
 </li>
 <li><a href="#_1_3_2019_03_05">1.3 (2019-03-05)</a></li>
@@ -7132,7 +7136,16 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_2_4_tbd"><a class="anchor" href="#_2_4_tbd"></a><a class="link" href="#_2_4_tbd">2.4 (tbd)</a></h3>
-
+<div class="sect3">
+<h4 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Calling <code>old(&#8230;&#8203;)</code> with multiple arguments is now a compilation error. Previously the additional arguments were simply ignored.</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_2_4_m1_2022_11_30"><a class="anchor" href="#_2_4_m1_2022_11_30"></a><a class="link" href="#_2_4_m1_2022_11_30">2.4-M1 (2022-11-30)</a></h3>
@@ -7359,7 +7372,7 @@ Many thanks to Ayşe Altınsoy (@AltinsoyAyse) for creating the logo through man
 </div>
 </div>
 <div class="sect3">
-<h4 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h4>
+<h4 id="_breaking_changes_2"><a class="anchor" href="#_breaking_changes_2"></a><a class="link" href="#_breaking_changes_2">Breaking Changes</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -7517,7 +7530,7 @@ If you are one of the few that have already used <code>@ResourceLockChildren</co
 <div class="sect2">
 <h3 id="_2_0_m5_2021_03_23"><a class="anchor" href="#_2_0_m5_2021_03_23"></a><a class="link" href="#_2_0_m5_2021_03_23">2.0-M5 (2021-03-23)</a></h3>
 <div class="sect3">
-<h4 id="_breaking_changes_2"><a class="anchor" href="#_breaking_changes_2"></a><a class="link" href="#_breaking_changes_2">Breaking Changes</a></h4>
+<h4 id="_breaking_changes_3"><a class="anchor" href="#_breaking_changes_3"></a><a class="link" href="#_breaking_changes_3">Breaking Changes</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -7683,7 +7696,7 @@ by using the <code>instance.</code> qualifier inside the condition closure.</p>
 <div class="sect2">
 <h3 id="_2_0_m3_2020_06_11"><a class="anchor" href="#_2_0_m3_2020_06_11"></a><a class="link" href="#_2_0_m3_2020_06_11">2.0-M3 (2020-06-11)</a></h3>
 <div class="sect3">
-<h4 id="_breaking_changes_3"><a class="anchor" href="#_breaking_changes_3"></a><a class="link" href="#_breaking_changes_3">Breaking Changes</a></h4>
+<h4 id="_breaking_changes_4"><a class="anchor" href="#_breaking_changes_4"></a><a class="link" href="#_breaking_changes_4">Breaking Changes</a></h4>
 <div class="sect4">
 <h5 id="_sputnik_runner_removed_an_alternative"><a class="anchor" href="#_sputnik_runner_removed_an_alternative"></a><a class="link" href="#_sputnik_runner_removed_an_alternative">Sputnik Runner removed (an alternative)</a></h5>
 <div class="paragraph">
@@ -8070,7 +8083,7 @@ As Groovy 3 is not backward compatible with Groovy 2, there is a layer of abstra
 </div>
 </div>
 <div class="sect3">
-<h4 id="_breaking_changes_4"><a class="anchor" href="#_breaking_changes_4"></a><a class="link" href="#_breaking_changes_4">Breaking Changes</a></h4>
+<h4 id="_breaking_changes_5"><a class="anchor" href="#_breaking_changes_5"></a><a class="link" href="#_breaking_changes_5">Breaking Changes</a></h4>
 <div class="sect4">
 <h5 id="_sputnik_runner_removed"><a class="anchor" href="#_sputnik_runner_removed"></a><a class="link" href="#_sputnik_runner_removed">Sputnik Runner removed</a></h5>
 <div class="paragraph">
@@ -8125,7 +8138,7 @@ requested parallel execution support.</p>
 <p>Please try it out and report any new bugs so that we can fix them for the final 2.0 release.</p>
 </div>
 <div class="sect3">
-<h4 id="_breaking_changes_5"><a class="anchor" href="#_breaking_changes_5"></a><a class="link" href="#_breaking_changes_5">Breaking Changes</a></h4>
+<h4 id="_breaking_changes_6"><a class="anchor" href="#_breaking_changes_6"></a><a class="link" href="#_breaking_changes_6">Breaking Changes</a></h4>
 <div class="sect4">
 <h5 id="_new_junit_platform"><a class="anchor" href="#_new_junit_platform"></a><a class="link" href="#_new_junit_platform">New JUnit Platform</a></h5>
 <div class="paragraph">
@@ -10308,7 +10321,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2023-10-11 12:53:06 UTC
+Last updated 2023-10-27 13:20:44 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

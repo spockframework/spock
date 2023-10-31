@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-@file:DependsOn("io.github.typesafegithub:github-workflows-kt:1.3.0")
+@file:DependsOn("io.github.typesafegithub:github-workflows-kt:1.4.0")
 
 import io.github.typesafegithub.workflows.domain.Job
 import io.github.typesafegithub.workflows.domain.JobOutputs.EMPTY

@@ -52,9 +52,7 @@ jobs:
       uses: 'github/codeql-action/init@v3'
     - id: 'step-3'
       name: 'Build Spock Classes'
-      uses: 'gradle/gradle-build-action@v2'
-      with:
-        arguments: '--stacktrace --no-build-cache testClasses "-Dvariant=${{ matrix.variant }}"'
+      run: './gradlew --stacktrace --no-build-cache testClasses "-Dvariant=${{ matrix.variant }}"'
     - id: 'step-4'
       name: 'Perform CodeQL Analysis'
       uses: 'github/codeql-action/analyze@v3'

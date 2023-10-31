@@ -20,7 +20,6 @@
 
 import io.github.typesafegithub.workflows.actions.actions.CheckoutV4
 import io.github.typesafegithub.workflows.actions.codecov.CodecovActionV3
-import io.github.typesafegithub.workflows.actions.gradle.GradleBuildActionV2
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
@@ -88,17 +87,16 @@ workflow(
                 additionalJavaVersion = expr(Matrix.javaVersion)
             )
         )
-        uses(
+        run(
             name = "Build Spock",
-            action = GradleBuildActionV2(
-                arguments = listOf(
-                    "--no-parallel",
-                    "--stacktrace",
-                    "ghActionsBuild",
-                    """"-Dvariant=${expr(Matrix.variant)}"""",
-                    """"-DjavaVersion=${expr(Matrix.javaVersion)}""""
-                ).joinToString(" ")
-            ),
+            command = listOf(
+                "./gradlew",
+                "--no-parallel",
+                "--stacktrace",
+                "ghActionsBuild",
+                """"-Dvariant=${expr(Matrix.variant)}"""",
+                """"-DjavaVersion=${expr(Matrix.javaVersion)}""""
+            ).joinToString(" "),
             // secrets are not injected for pull requests
             env = commonCredentials
         )

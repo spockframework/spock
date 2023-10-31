@@ -24,6 +24,7 @@ import spock.mock.MockMakers;
 
 import static java.util.Objects.requireNonNull;
 import static org.spockframework.mock.runtime.IMockMaker.MockMakerId;
+import static org.spockframework.util.ObjectUtil.uncheckedCast;
 
 public final class MockitoMockMakerSettings implements IMockMaker.IMockMakerSettings {
   private final Closure<?> mockitoCode;
@@ -43,6 +44,7 @@ public final class MockitoMockMakerSettings implements IMockMaker.IMockMakerSett
 
   void applySettings(MockSettings mockitoSettings) {
     requireNonNull(mockitoSettings);
+    Closure<?> mockitoCode = uncheckedCast(this.mockitoCode.clone());
     mockitoCode.setResolveStrategy(Closure.DELEGATE_FIRST);
     mockitoCode.setDelegate(mockitoSettings);
     GroovyRuntimeUtil.invokeClosure(mockitoCode, mockitoSettings);

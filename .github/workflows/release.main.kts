@@ -21,7 +21,6 @@
 import io.github.typesafegithub.workflows.actions.actions.CheckoutV4
 import io.github.typesafegithub.workflows.actions.actions.CheckoutV4.FetchDepth
 import io.github.typesafegithub.workflows.actions.codecov.CodecovActionV3
-import io.github.typesafegithub.workflows.actions.gradle.GradleBuildActionV2
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.dsl.expressions.Contexts.github
@@ -68,18 +67,17 @@ workflow(
                 additionalJavaVersion = expr(Matrix.javaVersion)
             )
         )
-        uses(
+        run(
             name = "Build Spock",
-            action = GradleBuildActionV2(
-                arguments = listOf(
-                    "--no-parallel",
-                    "--stacktrace",
-                    "ghActionsBuild",
-                    """"-Dvariant=${expr(Matrix.variant)}"""",
-                    """"-DjavaVersion=${expr(Matrix.javaVersion)}"""",
-                    "-Dscan.tag.main-build"
-                ).joinToString(" ")
-            ),
+            command = listOf(
+                "./gradlew",
+                "--no-parallel",
+                "--stacktrace",
+                "ghActionsBuild",
+                """"-Dvariant=${expr(Matrix.variant)}"""",
+                """"-DjavaVersion=${expr(Matrix.javaVersion)}"""",
+                "-Dscan.tag.main-build"
+            ).joinToString(" "),
             env = commonCredentials
         )
         run(
@@ -114,18 +112,17 @@ workflow(
                 additionalJavaVersion = expr(Matrix.javaVersion)
             )
         )
-        uses(
+        run(
             name = "Publish Spock",
-            action = GradleBuildActionV2(
-                arguments = listOf(
-                    "--no-parallel",
-                    "--stacktrace",
-                    "ghActionsPublish",
-                    """"-Dvariant=${expr(Matrix.variant)}"""",
-                    """"-DjavaVersion=${expr(Matrix.javaVersion)}"""",
-                    "-Dscan.tag.main-publish"
-                ).joinToString(" ")
-            ),
+            command = listOf(
+                "./gradlew",
+                "--no-parallel",
+                "--stacktrace",
+                "ghActionsPublish",
+                """"-Dvariant=${expr(Matrix.variant)}"""",
+                """"-DjavaVersion=${expr(Matrix.javaVersion)}"""",
+                "-Dscan.tag.main-publish"
+            ).joinToString(" "),
             env = linkedMapOf(
                 "GITHUB_TOKEN" to expr(GITHUB_TOKEN),
                 "SONATYPE_OSS_USER" to expr(SONATYPE_OSS_USER),
@@ -161,18 +158,17 @@ workflow(
             name = "Create Temporary Branch",
             command = "git checkout -b \"docs-\$GITHUB_SHA\""
         )
-        uses(
+        run(
             name = "Publish Docs",
-            action = GradleBuildActionV2(
-                arguments = listOf(
-                    "--no-parallel",
-                    "--stacktrace",
-                    "ghActionsDocs",
-                    """"-Dvariant=${expr(Matrix.variant)}"""",
-                    """"-DjavaVersion=${expr(Matrix.javaVersion)}"""",
-                    "-Dscan.tag.main-docs"
-                ).joinToString(" ")
-            ),
+            command = listOf(
+                "./gradlew",
+                "--no-parallel",
+                "--stacktrace",
+                "ghActionsDocs",
+                """"-Dvariant=${expr(Matrix.variant)}"""",
+                """"-DjavaVersion=${expr(Matrix.javaVersion)}"""",
+                "-Dscan.tag.main-docs"
+            ).joinToString(" "),
             env = linkedMapOf(
                 "GITHUB_TOKEN" to expr(GITHUB_TOKEN)
             ).apply { putAll(commonCredentials) }

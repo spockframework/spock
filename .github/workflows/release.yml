@@ -82,13 +82,11 @@ jobs:
         additional-java-version: '${{ matrix.java }}'
     - id: 'step-2'
       name: 'Build Spock'
-      uses: 'gradle/gradle-build-action@v2'
-      with:
-        arguments: '--no-parallel --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" -Dscan.tag.main-build'
       env:
         ORG_GRADLE_PROJECT_spockBuildCacheUsername: '${{ secrets.SPOCK_BUILD_CACHE_USERNAME }}'
         ORG_GRADLE_PROJECT_spockBuildCachePassword: '${{ secrets.SPOCK_BUILD_CACHE_PASSWORD }}'
         GRADLE_ENTERPRISE_ACCESS_KEY: '${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}'
+      run: './gradlew --no-parallel --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" -Dscan.tag.main-build'
     - id: 'step-3'
       name: 'Stop Daemon'
       run: './gradlew --stop'
@@ -122,9 +120,6 @@ jobs:
         additional-java-version: '${{ matrix.java }}'
     - id: 'step-2'
       name: 'Publish Spock'
-      uses: 'gradle/gradle-build-action@v2'
-      with:
-        arguments: '--no-parallel --stacktrace ghActionsPublish "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" -Dscan.tag.main-publish'
       env:
         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         SONATYPE_OSS_USER: '${{ secrets.SONATYPE_OSS_USER }}'
@@ -133,6 +128,7 @@ jobs:
         ORG_GRADLE_PROJECT_spockBuildCacheUsername: '${{ secrets.SPOCK_BUILD_CACHE_USERNAME }}'
         ORG_GRADLE_PROJECT_spockBuildCachePassword: '${{ secrets.SPOCK_BUILD_CACHE_PASSWORD }}'
         GRADLE_ENTERPRISE_ACCESS_KEY: '${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}'
+      run: './gradlew --no-parallel --stacktrace ghActionsPublish "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" -Dscan.tag.main-publish'
   publish-release-docs:
     name: 'Publish Release Docs'
     runs-on: '${{ matrix.os }}'
@@ -161,11 +157,9 @@ jobs:
       run: 'git checkout -b "docs-$GITHUB_SHA"'
     - id: 'step-3'
       name: 'Publish Docs'
-      uses: 'gradle/gradle-build-action@v2'
-      with:
-        arguments: '--no-parallel --stacktrace ghActionsDocs "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" -Dscan.tag.main-docs'
       env:
         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         ORG_GRADLE_PROJECT_spockBuildCacheUsername: '${{ secrets.SPOCK_BUILD_CACHE_USERNAME }}'
         ORG_GRADLE_PROJECT_spockBuildCachePassword: '${{ secrets.SPOCK_BUILD_CACHE_PASSWORD }}'
         GRADLE_ENTERPRISE_ACCESS_KEY: '${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}'
+      run: './gradlew --no-parallel --stacktrace ghActionsDocs "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" -Dscan.tag.main-docs'

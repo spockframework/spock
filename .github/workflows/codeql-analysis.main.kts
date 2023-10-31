@@ -21,7 +21,6 @@
 import io.github.typesafegithub.workflows.actions.actions.CheckoutV4
 import io.github.typesafegithub.workflows.actions.github.CodeqlActionAnalyzeV2
 import io.github.typesafegithub.workflows.actions.github.CodeqlActionInitV2
-import io.github.typesafegithub.workflows.actions.gradle.GradleBuildActionV2
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
 import io.github.typesafegithub.workflows.domain.triggers.Cron
@@ -113,16 +112,15 @@ workflow(
         // Manually added: build
         // we have to disable build cache for now as it seems to be necessary for the compiler to run during the build
         // https://docs.github.com/en/github/finding-security-vulnerabilities-and-errors-in-your-code/troubleshooting-the-codeql-workflow#no-code-found-during-the-build
-        uses(
+        run(
             name = "Build Spock Classes",
-            action = GradleBuildActionV2(
-                arguments = listOf(
-                    "--stacktrace",
-                    "--no-build-cache",
-                    "testClasses",
-                    """"-Dvariant=${expr(Matrix.variant)}""""
-                ).joinToString(" ")
-            )
+            command = listOf(
+                "./gradlew",
+                "--stacktrace",
+                "--no-build-cache",
+                "testClasses",
+                """"-Dvariant=${expr(Matrix.variant)}""""
+            ).joinToString(" ")
         )
         uses(
             name = "Perform CodeQL Analysis",

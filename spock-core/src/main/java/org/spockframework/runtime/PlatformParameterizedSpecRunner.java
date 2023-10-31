@@ -44,7 +44,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
     try (IDataIterator dataIterator = new DataIteratorFactory(supervisor).createFeatureDataIterator(context)) {
       IIterationRunner iterationRunner = createIterationRunner(context, childExecutor);
       IDataDriver dataDriver = feature.getDataDriver();
-      dataDriver.runIterations(dataIterator, iterationRunner, feature.getFeatureMethod().getParameters().subList(0, feature.getDataVariables().size()));
+      dataDriver.runIterations(dataIterator, iterationRunner, feature.getFeatureMethod().getParameters());
       childExecutor.awaitFinished();
     } catch (InterruptedException ie) {
       throw ie;
@@ -58,9 +58,9 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
       private final AtomicInteger iterationIndex = new AtomicInteger(0);
 
       @Override
-      public CompletableFuture<ExecutionResult> runIteration(Object[] dataValues, int estimatedNumIterations) {
+      public CompletableFuture<ExecutionResult> runIteration(Object[] args, int estimatedNumIterations) {
         int currIterationIndex = iterationIndex.getAndIncrement();
-        IterationInfo iterationInfo = createIterationInfo(context, currIterationIndex, dataValues, estimatedNumIterations);
+        IterationInfo iterationInfo = createIterationInfo(context, currIterationIndex, args, estimatedNumIterations);
         IterationNode iterationNode = new IterationNode(
           context.getParentId().append("iteration", String.valueOf(currIterationIndex)),
           context.getRunContext().getConfiguration(RunnerConfiguration.class), iterationInfo);

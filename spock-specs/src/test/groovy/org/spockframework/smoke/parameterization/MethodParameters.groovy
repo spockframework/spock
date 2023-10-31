@@ -30,6 +30,7 @@ import spock.lang.Unroll
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 
+import static org.junit.platform.testkit.engine.EventConditions.displayName
 import static org.spockframework.runtime.model.MethodInfo.MISSING_ARGUMENT
 
 /**
@@ -276,6 +277,53 @@ def foo() {
     where:
     x = 1
     y = 2
+  }
+
+  def 'data variables and iteration index are rendered properly with additional arguments'() {
+    given:
+    runner.addClassImport(Foo)
+
+    when:
+    def result = runner.runSpecBody '''
+      @Foo
+      def 'a feature'(a) {
+        expect:
+        true
+
+        where:
+        x << [1, 2]
+        y << [3, 4]
+      }
+    '''
+
+    then:
+    result.testEvents().succeeded().assertEventsMatchExactly(
+      displayName('a feature [x: 1, y: 3, #0]'),
+      displayName('a feature [x: 2, y: 4, #1]'),
+      displayName('a feature')
+    )
+  }
+
+  def 'conditional annotations that check data values work properly with additional arguments'() {
+    given:
+    runner.addClassImport(Foo)
+
+    when:
+    runner.runSpecBody '''
+      @Foo
+      @Requires({ data.x })
+      def 'a feature'(a) {
+        expect:
+        true
+
+        where:
+        x = 1
+        y = 2
+      }
+    '''
+
+    then:
+    noExceptionThrown()
   }
 
   static class FooExtension implements IAnnotationDrivenExtension<Foo> {

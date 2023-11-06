@@ -38,6 +38,16 @@ public class MockUtil {
     return getMockMakerRegistry().asMockOrNull(object) != null;
   }
 
+  /**
+   * Returns {@code true} if the passed class is a Spock static mock currently active on the current {@link Thread}.
+   *
+   * @param clazz the class to check
+   * @return {@code true} if this class is a Spock static mock currently active on the current {@code Thread}
+   */
+  public boolean isStaticMock(Class<?> clazz) {
+    return getMockMakerRegistry().isStaticMock(clazz);
+  }
+
   private static MockMakerRegistry getMockMakerRegistry() {
     return RunContext.get().getMockMakerRegistry();
   }

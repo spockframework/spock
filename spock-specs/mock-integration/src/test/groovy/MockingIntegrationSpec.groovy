@@ -138,9 +138,29 @@ class MockingIntegrationSpec extends Specification {
     1 * mock.method()
   }
 
+  @Requires({ TEST_TYPE.startsWith("mockito") })
+  def "mockito - test mocking static methods"() {
+    given:
+    MockStatic(StaticClass)
+
+    when:
+    def result = StaticClass.staticMethod()
+
+    then:
+    result == null
+    1 * StaticClass.staticMethod()
+  }
+
   private static final class FinalClass {
 
     void method() {
+    }
+  }
+
+  private static class StaticClass {
+
+    static String staticMethod() {
+      return "RealValue"
     }
   }
 }

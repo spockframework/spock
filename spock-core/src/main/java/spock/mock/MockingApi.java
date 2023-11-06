@@ -15,6 +15,7 @@
 package spock.mock;
 
 import java.util.*;
+import java.util.concurrent.Callable;
 
 import groovy.lang.DelegatesTo;
 import groovy.transform.*;
@@ -23,7 +24,6 @@ import groovy.transform.stc.FirstParam;
 import groovy.transform.stc.SecondParam;
 import org.spockframework.lang.SpecInternals;
 import org.spockframework.mock.*;
-import org.spockframework.mock.runtime.IMockMaker;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.util.Beta;
@@ -46,6 +46,12 @@ import groovy.lang.Closure;
  *   <dd>Creates a Stub() with additional, Groovy-specific features.</dd>
  *   <dt>GroovySpy() </dt>
  *   <dd>Creates a Spy() with additional, Groovy-specific features.</dd>
+ *   <dt>MockStatic()</dt>
+ *   <dd>Mocks static methods of the given type that supports both stubbing and mocking.</dd>
+ *   <dt>StubStatic()</dt>
+ *   <dd>Mocks static methods of the given type that supports stubbing but not mocking.</dd>
+ *   <dt>MockStatic()</dt>
+ *   <dd>Mocks static methods of the given type that, by default, delegates all calls to the real static methods. Supports both stubbing and mocking.</dd>
  * </dl>
  *
  * Each factory method accepts up to three parameters, each of which is optional (resulting in eight method overloads):
@@ -146,8 +152,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a mock whose type and name are inferred from the left-hand side of the enclosing variable assignment
    */
   public <T> T Mock() {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -176,8 +181,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -197,8 +201,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    */
   @Override
   public <T> T Mock(Class<T> type) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -229,8 +232,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options, Class<T> type) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -256,8 +258,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
   public <T> T Mock(
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -293,8 +294,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
     Map<String, Object> options,
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -324,8 +324,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
     @ClosureParams(FirstParam.FirstGenericType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -365,8 +364,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
     @ClosureParams(SecondParam.FirstGenericType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -382,8 +380,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    */
   @Beta
   public <T> T Stub() {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -412,8 +409,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -434,8 +430,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
   @Override
   @Beta
   public <T> T Stub(Class<T> type) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -466,8 +461,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options, Class<T> type) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -493,8 +487,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
   public <T> T Stub(
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -530,8 +523,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       Map<String, Object> options,
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -561,8 +553,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
     @ClosureParams(FirstParam.FirstGenericType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -602,8 +593,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
     @ClosureParams(SecondParam.FirstGenericType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -619,8 +609,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    */
   @Beta
   public <T> T Spy() {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -649,8 +638,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -671,8 +659,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
   @Override
   @Beta
   public <T> T Spy(Class<T> type) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -697,8 +684,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
   @Override
   @Beta
   public <T> T Spy(T obj) {
-      invalidMockCreation();
-      return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -730,8 +716,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST)
     @ClosureParams(FirstParam.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -762,8 +747,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options, Class<T> type) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -788,8 +772,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
   public <T> T Spy(
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -824,8 +807,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       Map<String, Object> options,
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -855,8 +837,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
     @ClosureParams(FirstParam.FirstGenericType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -895,8 +876,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
     @ClosureParams(SecondParam.FirstGenericType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -912,8 +892,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    */
   @Beta
   public <T> T GroovyMock() {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -943,8 +922,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -964,8 +942,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    */
   @Beta
   public <T> T GroovyMock(Class<T> type) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -996,8 +973,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options, Class<T> type) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -1023,8 +999,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
   public <T> T GroovyMock(
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -1061,8 +1036,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       Map<String, Object> options,
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -1092,8 +1066,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
     @ClosureParams(FirstParam.FirstGenericType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -1134,8 +1107,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
     @ClosureParams(SecondParam.FirstGenericType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -1151,8 +1123,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    */
   @Beta
   public <T> T GroovyStub() {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -1182,8 +1153,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -1203,8 +1173,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    */
   @Beta
   public <T> T GroovyStub(Class<T> type) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -1235,8 +1204,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options, Class<T> type) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -1262,8 +1230,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
   public <T> T GroovyStub(
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -1300,8 +1267,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       Map<String, Object> options,
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -1331,8 +1297,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
     @ClosureParams(FirstParam.FirstGenericType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -1373,8 +1338,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
     @ClosureParams(SecondParam.FirstGenericType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -1390,8 +1354,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    */
   @Beta
   public <T> T GroovySpy() {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -1421,8 +1384,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -1442,8 +1404,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    */
   @Beta
   public <T> T GroovySpy(Class<T> type) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -1474,8 +1435,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options, Class<T> type) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -1500,8 +1460,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
   public <T> T GroovySpy(
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -1537,8 +1496,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       Map<String, Object> options,
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -1568,8 +1526,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
     @ClosureParams(FirstParam.FirstGenericType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
   /**
@@ -1585,7 +1542,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    *   }
    * </pre>
    *
-   * @param options options for creating the Groovy spy (see {@link org.spockframework.mock.IMockConfiguration} for available options})
+   * @param options options for creating the Groovy spy (see {@link org.spockframework.mock.IMockConfiguration} for available options)
    * @param type the class type of the Groovy spy
    * @param interactions a description of the Groovy spy's interactions
    * @param <T> the class type of the Groovy spy
@@ -1609,11 +1566,351 @@ public class MockingApi extends SpecInternals implements MockFactory {
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
     @ClosureParams(SecondParam.FirstGenericType.class)
       Closure interactions) {
-    invalidMockCreation();
-    return null;
+    throw invalidMockCreation();
   }
 
-  private void invalidMockCreation() {
-    throw new InvalidSpecException("Mock objects can only be created inside a spec, and only during the lifetime of a feature (iteration)");
+  /**
+   * Creates a thread-local mock for all static methods of the passed type.
+   * <p>
+   * Example:
+   *
+   * <pre>
+   *   MockStatic(Person) // type is Person.class
+   * </pre>
+   *
+   * <p>If you want to activate the static mocks on a different {@code Thread},
+   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   *
+   * @param type the type of which the static methods shall be mocked
+   */
+  @Beta
+  public <T> void MockStatic(Class<T> type) {
+    throw invalidMockCreation();
+  }
+
+  /**
+   * Creates a thread-local mock for all static methods of the passed type.
+   * <p>
+   * Example:
+   *
+   * <pre>
+   *   MockStatic(Person, mockMaker: spock.mock.MockMakers.mockitoInline)
+   * </pre>
+   *
+   * <p>If you want to activate the static mocks on a different {@code Thread},
+   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   *
+   * @param options options for creating the mock (see {@link org.spockframework.mock.IMockConfiguration} for available options)
+   * @param type    the type of which the static methods shall be mocked
+   */
+  @Beta
+  public <T> void MockStatic(
+    @NamedParams({
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
+    })
+    Map<String, Object> options,
+    Class<T> type) {
+    throw invalidMockCreation();
+  }
+
+  /**
+   * Creates a thread-local mock for all static methods of the passed type.
+   * <p>
+   * Example:
+   *
+   * <pre>
+   *   MockStatic(Person){
+   *     staticMethod() >> "Return Value"
+   *   }
+   * </pre>
+   *
+   * <p>If you want to activate the static mocks on a different {@code Thread},
+   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   *
+   * @param type         the type of which the static methods shall be mocked
+   * @param interactions a description of the static mock interactions
+   */
+  @Beta
+  public <T> void MockStatic(
+    @DelegatesTo.Target
+    Class<T> type,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
+    Closure<?> interactions) {
+    throw invalidMockCreation();
+  }
+
+  /**
+   * Creates a thread-local mock for all static methods of the passed type.
+   * <p>
+   * Example:
+   *
+   * <pre>
+   *   MockStatic(Person, mockMaker: spock.mock.MockMakers.mockitoInline){
+   *     staticMethod() >> "Return Value"
+   *   }
+   * </pre>
+   *
+   * <p>If you want to activate the static mocks on a different {@code Thread},
+   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   *
+   * @param options      options for creating the mock (see {@link org.spockframework.mock.IMockConfiguration} for available options)
+   * @param type         the type of which the static methods shall be mocked
+   * @param interactions a description of the static mock interactions
+   */
+  @Beta
+  public <T> void MockStatic(
+    @NamedParams({
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
+    })
+    Map<String, Object> options,
+    @DelegatesTo.Target
+    Class<T> type,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
+    Closure<?> interactions) {
+    throw invalidMockCreation();
+  }
+
+  /**
+   * Creates a thread-local stub for all static methods of the passed type.
+   * <p>
+   * Example:
+   *
+   * <pre>
+   *   StubStatic(Person)
+   * </pre>
+   *
+   * <p>If you want to activate the static mocks on a different {@code Thread},
+   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   *
+   * @param type the type of which the static methods shall be stubbed
+   */
+  @Beta
+  public <T> void StubStatic(Class<T> type) {
+    throw invalidMockCreation();
+  }
+
+  /**
+   * Creates a thread-local stub for all static methods of the passed type.
+   * <p>
+   * Example:
+   *
+   * <pre>
+   *   StubStatic(Person, mockMaker: spock.mock.MockMakers.mockitoInline)
+   * </pre>
+   *
+   * <p>If you want to activate the static mocks on a different {@code Thread},
+   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   *
+   * @param options options for creating the stub (see {@link org.spockframework.mock.IMockConfiguration} for available options)
+   * @param type    the type of which the static methods shall be stubbed
+   */
+  @Beta
+  public <T> void StubStatic(
+    @NamedParams({
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
+    })
+    Map<String, Object> options,
+    Class<T> type) {
+    throw invalidMockCreation();
+  }
+
+  /**
+   * Creates a thread-local stub for all static methods of the passed type.
+   * <p>
+   * Example:
+   *
+   * <pre>
+   *   StubStatic(Person){
+   *     staticMethod() >> "Return Value"
+   *   }
+   * </pre>
+   *
+   * <p>If you want to activate the static mocks on a different {@code Thread},
+   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   *
+   * @param type         the type of which the static methods shall be stubbed
+   * @param interactions a description of the static stub interactions
+   */
+  @Beta
+  public <T> void StubStatic(
+    @DelegatesTo.Target
+    Class<T> type,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
+    Closure<?> interactions) {
+    throw invalidMockCreation();
+  }
+
+  /**
+   * Creates a thread-local stub for all static methods of the passed type.
+   * <p>
+   * Example:
+   *
+   * <pre>
+   *   StubStatic(Person, mockMaker: spock.mock.MockMakers.mockitoInline){
+   *     staticMethod() >> "Return Value"
+   *   }
+   * </pre>
+   *
+   * <p>If you want to activate the static mocks on a different {@code Thread},
+   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   *
+   * @param options      options for creating the stub (see {@link org.spockframework.mock.IMockConfiguration} for available options)
+   * @param type         the type of which the static methods shall be stubbed
+   * @param interactions a description of the static stub interactions
+   */
+  @Beta
+  public <T> void StubStatic(
+    @NamedParams({
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
+    })
+    Map<String, Object> options,
+    @DelegatesTo.Target
+    Class<T> type,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
+    Closure<?> interactions) {
+    throw invalidMockCreation();
+  }
+
+  /**
+   * Creates a thread-local spy for all static methods of the passed type.
+   * <p>
+   * Example:
+   *
+   * <pre>
+   *   SpyStatic(Person)
+   * </pre>
+   *
+   * <p>If you want to activate the static mocks on a different {@code Thread},
+   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   *
+   * @param type the type of which the static methods shall be spied
+   */
+  @Beta
+  public <T> void SpyStatic(Class<T> type) {
+    throw invalidMockCreation();
+  }
+
+  /**
+   * Creates a thread-local spy for all static methods of the passed type.
+   * <p>
+   * Example:
+   *
+   * <pre>
+   *   SpyStatic(Person, mockMaker: spock.mock.MockMakers.mockitoInline)
+   * </pre>
+   *
+   * <p>If you want to activate the static mocks on a different {@code Thread},
+   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   *
+   * @param options options for creating the spy (see {@link org.spockframework.mock.IMockConfiguration} for available options)
+   * @param type    the type of which the static methods shall be spied
+   */
+  @Beta
+  public <T> void SpyStatic(
+    @NamedParams({
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
+    })
+    Map<String, Object> options,
+    Class<T> type) {
+    throw invalidMockCreation();
+  }
+
+  /**
+   * Creates a thread-local spy for all static methods of the passed type.
+   * <p>
+   * Example:
+   *
+   * <pre>
+   *   SpyStatic(Person){
+   *     staticMethod() >> "Return Value"
+   *   }
+   * </pre>
+   *
+   * <p>If you want to activate the static mocks on a different {@code Thread},
+   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   *
+   * @param type         the type of which the static methods shall be spied.
+   * @param interactions a description of the static spy interactions
+   */
+  @Beta
+  public <T> void SpyStatic(
+    @DelegatesTo.Target
+    Class<T> type,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
+    Closure<?> interactions) {
+    throw invalidMockCreation();
+  }
+
+  /**
+   * Creates a thread-local spy for all static methods of the passed type.
+   * <p>
+   * Example:
+   *
+   * <pre>
+   *   SpyStatic(Person, mockMaker: spock.mock.MockMakers.mockitoInline){
+   *     staticMethod() >> "Return Value"
+   *   }
+   * </pre>
+   *
+   * <p>If you want to activate the static mocks on a different {@code Thread},
+   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   *
+   * @param options      options for creating the spy (see {@link org.spockframework.mock.IMockConfiguration} for available options)
+   * @param type         the type of which the static methods shall be spied.
+   * @param interactions a description of the static spy interactions
+   */
+  @Beta
+  public <T> void SpyStatic(
+    @NamedParams({
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
+    })
+    Map<String, Object> options,
+    @DelegatesTo.Target
+    Class<T> type,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
+    Closure<?> interactions) {
+    throw invalidMockCreation();
+  }
+
+  /**
+   * Runs the code with the static mocks activated on the current {@link Thread}.
+   *
+   * <p>Note: You only need this if your current {@code Thread} is not the test thread.
+   * On the test {@code Thread}, the static mocks is automatically activated.</p>
+   *
+   * @param code the code to execute
+   */
+  public void runWithActiveStaticMocks(Runnable code) {
+    getSpecificationContext().getStaticMockController().runWithActiveStaticMocks(code);
+  }
+
+  /**
+   * Runs the code with the static mocks activated on the current {@link Thread}.
+   *
+   * <p>Note: You only need this if your current {@code Thread} is not the test thread.
+   * On the test {@code Thread}, the static mocks is automatically activated.</p>
+   *
+   * @param <R>  the return type
+   * @param code the code to execute
+   * @return the return value of the executed code
+   */
+  public <R> R withActiveStaticMocks(Callable<R> code) {
+    return getSpecificationContext().getStaticMockController().withActiveStaticMocks(code);
+  }
+
+  private InvalidSpecException invalidMockCreation() {
+    return new InvalidSpecException("Mock objects can only be created inside a spec, and only during the lifetime of a feature (iteration)");
   }
 }

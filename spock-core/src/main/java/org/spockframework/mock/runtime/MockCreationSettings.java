@@ -47,6 +47,10 @@ public class MockCreationSettings implements IMockMaker.IMockCreationSettings {
     return new MockCreationSettings(mockConfig.getMockMaker(), mockConfig.getType(), mockConfig.getNature(), new ArrayList<>(mockConfig.getAdditionalInterfaces()), mockConfig.getConstructorArgs(), interceptor, classLoader, mockConfig.isUseObjenesis(), false);
   }
 
+  public static MockCreationSettings settingsFromMockConfigurationForStaticMock(IMockConfiguration mockConfig, IProxyBasedMockInterceptor interceptor, ClassLoader classLoader) {
+    return new MockCreationSettings(mockConfig.getMockMaker(), mockConfig.getType(), mockConfig.getNature(), Collections.emptyList(), null, interceptor, classLoader, false, true);
+  }
+
   public static MockCreationSettings settings(Class<?> mockType, List<Class<?>> additionalInterfaces, IProxyBasedMockInterceptor interceptor, ClassLoader classLoader, boolean useObjenesis) {
     return new MockCreationSettings(null, mockType, MockNature.MOCK, additionalInterfaces, null, interceptor, classLoader, useObjenesis, false);
   }

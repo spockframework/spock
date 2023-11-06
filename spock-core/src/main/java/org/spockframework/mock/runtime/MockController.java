@@ -17,15 +17,20 @@
 package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
+import org.spockframework.util.ExceptionUtil;
 
 import java.util.*;
+import java.util.concurrent.Callable;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * @author Peter Niederwieser
  */
-public class MockController implements IMockController {
+public class MockController implements IMockController, IStaticMockController {
   private final Deque<IInteractionScope> scopes = new LinkedList<>();
   private final List<InteractionNotSatisfiedError> errors = new ArrayList<>();
+  private final List<IMockMaker.IStaticMock> staticMocks = new ArrayList<>();
 
   public MockController() {
     scopes.addFirst(new InteractionScope());
@@ -79,5 +84,50 @@ public class MockController implements IMockController {
 
   private void throwAnyPreviousError() {
     if (!errors.isEmpty()) throw errors.get(0);
+  }
+
+  @Override
+  public void registerStaticMock(IMockMaker.IStaticMock staticMock) {
+    synchronized (staticMocks) {
+      staticMocks.add(requireNonNull(staticMock));
+    }
+  }
+
+  void enableStaticMocksOnCurrentThread() {
+    synchronized (staticMocks) {
+      for (IMockMaker.IStaticMock mock : staticMocks) {
+        mock.enable();
+      }
+    }
+  }
+
+  void disableStaticMocksOnCurrentThread() {
+    synchronized (staticMocks) {
+      for (IMockMaker.IStaticMock mock : staticMocks) {
+        mock.disable();
+      }
+    }
+  }
+
+  @Override
+  public void runWithActiveStaticMocks(Runnable code) {
+    enableStaticMocksOnCurrentThread();
+    try {
+      code.run();
+    } finally {
+      disableStaticMocksOnCurrentThread();
+    }
+  }
+
+  @Override
+  public <R> R withActiveStaticMocks(Callable<R> code) {
+    enableStaticMocksOnCurrentThread();
+    try {
+      return code.call();
+    } catch (Exception ex) {
+      return ExceptionUtil.sneakyThrow(ex);
+    } finally {
+      disableStaticMocksOnCurrentThread();
+    }
   }
 }

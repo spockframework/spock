@@ -1097,7 +1097,7 @@ The following mock makers are built-in, and are selected in this order:
 | Explicit Constructor Arguments |      ✘       |      ✔       |    ✔    |     ✔
 | Final Class                    |      ✘       |      ✘       |    ✘    |     ✔
 | Final Method                   |      ✘       |      ✘       |    ✘    |     ✔
-| Static Method                  |      ✘       |      ✘       |    ✘    |     ✘
+| Static Method                  |      ✘       |      ✘       |    ✘    |     ✔
 |===
 
 The class `spock.mock.MockMakers` provides constants and methods for the built-in mock makers.
@@ -1141,6 +1141,8 @@ include::{sourcedir}/interaction/MockMakerDocSpec.groovy[tag=mock-serializable]
 The `mockito` mock maker uses `org.mockito.MockMakers.INLINE` under the hood,
 please see the Mockito manual "Mocking final types, enums and final methods" for all pros and cons,
 when using `org.mockito.MockMakers.INLINE`.
+It also supports mocking of static methods of classes and interfaces with `Mock/Stub/SpyStatic`.
+See <<interaction_based_testing.adoc#static-mocks,static mocks>> section for more details.
 
 ==== Custom Mock Maker
 

@@ -14,6 +14,7 @@
 
 package org.spockframework.lang;
 
+import org.spockframework.mock.IStaticMockController;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.Beta;
@@ -31,4 +32,6 @@ public interface ISpecificationContext {
   Throwable getThrownException();
 
   IMockController getMockController();
+
+  IStaticMockController getStaticMockController();
 }

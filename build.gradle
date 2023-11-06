@@ -436,6 +436,7 @@ def configureJavadoc(TaskProvider javadoc, boolean root = false) {
       options.addStringOption('source', '1.8')
       links "https://docs.groovy-lang.org/docs/groovy-$groovyVersion/html/gapi/"
       links "https://junit.org/junit4/javadoc/latest/"
+      links "https://javadoc.io/doc/org.mockito/mockito-core/${libs.versions.mockito5.get()}/"
       // Use offline package list, as the JavaVersion is fixed to 8 for the time being
       // and Hamcrest has certificate issues for their domain.
       linksOffline("https://docs.oracle.com/javase/8/docs/api/", "${root ? '' : '../'}javadoc/java-8")

@@ -5,7 +5,7 @@ groovy4 = '4.0.15'
 jacoco = '0.8.11'
 asm = '9.6'
 mockito4 = '4.11.0'
-mockito5 = '5.6.0'
+mockito5 = '5.7.0'
 
 [libraries]
 jetbrains-annotations = "org.jetbrains:annotations:24.0.1"

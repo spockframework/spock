@@ -237,7 +237,7 @@ public interface IMockMaker {
 
         @Override
         public String toString() {
-          return id.toString();
+          return id + " simple mock maker settings";
         }
       };
     }

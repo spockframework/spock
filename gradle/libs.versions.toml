@@ -4,6 +4,8 @@ groovy3 = '3.0.19'
 groovy4 = '4.0.15'
 jacoco = '0.8.11'
 asm = '9.6'
+mockito4 = '4.11.0'
+mockito5 = '5.6.0'
 
 [libraries]
 jetbrains-annotations = "org.jetbrains:annotations:24.0.1"
@@ -17,8 +19,8 @@ hamcrest = "org.hamcrest:hamcrest:2.2"
 jaxb = "javax.xml.bind:jaxb-api:2.3.1"
 junit4 = "junit:junit:4.13.2"
 log4j = "log4j:log4j:1.2.17"
-mockito4 = "org.mockito:mockito-core:4.11.0"
-mockito5 = "org.mockito:mockito-core:5.6.0"
+mockito4 = { module = "org.mockito:mockito-core", version.ref = "mockito4" }
+mockito5 = { module = "org.mockito:mockito-core", version.ref = "mockito5" }
 objenesis = "org.objenesis:objenesis:3.3"
 # This needs a classifier, but is has to be specified on the usage end https://melix.github.io/blog/2021/03/version-catalogs-faq.html#_why_can_t_i_use_excludes_or_classifiers
 jacoco-agent = { module = "org.jacoco:org.jacoco.agent", version.ref = "jacoco" }

@@ -191,8 +191,8 @@ class MockMakerRegistrySpec extends Specification {
     then:
     makers[0] instanceof JavaProxyMockMaker
     makers[1] instanceof ByteBuddyMockMaker
-    makers[2] instanceof MockitoMockMaker
-    makers[3] instanceof CglibMockMaker
+    makers[2] instanceof CglibMockMaker
+    makers[3] instanceof MockitoMockMaker
   }
 
   def "Mock with unknown MockMaker"() {
@@ -261,8 +261,8 @@ class MockMakerRegistrySpec extends Specification {
     ex.message == """Cannot create mock for class java.io.File.
 java-proxy: Cannot mock classes.
 byte-buddy: Cannot mock static methods.
-mockito: Cannot mock static methods.
 cglib: Cannot mock static methods.
+mockito: Cannot mock static methods.
 fancy: Cannot mock static methods."""
   }
 

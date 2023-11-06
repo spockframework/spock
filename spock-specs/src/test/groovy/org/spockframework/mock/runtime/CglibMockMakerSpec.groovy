@@ -36,7 +36,7 @@ class CglibMockMakerSpec extends Specification {
   def "Verify ID and IMockMakerSettings"() {
     expect:
     MockMakers.cglib.mockMakerId.toString() == "cglib"
-    MockMakers.cglib.toString() == "cglib"
+    MockMakers.cglib.toString() == "cglib simple mock maker settings"
   }
 
   def "Use specific MockMaker cglib"() {

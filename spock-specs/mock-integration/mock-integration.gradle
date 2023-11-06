@@ -30,7 +30,7 @@ def codeGenerationLibraries = [
   mockito4 : configurations.mockito4
 ]
 
-if (rootProject.ext.javaVersion >= 11) {
+if (rootProject.javaVersion >= 11) {
   //Mockito 5 requires at least Java 11 to run
   codeGenerationLibraries.put("mockito5", configurations.mockito5)
 }
@@ -41,17 +41,17 @@ codeGenerationLibraries.each { key, config ->
     classpath += config
 
     if (key == "cglib") {
-      if (rootProject.ext.javaVersion >= 17) {
+      if (rootProject.javaVersion >= 17) {
         jvmArgs(
           //cglib requires access to java.lang.ClassLoader.defineClass() from net.sf.cglib.core.ReflectUtils
           "--add-opens=java.base/java.lang=ALL-UNNAMED"
         )
       }
-      onlyIf { rootProject.ext.javaVersion < 21}
+      onlyIf { rootProject.javaVersion < 21}
     }
     if (key == "mockito4") {
       // mockito4 only supports up to Java 20
-      onlyIf { rootProject.ext.javaVersion < 21}
+      onlyIf { rootProject.javaVersion < 21}
     }
   }
   tasks.register("test${key.capitalize()}WithObjenesis", Test) {
@@ -60,17 +60,17 @@ codeGenerationLibraries.each { key, config ->
     classpath += configurations.objenesis
 
     if (key == "cglib") {
-      if (rootProject.ext.javaVersion >= 17) {
+      if (rootProject.javaVersion >= 17) {
         jvmArgs(
           //cglib requires access to java.lang.ClassLoader.defineClass() from net.sf.cglib.core.ReflectUtils
           "--add-opens=java.base/java.lang=ALL-UNNAMED"
         )
       }
-      onlyIf { rootProject.ext.javaVersion < 21}
+      onlyIf { rootProject.javaVersion < 21}
     }
     if (key == "mockito4") {
       // mockito4 only supports up to Java 20
-      onlyIf { rootProject.ext.javaVersion < 21}
+      onlyIf { rootProject.javaVersion < 21}
     }
   }
 }

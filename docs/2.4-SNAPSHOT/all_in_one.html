@@ -5543,26 +5543,26 @@ each at addition time whether it is attached to the method interceptor or the ot
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">I</span> <span class="directive">extends</span> AbstractMethodInterceptor { I(<span class="keyword">def</span> s) {} }
 
-<span class="comment">// On SpecInfo</span>
+<span class="comment">// on SpecInfo</span>
 specInfo.addSharedInitializerInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">shared initializer</span><span class="delimiter">'</span></span>)
-specInfo.sharedInitializerMethod?.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">shared initializer method</span><span class="delimiter">'</span></span>)
+specInfo.specsBottomToTop*.sharedInitializerMethod*.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">shared initializer method</span><span class="delimiter">'</span></span>)
 specInfo.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">specification</span><span class="delimiter">'</span></span>)
 specInfo.addSetupSpecInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">setup spec</span><span class="delimiter">'</span></span>)
-specInfo.setupSpecMethods*.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">setup spec method</span><span class="delimiter">'</span></span>)
+specInfo.specsBottomToTop.collectMany { <span class="local-variable">it</span>.setupSpecMethods }*.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">setup spec method</span><span class="delimiter">'</span></span>)
 specInfo.allFeatures*.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">feature</span><span class="delimiter">'</span></span>)
 specInfo.addInitializerInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">initializer</span><span class="delimiter">'</span></span>)
-specInfo.initializerMethod?.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">initializer method</span><span class="delimiter">'</span></span>)
+specInfo.specsBottomToTop*.initializerMethod*.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">initializer method</span><span class="delimiter">'</span></span>)
 specInfo.allFeatures*.addIterationInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">iteration</span><span class="delimiter">'</span></span>)
 specInfo.addSetupInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">setup</span><span class="delimiter">'</span></span>)
-specInfo.setupMethods*.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">setup method</span><span class="delimiter">'</span></span>)
+specInfo.specsBottomToTop.collectMany { <span class="local-variable">it</span>.setupMethods }*.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">setup method</span><span class="delimiter">'</span></span>)
 specInfo.allFeatures*.featureMethod*.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">feature method</span><span class="delimiter">'</span></span>)
 specInfo.addCleanupInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">cleanup</span><span class="delimiter">'</span></span>)
-specInfo.cleanupMethods*.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">cleanup method</span><span class="delimiter">'</span></span>)
+specInfo.specsBottomToTop.collectMany { <span class="local-variable">it</span>.cleanupMethods }*.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">cleanup method</span><span class="delimiter">'</span></span>)
 specInfo.addCleanupSpecInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">cleanup spec</span><span class="delimiter">'</span></span>)
-specInfo.cleanupSpecMethods*.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">cleanup spec method</span><span class="delimiter">'</span></span>)
+specInfo.specsBottomToTop.collectMany { <span class="local-variable">it</span>.cleanupSpecMethods }*.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">cleanup spec method</span><span class="delimiter">'</span></span>)
 specInfo.allFixtureMethods*.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">fixture method</span><span class="delimiter">'</span></span>)
 
-<span class="comment">// on FeatureInfo</span>
+<span class="comment">// on FeatureInfo (already included above, handling all features)</span>
 featureInfo.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">feature</span><span class="delimiter">'</span></span>)
 featureInfo.addIterationInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">iteration</span><span class="delimiter">'</span></span>)
 featureInfo.featureMethod.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">feature method</span><span class="delimiter">'</span></span>)</code></pre>
@@ -10321,7 +10321,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2023-11-06 13:38:21 UTC
+Last updated 2023-11-06 21:41:00 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

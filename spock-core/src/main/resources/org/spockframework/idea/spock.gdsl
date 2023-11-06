@@ -14,36 +14,108 @@
 
 package org.spockframework.idea
 
-import com.intellij.psi.PsiVariable
-
 // only tested with 11.1, so play it safe and bail out on earlier version
-if (!supportsVersion("11.1")) return
+if (!supportsVersion('11.1')) return
 
-def ctx = context(ctype: "spock.lang.Specification", scope: closureScope(isArg: true))
+// handle closures that are method arguments of methods called from a class implementing MockingApi
+def ctx = context(ctype: 'spock.mock.MockingApi', scope: closureScope(isArg: true))
 
 // Mock(Foo) { /* delegates to instance of type Foo */ }
 // Foo x = Mock { /* delegates to instance of type Foo */ }
-contributor(ctx, {
-  def call = enclosingCall("Mock") ?: enclosingCall("Stub") ?: enclosingCall("Spy") ?:
-    enclosingCall("GroovyMock") ?: enclosingCall("GroovyStub") ?: enclosingCall("GroovySpy")
-  if (call) {
-    def method = call.bind()
-    def clazz = method?.containingClass
-    if (clazz?.qualName == "spock.mock.MockingApi") {
-      def mockType = call.arguments.find { it.type?.className == "Class" }
-      if (mockType) {
-        def typeParameter = mockType.type.parameters[0]
-        delegatesTo(typeParameter.resolve())
-        return
-      }
-      def callContext = call.context
-      if (callContext instanceof PsiVariable) {
-        delegatesTo(callContext.typeGroovy.resolve())
-      }
+contributor(ctx) {
+  // the context is the closure, get the enclosing method call to only handle the mock creation methods
+  def call = enclosingCall('Mock') ?: enclosingCall('Stub') ?: enclosingCall('Spy') ?:
+      enclosingCall('GroovyMock') ?: enclosingCall('GroovyStub') ?: enclosingCall('GroovySpy')
+
+  // expect to be within a mock creation method call or abort
+  if (!call) return
+  // expect a method bind on the method call or abort
+  if (!respondsToParameterless(call, 'bind')) return
+
+  // get a reference to the called method
+  def calledMethod = call.bind()
+
+  // if the called method could not be determined, abort
+  if (!calledMethod) return
+  // expect the called method to have a containingClass property or abort
+  if (!respondsToProperty(calledMethod, 'containingClass')) return
+
+  // get the class containing the called method
+  def clazz = calledMethod.containingClass
+
+  // if the class could not be determined, abort
+  if (!clazz) return
+  // expect the called method to have a qualName property or abort
+  if (!respondsToProperty(clazz, 'qualName')) return
+  // expect the called method to be from MockingApi or abort
+  if (clazz.qualName != 'spock.mock.MockingApi') return
+
+  def delegateTo = { type ->
+    if (respondsToProperty(type, 'boxedTypeName')) {
+      // trying to mock a primitive type, so use the boxed type
+      delegatesTo(findClass(type.boxedTypeName))
+    } else if (respondsToParameterless(type, 'resolve')) {
+      // the type is resolvable, e.g. because it is a reference to an actual type
+      // so resolve the type before using it
+      delegatesTo(type.resolve())
+    } else {
+      // as fallback just use the type directly
+      delegatesTo(type)
     }
   }
-})
 
+  // if the arguments of the call can be requested,
+  // check for an explicit type which should win over an inferred type
+  if (respondsToProperty(call, 'arguments')) {
+    // find the first argument that is a Class,
+    // this is expected to be the explicit type
+    def explicitType = call.arguments.find {
+      respondsToProperty(it, 'classType')
+          && respondsToProperty(it.classType, 'name')
+          && (it.classType.name == 'Class')
+    }
+    // if an explicit type was found, use it as delegate type if possible
+    if (explicitType) {
+      if (!respondsToProperty(explicitType, 'type')) return
+      if (!respondsToProperty(explicitType.type, 'parameters')) return
+
+      delegateTo(explicitType.type.parameters[0])
+      return
+    }
+  }
+
+  if (!respondsToProperty(call, 'context')) return
+
+  def callContext = call.context
+  if (respondsToProperty(callContext, 'typeGroovy')) {
+    // the call context directly has a groovy type, this usually means
+    // it is directly a variable assignment, so use the type
+    delegateTo(callContext.typeGroovy)
+  } else if (respondsToProperty(callContext, 'LValue')) {
+    // the call context does not have a groovy type, but an LValue
+    // this for example happens when you split declaration of the mock variable
+    // and assigning it like in `Foo foo; foo = Mock { }`.
+    def lvalue = callContext.LValue
+    if (respondsToParameterless(lvalue, 'resolve')) {
+      // the type is resolvable, e.g. because it is a reference to an actual type
+      // so resolve the type before using it
+      lvalue = lvalue.resolve()
+    }
+    if (respondsToProperty(lvalue, 'typeGroovy'))
+    delegateTo(lvalue.typeGroovy)
+  }
+}
+
+List<MetaMethod> respondsToParameterless(Object target, String name) {
+  return target.respondsTo(name, [] as Object[])
+}
+
+boolean respondsToProperty(target, String name) {
+  def nameCapitalized = name.capitalize()
+  return respondsToParameterless(target, "get$nameCapitalized")
+      || respondsToParameterless(target, "is$nameCapitalized")*.returnType == [boolean]
+      || target.hasProperty(name)
+}
 
 // From https://issues.apache.org/jira/browse/GROOVY-9510
 // Properly resolve the delegatesTo for the closures of these extensions

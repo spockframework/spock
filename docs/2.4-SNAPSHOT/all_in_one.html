@@ -5785,7 +5785,17 @@ if it can mock the requested type. Spock will use the first mock maker which is 
 </div>
 </li>
 <li>
-<p><code>mockito</code>: Uses <a href="https://site.mockito.org/">Mockito</a> to create mocks of classes.</p>
+<p><code>cglib</code>: Deprecated: Uses <a href="https://github.com/cglib/cglib">CGLIB</a> to create mock objects.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Requires <code>cglib:cglib-nodep</code> 3.2.0+ on the class path.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>mockito</code>: Uses <a href="https://site.mockito.org/">Mockito</a> to create mock objects.</p>
 <div class="ulist">
 <ul>
 <li>
@@ -5793,16 +5803,6 @@ if it can mock the requested type. Spock will use the first mock maker which is 
 </li>
 <li>
 <p>Requires <code>org.mockito:mockito-core</code> 4.11+ on the class path.</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p><code>cglib</code>: Deprecated: Uses <a href="https://github.com/cglib/cglib">CGLIB</a> to create mock objects.</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Requires <code>cglib:cglib-nodep</code> 3.2.0+ on the class path.</p>
 </li>
 </ul>
 </div>
@@ -5816,7 +5816,7 @@ if it can mock the requested type. Spock will use the first mock maker which is 
 <col style="width: 15%;">
 <col style="width: 15%;">
 <col style="width: 15%;">
-<col style="width: 18%;">
+<col style="width: 15%;">
 </colgroup>
 <thead>
 <tr>
@@ -5902,7 +5902,7 @@ The preferred mock maker will be used globally, if no mock maker is explicitly s
 The mocking of final classes is automatically enabled, if <code>org.mockito:mockito-core</code> 4.11+ is on the class path.</p>
 </div>
 <div class="paragraph">
-<p>For mocking of final methods, you need to select <code>mockito</code> during mock construction,
+<p>For mocking of final methods, you need to select the <code>mockito</code> mock maker during mock construction,
 like:</p>
 </div>
 <div class="listingblock">
@@ -5911,8 +5911,8 @@ like:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>If you want to make final method mockable by default, you can select this mock maker as the preferred mock maker.
-It can&#8217;t mock <code>native</code> methods, see Mockito for details.</p>
+<p>If you want to make final methods mockable by default, you can select this mock maker as the preferred mock maker.
+It can&#8217;t mock native methods, see <a href="https://javadoc.io/doc/org.mockito/mockito-core/5.6.0/org/mockito/Mockito.html#Mocking_Final">the Mockito documentation</a> for details.</p>
 </div>
 <div class="admonitionblock caution">
 <table>
@@ -5921,24 +5921,24 @@ It can&#8217;t mock <code>native</code> methods, see Mockito for details.</p>
 <div class="title">Caution</div>
 </td>
 <td class="content">
-If you try to mock a final method without a Mock Maker supporting it.
-         It will silently fail, without honoring your specified interactions.
+If you try to mock a final method without a Mock Maker supporting it,
+         it will silently fail, without honoring your specified interactions.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>You can configure the created mocks with the <code>org.mockito.MockSettings</code> during construction to use features provided by Mockito:</p>
+<p>You can configure the created mock objects using the interface <code>org.mockito.MockSettings</code> during the construction to use features provided by Mockito:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">Subscriber subscriber = Mock(<span class="key">mockMaker</span>: MockMakers.mockito { org.mockito.MockSettings settings -&gt;
-  settings.serializable()
+<pre class="CodeRay highlight"><code data-lang="groovy">Subscriber subscriber = Mock(<span class="key">mockMaker</span>: MockMakers.mockito {
+  serializable()
 })</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The <code>mockito</code> uses the <code>org.mockito.MockMakers.INLINE</code> under the hood,
+<p>The <code>mockito</code> mock maker uses <code>org.mockito.MockMakers.INLINE</code> under the hood,
 please see the Mockito manual "Mocking final types, enums and final methods" for all pros and cons,
 when using <code>org.mockito.MockMakers.INLINE</code>.</p>
 </div>
@@ -10321,7 +10321,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2023-10-27 13:20:44 UTC
+Last updated 2023-11-06 13:38:21 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

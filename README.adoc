@@ -10,8 +10,8 @@ Workflow Status (branch)]]
 https://jitpack.io/#org.spockframework/spock[image:https://jitpack.io/v/org.spockframework/spock.svg[Jitpack]]
 https://codecov.io/gh/spockframework/spock[image:https://codecov.io/gh/spockframework/spock/branch/master/graph/badge.svg[Codecov]]
 https://gitter.im/spockframework/spock?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge[image:https://badges.gitter.im/spockframework/spock.svg[Gitter]]
-https://ge.spockframework.org/scans[image:https://img.shields.io/badge/Revved%20up%20by-Gradle%20Enterprise-06A0CE?logo=Gradle&labelColor=02303A[Revved
-up by Gradle Enterprise]]
+https://ge.spockframework.org/scans[image:https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A[Revved
+up by Develocity]]
 
 image::docs/images/spock-main-logo.png[width=100px,float=right]
 

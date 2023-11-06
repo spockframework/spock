@@ -30,7 +30,7 @@ import org.spockframework.mock.runtime.mockito.MockitoMockMakerSettings;
 
 import java.lang.reflect.Proxy;
 
-import static org.spockframework.mock.runtime.IMockMaker.IMockMakerSettings.simple;
+import static spock.mock.IMockMakerSettings.settingsFor;
 
 /**
  * Provides constants and factory methods for known built-in {@link IMockMaker} implementations.
@@ -55,7 +55,7 @@ public final class MockMakers {
    * <li>{@code EXPLICIT_CONSTRUCTOR_ARGUMENTS}</li>
    * </ul>
    */
-  public static final IMockMaker.IMockMakerSettings byteBuddy = simple(ByteBuddyMockMaker.ID);
+  public static final IMockMakerSettings byteBuddy = settingsFor(ByteBuddyMockMaker.ID);
 
   /**
    * Uses <a href="https://github.com/cglib/cglib">CGLIB</a> to create mocks.
@@ -68,7 +68,7 @@ public final class MockMakers {
    * <li>{@code EXPLICIT_CONSTRUCTOR_ARGUMENTS}</li>
    * </ul>
    */
-  public static final IMockMaker.IMockMakerSettings cglib = simple(CglibMockMaker.ID);
+  public static final IMockMakerSettings cglib = settingsFor(CglibMockMaker.ID);
 
   /**
    * Uses the Java {@link Proxy} API to create mocks of interfaces.
@@ -79,7 +79,7 @@ public final class MockMakers {
    * <li>{@code ADDITIONAL_INTERFACES}</li>
    * </ul>
    */
-  public static final IMockMaker.IMockMakerSettings javaProxy = simple(JavaProxyMockMaker.ID);
+  public static final IMockMakerSettings javaProxy = settingsFor(JavaProxyMockMaker.ID);
 
   /**
    * Uses <a href="https://site.mockito.org/">Mockito</a> to create mocks,
@@ -97,7 +97,7 @@ public final class MockMakers {
    * <p>It uses {@link org.mockito.MockMakers#INLINE} under the hood,
    * please see the Mockito manual for all pros and cons, when using {@code MockMakers.INLINE}.
    */
-  public static final IMockMaker.IMockMakerSettings mockito = simple(MockitoMockMaker.ID);
+  public static final IMockMakerSettings mockito = settingsFor(MockitoMockMaker.ID);
 
   /**
    * Uses <a href="https://site.mockito.org/">Mockito</a> to create mocks,
@@ -117,9 +117,9 @@ public final class MockMakers {
    *
    * @param settingsCode the code to execute to configure {@link MockSettings} for further configuration of the mock to create
    */
-  public static IMockMaker.IMockMakerSettings mockito(@DelegatesTo(type = "org.mockito.MockSettings", strategy = Closure.DELEGATE_FIRST)
-                                                      @ClosureParams(value = SimpleType.class, options = "org.mockito.MockSettings")
-                                                            Closure<?> settingsCode) {
+  public static IMockMakerSettings mockito(@DelegatesTo(type = "org.mockito.MockSettings", strategy = Closure.DELEGATE_FIRST)
+                                           @ClosureParams(value = SimpleType.class, options = "org.mockito.MockSettings")
+                                           Closure<?> settingsCode) {
     return MockitoMockMakerSettings.createSettings(settingsCode);
   }
 }

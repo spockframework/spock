@@ -30,9 +30,28 @@ def codeGenerationLibraries = [
   mockito4 : configurations.mockito4
 ]
 
-if (rootProject.javaVersion >= 11) {
+def javaVersion = rootProject.javaVersion
+
+if (javaVersion >= 11) {
   //Mockito 5 requires at least Java 11 to run
   codeGenerationLibraries.put("mockito5", configurations.mockito5)
+}
+
+def configureTaskFilters = { String key, Test t ->
+  if (key == "cglib") {
+    if (javaVersion >= 17) {
+      t.jvmArgs(
+        //cglib requires access to java.lang.ClassLoader.defineClass() from net.sf.cglib.core.ReflectUtils
+        "--add-opens=java.base/java.lang=ALL-UNNAMED"
+      )
+
+      //Cglib does not support Java 21 anymore
+      t.onlyIf { javaVersion < 21 }
+    }
+  } else if (key == "mockito4") {
+    //Mockito 4 or to be more specific the old byte-buddy version used by mockito 4 does not support Java 21
+    t.onlyIf { javaVersion < 21 }
+  }
 }
 
 codeGenerationLibraries.each { key, config ->
@@ -40,38 +59,15 @@ codeGenerationLibraries.each { key, config ->
     systemProperty("org.spockframework.mock.testType", "${key.toLowerCase()} - objenesis")
     classpath += config
 
-    if (key == "cglib") {
-      if (rootProject.javaVersion >= 17) {
-        jvmArgs(
-          //cglib requires access to java.lang.ClassLoader.defineClass() from net.sf.cglib.core.ReflectUtils
-          "--add-opens=java.base/java.lang=ALL-UNNAMED"
-        )
-      }
-      onlyIf { rootProject.javaVersion < 21}
-    }
-    if (key == "mockito4") {
-      // mockito4 only supports up to Java 20
-      onlyIf { rootProject.javaVersion < 21}
-    }
+    configureTaskFilters(key, it)
   }
+
   tasks.register("test${key.capitalize()}WithObjenesis", Test) {
     systemProperty("org.spockframework.mock.testType", "${key.toLowerCase()} + objenesis")
     classpath += config
     classpath += configurations.objenesis
 
-    if (key == "cglib") {
-      if (rootProject.javaVersion >= 17) {
-        jvmArgs(
-          //cglib requires access to java.lang.ClassLoader.defineClass() from net.sf.cglib.core.ReflectUtils
-          "--add-opens=java.base/java.lang=ALL-UNNAMED"
-        )
-      }
-      onlyIf { rootProject.javaVersion < 21}
-    }
-    if (key == "mockito4") {
-      // mockito4 only supports up to Java 20
-      onlyIf { rootProject.javaVersion < 21}
-    }
+    configureTaskFilters(key, it)
   }
 }
 

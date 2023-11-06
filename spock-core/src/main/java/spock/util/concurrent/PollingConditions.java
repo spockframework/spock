@@ -21,6 +21,8 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.SpockTimeoutError;
 import org.spockframework.util.Beta;
 
+import java.util.Locale;
+
 /**
  * Repeatedly evaluates one or more conditions until they are satisfied or a timeout has elapsed.
  * The timeout and delays between evaluation attempts are configurable. All durations are in seconds.
@@ -130,7 +132,7 @@ public class PollingConditions {
   }
 
   /**
-   * Sets the closure that is evaluated when a timeout is reached. 
+   * Sets the closure that is evaluated when a timeout is reached.
    * <p>
    * The closure can use a {@link Throwable} as an input parameter,
    * which is thrown by the test conditions when a timeout is reached. The result of this
@@ -197,9 +199,9 @@ public class PollingConditions {
       }
     }
 
-    String msg = String.format("Condition not satisfied after %1.2f seconds and %d attempts", elapsedTime / 1000d, attempts);
+    String msg = String.format(Locale.ENGLISH, "Condition not satisfied after %1.2f seconds and %d attempts", elapsedTime / 1000d, attempts);
     if (timeoutMessage != null) {
-      msg = String.format("%s: %s", msg, GroovyRuntimeUtil.invokeClosure(timeoutMessage, testException));
+      msg = String.format(Locale.ENGLISH, "%s: %s", msg, GroovyRuntimeUtil.invokeClosure(timeoutMessage, testException));
     }
     throw new SpockTimeoutError(seconds, msg, testException);
   }

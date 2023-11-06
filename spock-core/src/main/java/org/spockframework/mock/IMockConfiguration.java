@@ -1,6 +1,7 @@
 package org.spockframework.mock;
 
 import org.spockframework.mock.runtime.IMockMaker;
+import spock.mock.IMockMakerSettings;
 import org.spockframework.util.*;
 import spock.mock.MockingApi;
 
@@ -95,7 +96,7 @@ public interface IMockConfiguration {
    * @return the custom settings to use for the creation of the mock, or {@code null}
    */
   @Nullable
-  IMockMaker.IMockMakerSettings getMockMaker();
+  IMockMakerSettings getMockMaker();
 
   /**
    * Tells whether a mock object stands in for all objects of the mocked type, or just for itself.
@@ -106,7 +107,7 @@ public interface IMockConfiguration {
   boolean isGlobal();
 
   /**
-   * Tells whether invocations on the mock object should be verified. If (@code false}, invocations
+   * Tells whether invocations on the mock object should be verified. If {@code false}, invocations
    * on the mock object will not be matched against interactions that have a cardinality.
    *
    * @return whether invocations on the mock object should be verified

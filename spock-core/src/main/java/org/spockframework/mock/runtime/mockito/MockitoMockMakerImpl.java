@@ -16,16 +16,19 @@
 
 package org.spockframework.mock.runtime.mockito;
 
-import org.mockito.MockMakers;
+import org.codehaus.groovy.runtime.InvokerHelper;
 import org.mockito.MockSettings;
 import org.mockito.Mockito;
 import org.mockito.MockitoFramework;
+import org.mockito.creation.instance.InstantiationException;
 import org.mockito.exceptions.base.MockitoException;
+import org.mockito.internal.util.MockUtil;
 import org.mockito.invocation.Invocation;
 import org.mockito.invocation.InvocationContainer;
 import org.mockito.invocation.MockHandler;
 import org.mockito.mock.MockCreationSettings;
 import org.mockito.plugins.MockMaker;
+import org.mockito.plugins.MockitoPlugins;
 import org.spockframework.mock.CannotCreateMockException;
 import org.spockframework.mock.IMockObject;
 import org.spockframework.mock.ISpockMockObject;
@@ -35,8 +38,12 @@ import org.spockframework.mock.runtime.IProxyBasedMockInterceptor;
 import org.spockframework.util.ExceptionUtil;
 import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.ThreadSafe;
+import spock.mock.IMockMakerSettings;
 
 import java.lang.reflect.Method;
+
+import static java.util.Objects.requireNonNull;
+import static org.mockito.MockMakers.INLINE;
 
 @ThreadSafe
 class MockitoMockMakerImpl {
@@ -46,9 +53,36 @@ class MockitoMockMakerImpl {
   private final Method spockMockMethod;
 
   MockitoMockMakerImpl() {
+    inlineMockMaker = resolveInlineMockMaker();
+    spockMockMethod = ReflectionUtil.getMethodByName(ISpockMockObject.class, "$spock_get");
+  }
+
+  /**
+   * Resolves the inline mock maker of Mockito, via different ways, depending on the Mockito version.
+   *
+   * @return The inline mock maker of Mockito
+   */
+  private MockMaker resolveInlineMockMaker() {
     MockitoFramework framework = Mockito.framework();
-    this.inlineMockMaker = framework.getPlugins().getInlineMockMaker();
-    this.spockMockMethod = ReflectionUtil.getMethodByName(ISpockMockObject.class, "$spock_get");
+    MockitoPlugins plugins = framework.getPlugins();
+    try {
+      //First: Try to retrieve the inline mockMaker used by Mockito >= 5.6.0 public API, to share the same mocking state.
+      MockMaker mockMaker = (MockMaker) InvokerHelper.invokeMethod(plugins, "getMockMaker", INLINE);
+      return requireNonNull(mockMaker);
+
+    } catch (Exception ignored) {
+      try {
+        //Second: Try to retrieve the inline mockMaker used by Mockito < 5.6.0 with private method, to share the same mocking state.
+        MockMaker mockMaker = (MockMaker) InvokerHelper.invokeStaticMethod(MockUtil.class, "getMockMaker", INLINE);
+        return requireNonNull(mockMaker);
+
+      } catch (Exception ignored2) {
+        //Fallback: Use our own InlineMockMaker instance from the Mockito public plugin API, but this will degrade the interoperability with Mockito static mocks.
+        //The own InlineMockMaker created here, does not share its state with the Mockito mock maker.
+        //It will work for all features, but if a class is mocked with both mock makers, it will yield strange behavior.
+        return plugins.getInlineMockMaker();
+      }
+    }
   }
 
   IMockObject asMockOrNull(Object object) {
@@ -64,7 +98,7 @@ class MockitoMockMakerImpl {
   Object makeMock(IMockMaker.IMockCreationSettings settings) throws CannotCreateMockException {
     try {
       MockSettings mockitoSettings = Mockito.withSettings();
-      mockitoSettings.mockMaker(MockMakers.INLINE);
+      mockitoSettings.mockMaker(INLINE);
       if (!settings.getAdditionalInterface().isEmpty()) {
         mockitoSettings.extraInterfaces(settings.getAdditionalInterface().toArray(CLASS_ARRAY));
       }
@@ -85,12 +119,12 @@ class MockitoMockMakerImpl {
 
       return inlineMockMaker.createMock(mockitoCreationSettings, handler);
     } catch (MockitoException ex) {
-      throw new CannotCreateMockException(settings.getMockType(), " with " + MockitoMockMaker.ID + ": " + ex.getMessage().trim(), ex);
+      throw cannotCreateMockException(settings.getMockType(), ex);
     }
   }
 
   private static void applyMockMakerSettingsFromUser(IMockMaker.IMockCreationSettings settings, MockSettings mockitoSettings) {
-    IMockMaker.IMockMakerSettings mockMakerSettings = settings.getMockMakerSettings();
+    IMockMakerSettings mockMakerSettings = settings.getMockMakerSettings();
     if (mockMakerSettings instanceof MockitoMockMakerSettings) {
       MockitoMockMakerSettings mockitoMakerSettings = (MockitoMockMakerSettings) mockMakerSettings;
       mockitoMakerSettings.applySettings(mockitoSettings);
@@ -105,7 +139,20 @@ class MockitoMockMakerImpl {
     return result::nonMockableReason;
   }
 
-  static class SpockMockHandler implements MockHandler<Object> {
+  private static CannotCreateMockException cannotCreateMockException(Class<?> mockType, MockitoException ex) {
+    final String mockitoMessage = extractMockitoExceptionMessage(ex);
+    return new CannotCreateMockException(mockType, " with " + MockitoMockMaker.ID + ": " + mockitoMessage, ex);
+  }
+
+  private static String extractMockitoExceptionMessage(MockitoException ex) {
+    Throwable exToUse = ex;
+    if (ex.getCause() instanceof InstantiationException) {
+      exToUse = ex.getCause();
+    }
+    return exToUse.getMessage().trim();
+  }
+
+  private static final class SpockMockHandler implements MockHandler<Object> {
     private final IProxyBasedMockInterceptor mockInterceptor;
 
     public SpockMockHandler(IProxyBasedMockInterceptor mockInterceptor) {

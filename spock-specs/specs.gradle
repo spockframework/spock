@@ -39,6 +39,7 @@ dependencies {
     testRuntimeOnly libs.mockito5
   } else {
     testRuntimeOnly libs.mockito4
+    testRuntimeOnly libs.mockito4inline
   }
 
   groovyConsole groovyConsoleExtraDependencies

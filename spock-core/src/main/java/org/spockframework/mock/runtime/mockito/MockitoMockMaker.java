@@ -21,6 +21,7 @@ import org.spockframework.mock.IMockObject;
 import org.spockframework.mock.runtime.IMockMaker;
 import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.ThreadSafe;
+import spock.mock.MockMakerId;
 
 import java.lang.reflect.Modifier;
 import java.util.Collections;

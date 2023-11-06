@@ -24,6 +24,8 @@ import org.spockframework.mock.runtime.IMockMaker.MockMakerCapability;
 import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.Nullable;
 import org.spockframework.util.ThreadSafe;
+import spock.mock.IMockMakerSettings;
+import spock.mock.MockMakerId;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -38,8 +40,8 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import static org.spockframework.mock.runtime.IMockMaker.MockMakerId;
-import static org.spockframework.mock.runtime.IMockMaker.IMockMakerSettings;
+import static java.util.Objects.requireNonNull;
+
 import static org.spockframework.mock.runtime.IMockMaker.IMockCreationSettings;
 import static org.spockframework.mock.runtime.IMockMaker.IMockabilityResult;
 

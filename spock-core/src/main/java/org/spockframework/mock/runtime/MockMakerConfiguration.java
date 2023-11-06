@@ -19,6 +19,7 @@ package org.spockframework.mock.runtime;
 import org.spockframework.util.Beta;
 import org.spockframework.util.Nullable;
 import spock.config.ConfigurationObject;
+import spock.mock.IMockMakerSettings;
 import spock.mock.MockMakers;
 
 /**
@@ -43,5 +44,5 @@ public class MockMakerConfiguration {
    * You can find the built-in mock makers in {@link MockMakers}.
    */
   @Nullable
-  public IMockMaker.IMockMakerSettings preferredMockMaker = null;
+  public IMockMakerSettings preferredMockMaker = null;
 }

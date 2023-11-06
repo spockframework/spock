@@ -15,6 +15,7 @@
 package org.spockframework.smoke.mock
 
 import org.spockframework.mock.CannotCreateMockException
+import org.spockframework.runtime.InvalidSpecException
 import org.spockframework.runtime.SpockException
 import org.spockframework.util.SpockDocLinks
 import spock.lang.*
@@ -192,6 +193,15 @@ class JavaSpies extends Specification {
     person.phoneNumber == "6789"
   }
 
+  def "can spy final methods with mockito with closure"() {
+    FinalMethodPerson person = Spy(mockMaker: MockMakers.mockito) {
+      phoneNumber >> 6789
+    }
+
+    expect:
+    person.phoneNumber == "6789"
+  }
+
   def "cannot spy final methods with byteBuddy"() {
     FinalMethodPerson person = Spy(mockMaker: MockMakers.byteBuddy)
     person.phoneNumber >> 6789
@@ -254,6 +264,22 @@ class JavaSpies extends Specification {
     CannotCreateMockException e = thrown()
     e.message == "Cannot create mock for class java.util.ArrayList. Cannot copy fields.\n" +
       SpockDocLinks.SPY_ON_JAVA_17.link
+  }
+
+  def "no static type specified"() {
+    when:
+    Stub()
+    then:
+    InvalidSpecException ex = thrown()
+    ex.message == "Mock object type cannot be inferred automatically. Please specify a type explicitly (e.g. 'Mock(Person)')."
+  }
+
+  def "specified instance is null"() {
+    when:
+    Spy((Object) null)
+    then:
+    SpockException ex = thrown()
+    ex.message == "Spy instance may not be null"
   }
 
   static class Constructable {

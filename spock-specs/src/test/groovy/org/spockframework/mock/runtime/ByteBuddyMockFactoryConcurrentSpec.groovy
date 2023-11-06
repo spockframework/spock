@@ -17,7 +17,7 @@
 package org.spockframework.mock.runtime
 
 import groovy.transform.Canonical
-import spock.lang.Retry
+import spock.lang.Isolated
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Timeout
@@ -27,6 +27,7 @@ import java.util.concurrent.Phaser
 import java.util.concurrent.TimeUnit
 import java.util.function.Function
 
+@Isolated("Run isolated, to prevent the test to be flaky under load")
 class ByteBuddyMockFactoryConcurrentSpec extends Specification {
   private static final String IfA = "IfA"
   private static final String IfB = "IfB"

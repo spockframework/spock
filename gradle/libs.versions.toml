@@ -21,6 +21,7 @@ jaxb = "javax.xml.bind:jaxb-api:2.3.1"
 junit4 = "junit:junit:4.13.2"
 log4j = "log4j:log4j:1.2.17"
 mockito4 = { module = "org.mockito:mockito-core", version.ref = "mockito4" }
+mockito4inline = { module = "org.mockito:mockito-inline", version.ref = "mockito4" }
 mockito5 = { module = "org.mockito:mockito-core", version.ref = "mockito5" }
 objenesis = "org.objenesis:objenesis:3.3"
 # This needs a classifier, but is has to be specified on the usage end https://melix.github.io/blog/2021/03/version-catalogs-faq.html#_why_can_t_i_use_excludes_or_classifiers

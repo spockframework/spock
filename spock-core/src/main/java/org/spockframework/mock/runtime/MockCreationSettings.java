@@ -20,8 +20,10 @@ import org.spockframework.mock.IMockConfiguration;
 import org.spockframework.mock.MockNature;
 import org.spockframework.util.Beta;
 import org.spockframework.util.Nullable;
+import spock.mock.IMockMakerSettings;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
@@ -30,7 +32,7 @@ import static org.spockframework.util.ObjectUtil.uncheckedCast;
 @Beta
 public class MockCreationSettings implements IMockMaker.IMockCreationSettings {
 
-  private final IMockMaker.IMockMakerSettings mockMakerSettings;
+  private final IMockMakerSettings mockMakerSettings;
   private final Class<?> mockType;
   private final ClassLoader classLoader;
   private final boolean useObjenesis;
@@ -49,7 +51,7 @@ public class MockCreationSettings implements IMockMaker.IMockCreationSettings {
     return new MockCreationSettings(null, mockType, MockNature.MOCK, additionalInterfaces, null, interceptor, classLoader, useObjenesis, false);
   }
 
-  MockCreationSettings(@Nullable IMockMaker.IMockMakerSettings mockMakerSettings,
+  private MockCreationSettings(@Nullable IMockMakerSettings mockMakerSettings,
                        Class<?> mockType,
                        MockNature mockNature,
                        List<Class<?>> additionalInterfaces,
@@ -110,7 +112,7 @@ public class MockCreationSettings implements IMockMaker.IMockCreationSettings {
   }
 
   @Override
-  public <T extends IMockMaker.IMockMakerSettings> T getMockMakerSettings() {
+  public <T extends IMockMakerSettings> T getMockMakerSettings() {
     return uncheckedCast(mockMakerSettings);
   }
 }

@@ -127,8 +127,11 @@ class SubSpec extends SuperSpec {
   def "non-method interceptors are called even without the respective method"() {
     when:
     runner.runWithImports """
+abstract class SuperSpec extends Specification {
+}
+
 @LifecycleTest
-class FooSpec extends Specification {
+class SubSpec extends SuperSpec {
   def foo() {
     expect: true
   }
@@ -151,7 +154,7 @@ class FooSpec extends Specification {
 
     @Override
     void visitSpecAnnotation(LifecycleTest annotation, SpecInfo specInfo) {
-      specInfo.addSharedInitializerInterceptor {
+      specInfo.specsBottomToTop*.addSharedInitializerInterceptor {
         proceed(it, 'shared initializer', "$it.spec.name")
       }
       specInfo.specsBottomToTop*.sharedInitializerMethod*.addInterceptor {
@@ -160,7 +163,7 @@ class FooSpec extends Specification {
       specInfo.addInterceptor {
         proceed(it, 'specification', "$it.spec.name")
       }
-      specInfo.addSetupSpecInterceptor {
+      specInfo.specsBottomToTop*.addSetupSpecInterceptor {
         proceed(it, 'setup spec', "$it.spec.name")
       }
       specInfo.specsBottomToTop.collectMany { it.setupSpecMethods }*.addInterceptor {
@@ -169,7 +172,7 @@ class FooSpec extends Specification {
       specInfo.allFeatures*.addInterceptor {
         proceed(it, 'feature', "$it.spec.name.$it.feature.name")
       }
-      specInfo.addInitializerInterceptor {
+      specInfo.specsBottomToTop*.addInitializerInterceptor {
         proceed(it, 'initializer', "$it.spec.name.$it.feature.name")
       }
       specInfo.specsBottomToTop*.initializerMethod*.addInterceptor {
@@ -178,7 +181,7 @@ class FooSpec extends Specification {
       specInfo.allFeatures*.addIterationInterceptor {
         proceed(it, 'iteration', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
-      specInfo.addSetupInterceptor {
+      specInfo.specsBottomToTop*.addSetupInterceptor {
         proceed(it, 'setup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
       specInfo.specsBottomToTop.collectMany { it.setupMethods }*.addInterceptor {
@@ -187,13 +190,13 @@ class FooSpec extends Specification {
       specInfo.allFeatures*.featureMethod*.addInterceptor {
         proceed(it, 'feature method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
       }
-      specInfo.addCleanupInterceptor {
+      specInfo.specsBottomToTop*.addCleanupInterceptor {
         proceed(it, 'cleanup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
       specInfo.specsBottomToTop.collectMany { it.cleanupMethods }*.addInterceptor {
         proceed(it, 'cleanup method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
       }
-      specInfo.addCleanupSpecInterceptor {
+      specInfo.specsBottomToTop*.addCleanupSpecInterceptor {
         proceed(it, 'cleanup spec', "$it.spec.name")
       }
       specInfo.specsBottomToTop.collectMany { it.cleanupSpecMethods }*.addInterceptor {

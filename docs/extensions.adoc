@@ -904,21 +904,21 @@ each at addition time whether it is attached to the method interceptor or the ot
 class I extends AbstractMethodInterceptor { I(def s) {} }
 
 // on SpecInfo
-specInfo.addSharedInitializerInterceptor new I('shared initializer')
+specInfo.specsBottomToTop*.addSharedInitializerInterceptor new I('shared initializer')
 specInfo.specsBottomToTop*.sharedInitializerMethod*.addInterceptor new I('shared initializer method')
 specInfo.addInterceptor new I('specification')
-specInfo.addSetupSpecInterceptor new I('setup spec')
+specInfo.specsBottomToTop*.addSetupSpecInterceptor new I('setup spec')
 specInfo.specsBottomToTop.collectMany { it.setupSpecMethods }*.addInterceptor new I('setup spec method')
 specInfo.allFeatures*.addInterceptor new I('feature')
-specInfo.addInitializerInterceptor new I('initializer')
+specInfo.specsBottomToTop*.addInitializerInterceptor new I('initializer')
 specInfo.specsBottomToTop*.initializerMethod*.addInterceptor new I('initializer method')
 specInfo.allFeatures*.addIterationInterceptor new I('iteration')
-specInfo.addSetupInterceptor new I('setup')
+specInfo.specsBottomToTop*.addSetupInterceptor new I('setup')
 specInfo.specsBottomToTop.collectMany { it.setupMethods }*.addInterceptor new I('setup method')
 specInfo.allFeatures*.featureMethod*.addInterceptor new I('feature method')
-specInfo.addCleanupInterceptor new I('cleanup')
+specInfo.specsBottomToTop*.addCleanupInterceptor new I('cleanup')
 specInfo.specsBottomToTop.collectMany { it.cleanupMethods }*.addInterceptor new I('cleanup method')
-specInfo.addCleanupSpecInterceptor new I('cleanup spec')
+specInfo.specsBottomToTop*.addCleanupSpecInterceptor new I('cleanup spec')
 specInfo.specsBottomToTop.collectMany { it.cleanupSpecMethods }*.addInterceptor new I('cleanup spec method')
 specInfo.allFixtureMethods*.addInterceptor new I('fixture method')
 

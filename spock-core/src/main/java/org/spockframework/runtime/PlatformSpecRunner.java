@@ -24,6 +24,7 @@ import spock.lang.Specification;
 import java.util.Arrays;
 
 import static java.lang.System.arraycopy;
+import static java.util.Arrays.copyOfRange;
 import static org.spockframework.runtime.model.MethodInfo.MISSING_ARGUMENT;
 
 /**
@@ -220,8 +221,9 @@ public class PlatformSpecRunner {
     getSpecificationContext(context).setCurrentIteration(null); // TODO check if we really need to null here
   }
 
-  IterationInfo createIterationInfo(SpockExecutionContext context, int iterationIndex, Object[] dataValues, int estimatedNumIterations) {
+  IterationInfo createIterationInfo(SpockExecutionContext context, int iterationIndex, Object[] args, int estimatedNumIterations) {
     FeatureInfo currentFeature = context.getCurrentFeature();
+    Object[] dataValues = copyOfRange(args, 0, currentFeature.getDataVariables().size());
     IterationInfo result = new IterationInfo(currentFeature, iterationIndex, dataValues, estimatedNumIterations);
     result.setName(currentFeature.getName());
     String iterationName = currentFeature.getIterationNameProvider().getName(result);

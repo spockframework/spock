@@ -68,7 +68,7 @@ public abstract class SpecInternals {
   }
 
   Throwable thrownImpl(String inferredName, Class<? extends Throwable> inferredType, Class<? extends Throwable> specifiedType) {
-    return checkExceptionThrown(specifiedType != null ? specifiedType : inferredType);
+    return checkExceptionThrown(specifiedType == null ? inferredType : specifiedType);
   }
 
   Throwable checkExceptionThrown(Class<? extends Throwable> exceptionType) {

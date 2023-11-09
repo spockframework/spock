@@ -64,26 +64,25 @@ public abstract class SpecInternals {
   }
 
   <T extends Throwable> T thrownImpl(String inferredName, Class<T> inferredType) {
-    if (inferredType == null) {
-      throw new InvalidSpecException("Thrown exception type cannot be inferred automatically. " +
-        "Please specify a type explicitly (e.g. 'thrown(MyException)').");
-    }
-
     return inferredType.cast(checkExceptionThrown(inferredType));
   }
 
   Throwable thrownImpl(String inferredName, Class<? extends Throwable> inferredType, Class<? extends Throwable> specifiedType) {
-    return checkExceptionThrown(specifiedType);
+    return checkExceptionThrown(specifiedType == null ? inferredType : specifiedType);
   }
 
   Throwable checkExceptionThrown(Class<? extends Throwable> exceptionType) {
-    Throwable actual = specificationContext.getThrownException();
+    if (exceptionType == null) {
+      throw new InvalidSpecException("Thrown exception type cannot be inferred automatically. " +
+        "Please specify a type explicitly (e.g. 'thrown(MyException)').");
+    }
 
     if (!Throwable.class.isAssignableFrom(exceptionType))
       throw new InvalidSpecException(
         "Invalid exception condition: '%s' is not a (subclass of) java.lang.Throwable"
       ).withArgs(exceptionType.getSimpleName());
 
+    Throwable actual = specificationContext.getThrownException();
     if (exceptionType.isInstance(actual)) return actual;
 
     throw new WrongExceptionThrownError(exceptionType, actual);

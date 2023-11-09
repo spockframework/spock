@@ -4,17 +4,16 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.extension.*
 import org.spockframework.runtime.model.MethodKind
 import org.spockframework.runtime.model.SpecInfo
-import org.spockframework.runtime.model.parallel.ExecutionMode
 import org.spockframework.specs.extension.Snapshot
 import org.spockframework.specs.extension.Snapshotter
 import org.spockframework.util.Assert
 import org.spockframework.util.InternalSpockError
-import spock.lang.Execution
-import spock.lang.ResourceLock
+import spock.config.ConfigurationObject
 import spock.lang.Shared
 
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
+import java.util.concurrent.atomic.AtomicReference
 
 class StoreSpec extends EmbeddedSpecification {
 
@@ -27,10 +26,15 @@ class StoreSpec extends EmbeddedSpecification {
     runner.addClassMemberImport(MethodKind)
   }
 
-  @ResourceLock("org.spockframework.runtime.LogStoreUsage")
   def "store is created and cleaned for each level"() {
     given:
-    LoggingStoreInterceptor.reset()
+    AtomicReference sharedList = new AtomicReference([])
+    runner.configClasses << LoggingStoreConfig
+    runner.configurationScript {
+      loggingStore {
+        actionRecorderList sharedList
+      }
+    }
 
     when:
     runner.runWithImports('''
@@ -49,16 +53,21 @@ class StoreSpec extends EmbeddedSpecification {
 ''')
 
     then:
-    snapshotter.assertThat(LoggingStoreInterceptor.HACKY_SHARED_LIST_OF_ACTIONS.join("\n")).matchesSnapshot()
+    snapshotter.assertThat(sharedList.get().join("\n")).matchesSnapshot()
   }
 
   @Shared
   def supportedMethodKinds = ((MethodKind.values() as List) - [MethodKind.DATA_PROCESSOR, MethodKind.DATA_PROVIDER])
 
-  @ResourceLock("org.spockframework.runtime.FailingStoreUsage")
-  def "store cleanup fails"() {
+  def "properly handles failures during store cleanup"() {
     given:
-    FailingValue.HACKY_SHARED_LIST_OF_CLEANUPS.clear()
+    AtomicReference sharedList = new AtomicReference([])
+    runner.configClasses << FailingCleanupStoreConfig
+    runner.configurationScript {
+      failingCleanup {
+        cleanupRecorderList sharedList
+      }
+    }
 
     when:
     runner.runWithImports("""
@@ -73,7 +82,7 @@ class StoreSpec extends EmbeddedSpecification {
     then:
     InternalSpockError e = thrown()
     e.message.startsWith("Failing at ")
-    FailingValue.HACKY_SHARED_LIST_OF_CLEANUPS ==~ supportedMethodKinds
+    sharedList.get() ==~ supportedMethodKinds
 
     where:
     methodKinds << supportedMethodKinds.subsequences()
@@ -86,39 +95,44 @@ class StoreSpec extends EmbeddedSpecification {
 }
 
 class LogStoreExtension implements IAnnotationDrivenExtension<LogStoreUsage> {
+  final LoggingStoreConfig config
+
+  LogStoreExtension (LoggingStoreConfig config) {
+    this.config = config
+  }
+
   @Override
   void visitSpecAnnotation(LogStoreUsage annotation, SpecInfo spec) {
     def specInfo = spec.bottomSpec
-    specInfo.addSharedInitializerInterceptor LoggingStoreInterceptor.INSTANCE
-    specInfo.sharedInitializerMethod?.addInterceptor LoggingStoreInterceptor.INSTANCE
-    specInfo.addInterceptor LoggingStoreInterceptor.INSTANCE
-    specInfo.addSetupSpecInterceptor LoggingStoreInterceptor.INSTANCE
-    specInfo.setupSpecMethods*.addInterceptor LoggingStoreInterceptor.INSTANCE
-    specInfo.allFeatures*.addInterceptor LoggingStoreInterceptor.INSTANCE
-    specInfo.addInitializerInterceptor LoggingStoreInterceptor.INSTANCE
-    specInfo.initializerMethod?.addInterceptor LoggingStoreInterceptor.INSTANCE
-    specInfo.allFeatures*.addIterationInterceptor LoggingStoreInterceptor.INSTANCE
-    specInfo.addSetupInterceptor LoggingStoreInterceptor.INSTANCE
-    specInfo.setupMethods*.addInterceptor LoggingStoreInterceptor.INSTANCE
-    specInfo.allFeatures*.featureMethod*.addInterceptor LoggingStoreInterceptor.INSTANCE
-    specInfo.addCleanupInterceptor LoggingStoreInterceptor.INSTANCE
-    specInfo.cleanupMethods*.addInterceptor LoggingStoreInterceptor.INSTANCE
-    specInfo.addCleanupSpecInterceptor LoggingStoreInterceptor.INSTANCE
-    specInfo.cleanupSpecMethods*.addInterceptor LoggingStoreInterceptor.INSTANCE
+    def interceptor = new LoggingStoreInterceptor(config.actionRecorderList.get())
+    specInfo.addSharedInitializerInterceptor interceptor
+    specInfo.sharedInitializerMethod?.addInterceptor interceptor
+    specInfo.addInterceptor interceptor
+    specInfo.addSetupSpecInterceptor interceptor
+    specInfo.setupSpecMethods*.addInterceptor interceptor
+    specInfo.allFeatures*.addInterceptor interceptor
+    specInfo.addInitializerInterceptor interceptor
+    specInfo.initializerMethod?.addInterceptor interceptor
+    specInfo.allFeatures*.addIterationInterceptor interceptor
+    specInfo.addSetupInterceptor interceptor
+    specInfo.setupMethods*.addInterceptor interceptor
+    specInfo.allFeatures*.featureMethod*.addInterceptor interceptor
+    specInfo.addCleanupInterceptor interceptor
+    specInfo.cleanupMethods*.addInterceptor interceptor
+    specInfo.addCleanupSpecInterceptor interceptor
+    specInfo.cleanupSpecMethods*.addInterceptor interceptor
   }
 }
 
 class LoggingStoreInterceptor implements IMethodInterceptor {
 
   static final IStore.Namespace NAMESPACE = IStore.Namespace.create(LoggingStoreInterceptor.class)
-  static final LoggingStoreInterceptor INSTANCE = new LoggingStoreInterceptor()
 
-  static List<String> HACKY_SHARED_LIST_OF_ACTIONS = []
-  static int counter
+  final List<String> actionList
+  int counter
 
-  static void reset() {
-    HACKY_SHARED_LIST_OF_ACTIONS.clear()
-    counter = 0
+  LoggingStoreInterceptor(List<String> actionList) {
+    this.actionList = actionList
   }
 
   @Override
@@ -128,29 +142,36 @@ class LoggingStoreInterceptor implements IMethodInterceptor {
     def prev = store.get("message", String)
     def replaced = store.put("message", message)
 
-    store.put(invocation.method.kind, new LoggingValue(message))
+    store.put(invocation.method.kind, new LoggingValue(actionList, message))
 
-    HACKY_SHARED_LIST_OF_ACTIONS << "before $invocation.method.kind - $invocation.method.name".toString()
-    HACKY_SHARED_LIST_OF_ACTIONS << "\tprev:     ${prev}".toString()
-    HACKY_SHARED_LIST_OF_ACTIONS << "\treplaced: ${replaced}".toString()
-    HACKY_SHARED_LIST_OF_ACTIONS << "\tput:      ${message}".toString()
+    actionList << "before $invocation.method.kind - $invocation.method.name".toString()
+    actionList << "\tprev:     ${prev}".toString()
+    actionList << "\treplaced: ${replaced}".toString()
+    actionList << "\tput:      ${message}".toString()
     invocation.proceed()
-    HACKY_SHARED_LIST_OF_ACTIONS << "after $invocation.method.kind - $invocation.method.name".toString()
+    actionList << "after $invocation.method.kind - $invocation.method.name".toString()
   }
 }
 
 class LoggingValue implements AutoCloseable {
 
   final String value
+  private final List<String> actionList
 
-  LoggingValue(String value) {
+  LoggingValue(List<String> actionList, String value) {
+    this.actionList = actionList
     this.value = value
   }
 
   @Override
   void close() throws Exception {
-    LoggingStoreInterceptor.HACKY_SHARED_LIST_OF_ACTIONS << "# closing ${this.value}".toString()
+    actionList << "# closing ${this.value}".toString()
   }
+}
+
+@ConfigurationObject("loggingStore")
+class LoggingStoreConfig {
+  AtomicReference<List<String>> actionRecorderList
 }
 
 
@@ -162,10 +183,17 @@ class LoggingValue implements AutoCloseable {
 
 
 class FailingCleanupStoreExtension implements IAnnotationDrivenExtension<FailingStoreUsage> {
+
+  final FailingCleanupStoreConfig config
+
+  FailingCleanupStoreExtension(FailingCleanupStoreConfig config) {
+    this.config = config
+  }
+
   @Override
   void visitSpecAnnotation(FailingStoreUsage annotation, SpecInfo spec) {
     def specInfo = spec.bottomSpec
-    def interceptor = new FailingCleanupStoreInterceptor(annotation)
+    def interceptor = new FailingCleanupStoreInterceptor(annotation, config.cleanupRecorderList.get())
     specInfo.addSharedInitializerInterceptor interceptor
     specInfo.sharedInitializerMethod?.addInterceptor interceptor
     specInfo.addInterceptor interceptor
@@ -190,9 +218,11 @@ class FailingCleanupStoreInterceptor implements IMethodInterceptor {
   static final IStore.Namespace NAMESPACE = IStore.Namespace.create(FailingCleanupStoreInterceptor.class)
 
   final FailingStoreUsage annotation
+  final List<MethodKind> cleanupFailures
 
-  FailingCleanupStoreInterceptor(FailingStoreUsage annotation) {
+  FailingCleanupStoreInterceptor(FailingStoreUsage annotation, List<MethodKind> cleanupFailures) {
     this.annotation = annotation
+    this.cleanupFailures = cleanupFailures
   }
 
   @Override
@@ -200,6 +230,7 @@ class FailingCleanupStoreInterceptor implements IMethodInterceptor {
     def store = invocation.getStore(NAMESPACE)
     store.put(invocation.method.kind,
       new FailingValue(
+        cleanupFailures,
         invocation.method.kind,
         "Failing at $invocation.method.kind - $invocation.method.name",
         annotation.value().contains(invocation.method.kind))
@@ -210,13 +241,13 @@ class FailingCleanupStoreInterceptor implements IMethodInterceptor {
 
 class FailingValue implements AutoCloseable {
 
-  static List<MethodKind> HACKY_SHARED_LIST_OF_CLEANUPS = []
-
   final String value
   final boolean failAtCleanup
   private final MethodKind methodKind
+  private final List<MethodKind> cleanupFailures
 
-  FailingValue(MethodKind methodKind, String value, boolean failAtCleanup) {
+  FailingValue(List<MethodKind> cleanupFailures, MethodKind methodKind, String value, boolean failAtCleanup) {
+    this.cleanupFailures = cleanupFailures
     this.methodKind = methodKind
     this.failAtCleanup = failAtCleanup
     this.value = value
@@ -224,7 +255,12 @@ class FailingValue implements AutoCloseable {
 
   @Override
   void close() throws Exception {
-    HACKY_SHARED_LIST_OF_CLEANUPS << methodKind
+    cleanupFailures << methodKind
     Assert.that(!failAtCleanup, value)
   }
+}
+
+@ConfigurationObject("failingCleanup")
+class FailingCleanupStoreConfig {
+  AtomicReference<List<MethodKind>> cleanupRecorderList
 }

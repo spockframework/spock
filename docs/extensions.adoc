@@ -1170,7 +1170,7 @@ Often, the state can be kept locally in the `intercept(IMethodInvocation)` metho
 
 Spock 2.4 adds a new `org.spockframework.runtime.extension.IStore` interface that allows extensions to store and retrieve data during the execution of a specification.
 
-The store is available from the `org.spockframework.runtime.extension.IMethodInvocation` interface via the `getStore(IStore.Namespace namespace)` method. Currently, it is possible to access the store directly from an extension, only via a registering an <<#interceptors,interceptor>>.
+The store is available from the `org.spockframework.runtime.extension.IMethodInvocation` interface via the `getStore(IStore.Namespace namespace)` method. Currently, it is not possible to access the store directly from an extension, only via registering an <<#interceptors,interceptor>>.
 
 The stores are hierarchical and follow roughly the same hierarchy as shown in the <<spock-interceptors>> figure. The hierarchy is as follows:
 

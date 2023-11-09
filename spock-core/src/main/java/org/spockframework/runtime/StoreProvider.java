@@ -19,7 +19,7 @@ public class StoreProvider implements AutoCloseable {
     return new StoreProvider(newBackendStore(null));
   }
 
-  public StoreProvider createChildStore() {
+  public StoreProvider createChildStoreProvider() {
     return new StoreProvider(newBackendStore(backend));
   }
 

@@ -138,8 +138,8 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
     return clone().setParentId(uniqueId);
   }
 
-  public SpockExecutionContext withChildStore() {
-    return clone().setStoreProvider(storeProvider.createChildStore());
+  public SpockExecutionContext withChildStoreProvider() {
+    return clone().setStoreProvider(storeProvider.createChildStoreProvider());
   }
 
   public Specification getSharedInstance() {

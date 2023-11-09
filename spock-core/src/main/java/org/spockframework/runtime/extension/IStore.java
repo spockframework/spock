@@ -220,7 +220,7 @@ public interface IStore {
 
   /**
    * A {@code Namespace} is used to provide a <em>scope</em> for data saved by
-   * extensions within a {@link IStore}.
+   * extensions within an {@link IStore}.
    *
    * <p>Storing data in custom namespaces allows extensions to avoid accidentally
    * mixing data between extensions or across different invocations within the

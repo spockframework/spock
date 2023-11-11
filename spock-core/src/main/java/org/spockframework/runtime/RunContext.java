@@ -78,13 +78,7 @@ public class RunContext implements EngineExecutionContext {
       ConfigurationBuilder builder = new ConfigurationBuilder();
       builder.build(globalExtensionRegistry, configurationScript);
     }
-    initMockMakerRegistry();
     globalExtensionRegistry.startGlobalExtensions();
-  }
-
-  private void initMockMakerRegistry() {
-    MockMakerConfiguration configuration = globalExtensionRegistry.getConfigurationByType(MockMakerConfiguration.class);
-    this.mockMakerRegistry = MockMakerRegistry.createFromServiceLoader(configuration);
   }
 
   void stop() {
@@ -105,7 +99,19 @@ public class RunContext implements EngineExecutionContext {
   }
 
   public MockMakerRegistry getMockMakerRegistry() {
+    initMockMakerRegistry();
     return Objects.requireNonNull(mockMakerRegistry);
+  }
+
+  private void initMockMakerRegistry() {
+    if (mockMakerRegistry == null) {
+      synchronized (this) {
+        if (mockMakerRegistry == null) {
+          MockMakerConfiguration configuration = globalExtensionRegistry.getConfigurationByType(MockMakerConfiguration.class);
+          mockMakerRegistry = MockMakerRegistry.createFromServiceLoader(configuration);
+        }
+      }
+    }
   }
 
   public PlatformParameterizedSpecRunner createSpecRunner(SpecInfo spec) {

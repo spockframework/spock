@@ -17,8 +17,6 @@ import java.util.concurrent.atomic.AtomicReference
 
 class StoreSpec extends EmbeddedSpecification {
 
-  @Snapshot
-  Snapshotter snapshotter
 
   def setup() {
     runner.addClassImport(LogStoreUsage)
@@ -26,7 +24,7 @@ class StoreSpec extends EmbeddedSpecification {
     runner.addClassMemberImport(MethodKind)
   }
 
-  def "store is created and cleaned for each level"() {
+  def "store is created and cleaned for each level"(@Snapshot Snapshotter snapshotter) {
     given:
     AtomicReference sharedList = new AtomicReference([])
     runner.configClasses << LoggingStoreConfig

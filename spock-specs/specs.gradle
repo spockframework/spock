@@ -60,6 +60,9 @@ tasks.named("test", Test) {
   systemProperty "spock.snapshots.rootPath", "src/test/resources"
   if (project.hasProperty("updateSnapshots")) {
     systemProperty("spock.snapshots.updateSnapshots", "true")
+    useJUnitPlatform {
+      includeTags("snapshot")
+    }
   }
 
   if (javaVersion.isCompatibleWith(JavaVersion.VERSION_17)) {

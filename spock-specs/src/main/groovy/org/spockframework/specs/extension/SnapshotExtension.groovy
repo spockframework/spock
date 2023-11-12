@@ -19,6 +19,7 @@ class SnapshotExtension implements IAnnotationDrivenExtension<Snapshot> {
   @Override
   void visitFieldAnnotation(Snapshot annotation, FieldInfo field) {
     Assert.that(field.type.isAssignableFrom(Snapshotter), "Field must be of type Snapshotter")
+    field.parent.bottomSpec.allFeatures*.addTestTag("snapshot")
     field.parent.bottomSpec.addSetupInterceptor(new SnapshotInterceptor(annotation, field))
   }
 

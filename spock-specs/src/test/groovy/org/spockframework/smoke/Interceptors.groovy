@@ -176,7 +176,7 @@ class SubSpec extends SuperSpec {
         proceed(it, 'initializer', "$it.spec.name.$it.feature.name")
       }
       specInfo.specsBottomToTop*.initializerMethod*.addInterceptor {
-        proceed(it, 'initializer method', "$it.spec.name.$it.feature.name.$it.method.name()")
+        proceed(it, 'initializer method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
       specInfo.allFeatures*.addIterationInterceptor {
         proceed(it, 'iteration', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
@@ -185,16 +185,16 @@ class SubSpec extends SuperSpec {
         proceed(it, 'setup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
       specInfo.specsBottomToTop.collectMany { it.setupMethods }*.addInterceptor {
-        proceed(it, 'setup method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
+        proceed(it, 'setup method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
       specInfo.allFeatures*.featureMethod*.addInterceptor {
-        proceed(it, 'feature method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
+        proceed(it, 'feature method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
       specInfo.specsBottomToTop*.addCleanupInterceptor {
         proceed(it, 'cleanup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
       specInfo.specsBottomToTop.collectMany { it.cleanupMethods }*.addInterceptor {
-        proceed(it, 'cleanup method', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex].$it.method.name()")
+        proceed(it, 'cleanup method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
       specInfo.specsBottomToTop*.addCleanupSpecInterceptor {
         proceed(it, 'cleanup spec', "$it.spec.name")
@@ -203,7 +203,7 @@ class SubSpec extends SuperSpec {
         proceed(it, 'cleanup spec method', "$it.spec.name.$it.method.name()")
       }
       specInfo.allFixtureMethods*.addInterceptor {
-        proceed(it, 'fixture method', "$it.spec.name${it.feature?.name?.with { name -> ".$name[#$it.iteration.iterationIndex]" } ?: ''}.$it.method.name()")
+        proceed(it, 'fixture method', "${it.feature?.with { feature -> "$feature.parent.name.$feature.name[#$it.iteration.iterationIndex] / " } ?: ''}$it.spec.name.$it.method.name()")
       }
     }
 

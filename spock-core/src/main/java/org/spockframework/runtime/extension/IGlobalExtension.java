@@ -18,10 +18,45 @@ package org.spockframework.runtime.extension;
 
 import org.spockframework.runtime.model.SpecInfo;
 
-// TODO: start/stop lifecycle
-// TODO: design threading model
 public interface IGlobalExtension {
-  default void start() {};
-  default void visitSpec(SpecInfo spec){};
-  default void stop(){};
+  /**
+   * Is called when Spock starts it services, before tests are discovered.
+   */
+  default void start() {}
+
+  /**
+   * This is called for each {@link spock.lang.Specification} discovered.
+   * <p>
+   * Extensions can perform their actions to register {@link IMethodInterceptor} or other things.
+   * @param spec the {@link SpecInfo} for the discovered {@link spock.lang.Specification}.
+   *             Note that this is always the bottomSpec, it is not called for super specs.
+   */
+  default void visitSpec(SpecInfo spec) {}
+
+  /**
+   * Is called right before Spock starts executing tests.
+   * <p>
+   * Extensions get access to the {@link IStore} via the {@link ISpockExecution}
+   * and can initialize things that are needed during execution.
+   * @since 2.4
+   */
+  default void executionStart(ISpockExecution spockExecution) {}
+  /**
+   * Is called after Spock finished executing tests.
+   * <p>
+   * Extensions get access to the {@link IStore} via the {@link ISpockExecution}
+   * and can do some finishing action.
+   * <p>
+   * Note that values implementing {@link AutoCloseable} will be automatically closed
+   * by the {@link IStore}, so there is no need to do this here.
+   * @since 2.4
+   */
+  default void executionStop(ISpockExecution spockExecution) {}
+
+  /**
+   * Is called when the execution stops, or when the JVM exits at the latest.
+   * <p>
+   * It can be called more than once.
+   */
+  default void stop() {}
 }

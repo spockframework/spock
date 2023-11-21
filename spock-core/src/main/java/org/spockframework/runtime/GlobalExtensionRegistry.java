@@ -139,6 +139,18 @@ public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurati
     }
   }
 
+  public void startExecutionForGlobalExtensions(ISpockExecution spockExecution) {
+    for (IGlobalExtension extension : globalExtensions) {
+      extension.executionStart(spockExecution);
+    }
+  }
+
+  public void stopExecutionForGlobalExtensions(SpockExecution spockExecution) {
+    for (IGlobalExtension extension : globalExtensions) {
+      extension.executionStop(spockExecution);
+    }
+  }
+
   public void stopGlobalExtensions() {
     for (IGlobalExtension extension : globalExtensions) {
       extension.stop();

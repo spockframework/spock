@@ -19,6 +19,7 @@ import org.spockframework.mock.runtime.MockMakerRegistry;
 import org.spockframework.mock.runtime.MockMakerConfiguration;
 import org.spockframework.runtime.condition.*;
 import org.spockframework.runtime.extension.IGlobalExtension;
+import org.spockframework.runtime.extension.ISpockExecution;
 import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.*;
 import spock.config.RunnerConfiguration;
@@ -251,5 +252,13 @@ public class RunContext implements EngineExecutionContext {
         runContexts.removeFirst();
       }
     }
+  }
+
+  public void startExecution(ISpockExecution spockExecution) {
+    globalExtensionRegistry.startExecutionForGlobalExtensions(spockExecution);
+  }
+
+  public void stopExecution(SpockExecution spockExecution) {
+    globalExtensionRegistry.stopExecutionForGlobalExtensions(spockExecution);
   }
 }

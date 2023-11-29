@@ -22,6 +22,7 @@ import org.spockframework.runtime.model.parallel.*;
 import org.spockframework.util.*;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -193,7 +194,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
   }
 
   public Iterable<MethodInfo> getAllSetupMethods() {
-    return collectAllFromList(SpecInfo::getSetupMethods);
+    return collectAllFromIterable(SpecInfo::getSetupMethods);
   }
 
   public void addSetupMethod(MethodInfo setupMethod) {
@@ -205,7 +206,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
   }
 
   public Iterable<MethodInfo> getAllCleanupMethods() {
-    return collectAllFromList(SpecInfo::getCleanupMethods);
+    return collectAllFromIterable(SpecInfo::getCleanupMethods);
   }
 
   public void addCleanupMethod(MethodInfo cleanupMethod) {
@@ -217,7 +218,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
   }
 
   public Iterable<MethodInfo> getAllSetupSpecMethods() {
-    return collectAllFromList(SpecInfo::getSetupSpecMethods);
+    return collectAllFromIterable(SpecInfo::getSetupSpecMethods);
   }
 
   public void addSetupSpecMethod(MethodInfo setupSpecMethod) {
@@ -229,7 +230,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
   }
 
   public Iterable<MethodInfo> getAllCleanupSpecMethods() {
-    return collectAllFromList(SpecInfo::getCleanupSpecMethods);
+    return collectAllFromIterable(SpecInfo::getCleanupSpecMethods);
   }
 
   public void addCleanupSpecMethod(MethodInfo cleanupSpecMethod) {
@@ -241,7 +242,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
   }
 
   public Iterable<MethodInfo> getAllFixtureMethods() {
-    return collectAllFromList(SpecInfo::getFixtureMethods);
+    return collectAllFromIterable(SpecInfo::getFixtureMethods);
   }
 
   public List<FieldInfo> getFields() {
@@ -249,7 +250,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
   }
 
   public List<FieldInfo> getAllFields() {
-    return collectAllFromList(SpecInfo::getFields);
+    return collectAllFromIterable(SpecInfo::getFields);
   }
 
   public void addField(FieldInfo field) {
@@ -261,7 +262,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
   }
 
   public List<FeatureInfo> getAllFeatures() {
-    return collectAllFromList(SpecInfo::getFeatures);
+    return collectAllFromIterable(SpecInfo::getFeatures);
   }
 
   public List<FeatureInfo> getAllFeaturesInExecutionOrder() {
@@ -272,28 +273,21 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
 
   private <T> List<T> collectAll(Function<SpecInfo, T> getter) {
     List<T> result = new ArrayList<>();
-    collectAll(result, getter);
+    collectAll(result, getter, List::add);
     return result;
   }
 
-  private <T> void collectAll(List<T> accumulator, Function<SpecInfo, T> getter) {
-    if (superSpec != null) {
-      superSpec.collectAll(accumulator, getter);
-    }
-    accumulator.add(getter.apply(this));
-  }
-
-  private <T> List<T> collectAllFromList(Function<SpecInfo, Iterable<T>> getter) {
+  private <T> List<T> collectAllFromIterable(Function<SpecInfo, Iterable<T>> getter) {
     List<T> result = new ArrayList<>();
-    collectAllFromList(result, getter);
+    collectAll(result, getter, (a, i) -> i.forEach(a::add));
     return result;
   }
 
-  private <T> void collectAllFromList(List<T> accumulator, Function<SpecInfo, Iterable<T>> getter) {
+  private <T,U> void collectAll(List<T> accumulator, Function<SpecInfo, U> getter, BiConsumer<List<T>, U> combiner) {
     if (superSpec != null) {
-      superSpec.collectAllFromList(accumulator, getter);
+      superSpec.collectAll(accumulator, getter, combiner);
     }
-    getter.apply(this).forEach(accumulator::add);
+    combiner.accept(accumulator, getter.apply(this));
   }
 
   public void addFeature(FeatureInfo feature) {

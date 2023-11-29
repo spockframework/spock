@@ -169,7 +169,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     return initializerMethod;
   }
 
-  public Iterable<MethodInfo> getAllInitializerMethods() {
+  public List<MethodInfo> getAllInitializerMethods() {
     return collectAll(SpecInfo::getInitializerMethod);
   }
 
@@ -181,7 +181,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     return sharedInitializerMethod;
   }
 
-  public Iterable<MethodInfo> getAllSharedInitializerMethods() {
+  public List<MethodInfo> getAllSharedInitializerMethods() {
     return collectAll(SpecInfo::getSharedInitializerMethod);
   }
 
@@ -193,7 +193,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     return setupMethods;
   }
 
-  public Iterable<MethodInfo> getAllSetupMethods() {
+  public List<MethodInfo> getAllSetupMethods() {
     return collectAllFromIterable(SpecInfo::getSetupMethods);
   }
 
@@ -205,7 +205,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     return cleanupMethods;
   }
 
-  public Iterable<MethodInfo> getAllCleanupMethods() {
+  public List<MethodInfo> getAllCleanupMethods() {
     return collectAllFromIterable(SpecInfo::getCleanupMethods);
   }
 
@@ -217,7 +217,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     return setupSpecMethods;
   }
 
-  public Iterable<MethodInfo> getAllSetupSpecMethods() {
+  public List<MethodInfo> getAllSetupSpecMethods() {
     return collectAllFromIterable(SpecInfo::getSetupSpecMethods);
   }
 
@@ -229,7 +229,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     return cleanupSpecMethods;
   }
 
-  public Iterable<MethodInfo> getAllCleanupSpecMethods() {
+  public List<MethodInfo> getAllCleanupSpecMethods() {
     return collectAllFromIterable(SpecInfo::getCleanupSpecMethods);
   }
 
@@ -237,11 +237,16 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     cleanupSpecMethods.add(cleanupSpecMethod);
   }
 
-  public Iterable<MethodInfo> getFixtureMethods() {
-    return CollectionUtil.concat(setupSpecMethods, setupMethods, cleanupMethods, cleanupSpecMethods);
+  public List<MethodInfo> getFixtureMethods() {
+    List<MethodInfo> result = new ArrayList<>();
+    result.addAll(setupSpecMethods);
+    result.addAll(setupMethods);
+    result.addAll(cleanupMethods);
+    result.addAll(cleanupSpecMethods);
+    return result;
   }
 
-  public Iterable<MethodInfo> getAllFixtureMethods() {
+  public List<MethodInfo> getAllFixtureMethods() {
     return collectAllFromIterable(SpecInfo::getFixtureMethods);
   }
 

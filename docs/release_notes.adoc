@@ -7,7 +7,14 @@ include::include.adoc[]
 
 === Breaking Changes
 
-- Calling `old(...)` with multiple arguments is now a compilation error. Previously the additional arguments were simply ignored.
+* Calling `old(...)` with multiple arguments is now a compilation error. Previously the additional arguments were simply ignored.
+* The return type of `SpecInfo#getFixtureMethods()` and `SpecInfo#getAllFixtureMethods()`
+  was changed from `Iterable<MethodInfo>` to `List<MethodInfo>`.
+  This is a source-compatible change, but it is not binary compatible.
+  That means code that was compiled against an older Spock version and is not recompiled against the new version
+  and is using one of these methods will throw a `NoSuchMethodError` at runtime.
+  This could for example affect published plugins. Those need to be recompiled against the new Spock version
+  and rereleased.
 
 == 2.4-M1 (2022-11-30)
 

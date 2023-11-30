@@ -12,18 +12,18 @@ before SETUP_SPEC - null
 	replaced: Stored at SPEC_EXECUTION - null [1]
 	put:      Stored at SETUP_SPEC - null [2]
 after SETUP_SPEC - null
-before INITIALIZER - null
-	prev:     Stored at SETUP_SPEC - null [2]
-	replaced: null
-	put:      Stored at INITIALIZER - null [3]
-after INITIALIZER - null
 before FEATURE_EXECUTION - null
-	prev:     Stored at INITIALIZER - null [3]
-	replaced: Stored at INITIALIZER - null [3]
-	put:      Stored at FEATURE_EXECUTION - null [4]
+	prev:     Stored at SETUP_SPEC - null [2]
+	replaced: Stored at SETUP_SPEC - null [2]
+	put:      Stored at FEATURE_EXECUTION - null [3]
+before INITIALIZER - null
+	prev:     Stored at FEATURE_EXECUTION - null [3]
+	replaced: null
+	put:      Stored at INITIALIZER - null [4]
+after INITIALIZER - null
 before ITERATION_EXECUTION - null
-	prev:     Stored at FEATURE_EXECUTION - null [4]
-	replaced: Stored at FEATURE_EXECUTION - null [4]
+	prev:     Stored at INITIALIZER - null [4]
+	replaced: Stored at INITIALIZER - null [4]
 	put:      Stored at ITERATION_EXECUTION - null [5]
 before SETUP - null
 	prev:     Stored at ITERATION_EXECUTION - null [5]
@@ -44,13 +44,12 @@ after CLEANUP - null
 # closing Stored at FEATURE - a feature [7]
 # closing Stored at SETUP - null [6]
 # closing Stored at ITERATION_EXECUTION - null [5]
-# closing Stored at FEATURE_EXECUTION - null [4]
-# closing Stored at INITIALIZER - null [3]
+# closing Stored at INITIALIZER - null [4]
 after ITERATION_EXECUTION - null
 after FEATURE_EXECUTION - null
 before FEATURE_EXECUTION - null
-	prev:     Stored at SETUP_SPEC - null [2]
-	replaced: Stored at SETUP_SPEC - null [2]
+	prev:     Stored at FEATURE_EXECUTION - null [3]
+	replaced: Stored at FEATURE_EXECUTION - null [3]
 	put:      Stored at FEATURE_EXECUTION - null [9]
 before INITIALIZER - null
 	prev:     Stored at FEATURE_EXECUTION - null [9]

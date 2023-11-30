@@ -1,5 +1,6 @@
 package org.spockframework.runtime.extension;
 
+import org.spockframework.runtime.SpockException;
 import org.spockframework.util.Beta;
 import org.spockframework.util.Checks;
 import org.spockframework.util.ReflectionUtil;
@@ -9,9 +10,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * A hierarchical store of key-value pairs.
+ *
  * @since 2.4
  */
 @Beta
@@ -44,7 +47,8 @@ public interface IStore {
    * to create this store.
    *
    * @param key          the key; never {@code null}
-   * @param requiredType the required type of the value; never {@code null}
+   * @param requiredType the required type of the value; never {@code null};
+   *                     will throw {@link StoreException} if value isn't an instance of this type
    * @param <V>          the value type
    * @return the value; potentially {@code null}
    * @see #get(Object)
@@ -64,7 +68,8 @@ public interface IStore {
    * to create this store.
    *
    * @param key          the key; never {@code null}
-   * @param requiredType the required type of the value; never {@code null}
+   * @param requiredType the required type of the value; never {@code null};
+   *                     will throw {@link StoreException} if value isn't an instance of this type
    * @param defaultValue the default value
    * @param <V>          the value type
    * @return the value; potentially {@code null}
@@ -72,7 +77,31 @@ public interface IStore {
    */
   default <V> V getOrDefault(Object key, Class<V> requiredType, V defaultValue) {
     V value = get(key, requiredType);
-    return (value != null ? value : defaultValue);
+    return (value == null ? defaultValue : value);
+  }
+
+  /**
+   * Get the value of the specified required type that is stored under
+   * the supplied {@code key}, or uses the supplied {@code defaultValueSupplier}
+   * to create it, if no value is found for the supplied {@code key} in this store
+   * or in an ancestor.
+   *
+   * <p>If no value is stored in the current {@link IStore}
+   * for the supplied {@code key}, ancestors of the context will be queried
+   * for a value with the same {@code key} in the {@code Namespace} used
+   * to create this store.
+   *
+   * @param key                  the key; never {@code null}
+   * @param requiredType         the required type of the value; never {@code null};
+   *                             will throw {@link StoreException} if value isn't an instance of this type
+   * @param defaultValueSupplier the {@link Supplier} for the default value
+   * @param <V>                  the value type
+   * @return the value; potentially {@code null}
+   * @see #get(Object, Class)
+   */
+  default <V> V getOrDefault(Object key, Class<V> requiredType, Supplier<V> defaultValueSupplier) {
+    V value = get(key, requiredType);
+    return (value == null ? defaultValueSupplier.get() : value);
   }
 
   /**
@@ -155,7 +184,8 @@ public interface IStore {
    * @param key            the key; never {@code null}
    * @param defaultCreator the function called with the supplied {@code key}
    *                       to create a new value; never {@code null}
-   * @param requiredType   the required type of the value; never {@code null}
+   * @param requiredType   the required type of the value; never {@code null};
+   *                       will throw {@link StoreException} if value isn't an instance of this type
    * @param <K>            the key type
    * @param <V>            the value type
    * @return the value; potentially {@code null}
@@ -168,13 +198,16 @@ public interface IStore {
   /**
    * Store a {@code value} for later retrieval under the supplied {@code key}.
    *
-   * <p>A stored {@code value} is visible in child {@link IStore
-   * ExtensionContexts} for the store's {@code Namespace} unless they
-   * overwrite it.
+   * <p>A stored {@code value} is visible in child {@link IStore}
+   * for the store's {@code Namespace} unless they overwrite it.
    *
    * <p>If the {@code value} is an instance of {@link AutoCloseable}
    * the {@code close()} method will be invoked on the stored object when
    * the store is closed.
+   *
+   * <p>Any existing value in the current {@link IStore} will be replaced,
+   * byt not in ancestors. In addition, the {@link AutoCloseable} API will not
+   * be honored for values that are replaced via this method.
    *
    * @param key   the key under which the value should be stored; never
    *              {@code null}
@@ -211,6 +244,7 @@ public interface IStore {
    *
    * @param key          the key; never {@code null}
    * @param requiredType the required type of the value; never {@code null}
+   *                     will throw {@link StoreException} if value isn't an instance of this type
    * @param <V>          the value type
    * @return the previous value or {@code null} if no value was present
    * for the specified key
@@ -278,6 +312,12 @@ public interface IStore {
       newParts.addAll(this.parts);
       Collections.addAll(newParts, parts);
       return new Namespace(newParts);
+    }
+  }
+
+  class StoreException extends SpockException {
+    public StoreException(String message, Throwable cause) {
+      super(message, cause);
     }
   }
 }

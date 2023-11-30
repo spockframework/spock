@@ -1221,3 +1221,35 @@ If an interceptor adds a `Macguffin` to the store via a `sharedInitializerInterc
 
 
 NOTE: If an object stored in the store implements `java.lang.AutoCloseable`, then the `close()` method will be called when the store is closed.
+
+==== Example of a global extension using the Store
+
+.Global Extension implementation
+[source,groovy,indent=0]
+----
+include::{sourcedir}/extension/ExtensionStoreSpec.groovy[tag=example-extension]
+----
+<1> The `Namespace` for the extension is created, here we use the extension's class as key
+<2> The extension registers the `INTERCEPTOR` for each feature method
+<3> `executionStart` is called right before the specifications are executed, it also gives access to the root-level `IStore`
+<4> The extensions uses its `Namespace` to retrieve the `IStore`
+<5> It then puts a `ConcurrentHashMap` into the store to serve as collector for the data
+<6> During the feature method execution the `INTERCEPTOR` retrieves the `IStore` via the shared `Namespace`
+<7> It then retrieves the `ConcurrentHashMap` via the key, retrieval request will propagate through the hierarchy until it finds the value at the root-level
+<8> It then adds counts the occurred exception type, creating the counter if it was not yet present.
+<9> `executionStop` is called after all tests have been executed and also give access to the root-level `IStore`.
+    The extension uses this to print a report of the collected exception statistics.
+
+.Example Specs
+[source,groovy,indent=0]
+----
+include::{sourcedir}/extension/ExtensionStoreSpec.groovy[tag=example-spec]
+----
+
+The extension generates the following output for the example code above.
+
+.Output
+[source,indent=0]
+----
+include::{sourcedir}/extension/ExtensionStoreSpec.groovy[tag=example-result]
+----

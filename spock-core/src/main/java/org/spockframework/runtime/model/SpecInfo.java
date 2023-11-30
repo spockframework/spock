@@ -237,16 +237,11 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     cleanupSpecMethods.add(cleanupSpecMethod);
   }
 
-  public List<MethodInfo> getFixtureMethods() {
-    List<MethodInfo> result = new ArrayList<>();
-    result.addAll(setupSpecMethods);
-    result.addAll(setupMethods);
-    result.addAll(cleanupMethods);
-    result.addAll(cleanupSpecMethods);
-    return result;
+  public Iterable<MethodInfo> getFixtureMethods() {
+    return CollectionUtil.concat(setupSpecMethods, setupMethods, cleanupMethods, cleanupSpecMethods);
   }
 
-  public List<MethodInfo> getAllFixtureMethods() {
+  public Iterable<MethodInfo> getAllFixtureMethods() {
     return collectAllFromIterable(SpecInfo::getFixtureMethods);
   }
 

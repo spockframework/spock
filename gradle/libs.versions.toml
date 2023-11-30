@@ -8,7 +8,7 @@ mockito4 = '4.11.0'
 mockito5 = '5.7.0'
 
 [libraries]
-jetbrains-annotations = "org.jetbrains:annotations:24.0.1"
+jetbrains-annotations = "org.jetbrains:annotations:24.1.0"
 asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
 asmUtil = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
 bytebuddy = "net.bytebuddy:byte-buddy:1.14.9"

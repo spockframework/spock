@@ -104,21 +104,17 @@ class LogStoreExtension implements IAnnotationDrivenExtension<LogStoreUsage> {
     def specInfo = spec.bottomSpec
     def interceptor = new LoggingStoreInterceptor(config.actionRecorderList.get())
     specInfo.addSharedInitializerInterceptor interceptor
-    specInfo.sharedInitializerMethod?.addInterceptor interceptor
+    specInfo.allSharedInitializerMethods*.addInterceptor interceptor
     specInfo.addInterceptor interceptor
     specInfo.addSetupSpecInterceptor interceptor
-    specInfo.setupSpecMethods*.addInterceptor interceptor
-    specInfo.allFeatures*.addInterceptor interceptor
     specInfo.addInitializerInterceptor interceptor
-    specInfo.initializerMethod?.addInterceptor interceptor
-    specInfo.allFeatures*.addIterationInterceptor interceptor
     specInfo.addSetupInterceptor interceptor
-    specInfo.setupMethods*.addInterceptor interceptor
+    specInfo.allFixtureMethods*.addInterceptor  interceptor
+    specInfo.allFeatures*.addInterceptor interceptor
+    specInfo.allFeatures*.addIterationInterceptor interceptor
     specInfo.allFeatures*.featureMethod*.addInterceptor interceptor
     specInfo.addCleanupInterceptor interceptor
-    specInfo.cleanupMethods*.addInterceptor interceptor
     specInfo.addCleanupSpecInterceptor interceptor
-    specInfo.cleanupSpecMethods*.addInterceptor interceptor
   }
 }
 
@@ -193,21 +189,17 @@ class FailingCleanupStoreExtension implements IAnnotationDrivenExtension<Failing
     def specInfo = spec.bottomSpec
     def interceptor = new FailingCleanupStoreInterceptor(annotation, config.cleanupRecorderList.get())
     specInfo.addSharedInitializerInterceptor interceptor
-    specInfo.sharedInitializerMethod?.addInterceptor interceptor
+    specInfo.allSharedInitializerMethods*.addInterceptor interceptor
     specInfo.addInterceptor interceptor
     specInfo.addSetupSpecInterceptor interceptor
-    specInfo.setupSpecMethods*.addInterceptor interceptor
-    specInfo.allFeatures*.addInterceptor interceptor
     specInfo.addInitializerInterceptor interceptor
-    specInfo.initializerMethod?.addInterceptor interceptor
-    specInfo.allFeatures*.addIterationInterceptor interceptor
     specInfo.addSetupInterceptor interceptor
-    specInfo.setupMethods*.addInterceptor interceptor
+    specInfo.allFixtureMethods*.addInterceptor  interceptor
+    specInfo.allFeatures*.addInterceptor interceptor
+    specInfo.allFeatures*.addIterationInterceptor interceptor
     specInfo.allFeatures*.featureMethod*.addInterceptor interceptor
     specInfo.addCleanupInterceptor interceptor
-    specInfo.cleanupMethods*.addInterceptor interceptor
     specInfo.addCleanupSpecInterceptor interceptor
-    specInfo.cleanupSpecMethods*.addInterceptor interceptor
   }
 }
 

@@ -7,7 +7,7 @@ include::include.adoc[]
 
 === Breaking Changes
 
-- Calling `old(...)` with multiple arguments is now a compilation error. Previously the additional arguments were simply ignored.
+* Calling `old(...)` with multiple arguments is now a compilation error. Previously the additional arguments were simply ignored.
 
 == 2.4-M1 (2022-11-30)
 

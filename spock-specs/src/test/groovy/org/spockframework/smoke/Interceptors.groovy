@@ -157,7 +157,7 @@ class SubSpec extends SuperSpec {
       specInfo.specsBottomToTop*.addSharedInitializerInterceptor {
         proceed(it, 'shared initializer', "$it.spec.name")
       }
-      specInfo.specsBottomToTop*.sharedInitializerMethod*.addInterceptor {
+      specInfo.allSharedInitializerMethods*.addInterceptor {
         proceed(it, 'shared initializer method', "$it.spec.name.$it.method.name()")
       }
       specInfo.addInterceptor {
@@ -166,7 +166,7 @@ class SubSpec extends SuperSpec {
       specInfo.specsBottomToTop*.addSetupSpecInterceptor {
         proceed(it, 'setup spec', "$it.spec.name")
       }
-      specInfo.specsBottomToTop.collectMany { it.setupSpecMethods }*.addInterceptor {
+      specInfo.allSetupSpecMethods*.addInterceptor {
         proceed(it, 'setup spec method', "$it.spec.name.$it.method.name()")
       }
       specInfo.allFeatures*.addInterceptor {
@@ -177,7 +177,7 @@ class SubSpec extends SuperSpec {
           proceed(it, 'initializer', "$it.spec.name.$it.feature.name / $spec.name")
         }
       }
-      specInfo.specsBottomToTop*.initializerMethod*.addInterceptor {
+      specInfo.allInitializerMethods*.addInterceptor {
         proceed(it, 'initializer method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
       specInfo.allFeatures*.addIterationInterceptor {
@@ -188,7 +188,7 @@ class SubSpec extends SuperSpec {
           proceed(it, 'setup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex] / $spec.name")
         }
       }
-      specInfo.specsBottomToTop.collectMany { it.setupMethods }*.addInterceptor {
+      specInfo.allSetupMethods*.addInterceptor {
         proceed(it, 'setup method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
       specInfo.allFeatures*.featureMethod*.addInterceptor {
@@ -199,13 +199,13 @@ class SubSpec extends SuperSpec {
           proceed(it, 'cleanup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex] / $spec.name")
         }
       }
-      specInfo.specsBottomToTop.collectMany { it.cleanupMethods }*.addInterceptor {
+      specInfo.allCleanupMethods*.addInterceptor {
         proceed(it, 'cleanup method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
       specInfo.specsBottomToTop*.addCleanupSpecInterceptor {
         proceed(it, 'cleanup spec', "$it.spec.name")
       }
-      specInfo.specsBottomToTop.collectMany { it.cleanupSpecMethods }*.addInterceptor {
+      specInfo.allCleanupSpecMethods*.addInterceptor {
         proceed(it, 'cleanup spec method', "$it.spec.name.$it.method.name()")
       }
       specInfo.allFixtureMethods*.addInterceptor {

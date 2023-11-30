@@ -45,6 +45,12 @@ public abstract class FeatureNode extends SpockNode<FeatureInfo> {
   }
 
   @Override
+  public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
+    return context.withChildStoreProvider();
+
+  }
+
+  @Override
   public void around(SpockExecutionContext context, Invocation<SpockExecutionContext> invocation) {
     context.getRunContext().ensureInstalled();
     ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();

@@ -55,6 +55,7 @@ public class PlatformSpecRunner {
     supervisor.beforeSpec(spec);
     invoke(context, this, createMethodInfoForDoRunSpec(context, specRunner));
     supervisor.afterSpec(spec);
+    runCloseContextStoreProvider(context, MethodKind.CLEANUP_SPEC);
   }
 
   private MethodInfo createMethodInfoForDoRunSpec(SpockExecutionContext context, Runnable specRunner) {
@@ -151,7 +152,6 @@ public class PlatformSpecRunner {
 
   void runCleanupSpec(SpockExecutionContext context) {
     runCleanupSpec(context.withCurrentInstance(context.getSharedInstance()), context.getSpec());
-    runCloseContextStoreProvider(context, MethodKind.CLEANUP_SPEC);
   }
 
   private void runCleanupSpec(SpockExecutionContext context, SpecInfo spec) {
@@ -192,6 +192,7 @@ public class PlatformSpecRunner {
     supervisor.beforeFeature(currentFeature);
     invoke(context, this, createMethodInfoForDoRunFeature(context, feature));
     supervisor.afterFeature(currentFeature);
+    runCloseContextStoreProvider(context, MethodKind.CLEANUP);
   }
 
   private MethodInfo createMethodInfoForDoRunFeature(SpockExecutionContext context, Runnable feature) {
@@ -218,6 +219,7 @@ public class PlatformSpecRunner {
     supervisor.beforeIteration(iterationInfo);
     invoke(context, this, createMethodInfoForDoRunIteration(context, runnable));
     supervisor.afterIteration(iterationInfo);
+    runCloseContextStoreProvider(context, MethodKind.CLEANUP);
 
     getSpecificationContext(context).setCurrentIteration(null); // TODO check if we really need to null here
   }
@@ -328,7 +330,6 @@ public class PlatformSpecRunner {
 
   void runCleanup(SpockExecutionContext context) {
     runCleanup(context, context.getSpec());
-    runCloseContextStoreProvider(context, MethodKind.CLEANUP);
   }
 
   private void runCleanup(SpockExecutionContext context, SpecInfo spec) {

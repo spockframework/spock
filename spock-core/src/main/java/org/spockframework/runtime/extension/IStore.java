@@ -229,12 +229,6 @@ public interface IStore {
   class Namespace {
 
     /**
-     * The default, global namespace which allows access to stored data from
-     * all extensions.
-     */
-    public static final Namespace GLOBAL = Namespace.create(new Object());
-
-    /**
      * Create a namespace which restricts access to data to all extensions
      * which use the same sequence of {@code parts} for creating a namespace.
      *

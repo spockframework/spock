@@ -112,7 +112,6 @@ public interface IMethodInvocation {
    * @param namespace the {@code Namespace} to get the store for; never {@code null}
    * @return the store in which to put and get objects for other invocations
    * working in the same namespace; never {@code null}
-   * @see IStore.Namespace#GLOBAL
    * @since 2.4
    */
   @Beta

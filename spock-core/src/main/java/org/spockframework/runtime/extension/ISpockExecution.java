@@ -6,8 +6,6 @@ public interface ISpockExecution {
   /**
    * Get the {@link IStore} for the supplied {@linkplain IStore.Namespace namespace}.
    *
-   * <p>Use {@code getStore(Namespace.GLOBAL)} to get the default, global.
-   *
    * <p>A store is bound to its context lifecycle. When a
    * context lifecycle ends it closes its associated store. All stored values
    * that are instances of {@link AutoCloseable} are

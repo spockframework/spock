@@ -20,6 +20,9 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
   private final List<String> dataVariables = new ArrayList<>();
   private final List<BlockInfo> blocks = new ArrayList<>();
   private final List<IMethodInterceptor> iterationInterceptors = new ArrayList<>();
+  private final List<IMethodInterceptor> setupInterceptors = new ArrayList<>();
+  private final List<IMethodInterceptor> cleanupInterceptors = new ArrayList<>();
+  private final List<IMethodInterceptor> initializerInterceptors = new ArrayList<>();
 
   private final Set<ExclusiveResource> exclusiveResources = new HashSet<>();
 
@@ -89,6 +92,54 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
 
   public void addBlock(BlockInfo block) {
     blocks.add(block);
+  }
+
+  /**
+   * @since 2.4
+   */
+  @Beta
+  public List<IMethodInterceptor> getSetupInterceptors() {
+    return setupInterceptors;
+  }
+
+  /**
+   * @since 2.4
+   */
+  @Beta
+  public void addSetupInterceptor(IMethodInterceptor interceptor) {
+    setupInterceptors.add(interceptor);
+  }
+
+  /**
+   * @since 2.4
+   */
+  @Beta
+  public List<IMethodInterceptor> getCleanupInterceptors() {
+    return cleanupInterceptors;
+  }
+
+  /**
+   * @since 2.4
+   */
+  @Beta
+  public void addCleanupInterceptor(IMethodInterceptor interceptor) {
+    cleanupInterceptors.add(interceptor);
+  }
+
+  /**
+   * @since 2.4
+   */
+  @Beta
+  public List<IMethodInterceptor> getInitializerInterceptors() {
+    return initializerInterceptors;
+  }
+
+  /**
+   * @since 2.4
+   */
+  @Beta
+  public void addInitializerInterceptor(IMethodInterceptor interceptor) {
+    initializerInterceptors.add(interceptor);
   }
 
   public List<IMethodInterceptor> getIterationInterceptors() {

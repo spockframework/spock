@@ -19,6 +19,7 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.extension.ExtensionAnnotation
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension
 import org.spockframework.runtime.extension.IMethodInvocation
+import org.spockframework.runtime.model.FeatureInfo
 import org.spockframework.runtime.model.SpecInfo
 import org.spockframework.specs.extension.SpockSnapshotter
 import spock.lang.Snapshot
@@ -153,6 +154,7 @@ class SubSpec extends SuperSpec {
 
     @Override
     void visitSpecAnnotation(LifecycleTest annotation, SpecInfo specInfo) {
+      def allFeatures = specInfo.allFeatures
       specInfo.specsBottomToTop*.addSharedInitializerInterceptor {
         assertSpecContext(it)
         proceed(it, 'shared initializer', "$it.spec.name")
@@ -173,7 +175,7 @@ class SubSpec extends SuperSpec {
         assertSpecMethodContext(it)
         proceed(it, 'setup spec method', "$it.spec.name.$it.method.name()")
       }
-      specInfo.allFeatures*.addInterceptor {
+      allFeatures*.addInterceptor {
         assertFeatureContext(it)
         proceed(it, 'feature', "$it.spec.name.$it.feature.name")
       }
@@ -187,7 +189,11 @@ class SubSpec extends SuperSpec {
         assertIterationMethodContext(it)
         proceed(it, 'initializer method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
-      specInfo.allFeatures*.addIterationInterceptor {
+      allFeatures*.addInitializerInterceptor {
+        assertIterationContext(it)
+        proceed(it, 'feature scoped initializer', "$it.spec.name.$it.feature.name")
+      }
+      allFeatures*.addIterationInterceptor {
         assertIterationContext(it)
         proceed(it, 'iteration', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
@@ -197,11 +203,15 @@ class SubSpec extends SuperSpec {
           proceed(it, 'setup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex] / $spec.name")
         }
       }
+      allFeatures*.addSetupInterceptor {
+        assertIterationContext(it)
+        proceed(it, 'feature scoped setup', "$it.spec.name.$it.feature.name")
+      }
       specInfo.allSetupMethods*.addInterceptor {
         assertIterationMethodContext(it)
         proceed(it, 'setup method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
-      specInfo.allFeatures*.featureMethod*.addInterceptor {
+      allFeatures*.featureMethod*.addInterceptor {
         assertIterationMethodContext(it)
         proceed(it, 'feature method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
@@ -210,6 +220,10 @@ class SubSpec extends SuperSpec {
           assertIterationContext(it)
           proceed(it, 'cleanup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex] / $spec.name")
         }
+      }
+      allFeatures*.addCleanupInterceptor {
+        assertIterationContext(it)
+        proceed(it, 'feature scoped cleanup', "$it.spec.name.$it.feature.name")
       }
       specInfo.allCleanupMethods*.addInterceptor {
         assertIterationMethodContext(it)

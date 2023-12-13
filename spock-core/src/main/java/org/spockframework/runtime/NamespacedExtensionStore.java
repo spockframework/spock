@@ -9,10 +9,12 @@ import java.util.function.Supplier;
 
 public class NamespacedExtensionStore implements IStore {
   private final NamespacedHierarchicalStore<Namespace> delegate;
+  private final Supplier<NamespacedExtensionStore> parentProvider;
   private final IStore.Namespace namespace;
 
-  public NamespacedExtensionStore(NamespacedHierarchicalStore<Namespace> delegate, Namespace namespace) {
+  public NamespacedExtensionStore(NamespacedHierarchicalStore<Namespace> delegate, Supplier<NamespacedExtensionStore> parentProvider, Namespace namespace) {
     this.delegate = delegate;
+    this.parentProvider = parentProvider;
     this.namespace = namespace;
   }
 
@@ -53,6 +55,11 @@ public class NamespacedExtensionStore implements IStore {
   @Override
   public <V> V remove(Object key, Class<V> requiredType) {
     return execute(() -> delegate.remove(namespace, key, requiredType));
+  }
+
+  @Override
+  public IStore getParentStore() {
+    return parentProvider.get();
   }
 
   private <V> V execute(Supplier<V> exec) {

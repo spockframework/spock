@@ -39,11 +39,11 @@ class NamespacedExtensionStoreSpec extends Specification {
   def "child values shadow parent values"() {
     when:
     ns1Root.put("key", "something")
-    ns1Child.put("key", "otherthing")
+    ns1Child.put("key", "other thing")
 
     then:
     ns1Root.get("key") == "something"
-    ns1Child.get("key", String) == "otherthing"
+    ns1Child.get("key", String) == "other thing"
 
     when:
     ns1Child.remove("key")
@@ -271,6 +271,34 @@ class NamespacedExtensionStoreSpec extends Specification {
     ns1Root.getOrComputeIfAbsent("a", { null }) == null
     ns1Root.getOrComputeIfAbsent("a", { shouldNotBeCalled() }) == null
     ns1Root.getOrComputeIfAbsent("key", { shouldNotBeCalled() }) == null
+  }
+
+  def "root stores have no parent and return themselves as root"() {
+    expect:
+    ns1Root.parentStore == null
+    ns1Root.rootStore == ns1Root
+  }
+
+  def "child stores can navigate to the parent and root store"() {
+    given:
+    def grandChild = childStore.createChildStoreProvider()
+    def ns1GrandChild = grandChild.getStore(NS1)
+    ns1Root.put("key", "something")
+    ns1Child.put("key", "other thing")
+    ns1GrandChild.put("key", "grand thing")
+
+    expect:
+    ns1Root.get("key") == "something"
+
+    and:
+    ns1Child.get("key") == "other thing"
+    ns1Child.parentStore.get("key") == "something"
+    ns1Child.rootStore.get("key") == "something"
+
+    and:
+    ns1GrandChild.get("key") == "grand thing"
+    ns1GrandChild.parentStore.get("key") == "other thing"
+    ns1GrandChild.rootStore.get("key") == "something"
   }
 
   def <V> V shouldNotBeCalled() {

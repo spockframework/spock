@@ -283,6 +283,27 @@ public interface IStore {
   <V> V remove(Object key, Class<V> requiredType);
 
   /**
+   * Returns the top most store in the hierarchy.
+   *
+   * @return the top most store in the hierarchy
+   */
+  default IStore getRootStore() {
+    IStore parent = getParentStore();
+    if (parent == null) {
+      return this;
+    }
+    return parent.getRootStore();
+  }
+
+  /**
+   * Returns the parent of this store in the hierarchy.
+   *
+   * @return the parent or {@code null} if this is the root store
+   */
+  @Nullable
+  IStore getParentStore();
+
+  /**
    * A {@code Namespace} is used to provide a <em>scope</em> for data saved by
    * extensions within an {@link IStore}.
    *

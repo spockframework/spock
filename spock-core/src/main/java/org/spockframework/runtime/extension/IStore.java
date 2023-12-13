@@ -1,10 +1,7 @@
 package org.spockframework.runtime.extension;
 
 import org.spockframework.runtime.SpockException;
-import org.spockframework.util.Beta;
-import org.spockframework.util.Checks;
-import org.spockframework.util.ReflectionUtil;
-import org.spockframework.util.ThreadSafe;
+import org.spockframework.util.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +39,7 @@ public interface IStore {
    * @see #get(Object, Class)
    * @see #getOrDefault(Object, Class, Object)
    */
+  @Nullable
   <V> V get(Object key);
 
   /**
@@ -61,6 +59,7 @@ public interface IStore {
    * @see #get(Object)
    * @see #getOrDefault(Object, Class, Object)
    */
+  @Nullable
   <V> V get(Object key, Class<V> requiredType);
 
   /**
@@ -82,6 +81,8 @@ public interface IStore {
    * @return the value; potentially {@code null}
    * @see #get(Object, Class)
    */
+
+  @Nullable
   default <V> V getOrDefault(Object key, Class<V> requiredType, V defaultValue) {
     V value = get(key, requiredType);
     return (value == null ? defaultValue : value);
@@ -106,6 +107,8 @@ public interface IStore {
    * @return the value; potentially {@code null}
    * @see #get(Object, Class)
    */
+
+  @Nullable
   default <V> V getOrDefault(Object key, Class<V> requiredType, Supplier<V> defaultValueSupplier) {
     V value = get(key, requiredType);
     return (value == null ? defaultValueSupplier.get() : value);
@@ -175,6 +178,8 @@ public interface IStore {
    * @see #getOrComputeIfAbsent(Object, Function, Class)
    * @see AutoCloseable
    */
+
+  @Nullable
   <K, V> V getOrComputeIfAbsent(K key, Function<K, V> defaultCreator);
 
   /**
@@ -204,6 +209,7 @@ public interface IStore {
    * @see #getOrComputeIfAbsent(Object, Function)
    * @see AutoCloseable
    */
+  @Nullable
   <K, V> V getOrComputeIfAbsent(K key, Function<K, V> defaultCreator, Class<V> requiredType);
 
   /**
@@ -231,6 +237,7 @@ public interface IStore {
    * @return the previous value; may be {@code null}
    * @see AutoCloseable
    */
+  @Nullable
   <V> V put(Object key, Object value);
 
   /**
@@ -253,6 +260,7 @@ public interface IStore {
    * for the specified key
    * @see #remove(Object, Class)
    */
+  @Nullable
   <V> V remove(Object key);
 
   /**
@@ -271,6 +279,7 @@ public interface IStore {
    * for the specified key
    * @see #remove(Object)
    */
+  @Nullable
   <V> V remove(Object key, Class<V> requiredType);
 
   /**

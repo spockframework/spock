@@ -255,6 +255,24 @@ class NamespacedExtensionStoreSpec extends Specification {
     thrown(IStore.StoreException)
   }
 
+  def "returning null default values is valid"() {
+    expect:
+    ns1Root.getOrDefault("key", String, null as String) == null
+    ns1Root.getOrDefault("key", String, { null } as Supplier<String>) == null
+    ns1Root.getOrComputeIfAbsent("a", { null }) == null
+    ns1Root.getOrComputeIfAbsent("b", { null }, String) == null
+  }
+
+  def "null values still count as present"() {
+    given:
+    ns1Root.put("key", null)
+
+    expect:
+    ns1Root.getOrComputeIfAbsent("a", { null }) == null
+    ns1Root.getOrComputeIfAbsent("a", { shouldNotBeCalled() }) == null
+    ns1Root.getOrComputeIfAbsent("key", { shouldNotBeCalled() }) == null
+  }
+
   def <V> V shouldNotBeCalled() {
     throw new RuntimeException()
   }

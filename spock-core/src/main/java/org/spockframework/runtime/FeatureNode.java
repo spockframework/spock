@@ -46,6 +46,7 @@ public abstract class FeatureNode extends SpockNode<FeatureInfo> {
 
   @Override
   public void around(SpockExecutionContext context, Invocation<SpockExecutionContext> invocation) {
+    context.getRunContext().ensureInstalled();
     ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
     final SpockExecutionContext innerContext = context.withErrorInfoCollector(errorInfoCollector);
     context.getRunner().runFeature(innerContext, () -> sneakyInvoke(invocation, innerContext));

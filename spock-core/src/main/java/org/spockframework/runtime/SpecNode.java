@@ -22,6 +22,7 @@ public class SpecNode extends SpockNode<SpecInfo> {
 
   @Override
   public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
+    context.getRunContext().ensureInstalled();
     PlatformParameterizedSpecRunner specRunner = context.getRunContext().createSpecRunner(getNodeInfo());
     context = context.withRunner(specRunner).withSpec(getNodeInfo());
     if (getNodeInfo().isSkipped()) {
@@ -65,6 +66,7 @@ public class SpecNode extends SpockNode<SpecInfo> {
 
   @Override
   public void around(SpockExecutionContext context, Invocation<SpockExecutionContext> invocation) throws Exception {
+    context.getRunContext().ensureInstalled();
     ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
     SpockExecutionContext ctx = context.withErrorInfoCollector(errorInfoCollector);
     ctx.getRunner().runSpec(ctx, () -> sneakyInvoke(invocation, ctx));

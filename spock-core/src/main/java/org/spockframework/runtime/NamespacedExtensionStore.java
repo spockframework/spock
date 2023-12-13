@@ -16,9 +16,10 @@ public class NamespacedExtensionStore implements IStore {
     this.namespace = namespace;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public Object get(Object key) {
-    return execute(() -> delegate.get(namespace, key));
+  public <V> V get(Object key) {
+    return (V) execute(() -> delegate.get(namespace, key));
   }
 
   @Override
@@ -26,9 +27,10 @@ public class NamespacedExtensionStore implements IStore {
     return execute(() -> delegate.get(namespace, key, requiredType));
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public <K, V> Object getOrComputeIfAbsent(K key, Function<K, V> defaultCreator) {
-    return execute(() -> delegate.getOrComputeIfAbsent(namespace, key, defaultCreator));
+  public <K, V> V getOrComputeIfAbsent(K key, Function<K, V> defaultCreator) {
+    return (V) execute(() -> delegate.getOrComputeIfAbsent(namespace, key, defaultCreator));
   }
 
   @Override
@@ -36,14 +38,16 @@ public class NamespacedExtensionStore implements IStore {
     return execute(() -> delegate.getOrComputeIfAbsent(namespace, key, defaultCreator, requiredType));
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public Object put(Object key, Object value) {
-    return execute(() -> delegate.put(namespace, key, value));
+  public <V> V put(Object key, Object value) {
+    return (V) execute(() -> delegate.put(namespace, key, value));
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public Object remove(Object key) {
-    return execute(() -> delegate.remove(namespace, key));
+  public <V> V remove(Object key) {
+    return (V) execute(() -> delegate.remove(namespace, key));
   }
 
   @Override

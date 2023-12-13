@@ -31,13 +31,18 @@ public interface IStore {
    * <p>
    * For greater type safety, consider using {@link #get(Object, Class)}
    * instead.
+   * <p>
+   * <b>Warning:</b> Be aware that choosing {@code V} must be done wisely as it is an unsafe operation. If you for
+   * example select {@code String} for {@code V} and then try to get a {@code List} object from the returned
+   * optional, you will get a {@link ClassCastException} at runtime.
    *
    * @param key the key; never {@code null}
+   * @param <V> the value type
    * @return the value; potentially {@code null}
    * @see #get(Object, Class)
    * @see #getOrDefault(Object, Class, Object)
    */
-  Object get(Object key);
+  <V> V get(Object key);
 
   /**
    * Get the value of the specified required type that is stored under
@@ -155,6 +160,10 @@ public interface IStore {
    * If the created value is an instance of {@link AutoCloseable}
    * the {@code close()} method will be invoked on the stored object when
    * the store is closed.
+   * <p>
+   * <b>Warning:</b> Be aware that choosing {@code V} must be done wisely as it is an unsafe operation. If you for
+   * example select {@code String} for {@code V} and then try to get a {@code List} object from the returned
+   * optional, you will get a {@link ClassCastException} at runtime.
    *
    * @param key            the key; never {@code null}
    * @param defaultCreator the function called with the supplied {@code key}
@@ -166,7 +175,7 @@ public interface IStore {
    * @see #getOrComputeIfAbsent(Object, Function, Class)
    * @see AutoCloseable
    */
-  <K, V> Object getOrComputeIfAbsent(K key, Function<K, V> defaultCreator);
+  <K, V> V getOrComputeIfAbsent(K key, Function<K, V> defaultCreator);
 
   /**
    * Get the value of the specified required type that is stored under the
@@ -210,14 +219,19 @@ public interface IStore {
    * Any existing value in the current {@link IStore} will be replaced,
    * byt not in ancestors. In addition, the {@link AutoCloseable} API will not
    * be honored for values that are replaced via this method.
+   * <p>
+   * <b>Warning:</b> Be aware that choosing {@code V} must be done wisely as it is an unsafe operation. If you for
+   * example select {@code String} for {@code V} and then try to get a {@code List} object from the returned
+   * optional, you will get a {@link ClassCastException} at runtime.
    *
    * @param key   the key under which the value should be stored; never
    *              {@code null}
+   * @param <V>   the value type
    * @param value the value to store; may be {@code null}
    * @return the previous value; may be {@code null}
    * @see AutoCloseable
    */
-  Object put(Object key, Object value);
+  <V> V put(Object key, Object value);
 
   /**
    * Remove the value that was previously stored under the supplied {@code key}.
@@ -228,13 +242,18 @@ public interface IStore {
    * <p>
    * For greater type safety, consider using {@link #remove(Object, Class)}
    * instead.
+   * <p>
+   * <b>Warning:</b> Be aware that choosing {@code V} must be done wisely as it is an unsafe operation. If you for
+   * example select {@code String} for {@code V} and then try to get a {@code List} object from the returned
+   * optional, you will get a {@link ClassCastException} at runtime.
    *
    * @param key the key; never {@code null}
+   * @param <V> the value type
    * @return the previous value or {@code null} if no value was present
    * for the specified key
    * @see #remove(Object, Class)
    */
-  Object remove(Object key);
+  <V> V remove(Object key);
 
   /**
    * Remove the value of the specified required type that was previously stored

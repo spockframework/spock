@@ -4,6 +4,7 @@ import org.spockframework.runtime.SpockException;
 import org.spockframework.util.Beta;
 import org.spockframework.util.Checks;
 import org.spockframework.util.ReflectionUtil;
+import org.spockframework.util.ThreadSafe;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,16 +19,17 @@ import java.util.function.Supplier;
  * @since 2.4
  */
 @Beta
+@ThreadSafe
 public interface IStore {
   /**
    * Get the value that is stored under the supplied {@code key}.
-   *
-   * <p>If no value is stored in the current {@link IStore}
+   * <p>
+   * If no value is stored in the current {@link IStore}
    * for the supplied {@code key}, ancestors of the context will be queried
    * for a value with the same {@code key} in the {@code Namespace} used
    * to create this store.
-   *
-   * <p>For greater type safety, consider using {@link #get(Object, Class)}
+   * <p>
+   * For greater type safety, consider using {@link #get(Object, Class)}
    * instead.
    *
    * @param key the key; never {@code null}
@@ -40,8 +42,8 @@ public interface IStore {
   /**
    * Get the value of the specified required type that is stored under
    * the supplied {@code key}.
-   *
-   * <p>If no value is stored in the current {@link IStore}
+   * <p>
+   * If no value is stored in the current {@link IStore}
    * for the supplied {@code key}, ancestors of the context will be queried
    * for a value with the same {@code key} in the {@code Namespace} used
    * to create this store.
@@ -61,8 +63,8 @@ public interface IStore {
    * the supplied {@code key}, or the supplied {@code defaultValue} if no
    * value is found for the supplied {@code key} in this store or in an
    * ancestor.
-   *
-   * <p>If no value is stored in the current {@link IStore}
+   * <p>
+   * If no value is stored in the current {@link IStore}
    * for the supplied {@code key}, ancestors of the context will be queried
    * for a value with the same {@code key} in the {@code Namespace} used
    * to create this store.
@@ -85,8 +87,8 @@ public interface IStore {
    * the supplied {@code key}, or uses the supplied {@code defaultValueSupplier}
    * to create it, if no value is found for the supplied {@code key} in this store
    * or in an ancestor.
-   *
-   * <p>If no value is stored in the current {@link IStore}
+   * <p>
+   * If no value is stored in the current {@link IStore}
    * for the supplied {@code key}, ancestors of the context will be queried
    * for a value with the same {@code key} in the {@code Namespace} used
    * to create this store.
@@ -109,8 +111,8 @@ public interface IStore {
    * {@code Store} (<em>keyed</em> by {@code type}); and otherwise invoke
    * the default constructor for {@code type} to generate the object,
    * store it, and return it.
-   *
-   * <p>This method is a shortcut for the following, where {@code X} is
+   * <p>
+   * This method is a shortcut for the following, where {@code X} is
    * the type of object we wish to retrieve from the store.
    *
    * <pre style="code">
@@ -118,11 +120,11 @@ public interface IStore {
    * // Equivalent to:
    * // X x = store.getOrComputeIfAbsent(X.class);
    * </pre>
-   *
-   * <p>See {@link #getOrComputeIfAbsent(Object, Function, Class)} for
+   * <p>
+   * See {@link #getOrComputeIfAbsent(Object, Function, Class)} for
    * further details.
-   *
-   * <p>If {@code type} implements {@link AutoCloseable}
+   * <p>
+   * If {@code type} implements {@link AutoCloseable}
    * the {@code close()} method will be invoked on the stored object when
    * the store is closed.
    *
@@ -139,18 +141,18 @@ public interface IStore {
 
   /**
    * Get the value that is stored under the supplied {@code key}.
-   *
-   * <p>If no value is stored in the current {@link IStore}
+   * <p>
+   * If no value is stored in the current {@link IStore}
    * for the supplied {@code key}, ancestors of the context will be queried
    * for a value with the same {@code key} in the {@code Namespace} used
    * to create this store. If no value is found for the supplied {@code key},
    * a new value will be computed by the {@code defaultCreator} (given
    * the {@code key} as input), stored, and returned.
-   *
-   * <p>For greater type safety, consider using
+   * <p>
+   * For greater type safety, consider using
    * {@link #getOrComputeIfAbsent(Object, Function, Class)} instead.
-   *
-   * <p>If the created value is an instance of {@link AutoCloseable}
+   * <p>
+   * If the created value is an instance of {@link AutoCloseable}
    * the {@code close()} method will be invoked on the stored object when
    * the store is closed.
    *
@@ -169,15 +171,15 @@ public interface IStore {
   /**
    * Get the value of the specified required type that is stored under the
    * supplied {@code key}.
-   *
-   * <p>If no value is stored in the current {@link IStore}
+   * <p>
+   * If no value is stored in the current {@link IStore}
    * for the supplied {@code key}, ancestors of the context will be queried
    * for a value with the same {@code key} in the {@code Namespace} used
    * to create this store. If no value is found for the supplied {@code key},
    * a new value will be computed by the {@code defaultCreator} (given
    * the {@code key} as input), stored, and returned.
-   *
-   * <p>If {@code requiredType} implements {@link AutoCloseable}
+   * <p>
+   * If {@code requiredType} implements {@link AutoCloseable}
    * the {@code close()} method will be invoked on the stored object when
    * the store is closed.
    *
@@ -197,15 +199,15 @@ public interface IStore {
 
   /**
    * Store a {@code value} for later retrieval under the supplied {@code key}.
-   *
-   * <p>A stored {@code value} is visible in child {@link IStore}
+   * <p>
+   * A stored {@code value} is visible in child {@link IStore}
    * for the store's {@code Namespace} unless they overwrite it.
-   *
-   * <p>If the {@code value} is an instance of {@link AutoCloseable}
+   * <p>
+   * If the {@code value} is an instance of {@link AutoCloseable}
    * the {@code close()} method will be invoked on the stored object when
    * the store is closed.
-   *
-   * <p>Any existing value in the current {@link IStore} will be replaced,
+   * <p>
+   * Any existing value in the current {@link IStore} will be replaced,
    * byt not in ancestors. In addition, the {@link AutoCloseable} API will not
    * be honored for values that are replaced via this method.
    *
@@ -219,12 +221,12 @@ public interface IStore {
 
   /**
    * Remove the value that was previously stored under the supplied {@code key}.
-   *
-   * <p>The value will only be removed in the current {@link IStore},
+   * <p>
+   * The value will only be removed in the current {@link IStore},
    * not in ancestors. In addition, the {@link AutoCloseable} API will not
    * be honored for values that are manually removed via this method.
-   *
-   * <p>For greater type safety, consider using {@link #remove(Object, Class)}
+   * <p>
+   * For greater type safety, consider using {@link #remove(Object, Class)}
    * instead.
    *
    * @param key the key; never {@code null}
@@ -237,8 +239,8 @@ public interface IStore {
   /**
    * Remove the value of the specified required type that was previously stored
    * under the supplied {@code key}.
-   *
-   * <p>The value will only be removed in the current {@link IStore},
+   * <p>
+   * The value will only be removed in the current {@link IStore},
    * not in ancestors. In addition, the {@link AutoCloseable} API will not
    * be honored for values that are manually removed via this method.
    *
@@ -265,10 +267,13 @@ public interface IStore {
     /**
      * Create a namespace which restricts access to data to all extensions
      * which use the same sequence of {@code parts} for creating a namespace.
-     *
-     * <p>The order of the {@code parts} is significant.
-     *
-     * <p>Internally the {@code parts} are compared using {@link Object#equals(Object)}.
+     * <p>
+     * The order of the {@code parts} is significant.
+     * <p>
+     * Internally the {@code parts} are compared using {@link Object#equals(Object)}.
+     * <p>
+     * The parts should be valid keys for a map, that is they should be immutable,
+     * or at least have a stable hash code and equality.
      */
     public static Namespace create(Object... parts) {
       Checks.notEmpty(parts, () -> "parts array must not be null or empty");
@@ -312,6 +317,13 @@ public interface IStore {
       newParts.addAll(this.parts);
       Collections.addAll(newParts, parts);
       return new Namespace(newParts);
+    }
+
+    @Override
+    public String toString() {
+      return "Namespace{" +
+        "parts=" + parts +
+        '}';
     }
   }
 

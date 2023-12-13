@@ -952,6 +952,8 @@ it is only used to describe the interaction.
 NOTE: A global mock can only be created for a class type. It effectively replaces
 all instances of that type for the duration from mock creation up until the end of the feature method.
 
+CAUTION: Using global mocks for standard types from the JDK, for example `ArrayList`, is a bad idea and can lead to unforeseen and widespread consequences.
+
 CAUTION: The declaration order of global mocks is relevant.
          The `GroovySpy(global:true, <type>)` must come before all creations of new mocked/spied objects of `<type>`.
          The global spies will only take effect on objects of that type, if the `GroovySpy(global:true, <type>)` was
@@ -982,6 +984,15 @@ include::{sourcedir}/interaction/GlobalMockDocSpec.groovy[tag=global-mock-constr
 When `Specifications` or `Features` are executed concurrently you have to make sure that the `Features` which create
 global mocks on the same types are properly guarded against each other, because a global mock changes the global state
 for the mocked `Class` during execution.
+
+[[global-mocks-parallel-execution]]
+==== Global mocks and parallel execution
+
+Creating a global `GroovyMock`/`GroovyStub`/`GroovySpy` when <<parallel-execution.adoc#parallel-execution,parallel execution>> is enabled,
+requires that the spec is annotated with <<parallel-execution.adoc#isolated-execution, @Isolated>> or `@@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)`.
+If it is only used for a feature, then it suffices that the feature is annotated with `@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)`.
+The rule of thumb to choose between `@ResourceLock` and `@Isolated`, is to look at how widespread the mocked type is used.
+If it is widely used, then `@Isolated` is the safe choice, otherwise `@ResourceLock` may be sufficient.
 
 .How Are Global Groovy Mocks Implemented?
 ****

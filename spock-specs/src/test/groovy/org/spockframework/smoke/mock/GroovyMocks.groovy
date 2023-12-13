@@ -24,7 +24,7 @@ class GroovyMocks extends Specification {
 
     then:
     CannotCreateMockException e = thrown()
-    e.message == 'Cannot create mock for class java.util.ArrayList. The given type is already mocked by Spock.'
+    e.message == 'Cannot create mock for class org.spockframework.smoke.mock.GroovyMocks$LocalClassForMocking. The given type is already mocked by Spock.'
 
     where:
     [typeA, typeB] << ([['Mock', 'Stub', 'Spy']] * 2).combinations()
@@ -33,16 +33,18 @@ class GroovyMocks extends Specification {
   void createMock(String type) {
     switch (type) {
       case 'Mock':
-        GroovyMock(global: true, ArrayList)
+        GroovyMock(global: true, LocalClassForMocking)
         break
       case 'Stub':
-        GroovyStub(global: true, ArrayList)
+        GroovyStub(global: true, LocalClassForMocking)
         break
       case 'Spy':
-        GroovySpy(global: true, ArrayList)
+        GroovySpy(global: true, LocalClassForMocking)
         break
       default:
         throw new IllegalArgumentException(type)
     }
   }
+
+  class LocalClassForMocking {}
 }

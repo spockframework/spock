@@ -4,6 +4,7 @@ import org.junit.platform.engine.support.store.NamespacedHierarchicalStore;
 import org.junit.platform.engine.support.store.NamespacedHierarchicalStoreException;
 import org.spockframework.runtime.extension.IStore;
 
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -12,10 +13,10 @@ public class NamespacedExtensionStore implements IStore {
   private final Supplier<NamespacedExtensionStore> parentProvider;
   private final IStore.Namespace namespace;
 
-  public NamespacedExtensionStore(NamespacedHierarchicalStore<Namespace> delegate, Supplier<NamespacedExtensionStore> parentProvider, Namespace namespace) {
-    this.delegate = delegate;
-    this.parentProvider = parentProvider;
-    this.namespace = namespace;
+  NamespacedExtensionStore(NamespacedHierarchicalStore<Namespace> delegate, Supplier<NamespacedExtensionStore> parentProvider, Namespace namespace) {
+    this.delegate = Objects.requireNonNull(delegate);
+    this.parentProvider =  Objects.requireNonNull(parentProvider);
+    this.namespace =  Objects.requireNonNull(namespace);
   }
 
   @SuppressWarnings("unchecked")

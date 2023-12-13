@@ -4,6 +4,8 @@ import org.junit.platform.engine.support.store.NamespacedHierarchicalStore;
 import org.spockframework.runtime.extension.IStore;
 import org.spockframework.util.Nullable;
 
+import java.util.Objects;
+
 public class StoreProvider implements AutoCloseable {
   private static final NamespacedHierarchicalStore.CloseAction<IStore.Namespace> CLOSE_ACTION = (IStore.Namespace namespace, Object key, Object value) -> {
     if (value instanceof AutoCloseable) {
@@ -11,13 +13,12 @@ public class StoreProvider implements AutoCloseable {
     }
   };
 
-  @Nullable
   private final NamespacedHierarchicalStore<IStore.Namespace> backend;
   @Nullable
   private final StoreProvider parent;
 
   private StoreProvider(NamespacedHierarchicalStore<IStore.Namespace> backend, StoreProvider parent) {
-    this.backend = backend;
+    this.backend = Objects.requireNonNull(backend);
     this.parent = parent;
   }
 

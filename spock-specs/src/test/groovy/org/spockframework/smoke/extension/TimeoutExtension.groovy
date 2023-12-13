@@ -38,10 +38,6 @@ class TimeoutExtension extends BaseTimeoutExtensionSpecification {
   @TempDir
   Path tempDir
 
-  def setup() {
-    outputCapturer.muteStandardStreams()
-  }
-
   @Timeout(1)
   def "method that completes in time"() {
     setup:

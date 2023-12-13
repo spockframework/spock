@@ -235,17 +235,20 @@ public class RunContext implements EngineExecutionContext {
     if (runContexts.isEmpty()) {
       // we got a new thread that didn't inherit the original context, so just add us here
       runContexts.add(this);
+      return;
+    }
+
+    if (runContexts.getFirst() == this) return; // everything is well
+
+    if (!runContexts.contains(this)) {
+      // something weird happened, and we got the got a separate RunContext hierarchy from what we'd expect
+      // maybe some thread re-use between runs
+      runContexts.clear();
+      runContexts.add(this);
     } else {
-      if (!runContexts.contains(this)) {
-        // something weird happened, and we got the got a separate RunContext hierarchy from what we'd expect
-        // maybe some thread re-use between runs
-        runContexts.clear();
-        runContexts.add(this);
-      } else {
-        while (runContexts.getFirst() != this) {
-          // we got some residual child contexts that didn't get cleared after a thread spawn
-          runContexts.removeFirst();
-        }
+      while (runContexts.getFirst() != this) {
+        // we got some residual child contexts that didn't get cleared after a thread spawn
+        runContexts.removeFirst();
       }
     }
   }

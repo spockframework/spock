@@ -301,6 +301,11 @@ class NamespacedExtensionStoreSpec extends Specification {
     ns1GrandChild.rootStore.get("key") == "something"
   }
 
+  def "namespaces have readable toString"() {
+    expect:
+    NS1.toString() == "Namespace{parts=[NS1]}"
+  }
+
   def <V> V shouldNotBeCalled() {
     throw new RuntimeException()
   }

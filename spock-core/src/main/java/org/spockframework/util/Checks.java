@@ -1,7 +1,21 @@
+/*
+ * Copyright 2023 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package org.spockframework.util;
 
 import org.jetbrains.annotations.Contract;
-import org.junit.platform.commons.PreconditionViolationException;
 
 import java.util.Arrays;
 import java.util.function.Supplier;
@@ -31,7 +45,7 @@ public abstract class Checks {
   /**
    * Assert that the supplied {@link Object} is not {@code null}.
    *
-   * @param object the object to check
+   * @param object          the object to check
    * @param messageProvider violation message
    * @return the supplied object as a convenience
    * @throws IllegalArgumentException if the supplied object is {@code null}
@@ -47,7 +61,7 @@ public abstract class Checks {
    * This method does NOT check if the supplied
    * array contains any {@code null} elements.
    *
-   * @param array the array to check
+   * @param array           the array to check
    * @param messageProvider violation message
    * @return the supplied array as a convenience
    * @throws IllegalArgumentException if the supplied array is {@code null} or contains no elements.
@@ -64,7 +78,7 @@ public abstract class Checks {
    * This method does NOT check if the supplied
    * array is {@code null} or <em>empty</em>.
    *
-   * @param array the array to check
+   * @param array           the array to check
    * @param messageProvider violation message
    * @return the supplied array as a convenience
    * @see #notNull(Object, Supplier)

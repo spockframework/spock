@@ -43,7 +43,7 @@ public abstract class Checks {
 
   /**
    * Assert that the supplied array is neither {@code null} nor <em>empty</em>.
-   *
+   * <p>
    * This method does NOT check if the supplied
    * array contains any {@code null} elements.
    *
@@ -60,7 +60,7 @@ public abstract class Checks {
 
   /**
    * Assert that the supplied array contains no {@code null} elements.
-   *
+   * <p>
    * This method does NOT check if the supplied
    * array is {@code null} or <em>empty</em>.
    *

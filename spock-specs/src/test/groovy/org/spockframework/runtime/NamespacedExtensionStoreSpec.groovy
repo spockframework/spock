@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package org.spockframework.runtime
 
 import org.spockframework.runtime.extension.IStore
@@ -11,12 +26,12 @@ class NamespacedExtensionStoreSpec extends Specification {
   static final NS2 = IStore.Namespace.create("NS2")
 
   @AutoCleanup
-  def rootStore = StoreProvider.createRootStore()
+  def rootStoreProvider = StoreProvider.createRootStoreProvider()
   @AutoCleanup
-  def childStore = rootStore.createChildStoreProvider()
+  def childStoreProvider = rootStoreProvider.createChildStoreProvider()
 
-  def ns1Root = rootStore.getStore(NS1)
-  def ns1Child = childStore.getStore(NS1)
+  def ns1Root = rootStoreProvider.getStore(NS1)
+  def ns1Child = childStoreProvider.getStore(NS1)
 
   def "can put something in and retrieve it"() {
     when:
@@ -57,10 +72,10 @@ class NamespacedExtensionStoreSpec extends Specification {
     ns1Root.put("key", "something")
 
     and: "another store"
-    def ns2Store = rootStore.getStore(NS2)
+    def ns2Store = rootStoreProvider.getStore(NS2)
 
     and: "another store with an appended namespace"
-    def ns1Sub = rootStore.getStore(NS1.append("sub"))
+    def ns1Sub = rootStoreProvider.getStore(NS1.append("sub"))
 
     expect:
     ns2Store.get("key") == null
@@ -72,7 +87,7 @@ class NamespacedExtensionStoreSpec extends Specification {
     expect:
     ns1Root.getOrDefault("key", String, "default") == "default"
 
-    and: "value ist still missing"
+    and: "value is still missing"
     ns1Root.get("key") == null
   }
 
@@ -81,7 +96,7 @@ class NamespacedExtensionStoreSpec extends Specification {
     // explicit cast is necessary as groovy dynamic dispatch would otherwise treat the closure as default value 🤦
     ns1Root.getOrDefault("key", String, { "default" } as Supplier<String>) == "default"
 
-    and: "value ist still missing"
+    and: "value is still missing"
     ns1Root.get("key") == null
   }
 
@@ -142,12 +157,16 @@ class NamespacedExtensionStoreSpec extends Specification {
     ns1Root.getOrComputeIfAbsent("key", { shouldNotBeCalled() }, List) == ["something"]
   }
 
-  def "AutoCloseable items are closed when the store is closed, but not when they have been removed or replaced prior"() {
+  def "AutoCloseable items are closed in reverse insertion order when the store is closed, but not when they have been removed or replaced prior"() {
     given:
     AutoCloseable item = Mock()
+    AutoCloseable item2 = Mock()
+    AutoCloseable item3 = Mock()
     AutoCloseable other = Mock()
 
     ns1Child.put("item", item)
+    ns1Child.put("item2", item2)
+    ns1Child.put("item3", item3)
     ns1Child.put("other", other)
     ns1Child.put("yetAnother", other)
 
@@ -156,7 +175,13 @@ class NamespacedExtensionStoreSpec extends Specification {
     ns1Child.put("yetAnother", "something else")
 
     and:
-    childStore.close()
+    childStoreProvider.close()
+
+    then:
+    1 * item3.close()
+
+    then:
+    1 * item2.close()
 
     then:
     1 * item.close()
@@ -281,8 +306,8 @@ class NamespacedExtensionStoreSpec extends Specification {
 
   def "child stores can navigate to the parent and root store"() {
     given:
-    def grandChild = childStore.createChildStoreProvider()
-    def ns1GrandChild = grandChild.getStore(NS1)
+    def grandChildStoreProvider = childStoreProvider.createChildStoreProvider()
+    def ns1GrandChild = grandChildStoreProvider.getStore(NS1)
     ns1Root.put("key", "something")
     ns1Child.put("key", "other thing")
     ns1GrandChild.put("key", "grand thing")

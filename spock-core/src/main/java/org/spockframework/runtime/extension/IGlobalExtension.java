@@ -17,10 +17,11 @@
 package org.spockframework.runtime.extension;
 
 import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.util.Beta;
 
 public interface IGlobalExtension {
   /**
-   * Is called when Spock starts it services, before tests are discovered.
+   * Is called when Spock starts its services, before tests are discovered.
    */
   default void start() {}
 
@@ -29,7 +30,7 @@ public interface IGlobalExtension {
    * <p>
    * Extensions can perform their actions to register {@link IMethodInterceptor} or other things.
    * @param spec the {@link SpecInfo} for the discovered {@link spock.lang.Specification}.
-   *             Note that this is always the bottomSpec, it is not called for super specs.
+   *             Note that this is always the bottom specification, it is not called for super specs.
    */
   default void visitSpec(SpecInfo spec) {}
 
@@ -40,7 +41,9 @@ public interface IGlobalExtension {
    * and can initialize things that are needed during execution.
    * @since 2.4
    */
+  @Beta
   default void executionStart(ISpockExecution spockExecution) {}
+
   /**
    * Is called after Spock finished executing tests.
    * <p>
@@ -51,12 +54,13 @@ public interface IGlobalExtension {
    * by the {@link IStore}, so there is no need to do this here.
    * @since 2.4
    */
+  @Beta
   default void executionStop(ISpockExecution spockExecution) {}
 
   /**
    * Is called when the execution stops, or when the JVM exits at the latest.
    * <p>
-   * It can be called more than once.
+   * It can be called more than once or also not at all.
    */
   default void stop() {}
 }

@@ -17,7 +17,6 @@ import java.util.concurrent.atomic.AtomicReference
 
 class StoreSpec extends EmbeddedSpecification {
 
-
   def setup() {
     runner.addClassImport(LogStoreUsage)
     runner.addClassImport(FailingStoreUsage)

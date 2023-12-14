@@ -1220,7 +1220,9 @@ If an item is not found in the current store, its parent store is searched, and 
 If an interceptor adds a `Macguffin` to the store via a `sharedInitializerInterceptor`  for `ASpec` it will be available to all features (`AFeature1` and `AFeature2`) and iterations (`AFeature1[1]`, `AFeature1[2]`, `AFeature2[1]`, `AFeature2[2]`) of that specification, but not to `BSpec` or its features. Conversely, if a feature interceptor adds a `Thingmajig` to the store for `AFeature1` it will be available to all its iterations (`AFeature1[1]`, `AFeature1[2]`), but not to sibling features (`AFeature2`) or to the specification (`ASpec`).
 
 
-NOTE: If an object stored in the store implements `java.lang.AutoCloseable`, then the `close()` method will be called when the store is closed.
+NOTE: When the store is closed, it will call the `close()` method for all stored values that implements `java.lang.AutoCloseable`.
+      Stored values will be closed in reverse insertion order.
+      This does not happen, if the value was added and subsequently removed from the store, before the store was closed.
 
 ==== Example of a global extension using the Store
 
@@ -1236,7 +1238,7 @@ include::{sourcedir}/extension/ExtensionStoreSpec.groovy[tag=example-extension]
 <5> It then puts a `ConcurrentHashMap` into the store to serve as collector for the data
 <6> During the feature method execution the `INTERCEPTOR` retrieves the `IStore` via the shared `Namespace`
 <7> It then retrieves the `ConcurrentHashMap` via the key, retrieval request will propagate through the hierarchy until it finds the value at the root-level
-<8> It then adds counts the occurred exception type, creating the counter if it was not yet present.
+<8> It then increments the counter for the occurred exception type, creating the counter if it was not yet present.
 <9> `executionStop` is called after all tests have been executed and also give access to the root-level `IStore`.
     The extension uses this to print a report of the collected exception statistics.
 

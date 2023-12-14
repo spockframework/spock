@@ -32,7 +32,7 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
 
   public SpockExecutionContext(EngineExecutionListener engineExecutionListener) {
     this.engineExecutionListener = engineExecutionListener;
-    this.storeProvider = StoreProvider.createRootStore();
+    this.storeProvider = StoreProvider.createRootStoreProvider();
   }
 
   private SpockExecutionContext setRunContext(RunContext runContext) {

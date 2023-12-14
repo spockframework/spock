@@ -2,6 +2,11 @@ package org.spockframework.runtime.extension;
 
 import org.spockframework.util.Beta;
 
+/**
+ * @author Leonard Brünings
+ * @since 2.4
+ */
+@Beta
 public interface ISpockExecution {
   /**
    * Get the {@link IStore} for the supplied {@linkplain IStore.Namespace namespace}.
@@ -16,6 +21,5 @@ public interface ISpockExecution {
    * working in the same namespace; never {@code null}
    * @since 2.4
    */
-  @Beta
   IStore getStore(IStore.Namespace namespace);
 }

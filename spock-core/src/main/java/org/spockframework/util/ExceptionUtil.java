@@ -73,10 +73,4 @@ public class ExceptionUtil {
     }
     return t;
   }
-
-  @SuppressWarnings("unchecked")
-  private static <T extends Throwable> void throwAsUncheckedException(Throwable t) throws T {
-    throw (T) t;
-  }
-
 }

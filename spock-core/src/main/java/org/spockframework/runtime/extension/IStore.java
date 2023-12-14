@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 /**
  * A hierarchical store of key-value pairs.
  *
+ * @author Leonard Brünings
  * @since 2.4
  */
 @Beta
@@ -38,6 +39,7 @@ public interface IStore {
    * @return the value; potentially {@code null}
    * @see #get(Object, Class)
    * @see #getOrDefault(Object, Class, Object)
+   * @since 2.4
    */
   @Nullable
   <V> V get(Object key);
@@ -51,13 +53,14 @@ public interface IStore {
    * for a value with the same {@code key} in the {@code Namespace} used
    * to create this store.
    *
-   * @param key          the key; never {@code null}
+   * @param key the key; never {@code null}
    * @param requiredType the required type of the value; never {@code null};
-   *                     will throw {@link StoreException} if value isn't an instance of this type
-   * @param <V>          the value type
+   * will throw {@link StoreException} if value isn't an instance of this type
+   * @param <V> the value type
    * @return the value; potentially {@code null}
    * @see #get(Object)
    * @see #getOrDefault(Object, Class, Object)
+   * @since 2.4
    */
   @Nullable
   <V> V get(Object key, Class<V> requiredType);
@@ -73,13 +76,14 @@ public interface IStore {
    * for a value with the same {@code key} in the {@code Namespace} used
    * to create this store.
    *
-   * @param key          the key; never {@code null}
+   * @param key the key; never {@code null}
    * @param requiredType the required type of the value; never {@code null};
-   *                     will throw {@link StoreException} if value isn't an instance of this type
+   * will throw {@link StoreException} if value isn't an instance of this type
    * @param defaultValue the default value
-   * @param <V>          the value type
+   * @param <V> the value type
    * @return the value; potentially {@code null}
    * @see #get(Object, Class)
+   * @since 2.4
    */
 
   @Nullable
@@ -99,13 +103,14 @@ public interface IStore {
    * for a value with the same {@code key} in the {@code Namespace} used
    * to create this store.
    *
-   * @param key                  the key; never {@code null}
-   * @param requiredType         the required type of the value; never {@code null};
-   *                             will throw {@link StoreException} if value isn't an instance of this type
+   * @param key the key; never {@code null}
+   * @param requiredType the required type of the value; never {@code null};
+   * will throw {@link StoreException} if value isn't an instance of this type
    * @param defaultValueSupplier the {@link Supplier} for the default value
-   * @param <V>                  the value type
+   * @param <V> the value type
    * @return the value; potentially {@code null}
    * @see #get(Object, Class)
+   * @since 2.4
    */
 
   @Nullable
@@ -137,11 +142,12 @@ public interface IStore {
    * the store is closed.
    *
    * @param type the type of object to retrieve; never {@code null}
-   * @param <V>  the key and value type
+   * @param <V> the key and value type
    * @return the object; never {@code null}
    * @see #getOrComputeIfAbsent(Object, Function)
    * @see #getOrComputeIfAbsent(Object, Function, Class)
    * @see AutoCloseable
+   * @since 2.4
    */
   default <V> V getOrComputeIfAbsent(Class<V> type) {
     return getOrComputeIfAbsent(type, ReflectionUtil::newInstance, type);
@@ -168,15 +174,16 @@ public interface IStore {
    * example select {@code String} for {@code V} and then try to get a {@code List} object from the returned
    * optional, you will get a {@link ClassCastException} at runtime.
    *
-   * @param key            the key; never {@code null}
+   * @param key the key; never {@code null}
    * @param defaultCreator the function called with the supplied {@code key}
-   *                       to create a new value; never {@code null}
-   * @param <K>            the key type
-   * @param <V>            the value type
+   * to create a new value; never {@code null}
+   * @param <K> the key type
+   * @param <V> the value type
    * @return the value; potentially {@code null}
    * @see #getOrComputeIfAbsent(Class)
    * @see #getOrComputeIfAbsent(Object, Function, Class)
    * @see AutoCloseable
+   * @since 2.4
    */
 
   @Nullable
@@ -193,21 +200,22 @@ public interface IStore {
    * a new value will be computed by the {@code defaultCreator} (given
    * the {@code key} as input), stored, and returned.
    * <p>
-   * If {@code requiredType} implements {@link AutoCloseable}
+   * If created value implements {@link AutoCloseable}
    * the {@code close()} method will be invoked on the stored object when
    * the store is closed.
    *
-   * @param key            the key; never {@code null}
+   * @param key the key; never {@code null}
    * @param defaultCreator the function called with the supplied {@code key}
-   *                       to create a new value; never {@code null}
-   * @param requiredType   the required type of the value; never {@code null};
-   *                       will throw {@link StoreException} if value isn't an instance of this type
-   * @param <K>            the key type
-   * @param <V>            the value type
+   * to create a new value; never {@code null}
+   * @param requiredType the required type of the value; never {@code null};
+   * will throw {@link StoreException} if value isn't an instance of this type
+   * @param <K> the key type
+   * @param <V> the value type
    * @return the value; potentially {@code null}
    * @see #getOrComputeIfAbsent(Class)
    * @see #getOrComputeIfAbsent(Object, Function)
    * @see AutoCloseable
+   * @since 2.4
    */
   @Nullable
   <K, V> V getOrComputeIfAbsent(K key, Function<K, V> defaultCreator, Class<V> requiredType);
@@ -223,19 +231,20 @@ public interface IStore {
    * the store is closed.
    * <p>
    * Any existing value in the current {@link IStore} will be replaced,
-   * byt not in ancestors. In addition, the {@link AutoCloseable} API will not
+   * but not in ancestors. In addition, the {@link AutoCloseable} API will not
    * be honored for values that are replaced via this method.
    * <p>
    * <b>Warning:</b> Be aware that choosing {@code V} must be done wisely as it is an unsafe operation. If you for
    * example select {@code String} for {@code V} and then try to get a {@code List} object from the returned
    * optional, you will get a {@link ClassCastException} at runtime.
    *
-   * @param key   the key under which the value should be stored; never
-   *              {@code null}
-   * @param <V>   the value type
+   * @param key the key under which the value should be stored; never
+   * {@code null}
+   * @param <V> the value type
    * @param value the value to store; may be {@code null}
    * @return the previous value; may be {@code null}
    * @see AutoCloseable
+   * @since 2.4
    */
   @Nullable
   <V> V put(Object key, Object value);
@@ -259,6 +268,7 @@ public interface IStore {
    * @return the previous value or {@code null} if no value was present
    * for the specified key
    * @see #remove(Object, Class)
+   * @since 2.4
    */
   @Nullable
   <V> V remove(Object key);
@@ -271,13 +281,14 @@ public interface IStore {
    * not in ancestors. In addition, the {@link AutoCloseable} API will not
    * be honored for values that are manually removed via this method.
    *
-   * @param key          the key; never {@code null}
+   * @param key the key; never {@code null}
    * @param requiredType the required type of the value; never {@code null}
-   *                     will throw {@link StoreException} if value isn't an instance of this type
-   * @param <V>          the value type
+   * will throw {@link StoreException} if value isn't an instance of this type
+   * @param <V> the value type
    * @return the previous value or {@code null} if no value was present
    * for the specified key
    * @see #remove(Object)
+   * @since 2.4
    */
   @Nullable
   <V> V remove(Object key, Class<V> requiredType);
@@ -286,19 +297,22 @@ public interface IStore {
    * Returns the top most store in the hierarchy.
    *
    * @return the top most store in the hierarchy
+   * @since 2.4
    */
   default IStore getRootStore() {
-    IStore parent = getParentStore();
-    if (parent == null) {
-      return this;
+    IStore current = this;
+    IStore parent;
+    while ((parent = current.getParentStore()) != null) {
+      current = parent;
     }
-    return parent.getRootStore();
+    return current;
   }
 
   /**
    * Returns the parent of this store in the hierarchy.
    *
    * @return the parent or {@code null} if this is the root store
+   * @since 2.4
    */
   @Nullable
   IStore getParentStore();
@@ -310,6 +324,8 @@ public interface IStore {
    * <p>Storing data in custom namespaces allows extensions to avoid accidentally
    * mixing data between extensions or across different invocations within the
    * lifecycle of a single extension.
+   *
+   * @since 2.4
    */
   class Namespace {
 
@@ -323,6 +339,8 @@ public interface IStore {
      * <p>
      * The parts should be valid keys for a map, that is they should be immutable,
      * or at least have a stable hash code and equality.
+     *
+     * @since 2.4
      */
     public static Namespace create(Object... parts) {
       Checks.notEmpty(parts, () -> "parts array must not be null or empty");
@@ -358,6 +376,7 @@ public interface IStore {
      * existing sequence of parts in this namespace.
      *
      * @return new namespace; never {@code null}
+     * @since 2.4
      */
     public Namespace append(Object... parts) {
       Checks.notEmpty(parts, () -> "parts array must not be null or empty");

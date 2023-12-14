@@ -3,6 +3,7 @@ package org.spockframework.runtime;
 import org.junit.platform.engine.support.store.NamespacedHierarchicalStore;
 import org.junit.platform.engine.support.store.NamespacedHierarchicalStoreException;
 import org.spockframework.runtime.extension.IStore;
+import org.spockframework.util.ObjectUtil;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -19,10 +20,9 @@ public class NamespacedExtensionStore implements IStore {
     this.namespace =  Objects.requireNonNull(namespace);
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public <V> V get(Object key) {
-    return (V) execute(() -> delegate.get(namespace, key));
+    return ObjectUtil.uncheckedCast(execute(() -> delegate.get(namespace, key)));
   }
 
   @Override
@@ -30,10 +30,9 @@ public class NamespacedExtensionStore implements IStore {
     return execute(() -> delegate.get(namespace, key, requiredType));
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public <K, V> V getOrComputeIfAbsent(K key, Function<K, V> defaultCreator) {
-    return (V) execute(() -> delegate.getOrComputeIfAbsent(namespace, key, defaultCreator));
+    return ObjectUtil.uncheckedCast(execute(() -> delegate.getOrComputeIfAbsent(namespace, key, defaultCreator)));
   }
 
   @Override
@@ -41,16 +40,14 @@ public class NamespacedExtensionStore implements IStore {
     return execute(() -> delegate.getOrComputeIfAbsent(namespace, key, defaultCreator, requiredType));
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public <V> V put(Object key, Object value) {
-    return (V) execute(() -> delegate.put(namespace, key, value));
+    return ObjectUtil.uncheckedCast(execute(() -> delegate.put(namespace, key, value)));
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public <V> V remove(Object key) {
-    return (V) execute(() -> delegate.remove(namespace, key));
+    return ObjectUtil.uncheckedCast(execute(() -> delegate.remove(namespace, key)));
   }
 
   @Override

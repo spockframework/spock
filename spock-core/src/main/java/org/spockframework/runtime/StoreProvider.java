@@ -6,6 +6,10 @@ import org.spockframework.util.Nullable;
 
 import java.util.Objects;
 
+/**
+ * @author Leonard Brünings
+ * @since 2.4
+ */
 public class StoreProvider implements AutoCloseable {
   private static final NamespacedHierarchicalStore.CloseAction<IStore.Namespace> CLOSE_ACTION = (IStore.Namespace namespace, Object key, Object value) -> {
     if (value instanceof AutoCloseable) {
@@ -22,7 +26,7 @@ public class StoreProvider implements AutoCloseable {
     this.parent = parent;
   }
 
-  public static StoreProvider createRootStore() {
+  public static StoreProvider createRootStoreProvider() {
     return new StoreProvider(newBackendStore(null), null);
   }
 

@@ -110,28 +110,15 @@ class IsolatedUseSpec extends EmbeddedSpecification {
     def result = runner.runWithImports '''
       @Use(StringExtensions)
       class ASpec extends Specification {
-        @Shared
-        CountDownLatch latch = new CountDownLatch(2)
-
-        @IgnoreIf({ instance.specificationContext.currentSpec.childExecutionMode.orElse(null) == ExecutionMode.SAME_THREAD })
         def feature() {
-          given:
-          latch.countDown()
-
           expect:
-          !latch.await(10, TimeUnit.SECONDS)
-
-          where:
-          i << (1..2)
+          specificationContext.currentSpec.childExecutionMode.orElse(null) == ExecutionMode.SAME_THREAD
         }
       }
     '''
 
     then:
-    verifyAll {
-      result.testsSucceededCount == 1
-      result.testsAbortedCount == 2
-    }
+    result.testsSucceededCount == 1
   }
 
   def "executing iterations in parallel works with annotated feature"() {

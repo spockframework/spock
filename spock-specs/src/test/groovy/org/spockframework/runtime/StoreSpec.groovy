@@ -24,6 +24,7 @@ import org.spockframework.specs.extension.Snapshotter
 import org.spockframework.util.Assert
 import org.spockframework.util.InternalSpockError
 import spock.config.ConfigurationObject
+import spock.lang.IgnoreIf
 import spock.lang.Shared
 
 import java.lang.annotation.Retention
@@ -71,6 +72,10 @@ class StoreSpec extends EmbeddedSpecification {
   @Shared
   def supportedMethodKinds = ((MethodKind.values() as List) - [MethodKind.DATA_PROCESSOR, MethodKind.DATA_PROVIDER])
 
+  @IgnoreIf(
+    value = { env.CI && (os.macOs || os.windows) },
+    reason = "The CI runners for macos and windows are too slow and this isn't really affected by platform"
+  )
   def "properly handles failures during store cleanup"() {
     given:
     AtomicReference sharedList = new AtomicReference([])
@@ -109,7 +114,7 @@ class StoreSpec extends EmbeddedSpecification {
 class LogStoreExtension implements IAnnotationDrivenExtension<LogStoreUsage> {
   final LoggingStoreConfig config
 
-  LogStoreExtension (LoggingStoreConfig config) {
+  LogStoreExtension(LoggingStoreConfig config) {
     this.config = config
   }
 
@@ -123,7 +128,7 @@ class LogStoreExtension implements IAnnotationDrivenExtension<LogStoreUsage> {
     specInfo.addSetupSpecInterceptor interceptor
     specInfo.addInitializerInterceptor interceptor
     specInfo.addSetupInterceptor interceptor
-    specInfo.allFixtureMethods*.addInterceptor  interceptor
+    specInfo.allFixtureMethods*.addInterceptor interceptor
     specInfo.allFeatures*.addInterceptor interceptor
     specInfo.allFeatures*.addIterationInterceptor interceptor
     specInfo.allFeatures*.featureMethod*.addInterceptor interceptor
@@ -208,7 +213,7 @@ class FailingCleanupStoreExtension implements IAnnotationDrivenExtension<Failing
     specInfo.addSetupSpecInterceptor interceptor
     specInfo.addInitializerInterceptor interceptor
     specInfo.addSetupInterceptor interceptor
-    specInfo.allFixtureMethods*.addInterceptor  interceptor
+    specInfo.allFixtureMethods*.addInterceptor interceptor
     specInfo.allFeatures*.addInterceptor interceptor
     specInfo.allFeatures*.addIterationInterceptor interceptor
     specInfo.allFeatures*.featureMethod*.addInterceptor interceptor

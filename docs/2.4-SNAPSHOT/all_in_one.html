@@ -186,8 +186,9 @@
 <li><a href="#_global_extensions">Global Extensions</a></li>
 <li><a href="#_annotation_driven_local_extensions">Annotation Driven Local Extensions</a></li>
 <li><a href="#_configuration_objects">Configuration Objects</a></li>
-<li><a href="#_interceptors">Interceptors</a></li>
+<li><a href="#interceptors">Interceptors</a></li>
 <li><a href="#mock-makers">Mock Maker Extensions</a></li>
+<li><a href="#extension-store">Keeping State in Extensions</a></li>
 </ul>
 </li>
 </ul>
@@ -255,6 +256,7 @@
 <li><a href="#_2_4_tbd">2.4 (tbd)</a>
 <ul class="sectlevel3">
 <li><a href="#_breaking_changes">Breaking Changes</a></li>
+<li><a href="#_misc">Misc</a></li>
 </ul>
 </li>
 <li><a href="#_2_4_m1_2022_11_30">2.4-M1 (2022-11-30)</a></li>
@@ -265,13 +267,13 @@
 <li><a href="#_2_2_m1_2022_02_16">2.2-M1 (2022-02-16)</a></li>
 <li><a href="#_2_1_2022_02_15">2.1 (2022-02-15)</a></li>
 <li><a href="#_official_spock_logo">Official Spock Logo</a></li>
-<li><a href="#_misc">Misc</a></li>
+<li><a href="#_misc_2">Misc</a></li>
 <li><a href="#_2_1_m2_2021_11_12">2.1-M2 (2021-11-12)</a></li>
 <li><a href="#_2_1_m1_2021_11_12">2.1-M1 (2021-11-12)</a>
 <ul class="sectlevel3">
 <li><a href="#_highlights">Highlights</a></li>
 <li><a href="#_breaking_changes_2">Breaking Changes</a></li>
-<li><a href="#_misc_2">Misc</a></li>
+<li><a href="#_misc_3">Misc</a></li>
 </ul>
 </li>
 <li><a href="#_2_0_2021_05_17">2.0 (2021-05-17)</a>
@@ -279,27 +281,27 @@
 <li><a href="#_highlights_2">Highlights</a></li>
 <li><a href="#_migrating_from_1_x">Migrating from 1.x</a></li>
 <li><a href="#_breaking_changes_from_2_0_m5">Breaking Changes (from 2.0-M5)</a></li>
-<li><a href="#_misc_3">Misc</a></li>
+<li><a href="#_misc_4">Misc</a></li>
 </ul>
 </li>
 <li><a href="#_2_0_m5_2021_03_23">2.0-M5 (2021-03-23)</a>
 <ul class="sectlevel3">
 <li><a href="#_breaking_changes_3">Breaking Changes</a></li>
-<li><a href="#_misc_4">Misc</a></li>
+<li><a href="#_misc_5">Misc</a></li>
 </ul>
 </li>
 <li><a href="#_2_0_m4_2020_11_01">2.0-M4 (2020-11-01)</a></li>
 <li><a href="#_2_0_m3_2020_06_11">2.0-M3 (2020-06-11)</a>
 <ul class="sectlevel3">
 <li><a href="#_breaking_changes_4">Breaking Changes</a></li>
-<li><a href="#_misc_5">Misc</a></li>
+<li><a href="#_misc_6">Misc</a></li>
 </ul>
 </li>
 <li><a href="#_2_0_m2_2020_02_10">2.0-M2 (2020-02-10)</a>
 <ul class="sectlevel3">
 <li><a href="#_groovy_3_0_support">Groovy-3.0 Support</a></li>
 <li><a href="#_breaking_changes_5">Breaking Changes</a></li>
-<li><a href="#_misc_6">Misc</a></li>
+<li><a href="#_misc_7">Misc</a></li>
 </ul>
 </li>
 <li><a href="#_2_0_m1_2019_12_31">2.0-M1 (2019-12-31)</a>
@@ -5321,7 +5323,7 @@ running.</p>
 <dt class="hdlist1"><code>visitSpec(SpecInfo spec)</code></dt>
 <dd>
 <p>This is called once for each specification. In this method you can prepare a specification with your extension magic,
-like attaching interceptors to various interception points as described in the chapter <a href="#_interceptors">Interceptors</a>.</p>
+like attaching interceptors to various interception points as described in the chapter <a href="#interceptors">Interceptors</a>.</p>
 </dd>
 <dt class="hdlist1"><code>stop()</code></dt>
 <dd>
@@ -5363,7 +5365,7 @@ as they are primarily intended to provide a value and only a singular value is a
 <div class="paragraph">
 <p><code>IAnnotationDrivenExtension</code> has the following nine methods, where in each you can prepare a specification with your
 extension magic, like attaching interceptors to various interception points as described in the chapter
-<a href="#_interceptors">Interceptors</a>:</p>
+<a href="#interceptors">Interceptors</a>:</p>
 </div>
 <div class="dlist">
 <dl>
@@ -5492,14 +5494,14 @@ configuration file is evaluated, and it contains the section, as the configurati
 </div>
 </div>
 <div class="sect3">
-<h4 id="_interceptors"><a class="anchor" href="#_interceptors"></a><a class="link" href="#_interceptors">Interceptors</a></h4>
+<h4 id="interceptors"><a class="anchor" href="#interceptors"></a><a class="link" href="#interceptors">Interceptors</a></h4>
 <div class="paragraph">
 <p>For applying the magic of your extension, there are various interception points, where you can attach interceptors from
 the extension methods described above to hook into the Spock lifecycle. For each interception point there can of course
 be multiple interceptors added by arbitrary Spock extensions (shipped or 3rd party). Their order currently depends
 on the order they are added, but there should not be made any order assumptions within one interception point.</p>
 </div>
-<div class="imageblock text-center">
+<div id="spock-interceptors" class="imageblock text-center">
 <div class="content">
 <img src="images/spock_interceptors.png" alt="Spock Interceptors">
 </div>
@@ -6082,6 +6084,189 @@ ex.message == <span class="string"><span class="delimiter">&quot;</span><span cl
 </div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="extension-store"><a class="anchor" href="#extension-store"></a><a class="link" href="#extension-store">Keeping State in Extensions</a></h4>
+<div class="paragraph">
+<p>Prior to Spock 2.4, extensions could only store state either in their own instances or their interceptor instances.
+Often, the state can be kept locally in the <code>intercept(IMethodInvocation)</code> method around the <code>IMethodInvocation.proceed()</code> call. However, there are cases where this is not possible, for example when using initializer interceptors.</p>
+</div>
+<div class="paragraph">
+<p>Spock 2.4 adds a new <code>org.spockframework.runtime.extension.IStore</code> interface that allows extensions to store and retrieve data during the execution of a specification.</p>
+</div>
+<div class="paragraph">
+<p>The store is available from the <code>org.spockframework.runtime.extension.IMethodInvocation</code> interface via the <code>getStore(IStore.Namespace namespace)</code> method. Currently, it is not possible to access the store directly from an extension, only via registering an <a href="#interceptors">interceptor</a>.</p>
+</div>
+<div class="paragraph">
+<p>The stores are hierarchical and follow roughly the same hierarchy as shown in the <a href="#spock-interceptors">Spock Interceptors</a> figure. The hierarchy is as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>Root
+┗ Specification
+  ┗ Feature
+    ┗ Iteration</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/extension-store.svg" alt="extension store" width="308" height="211">
+</div>
+<div class="title">Figure 2. Store hierarchy</div>
+</div>
+<div class="paragraph">
+<p>If an item is not found in the current store, its parent store is searched, and so on until the root store is reached. For more information see the JavaDoc of <code>org.spockframework.runtime.extension.IStore</code>.</p>
+</div>
+<div class="paragraph">
+<div class="title">Example</div>
+<p>If an interceptor adds a <code>Macguffin</code> to the store via a <code>sharedInitializerInterceptor</code>  for <code>ASpec</code> it will be available to all features (<code>AFeature1</code> and <code>AFeature2</code>) and iterations (<code>AFeature1[1]</code>, <code>AFeature1[2]</code>, <code>AFeature2[1]</code>, <code>AFeature2[2]</code>) of that specification, but not to <code>BSpec</code> or its features. Conversely, if a feature interceptor adds a <code>Thingmajig</code> to the store for <code>AFeature1</code> it will be available to all its iterations (<code>AFeature1[1]</code>, <code>AFeature1[2]</code>), but not to sibling features (<code>AFeature2</code>) or to the specification (<code>ASpec</code>).</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+When the store is closed, it will call the <code>close()</code> method for all stored values that implement <code>java.lang.AutoCloseable</code>.
+      Stored values will be closed in reverse insertion order.
+      This does not happen, if the value was added and subsequently removed from the store, before the store was closed.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_example_of_a_global_extension_using_the_store"><a class="anchor" href="#_example_of_a_global_extension_using_the_store"></a><a class="link" href="#_example_of_a_global_extension_using_the_store">Example of a global extension using the Store</a></h5>
+<div class="listingblock">
+<div class="title">Global Extension implementation</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">ExceptionCounterGlobalExtension</span> <span class="directive">implements</span> IGlobalExtension {
+  <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> Namespace EXAMPLE_NS = Namespace.create(ExceptionCounterGlobalExtension)    // <b class="conum">(1)</b>
+  <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">String</span> ACCUMULATOR = <span class="string"><span class="delimiter">&quot;</span><span class="content">accumulator</span><span class="delimiter">&quot;</span></span>
+  <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> IMethodInterceptor INTERCEPTOR =  {
+    <span class="keyword">try</span> {
+      <span class="local-variable">it</span>.proceed()
+    } <span class="keyword">catch</span> (<span class="exception">Exception</span> e) {
+      <span class="local-variable">it</span>.getStore(EXAMPLE_NS)                                                                      // <b class="conum">(6)</b>
+        .get(ACCUMULATOR, <span class="predefined-type">ConcurrentHashMap</span>)                                                       // <b class="conum">(7)</b>
+        .computeIfAbsent(e.class.name, { __ -&gt; <span class="keyword">new</span> <span class="predefined-type">AtomicInteger</span>() })                              // <b class="conum">(8)</b>
+        .incrementAndGet()
+      <span class="keyword">throw</span> e
+    }
+  }
+
+  <span class="annotation">@Override</span>
+  <span class="type">void</span> visitSpec(SpecInfo spec) {
+    spec.allFeatures.featureMethod*.addInterceptor(INTERCEPTOR)                                    // <b class="conum">(2)</b>
+  }
+
+  <span class="annotation">@Override</span>
+  <span class="type">void</span> executionStart(ISpockExecution spockExecution) {                                            // <b class="conum">(3)</b>
+    spockExecution.getStore(EXAMPLE_NS)                                                            // <b class="conum">(4)</b>
+      .put(ACCUMULATOR, <span class="keyword">new</span> <span class="predefined-type">ConcurrentHashMap</span>())                                                   // <b class="conum">(5)</b>
+  }
+
+  <span class="annotation">@Override</span>
+  <span class="type">void</span> executionStop(ISpockExecution spockExecution) {                                             // <b class="conum">(9)</b>
+    <span class="keyword">def</span> results = spockExecution.getStore(EXAMPLE_NS)                                              // <b class="conum">(10)</b>
+      .get(ACCUMULATOR, <span class="predefined-type">ConcurrentHashMap</span>)
+
+    <span class="keyword">if</span> (!results.isEmpty()) {
+      println <span class="string"><span class="delimiter">&quot;</span><span class="content">========================</span><span class="delimiter">&quot;</span></span>
+      println <span class="string"><span class="delimiter">&quot;</span><span class="content">==Exception statistics==</span><span class="delimiter">&quot;</span></span>
+      println <span class="string"><span class="delimiter">&quot;</span><span class="content">========================</span><span class="delimiter">&quot;</span></span>
+      results.toSorted().each { exceptionName, counter -&gt;
+        println <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">${</span>counter<span class="inline-delimiter">}</span></span><span class="content">x </span><span class="inline"><span class="inline-delimiter">$</span>exceptionName</span><span class="delimiter">&quot;</span></span>
+      }
+      println <span class="string"><span class="delimiter">&quot;</span><span class="content">========================</span><span class="delimiter">&quot;</span></span>
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>The <code>Namespace</code> for the extension is created, here we use the extension&#8217;s class as key</p>
+</li>
+<li>
+<p>The extension registers the <code>INTERCEPTOR</code> for each feature method</p>
+</li>
+<li>
+<p><code>executionStart</code> is called right before the specifications are executed, it also gives access to the root-level <code>IStore</code></p>
+</li>
+<li>
+<p>The extensions uses its <code>Namespace</code> to retrieve the <code>IStore</code></p>
+</li>
+<li>
+<p>It then puts a <code>ConcurrentHashMap</code> into the store to serve as collector for the data</p>
+</li>
+<li>
+<p>During the feature method execution the <code>INTERCEPTOR</code> retrieves the <code>IStore</code> via the shared <code>Namespace</code></p>
+</li>
+<li>
+<p>It then retrieves the <code>ConcurrentHashMap</code> via the key, retrieval request will propagate through the hierarchy until it finds the value at the root-level</p>
+</li>
+<li>
+<p>It then increments the counter for the occurred exception type, creating the counter if it was not yet present.</p>
+</li>
+<li>
+<p><code>executionStop</code> is called after all tests have been executed and also give access to the root-level <code>IStore</code>.
+The extension uses this to print a report of the collected exception statistics.</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="title">Example Specs</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">ASpec</span> <span class="directive">extends</span> Specification {
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">a failing test</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">expect</span>: <span class="predefined-constant">false</span>
+  }
+
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">a test failing with an exception</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">given</span>:
+    <span class="keyword">if</span>(<span class="integer">1</span>==<span class="integer">1</span>) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="exception">IllegalStateException</span>()
+
+    <span class="key">expect</span>: <span class="predefined-constant">true</span>
+  }
+}
+
+<span class="type">class</span> <span class="class">BSpec</span> <span class="directive">extends</span> Specification {
+
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">illegal parameter for List</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">given</span>:
+    <span class="keyword">def</span> value = <span class="keyword">new</span> <span class="predefined-type">ArrayList</span>&lt;&gt;(-<span class="integer">1</span>)
+
+    <span class="key">expect</span>:
+    value.empty
+  }
+
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">illegal parameter for Map</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">given</span>:
+    <span class="keyword">def</span> value = <span class="keyword">new</span> <span class="predefined-type">HashMap</span>(-<span class="integer">1</span>)
+
+    <span class="key">expect</span>:
+    value.empty
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The extension generates the following output for the example code above.</p>
+</div>
+<div class="listingblock">
+<div class="title">Output</div>
+<div class="content">
+<pre class="CodeRay highlight"><code>========================
+==Exception statistics==
+========================
+1x java.lang.IllegalStateException
+2x java.lang.IllegalArgumentException
+========================</code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -6412,25 +6597,25 @@ Certain <a href="#extensions">extensions</a> also set execution modes when they 
 <div class="content">
 <img src="images/sequential-sequential-execution.svg" alt="sequential sequential execution" width="708" height="164">
 </div>
-<div class="title">Figure 2. Sequential Execution, either <code>runner.parallel.enabled=false</code> or <code>SAME_THREAD</code> Specifications, <code>SAME_THREAD</code> Features</div>
+<div class="title">Figure 3. Sequential Execution, either <code>runner.parallel.enabled=false</code> or <code>SAME_THREAD</code> Specifications, <code>SAME_THREAD</code> Features</div>
 </div>
 <div id="figure-concurrent-concurrent-execution" class="imageblock">
 <div class="content">
 <img src="images/concurrent-concurrent-execution.svg" alt="concurrent concurrent execution" width="260" height="164">
 </div>
-<div class="title">Figure 3. <code>CONCURRENT</code> Specifications, <code>CONCURRENT</code> Features</div>
+<div class="title">Figure 4. <code>CONCURRENT</code> Specifications, <code>CONCURRENT</code> Features</div>
 </div>
 <div id="figure-concurrent-sequential-execution" class="imageblock">
 <div class="content">
 <img src="images/concurrent-sequential-execution.svg" alt="concurrent sequential execution" width="388" height="164">
 </div>
-<div class="title">Figure 4. <code>CONCURRENT</code> Specifications, <code>SAME_THREAD</code> Features</div>
+<div class="title">Figure 5. <code>CONCURRENT</code> Specifications, <code>SAME_THREAD</code> Features</div>
 </div>
 <div id="figure-sequential-concurrent-execution" class="imageblock">
 <div class="content">
 <img src="images/sequential-concurrent-execution.svg" alt="sequential concurrent execution" width="452" height="164">
 </div>
-<div class="title">Figure 5. <code>SAME_THREAD</code> Specifications, <code>CONCURRENT</code> Features</div>
+<div class="title">Figure 6. <code>SAME_THREAD</code> Specifications, <code>CONCURRENT</code> Features</div>
 </div>
 <div class="sect3">
 <h4 id="_execution_hierarchy"><a class="anchor" href="#_execution_hierarchy"></a><a class="link" href="#_execution_hierarchy">Execution Hierarchy</a></h4>
@@ -6438,7 +6623,7 @@ Certain <a href="#extensions">extensions</a> also set execution modes when they 
 <div class="content">
 <img src="images/wbs-legend.svg" alt="wbs legend" width="1051" height="226">
 </div>
-<div class="title">Figure 6. Legend for the following figures</div>
+<div class="title">Figure 7. Legend for the following figures</div>
 </div>
 <div class="ulist">
 <ul>
@@ -6469,38 +6654,38 @@ Certain <a href="#extensions">extensions</a> also set execution modes when they 
 <div class="content">
 <img src="images/execution-hierarchy-same-thread.svg" alt="execution hierarchy same thread" width="300" height="324">
 </div>
-<div class="title">Figure 7. Single threaded execution</div>
+<div class="title">Figure 8. Single threaded execution</div>
 </div>
 <div class="paragraph">
-<p><a href="#figure-execution-hierarchy-same-thread">Figure 7</a> shows the default case when parallel execution is disabled (<code>runner.parallel.enabled=false</code>) or when both specifications (<code>defaultSpecificationExecutionMode</code>) and features (<code>defaultExecutionMode</code>) are set to <code>SAME_THREAD</code>.</p>
+<p><a href="#figure-execution-hierarchy-same-thread">Figure 8</a> shows the default case when parallel execution is disabled (<code>runner.parallel.enabled=false</code>) or when both specifications (<code>defaultSpecificationExecutionMode</code>) and features (<code>defaultExecutionMode</code>) are set to <code>SAME_THREAD</code>.</p>
 </div>
 <div id="figure-execution-hierarchy-concurrent-sequential-execution" class="imageblock">
 <div class="content">
 <img src="images/execution-hierarchy-concurrent-sequential-execution.svg" alt="execution hierarchy concurrent sequential execution" width="300" height="324">
 </div>
-<div class="title">Figure 8. Execution with <code>CONCURRENT</code> Specifications, <code>SAME_THREAD</code></div>
+<div class="title">Figure 9. Execution with <code>CONCURRENT</code> Specifications, <code>SAME_THREAD</code></div>
 </div>
 <div class="paragraph">
-<p><a href="#figure-execution-hierarchy-concurrent-sequential-execution">Figure 8</a> shows the result of setting <code>defaultSpecificationExecutionMode=CONCURRENT</code> and <code>defaultExecutionMode=SAME_THREAD</code>, the specifications will run concurrently but all features will run in the same thread as their specification.</p>
+<p><a href="#figure-execution-hierarchy-concurrent-sequential-execution">Figure 9</a> shows the result of setting <code>defaultSpecificationExecutionMode=CONCURRENT</code> and <code>defaultExecutionMode=SAME_THREAD</code>, the specifications will run concurrently but all features will run in the same thread as their specification.</p>
 </div>
 <div id="figure-execution-hierarchy-sequential-concurrent-execution" class="imageblock">
 <div class="content">
 <img src="images/execution-hierarchy-sequential-concurrent-execution.svg" alt="execution hierarchy sequential concurrent execution" width="300" height="324">
 </div>
-<div class="title">Figure 9. Execution with <code>SAME_THREAD</code> Specifications, <code>CONCURRENT</code> Features</div>
+<div class="title">Figure 10. Execution with <code>SAME_THREAD</code> Specifications, <code>CONCURRENT</code> Features</div>
 </div>
 <div class="paragraph">
-<p><a href="#figure-execution-hierarchy-sequential-concurrent-execution">Figure 9</a> shows the result of setting <code>defaultSpecificationExecutionMode=SAME_THREAD</code> and <code>defaultExecutionMode=CONCURRENT</code>, the specifications will run in the same thread, causing them to run one after the other.
+<p><a href="#figure-execution-hierarchy-sequential-concurrent-execution">Figure 10</a> shows the result of setting <code>defaultSpecificationExecutionMode=SAME_THREAD</code> and <code>defaultExecutionMode=CONCURRENT</code>, the specifications will run in the same thread, causing them to run one after the other.
 The features inside a specification will run concurrently.</p>
 </div>
 <div id="figure-execution-hierarchy-concurrent-concurrent-execution" class="imageblock">
 <div class="content">
 <img src="images/execution-hierarchy-concurrent-concurrent-execution.svg" alt="execution hierarchy concurrent concurrent execution" width="300" height="324">
 </div>
-<div class="title">Figure 10. Execution with <code>CONCURRENT</code> Specifications, <code>CONCURRENT</code> Features</div>
+<div class="title">Figure 11. Execution with <code>CONCURRENT</code> Specifications, <code>CONCURRENT</code> Features</div>
 </div>
 <div class="paragraph">
-<p><a href="#figure-execution-hierarchy-concurrent-concurrent-execution">Figure 10</a> shows the result of setting <code>defaultSpecificationExecutionMode=CONCURRENT</code> and <code>defaultExecutionMode=CONCURRENT</code>, both specifications and features will run concurrently.</p>
+<p><a href="#figure-execution-hierarchy-concurrent-concurrent-execution">Figure 11</a> shows the result of setting <code>defaultSpecificationExecutionMode=CONCURRENT</code> and <code>defaultExecutionMode=CONCURRENT</code>, both specifications and features will run concurrently.</p>
 </div>
 <div class="sect4">
 <h5 id="_execution_mode_inheritance"><a class="anchor" href="#_execution_mode_inheritance"></a><a class="link" href="#_execution_mode_inheritance">Execution Mode Inheritance</a></h5>
@@ -6518,29 +6703,29 @@ If you invert the values <code>SAME_THREAD</code> and <code>CONCURRENT</code> in
 <div class="content">
 <img src="images/execution-hierarchy-inheritance-feature-execution.svg" alt="execution hierarchy inheritance feature execution" width="494" height="338">
 </div>
-<div class="title">Figure 11. Execution with <code>SAME_THREAD</code> Specifications, <code>SAME_THREAD</code> Features and explicit <code>@Execution</code> on Features</div>
+<div class="title">Figure 12. Execution with <code>SAME_THREAD</code> Specifications, <code>SAME_THREAD</code> Features and explicit <code>@Execution</code> on Features</div>
 </div>
 <div class="paragraph">
-<p>In <a href="#figure-execution-hierarchy-inheritance-feature-execution">Figure 11</a> <code>@Execution</code> is applied on the features and those features and iterations will execute concurrently while the rest will execute in the same thread.</p>
+<p>In <a href="#figure-execution-hierarchy-inheritance-feature-execution">Figure 12</a> <code>@Execution</code> is applied on the features and those features and iterations will execute concurrently while the rest will execute in the same thread.</p>
 </div>
 <div id="figure-execution-hierarchy-inheritance-spec-execution" class="imageblock">
 <div class="content">
 <img src="images/execution-hierarchy-inheritance-spec-execution.svg" alt="execution hierarchy inheritance spec execution" width="364" height="338">
 </div>
-<div class="title">Figure 12. Execution with <code>SAME_THREAD</code> Specifications, <code>SAME_THREAD</code> Features and explicit <code>@Execution</code> on a Specification</div>
+<div class="title">Figure 13. Execution with <code>SAME_THREAD</code> Specifications, <code>SAME_THREAD</code> Features and explicit <code>@Execution</code> on a Specification</div>
 </div>
 <div class="paragraph">
-<p>In <a href="#figure-execution-hierarchy-inheritance-spec-execution">Figure 12</a> <code>@Execution</code> is applied on one specification causing the specification and all its features to run concurrently.
+<p>In <a href="#figure-execution-hierarchy-inheritance-spec-execution">Figure 13</a> <code>@Execution</code> is applied on one specification causing the specification and all its features to run concurrently.
 The features execute concurrently since they inherit the explicit execution mode from the specification.</p>
 </div>
 <div id="figure-execution-hierarchy-inheritance-spec-feature-execution" class="imageblock">
 <div class="content">
 <img src="images/execution-hierarchy-inheritance-spec-feature-execution.svg" alt="execution hierarchy inheritance spec feature execution" width="438" height="352">
 </div>
-<div class="title">Figure 13. Execution with <code>SAME_THREAD</code> Specifications, <code>SAME_THREAD</code> Features and explicit <code>@Execution</code> on Features and Specifications</div>
+<div class="title">Figure 14. Execution with <code>SAME_THREAD</code> Specifications, <code>SAME_THREAD</code> Features and explicit <code>@Execution</code> on Features and Specifications</div>
 </div>
 <div class="paragraph">
-<p><a href="#figure-execution-hierarchy-inheritance-spec-feature-execution">Figure 13</a> showcases the combined application of <code>@Execution</code> on a specification and some of its features.
+<p><a href="#figure-execution-hierarchy-inheritance-spec-feature-execution">Figure 14</a> showcases the combined application of <code>@Execution</code> on a specification and some of its features.
 As in the previous example the specification and its features will execute concurrently except <code>testB1</code> since it has its own explicit execution mode set.</p>
 </div>
 </div>
@@ -6584,7 +6769,7 @@ You should not modify the shared resource when you only hold a <code>READ</code>
 <div class="content">
 <img src="images/lock-contention-basics.svg" alt="lock contention basics" width="416" height="338">
 </div>
-<div class="title">Figure 14. Two features with <code>@ResourceLock</code></div>
+<div class="title">Figure 15. Two features with <code>@ResourceLock</code></div>
 </div>
 <div class="sect3">
 <h4 id="_lock_inheritance"><a class="anchor" href="#_lock_inheritance"></a><a class="link" href="#_lock_inheritance">Lock inheritance</a></h4>
@@ -6597,13 +6782,13 @@ However, if the parent node has only <code>READ</code> locks, then it allows par
 <div class="content">
 <img src="images/lock-inherit-iterate-feature.svg" alt="lock inherit iterate feature" width="560" height="338">
 </div>
-<div class="title">Figure 15. Locks on data driven features</div>
+<div class="title">Figure 16. Locks on data driven features</div>
 </div>
 <div id="figure-lock-inherit-spec" class="imageblock">
 <div class="content">
 <img src="images/lock-inherit-spec.svg" alt="lock inherit spec" width="642" height="338">
 </div>
-<div class="title">Figure 16. Locks on spec inherited by features</div>
+<div class="title">Figure 17. Locks on spec inherited by features</div>
 </div>
 </div>
 <div class="sect3">
@@ -6617,13 +6802,13 @@ If the features both had <code>READ_WRITE</code> and <code>READ</code> locks for
 <div class="content">
 <img src="images/lock-coarsening-before.svg" alt="lock coarsening before" width="253" height="268">
 </div>
-<div class="title">Figure 17. Lock coarsening - before</div>
+<div class="title">Figure 18. Lock coarsening - before</div>
 </div>
 <div id="figure-lock-coarsening-after" class="imageblock">
 <div class="content">
 <img src="images/lock-coarsening-after.svg" alt="lock coarsening after" width="169" height="268">
 </div>
-<div class="title">Figure 18. Lock coarsening - after</div>
+<div class="title">Figure 19. Lock coarsening - after</div>
 </div>
 </div>
 <div class="sect3">
@@ -6642,7 +6827,7 @@ you might want to consider splitting the spec into <code>@Isolated</code> and no
 <div class="content">
 <img src="images/isolated.svg" alt="isolated" width="312" height="324">
 </div>
-<div class="title">Figure 19. <code>@Isolated</code> execution</div>
+<div class="title">Figure 20. <code>@Isolated</code> execution</div>
 </div>
 </div>
 </div>
@@ -7156,6 +7341,16 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 </ul>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_misc"><a class="anchor" href="#_misc"></a><a class="link" href="#_misc">Misc</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Add support for <a href="#extension-store">keeping state in extensions</a></p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_2_4_m1_2022_11_30"><a class="anchor" href="#_2_4_m1_2022_11_30"></a><a class="link" href="#_2_4_m1_2022_11_30">2.4-M1 (2022-11-30)</a></h3>
@@ -7338,7 +7533,7 @@ Many thanks to Ayşe Altınsoy (@AltinsoyAyse) for creating the logo through man
 </div>
 </div>
 <div class="sect2">
-<h3 id="_misc"><a class="anchor" href="#_misc"></a><a class="link" href="#_misc">Misc</a></h3>
+<h3 id="_misc_2"><a class="anchor" href="#_misc_2"></a><a class="link" href="#_misc_2">Misc</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -7394,7 +7589,7 @@ See <a href="#precondition_context">Precondition Context</a> for more details.</
 </div>
 </div>
 <div class="sect3">
-<h4 id="_misc_2"><a class="anchor" href="#_misc_2"></a><a class="link" href="#_misc_2">Misc</a></h4>
+<h4 id="_misc_3"><a class="anchor" href="#_misc_3"></a><a class="link" href="#_misc_3">Misc</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -7512,7 +7707,7 @@ If you are one of the few that have already used <code>@ResourceLockChildren</co
 </div>
 </div>
 <div class="sect3">
-<h4 id="_misc_3"><a class="anchor" href="#_misc_3"></a><a class="link" href="#_misc_3">Misc</a></h4>
+<h4 id="_misc_4"><a class="anchor" href="#_misc_4"></a><a class="link" href="#_misc_4">Misc</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -7553,7 +7748,7 @@ These two properties are still supported and used by the <code>@Issue</code> ext
 </div>
 </div>
 <div class="sect3">
-<h4 id="_misc_4"><a class="anchor" href="#_misc_4"></a><a class="link" href="#_misc_4">Misc</a></h4>
+<h4 id="_misc_5"><a class="anchor" href="#_misc_5"></a><a class="link" href="#_misc_5">Misc</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -7872,7 +8067,7 @@ If you are still using spock with <code>ant</code>, then you can just copy the c
 </div>
 </div>
 <div class="sect3">
-<h4 id="_misc_5"><a class="anchor" href="#_misc_5"></a><a class="link" href="#_misc_5">Misc</a></h4>
+<h4 id="_misc_6"><a class="anchor" href="#_misc_6"></a><a class="link" href="#_misc_6">Misc</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -8103,7 +8298,7 @@ or used it as a delegate runner will not work anymore, e.g, <code>PowerMockRunne
 </div>
 </div>
 <div class="sect3">
-<h4 id="_misc_6"><a class="anchor" href="#_misc_6"></a><a class="link" href="#_misc_6">Misc</a></h4>
+<h4 id="_misc_7"><a class="anchor" href="#_misc_7"></a><a class="link" href="#_misc_7">Misc</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -8162,7 +8357,7 @@ module that provides best effort support to ease migration.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_misc_7"><a class="anchor" href="#_misc_7"></a><a class="link" href="#_misc_7">Misc</a></h5>
+<h5 id="_misc_8"><a class="anchor" href="#_misc_8"></a><a class="link" href="#_misc_8">Misc</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -10331,7 +10526,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2023-12-13 10:36:41 UTC
+Last updated 2023-12-15 23:28:26 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

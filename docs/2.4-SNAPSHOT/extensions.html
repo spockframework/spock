@@ -1165,7 +1165,7 @@ running.</p>
 <dt class="hdlist1"><code>visitSpec(SpecInfo spec)</code></dt>
 <dd>
 <p>This is called once for each specification. In this method you can prepare a specification with your extension magic,
-like attaching interceptors to various interception points as described in the chapter <a href="#_interceptors">Interceptors</a>.</p>
+like attaching interceptors to various interception points as described in the chapter <a href="#interceptors">Interceptors</a>.</p>
 </dd>
 <dt class="hdlist1"><code>stop()</code></dt>
 <dd>
@@ -1207,7 +1207,7 @@ as they are primarily intended to provide a value and only a singular value is a
 <div class="paragraph">
 <p><code>IAnnotationDrivenExtension</code> has the following nine methods, where in each you can prepare a specification with your
 extension magic, like attaching interceptors to various interception points as described in the chapter
-<a href="#_interceptors">Interceptors</a>:</p>
+<a href="#interceptors">Interceptors</a>:</p>
 </div>
 <div class="dlist">
 <dl>
@@ -1336,14 +1336,14 @@ configuration file is evaluated, and it contains the section, as the configurati
 </div>
 </div>
 <div class="sect2">
-<h3 id="_interceptors"><a class="anchor" href="#_interceptors"></a><a class="link" href="#_interceptors">Interceptors</a></h3>
+<h3 id="interceptors"><a class="anchor" href="#interceptors"></a><a class="link" href="#interceptors">Interceptors</a></h3>
 <div class="paragraph">
 <p>For applying the magic of your extension, there are various interception points, where you can attach interceptors from
 the extension methods described above to hook into the Spock lifecycle. For each interception point there can of course
 be multiple interceptors added by arbitrary Spock extensions (shipped or 3rd party). Their order currently depends
 on the order they are added, but there should not be made any order assumptions within one interception point.</p>
 </div>
-<div class="imageblock text-center">
+<div id="spock-interceptors" class="imageblock text-center">
 <div class="content">
 <img src="images/spock_interceptors.png" alt="Spock Interceptors">
 </div>
@@ -1926,13 +1926,196 @@ ex.message == <span class="string"><span class="delimiter">&quot;</span><span cl
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="extension-store"><a class="anchor" href="#extension-store"></a><a class="link" href="#extension-store">Keeping State in Extensions</a></h3>
+<div class="paragraph">
+<p>Prior to Spock 2.4, extensions could only store state either in their own instances or their interceptor instances.
+Often, the state can be kept locally in the <code>intercept(IMethodInvocation)</code> method around the <code>IMethodInvocation.proceed()</code> call. However, there are cases where this is not possible, for example when using initializer interceptors.</p>
+</div>
+<div class="paragraph">
+<p>Spock 2.4 adds a new <code>org.spockframework.runtime.extension.IStore</code> interface that allows extensions to store and retrieve data during the execution of a specification.</p>
+</div>
+<div class="paragraph">
+<p>The store is available from the <code>org.spockframework.runtime.extension.IMethodInvocation</code> interface via the <code>getStore(IStore.Namespace namespace)</code> method. Currently, it is not possible to access the store directly from an extension, only via registering an <a href="#interceptors">interceptor</a>.</p>
+</div>
+<div class="paragraph">
+<p>The stores are hierarchical and follow roughly the same hierarchy as shown in the <a href="#spock-interceptors">Spock Interceptors</a> figure. The hierarchy is as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>Root
+┗ Specification
+  ┗ Feature
+    ┗ Iteration</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/extension-store.svg" alt="extension store" width="308" height="211">
+</div>
+<div class="title">Figure 2. Store hierarchy</div>
+</div>
+<div class="paragraph">
+<p>If an item is not found in the current store, its parent store is searched, and so on until the root store is reached. For more information see the JavaDoc of <code>org.spockframework.runtime.extension.IStore</code>.</p>
+</div>
+<div class="paragraph">
+<div class="title">Example</div>
+<p>If an interceptor adds a <code>Macguffin</code> to the store via a <code>sharedInitializerInterceptor</code>  for <code>ASpec</code> it will be available to all features (<code>AFeature1</code> and <code>AFeature2</code>) and iterations (<code>AFeature1[1]</code>, <code>AFeature1[2]</code>, <code>AFeature2[1]</code>, <code>AFeature2[2]</code>) of that specification, but not to <code>BSpec</code> or its features. Conversely, if a feature interceptor adds a <code>Thingmajig</code> to the store for <code>AFeature1</code> it will be available to all its iterations (<code>AFeature1[1]</code>, <code>AFeature1[2]</code>), but not to sibling features (<code>AFeature2</code>) or to the specification (<code>ASpec</code>).</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+When the store is closed, it will call the <code>close()</code> method for all stored values that implement <code>java.lang.AutoCloseable</code>.
+      Stored values will be closed in reverse insertion order.
+      This does not happen, if the value was added and subsequently removed from the store, before the store was closed.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_example_of_a_global_extension_using_the_store"><a class="anchor" href="#_example_of_a_global_extension_using_the_store"></a><a class="link" href="#_example_of_a_global_extension_using_the_store">Example of a global extension using the Store</a></h4>
+<div class="listingblock">
+<div class="title">Global Extension implementation</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">ExceptionCounterGlobalExtension</span> <span class="directive">implements</span> IGlobalExtension {
+  <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> Namespace EXAMPLE_NS = Namespace.create(ExceptionCounterGlobalExtension)    // <b class="conum">(1)</b>
+  <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">String</span> ACCUMULATOR = <span class="string"><span class="delimiter">&quot;</span><span class="content">accumulator</span><span class="delimiter">&quot;</span></span>
+  <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> IMethodInterceptor INTERCEPTOR =  {
+    <span class="keyword">try</span> {
+      <span class="local-variable">it</span>.proceed()
+    } <span class="keyword">catch</span> (<span class="exception">Exception</span> e) {
+      <span class="local-variable">it</span>.getStore(EXAMPLE_NS)                                                                      // <b class="conum">(6)</b>
+        .get(ACCUMULATOR, <span class="predefined-type">ConcurrentHashMap</span>)                                                       // <b class="conum">(7)</b>
+        .computeIfAbsent(e.class.name, { __ -&gt; <span class="keyword">new</span> <span class="predefined-type">AtomicInteger</span>() })                              // <b class="conum">(8)</b>
+        .incrementAndGet()
+      <span class="keyword">throw</span> e
+    }
+  }
+
+  <span class="annotation">@Override</span>
+  <span class="type">void</span> visitSpec(SpecInfo spec) {
+    spec.allFeatures.featureMethod*.addInterceptor(INTERCEPTOR)                                    // <b class="conum">(2)</b>
+  }
+
+  <span class="annotation">@Override</span>
+  <span class="type">void</span> executionStart(ISpockExecution spockExecution) {                                            // <b class="conum">(3)</b>
+    spockExecution.getStore(EXAMPLE_NS)                                                            // <b class="conum">(4)</b>
+      .put(ACCUMULATOR, <span class="keyword">new</span> <span class="predefined-type">ConcurrentHashMap</span>())                                                   // <b class="conum">(5)</b>
+  }
+
+  <span class="annotation">@Override</span>
+  <span class="type">void</span> executionStop(ISpockExecution spockExecution) {                                             // <b class="conum">(9)</b>
+    <span class="keyword">def</span> results = spockExecution.getStore(EXAMPLE_NS)                                              // <b class="conum">(10)</b>
+      .get(ACCUMULATOR, <span class="predefined-type">ConcurrentHashMap</span>)
+
+    <span class="keyword">if</span> (!results.isEmpty()) {
+      println <span class="string"><span class="delimiter">&quot;</span><span class="content">========================</span><span class="delimiter">&quot;</span></span>
+      println <span class="string"><span class="delimiter">&quot;</span><span class="content">==Exception statistics==</span><span class="delimiter">&quot;</span></span>
+      println <span class="string"><span class="delimiter">&quot;</span><span class="content">========================</span><span class="delimiter">&quot;</span></span>
+      results.toSorted().each { exceptionName, counter -&gt;
+        println <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">${</span>counter<span class="inline-delimiter">}</span></span><span class="content">x </span><span class="inline"><span class="inline-delimiter">$</span>exceptionName</span><span class="delimiter">&quot;</span></span>
+      }
+      println <span class="string"><span class="delimiter">&quot;</span><span class="content">========================</span><span class="delimiter">&quot;</span></span>
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>The <code>Namespace</code> for the extension is created, here we use the extension&#8217;s class as key</p>
+</li>
+<li>
+<p>The extension registers the <code>INTERCEPTOR</code> for each feature method</p>
+</li>
+<li>
+<p><code>executionStart</code> is called right before the specifications are executed, it also gives access to the root-level <code>IStore</code></p>
+</li>
+<li>
+<p>The extensions uses its <code>Namespace</code> to retrieve the <code>IStore</code></p>
+</li>
+<li>
+<p>It then puts a <code>ConcurrentHashMap</code> into the store to serve as collector for the data</p>
+</li>
+<li>
+<p>During the feature method execution the <code>INTERCEPTOR</code> retrieves the <code>IStore</code> via the shared <code>Namespace</code></p>
+</li>
+<li>
+<p>It then retrieves the <code>ConcurrentHashMap</code> via the key, retrieval request will propagate through the hierarchy until it finds the value at the root-level</p>
+</li>
+<li>
+<p>It then increments the counter for the occurred exception type, creating the counter if it was not yet present.</p>
+</li>
+<li>
+<p><code>executionStop</code> is called after all tests have been executed and also give access to the root-level <code>IStore</code>.
+The extension uses this to print a report of the collected exception statistics.</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="title">Example Specs</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">ASpec</span> <span class="directive">extends</span> Specification {
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">a failing test</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">expect</span>: <span class="predefined-constant">false</span>
+  }
+
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">a test failing with an exception</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">given</span>:
+    <span class="keyword">if</span>(<span class="integer">1</span>==<span class="integer">1</span>) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="exception">IllegalStateException</span>()
+
+    <span class="key">expect</span>: <span class="predefined-constant">true</span>
+  }
+}
+
+<span class="type">class</span> <span class="class">BSpec</span> <span class="directive">extends</span> Specification {
+
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">illegal parameter for List</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">given</span>:
+    <span class="keyword">def</span> value = <span class="keyword">new</span> <span class="predefined-type">ArrayList</span>&lt;&gt;(-<span class="integer">1</span>)
+
+    <span class="key">expect</span>:
+    value.empty
+  }
+
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">illegal parameter for Map</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">given</span>:
+    <span class="keyword">def</span> value = <span class="keyword">new</span> <span class="predefined-type">HashMap</span>(-<span class="integer">1</span>)
+
+    <span class="key">expect</span>:
+    value.empty
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The extension generates the following output for the example code above.</p>
+</div>
+<div class="listingblock">
+<div class="title">Output</div>
+<div class="content">
+<pre class="CodeRay highlight"><code>========================
+==Exception statistics==
+========================
+1x java.lang.IllegalStateException
+2x java.lang.IllegalArgumentException
+========================</code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2023-12-13 10:36:41 UTC
+Last updated 2023-12-15 23:28:26 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

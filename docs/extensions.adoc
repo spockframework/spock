@@ -1220,7 +1220,7 @@ If an item is not found in the current store, its parent store is searched, and 
 If an interceptor adds a `Macguffin` to the store via a `sharedInitializerInterceptor`  for `ASpec` it will be available to all features (`AFeature1` and `AFeature2`) and iterations (`AFeature1[1]`, `AFeature1[2]`, `AFeature2[1]`, `AFeature2[2]`) of that specification, but not to `BSpec` or its features. Conversely, if a feature interceptor adds a `Thingmajig` to the store for `AFeature1` it will be available to all its iterations (`AFeature1[1]`, `AFeature1[2]`), but not to sibling features (`AFeature2`) or to the specification (`ASpec`).
 
 
-NOTE: When the store is closed, it will call the `close()` method for all stored values that implements `java.lang.AutoCloseable`.
+NOTE: When the store is closed, it will call the `close()` method for all stored values that implement `java.lang.AutoCloseable`.
       Stored values will be closed in reverse insertion order.
       This does not happen, if the value was added and subsequently removed from the store, before the store was closed.
 

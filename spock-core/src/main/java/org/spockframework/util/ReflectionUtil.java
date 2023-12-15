@@ -17,9 +17,6 @@ package org.spockframework.util;
 
 import static java.util.Arrays.asList;
 
-import org.junit.platform.commons.util.ExceptionUtils;
-import org.junit.platform.commons.util.Preconditions;
-
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;

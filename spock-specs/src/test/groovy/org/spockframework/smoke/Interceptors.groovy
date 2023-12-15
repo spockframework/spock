@@ -237,16 +237,13 @@ class SubSpec extends SuperSpec {
       }
     }
 
-    static assertSpecContext(IMethodInvocation invocation) {
+    static assertSpecCommonContext(IMethodInvocation invocation) {
       invocation.with {
         assert spec
         assert !feature
         assert !iteration
         assert instance == sharedInstance
-        assert target != instance
         assert method
-        assert !method.reflection
-        assert !method.name
         instance.specificationContext.with {
           assert currentSpec
           try {
@@ -265,47 +262,45 @@ class SubSpec extends SuperSpec {
       }
     }
 
-    static assertSpecMethodContext(IMethodInvocation invocation) {
+    static assertSpecContext(IMethodInvocation invocation) {
+      assertSpecCommonContext(invocation)
       invocation.with {
-        assert spec
-        assert !feature
-        assert !iteration
-        assert instance == sharedInstance
+        assert target != instance
+        assert !method.reflection
+        assert !method.name
+      }
+    }
+
+    static assertSpecMethodContext(IMethodInvocation invocation) {
+      assertSpecCommonContext(invocation)
+      invocation.with {
         assert target == instance
-        assert method
         assert method.reflection
         assert method.name
+      }
+    }
+
+    static assertFeatureCommonContext(IMethodInvocation invocation) {
+      invocation.with {
+        assert spec
+        assert feature
+        assert method
         instance.specificationContext.with {
           assert currentSpec
-          try {
-            currentFeature
-            assert false: 'currentFeature should not be set'
-          } catch (IllegalStateException ise) {
-            assert ise.message == 'Cannot request current feature in @Shared context'
-          }
-          try {
-            currentIteration
-            assert false: 'currentIteration should not be set'
-          } catch (IllegalStateException ise) {
-            assert ise.message == 'Cannot request current iteration in @Shared context, or feature context'
-          }
+          assert currentFeature
         }
       }
     }
 
     static assertFeatureContext(IMethodInvocation invocation) {
+      assertFeatureCommonContext(invocation)
       invocation.with {
-        assert spec
-        assert feature
         assert !iteration
         assert instance == sharedInstance
         assert target != instance
-        assert method
         assert !method.reflection
         assert !method.name
         instance.specificationContext.with {
-          assert currentSpec
-          assert currentFeature
           try {
             currentIteration
             assert false: 'currentIteration should not be set'
@@ -316,39 +311,32 @@ class SubSpec extends SuperSpec {
       }
     }
 
-    static assertIterationContext(IMethodInvocation invocation) {
+    static assertIterationCommonContext(IMethodInvocation invocation) {
+      assertFeatureCommonContext(invocation)
       invocation.with {
-        assert spec
-        assert feature
         assert iteration
         assert instance != sharedInstance
-        assert target != instance
-        assert method
-        assert !method.reflection
-        assert !method.name
         instance.specificationContext.with {
-          assert currentSpec
-          assert currentFeature
           assert currentIteration
         }
       }
     }
 
-    static assertIterationMethodContext(IMethodInvocation invocation) {
+    static assertIterationContext(IMethodInvocation invocation) {
+      assertIterationCommonContext(invocation)
       invocation.with {
-        assert spec
-        assert feature
-        assert iteration
-        assert instance != sharedInstance
+        assert target != instance
+        assert !method.reflection
+        assert !method.name
+      }
+    }
+
+    static assertIterationMethodContext(IMethodInvocation invocation) {
+      assertIterationCommonContext(invocation)
+      invocation.with {
         assert target == instance
-        assert method
         assert method.reflection
         assert method.name
-        instance.specificationContext.with {
-          assert currentSpec
-          assert currentFeature
-          assert currentIteration
-        }
       }
     }
 

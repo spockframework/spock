@@ -19,6 +19,9 @@ plugins {
   id 'org.springframework.boot' version "2.5.3"
 }
 
+// Spring dependency management downgrades the jupiter version to 5.7.2 otherwise
+ext['junit-jupiter.version'] = libs.versions.junit.get()
+
 dependencies {
   implementation "org.springframework.boot:spring-boot-starter-data-jpa"
   implementation "org.springframework.boot:spring-boot-starter-web"
@@ -32,6 +35,4 @@ dependencies {
   }
 
   runtimeOnly "com.h2database:h2"
-
 }
-

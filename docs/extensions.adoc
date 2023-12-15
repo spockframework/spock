@@ -860,6 +860,7 @@ extension. If the configuration object is only used in an annotation driven loca
 when then configuration object is to be injected into the extension, and you will also get an error when the
 configuration file is evaluated, and it contains the section, as the configuration object is not properly registered yet.
 
+[#interceptors]
 === Interceptors
 
 For applying the magic of your extension, there are various interception points, where you can attach interceptors from
@@ -868,6 +869,7 @@ be multiple interceptors added by arbitrary Spock extensions (shipped or 3rd par
 on the order they are added, but there should not be made any order assumptions within one interception point.
 
 .Spock Interceptors
+[#spock-interceptors]
 image::images/spock_interceptors.png[Spock Interceptors, align=center]
 
 An ellipsis in the figure means that the block before it can be repeated an arbitrary amount of times.
@@ -1158,4 +1160,98 @@ include::{sourcedir}/extension/FancyMockMaker.java[tag=fancy-mock-maker]
 [source,groovy,indent=0]
 ----
 include::{sourcedir}/extension/FancyMockMakerDocSpec.groovy[tag=fancy-mock-maker-usage]
+----
+
+[#extension-store]
+=== Keeping State in Extensions
+
+Prior to Spock 2.4, extensions could only store state either in their own instances or their interceptor instances.
+Often, the state can be kept locally in the `intercept(IMethodInvocation)` method around the `IMethodInvocation.proceed()` call. However, there are cases where this is not possible, for example when using initializer interceptors.
+
+Spock 2.4 adds a new `org.spockframework.runtime.extension.IStore` interface that allows extensions to store and retrieve data during the execution of a specification.
+
+The store is available from the `org.spockframework.runtime.extension.IMethodInvocation` interface via the `getStore(IStore.Namespace namespace)` method. Currently, it is not possible to access the store directly from an extension, only via registering an <<#interceptors,interceptor>>.
+
+The stores are hierarchical and follow roughly the same hierarchy as shown in the <<spock-interceptors>> figure. The hierarchy is as follows:
+
+[source]
+----
+Root
+┗ Specification
+  ┗ Feature
+    ┗ Iteration
+----
+
+.Store hierarchy
+[plantuml,images/extension-store,svg]
+....
+@startuml
+state Root #88CCEE {
+    state ASpec #DDCC77 {
+        state AFeature1 #44AA99 {
+            state "AFeature1[1]" #CC6677
+            state "AFeature1[2]" #CC6677
+        }
+        state AFeature2 #44AA99 {
+            state "AFeature2[1]" #CC6677
+            state "AFeature2[2]" #CC6677
+        }
+    }
+    state BSpec #DDCC77{
+        state BFeature1 #44AA99 {
+            state "BFeature1[1]" #CC6677
+            state "BFeature1[2]" #CC6677
+        }
+        state BFeature2 #44AA99 {
+            state "BFeature2[1]" #CC6677
+            state "BFeature2[2]" #CC6677
+        }
+    }
+}
+
+'// color palette is TOL from https://davidmathlogic.com/colorblind/
+'// https://personal.sron.nl/~pault/ muted variant
+@enduml
+....
+
+If an item is not found in the current store, its parent store is searched, and so on until the root store is reached. For more information see the JavaDoc of `org.spockframework.runtime.extension.IStore`.
+
+.Example
+If an interceptor adds a `Macguffin` to the store via a `sharedInitializerInterceptor`  for `ASpec` it will be available to all features (`AFeature1` and `AFeature2`) and iterations (`AFeature1[1]`, `AFeature1[2]`, `AFeature2[1]`, `AFeature2[2]`) of that specification, but not to `BSpec` or its features. Conversely, if a feature interceptor adds a `Thingmajig` to the store for `AFeature1` it will be available to all its iterations (`AFeature1[1]`, `AFeature1[2]`), but not to sibling features (`AFeature2`) or to the specification (`ASpec`).
+
+
+NOTE: When the store is closed, it will call the `close()` method for all stored values that implement `java.lang.AutoCloseable`.
+      Stored values will be closed in reverse insertion order.
+      This does not happen, if the value was added and subsequently removed from the store, before the store was closed.
+
+==== Example of a global extension using the Store
+
+.Global Extension implementation
+[source,groovy,indent=0]
+----
+include::{sourcedir}/extension/ExtensionStoreSpec.groovy[tag=example-extension]
+----
+<1> The `Namespace` for the extension is created, here we use the extension's class as key
+<2> The extension registers the `INTERCEPTOR` for each feature method
+<3> `executionStart` is called right before the specifications are executed, it also gives access to the root-level `IStore`
+<4> The extensions uses its `Namespace` to retrieve the `IStore`
+<5> It then puts a `ConcurrentHashMap` into the store to serve as collector for the data
+<6> During the feature method execution the `INTERCEPTOR` retrieves the `IStore` via the shared `Namespace`
+<7> It then retrieves the `ConcurrentHashMap` via the key, retrieval request will propagate through the hierarchy until it finds the value at the root-level
+<8> It then increments the counter for the occurred exception type, creating the counter if it was not yet present.
+<9> `executionStop` is called after all tests have been executed and also give access to the root-level `IStore`.
+    The extension uses this to print a report of the collected exception statistics.
+
+.Example Specs
+[source,groovy,indent=0]
+----
+include::{sourcedir}/extension/ExtensionStoreSpec.groovy[tag=example-spec]
+----
+
+The extension generates the following output for the example code above.
+
+.Output
+[source,indent=0]
+----
+include::{sourcedir}/extension/ExtensionStoreSpec.groovy[tag=example-result]
 ----

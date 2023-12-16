@@ -188,7 +188,7 @@ def feature() {
     def foobar = foobar()
 
     then:
-    println(foobar)
+    consume(foobar)
 
     cleanup:
     foobar.size()
@@ -200,10 +200,14 @@ def feature() {
     def (foobar, b) = foobar()
 
     then:
-    println(foobar)
+    consume(foobar)
 
     cleanup:
     foobar.size()
+  }
+
+  void consume(def value) {
+
   }
 
   def foobar() {

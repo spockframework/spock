@@ -217,7 +217,7 @@ Exception e = thrown(IOException)
   @FailsWith(InvalidSpecException)
   def "(Java-style) exception condition must specify a type that is-a java.lang.Throwable"() {
     when:
-    println()
+    URI.create("localhost")
 
     then:
     String str = thrown()
@@ -227,7 +227,7 @@ Exception e = thrown(IOException)
   @FailsWith(InvalidSpecException)
   def "(Groovy-style) exception condition must specify a type that is-a java.lang.Throwable"() {
     when:
-    println()
+    URI.create("localhost")
 
     then:
     thrown(String)

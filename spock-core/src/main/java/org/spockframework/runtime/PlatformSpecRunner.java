@@ -187,11 +187,14 @@ public class PlatformSpecRunner {
     if (currentFeature.isSkipped()) {
       throw new InternalSpockError("Invalid state, feature is executed although it should have been skipped");
     }
+    getSpecificationContext(context).setCurrentFeature(currentFeature);
 
     supervisor.beforeFeature(currentFeature);
     invoke(context, this, createMethodInfoForDoRunFeature(context, feature));
     supervisor.afterFeature(currentFeature);
+
     runCloseContextStoreProvider(context, MethodKind.CLEANUP);
+    getSpecificationContext(context).setCurrentFeature(null);
   }
 
   private MethodInfo createMethodInfoForDoRunFeature(SpockExecutionContext context, Runnable feature) {
@@ -254,6 +257,8 @@ public class PlatformSpecRunner {
   }
 
   void runInitializer(SpockExecutionContext context) {
+    getSpecificationContext(context).setCurrentFeature(context.getCurrentFeature());
+    getSpecificationContext(context).setCurrentIteration(context.getCurrentIteration());
     runInitializer(context, context.getSpec());
   }
 

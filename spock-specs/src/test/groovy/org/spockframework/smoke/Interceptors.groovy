@@ -38,7 +38,7 @@ class Interceptors extends EmbeddedSpecification {
   }
 
   @ResourceLock("LifecycleRecorderAndContextTesterExtension.lifecycleOutline")
-  def "interceptors are called in the correct order"() {
+  def "interceptors are called in the correct order and with the correct context information"() {
     when:
     runner.runWithImports """
 abstract class SuperSpec extends Specification {
@@ -155,61 +155,188 @@ class SubSpec extends SuperSpec {
     @Override
     void visitSpecAnnotation(LifecycleTest annotation, SpecInfo specInfo) {
       specInfo.specsBottomToTop*.addSharedInitializerInterceptor {
+        assertSpecContext(it)
         proceed(it, 'shared initializer', "$it.spec.name")
       }
       specInfo.allSharedInitializerMethods*.addInterceptor {
+        assertSpecMethodContext(it)
         proceed(it, 'shared initializer method', "$it.spec.name.$it.method.name()")
       }
       specInfo.addInterceptor {
+        assertSpecContext(it)
         proceed(it, 'specification', "$it.spec.name")
       }
       specInfo.specsBottomToTop*.addSetupSpecInterceptor {
+        assertSpecContext(it)
         proceed(it, 'setup spec', "$it.spec.name")
       }
       specInfo.allSetupSpecMethods*.addInterceptor {
+        assertSpecMethodContext(it)
         proceed(it, 'setup spec method', "$it.spec.name.$it.method.name()")
       }
       specInfo.allFeatures*.addInterceptor {
+        assertFeatureContext(it)
         proceed(it, 'feature', "$it.spec.name.$it.feature.name")
       }
       specInfo.specsBottomToTop.each { spec ->
         spec.addInitializerInterceptor {
+          assertIterationContext(it)
           proceed(it, 'initializer', "$it.spec.name.$it.feature.name / $spec.name")
         }
       }
       specInfo.allInitializerMethods*.addInterceptor {
+        assertIterationMethodContext(it)
         proceed(it, 'initializer method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
       specInfo.allFeatures*.addIterationInterceptor {
+        assertIterationContext(it)
         proceed(it, 'iteration', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
       }
       specInfo.specsBottomToTop.each { spec ->
         spec.addSetupInterceptor {
+          assertIterationContext(it)
           proceed(it, 'setup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex] / $spec.name")
         }
       }
       specInfo.allSetupMethods*.addInterceptor {
+        assertIterationMethodContext(it)
         proceed(it, 'setup method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
       specInfo.allFeatures*.featureMethod*.addInterceptor {
+        assertIterationMethodContext(it)
         proceed(it, 'feature method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
       specInfo.specsBottomToTop.each { spec ->
         spec.addCleanupInterceptor {
+          assertIterationContext(it)
           proceed(it, 'cleanup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex] / $spec.name")
         }
       }
       specInfo.allCleanupMethods*.addInterceptor {
+        assertIterationMethodContext(it)
         proceed(it, 'cleanup method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
       }
       specInfo.specsBottomToTop*.addCleanupSpecInterceptor {
+        assertSpecContext(it)
         proceed(it, 'cleanup spec', "$it.spec.name")
       }
       specInfo.allCleanupSpecMethods*.addInterceptor {
+        assertSpecMethodContext(it)
         proceed(it, 'cleanup spec method', "$it.spec.name.$it.method.name()")
       }
       specInfo.allFixtureMethods*.addInterceptor {
+        it.with {
+          def specFixture = method.name.endsWith('Spec')
+          if (specFixture) {
+            assertSpecMethodContext(it)
+          } else {
+            assertIterationMethodContext(it)
+          }
+        }
         proceed(it, 'fixture method', "${it.feature?.with { feature -> "$feature.parent.name.$feature.name[#$it.iteration.iterationIndex] / " } ?: ''}$it.spec.name.$it.method.name()")
+      }
+    }
+
+    static assertSpecCommonContext(IMethodInvocation invocation) {
+      invocation.with {
+        assert spec
+        assert !feature
+        assert !iteration
+        assert instance == sharedInstance
+        assert method
+        instance.specificationContext.with {
+          assert currentSpec
+          try {
+            currentFeature
+            assert false: 'currentFeature should not be set'
+          } catch (IllegalStateException ise) {
+            assert ise.message == 'Cannot request current feature in @Shared context'
+          }
+          try {
+            currentIteration
+            assert false: 'currentIteration should not be set'
+          } catch (IllegalStateException ise) {
+            assert ise.message == 'Cannot request current iteration in @Shared context, or feature context'
+          }
+        }
+      }
+    }
+
+    static assertSpecContext(IMethodInvocation invocation) {
+      assertSpecCommonContext(invocation)
+      invocation.with {
+        assert target != instance
+        assert !method.reflection
+        assert !method.name
+      }
+    }
+
+    static assertSpecMethodContext(IMethodInvocation invocation) {
+      assertSpecCommonContext(invocation)
+      invocation.with {
+        assert target == instance
+        assert method.reflection
+        assert method.name
+      }
+    }
+
+    static assertFeatureCommonContext(IMethodInvocation invocation) {
+      invocation.with {
+        assert spec
+        assert feature
+        assert method
+        instance.specificationContext.with {
+          assert currentSpec
+          assert currentFeature
+        }
+      }
+    }
+
+    static assertFeatureContext(IMethodInvocation invocation) {
+      assertFeatureCommonContext(invocation)
+      invocation.with {
+        assert !iteration
+        assert instance == sharedInstance
+        assert target != instance
+        assert !method.reflection
+        assert !method.name
+        instance.specificationContext.with {
+          try {
+            currentIteration
+            assert false: 'currentIteration should not be set'
+          } catch (IllegalStateException ise) {
+            assert ise.message == 'Cannot request current iteration in @Shared context, or feature context'
+          }
+        }
+      }
+    }
+
+    static assertIterationCommonContext(IMethodInvocation invocation) {
+      assertFeatureCommonContext(invocation)
+      invocation.with {
+        assert iteration
+        assert instance != sharedInstance
+        instance.specificationContext.with {
+          assert currentIteration
+        }
+      }
+    }
+
+    static assertIterationContext(IMethodInvocation invocation) {
+      assertIterationCommonContext(invocation)
+      invocation.with {
+        assert target != instance
+        assert !method.reflection
+        assert !method.name
+      }
+    }
+
+    static assertIterationMethodContext(IMethodInvocation invocation) {
+      assertIterationCommonContext(invocation)
+      invocation.with {
+        assert target == instance
+        assert method.reflection
+        assert method.name
       }
     }
 

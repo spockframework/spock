@@ -53,6 +53,7 @@ public class PollingConditions {
   private double initialDelay = 0;
   private double delay = 0.1;
   private double factor = 1.0;
+  private Closure<String> timeoutMessage = null;
 
   /**
    * Returns the timeout (in seconds) until which the conditions have to be satisfied.
@@ -130,7 +131,7 @@ public class PollingConditions {
 
   // TODO: add documentation.
   public void onTimeout(Closure<String> timeoutMessage) {
-    // TODO: implement.
+    this.timeoutMessage = timeoutMessage;
   }
 
   /**
@@ -187,6 +188,9 @@ public class PollingConditions {
     }
 
     String msg = String.format("Condition not satisfied after %1.2f seconds and %d attempts", elapsedTime / 1000d, attempts);
+    if (timeoutMessage != null) {
+      msg = String.format("%s with message: %s", msg, GroovyRuntimeUtil.invokeClosure(timeoutMessage, testException));
+    }
     throw new SpockTimeoutError(seconds, msg, testException);
   }
 

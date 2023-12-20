@@ -130,8 +130,9 @@ public class PollingConditions {
   }
 
   /**
-   * Sets the closure that is evaluated when a timeout is reached. The result of this closure is added
-   * to the {@link SpockTimeoutError} message. Calling it with null resets the timeout message.
+   * Sets the closure that is evaluated when a timeout is reached. The closure can use a {@link Throwable}
+   * as an input parameter, which is thrown by the test conditions when a timeout is reached. The result of this
+   * closure is added to the {@link SpockTimeoutError} message. Calling it with null resets the timeout message.
    *
    * @param timeoutMessage the closure that is evaluated when a timeout is reached
    */

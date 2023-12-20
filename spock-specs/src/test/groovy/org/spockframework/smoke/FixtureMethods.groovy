@@ -83,7 +83,7 @@ class Derived extends Base {
 def x = 42
 
 def setupSpec() {
-  println x
+  def foo = x
 }
     """
 

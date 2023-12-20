@@ -26,45 +26,70 @@ import static java.util.Arrays.asList;
 
 @ThreadSafe
 public class TeePrintStream extends PrintStream {
-  private final List<PrintStream> delegates;
+  private final PrintStream original;
+  private final PrintStream delegate;
 
+  private volatile boolean includeOriginal = true;
+
+  public TeePrintStream(PrintStream original, PrintStream delegate) {
+    super(new ByteArrayOutputStream(0));
+    this.original = original;
+    this.delegate = delegate;
+  }
+
+  @Deprecated
   public TeePrintStream(PrintStream... delegates) {
     this(asList(delegates));
   }
 
+  @Deprecated
   public TeePrintStream(List<PrintStream> delegates) {
-    super(new ByteArrayOutputStream(0));
-    this.delegates = new CopyOnWriteArrayList<>(delegates);
+    this(delegates.get(0), delegates.get(1));
+    Checks.checkArgument(delegates.size() == 2, () -> "Only accepts two arguments");
   }
-
+  @Deprecated
   public List<PrintStream> getDelegates() {
-    return delegates;
+    return asList(original, delegate);
   }
 
+  public PrintStream getOriginal() {
+    return original;
+  }
+
+  public PrintStream getDelegate() {
+    return delegate;
+  }
+
+  public void muteOriginal() {
+    includeOriginal = false;
+  }
+
+  public void unmuteOriginal() {
+    includeOriginal = true;
+  }
+
+  @Deprecated
   public void stopDelegation() {
-    delegates.clear();
+
   }
 
   @Override
   public void flush() {
-    for (PrintStream stream : delegates) {
-      stream.flush();
+    if (includeOriginal) {
+      original.flush();
     }
+    delegate.flush();
   }
 
   @Override
   public void close() {
-    for (PrintStream stream : delegates) {
-      stream.close();
-    }
+    original.close();
+    delegate.close();
   }
 
   @Override
   public boolean checkError() {
-    for (PrintStream stream : delegates) {
-      if (stream.checkError()) return true;
-    }
-    return false;
+    return original.checkError() || delegate.checkError();
   }
 
   @Override
@@ -74,7 +99,7 @@ public class TeePrintStream extends PrintStream {
 
   @Override
   protected void clearError() {
-    for (PrintStream stream : delegates) {
+    for (PrintStream stream : asList(original, delegate)) {
       try {
         GroovyRuntimeUtil.invokeMethod(stream, "clearError");
       } catch (MissingMethodException e) {
@@ -88,211 +113,240 @@ public class TeePrintStream extends PrintStream {
 
   @Override
   public void write(int b) {
-    for (PrintStream stream : delegates) {
-      stream.write(b);
+    if (includeOriginal) {
+      original.write(b);
     }
+    delegate.write(b);
   }
 
   @Override
   public void write(byte[] buf, int off, int len) {
-    for (PrintStream stream : delegates) {
-      stream.write(buf, off, len);
+    if (includeOriginal) {
+      original.write(buf, off, len);
     }
+    delegate.write(buf, off, len);
   }
 
   @Override
   public void print(boolean b) {
-    for (PrintStream stream : delegates) {
-      stream.print(b);
+    if (includeOriginal) {
+      original.print(b);
     }
+    delegate.print(b);
   }
 
   @Override
   public void print(char c) {
-    for (PrintStream stream : delegates) {
-      stream.print(c);
+    if (includeOriginal) {
+      original.print(c);
     }
+    delegate.print(c);
   }
 
   @Override
   public void print(int i) {
-    for (PrintStream stream : delegates) {
-      stream.print(i);
+    if (includeOriginal) {
+      original.print(i);
     }
+    delegate.print(i);
   }
 
   @Override
   public void print(long l) {
-    for (PrintStream stream : delegates) {
-      stream.print(l);
+    if (includeOriginal) {
+      original.print(l);
     }
+    delegate.print(l);
   }
 
   @Override
   public void print(float f) {
-    for (PrintStream stream : delegates) {
-      stream.print(f);
+    if (includeOriginal) {
+      original.print(f);
     }
+    delegate.print(f);
   }
 
   @Override
   public void print(double d) {
-    for (PrintStream stream : delegates) {
-      stream.print(d);
+    if (includeOriginal) {
+      original.print(d);
     }
+    delegate.print(d);
   }
 
   @Override
   public void print(char[] s) {
-    for (PrintStream stream : delegates) {
-      stream.print(s);
+    if (includeOriginal) {
+      original.print(s);
     }
+    delegate.print(s);
   }
 
   @Override
   public void print(String s) {
-    for (PrintStream stream : delegates) {
-      stream.print(s);
+    if (includeOriginal) {
+      original.print(s);
     }
+    delegate.print(s);
   }
 
   @Override
   public void print(Object obj) {
-    for (PrintStream stream : delegates) {
-      stream.print(obj);
+    if (includeOriginal) {
+      original.print(obj);
     }
+    delegate.print(obj);
   }
 
   @Override
   public void println() {
-    for (PrintStream stream : delegates) {
-      stream.println();
+    if (includeOriginal) {
+      original.println();
     }
+    delegate.println();
   }
 
   @Override
   public void println(boolean x) {
-    for (PrintStream stream : delegates) {
-      stream.println(x);
+    if (includeOriginal) {
+      original.println(x);
     }
+    delegate.println(x);
   }
 
   @Override
   public void println(char x) {
-    for (PrintStream stream : delegates) {
-      stream.println(x);
+    if (includeOriginal) {
+      original.println(x);
     }
+    delegate.println(x);
   }
 
   @Override
   public void println(int x) {
-    for (PrintStream stream : delegates) {
-      stream.println(x);
+    if (includeOriginal) {
+      original.println(x);
     }
+    delegate.println(x);
   }
 
   @Override
   public void println(long x) {
-    for (PrintStream stream : delegates) {
-      stream.println(x);
+    if (includeOriginal) {
+      original.println(x);
     }
+    delegate.println(x);
   }
 
   @Override
   public void println(float x) {
-    for (PrintStream stream : delegates) {
-      stream.println(x);
+    if (includeOriginal) {
+      original.println(x);
     }
+    delegate.println(x);
   }
 
   @Override
   public void println(double x) {
-    for (PrintStream stream : delegates) {
-      stream.println(x);
+    if (includeOriginal) {
+      original.println(x);
     }
+    delegate.println(x);
   }
 
   @Override
   public void println(char[] x) {
-    for (PrintStream stream : delegates) {
-      stream.println(x);
+    if (includeOriginal) {
+      original.println(x);
     }
+    delegate.println(x);
   }
 
   @Override
   public void println(String x) {
-    for (PrintStream stream : delegates) {
-      stream.println(x);
+    if (includeOriginal) {
+      original.println(x);
     }
+    delegate.println(x);
   }
 
   @Override
   public void println(Object x) {
-    for (PrintStream stream : delegates) {
-      stream.println(x);
+    if (includeOriginal) {
+      original.println(x);
     }
+    delegate.println(x);
   }
 
   @Override
   public PrintStream printf(String format, Object... args) {
-    for (PrintStream stream : delegates) {
-      stream.printf(format, args);
+    if (includeOriginal) {
+      original.printf(format, args);
     }
+    delegate.printf(format, args);
     return this;
   }
 
   @Override
   public PrintStream printf(Locale l, String format, Object... args) {
-    for (PrintStream stream : delegates) {
-      stream.printf(l, format, args);
+    if (includeOriginal) {
+      original.printf(l, format, args);
     }
+    delegate.printf(l, format, args);
     return this;
   }
 
   @Override
   public PrintStream format(String format, Object... args) {
-    for (PrintStream stream : delegates) {
-      stream.printf(format, args);
+    if (includeOriginal) {
+      original.printf(format, args);
     }
+    delegate.printf(format, args);
     return this;
   }
 
   @Override
   public PrintStream format(Locale l, String format, Object... args) {
-    for (PrintStream stream : delegates) {
-      stream.printf(format, args);
+    if (includeOriginal) {
+      original.printf(format, args);
     }
+    delegate.printf(format, args);
     return this;
   }
 
   @Override
   public PrintStream append(CharSequence csq) {
-    for (PrintStream stream : delegates) {
-      stream.append(csq);
+    if (includeOriginal) {
+      original.append(csq);
     }
+    delegate.append(csq);
     return this;
   }
 
   @Override
   public PrintStream append(CharSequence csq, int start, int end) {
-    for (PrintStream stream : delegates) {
-      stream.append(csq, start, end);
+    if (includeOriginal) {
+      original.append(csq, start, end);
     }
+    delegate.append(csq, start, end);
     return this;
   }
 
   @Override
   public PrintStream append(char c) {
-    for (PrintStream stream : delegates) {
-      stream.append(c);
+    if (includeOriginal) {
+      original.append(c);
     }
+    delegate.append(c);
     return this;
   }
 
   @Override
   public void write(byte[] b) throws IOException {
-    for (PrintStream stream : delegates) {
-      stream.write(b);
+    if (includeOriginal) {
+      original.write(b);
     }
+    delegate.write(b);
   }
 }

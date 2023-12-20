@@ -52,8 +52,8 @@ class MockMakerDocSpec extends Specification {
   def "mockito additional settings serializable"() {
     given:
 // tag::mock-serializable[]
-    Subscriber subscriber = Mock(mockMaker: MockMakers.mockito { org.mockito.MockSettings settings ->
-      settings.serializable()
+    Subscriber subscriber = Mock(mockMaker: MockMakers.mockito {
+      serializable()
     })
 // end::mock-serializable[]
 

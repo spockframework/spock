@@ -284,6 +284,11 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
 
     expr.setMethod(new ConstantExpression(expr.getMethodAsString() + "Impl"));
     List<Expression> args = AstUtil.getArgumentList(expr);
+    if (args.size() != 1) {
+      resources.getErrorReporter().error(expr, "old() must have exactly one argument");
+      return true;
+    }
+
     VariableExpression oldValue = resources.captureOldValue(args.get(0));
     args.set(0, oldValue);
 

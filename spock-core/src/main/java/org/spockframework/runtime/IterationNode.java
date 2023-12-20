@@ -22,9 +22,10 @@ public class IterationNode extends SpockNode<FeatureInfo> {
   @Override
   public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
     if (iterationInfo.getFeature().isSkipped()) {
-      // Node.prepare is called before Node.shouldBeSkipped so we just skip the prepare
+      // Node.prepare is called before Node.shouldBeSkipped, so we just skip the prepare step.
       return context;
     }
+    context.getRunContext().ensureInstalled();
     context.getErrorInfoCollector().assertEmpty();
     context = context.withCurrentIteration(iterationInfo);
     context = context.getRunner().createSpecInstance(context, false);

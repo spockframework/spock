@@ -14,30 +14,24 @@
  * limitations under the License.
  */
 
-package org.spockframework.docs.extension
+package org.spockframework.runtime
 
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.runtime.RunContext
-import spock.mock.MockMakers
 
-class MockMakerConfigurationDocSpec extends EmbeddedSpecification {
-
-  @SuppressWarnings('UnnecessaryQualifiedReference')
-  def "preferredMockMaker configuration setting"() {
+class RunContextEmbeddedSpec extends EmbeddedSpecification {
+  def "initial run context is named 'default'"() {
     given:
-    runner.configurationScript {
-      // tag::mock-maker-preferredMockMaker[]
-      mockMaker {
-        preferredMockMaker spock.mock.MockMakers.byteBuddy
-      }
-      // end::mock-maker-preferredMockMaker[]
-    }
     runner.addClassImport(RunContext)
-    runner.addClassImport(MockMakers)
-    runner.runFeatureBody("""
-    def registry = RunContext.get().getMockMakerRegistry()
     expect:
-    registry.getMakerList().get(0).getId().toString() == "${MockMakers.byteBuddy.mockMakerId}"
-""")
+    RunContext.get().name == "default"
+
+    when:
+    runner.runFeatureBody """
+        expect:
+        RunContext.get().name == "default/EmbeddedSpecRunner"
+    """
+
+    then:
+    RunContext.get().name == "default"
   }
 }

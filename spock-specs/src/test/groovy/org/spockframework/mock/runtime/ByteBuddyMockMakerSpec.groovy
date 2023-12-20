@@ -29,7 +29,7 @@ class ByteBuddyMockMakerSpec extends Specification {
   def "Verify ID and IMockMakerSettings"() {
     expect:
     MockMakers.byteBuddy.mockMakerId.toString() == "byte-buddy"
-    MockMakers.byteBuddy.toString() == "byte-buddy"
+    MockMakers.byteBuddy.toString() == "byte-buddy simple mock maker settings"
   }
 
   def "Use specific MockMaker byteBuddy"() {

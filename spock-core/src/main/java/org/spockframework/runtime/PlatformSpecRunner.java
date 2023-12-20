@@ -1,17 +1,16 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2023 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 package org.spockframework.runtime;
@@ -24,6 +23,7 @@ import spock.lang.Specification;
 import java.util.Arrays;
 
 import static java.lang.System.arraycopy;
+import static java.util.Arrays.copyOfRange;
 import static org.spockframework.runtime.model.MethodInfo.MISSING_ARGUMENT;
 
 /**
@@ -54,6 +54,7 @@ public class PlatformSpecRunner {
     supervisor.beforeSpec(spec);
     invoke(context, this, createMethodInfoForDoRunSpec(context, specRunner));
     supervisor.afterSpec(spec);
+    runCloseContextStoreProvider(context, MethodKind.CLEANUP_SPEC);
   }
 
   private MethodInfo createMethodInfoForDoRunSpec(SpockExecutionContext context, Runnable specRunner) {
@@ -81,7 +82,7 @@ public class PlatformSpecRunner {
     }
 
 
-    context = context.withCurrentInstance(instance);
+    context = context.withChildStoreProvider().withCurrentInstance(instance);
     getSpecificationContext(context).setCurrentSpec(context.getSpec());
     if (shared) {
       context = context.withSharedInstance(instance);
@@ -186,10 +187,14 @@ public class PlatformSpecRunner {
     if (currentFeature.isSkipped()) {
       throw new InternalSpockError("Invalid state, feature is executed although it should have been skipped");
     }
+    getSpecificationContext(context).setCurrentFeature(currentFeature);
 
     supervisor.beforeFeature(currentFeature);
     invoke(context, this, createMethodInfoForDoRunFeature(context, feature));
     supervisor.afterFeature(currentFeature);
+
+    runCloseContextStoreProvider(context, MethodKind.CLEANUP);
+    getSpecificationContext(context).setCurrentFeature(null);
   }
 
   private MethodInfo createMethodInfoForDoRunFeature(SpockExecutionContext context, Runnable feature) {
@@ -216,12 +221,14 @@ public class PlatformSpecRunner {
     supervisor.beforeIteration(iterationInfo);
     invoke(context, this, createMethodInfoForDoRunIteration(context, runnable));
     supervisor.afterIteration(iterationInfo);
+    runCloseContextStoreProvider(context, MethodKind.CLEANUP);
 
     getSpecificationContext(context).setCurrentIteration(null); // TODO check if we really need to null here
   }
 
-  IterationInfo createIterationInfo(SpockExecutionContext context, int iterationIndex, Object[] dataValues, int estimatedNumIterations) {
+  IterationInfo createIterationInfo(SpockExecutionContext context, int iterationIndex, Object[] args, int estimatedNumIterations) {
     FeatureInfo currentFeature = context.getCurrentFeature();
+    Object[] dataValues = copyOfRange(args, 0, currentFeature.getDataVariables().size());
     IterationInfo result = new IterationInfo(currentFeature, iterationIndex, dataValues, estimatedNumIterations);
     result.setName(currentFeature.getName());
     String iterationName = currentFeature.getIterationNameProvider().getName(result);
@@ -250,6 +257,8 @@ public class PlatformSpecRunner {
   }
 
   void runInitializer(SpockExecutionContext context) {
+    getSpecificationContext(context).setCurrentFeature(context.getCurrentFeature());
+    getSpecificationContext(context).setCurrentIteration(context.getCurrentIteration());
     runInitializer(context, context.getSpec());
   }
 
@@ -369,6 +378,21 @@ public class PlatformSpecRunner {
     }
   }
 
+  void runCloseContextStoreProvider(SpockExecutionContext context, MethodKind kind) {
+    MethodInfo methodInfo = createMethodInfoForCloseContextStoreProvider(context, kind);
+    invokeRaw(context, context.getStoreProvider(), methodInfo);
+  }
+
+  private MethodInfo createMethodInfoForCloseContextStoreProvider(SpockExecutionContext context, MethodKind kind) {
+    MethodInfo result = new MethodInfo((Object target, Object... arguments) -> {
+        context.getStoreProvider().close();
+        return null;
+      }
+    );
+    result.setKind(kind);
+    return result;
+  }
+
   protected void invoke(SpockExecutionContext context, Object target, MethodInfo method, Object... arguments) {
     if (method == null || method.isExcluded()) {
       return;
@@ -392,7 +416,7 @@ public class PlatformSpecRunner {
 
     // slow lane
     MethodInvocation invocation = new MethodInvocation(context.getCurrentFeature(),
-      context.getCurrentIteration(), context.getSharedInstance(), context.getCurrentInstance(), target, method, methodArguments);
+      context.getCurrentIteration(), context.getStoreProvider(), context.getSharedInstance(), context.getCurrentInstance(), target, method, methodArguments);
     try {
       invocation.proceed();
     } catch (Throwable throwable) {

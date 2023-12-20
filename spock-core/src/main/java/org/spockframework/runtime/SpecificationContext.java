@@ -8,6 +8,7 @@ import spock.lang.Specification;
 
 public class SpecificationContext implements ISpecificationContext {
   private volatile SpecInfo currentSpec;
+  private volatile FeatureInfo currentFeature;
   private volatile IterationInfo currentIteration;
 
   private volatile Specification sharedInstance;
@@ -36,16 +37,20 @@ public class SpecificationContext implements ISpecificationContext {
 
   @Override
   public FeatureInfo getCurrentFeature() {
-    if (currentIteration == null) {
+    if (currentFeature == null) {
       throw new IllegalStateException("Cannot request current feature in @Shared context");
     }
-    return getCurrentIteration().getFeature();
+    return currentFeature;
+  }
+
+  public void setCurrentFeature(FeatureInfo currentFeature) {
+    this.currentFeature = currentFeature;
   }
 
   @Override
   public IterationInfo getCurrentIteration() {
     if (currentIteration == null) {
-      throw new IllegalStateException("Cannot request current iteration in @Shared context");
+      throw new IllegalStateException("Cannot request current iteration in @Shared context, or feature context");
     }
     return currentIteration;
   }

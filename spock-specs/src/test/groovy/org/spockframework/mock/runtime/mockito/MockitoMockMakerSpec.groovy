@@ -39,7 +39,7 @@ class MockitoMockMakerSpec extends Specification {
   def "Verify simple ID and IMockMakerSettings"() {
     expect:
     mockito.mockMakerId.toString() == ID
-    mockito.toString() == ID
+    mockito.toString() == "$ID simple mock maker settings"
   }
 
   def "Verify ID and IMockMakerSettings with Mockito settings"() {
@@ -48,7 +48,7 @@ class MockitoMockMakerSpec extends Specification {
 
     then:
     set.mockMakerId.toString() == ID
-    set.toString() == ID
+    set.toString() == "$ID mock maker settings"
     set instanceof MockitoMockMakerSettings
   }
 

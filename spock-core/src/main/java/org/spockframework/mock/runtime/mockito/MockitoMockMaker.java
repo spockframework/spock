@@ -63,7 +63,7 @@ public class MockitoMockMaker implements IMockMaker {
 
   @Override
   public int getPriority() {
-    return 300;
+    return 400;
   }
 
   @Override

@@ -1,15 +1,16 @@
 /*
- * Copyright 2010 the original author or authors.
+ * Copyright 2023 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *     https://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
  */
 
 package org.spockframework.runtime;
@@ -19,6 +20,7 @@ import org.spockframework.mock.runtime.MockMakerRegistry;
 import org.spockframework.mock.runtime.MockMakerConfiguration;
 import org.spockframework.runtime.condition.*;
 import org.spockframework.runtime.extension.IGlobalExtension;
+import org.spockframework.runtime.extension.ISpockExecution;
 import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.*;
 import spock.config.RunnerConfiguration;
@@ -78,13 +80,7 @@ public class RunContext implements EngineExecutionContext {
       ConfigurationBuilder builder = new ConfigurationBuilder();
       builder.build(globalExtensionRegistry, configurationScript);
     }
-    initMockMakerRegistry();
     globalExtensionRegistry.startGlobalExtensions();
-  }
-
-  private void initMockMakerRegistry() {
-    MockMakerConfiguration configuration = globalExtensionRegistry.getConfigurationByType(MockMakerConfiguration.class);
-    this.mockMakerRegistry = MockMakerRegistry.createFromServiceLoader(configuration);
   }
 
   void stop() {
@@ -105,7 +101,19 @@ public class RunContext implements EngineExecutionContext {
   }
 
   public MockMakerRegistry getMockMakerRegistry() {
+    initMockMakerRegistry();
     return Objects.requireNonNull(mockMakerRegistry);
+  }
+
+  private void initMockMakerRegistry() {
+    if (mockMakerRegistry == null) {
+      synchronized (this) {
+        if (mockMakerRegistry == null) {
+          MockMakerConfiguration configuration = globalExtensionRegistry.getConfigurationByType(MockMakerConfiguration.class);
+          mockMakerRegistry = MockMakerRegistry.createFromServiceLoader(configuration);
+        }
+      }
+    }
   }
 
   public PlatformParameterizedSpecRunner createSpecRunner(SpecInfo spec) {
@@ -222,5 +230,36 @@ public class RunContext implements EngineExecutionContext {
     List<Class<? extends IGlobalExtension>> classes = extensionClassesLoader.loadExtensionClassesFromDefaultLocation();
     List<Class<?>> configs = extensionClassesLoader.loadConfigClassesFromDefaultLocation();
     return new RunContext("default", spockUserHome, script, classes, configs);
+  }
+
+  public void ensureInstalled() {
+    LinkedList<RunContext> runContexts = contextStacks.get();
+    if (runContexts.isEmpty()) {
+      // we got a new thread that didn't inherit the original context, so just add us here
+      runContexts.add(this);
+      return;
+    }
+
+    if (runContexts.getFirst() == this) return; // everything is well
+
+    if (!runContexts.contains(this)) {
+      // something weird happened, and we got the got a separate RunContext hierarchy from what we'd expect
+      // maybe some thread re-use between runs
+      runContexts.clear();
+      runContexts.add(this);
+    } else {
+      while (runContexts.getFirst() != this) {
+        // we got some residual child contexts that didn't get cleared after a thread spawn
+        runContexts.removeFirst();
+      }
+    }
+  }
+
+  public void startExecution(ISpockExecution spockExecution) {
+    globalExtensionRegistry.startExecutionForGlobalExtensions(spockExecution);
+  }
+
+  public void stopExecution(SpockExecution spockExecution) {
+    globalExtensionRegistry.stopExecutionForGlobalExtensions(spockExecution);
   }
 }

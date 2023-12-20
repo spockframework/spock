@@ -16,7 +16,6 @@
 
 package org.spockframework.smoke.extension
 
-import org.spockframework.runtime.IStandardStreamsListener
 import org.spockframework.runtime.SpockTimeoutError
 import org.spockframework.runtime.extension.builtin.ThreadDumpUtilityType
 import spock.lang.*
@@ -26,7 +25,6 @@ import spock.util.environment.RestoreSystemProperties
 import java.nio.file.Path
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS
-import static org.spockframework.runtime.model.parallel.ExecutionMode.SAME_THREAD
 
 /**
  * @author Peter Niederwieser

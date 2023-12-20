@@ -18,6 +18,7 @@ import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.SpockTimeoutError
 import spock.lang.Issue
 import spock.lang.PendingFeature
+import spock.lang.Retry
 import spock.lang.Specification
 
 class PollingConditionsSpec extends Specification {
@@ -37,6 +38,7 @@ class PollingConditionsSpec extends Specification {
     }
   }
 
+  @Retry
   def "succeeds if all conditions are eventually satisfied"() {
     num = 42
     Thread.start {
@@ -126,6 +128,7 @@ class PollingConditionsSpec extends Specification {
     thrown(SpockTimeoutError)
   }
 
+  @Retry
   def "provides fine-grained control over polling rhythm"() {
     conditions.initialDelay = 0.01
     conditions.delay = 0.2

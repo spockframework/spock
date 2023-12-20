@@ -36,10 +36,6 @@ public class StandardStreamsCapturer implements IStoppable {
   private void startCapture(PrintStream originalStream, TeePrintStream teeStream, final boolean isOut) {
     if (originalStream == teeStream) return;
 
-    if (teeStream != null) {
-      teeStream.stopDelegation();
-    }
-
     StringMessagePrintStream notifyingStream = new StringMessagePrintStream() {
       @Override
       protected void printed(String message) {
@@ -72,9 +68,27 @@ public class StandardStreamsCapturer implements IStoppable {
   private void stopCapture(PrintStream originalStream, TeePrintStream teeStream, boolean isOut) {
     if (originalStream != teeStream) return;
     if (isOut) {
-      System.setOut(teeStream.getDelegates().get(0));
+      System.setOut(teeStream.getOriginal());
     } else {
-      System.setErr(teeStream.getDelegates().get(0));
+      System.setErr(teeStream.getOriginal());
+    }
+  }
+
+  public synchronized void muteStandardStreams() {
+    if (outStream != null) {
+      outStream.muteOriginal();
+    }
+    if (errStream != null) {
+      errStream.muteOriginal();
+    }
+  }
+
+  public synchronized void unmuteStandardStreams() {
+    if (outStream != null) {
+      outStream.unmuteOriginal();
+    }
+    if (errStream != null) {
+      errStream.unmuteOriginal();
     }
   }
 

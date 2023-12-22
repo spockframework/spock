@@ -58,7 +58,12 @@ public class SnapshotExtension implements IAnnotationDrivenExtension<Snapshot> {
   }
 
   private Snapshotter createSnapshotter(IMethodInvocation invocation, Class<?> type, Snapshot annotation) {
-    Snapshotter.Store snapshotStore = new Snapshotter.Store(invocation.getMethod().getIteration(), config.rootPath, config.updateSnapshots, annotation.extension(), Charset.forName(annotation.charset()));
+    Snapshotter.Store snapshotStore = new Snapshotter.Store(
+      invocation.getMethod().getIteration(),
+      config.rootPath,
+      config.updateSnapshots,
+      annotation.extension(),
+      Charset.forName(annotation.charset()));
     Checks.checkArgument(Snapshotter.class.isAssignableFrom(type), () -> "Target must be of type Snapshotter or a valid Subtype");
     return (Snapshotter) ReflectionUtil.newInstance(type, snapshotStore);
   }

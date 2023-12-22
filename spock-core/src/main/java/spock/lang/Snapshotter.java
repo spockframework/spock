@@ -157,18 +157,21 @@ public class Snapshotter {
       this.updateSnapshots = updateSnapshots;
       this.charset = charset;
 
-      FeatureInfo feature = iterationInfo.getFeature();
-      Path specPath = rootPath.resolve(feature.getSpec().getReflection().getPackage().getName().replace('.', '/'));
-      String uniqueName = calculateSafeUniqueName(extension, feature);
+      Class<?> specClass = iterationInfo.getFeature().getSpec().getReflection();
+      Path specPath = rootPath
+        .resolve(specClass.getPackage().getName().replace('.', '/'))
+        .resolve(specClass.getSimpleName().replace('$', '/')); // use subdirectories for inner classes
+      String uniqueName = calculateSafeUniqueName(extension, iterationInfo);
       snapshotPath = specPath.resolve(uniqueName);
     }
 
-    private static String calculateSafeUniqueName(String extension, FeatureInfo feature) {
-      String safeName = String.format("%s__%s", feature.getSpec().getName(), feature.getName()).replaceAll("[^a-zA-Z0-9]", "_");
-      if (safeName.length() > 255) {
+    private static String calculateSafeUniqueName(String extension, IterationInfo iterationInfo) {
+      FeatureInfo feature = iterationInfo.getFeature();
+      String safeName = feature.getName().replaceAll("[^a-zA-Z0-9]", "_");
+      if (safeName.length() > 240) {
         safeName = safeName.substring(0, 240) + "_" + (feature.getFeatureMethod().getReflection().getName().substring("$spock_feature_".length()));
       }
-      String iterationIndex = feature.isParameterized() ? "_[$iterationInfo.iterationIndex]" : "";
+      String iterationIndex = feature.isParameterized() ? String.format("_[%d]", iterationInfo.getIterationIndex()) : "";
       return String.format("%s%s.%s", safeName, iterationIndex, extension);
     }
 

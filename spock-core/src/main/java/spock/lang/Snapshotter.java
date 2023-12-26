@@ -22,6 +22,7 @@ import org.spockframework.runtime.ConditionNotSatisfiedError;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.IterationInfo;
 import org.spockframework.runtime.model.TextPosition;
+import org.spockframework.util.Beta;
 import org.spockframework.util.IoUtil;
 
 import java.io.IOException;
@@ -33,15 +34,22 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /**
  * Allows to perform snapshot testing.
  * <p>
  * Snapshots are stored in a file next to the test class.
+ *
+ * @author Leonard Brünings
+ * @since 2.4
  */
+@Beta
 public class Snapshotter {
   private final Store snapshotStore;
   private Wrapper wrapper = Wrapper.NOOP;
+
+  private Function<String, String> normalizer = StringGroovyMethods::normalize;
 
   public Snapshotter(Store snapshotStore) {
     this.snapshotStore = snapshotStore;
@@ -71,9 +79,19 @@ public class Snapshotter {
   }
 
   /**
+   * Declares a {@link Function} for normalizing the reference value.
+   * <P>
+   * The default normalization is line ending normalization.
+   */
+  public Snapshotter normalizedWith(Function<String, String> normalizer) {
+    this.normalizer = normalizer;
+    return this;
+  }
+
+  /**
    * Specifies the {@code actual} value.
    * <p>
-   * Note: The value is normalized to {@code \n} line endings.
+   * Note: The value is normalized by the normalizer function, defaults to line ending normalization.
    * @param value the actual value for assertions
    */
   public Snapshot assertThat(String value) {
@@ -84,7 +102,7 @@ public class Snapshotter {
     private final String value;
 
     private Snapshot(String value) {
-      this.value = StringGroovyMethods.normalize(value);
+      this.value = normalizer.apply(value);
     }
 
     /**

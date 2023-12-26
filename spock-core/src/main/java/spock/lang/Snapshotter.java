@@ -16,6 +16,7 @@
 package spock.lang;
 
 import org.codehaus.groovy.runtime.StringGroovyMethods;
+import org.jetbrains.annotations.NotNull;
 import org.spockframework.runtime.Condition;
 import org.spockframework.runtime.ConditionNotSatisfiedError;
 import org.spockframework.runtime.model.FeatureInfo;
@@ -31,7 +32,13 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
+/**
+ * Allows to perform snapshot testing.
+ * <p>
+ * Snapshots are stored in a file next to the test class.
+ */
 public class Snapshotter {
   private final Store snapshotStore;
   private Wrapper wrapper = Wrapper.NOOP;
@@ -44,12 +51,12 @@ public class Snapshotter {
     return snapshotStore;
   }
 
-  protected String loadSnapshot() {
-    return getSnapshotStore().loadSnapshot().map(wrapper::unwrap).orElse("<Missing Snapshot>");
+  protected String loadSnapshot(String snapshotId) {
+    return getSnapshotStore().loadSnapshot(snapshotId).map(wrapper::unwrap).orElse("<Missing Snapshot>");
   }
 
-  protected void saveSnapshot(String value) {
-    snapshotStore.saveSnapshot(wrapper.wrap(value));
+  protected void saveSnapshot(String snapshotId, String value) {
+    snapshotStore.saveSnapshot(snapshotId, wrapper.wrap(value));
   }
 
   /**
@@ -69,25 +76,68 @@ public class Snapshotter {
    * Note: The value is normalized to {@code \n} line endings.
    * @param value the actual value for assertions
    */
-  public Snap assertThat(String value) {
-    return new Snap(value);
+  public Snapshot assertThat(String value) {
+    return new Snapshot(value);
   }
 
-  public class Snap {
+  public class Snapshot {
     private final String value;
 
-    private Snap(String value) {
+    private Snapshot(String value) {
       this.value = StringGroovyMethods.normalize(value);
     }
 
+    /**
+     * Asserts that the actual value matches the snapshot using string equality.
+     */
     public void matchesSnapshot() {
-      String snapshotValue = loadSnapshot();
-      if (!Objects.equals(value, snapshotValue)) {
-        if (snapshotStore.isUpdateSnapshots()) {
-          saveSnapshot(value);
-        } else {
+      matchesSnapshot("");
+    }
+
+    /**
+     * Asserts that the actual value matches the snapshot using string equality.
+     *
+     * @param snapshotId the id of the snapshot to use. In case of multiple snapshots per test, this allows to distinguish them.
+     */
+    public void matchesSnapshot(String snapshotId) {
+      matchesSnapshot(snapshotId, (expected, actual) -> {
+        if (!Objects.equals(expected, actual)) {
           // manually construct a ConditionNotSatisfiedError, as the native groovy assert doesn't get properly rendered by Intellij
-          throw new ConditionNotSatisfiedError(new Condition(Arrays.asList(value, snapshotValue), "value == snapshotValue", TextPosition.create(-1, -1), null, null, null));
+          throw new ConditionNotSatisfiedError(new Condition(Arrays.asList(value, expected), "value == snapshotValue", TextPosition.create(-1, -1), null, null, null));
+        }
+      });
+    }
+
+    /**
+     * Allows to specify a custom matcher for the snapshot.
+     * <p>
+     * This is useful when comparing json or similar, which have less strict equality rules.
+     *
+     * @param snapshotMatcher a custom matcher for the snapshot, which is called with the snapshot value and the actual value.
+     * The matcher must throw an {@link AssertionError} if the values don't match.
+     */
+    public void matchesSnapshot(BiConsumer<String, String> snapshotMatcher) {
+      matchesSnapshot("", snapshotMatcher);
+    }
+
+    /**
+     * Allows to specify a custom matcher for the snapshot.
+     * <p>
+     * This is useful when comparing json or similar, which have less strict equality rules.
+     *
+     * @param snapshotId the id of the snapshot to use. In case of multiple snapshots per test, this allows to distinguish them.
+     * @param snapshotMatcher a custom matcher for the snapshot, which is called with the snapshot value and the actual value.
+     * The matcher must throw an {@link AssertionError} if the values don't match.
+     */
+    public void matchesSnapshot(String snapshotId, BiConsumer<String, String> snapshotMatcher) {
+      String snapshotValue = loadSnapshot(snapshotId);
+      try {
+        snapshotMatcher.accept(snapshotValue, value);
+      } catch (AssertionError e) {
+        if (snapshotStore.isUpdateSnapshots()) {
+          saveSnapshot(snapshotId, value);
+        } else {
+          throw e;
         }
       }
     }
@@ -149,33 +199,46 @@ public class Snapshotter {
   }
 
   public static final class Store {
+    private final IterationInfo iterationInfo;
     private final boolean updateSnapshots;
+    private final String extension;
     private final Charset charset;
-    private final Path snapshotPath;
+    private final Path specPath;
 
     public Store(IterationInfo iterationInfo, Path rootPath, boolean updateSnapshots, String extension, Charset charset) {
+      this.iterationInfo = iterationInfo;
       this.updateSnapshots = updateSnapshots;
+      this.extension = extension;
       this.charset = charset;
 
       Class<?> specClass = iterationInfo.getFeature().getSpec().getReflection();
-      Path specPath = rootPath
+      specPath = rootPath
         .resolve(specClass.getPackage().getName().replace('.', '/'))
         .resolve(specClass.getSimpleName().replace('$', '/')); // use subdirectories for inner classes
-      String uniqueName = calculateSafeUniqueName(extension, iterationInfo);
-      snapshotPath = specPath.resolve(uniqueName);
     }
 
-    private static String calculateSafeUniqueName(String extension, IterationInfo iterationInfo) {
+    private static String calculateSafeUniqueName(String extension, IterationInfo iterationInfo, String snapshotId) {
       FeatureInfo feature = iterationInfo.getFeature();
-      String safeName = feature.getName().replaceAll("[^a-zA-Z0-9]", "_");
-      if (safeName.length() > 240) {
-        safeName = safeName.substring(0, 240) + "_" + (feature.getFeatureMethod().getReflection().getName().substring("$spock_feature_".length()));
+      String safeName = sanitize(feature.getName());
+      String featureId = feature.getFeatureMethod().getReflection().getName().substring("$spock_feature_".length());
+      String iterationIndex = feature.isParameterized() ? String.format("-[%d]", iterationInfo.getIterationIndex()) : "";
+      String snapshotIdSuffix = snapshotId.isEmpty() ? "" : "-" + sanitize(snapshotId);
+
+      int uniqueSuffixLength = 1 + featureId.length() + 1 + extension.length() + iterationIndex.length() + snapshotIdSuffix.length();
+      if (safeName.length() + uniqueSuffixLength > 250) {
+        safeName = safeName.substring(0, 250 - uniqueSuffixLength);
+        return String.format("%s%s-%s%s.%s", safeName, snapshotIdSuffix, featureId, iterationIndex, extension);
       }
-      String iterationIndex = feature.isParameterized() ? String.format("_[%d]", iterationInfo.getIterationIndex()) : "";
-      return String.format("%s%s.%s", safeName, iterationIndex, extension);
+      return String.format("%s%s%s.%s", safeName, snapshotIdSuffix, iterationIndex, extension);
     }
 
-    public Optional<String> loadSnapshot() {
+    @NotNull
+    private static String sanitize(String snapshotId) {
+      return snapshotId.replaceAll("[^a-zA-Z0-9]", "_");
+    }
+
+    public Optional<String> loadSnapshot(String snapshotId) {
+      Path snapshotPath = specPath.resolve(calculateSafeUniqueName(extension, iterationInfo, snapshotId));
       if (Files.exists(snapshotPath)) {
         try {
           return Optional.of(IoUtil.getText(snapshotPath, charset));
@@ -187,8 +250,9 @@ public class Snapshotter {
     }
 
 
-    public void saveSnapshot(String value) {
-      snapshotPath.getParent().toFile().mkdirs();
+    public void saveSnapshot(String snapshotId, String value) {
+      Path snapshotPath = specPath.resolve(calculateSafeUniqueName(extension, iterationInfo, snapshotId));
+      specPath.toFile().mkdirs();
       IoUtil.writeText(snapshotPath, value, charset);
     }
 

@@ -11,6 +11,7 @@ include::include.adoc[]
 
 === Misc
 * Add support for <<extensions.adoc#extension-store,keeping state in extensions>>
+* Fix bad error message for collection conditions, when one of the operands is `null`
 
 == 2.4-M1 (2022-11-30)
 

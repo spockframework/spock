@@ -98,6 +98,11 @@ public class Snapshotter {
     return new Snapshot(value);
   }
 
+  @Override
+  public String toString() {
+    return "Snapshotter";
+  }
+
   public class Snapshot {
     private final String value;
 
@@ -158,6 +163,11 @@ public class Snapshotter {
           throw e;
         }
       }
+    }
+
+    @Override
+    public String toString() {
+      return "Snapshot";
     }
   }
 

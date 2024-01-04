@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -78,9 +78,19 @@ class SnapshotterSpec extends Specification {
     featureName | iterationIndex | extension | snapshotId             | safeName
     'a feature' | 0              | 'txt'     | 'a snapshot'           | 'a_feature-a_snapshot.txt'
     'a feature' | 0              | 'txt'     | ''                     | 'a_feature.txt'
+    'a feature' | 0              | 'groovy'  | ''                     | 'a_feature.groovy'
     'a feature' | 1              | 'txt'     | 'a snapshot'           | 'a_feature-a_snapshot-[1].txt'
     'a feature' | 1              | 'txt'     | ''                     | 'a_feature-[1].txt'
     'a' * 300   | 0              | 'txt'     | ''                     | 'a' * 242 + '-0_1.txt'
     'a' * 300   | 100            | 'txt'     | 'a longer snapshot id' | 'a' * 215 + '-a_longer_snapshot_id-0_1-[100].txt'
+  }
+
+  def "snapshotId is limited to 100 characters"() {
+    when:
+    Snapshotter.Store.calculateSafeUniqueName('txt', Stub(IterationInfo), "a" * 101)
+
+    then:
+    IllegalArgumentException e = thrown()
+    e.message.startsWith("'snapshotId' is too long, only 100 characters are allowed, but was 101: aaaaa")
   }
 }

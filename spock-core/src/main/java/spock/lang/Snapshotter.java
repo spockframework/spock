@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.IterationInfo;
 import org.spockframework.runtime.model.TextPosition;
 import org.spockframework.util.Beta;
+import org.spockframework.util.Checks;
 import org.spockframework.util.IoUtil;
 
 import java.io.IOException;
@@ -246,6 +247,9 @@ public class Snapshotter {
     }
 
     private static String calculateSafeUniqueName(String extension, IterationInfo iterationInfo, String snapshotId) {
+      Checks.checkArgument(snapshotId.length() <= 100,
+        () -> String.format("'snapshotId' is too long, only 100 characters are allowed, but was %d: %s", snapshotId.length(), snapshotId));
+
       FeatureInfo feature = iterationInfo.getFeature();
       String safeName = sanitize(feature.getName());
       String featureId = feature.getFeatureMethod().getReflection().getName().substring("$spock_feature_".length());

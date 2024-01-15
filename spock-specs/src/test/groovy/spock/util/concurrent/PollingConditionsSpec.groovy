@@ -189,8 +189,8 @@ class PollingConditionsSpec extends Specification {
     where:
     onTimeoutClosure    || expectedMessageSuffix
     null                || ""
-    noArgClosure        || " with message: test"
-    throwableArgClosure || " with message: ConditionNotSatisfiedError"
+    noArgClosure        || ": test"
+    throwableArgClosure || ": ConditionNotSatisfiedError"
   }
 
   def "correctly creates timeout error message when onTimeout called multiple times"() {
@@ -211,7 +211,7 @@ class PollingConditionsSpec extends Specification {
     where:
     onTimeoutClosure    | secondOnTimeoutClosure || expectedMessageSuffix
     noArgClosure        | null                   || ""
-    null                | noArgClosure           || " with message: test"
-    throwableArgClosure | noArgClosure           || " with message: test"
+    null                | noArgClosure           || ": test"
+    throwableArgClosure | noArgClosure           || ": test"
   }
 }

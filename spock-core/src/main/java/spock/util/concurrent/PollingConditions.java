@@ -135,7 +135,9 @@ public class PollingConditions {
    * closure is added to the {@link SpockTimeoutError} message. Calling it with null resets the timeout message.
    *
    * @param timeoutMessage the closure that is evaluated when a timeout is reached
+   * @since 2.4
    */
+   @Beta
   public void onTimeout(Closure<String> timeoutMessage) {
     this.timeoutMessage = timeoutMessage;
   }

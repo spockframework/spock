@@ -1101,6 +1101,83 @@ mock.type == List
 mock.nature == MockNature.MOCK
 ----
 
+[[DetachedMockFactory]]
+=== Create Mocks Outside Specifications
+
+Sometimes, it can be helpful to create and possibly preconfigure mock, stub or spy objects outside specifications, especially if you want to factor out duplicate or similar code from there.
+Use `DetachedMockFactory` to create such mock objects.
+
+NOTE: Detached mocks, as the name implies, must be attached to a specification to make them functional.
+      This either happens manually by calling `MockUtil.attachMock(Object, Specification)` or automatically by declaring the mock as an instance field with an `@AutoAttach` annotation, see <<extensions.adoc#_autoattach,AutoAttach>>.
+      While auto-attached mocks will also be auto-detached during specification clean-up, you need to take care of manually attached mocks by yourself, calling `MockUtil.detachMock(Object)` when they are no longer in use.
+      Spring and Guice dependency injection will also automatically attach mocks, when the `SpringExtension` or `GuiceExtension` is used.
+
+Assuming that we have an application class `Car` and each car has an `Engine`:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=engine;car]
+----
+
+In our specification, we declare a detached mock factory and a mock util, either inside a feature method or, if we need them for multiple features, as (preferably) shared or (suboptimally) static instances:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=declare-shared]
+----
+
+==== Manually attach / detach
+
+Now in our feature, we create a detached `Engine` mock, attach the mock to the specification manually, stub its `isStarted()` method, inject the mock into a `Car` subject under specification, use the subject and finally detach the mock again after use:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=attach-manually]
+----
+
+==== Use @AutoAttach
+
+Same situation, different approach:
+We let Spock take care of automatically attaching the detached mock when starting the feature method and detaching it again after running the feature.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=auto-attach]
+----
+
+==== Pre-configure detached mock with default response
+
+This advanced use case might only be of interest to a minority of users, you may skip it for now if you just want to learn Spock basics.
+
+Usually, you would simply create your detached mock outside of Spock, but then define interactions (stubbed method results, method call verifications) inside the feature method itself.
+Sometimes however, you might want to define some (user-overridable) default behaviour right in the detached mock definition itself and even make it somewhat configurable.
+
+A valid use case could be a detached mock used in a dependency injection framework like Spring or Guice.
+The framework might wire the mock and rely on some default behaviour, before Spock even gets a chance to stub any methods.
+Defining default behaviour is possible using a combination of Spock's mocking API and custom `IDefaultResponse` implementations.
+
+A custom detached mock creator could look like this (please figure out by yourself what it does and how it works):
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=custom-mock-creator]
+----
+
+The first parametrized feature uses the mock without attach:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=use-custom-mock-creator-no-attach]
+----
+
+The next parametrized feature method showcasing a set of usage scenarios when a detached mock
+is attached to a spec before usage:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=use-custom-mock-creator-attach]
+----
+
 == Further Reading
 
 If you would like to dive deeper into interaction-based testing, we recommend the following resources:

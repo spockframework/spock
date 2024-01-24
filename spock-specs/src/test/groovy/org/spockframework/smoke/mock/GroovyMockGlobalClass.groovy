@@ -1,8 +1,11 @@
 package org.spockframework.smoke.mock
 
-import org.spockframework.smoke.mock.Subject
-import spock.lang.*
+import org.spockframework.runtime.model.parallel.Resources
+import spock.lang.Issue
+import spock.lang.ResourceLock
+import spock.lang.Specification
 
+@ResourceLock(Resources.META_CLASS_REGISTRY)
 @Issue('https://github.com/spockframework/spock/issues/761')
 class GroovyMockGlobalClass extends Specification {
 
@@ -32,4 +35,5 @@ class Subject {
 }
 
 class ClassA {}
+
 class ClassB {}

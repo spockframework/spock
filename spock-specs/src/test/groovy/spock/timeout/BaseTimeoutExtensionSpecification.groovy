@@ -22,6 +22,7 @@ abstract class BaseTimeoutExtensionSpecification extends EmbeddedSpecification {
     runner.addClassMemberImport TimeUnit
     outputCapturer.addStandardStreamsListener(outputListener)
     outputCapturer.start()
+    outputCapturer.muteStandardStreams()
   }
 
   protected void runSpecWithInterrupts(int interruptAttempts) {

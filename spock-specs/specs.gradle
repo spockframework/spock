@@ -19,6 +19,7 @@ dependencies {
   implementation groovylibs.groovyNio  //for groovy methods on Path
 
   testCompileOnly libs.jetbrains.annotations
+  testCompileOnly libs.mockito4
   testImplementation libs.junit.platform.testkit
   testImplementation libs.geantyref
 
@@ -33,6 +34,13 @@ dependencies {
   testRuntimeOnly libs.cglib
   testRuntimeOnly libs.objenesis
   testRuntimeOnly libs.h2database
+
+  if (rootProject.ext.javaVersion >= 11) {
+    testRuntimeOnly libs.mockito5
+  } else {
+    testRuntimeOnly libs.mockito4
+    testRuntimeOnly libs.mockito4inline
+  }
 
   groovyConsole groovyConsoleExtraDependencies
 
@@ -53,6 +61,9 @@ tasks.named("test", Test) {
   systemProperty "spock.snapshots.rootPath", "src/test/resources"
   if (project.hasProperty("updateSnapshots")) {
     systemProperty("spock.snapshots.updateSnapshots", "true")
+    useJUnitPlatform {
+      includeTags("snapshot")
+    }
   }
 
   if (javaVersion.isCompatibleWith(JavaVersion.VERSION_17)) {

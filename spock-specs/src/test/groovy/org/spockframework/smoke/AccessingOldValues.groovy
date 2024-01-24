@@ -116,6 +116,24 @@ class AccessingOldValues extends EmbeddedSpecification {
     e.line == 2
   }
 
+  def "old() must have exactly one argument"() {
+    when:
+    compiler.compileFeatureBody """
+    when: true
+    then: old($oldArguments)
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message == 'old() must have exactly one argument @ line 2, column 11.'
+
+    where:
+    oldArguments << [
+      '',
+      'null, null'
+    ]
+  }
+
   def "may occur outside of a condition"() {
     def list = [1,2,3]
 

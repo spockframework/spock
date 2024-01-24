@@ -21,8 +21,8 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpockExecutionException
 import org.spockframework.runtime.extension.ExtensionAnnotation
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension
+import org.spockframework.runtime.model.FeatureInfo
 import org.spockframework.runtime.model.MethodInfo
-import org.spockframework.runtime.model.MethodKind
 import spock.lang.Issue
 import spock.lang.Rollup
 import spock.lang.Unroll
@@ -30,6 +30,7 @@ import spock.lang.Unroll
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 
+import static org.junit.platform.testkit.engine.EventConditions.displayName
 import static org.spockframework.runtime.model.MethodInfo.MISSING_ARGUMENT
 
 /**
@@ -256,6 +257,75 @@ def foo() {
     ]
   }
 
+  @Foo
+  def "method arguments in data driven feature methods can be provided by extensions"(a) {
+    expect:
+    x == 1
+    y == 2
+    a == 'foo'
+
+    where:
+    x = 1
+    y = 2
+  }
+
+  @Foo
+  def "additional method arguments do not influence data values in iteration info"(a) {
+    expect:
+    specificationContext.currentIteration.dataValues == [1, 2]
+
+    where:
+    x = 1
+    y = 2
+  }
+
+  def 'data variables and iteration index are rendered properly with additional arguments'() {
+    given:
+    runner.addClassImport(Foo)
+
+    when:
+    def result = runner.runSpecBody '''
+      @Foo
+      def 'a feature'(a) {
+        expect:
+        true
+
+        where:
+        x << [1, 2]
+        y << [3, 4]
+      }
+    '''
+
+    then:
+    result.testEvents().succeeded().assertEventsMatchExactly(
+      displayName('a feature [x: 1, y: 3, #0]'),
+      displayName('a feature [x: 2, y: 4, #1]'),
+      displayName('a feature')
+    )
+  }
+
+  def 'conditional annotations that check data values work properly with additional arguments'() {
+    given:
+    runner.addClassImport(Foo)
+
+    when:
+    runner.runSpecBody '''
+      @Foo
+      @Requires({ data.x })
+      def 'a feature'(a) {
+        expect:
+        true
+
+        where:
+        x = 1
+        y = 2
+      }
+    '''
+
+    then:
+    noExceptionThrown()
+  }
+
   static class FooExtension implements IAnnotationDrivenExtension<Foo> {
     @Override
     void visitFixtureAnnotation(Foo annotation, MethodInfo fixtureMethod) {
@@ -263,6 +333,16 @@ def foo() {
         assert it.arguments.size() == 1
         assert it.arguments.first() == MISSING_ARGUMENT
         it.arguments[0] = 'foo'
+        it.proceed()
+      }
+    }
+
+    @Override
+    void visitFeatureAnnotation(Foo annotation, FeatureInfo feature) {
+      feature.featureMethod.addInterceptor {
+        assert it.arguments.size() == 3
+        assert it.arguments[2] == MISSING_ARGUMENT
+        it.arguments[2] = 'foo'
         it.proceed()
       }
     }

@@ -29,12 +29,24 @@ class TempDirDocSpec extends Specification {
   @TempDir
   FileSystemFixture path4
 
-  def demo() {
+  // Use for parameter injection of a setupSpec method
+  def setupSpec(@TempDir Path sharedPath) {
+    assert sharedPath instanceof Path
+  }
+
+  // Use for parameter injection of a setup method
+  def setup(@TempDir Path setupPath) {
+    assert setupPath instanceof Path
+  }
+
+  // Use for parameter injection of a feature
+  def demo(@TempDir Path path5) {
     expect:
     path1 instanceof Path
     path2 instanceof File
     path3 instanceof Path
     path4 instanceof FileSystemFixture
+    path5 instanceof Path
   }
 
 // end::example[]

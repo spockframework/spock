@@ -16,6 +16,7 @@ package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
 import org.spockframework.util.*;
+import spock.mock.IMockMakerSettings;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -36,7 +37,7 @@ public class MockConfiguration implements IMockConfiguration {
   private final boolean global;
   private final boolean verified;
   private final boolean useObjenesis;
-  private final IMockMaker.IMockMakerSettings mockMakerSettings;
+  private final IMockMakerSettings mockMakerSettings;
 
   public MockConfiguration(@Nullable String name, Type type, MockNature nature,
       MockImplementation implementation, Map<String, Object> options) {
@@ -57,7 +58,7 @@ public class MockConfiguration implements IMockConfiguration {
     this.global = getOption(options, "global", Boolean.class, false);
     this.verified = getOption(options, "verified", Boolean.class, this.nature.isVerified());
     this.useObjenesis = getOption(options, "useObjenesis", Boolean.class, this.nature.isUseObjenesis());
-    this.mockMakerSettings = getOption(options, "mockMaker", IMockMaker.IMockMakerSettings.class, null);
+    this.mockMakerSettings = getOption(options, "mockMaker", IMockMakerSettings.class, null);
   }
 
   @Override
@@ -123,7 +124,7 @@ public class MockConfiguration implements IMockConfiguration {
   }
 
   @Override
-  public IMockMaker.IMockMakerSettings getMockMaker() {
+  public IMockMakerSettings getMockMaker() {
     return mockMakerSettings;
   }
 

@@ -21,7 +21,7 @@ import spock.lang.Specification
 class TeePrintStreamSpec extends Specification {
   def delegate1 = Mock(PrintStream)
   def delegate2 = Mock(PrintStream)
-  def printStream = new TeePrintStream([delegate1, delegate2])
+  def printStream = new TeePrintStream(delegate1, delegate2)
 
   def "forwards stream management methods to all delegates"() {
     when:

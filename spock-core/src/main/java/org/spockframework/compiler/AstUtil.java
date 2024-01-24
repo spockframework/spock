@@ -222,7 +222,7 @@ public abstract class AstUtil {
       // return same result as for NamedArgumentListExpression wrapped in TupleExpression
       return singletonList(arguments);
 
-    return ((TupleExpression) arguments).getExpressions();
+    return (arguments == null) ? null : ((TupleExpression) arguments).getExpressions();
   }
 
   /**

@@ -15,9 +15,11 @@
 package org.spockframework.smoke.mock
 
 import org.spockframework.mock.CannotCreateMockException
+import org.spockframework.runtime.InvalidSpecException
 import org.spockframework.runtime.SpockException
 import org.spockframework.util.SpockDocLinks
 import spock.lang.*
+import spock.mock.MockMakers
 
 class JavaSpies extends Specification {
   def "construct spied-on object using default constructor when no constructor args given (even if Objenesis is available on class path)"() {
@@ -29,7 +31,7 @@ class JavaSpies extends Specification {
   }
 
   def "construct spied-on object using provided constructor args"() {
-    def spy = Spy(Constructable, constructorArgs: ctorArgs)
+    Constructable spy = Spy(constructorArgs: ctorArgs)
 
     expect:
     spy.arg1 == arg1
@@ -49,7 +51,7 @@ class JavaSpies extends Specification {
   }
 
   def "call real methods by default"() {
-    def person = Spy(Person, constructorArgs: ["fred", 42])
+    Person person = Spy(constructorArgs: ["fred", 42])
 
     expect:
     person.name == "fred"
@@ -57,9 +59,9 @@ class JavaSpies extends Specification {
   }
 
   def "call real equals method by default"() {
-    def fred1 = Spy(Person, constructorArgs: ["fred", 42])
-    def fred2 = Spy(Person, constructorArgs: ["fred", 21])
-    def barney = Spy(Person, constructorArgs: ["barney", 33])
+    Person fred1 = Spy(constructorArgs: ["fred", 42])
+    Person fred2 = Spy(constructorArgs: ["fred", 21])
+    Person barney = Spy(constructorArgs: ["barney", 33])
 
     expect:
     fred1 == fred2
@@ -67,21 +69,21 @@ class JavaSpies extends Specification {
   }
 
   def "call real hashCode method by default"() {
-    def person = Spy(Person, constructorArgs: ["fred", 42])
+    Person person = Spy(constructorArgs: ["fred", 42])
 
     expect:
     person.hashCode() == "fred".hashCode()
   }
 
   def "call real toString method by default"() {
-    def person = Spy(Person, constructorArgs: ["fred", 42])
+    Person person = Spy(constructorArgs: ["fred", 42])
 
     expect:
     person.toString() == "Hi, I'm fred"
   }
 
   def "can verify interactions with real methods"() {
-    def person = Spy(Person, constructorArgs: ["fred", 42])
+    Person person = Spy(constructorArgs: ["fred", 42])
 
     when:
     def result = person.work()
@@ -174,17 +176,42 @@ class JavaSpies extends Specification {
     spy.value == 7
   }
 
-  def "cannot spy on final classes"() {
+  def "can stub final classes"() {
     when:
-    Spy(FinalPerson)
+    FinalPerson person = Spy()
+    person.phoneNumber >> 6789
 
     then:
-    CannotCreateMockException e = thrown()
-    e.message.contains("final")
+    person.phoneNumber == "6789"
   }
 
-  def "cannot spy on final methods"() {
-    def person = Spy(FinalMethodPerson)
+  def "can spy final methods with mockito"() {
+    FinalMethodPerson person = Spy(mockMaker: MockMakers.mockito)
+    person.phoneNumber >> 6789
+
+    expect:
+    person.phoneNumber == "6789"
+  }
+
+  def "can spy final methods with mockito with closure"() {
+    FinalMethodPerson person = Spy(mockMaker: MockMakers.mockito) {
+      phoneNumber >> 6789
+    }
+
+    expect:
+    person.phoneNumber == "6789"
+  }
+
+  def "cannot spy final methods with byteBuddy"() {
+    FinalMethodPerson person = Spy(mockMaker: MockMakers.byteBuddy)
+    person.phoneNumber >> 6789
+
+    expect:
+    person.phoneNumber == "12345"
+  }
+
+  def "cannot spy on final methods without specifying mockMaker"() {
+    FinalMethodPerson person = Spy()
 
     when:
     person.phoneNumber
@@ -237,6 +264,22 @@ class JavaSpies extends Specification {
     CannotCreateMockException e = thrown()
     e.message == "Cannot create mock for class java.util.ArrayList. Cannot copy fields.\n" +
       SpockDocLinks.SPY_ON_JAVA_17.link
+  }
+
+  def "no static type specified"() {
+    when:
+    Stub()
+    then:
+    InvalidSpecException ex = thrown()
+    ex.message == "Mock object type cannot be inferred automatically. Please specify a type explicitly (e.g. 'Mock(Person)')."
+  }
+
+  def "specified instance is null"() {
+    when:
+    Spy((Object) null)
+    then:
+    SpockException ex = thrown()
+    ex.message == "Spy instance may not be null"
   }
 
   static class Constructable {
@@ -308,7 +351,9 @@ class JavaSpies extends Specification {
     }
   }
 
-  static final class FinalPerson extends Person {}
+  static final class FinalPerson extends Person {
+    String getPhoneNumber() { "12345" }
+  }
 
   static class FinalMethodPerson extends Person {
     final String getPhoneNumber() { "12345" }

@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package org.spockframework.mock.runtime
+package spock.mock
 
 import spock.lang.Specification
-
-import static org.spockframework.mock.runtime.IMockMaker.MockMakerId
 
 class MockMakerIdSpec extends Specification {
 
@@ -37,11 +35,11 @@ class MockMakerIdSpec extends Specification {
     where:
     input          | expectedErrorMessage
     null           | "The ID is null."
-    ""             | "The ID is empty."
-    "with space"   | "The ID 'with space' is invalid. Valid id must comply to the pattern: ^[a-z][a-z0-9-]*+(?<!-)\$"
-    "UpperCase"    | "The ID 'UpperCase' is invalid. Valid id must comply to the pattern: ^[a-z][a-z0-9-]*+(?<!-)\$"
-    "0numberStart" | "The ID '0numberStart' is invalid. Valid id must comply to the pattern: ^[a-z][a-z0-9-]*+(?<!-)\$"
-    "half-kebab-"  | "The ID 'half-kebab-' is invalid. Valid id must comply to the pattern: ^[a-z][a-z0-9-]*+(?<!-)\$"
+    ""             | "The ID '' is invalid. A valid ID must comply with the pattern: ^[a-z][a-z0-9-]*+(?<!-)\$"
+    "with space"   | "The ID 'with space' is invalid. A valid ID must comply with the pattern: ^[a-z][a-z0-9-]*+(?<!-)\$"
+    "UpperCase"    | "The ID 'UpperCase' is invalid. A valid ID must comply with the pattern: ^[a-z][a-z0-9-]*+(?<!-)\$"
+    "0numberStart" | "The ID '0numberStart' is invalid. A valid ID must comply with the pattern: ^[a-z][a-z0-9-]*+(?<!-)\$"
+    "half-kebab-"  | "The ID 'half-kebab-' is invalid. A valid ID must comply with the pattern: ^[a-z][a-z0-9-]*+(?<!-)\$"
   }
 
   def "Equals/hashcode"() {

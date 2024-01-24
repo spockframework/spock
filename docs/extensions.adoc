@@ -537,7 +537,11 @@ def ignoreMyExceptions
 In order to generate a temporary directory for test and delete it after test, annotate a member field of type
 `java.io.File`, `java.nio.file.Path` or untyped using `def` in a spec class (`def` will inject a `Path`).
 Alternatively, you can annotate a field with a custom type that has a public constructor accepting either `java.io.File` or `java.nio.file.Path` as its single parameter (see <<utilities.adoc#file-stystem-fixture, FileSystemFixture>> for an example).
-If the annotated field is `@Shared`, the temporary directory will be shared in the corresponding specification, otherwise every feature method and every iteration per parametrized feature method will have their own temporary directories:
+If the annotated field is `@Shared`, the temporary directory will be shared in the corresponding specification, otherwise every feature method and every iteration per parametrized feature method will have their own temporary directories.
+
+Since Spock 2.4, you can also use parameter injection with `@TempDir`.
+The types follow the same rules as for field injection.
+Valid methods are `setup()`, `setupSpec()`, or any feature methods.
 
 [source,groovy,indent=0]
 ----
@@ -864,6 +868,7 @@ extension. If the configuration object is only used in an annotation driven loca
 when then configuration object is to be injected into the extension, and you will also get an error when the
 configuration file is evaluated, and it contains the section, as the configuration object is not properly registered yet.
 
+[#interceptors]
 === Interceptors
 
 For applying the magic of your extension, there are various interception points, where you can attach interceptors from
@@ -872,6 +877,7 @@ be multiple interceptors added by arbitrary Spock extensions (shipped or 3rd par
 on the order they are added, but there should not be made any order assumptions within one interception point.
 
 .Spock Interceptors
+[#spock-interceptors]
 image::images/spock_interceptors.png[Spock Interceptors, align=center]
 
 An ellipsis in the figure means that the block before it can be repeated an arbitrary amount of times.
@@ -907,26 +913,36 @@ each at addition time whether it is attached to the method interceptor or the ot
 ----
 class I extends AbstractMethodInterceptor { I(def s) {} }
 
-// On SpecInfo
-specInfo.addSharedInitializerInterceptor new I('shared initializer')
-specInfo.sharedInitializerMethod?.addInterceptor new I('shared initializer method')
+// DISCLAIMER: The following shows all possible injection points that you could use
+//             depending on need and situation. You should normally not need to
+//             register a listener to all these places.
+//
+//             Also, when building an annotation driven local extension, you should
+//             consider where you want the effects to be present, for example only
+//             for the features in the same class (specInfo.features), or for features
+//             in the same and superclasses (specInfo.allFeatures), or also for
+//             features in subclasses (specInfo.bottomSpec.allFeatures), and so on.
+
+// on SpecInfo
+specInfo.specsBottomToTop*.addSharedInitializerInterceptor new I('shared initializer')
+specInfo.allSharedInitializerMethods*.addInterceptor new I('shared initializer method')
 specInfo.addInterceptor new I('specification')
-specInfo.addSetupSpecInterceptor new I('setup spec')
-specInfo.setupSpecMethods*.addInterceptor new I('setup spec method')
+specInfo.specsBottomToTop*.addSetupSpecInterceptor new I('setup spec')
+specInfo.allSetupSpecMethods*.addInterceptor new I('setup spec method')
 specInfo.allFeatures*.addInterceptor new I('feature')
-specInfo.addInitializerInterceptor new I('initializer')
-specInfo.initializerMethod?.addInterceptor new I('initializer method')
+specInfo.specsBottomToTop*.addInitializerInterceptor new I('initializer')
+specInfo.allInitializerMethods*.addInterceptor new I('initializer method')
 specInfo.allFeatures*.addIterationInterceptor new I('iteration')
-specInfo.addSetupInterceptor new I('setup')
-specInfo.setupMethods*.addInterceptor new I('setup method')
+specInfo.specsBottomToTop*.addSetupInterceptor new I('setup')
+specInfo.allSetupMethods*.addInterceptor new I('setup method')
 specInfo.allFeatures*.featureMethod*.addInterceptor new I('feature method')
-specInfo.addCleanupInterceptor new I('cleanup')
-specInfo.cleanupMethods*.addInterceptor new I('cleanup method')
-specInfo.addCleanupSpecInterceptor new I('cleanup spec')
-specInfo.cleanupSpecMethods*.addInterceptor new I('cleanup spec method')
+specInfo.specsBottomToTop*.addCleanupInterceptor new I('cleanup')
+specInfo.allCleanupMethods*.addInterceptor new I('cleanup method')
+specInfo.specsBottomToTop*.addCleanupSpecInterceptor new I('cleanup spec')
+specInfo.allCleanupSpecMethods*.addInterceptor new I('cleanup spec method')
 specInfo.allFixtureMethods*.addInterceptor new I('fixture method')
 
-// on FeatureInfo
+// on FeatureInfo (already included above, handling all features)
 featureInfo.addInterceptor new I('feature')
 featureInfo.addIterationInterceptor new I('iteration')
 featureInfo.featureMethod.addInterceptor new I('feature method')
@@ -1066,20 +1082,22 @@ The following mock makers are built-in, and are selected in this order:
 ** Requires `net.bytebuddy:byte-buddy` 1.9+ on the class path.
 * `cglib`: Deprecated: Uses https://github.com/cglib/cglib[CGLIB] to create mock objects.
 ** Requires `cglib:cglib-nodep` 3.2.0+ on the class path.
-
+* `mockito`: Uses https://site.mockito.org/[Mockito] to create mock objects.
+** Can be configured to use additional Mockito feature like mock `Serializable`
+** Requires `org.mockito:mockito-core` 4.11+ on the class path.
 
 .Capabilities of the different built-in mock makers
-[cols=".^~h,^.^15,^.^15,^.^15"]
+[cols=".^~h,^.^15,^.^15,^.^15,^.^15"]
 |===
-^|          Capability           | `java-proxy` | `byte-buddy` | `cglib`
+^|          Capability           | `java-proxy` | `byte-buddy` | `cglib` | `mockito`
 
-| Interface                      |      ✔       |      ✔       |    ✔
-| Class                          |      ✘       |      ✔       |    ✔
-| Additional Interfaces          |      ✔       |      ✔       |    ✔
-| Explicit Constructor Arguments |      ✘       |      ✔       |    ✔
-| Final Class                    |      ✘       |      ✘       |    ✘
-| Final Method                   |      ✘       |      ✘       |    ✘
-| Static Method                  |      ✘       |      ✘       |    ✘
+| Interface                      |      ✔       |      ✔       |    ✔    |     ✔
+| Class                          |      ✘       |      ✔       |    ✔    |     ✔
+| Additional Interfaces          |      ✔       |      ✔       |    ✔    |     ✔
+| Explicit Constructor Arguments |      ✘       |      ✔       |    ✔    |     ✔
+| Final Class                    |      ✘       |      ✘       |    ✘    |     ✔
+| Final Method                   |      ✘       |      ✘       |    ✘    |     ✔
+| Static Method                  |      ✘       |      ✘       |    ✘    |     ✘
 |===
 
 The class `spock.mock.MockMakers` provides constants and methods for the built-in mock makers.
@@ -1093,6 +1111,36 @@ The preferred mock maker will be used globally, if no mock maker is explicitly s
 ----
 include::{sourcedir}/extension/MockMakerConfigurationDocSpec.groovy[tag=mock-maker-preferredMockMaker]
 ----
+
+[[mock-makers-mockito]]
+==== Mockito Mock Maker
+
+The `mockito` Mock Maker provides the ability to mock final types, enums and final methods.
+The mocking of final classes is automatically enabled, if `org.mockito:mockito-core` 4.11+ is on the class path.
+
+For mocking of final methods, you need to select the `mockito` mock maker during mock construction,
+like:
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/MockMakerDocSpec.groovy[tag=mockito]
+----
+
+If you want to make final methods mockable by default, you can select this mock maker as the preferred mock maker.
+It can't mock native methods, see https://javadoc.io/doc/org.mockito/mockito-core/5.6.0/org/mockito/Mockito.html#Mocking_Final[the Mockito documentation] for details.
+
+CAUTION: If you try to mock a final method without a Mock Maker supporting it,
+         it will silently fail, without honoring your specified interactions.
+
+You can configure the created mock objects using the interface `org.mockito.MockSettings` during the construction to use features provided by Mockito:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/MockMakerDocSpec.groovy[tag=mock-serializable]
+----
+
+The `mockito` mock maker uses `org.mockito.MockMakers.INLINE` under the hood,
+please see the Mockito manual "Mocking final types, enums and final methods" for all pros and cons,
+when using `org.mockito.MockMakers.INLINE`.
 
 ==== Custom Mock Maker
 
@@ -1121,4 +1169,98 @@ include::{sourcedir}/extension/FancyMockMaker.java[tag=fancy-mock-maker]
 [source,groovy,indent=0]
 ----
 include::{sourcedir}/extension/FancyMockMakerDocSpec.groovy[tag=fancy-mock-maker-usage]
+----
+
+[#extension-store]
+=== Keeping State in Extensions
+
+Prior to Spock 2.4, extensions could only store state either in their own instances or their interceptor instances.
+Often, the state can be kept locally in the `intercept(IMethodInvocation)` method around the `IMethodInvocation.proceed()` call. However, there are cases where this is not possible, for example when using initializer interceptors.
+
+Spock 2.4 adds a new `org.spockframework.runtime.extension.IStore` interface that allows extensions to store and retrieve data during the execution of a specification.
+
+The store is available from the `org.spockframework.runtime.extension.IMethodInvocation` interface via the `getStore(IStore.Namespace namespace)` method. Currently, it is not possible to access the store directly from an extension, only via registering an <<#interceptors,interceptor>>.
+
+The stores are hierarchical and follow roughly the same hierarchy as shown in the <<spock-interceptors>> figure. The hierarchy is as follows:
+
+[source]
+----
+Root
+┗ Specification
+  ┗ Feature
+    ┗ Iteration
+----
+
+.Store hierarchy
+[plantuml,images/extension-store,svg]
+....
+@startuml
+state Root #88CCEE {
+    state ASpec #DDCC77 {
+        state AFeature1 #44AA99 {
+            state "AFeature1[1]" #CC6677
+            state "AFeature1[2]" #CC6677
+        }
+        state AFeature2 #44AA99 {
+            state "AFeature2[1]" #CC6677
+            state "AFeature2[2]" #CC6677
+        }
+    }
+    state BSpec #DDCC77{
+        state BFeature1 #44AA99 {
+            state "BFeature1[1]" #CC6677
+            state "BFeature1[2]" #CC6677
+        }
+        state BFeature2 #44AA99 {
+            state "BFeature2[1]" #CC6677
+            state "BFeature2[2]" #CC6677
+        }
+    }
+}
+
+'// color palette is TOL from https://davidmathlogic.com/colorblind/
+'// https://personal.sron.nl/~pault/ muted variant
+@enduml
+....
+
+If an item is not found in the current store, its parent store is searched, and so on until the root store is reached. For more information see the JavaDoc of `org.spockframework.runtime.extension.IStore`.
+
+.Example
+If an interceptor adds a `Macguffin` to the store via a `sharedInitializerInterceptor`  for `ASpec` it will be available to all features (`AFeature1` and `AFeature2`) and iterations (`AFeature1[1]`, `AFeature1[2]`, `AFeature2[1]`, `AFeature2[2]`) of that specification, but not to `BSpec` or its features. Conversely, if a feature interceptor adds a `Thingmajig` to the store for `AFeature1` it will be available to all its iterations (`AFeature1[1]`, `AFeature1[2]`), but not to sibling features (`AFeature2`) or to the specification (`ASpec`).
+
+
+NOTE: When the store is closed, it will call the `close()` method for all stored values that implement `java.lang.AutoCloseable`.
+      Stored values will be closed in reverse insertion order.
+      This does not happen, if the value was added and subsequently removed from the store, before the store was closed.
+
+==== Example of a global extension using the Store
+
+.Global Extension implementation
+[source,groovy,indent=0]
+----
+include::{sourcedir}/extension/ExtensionStoreSpec.groovy[tag=example-extension]
+----
+<1> The `Namespace` for the extension is created, here we use the extension's class as key
+<2> The extension registers the `INTERCEPTOR` for each feature method
+<3> `executionStart` is called right before the specifications are executed, it also gives access to the root-level `IStore`
+<4> The extensions uses its `Namespace` to retrieve the `IStore`
+<5> It then puts a `ConcurrentHashMap` into the store to serve as collector for the data
+<6> During the feature method execution the `INTERCEPTOR` retrieves the `IStore` via the shared `Namespace`
+<7> It then retrieves the `ConcurrentHashMap` via the key, retrieval request will propagate through the hierarchy until it finds the value at the root-level
+<8> It then increments the counter for the occurred exception type, creating the counter if it was not yet present.
+<9> `executionStop` is called after all tests have been executed and also give access to the root-level `IStore`.
+    The extension uses this to print a report of the collected exception statistics.
+
+.Example Specs
+[source,groovy,indent=0]
+----
+include::{sourcedir}/extension/ExtensionStoreSpec.groovy[tag=example-spec]
+----
+
+The extension generates the following output for the example code above.
+
+.Output
+[source,indent=0]
+----
+include::{sourcedir}/extension/ExtensionStoreSpec.groovy[tag=example-result]
 ----

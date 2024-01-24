@@ -15,7 +15,11 @@
 
 package org.spockframework.smoke.mock
 
+import spock.util.environment.Jvm
+
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 import org.spockframework.mock.TooFewInvocationsError
@@ -24,14 +28,19 @@ import org.spockframework.mock.TooManyInvocationsError
 import spock.lang.*
 
 class InvokingMocksFromMultipleThreads extends Specification {
+  private static final int WAIT_TIME_S = 200
+
   def numThreads = 10
   def list = Mock(List)
-  def latch = new CountDownLatch(10)
+  def latch = new CountDownLatch(numThreads)
+  @AutoCleanup("shutdownNow")
+  @Shared
+  def executorService = createExecutorService()
 
   def "invoking a mock from multiple threads"() {
     when:
     numThreads.times { threadId ->
-      Thread.start {
+      executorService.submit {
         try {
           100.times { count ->
             list.add(count)
@@ -42,7 +51,7 @@ class InvokingMocksFromMultipleThreads extends Specification {
         }
       }
     }
-    latch.await(10, TimeUnit.SECONDS)
+    awaitLatch()
 
     then:
     interaction {
@@ -54,7 +63,7 @@ class InvokingMocksFromMultipleThreads extends Specification {
   def "invoking a mock from multiple threads - too many invocations"() {
     when:
     numThreads.times { threadId ->
-      Thread.start {
+      executorService.submit {
         try {
           100.times { count ->
             list.add(count)
@@ -68,7 +77,7 @@ class InvokingMocksFromMultipleThreads extends Specification {
         }
       }
     }
-    latch.await(10, TimeUnit.SECONDS)
+    awaitLatch()
 
     then:
     interaction {
@@ -80,7 +89,7 @@ class InvokingMocksFromMultipleThreads extends Specification {
   def "invoking a mock from multiple threads - too few invocations"() {
     when:
     numThreads.times { threadId ->
-      Thread.start {
+      executorService.submit {
         try {
           100.times { count ->
             if (!(threadId == 0 && count == 99)) list.add(count)
@@ -93,11 +102,22 @@ class InvokingMocksFromMultipleThreads extends Specification {
         }
       }
     }
-    latch.await(10, TimeUnit.SECONDS)
+    awaitLatch()
 
     then:
     interaction {
       100.times { count -> numThreads * list.add(count) }
+    }
+  }
+
+
+  private static ExecutorService createExecutorService() {
+    return Jvm.current.java21Compatible ? Executors."newVirtualThreadPerTaskExecutor"() : Executors.newCachedThreadPool() { new Thread(it).tap { it.daemon = true } }
+  }
+
+  private void awaitLatch() {
+    if (!latch.await(WAIT_TIME_S, TimeUnit.SECONDS)) {
+      throw new IllegalStateException("The test threads did not terminate in ${WAIT_TIME_S}s.")
     }
   }
 }

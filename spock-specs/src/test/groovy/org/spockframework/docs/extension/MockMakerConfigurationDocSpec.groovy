@@ -37,7 +37,7 @@ class MockMakerConfigurationDocSpec extends EmbeddedSpecification {
     runner.runFeatureBody("""
     def registry = RunContext.get().getMockMakerRegistry()
     expect:
-    registry.getMakerList().get(0).getId().toString() == "${MockMakers.byteBuddy}"
+    registry.getMakerList().get(0).getId().toString() == "${MockMakers.byteBuddy.mockMakerId}"
 """)
   }
 }

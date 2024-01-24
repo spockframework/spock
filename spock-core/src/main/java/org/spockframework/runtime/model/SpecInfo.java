@@ -22,6 +22,7 @@ import org.spockframework.runtime.model.parallel.*;
 import org.spockframework.util.*;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -168,12 +169,20 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     return initializerMethod;
   }
 
+  public List<MethodInfo> getAllInitializerMethods() {
+    return collectAll(SpecInfo::getInitializerMethod);
+  }
+
   public void setInitializerMethod(MethodInfo initializerMethod) {
     this.initializerMethod = initializerMethod;
   }
 
   public MethodInfo getSharedInitializerMethod() {
     return sharedInitializerMethod;
+  }
+
+  public List<MethodInfo> getAllSharedInitializerMethods() {
+    return collectAll(SpecInfo::getSharedInitializerMethod);
   }
 
   public void setSharedInitializerMethod(MethodInfo sharedInitializerMethod) {
@@ -184,12 +193,20 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     return setupMethods;
   }
 
+  public List<MethodInfo> getAllSetupMethods() {
+    return collectAllFromIterable(SpecInfo::getSetupMethods);
+  }
+
   public void addSetupMethod(MethodInfo setupMethod) {
     setupMethods.add(setupMethod);
   }
 
   public List<MethodInfo> getCleanupMethods() {
     return cleanupMethods;
+  }
+
+  public List<MethodInfo> getAllCleanupMethods() {
+    return collectAllFromIterable(SpecInfo::getCleanupMethods);
   }
 
   public void addCleanupMethod(MethodInfo cleanupMethod) {
@@ -200,6 +217,10 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     return setupSpecMethods;
   }
 
+  public List<MethodInfo> getAllSetupSpecMethods() {
+    return collectAllFromIterable(SpecInfo::getSetupSpecMethods);
+  }
+
   public void addSetupSpecMethod(MethodInfo setupSpecMethod) {
     setupSpecMethods.add(setupSpecMethod);
   }
@@ -208,20 +229,20 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     return cleanupSpecMethods;
   }
 
+  public List<MethodInfo> getAllCleanupSpecMethods() {
+    return collectAllFromIterable(SpecInfo::getCleanupSpecMethods);
+  }
+
   public void addCleanupSpecMethod(MethodInfo cleanupSpecMethod) {
     cleanupSpecMethods.add(cleanupSpecMethod);
   }
 
-  @SuppressWarnings("unchecked")
   public Iterable<MethodInfo> getFixtureMethods() {
     return CollectionUtil.concat(setupSpecMethods, setupMethods, cleanupMethods, cleanupSpecMethods);
   }
 
-  @SuppressWarnings("unchecked")
   public Iterable<MethodInfo> getAllFixtureMethods() {
-    if (superSpec == null) return getFixtureMethods();
-
-    return CollectionUtil.concat(superSpec.getAllFixtureMethods(), getFixtureMethods());
+    return collectAllFromIterable(SpecInfo::getFixtureMethods);
   }
 
   public List<FieldInfo> getFields() {
@@ -229,11 +250,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
   }
 
   public List<FieldInfo> getAllFields() {
-    if (superSpec == null) return fields;
-
-    List<FieldInfo> result = new ArrayList<>(superSpec.getAllFields());
-    result.addAll(fields);
-    return result;
+    return collectAllFromIterable(SpecInfo::getFields);
   }
 
   public void addField(FieldInfo field) {
@@ -245,17 +262,32 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
   }
 
   public List<FeatureInfo> getAllFeatures() {
-    if (superSpec == null) return features;
-
-    List<FeatureInfo> result = new ArrayList<>(superSpec.getAllFeatures());
-    result.addAll(features);
-    return result;
+    return collectAllFromIterable(SpecInfo::getFeatures);
   }
 
   public List<FeatureInfo> getAllFeaturesInExecutionOrder() {
     List<FeatureInfo> result = getAllFeatures();
     result.sort(comparingInt(FeatureInfo::getExecutionOrder));
     return result;
+  }
+
+  private <T> List<T> collectAll(Function<SpecInfo, T> getter) {
+    List<T> result = new ArrayList<>();
+    collectAll(result, getter, List::add);
+    return result;
+  }
+
+  private <T> List<T> collectAllFromIterable(Function<SpecInfo, Iterable<T>> getter) {
+    List<T> result = new ArrayList<>();
+    collectAll(result, getter, (a, i) -> i.forEach(a::add));
+    return result;
+  }
+
+  private <T,U> void collectAll(List<T> accumulator, Function<SpecInfo, U> getter, BiConsumer<List<T>, U> combiner) {
+    if (superSpec != null) {
+      superSpec.collectAll(accumulator, getter, combiner);
+    }
+    combiner.accept(accumulator, getter.apply(this));
   }
 
   public void addFeature(FeatureInfo feature) {

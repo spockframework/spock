@@ -8,9 +8,10 @@
   "ignorePaths": ["spock-*/**"],
   "packageRules": [
     // Disable major version upgrades for Groovy versions
-    // as we want to keep one for each major version
+    // as we want to keep one for each major version.
+    // The same applies for mockito as we test with both 4 and 5
     {
-      "matchPackagePrefixes": ["org.codehaus.groovy:", "org.apache.groovy:"],
+      "matchPackagePrefixes": ["org.codehaus.groovy:", "org.apache.groovy:", "org.mockito:"],
       "matchManagers": ["regex"],
       "matchUpdateTypes": ["major"],
       "enabled": false

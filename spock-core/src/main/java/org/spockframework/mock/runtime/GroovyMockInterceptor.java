@@ -19,7 +19,6 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
 import spock.lang.Specification;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 import groovy.lang.*;
 
@@ -28,12 +27,11 @@ import static java.util.Arrays.asList;
 public class GroovyMockInterceptor extends BaseMockInterceptor {
   private final IMockConfiguration mockConfiguration;
   private final Specification specification;
-  private final MetaClass mockMetaClass;
 
   public GroovyMockInterceptor(IMockConfiguration mockConfiguration, Specification specification, MetaClass mockMetaClass) {
+    super(mockMetaClass);
     this.mockConfiguration = mockConfiguration;
     this.specification = specification;
-    this.mockMetaClass = mockMetaClass;
   }
 
   @Override
@@ -50,7 +48,7 @@ public class GroovyMockInterceptor extends BaseMockInterceptor {
     Object[] args = GroovyRuntimeUtil.asUnwrappedArgumentArray(arguments);
 
     if (isMethod(method, "getMetaClass")) {
-      return mockMetaClass;
+      return getMockMetaClass();
     }
     if (isMethod(method, "invokeMethod", String.class, Object.class)) {
       return GroovyRuntimeUtil.invokeMethod(target,

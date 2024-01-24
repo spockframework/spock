@@ -20,6 +20,7 @@ import org.spockframework.mock.CannotCreateMockException;
 import org.spockframework.util.Nullable;
 import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.ThreadSafe;
+import spock.mock.MockMakerId;
 
 import java.util.Collections;
 import java.util.EnumSet;

@@ -19,6 +19,8 @@ package org.spockframework.docs.extension;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import org.spockframework.mock.runtime.IMockMaker;
+import spock.mock.IMockMakerSettings;
+import spock.mock.MockMakerId;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -76,7 +78,7 @@ public final class FancyMockMaker implements IMockMaker {
   }
 }
 
-final class FancyMockMakerSettings implements IMockMaker.IMockMakerSettings {
+final class FancyMockMakerSettings implements IMockMakerSettings {
   private boolean serialization;
   private final List<Type> specialTypes = new ArrayList<>();
 
@@ -92,7 +94,7 @@ final class FancyMockMakerSettings implements IMockMaker.IMockMakerSettings {
   }
 
   @Override
-  public IMockMaker.MockMakerId getMockMakerId() {
+  public MockMakerId getMockMakerId() {
     return FancyMockMaker.ID;
   }
 
@@ -109,7 +111,7 @@ final class FancyMockMakers {
   /**
    * Public static entry point for the User.
    */
-  public static IMockMaker.IMockMakerSettings fancyMock(
+  public static IMockMakerSettings fancyMock(
     @DelegatesTo(FancyMockMakerSettings.class)
     Closure<?> code) {
     FancyMockMakerSettings settings = new FancyMockMakerSettings();

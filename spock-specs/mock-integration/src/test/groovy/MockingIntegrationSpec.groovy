@@ -20,6 +20,10 @@ class MockingIntegrationSpec extends Specification {
   }
 
   @IgnoreIf({ TEST_TYPE == "plain" })
+  @IgnoreIf(
+    value = { jvm.java21Compatible && TEST_TYPE.contains("cglib") },
+    reason = "Cglib doesn't support running on Java 21+"
+  )
   def "can mock class when cglib or byte-buddy are present"() {
     given:
     def list = Mock(ArrayList)
@@ -32,6 +36,10 @@ class MockingIntegrationSpec extends Specification {
   }
 
   @Requires({ TEST_TYPE == "plain" })
+  @IgnoreIf(
+    value = { jvm.java21Compatible && TEST_TYPE.contains("cglib") },
+    reason = "Cglib doesn't support running on Java 21+"
+  )
   def "cannot mock class without cglib and byte-buddy"() {
     when:
     Mock(ArrayList)
@@ -41,6 +49,10 @@ class MockingIntegrationSpec extends Specification {
   }
 
   @IgnoreIf({ TEST_TYPE == "plain" })
+  @IgnoreIf(
+    value = { jvm.java21Compatible && TEST_TYPE.contains("cglib") },
+    reason = "Cglib doesn't support running on Java 21+"
+  )
   def "can spy on class when cglib or byte-buddy are present"() {
     given:
     def list = Spy(ArrayList)
@@ -82,4 +94,53 @@ class MockingIntegrationSpec extends Specification {
     ex.message == "Cannot create mock for interface java.lang.Runnable. cglib: The cglib-nodep library is missing on the class path."
   }
 
+  @Requires({ TEST_TYPE == "plain" })
+  def "cannot Mock explicitly with mockito, if it is not on the classpath"() {
+    when:
+    Mock(mockMaker: MockMakers.mockito, Runnable)
+
+    then:
+    CannotCreateMockException ex = thrown()
+    ex.message == "Cannot create mock for interface java.lang.Runnable. mockito: The mockito-core library >= 4.11 is missing on the class path."
+  }
+
+  @Requires({ TEST_TYPE == "plain" })
+  def "cannot Mock explicitly with mockito with settings, if it is not on the classpath"() {
+    when:
+    Mock(mockMaker: MockMakers.mockito {}, Runnable)
+
+    then:
+    CannotCreateMockException ex = thrown()
+    ex.message == "Cannot create mock for interface java.lang.Runnable. mockito: The mockito-core library >= 4.11 is missing on the class path."
+  }
+
+  @Requires({ TEST_TYPE.startsWith("mockito") })
+  def "mockito - test mocking interface"() {
+    given:
+    Runnable mock = Mock(mockMaker: MockMakers.mockito)
+
+    when:
+    mock.run()
+
+    then:
+    1 * mock.run()
+  }
+
+  @Requires({ TEST_TYPE.startsWith("mockito") })
+  def "mockito - test mocking final class"() {
+    given:
+    FinalClass mock = Mock(mockMaker: MockMakers.mockito)
+
+    when:
+    mock.method()
+
+    then:
+    1 * mock.method()
+  }
+
+  private static final class FinalClass {
+
+    void method() {
+    }
+  }
 }

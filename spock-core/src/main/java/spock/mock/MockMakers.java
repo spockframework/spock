@@ -16,14 +16,21 @@
 
 package spock.mock;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+import groovy.transform.stc.ClosureParams;
+import groovy.transform.stc.SimpleType;
+import org.mockito.MockSettings;
 import org.spockframework.mock.runtime.ByteBuddyMockMaker;
 import org.spockframework.mock.runtime.CglibMockMaker;
 import org.spockframework.mock.runtime.IMockMaker;
 import org.spockframework.mock.runtime.JavaProxyMockMaker;
+import org.spockframework.mock.runtime.mockito.MockitoMockMaker;
+import org.spockframework.mock.runtime.mockito.MockitoMockMakerSettings;
 
 import java.lang.reflect.Proxy;
 
-import static org.spockframework.mock.runtime.IMockMaker.IMockMakerSettings.simple;
+import static spock.mock.IMockMakerSettings.settingsFor;
 
 /**
  * Provides constants and factory methods for known built-in {@link IMockMaker} implementations.
@@ -48,7 +55,7 @@ public final class MockMakers {
    * <li>{@code EXPLICIT_CONSTRUCTOR_ARGUMENTS}</li>
    * </ul>
    */
-  public static final IMockMaker.IMockMakerSettings byteBuddy = simple(ByteBuddyMockMaker.ID);
+  public static final IMockMakerSettings byteBuddy = settingsFor(ByteBuddyMockMaker.ID);
 
   /**
    * Uses <a href="https://github.com/cglib/cglib">CGLIB</a> to create mocks.
@@ -61,7 +68,7 @@ public final class MockMakers {
    * <li>{@code EXPLICIT_CONSTRUCTOR_ARGUMENTS}</li>
    * </ul>
    */
-  public static final IMockMaker.IMockMakerSettings cglib = simple(CglibMockMaker.ID);
+  public static final IMockMakerSettings cglib = settingsFor(CglibMockMaker.ID);
 
   /**
    * Uses the Java {@link Proxy} API to create mocks of interfaces.
@@ -72,5 +79,47 @@ public final class MockMakers {
    * <li>{@code ADDITIONAL_INTERFACES}</li>
    * </ul>
    */
-  public static final IMockMaker.IMockMakerSettings javaProxy = simple(JavaProxyMockMaker.ID);
+  public static final IMockMakerSettings javaProxy = settingsFor(JavaProxyMockMaker.ID);
+
+  /**
+   * Uses <a href="https://site.mockito.org/">Mockito</a> to create mocks,
+   * which also supports final classes, enums and final methods.
+   *
+   * <p>The supported mocking features are:
+   * <ul>
+   * <li>{@code INTERFACE}</li>
+   * <li>{@code CLASS}</li>
+   * <li>{@code ADDITIONAL_INTERFACES}</li>
+   * <li>{@code EXPLICIT_CONSTRUCTOR_ARGUMENTS}</li>
+   * <li>{@code FINAL_CLASS}</li>
+   * <li>{@code FINAL_METHOD}</li>
+   *
+   * <p>It uses {@link org.mockito.MockMakers#INLINE} under the hood,
+   * please see the Mockito manual for all pros and cons, when using {@code MockMakers.INLINE}.
+   */
+  public static final IMockMakerSettings mockito = settingsFor(MockitoMockMaker.ID);
+
+  /**
+   * Uses <a href="https://site.mockito.org/">Mockito</a> to create mocks,
+   * which also supports final classes, enums and final methods.
+   *
+   * <p>The supported mocking features are:
+   * <ul>
+   * <li>{@code INTERFACE}</li>
+   * <li>{@code CLASS}</li>
+   * <li>{@code ADDITIONAL_INTERFACES}</li>
+   * <li>{@code EXPLICIT_CONSTRUCTOR_ARGUMENTS}</li>
+   * <li>{@code FINAL_CLASS}</li>
+   * <li>{@code FINAL_METHOD}</li>
+   *
+   * <p>It uses {@link org.mockito.MockMakers#INLINE} under the hood,
+   * please see the Mockito manual for all pros and cons, when using {@code MockMakers.INLINE}.
+   *
+   * @param settingsCode the code to execute to configure {@link MockSettings} for further configuration of the mock to create
+   */
+  public static IMockMakerSettings mockito(@DelegatesTo(type = "org.mockito.MockSettings", strategy = Closure.DELEGATE_FIRST)
+                                           @ClosureParams(value = SimpleType.class, options = "org.mockito.MockSettings")
+                                           Closure<?> settingsCode) {
+    return MockitoMockMakerSettings.createSettings(settingsCode);
+  }
 }

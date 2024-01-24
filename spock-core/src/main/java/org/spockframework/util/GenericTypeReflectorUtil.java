@@ -1,3 +1,19 @@
+/*
+ * Copyright 2023 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.spockframework.util;
 
 import io.leangen.geantyref.GenericTypeReflector;
@@ -28,7 +44,19 @@ public abstract class GenericTypeReflectorUtil {
   }
 
   /**
-   * Resolves the parameter types of the given method/constructor in the given type,  with the method {@link GenericTypeReflector#getParameterTypes(Executable, Type)}.
+   * Finds the most specific supertype of {@code subType} whose erasure is {@code searchSuperClass}, with
+   * the method {@link GenericTypeReflector#getExactSuperType(Type, Class)}.
+   *
+   * @param subType          the subType which we search the super type for
+   * @param searchSuperClass the super type to search for
+   * @return the common super type or {@code null} if non was found
+   */
+  public static Type getExactSuperType(Type subType, Class<?> searchSuperClass) {
+    return GenericTypeReflector.getExactSuperType(subType, searchSuperClass);
+  }
+
+  /**
+   * Resolves the parameter types of the given method/constructor in the given type, with the method {@link GenericTypeReflector#getParameterTypes(Executable, Type)}.
    *
    * <p>In difference to the method of the library, this method will resolve unknown {@link java.lang.reflect.TypeVariable}s to the upper bound of the type variable.
    *

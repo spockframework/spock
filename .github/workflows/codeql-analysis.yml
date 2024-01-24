@@ -32,7 +32,7 @@ jobs:
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         # Override language selection by uncommenting this and choosing your languages
         # with:
         #   languages: go, javascript, csharp, python, cpp, java
@@ -57,8 +57,6 @@ jobs:
       # we have to disable build cache for now as it seems to be necessary for the compiler to run during the build
       # https://docs.github.com/en/github/finding-security-vulnerabilities-and-errors-in-your-code/troubleshooting-the-codeql-workflow#no-code-found-during-the-build
       - name: 'Build Spock Classes'
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: --stacktrace --no-build-cache testClasses "-Dvariant=${{ matrix.variant }}"
+        run: ./gradlew --stacktrace --no-build-cache testClasses "-Dvariant=${{ matrix.variant }}"
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3

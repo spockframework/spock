@@ -1,5 +1,6 @@
 package org.spockframework.runtime;
 
+import org.junit.platform.engine.TestDescriptor;
 import org.spockframework.runtime.model.SpecInfo;
 import spock.config.RunnerConfiguration;
 
@@ -21,14 +22,16 @@ public class SpecNode extends SpockNode<SpecInfo> {
 
   @Override
   public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
+    context.getRunContext().ensureInstalled();
+    PlatformParameterizedSpecRunner specRunner = context.getRunContext().createSpecRunner(getNodeInfo());
+    context = context.withRunner(specRunner).withSpec(getNodeInfo());
     if (getNodeInfo().isSkipped()) {
-      // Node.prepare is called before Node.shouldBeSkipped so we just skip the shared spec initialization
+      // Node.prepare is called before Node.shouldBeSkipped, so we just skip the shared spec initialization.
+      // We still set the runner, as we need it in the nodeSkipped callback.
       return context;
     }
-    PlatformParameterizedSpecRunner specRunner = context.getRunContext().createSpecRunner(getNodeInfo());
     ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
     context = context.withErrorInfoCollector(errorInfoCollector);
-    context = context.withRunner(specRunner).withSpec(getNodeInfo());
     context = specRunner.runSharedSpec(context);
     errorInfoCollector.assertEmpty();
     return context;
@@ -37,6 +40,11 @@ public class SpecNode extends SpockNode<SpecInfo> {
   @Override
   public SkipResult shouldBeSkipped(SpockExecutionContext context) throws Exception {
     return shouldBeSkipped(getNodeInfo());
+  }
+
+  @Override
+  public void nodeSkipped(SpockExecutionContext context, TestDescriptor testDescriptor, SkipResult result) {
+    context.getRunner().supervisor.specSkipped(getNodeInfo());
   }
 
   @Override
@@ -58,6 +66,7 @@ public class SpecNode extends SpockNode<SpecInfo> {
 
   @Override
   public void around(SpockExecutionContext context, Invocation<SpockExecutionContext> invocation) throws Exception {
+    context.getRunContext().ensureInstalled();
     ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
     SpockExecutionContext ctx = context.withErrorInfoCollector(errorInfoCollector);
     ctx.getRunner().runSpec(ctx, () -> sneakyInvoke(invocation, ctx));

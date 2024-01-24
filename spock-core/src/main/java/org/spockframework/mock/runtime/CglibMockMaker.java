@@ -19,6 +19,8 @@ package org.spockframework.mock.runtime;
 import org.spockframework.mock.CannotCreateMockException;
 import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.ThreadSafe;
+import spock.mock.MockMakerId;
+import spock.util.environment.Jvm;
 
 import java.util.Collections;
 import java.util.EnumSet;
@@ -59,6 +61,9 @@ public class CglibMockMaker implements IMockMaker {
   public IMockabilityResult getMockability(IMockCreationSettings settings) {
     if (!cglibAvailable) {
       return () -> "The cglib-nodep library is missing on the class path.";
+    }
+    if(Jvm.getCurrent().isJava21Compatible()){
+      return () -> "Mocking with cglib is not supported on Java 21 or newer.";
     }
     return IMockabilityResult.MOCKABLE;
   }

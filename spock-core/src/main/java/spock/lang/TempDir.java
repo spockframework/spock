@@ -36,13 +36,17 @@ import java.nio.file.Path;
  * &#64;TempDir
  * FileSystemFixture fsFixture // will inject an instance of FileSystemFixture with the temp path injected via constructor
  * </code></pre>
+ * <p>
+ * Since Spock 2.4, {@code @TempDir} can be used to annotate a method parameter, with the same behavior as the field types.
+ * Use this if you want to use a temp directory in a single method only.
+ * Valid methods are {@code setup()}, {@code setupSpec()}, or any feature methods.
  *
  * @author dqyuan
  * @since 2.0
  */
 @Beta
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 @ExtensionAnnotation(TempDirExtension.class)
 public @interface TempDir {
 }

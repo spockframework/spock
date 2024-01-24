@@ -16,6 +16,7 @@
 
 package org.spockframework.docs.interaction
 
+
 import spock.lang.Specification
 import spock.mock.MockMakers
 
@@ -32,5 +33,35 @@ class MockMakerDocSpec extends Specification {
 
     then:
     1 * _.receive(_)
+  }
+
+  def "mockito"() {
+    given:
+// tag::mockito[]
+    Subscriber subscriber = Mock(mockMaker: MockMakers.mockito)
+// end::mockito[]
+
+    when:
+    subscriber.receive("1")
+
+    then:
+    1 * _.receive(_)
+  }
+
+  @SuppressWarnings('UnnecessaryQualifiedReference')
+  def "mockito additional settings serializable"() {
+    given:
+// tag::mock-serializable[]
+    Subscriber subscriber = Mock(mockMaker: MockMakers.mockito {
+      serializable()
+    })
+// end::mock-serializable[]
+
+    when:
+    subscriber.receive("1")
+
+    then:
+    1 * _.receive(_)
+    subscriber instanceof Serializable
   }
 }

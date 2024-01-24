@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="">
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.10">
+<meta name="generator" content="Asciidoctor 2.0.18">
 <meta name="author" content="Peter Niederwieser, Leonard Brünings, The Spock Framework Team">
 <title>Spring Module</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
 </head>
 <body class="article">
 <div id="header">
@@ -93,16 +94,16 @@ Although the mocks can be created outside of a specification, they only work pro
            <span class="content">http://www.springframework.org/schema/beans/spring-beans.xsd</span>
            <span class="content">http://www.spockframework.org/spring https://www.spockframework.org/spring/spock.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
 
-  <span class="tag">&lt;spock:mock</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">serviceMock</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework.spring.docs.GreeterService</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>   <b class="conum">(1)</b>
-  <span class="tag">&lt;spock:stub</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">serviceStub</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework.spring.docs.GreeterService</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>   <b class="conum">(2)</b>
-  <span class="tag">&lt;spock:spy</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">serviceSpy</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework.spring.docs.GreeterServiceImpl</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span> <b class="conum">(3)</b>
+  <span class="tag">&lt;spock:mock</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">serviceMock</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework.spring.docs.GreeterService</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>   &lt;!--<b class="conum">(1)</b>--&gt;
+  <span class="tag">&lt;spock:stub</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">serviceStub</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework.spring.docs.GreeterService</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>   &lt;!--<b class="conum">(2)</b>--&gt;
+  <span class="tag">&lt;spock:spy</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">serviceSpy</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework.spring.docs.GreeterServiceImpl</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span> &lt;!--<b class="conum">(3)</b>--&gt;
 
-  <span class="tag">&lt;bean</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">someExistingBean</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">java.util.ArrayList</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>                              <b class="conum">(4)</b>
-  <span class="tag">&lt;spock:wrapWithSpy</span> <span class="attribute-name">ref</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">someExistingBean</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>                                            <b class="conum">(4)</b>
+  <span class="tag">&lt;bean</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">someExistingBean</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">java.util.ArrayList</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>                              &lt;!--<b class="conum">(4)</b>--&gt;
+  <span class="tag">&lt;spock:wrapWithSpy</span> <span class="attribute-name">ref</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">someExistingBean</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>                                            &lt;!--<b class="conum">(4)</b>--&gt;
 
-  <span class="tag">&lt;bean</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">alternativeMock</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework.spring.xml.SpockMockFactoryBean</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span> <b class="conum">(5)</b>
+  <span class="tag">&lt;bean</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">alternativeMock</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework.spring.xml.SpockMockFactoryBean</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span> &lt;!--<b class="conum">(5)</b>--&gt;
     <span class="tag">&lt;constructor-arg</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework.spring.docs.GreeterService</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
-    <span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">mockNature</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">MOCK</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>                                           <b class="conum">(6)</b>
+    <span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">mockNature</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">MOCK</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>                                           &lt;!--<b class="conum">(6)</b>--&gt;
   <span class="tag">&lt;/bean&gt;</span>
 
 
@@ -400,9 +401,8 @@ Refer to javadoc of <code>org.spockframework.spring.EnableSharedInjection</code>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-01-24 15:32:57 UTC
+Last updated 2024-01-24 15:39:39 UTC
 </div>
 </div>
-<link rel="stylesheet" href="./coderay-asciidoctor.css">
 </body>
 </html>

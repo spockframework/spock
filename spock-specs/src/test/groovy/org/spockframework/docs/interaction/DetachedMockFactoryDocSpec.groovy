@@ -16,8 +16,11 @@ import static org.spockframework.docs.interaction.DetachedMockFactoryDocSpec.Eng
 
 class DetachedMockFactoryDocSpec extends Specification {
   // tag::declare-shared[]
-  @Shared mockFactory = new DetachedMockFactory()
-  @Shared mockUtil = new MockUtil()
+  @Shared 
+  def mockFactory = new DetachedMockFactory()
+  
+  @Shared 
+  def mockUtil = new MockUtil()
   // end::declare-shared[]
 
   // tag::attach-manually[]

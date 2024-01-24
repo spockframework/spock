@@ -86,7 +86,7 @@ class TempDirExtensionSpec extends EmbeddedSpecification {
 
   def "define temp directory location and keep temp directory using configuration script"() {
     given:
-    def userDefinedBase = Paths.get("build")
+    def userDefinedBase = untypedPath.resolve("build")
     runner.configurationScript {
       tempdir {
         baseDir userDefinedBase
@@ -268,6 +268,38 @@ class CustomTempDirSpec extends Specification {
     expect:
     tmpFile != null
     tmpPath != null
+  }
+}
+
+class TempDirParameterSpec extends Specification {
+  @Shared
+  Path setupSpecParameter
+  @Shared
+  Path setupParameter
+  @Shared
+  def featureParameter
+
+  def setupSpec(@TempDir Path tempDir) {
+    setupSpecParameter = tempDir
+  }
+
+  def setup(@TempDir Path tempDir) {
+    setupParameter = tempDir
+  }
+
+  def "test"(@TempDir tempDir) {
+    given:
+    featureParameter = tempDir
+    expect:
+    tempDir instanceof Path
+    Files.isDirectory(setupSpecParameter)
+    Files.isDirectory(setupParameter)
+    Files.isDirectory(tempDir as Path)
+  }
+
+  def cleanupSpec() {
+    assert !Files.exists(setupParameter)
+    assert !Files.exists(featureParameter as Path)
   }
 }
 

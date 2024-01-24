@@ -21,6 +21,7 @@ package org.spockframework.util;
  *
  * @author Peter Niederwieser
  */
+@FunctionalInterface
 public interface IThrowableFunction<D, C, T extends Throwable> {
   C apply(D value) throws T;
 }

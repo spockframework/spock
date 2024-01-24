@@ -19,6 +19,7 @@ package org.spockframework.mock.runtime;
 import org.spockframework.mock.CannotCreateMockException;
 import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.ThreadSafe;
+import spock.mock.MockMakerId;
 import spock.util.environment.Jvm;
 
 import java.util.Collections;

@@ -18,15 +18,15 @@ package org.spockframework.mock.runtime.mockito;
 
 import groovy.lang.Closure;
 import org.mockito.MockSettings;
-import org.spockframework.mock.runtime.IMockMaker;
+import spock.mock.IMockMakerSettings;
+import spock.mock.MockMakerId;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import spock.mock.MockMakers;
 
 import static java.util.Objects.requireNonNull;
-import static org.spockframework.mock.runtime.IMockMaker.MockMakerId;
 import static org.spockframework.util.ObjectUtil.uncheckedCast;
 
-public final class MockitoMockMakerSettings implements IMockMaker.IMockMakerSettings {
+public final class MockitoMockMakerSettings implements IMockMakerSettings {
   private final Closure<?> mockitoCode;
 
   public static MockitoMockMakerSettings createSettings(Closure<?> mockitoCode) {

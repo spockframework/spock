@@ -5,6 +5,19 @@ include::include.adoc[]
 
 == 2.4 (tbd)
 
+* Spock now supports pluggable <<extensions.adoc#mock-makers,mock makers>> loaded via ServiceLoader spockPull:1746[]
+** This allows external libraries to contribute mocking logic to Spock and use the same API for the users
+** You can select the used mock maker during mock creation: `Mock(mockMaker:MockMakers.byteBuddy)`
+* Added <<extensions.adoc#mock-makers-mockito,mockito>> mock maker spockPull:1753[] which supports:
+** Mocking of final classes and final methods
+** Requires `org.mockito:mockito-core` >= 4.11 in the test class path
+* Fix issue with mocks of Groovy classes, where the Groovy MOP for `@Internal` methods was not honored by the `byte-buddy` mock maker spockPull:1729[]
+** This fixes multiple issues with Groovy MOP: spockIssue:1501[], spockIssue:1452[], spockIssue:1608[] and spockIssue:1145[]
+* Replaced `gentyref` code with https://github.com/leangen/geantyref[geantyref] library spockPull:1743[]
+** This is now a required dependency used by spock: `io.leangen.geantyref:geantyref:1.3.14`
+* Better support for generic return types for mocks spockPull:1731[]
+** This fixes the issues: spockIssue:520[], spockIssue:1163[]
+
 === Breaking Changes
 
 * Calling `old(...)` with multiple arguments is now a compilation error. Previously the additional arguments were simply ignored.
@@ -18,6 +31,11 @@ include::include.adoc[]
 * Improve `@TempDir` field injection, now it happens before field initialization, so it can be used by other field initializers.
 * Fix exception when configured `baseDir` was not existing, now `@TempDir` will create the baseDir directory if it is missing.
 * Fix bad error message for collection conditions, when one of the operands is `null`
+* Document `@ConditionBlock` Annotation spockPull:1709[]
+* Document `old`-Method spockPull:1708[]
+* Clarify documentation for global Mocks spockPull:1755[]
+* Spock-Compiler does not use wrapper types anymore spockPull:1765[]
+* Reduce lock contention of the `byte-buddy` mock maker, when multiple mocks are created concurrently spockPull:1778[]
 
 == 2.4-M1 (2022-11-30)
 

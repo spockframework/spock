@@ -141,6 +141,25 @@ class JavaStubs extends Specification {
     person.phoneNumber == "6789"
   }
 
+  def "can stub final methods with mockito with closure"() {
+    given:
+    FinalMethodPerson person = Stub(mockMaker: MockMakers.mockito) {
+      phoneNumber >> 6789
+    }
+
+    expect:
+    person.phoneNumber == "6789"
+  }
+
+  def "can stub final methods with mockito with closure and specified type"() {
+    FinalMethodPerson person = Stub(FinalMethodPerson, mockMaker: MockMakers.mockito) {
+      phoneNumber >> 6789
+    }
+
+    expect:
+    person.phoneNumber == "6789"
+  }
+
   def "cannot stub final methods with byteBuddy"() {
     FinalMethodPerson person = Stub(mockMaker: MockMakers.byteBuddy)
     person.phoneNumber >> 6789
@@ -164,6 +183,15 @@ class JavaStubs extends Specification {
     then:
     CannotCreateMockException e = thrown()
     e.message.contains("global")
+  }
+
+  def "no static type specified"() {
+    when:
+    Stub()
+
+    then:
+    InvalidSpecException ex = thrown()
+    ex.message == "Mock object type cannot be inferred automatically. Please specify a type explicitly (e.g. 'Mock(Person)')."
   }
 
   interface IPerson {

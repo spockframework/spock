@@ -27,7 +27,7 @@ class JavaProxyMockMakerSpec extends Specification {
   def "Verify ID and IMockMakerSettings"() {
     expect:
     MockMakers.javaProxy.mockMakerId.toString() == "java-proxy"
-    MockMakers.javaProxy.toString() == "java-proxy simple mock maker settings"
+    MockMakers.javaProxy.toString() == "java-proxy default mock maker settings"
   }
 
   def "Use specific MockMaker javaProxy"() {

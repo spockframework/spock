@@ -121,6 +121,7 @@ class MockingIntegrationSpec extends Specification {
 
     when:
     mock.run()
+
     then:
     1 * mock.run()
   }
@@ -128,10 +129,18 @@ class MockingIntegrationSpec extends Specification {
   @Requires({ TEST_TYPE.startsWith("mockito") })
   def "mockito - test mocking final class"() {
     given:
-    StringBuilder mock = Mock(mockMaker: MockMakers.mockito)
+    FinalClass mock = Mock(mockMaker: MockMakers.mockito)
+
     when:
-    mock.append(1)
+    mock.method()
+
     then:
-    1 * mock.append(1)
+    1 * mock.method()
+  }
+
+  private static final class FinalClass {
+
+    void method() {
+    }
   }
 }

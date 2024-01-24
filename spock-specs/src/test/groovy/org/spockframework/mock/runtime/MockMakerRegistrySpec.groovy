@@ -23,14 +23,14 @@ import org.spockframework.runtime.RunContext
 import org.spockframework.util.InternalSpockError
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.mock.IMockMakerSettings
+import spock.mock.MockMakerId
 import spock.mock.MockMakers
 
 import java.util.concurrent.Callable
 
-import static org.spockframework.mock.runtime.IMockMaker.MockMakerId
 import static org.spockframework.mock.runtime.IMockMaker.MockMakerCapability
 import static org.spockframework.mock.runtime.IMockMaker.IMockCreationSettings
-import static org.spockframework.mock.runtime.IMockMaker.IMockMakerSettings
 import static org.spockframework.mock.runtime.IMockMaker.IMockabilityResult
 
 class MockMakerRegistrySpec extends Specification {
@@ -161,7 +161,7 @@ class MockMakerRegistrySpec extends Specification {
     }
     def cglib = new CglibMockMaker()
     when:
-    def r = new MockMakerRegistry([mockSamePriorityProxy, byteBuddy, cglib, sampleMockMaker, proxy], IMockMakerSettings.simple(TEST_ID))
+    def r = new MockMakerRegistry([mockSamePriorityProxy, byteBuddy, cglib, sampleMockMaker, proxy], IMockMakerSettings.settingsFor(TEST_ID))
     then:
     r.makerList == [sampleMockMaker, proxy, byteBuddy, mockSamePriorityProxy, cglib]
   }
@@ -197,7 +197,7 @@ class MockMakerRegistrySpec extends Specification {
 
   def "Mock with unknown MockMaker"() {
     when:
-    Mock(mockMaker: IMockMakerSettings.simple(new MockMakerId("unknown")), Runnable)
+    Mock(mockMaker: IMockMakerSettings.settingsFor(new MockMakerId("unknown")), Runnable)
     then:
     CannotCreateMockException ex = thrown()
     ex.message == "Cannot create mock for interface java.lang.Runnable because MockMaker with ID 'unknown' does not exist."

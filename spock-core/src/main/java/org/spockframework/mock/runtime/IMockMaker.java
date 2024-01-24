@@ -16,7 +16,6 @@
 
 package org.spockframework.mock.runtime;
 
-import groovy.lang.Closure;
 import org.spockframework.mock.CannotCreateMockException;
 import org.spockframework.mock.IMockObject;
 import org.spockframework.mock.ISpockMockObject;
@@ -25,13 +24,13 @@ import org.spockframework.util.Beta;
 import org.spockframework.util.Immutable;
 import org.spockframework.util.Nullable;
 import org.spockframework.util.ThreadSafe;
+import spock.mock.IMockMakerSettings;
+import spock.mock.MockMakerId;
 import spock.mock.MockMakers;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * The {@code IMockMaker} provides a {@link ServiceLoader} extension point to allow the usage
@@ -205,47 +204,6 @@ public interface IMockMaker {
   }
 
   /**
-   * Settings passed to the {@link IMockMaker} and created explicitly for the requested mock maker.
-   * The user will create such an instance at the mocking site:
-   *
-   * <p>{@code Mock(mockMaker: yourMockSettings { yourProperty = true }, ClassToMock)}
-   *
-   * <p>The {@link IMockMaker} should define a static constant or method (see {@link MockMakers}),
-   * which let the user construct a custom {@link IMockMakerSettings}.
-   *
-   * <p>If you provide a method, you can define your settings in a typesafe manner for the user,
-   * e.g. with a {@link Closure} parameter to configure the mock.
-   *
-   * @since 2.4
-   */
-  @Immutable
-  @Beta
-  interface IMockMakerSettings {
-
-    /**
-     * Creates a simple {@code IMockMakerSettings} object with only an ID.
-     *
-     * @param id the mock maker ID.
-     * @return the settings object
-     */
-    static IMockMakerSettings simple(MockMakerId id) {
-      return new IMockMakerSettings() {
-        @Override
-        public MockMakerId getMockMakerId() {
-          return id;
-        }
-
-        @Override
-        public String toString() {
-          return id + " simple mock maker settings";
-        }
-      };
-    }
-
-    MockMakerId getMockMakerId();
-  }
-
-  /**
    * {@code MockMakerCapability} describes the possible features of an {@link IMockMaker}.
    *
    * <p>This provides the ability to extend the list of capabilities in the future without breaking existing external {@link IMockMaker}s.</p>
@@ -310,6 +268,7 @@ public interface IMockMaker {
    * @since 2.4
    */
   @Beta
+  @ThreadSafe
   interface IStaticMock {
 
     /**
@@ -318,65 +277,22 @@ public interface IMockMaker {
     Class<?> getType();
 
     /**
-     * Enables the static mock.
+     * Enables the static mock on the current thread.
      * Note: The default state on creation is disabled.
+     *
+     * <p>The implementation must ensure that this method can be called multiple times for the same thread and count the activations.
+     * Only the first activation shall enable the static mock.
      */
     void enable();
 
     /**
-     * Disables the static mock.
+     * Disables the static mock on the current thread.
      * Note: The default state on creation is disabled.
+     *
+     * <p>The implementation must ensure that this method can be called multiple times for the same thread and count the activations.
+     * Only the last activation shall disable the static mock.
      */
     void disable();
   }
 
-  /**
-   * Represents the ID of an {@link IMockMaker}.
-   */
-  @Immutable
-  @Beta
-  final class MockMakerId implements Comparable<MockMakerId> {
-    private static final Pattern VALID_ID = Pattern.compile("^[a-z][a-z0-9-]*+(?<!-)$");
-    private final String id;
-
-    public MockMakerId(String id) {
-      if (id == null) {
-        throw new IllegalArgumentException("The ID is null.");
-      }
-      if (id.isEmpty()) {
-        throw new IllegalArgumentException("The ID is empty.");
-      }
-      if (!VALID_ID.matcher(id).matches()) {
-        throw new IllegalArgumentException("The ID '" + id + "' is invalid. Valid id must comply to the pattern: " + VALID_ID);
-      }
-      this.id = id;
-    }
-
-    @Override
-    public int compareTo(MockMakerId o) {
-      return this.id.compareTo(o.id);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (o == null || getClass() != o.getClass()) {
-        return false;
-      }
-      MockMakerId that = (MockMakerId) o;
-      return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-      return id;
-    }
-  }
 }

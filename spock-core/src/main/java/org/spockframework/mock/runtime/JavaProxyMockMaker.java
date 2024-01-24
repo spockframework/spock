@@ -19,6 +19,7 @@ package org.spockframework.mock.runtime;
 import org.spockframework.mock.CannotCreateMockException;
 import org.spockframework.mock.ISpockMockObject;
 import org.spockframework.util.ThreadSafe;
+import spock.mock.MockMakerId;
 
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;

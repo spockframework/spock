@@ -173,7 +173,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options) {
     invalidMockCreation();
@@ -226,7 +226,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
@@ -288,7 +288,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
     Map<String, Object> options,
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
@@ -357,7 +357,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options,
     @DelegatesTo.Target
@@ -409,7 +409,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options) {
     invalidMockCreation();
@@ -463,7 +463,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
@@ -525,7 +525,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options,
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
@@ -594,7 +594,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options,
     @DelegatesTo.Target
@@ -646,7 +646,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options) {
     invalidMockCreation();
@@ -759,7 +759,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
@@ -819,7 +819,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options,
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
@@ -887,7 +887,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options,
     @DelegatesTo.Target
@@ -940,7 +940,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options) {
     invalidMockCreation();
@@ -993,7 +993,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
@@ -1056,7 +1056,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options,
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
@@ -1126,7 +1126,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options,
     @DelegatesTo.Target
@@ -1179,7 +1179,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options) {
     invalidMockCreation();
@@ -1232,7 +1232,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
@@ -1295,7 +1295,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options,
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
@@ -1365,7 +1365,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options,
     @DelegatesTo.Target
@@ -1418,7 +1418,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options) {
     invalidMockCreation();
@@ -1471,7 +1471,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
@@ -1532,7 +1532,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options,
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
@@ -1601,7 +1601,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMaker.IMockMakerSettings.class)
+      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
     })
       Map<String, Object> options,
     @DelegatesTo.Target

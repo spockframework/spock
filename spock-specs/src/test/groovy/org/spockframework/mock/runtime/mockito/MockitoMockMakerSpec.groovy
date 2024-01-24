@@ -39,7 +39,7 @@ class MockitoMockMakerSpec extends Specification {
   def "Verify simple ID and IMockMakerSettings"() {
     expect:
     mockito.mockMakerId.toString() == ID
-    mockito.toString() == "$ID simple mock maker settings"
+    mockito.toString() == "$ID default mock maker settings"
   }
 
   def "Verify ID and IMockMakerSettings with Mockito settings"() {
@@ -179,6 +179,16 @@ class MockitoMockMakerSpec extends Specification {
     then:
     spy != startList
     spy.size() == 0
+  }
+
+  def "Fails to construct object without default constructor"() {
+    when:
+    Spy(FileInputStream, mockMaker: mockito, useObjenesis: false)
+
+    then:
+    CannotCreateMockException ex = thrown()
+    ex.message == """Cannot create mock for class java.io.FileInputStream with mockito: Unable to create instance of 'FileInputStream'.
+Please ensure that the target class has a 0-arg constructor."""
   }
 
   def "Additional interfaces"() {
@@ -437,6 +447,14 @@ Can not mock final classes with the following settings :
     then:
     CannotCreateMockException ex = thrown()
     ex.message == "Cannot create mock for class java.lang.Class. mockito: Cannot mock wrapper types, String.class or Class.class"
+  }
+
+  def "mockito mock setting without mockito settings shall not fail"() {
+    when:
+    Runnable mock = Mock(mockMaker: mockito {})
+
+    then:
+    mock != null
   }
 }
 

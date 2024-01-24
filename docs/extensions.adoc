@@ -1108,6 +1108,7 @@ The preferred mock maker will be used globally, if no mock maker is explicitly s
 include::{sourcedir}/extension/MockMakerConfigurationDocSpec.groovy[tag=mock-maker-preferredMockMaker]
 ----
 
+[[mock-makers-mockito]]
 ==== Mockito Mock Maker
 
 The `mockito` Mock Maker provides the ability to mock final types, enums and final methods.

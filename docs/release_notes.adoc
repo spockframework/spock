@@ -10,7 +10,7 @@ include::include.adoc[]
 * Calling `old(...)` with multiple arguments is now a compilation error. Previously the additional arguments were simply ignored.
 * Creating `GroovyMock`/`GroovyStub`/`GroovySpy` for an already mocked type will now fail.
 * Creating a global `GroovyMock`/`GroovyStub`/`GroovySpy` when <<parallel-execution.adoc#parallel-execution, parallel execution>> is enabled,
-  will now require that the spec is annotated with <<parallel-execution.adoc#isolated-execution, @Isolated>> or `@@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)`. See <<interaction-based-testing.adoc#global-mocks-parallel-execution, Global mocks and parallel execution>>
+  will now require that the spec is annotated with <<parallel-execution.adoc#isolated-execution, @Isolated>> or `@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)`. See <<interaction-based-testing.adoc#global-mocks-parallel-execution, Global mocks and parallel execution>>
 
 === Misc
 * Add support for <<extensions.adoc#extension-store,keeping state in extensions>>

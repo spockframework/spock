@@ -33,6 +33,7 @@ class DetachedMockFactoryDocSpec extends Specification {
 
     when:
     car.drive()
+
     then:
     1 * manuallyAttachedEngine.start()
     manuallyAttachedEngine.isStarted()

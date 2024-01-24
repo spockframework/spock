@@ -84,12 +84,16 @@ loadScripts(document, 'script');</script>
 <div class="block">This factory allows the creations of mocks outside of a <a href="../lang/Specification.html" title="class in spock.lang"><code>Specification</code></a>,
  e.g., in a Spring configuration.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="MockFactory.html" title="interface in spock.mock">MockFactory</a></div>
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="IMockMakerSettings.html" title="interface in spock.mock">IMockMakerSettings</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="block">Settings passed to the <code>IMockMaker</code> and created explicitly for the requested mock maker.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="MockFactory.html" title="interface in spock.mock">MockFactory</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
 <div class="block">Base interface for Java based mocks see <a href="MockingApi.html" title="class in spock.mock"><code>MockingApi</code></a> or <a href="DetachedMockFactory.html" title="class in spock.mock"><code>DetachedMockFactory</code></a> for more examples.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="MockingApi.html" title="class in spock.mock">MockingApi</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="MockingApi.html" title="class in spock.mock">MockingApi</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Spock's mocking API primarily consists of the following factory methods:
 
  
@@ -99,6 +103,10 @@ loadScripts(document, 'script');</script>
    Creates a test double that supports stubbing but not mocking.
    Spy()
    Creates a test double that, by default, delegates all calls to a real object.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="MockMakerId.html" title="class in spock.mock">MockMakerId</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Represents the ID of an <code>IMockMaker</code>.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="MockMakers.html" title="class in spock.mock">MockMakers</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">

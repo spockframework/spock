@@ -144,6 +144,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Uses <a href="https://github.com/cglib/cglib">CGLIB</a> to create mocks.</div>
 </dd>
+<dt><a href="spock/mock/MockMakerId.html#compareTo(spock.mock.MockMakerId)" class="member-name-link">compareTo(MockMakerId)</a> - Method in class spock.mock.<a href="spock/mock/MockMakerId.html" title="class in spock.mock">MockMakerId</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="spock/lang/Retry.html#condition()" class="member-name-link">condition()</a> - Element in annotation type spock.lang.<a href="spock/lang/Retry.html" title="annotation in spock.lang">Retry</a></dt>
 <dd>
 <div class="block">Condition that is evaluated to decide whether the feature should be
@@ -253,6 +255,8 @@ loadScripts(document, 'script');</script>
 <dl class="index">
 <dt><a href="spock/config/ParallelConfiguration.html#enabled" class="member-name-link">enabled</a> - Variable in class spock.config.<a href="spock/config/ParallelConfiguration.html" title="class in spock.config">ParallelConfiguration</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="spock/mock/MockMakerId.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class spock.mock.<a href="spock/mock/MockMakerId.html" title="class in spock.mock">MockMakerId</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="spock/util/concurrent/AsyncConditions.html#evaluate(java.lang.Runnable)" class="member-name-link">evaluate(Runnable)</a> - Method in class spock.util.concurrent.<a href="spock/util/concurrent/AsyncConditions.html" title="class in spock.util.concurrent">AsyncConditions</a></dt>
 <dd>
 <div class="block">Evaluates the specified block, which is expected to contain
@@ -359,6 +363,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The Java version, as returned by the <code>java.version</code> system property.</div>
 </dd>
+<dt><a href="spock/mock/IMockMakerSettings.html#getMockMakerId()" class="member-name-link">getMockMakerId()</a> - Method in interface spock.mock.<a href="spock/mock/IMockMakerSettings.html" title="interface in spock.mock">IMockMakerSettings</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="spock/util/environment/OperatingSystem.html#getName()" class="member-name-link">getName()</a> - Method in class spock.util.environment.<a href="spock/util/environment/OperatingSystem.html" title="class in spock.util.environment">OperatingSystem</a></dt>
 <dd>
 <div class="block">Returns the name of the operating system, as returned by the <code>os.name</code> system property.</div>
@@ -497,6 +503,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="spock/util/matcher/HamcrestSupport.html#%3Cinit%3E()" class="member-name-link">HamcrestSupport()</a> - Constructor for class spock.util.matcher.<a href="spock/util/matcher/HamcrestSupport.html" title="class in spock.util.matcher">HamcrestSupport</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="spock/mock/MockMakerId.html#hashCode()" class="member-name-link">hashCode()</a> - Method in class spock.mock.<a href="spock/mock/MockMakerId.html" title="class in spock.mock">MockMakerId</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:I">I</h2>
 <dl class="index">
@@ -518,6 +526,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Indicates that all feature methods except the ones carrying this annotation
  should be ignored.</div>
+</dd>
+<dt><a href="spock/mock/IMockMakerSettings.html" class="type-name-link" title="interface in spock.mock">IMockMakerSettings</a> - Interface in <a href="spock/mock/package-summary.html">spock.mock</a></dt>
+<dd>
+<div class="block">Settings passed to the <code>IMockMaker</code> and created explicitly for the requested mock maker.</div>
 </dd>
 <dt><a href="spock/config/RunnerConfiguration.html#include" class="member-name-link">include</a> - Variable in class spock.config.<a href="spock/config/RunnerConfiguration.html" title="class in spock.config">RunnerConfiguration</a></dt>
 <dd>&nbsp;</dd>
@@ -831,6 +843,12 @@ loadScripts(document, 'script');</script>
 <div class="block">Uses <a href="https://site.mockito.org/">Mockito</a> to create mocks,
  which also supports final classes, enums and final methods.</div>
 </dd>
+<dt><a href="spock/mock/MockMakerId.html" class="type-name-link" title="class in spock.mock">MockMakerId</a> - Class in <a href="spock/mock/package-summary.html">spock.mock</a></dt>
+<dd>
+<div class="block">Represents the ID of an <code>IMockMaker</code>.</div>
+</dd>
+<dt><a href="spock/mock/MockMakerId.html#%3Cinit%3E(java.lang.String)" class="member-name-link">MockMakerId(String)</a> - Constructor for class spock.mock.<a href="spock/mock/MockMakerId.html" title="class in spock.mock">MockMakerId</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="spock/mock/MockMakers.html" class="type-name-link" title="class in spock.mock">MockMakers</a> - Class in <a href="spock/mock/package-summary.html">spock.mock</a></dt>
 <dd>
 <div class="block">Provides constants and factory methods for known built-in <code>IMockMaker</code> implementations.</div>
@@ -1065,6 +1083,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Sets the timeout (in seconds) until which the conditions have to be satisfied.</div>
 </dd>
+<dt><a href="spock/mock/IMockMakerSettings.html#settingsFor(spock.mock.MockMakerId)" class="member-name-link">settingsFor(MockMakerId)</a> - Static method in interface spock.mock.<a href="spock/mock/IMockMakerSettings.html" title="interface in spock.mock">IMockMakerSettings</a></dt>
+<dd>
+<div class="block">Creates a default <code>IMockMakerSettings</code> object with only an <a href="spock/mock/MockMakerId.html" title="class in spock.mock"><code>MockMakerId</code></a>.</div>
+</dd>
 <dt><a href="spock/lang/Retry.Mode.html#SETUP_FEATURE_CLEANUP" class="member-name-link">SETUP_FEATURE_CLEANUP</a> - Enum constant in enum spock.lang.<a href="spock/lang/Retry.Mode.html" title="enum in spock.lang">Retry.Mode</a></dt>
 <dd>
 <div class="block">Retry the the feature together with the setup and cleanup methods.</div>
@@ -1284,6 +1306,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Allows to attach a natural-language name to a spec.</div>
 </dd>
+<dt><a href="spock/mock/MockMakerId.html#toString()" class="member-name-link">toString()</a> - Method in class spock.mock.<a href="spock/mock/MockMakerId.html" title="class in spock.mock">MockMakerId</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="spock/util/time/MutableClock.html#toString()" class="member-name-link">toString()</a> - Method in class spock.util.time.<a href="spock/util/time/MutableClock.html" title="class in spock.util.time">MutableClock</a></dt>
 <dd>&nbsp;</dd>
 </dl>

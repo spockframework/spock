@@ -69,7 +69,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="annotations">@Beta
 <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Retention.html" title="class or interface in java.lang.annotation" class="external-link">@Retention</a>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/RetentionPolicy.html#RUNTIME" title="class or interface in java.lang.annotation" class="external-link">RUNTIME</a>)
-<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Target.html" title="class or interface in java.lang.annotation" class="external-link">@Target</a>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/ElementType.html#FIELD" title="class or interface in java.lang.annotation" class="external-link">FIELD</a>)
+<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Target.html" title="class or interface in java.lang.annotation" class="external-link">@Target</a>({<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/ElementType.html#FIELD" title="class or interface in java.lang.annotation" class="external-link">FIELD</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/ElementType.html#PARAMETER" title="class or interface in java.lang.annotation" class="external-link">PARAMETER</a>})
 </span><span class="modifiers">public @interface </span><span class="element-name type-name-label">TempDir</span></div>
 <div class="block">Generate a temp directory for test, and delete it after test.
 
@@ -96,7 +96,11 @@ loadScripts(document, 'script');</script>
 
  &#64;TempDir
  FileSystemFixture fsFixture // will inject an instance of FileSystemFixture with the temp path injected via constructor
- </code></pre></div>
+ </code></pre>
+ <p>
+ Since Spock 2.4, <code>@TempDir</code> can be used to annotate a method parameter, with the same behavior as the field types.
+ Use this if you want to use a temp directory in a single method only.
+ Valid methods are <code>setup()</code>, <code>setupSpec()</code>, or any feature methods.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>2.0</dd>

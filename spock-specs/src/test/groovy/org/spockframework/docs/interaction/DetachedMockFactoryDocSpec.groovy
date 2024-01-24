@@ -12,14 +12,17 @@ import spock.mock.DetachedMockFactory
 
 import java.util.concurrent.ThreadLocalRandom
 
-import static org.spockframework.docs.interaction.DetachedMockFactoryDocSpec.EngineMockCreator.StartMode.*
+import static org.spockframework.docs.interaction.DetachedMockFactoryDocSpec.EngineMockCreator.StartMode.ALWAYS_STARTED
+import static org.spockframework.docs.interaction.DetachedMockFactoryDocSpec.EngineMockCreator.StartMode.ALWAYS_STOPPED
+import static org.spockframework.docs.interaction.DetachedMockFactoryDocSpec.EngineMockCreator.StartMode.RANDOMLY_STARTED
+import static org.spockframework.docs.interaction.DetachedMockFactoryDocSpec.EngineMockCreator.StartMode.REAL_RESPONSE
 
 class DetachedMockFactoryDocSpec extends Specification {
   // tag::declare-shared[]
-  @Shared 
+  @Shared
   def mockFactory = new DetachedMockFactory()
-  
-  @Shared 
+
+  @Shared
   def mockUtil = new MockUtil()
   // end::declare-shared[]
 
@@ -40,6 +43,7 @@ class DetachedMockFactoryDocSpec extends Specification {
 
     when:
     car.park()
+
     then:
     1 * manuallyAttachedEngine.stop()
     manuallyAttachedEngine.isStarted()
@@ -60,12 +64,14 @@ class DetachedMockFactoryDocSpec extends Specification {
 
     when:
     car.drive()
+
     then:
     1 * autoAttachedEngine.start()
     autoAttachedEngine.isStarted()
 
     when:
     car.park()
+
     then:
     1 * autoAttachedEngine.stop()
     autoAttachedEngine.isStarted()
@@ -82,11 +88,13 @@ class DetachedMockFactoryDocSpec extends Specification {
 
     when:
     car.drive()
+
     then:
     possibleResponsesAfterStart.contains(preconfiguredEngine.isStarted())
 
     when:
     car.park()
+
     then:
     possibleResponsesAfterStop.contains(preconfiguredEngine.isStarted())
 
@@ -118,12 +126,14 @@ class DetachedMockFactoryDocSpec extends Specification {
 
     when:
     car.drive()
+
     then:
     1 * preconfiguredEngine.start()
     preconfiguredEngine.isStarted()
 
     when:
     car.park()
+
     then:
     1 * preconfiguredEngine.stop()
     preconfiguredEngine.isStarted()
@@ -147,7 +157,9 @@ class DetachedMockFactoryDocSpec extends Specification {
     private boolean started
 
     boolean isStarted() { return started }
+
     void start() { started = true }
+
     void stop() { started = false }
   }
 
@@ -159,6 +171,7 @@ class DetachedMockFactoryDocSpec extends Specification {
     private Engine engine
 
     void drive() { engine.start() }
+
     void park() { engine.stop() }
   }
   // end::car[]

@@ -1,17 +1,16 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 package org.spockframework.spring;
@@ -22,7 +21,9 @@ import org.spockframework.util.ReflectionUtil;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.Ordered;
 import org.springframework.test.context.TestExecutionListener;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import spock.lang.Specification;
 
 import java.util.*;
@@ -36,11 +37,18 @@ import static java.util.Collections.emptySet;
  *
  * @author Leonard Bruenings
  */
-public class SpringMockTestExecutionListener extends AbstractSpringTestExecutionListener {
+public class SpringMockTestExecutionListener extends AbstractSpringTestExecutionListener implements Ordered {
 
   public static final String MOCKED_BEANS_LIST = "org.spockframework.spring.SpringMockTestExecutionListener.MOCKED_BEANS_LIST";
 
   private final MockUtil mockUtil = new MockUtil();
+
+  @Override
+  public int getOrder() {
+    // needs to run before the DependencyInjectionTestExecutionListener
+    // https://github.com/spockframework/spock/issues/1790
+    return 1955;
+  }
 
   @Override
   public void beforeTestClass(SpringTestContext testContext) throws Exception {
@@ -51,10 +59,14 @@ public class SpringMockTestExecutionListener extends AbstractSpringTestExecution
     Object testInstance = testContext.getTestInstance();
     if (!(testInstance instanceof Specification)) return;
 
+    injectSpies(testContext);
+  }
+
+  private static void injectSpies(SpringTestContext testContext) {
     ApplicationContext applicationContext = testContext.getApplicationContext();
     if (applicationContext.containsBean(SpockMockPostprocessor.class.getName())) {
       SpockMockPostprocessor mockPostprocessor = applicationContext.getBean(SpockMockPostprocessor.class);
-      mockPostprocessor.injectSpies(testInstance);
+      mockPostprocessor.injectSpies(testContext.getTestInstance());
     }
   }
 
@@ -62,6 +74,12 @@ public class SpringMockTestExecutionListener extends AbstractSpringTestExecution
   public void beforeTestMethod(SpringTestContext testContext) throws Exception {
     Object testInstance = testContext.getTestInstance();
     if (!(testInstance instanceof Specification)) return;
+
+    if (Boolean.TRUE.equals(testContext.getAttribute(
+      DependencyInjectionTestExecutionListener.REINJECT_DEPENDENCIES_ATTRIBUTE))) {
+      // we need to reinject the spies https://github.com/spockframework/spock/issues/1790
+      injectSpies(testContext);
+    }
 
     Specification specification = (Specification)testInstance;
     ScanScopedBeans scanScopedBeans = ReflectionUtil.getAnnotationRecursive(specification.getClass(), ScanScopedBeans.class);

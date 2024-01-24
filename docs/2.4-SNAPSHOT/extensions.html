@@ -794,9 +794,14 @@ This will acquire a <code>READ_WRITE</code> lock for <code>Resources.SYSTEM_PROP
 <div class="sect2">
 <h3 id="_autoattach"><a class="anchor" href="#_autoattach"></a><a class="link" href="#_autoattach">AutoAttach</a></h3>
 <div class="paragraph">
-<p>Automatically attaches a detached mock to the current <code>Specification</code>. Use this if there is no direct framework
-support available. Spring and Guice dependency injection is automatically handled by the
-<a href="module_spring.html#_spring_module">Spring Module</a> and <a href="modules.html#_guice_module">Guice Module</a> respectively.</p>
+<p>Automatically attaches a detached mock to the current specification.
+<code>@AutoAttach</code> can only be used regular instance fields, not on shared or static ones.
+Use this, if there is no direct framework support available.
+To create detached mocks, see <a href="interaction_based_testing.html#DetachedMockFactory">Create Mocks Outside Specifications</a></p>
+</div>
+<div class="paragraph">
+<p>Spring and Guice dependency injection is automatically handled by the
+<a href="module_spring.html#_spring_module">Spring Module</a> and <a href="modules.html#_guice_module">Guice Module</a>, respectively.</p>
 </div>
 </div>
 <div class="sect2">
@@ -836,7 +841,12 @@ annotated object. To prevent cleanup exceptions from being reported, override th
 <p>In order to generate a temporary directory for test and delete it after test, annotate a member field of type
 <code>java.io.File</code>, <code>java.nio.file.Path</code> or untyped using <code>def</code> in a spec class (<code>def</code> will inject a <code>Path</code>).
 Alternatively, you can annotate a field with a custom type that has a public constructor accepting either <code>java.io.File</code> or <code>java.nio.file.Path</code> as its single parameter (see <a href="utilities.html#file-stystem-fixture">FileSystemFixture</a> for an example).
-If the annotated field is <code>@Shared</code>, the temporary directory will be shared in the corresponding specification, otherwise every feature method and every iteration per parametrized feature method will have their own temporary directories:</p>
+If the annotated field is <code>@Shared</code>, the temporary directory will be shared in the corresponding specification, otherwise every feature method and every iteration per parametrized feature method will have their own temporary directories.</p>
+</div>
+<div class="paragraph">
+<p>Since Spock 2.4, you can also use parameter injection with <code>@TempDir</code>.
+The types follow the same rules as for field injection.
+Valid methods are <code>setup()</code>, <code>setupSpec()</code>, or any feature methods.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -857,12 +867,24 @@ Path path1
 <span class="annotation">@TempDir</span>
 FileSystemFixture path4
 
-<span class="keyword">def</span> <span class="function">demo</span>() {
+<span class="comment">// Use for parameter injection of a setupSpec method</span>
+<span class="keyword">def</span> <span class="function">setupSpec</span>(<span class="annotation">@TempDir</span> Path sharedPath) {
+  <span class="keyword">assert</span> sharedPath <span class="keyword">instanceof</span> Path
+}
+
+<span class="comment">// Use for parameter injection of a setup method</span>
+<span class="keyword">def</span> <span class="function">setup</span>(<span class="annotation">@TempDir</span> Path setupPath) {
+  <span class="keyword">assert</span> setupPath <span class="keyword">instanceof</span> Path
+}
+
+<span class="comment">// Use for parameter injection of a feature</span>
+<span class="keyword">def</span> <span class="function">demo</span>(<span class="annotation">@TempDir</span> Path path5) {
   <span class="key">expect</span>:
   path1 <span class="keyword">instanceof</span> Path
   path2 <span class="keyword">instanceof</span> <span class="predefined-type">File</span>
   path3 <span class="keyword">instanceof</span> Path
   path4 <span class="keyword">instanceof</span> FileSystemFixture
+  path5 <span class="keyword">instanceof</span> Path
 }</code></pre>
 </div>
 </div>
@@ -1751,7 +1773,7 @@ The preferred mock maker will be used globally, if no mock maker is explicitly s
 </div>
 </div>
 <div class="sect3">
-<h4 id="_mockito_mock_maker"><a class="anchor" href="#_mockito_mock_maker"></a><a class="link" href="#_mockito_mock_maker">Mockito Mock Maker</a></h4>
+<h4 id="mock-makers-mockito"><a class="anchor" href="#mock-makers-mockito"></a><a class="link" href="#mock-makers-mockito">Mockito Mock Maker</a></h4>
 <div class="paragraph">
 <p>The <code>mockito</code> Mock Maker provides the ability to mock final types, enums and final methods.
 The mocking of final classes is automatically enabled, if <code>org.mockito:mockito-core</code> 4.11+ is on the class path.</p>
@@ -1868,7 +1890,7 @@ are then used during mock creation.</p>
   }
 }
 
-<span class="directive">final</span> <span class="type">class</span> <span class="class">FancyMockMakerSettings</span> <span class="directive">implements</span> IMockMaker.IMockMakerSettings {
+<span class="directive">final</span> <span class="type">class</span> <span class="class">FancyMockMakerSettings</span> <span class="directive">implements</span> IMockMakerSettings {
   <span class="directive">private</span> <span class="type">boolean</span> serialization;
   <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">List</span>&lt;<span class="predefined-type">Type</span>&gt; specialTypes = <span class="keyword">new</span> <span class="predefined-type">ArrayList</span>&lt;&gt;();
 
@@ -1884,7 +1906,7 @@ are then used during mock creation.</p>
   }
 
   <span class="annotation">@Override</span>
-  <span class="directive">public</span> IMockMaker.MockMakerId getMockMakerId() {
+  <span class="directive">public</span> MockMakerId getMockMakerId() {
     <span class="keyword">return</span> FancyMockMaker.ID;
   }
 
@@ -1901,7 +1923,7 @@ are then used during mock creation.</p>
   <span class="comment">/**
    * Public static entry point for the User.
    */</span>
-  <span class="directive">public</span> <span class="directive">static</span> IMockMaker.IMockMakerSettings fancyMock(
+  <span class="directive">public</span> <span class="directive">static</span> IMockMakerSettings fancyMock(
     <span class="annotation">@DelegatesTo</span>(FancyMockMakerSettings.class)
     Closure&lt;?&gt; code) {
     FancyMockMakerSettings settings = <span class="keyword">new</span> FancyMockMakerSettings();
@@ -2116,7 +2138,7 @@ The extension uses this to print a report of the collected exception statistics.
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-01-24 15:39:39 UTC
+Last updated 2024-01-24 23:16:20 UTC
 </div>
 </div>
 </body>

@@ -21,12 +21,79 @@
 <div class="sect1">
 <h2 id="_2_4_tbd"><a class="anchor" href="#_2_4_tbd"></a><a class="link" href="#_2_4_tbd">2.4 (tbd)</a></h2>
 <div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Spock now supports pluggable <a href="extensions.html#mock-makers">mock makers</a> loaded via ServiceLoader spockPull:1746[]</p>
+<div class="ulist">
+<ul>
+<li>
+<p>This allows external libraries to contribute mocking logic to Spock and use the same API for the users</p>
+</li>
+<li>
+<p>You can select the used mock maker during mock creation: <code>Mock(mockMaker:MockMakers.byteBuddy)</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Added <a href="extensions.html#mock-makers-mockito">mockito</a> mock maker spockPull:1753[] which supports:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Mocking of final classes and final methods</p>
+</li>
+<li>
+<p>Requires <code>org.mockito:mockito-core</code> &gt;= 4.11 in the test class path</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Fix issue with mocks of Groovy classes, where the Groovy MOP for <code>@Internal</code> methods was not honored by the <code>byte-buddy</code> mock maker spockPull:1729[]</p>
+<div class="ulist">
+<ul>
+<li>
+<p>This fixes multiple issues with Groovy MOP: spockIssue:1501[], spockIssue:1452[], spockIssue:1608[] and spockIssue:1145[]</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Replaced <code>gentyref</code> code with <a href="https://github.com/leangen/geantyref">geantyref</a> library spockPull:1743[]</p>
+<div class="ulist">
+<ul>
+<li>
+<p>This is now a required dependency used by spock: <code>io.leangen.geantyref:geantyref:1.3.14</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Better support for generic return types for mocks spockPull:1731[]</p>
+<div class="ulist">
+<ul>
+<li>
+<p>This fixes the issues: spockIssue:520[], spockIssue:1163[]</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
 <div class="sect2">
 <h3 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h3>
 <div class="ulist">
 <ul>
 <li>
 <p>Calling <code>old(&#8230;&#8203;)</code> with multiple arguments is now a compilation error. Previously the additional arguments were simply ignored.</p>
+</li>
+<li>
+<p>Creating <code>GroovyMock</code>/<code>GroovyStub</code>/<code>GroovySpy</code> for an already mocked type will now fail.</p>
+</li>
+<li>
+<p>Creating a global <code>GroovyMock</code>/<code>GroovyStub</code>/<code>GroovySpy</code> when <a href="parallel-execution.html#parallel-execution">parallel execution</a> is enabled,
+will now require that the spec is annotated with <a href="parallel-execution.html#isolated-execution">@Isolated</a> or <code>@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)</code>. See <a href="interaction-based-testing.html#global-mocks-parallel-execution">Global mocks and parallel execution</a></p>
 </li>
 </ul>
 </div>
@@ -39,7 +106,34 @@
 <p>Add support for <a href="extensions.html#extension-store">keeping state in extensions</a></p>
 </li>
 <li>
+<p>Add support for parameter injection of <code>@TempDir</code></p>
+</li>
+<li>
+<p>Improve <code>@TempDir</code> field injection, now it happens before field initialization, so it can be used by other field initializers.</p>
+</li>
+<li>
+<p>Fix exception when configured <code>baseDir</code> was not existing, now <code>@TempDir</code> will create the baseDir directory if it is missing.</p>
+</li>
+<li>
 <p>Fix bad error message for collection conditions, when one of the operands is <code>null</code></p>
+</li>
+<li>
+<p>Document <code>@ConditionBlock</code> Annotation spockPull:1709[]</p>
+</li>
+<li>
+<p>Document <code>old</code>-Method spockPull:1708[]</p>
+</li>
+<li>
+<p>Clarify documentation for global Mocks spockPull:1755[]</p>
+</li>
+<li>
+<p>Spock-Compiler does not use wrapper types anymore spockPull:1765[]</p>
+</li>
+<li>
+<p>Reduce lock contention of the <code>byte-buddy</code> mock maker, when multiple mocks are created concurrently spockPull:1778[]</p>
+</li>
+<li>
+<p>Documentation for DetachedMockFactory spockPull:1728[]</p>
 </li>
 </ul>
 </div>
@@ -2655,7 +2749,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-01-24 15:39:39 UTC
+Last updated 2024-01-24 23:16:20 UTC
 </div>
 </div>
 </body>

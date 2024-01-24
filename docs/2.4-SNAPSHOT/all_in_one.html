@@ -139,6 +139,7 @@
 <ul class="sectlevel3">
 <li><a href="#ALaCarteMocks">A la Carte Mocks</a></li>
 <li><a href="#DetectingMockObjects">Detecting Mock Objects</a></li>
+<li><a href="#DetachedMockFactory">Create Mocks Outside Specifications</a></li>
 </ul>
 </li>
 <li><a href="#_further_reading">Further Reading</a></li>
@@ -230,7 +231,7 @@
 <ul class="sectlevel3">
 <li><a href="#_lock_inheritance">Lock inheritance</a></li>
 <li><a href="#_lock_coarsening">Lock coarsening</a></li>
-<li><a href="#_isolated_execution">Isolated Execution</a></li>
+<li><a href="#isolated-execution">Isolated Execution</a></li>
 </ul>
 </li>
 <li><a href="#parallel-thread-pool">Parallel Thread Pool</a></li>
@@ -242,7 +243,7 @@
 <li><a href="#_guice_module">Guice Module</a></li>
 <li><a href="#_spring_module">Spring Module</a>
 <ul class="sectlevel3">
-<li><a href="#_mocks">Mocks</a></li>
+<li><a href="#SpringMocks">Mocks</a></li>
 <li><a href="#_scopes">Scopes</a></li>
 <li><a href="#_shared_fields_injection">Shared fields injection</a></li>
 </ul>
@@ -3972,6 +3973,18 @@ all instances of that type for the duration from mock creation up until the end 
 <div class="title">Caution</div>
 </td>
 <td class="content">
+Using global mocks for standard types from the JDK, for example <code>ArrayList</code>, is a bad idea and can lead to unforeseen and widespread consequences.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
 The declaration order of global mocks is relevant.
          The <code>GroovySpy(global:true, &lt;type&gt;)</code> must come before all creations of new mocked/spied objects of <code>&lt;type&gt;</code>.
          The global spies will only take effect on objects of that type, if the <code>GroovySpy(global:true, &lt;type&gt;)</code> was
@@ -4032,6 +4045,15 @@ sub <span class="keyword">instanceof</span> RealSubscriber</code></pre>
 global mocks on the same types are properly guarded against each other, because a global mock changes the global state
 for the mocked <code>Class</code> during execution.</p>
 </div>
+<div class="sect4">
+<h5 id="global-mocks-parallel-execution"><a class="anchor" href="#global-mocks-parallel-execution"></a><a class="link" href="#global-mocks-parallel-execution">Global mocks and parallel execution</a></h5>
+<div class="paragraph">
+<p>Creating a global <code>GroovyMock</code>/<code>GroovyStub</code>/<code>GroovySpy</code> when <a href="parallel-execution.html#parallel-execution">parallel execution</a> is enabled,
+requires that the spec is annotated with <a href="parallel-execution.html#isolated-execution">@Isolated</a> or <code>@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)</code>.
+If it is only used for a feature, then it suffices that the feature is annotated with <code>@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)</code>.
+The rule of thumb to choose between <code>@ResourceLock</code> and <code>@Isolated</code>, is to look at how widespread the mocked type is used.
+If it is widely used, then <code>@Isolated</code> is the safe choice, otherwise <code>@ResourceLock</code> may be sufficient.</p>
+</div>
 <div class="sidebarblock">
 <div class="content">
 <div class="title">How Are Global Groovy Mocks Implemented?</div>
@@ -4040,6 +4062,7 @@ for the mocked <code>Class</code> during execution.</p>
 every globally mocked type is assigned a custom <code>MetaClass</code> for the duration of the feature method.
 Since a global Groovy mock is still based on a proxy class, it will retain its general mocking capabilities
 (but not its super powers) when called from Java code.</p>
+</div>
 </div>
 </div>
 </div>
@@ -4154,6 +4177,260 @@ mockUtil.isMock(list2)</code></pre>
 mock.name == <span class="string"><span class="delimiter">&quot;</span><span class="content">list2</span><span class="delimiter">&quot;</span></span>
 mock.type == <span class="predefined-type">List</span>
 mock.nature == MockNature.MOCK</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="DetachedMockFactory"><a class="anchor" href="#DetachedMockFactory"></a><a class="link" href="#DetachedMockFactory">Create Mocks Outside Specifications</a></h4>
+<div class="paragraph">
+<p>Sometimes, it can be helpful to create and possibly preconfigure mock, stub or spy objects outside specifications, especially if you want to factor out duplicate or similar code from there.
+Use <code>DetachedMockFactory</code> to create such mock objects.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Detached mocks, as the name implies, must be attached to a specification to make them functional.
+      This either happens manually by calling <code>MockUtil.attachMock(Object, Specification)</code> or automatically by declaring the mock as an instance field with an <code>@AutoAttach</code> annotation, see <a href="#_autoattach">AutoAttach</a>.
+      While auto-attached mocks will also be auto-detached during specification clean-up, you need to take care of manually attached mocks by yourself, calling <code>MockUtil.detachMock(Object)</code> when they are no longer in use.
+      Spring and Guice dependency injection will also automatically attach mocks, when the <code>SpringExtension</code> or <code>GuiceExtension</code> is used.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Assuming that we have an application class <code>Car</code> and each car has an <code>Engine</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">Engine</span> {
+  <span class="directive">private</span> <span class="type">boolean</span> started
+
+  <span class="type">boolean</span> isStarted() { <span class="keyword">return</span> started }
+
+  <span class="type">void</span> start() { started = <span class="predefined-constant">true</span> }
+
+  <span class="type">void</span> stop() { started = <span class="predefined-constant">false</span> }
+}
+
+<span class="type">class</span> <span class="class">Car</span> {
+  <span class="directive">private</span> Engine engine
+
+  <span class="type">void</span> drive() { engine.start() }
+
+  <span class="type">void</span> park() { engine.stop() }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In our specification, we declare a detached mock factory and a mock util, either inside a feature method or, if we need them for multiple features, as (preferably) shared or (suboptimally) static instances:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Shared</span>
+<span class="keyword">def</span> mockFactory = <span class="keyword">new</span> DetachedMockFactory()
+
+<span class="annotation">@Shared</span>
+<span class="keyword">def</span> mockUtil = <span class="keyword">new</span> MockUtil()</code></pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_manually_attach_detach"><a class="anchor" href="#_manually_attach_detach"></a><a class="link" href="#_manually_attach_detach">Manually attach / detach</a></h5>
+<div class="paragraph">
+<p>Now in our feature, we create a detached <code>Engine</code> mock, attach the mock to the specification manually, stub its <code>isStarted()</code> method, inject the mock into a <code>Car</code> subject under specification, use the subject and finally detach the mock again after use:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Manually attach detached mock</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">given</span>:
+  <span class="keyword">def</span> manuallyAttachedEngine = mockFactory.Mock(Engine)
+  mockUtil.attachMock(manuallyAttachedEngine, <span class="local-variable">this</span>)
+  manuallyAttachedEngine.isStarted() &gt;&gt; <span class="predefined-constant">true</span>
+  <span class="keyword">def</span> car = <span class="keyword">new</span> Car(<span class="key">engine</span>: manuallyAttachedEngine)
+
+  <span class="key">when</span>:
+  car.drive()
+
+  <span class="key">then</span>:
+  <span class="integer">1</span> * manuallyAttachedEngine.start()
+  manuallyAttachedEngine.isStarted()
+
+  <span class="key">when</span>:
+  car.park()
+
+  <span class="key">then</span>:
+  <span class="integer">1</span> * manuallyAttachedEngine.stop()
+  manuallyAttachedEngine.isStarted()
+
+  <span class="key">cleanup</span>:
+  mockUtil.detachMock(manuallyAttachedEngine)
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_use_autoattach"><a class="anchor" href="#_use_autoattach"></a><a class="link" href="#_use_autoattach">Use @AutoAttach</a></h5>
+<div class="paragraph">
+<p>Same situation, different approach:
+We let Spock take care of automatically attaching the detached mock when starting the feature method and detaching it again after running the feature.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@AutoAttach</span>
+<span class="keyword">def</span> autoAttachedEngine = mockFactory.Mock(Engine)
+
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Auto-attach detached mock</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">given</span>:
+  autoAttachedEngine.isStarted() &gt;&gt; <span class="predefined-constant">true</span>
+  <span class="keyword">def</span> car = <span class="keyword">new</span> Car(<span class="key">engine</span>: autoAttachedEngine)
+
+  <span class="key">when</span>:
+  car.drive()
+
+  <span class="key">then</span>:
+  <span class="integer">1</span> * autoAttachedEngine.start()
+  autoAttachedEngine.isStarted()
+
+  <span class="key">when</span>:
+  car.park()
+
+  <span class="key">then</span>:
+  <span class="integer">1</span> * autoAttachedEngine.stop()
+  autoAttachedEngine.isStarted()
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_pre_configure_detached_mock_with_default_response"><a class="anchor" href="#_pre_configure_detached_mock_with_default_response"></a><a class="link" href="#_pre_configure_detached_mock_with_default_response">Pre-configure detached mock with default response</a></h5>
+<div class="paragraph">
+<p>This advanced use case might only be of interest to a minority of users, you may skip it for now if you just want to learn Spock basics.</p>
+</div>
+<div class="paragraph">
+<p>Usually, you would simply create your detached mock outside of Spock, but then define interactions (stubbed method results, method call verifications) inside the feature method itself.
+Sometimes however, you might want to define some (user-overridable) default behaviour right in the detached mock definition itself and even make it somewhat configurable.</p>
+</div>
+<div class="paragraph">
+<p>A valid use case could be a detached mock used in a dependency injection framework like Spring or Guice.
+The framework might wire the mock and rely on some default behaviour, before Spock even gets a chance to stub any methods.
+Defining default behaviour is possible using a combination of Spock&#8217;s mocking API and custom <code>IDefaultResponse</code> implementations.</p>
+</div>
+<div class="paragraph">
+<p>A custom detached mock creator could look like this (please figure out by yourself what it does and how it works):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">EngineMockCreator</span> {
+  <span class="type">enum</span> StartMode {
+    ALWAYS_STARTED, ALWAYS_STOPPED, RANDOMLY_STARTED, REAL_RESPONSE
+  }
+
+  <span class="directive">static</span> DetachedMockFactory mockFactory = <span class="keyword">new</span> DetachedMockFactory()
+
+  <span class="directive">static</span> <span class="type">class</span> <span class="class">EngineStateResponse</span> <span class="directive">implements</span> IDefaultResponse {
+    StartMode startMode
+
+    <span class="annotation">@Override</span>
+    <span class="predefined-type">Object</span> respond(IMockInvocation invocation) {
+      <span class="keyword">if</span> (invocation.method.name != <span class="string"><span class="delimiter">'</span><span class="content">isStarted</span><span class="delimiter">'</span></span>)
+        <span class="keyword">return</span> ZeroOrNullResponse.INSTANCE.respond(invocation)
+      startMode == RANDOMLY_STARTED
+        ? ThreadLocalRandom.current().nextBoolean()
+        : startMode == ALWAYS_STARTED
+    }
+  }
+
+  <span class="directive">static</span> Engine getMock(StartMode startMode) {
+    startMode == REAL_RESPONSE
+      ? mockFactory.Spy(<span class="keyword">new</span> Engine())
+      : mockFactory.Mock(Engine, <span class="key">defaultResponse</span>: <span class="keyword">new</span> EngineStateResponse(<span class="key">startMode</span>: startMode)) <span class="keyword">as</span> Engine
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The first parametrized feature uses the mock without attach:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Unroll</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Engine state #engineStateResponseType</span><span class="delimiter">&quot;</span></span>)
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Mock usage without manually attach detach with preconfigured engine state</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">given</span>:
+  <span class="keyword">def</span> car = <span class="keyword">new</span> Car(<span class="key">engine</span>: preconfiguredEngine)
+  <span class="comment">// The preconfigured mock with default behaviour behaves as defined,</span>
+  <span class="comment">// even *without* attaching it to the spec.</span>
+
+  <span class="key">when</span>:
+  car.drive()
+
+  <span class="key">then</span>:
+  possibleResponsesAfterStart.contains(preconfiguredEngine.isStarted())
+
+  <span class="key">when</span>:
+  car.park()
+
+  <span class="key">then</span>:
+  possibleResponsesAfterStop.contains(preconfiguredEngine.isStarted())
+
+  <span class="key">where</span>:
+  engineStateResponseType | possibleResponsesAfterStart | possibleResponsesAfterStop
+  ALWAYS_STARTED          | [<span class="predefined-constant">true</span>]                      | [<span class="predefined-constant">true</span>]
+  ALWAYS_STOPPED          | [<span class="predefined-constant">false</span>]                     | [<span class="predefined-constant">false</span>]
+  RANDOMLY_STARTED        | [<span class="predefined-constant">true</span>, <span class="predefined-constant">false</span>]               | [<span class="predefined-constant">true</span>, <span class="predefined-constant">false</span>]
+  REAL_RESPONSE           | [<span class="predefined-constant">true</span>]                      | [<span class="predefined-constant">false</span>]
+  preconfiguredEngine = EngineMockCreator.getMock(engineStateResponseType)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The next parametrized feature method showcasing a set of usage scenarios when a detached mock
+is attached to a spec before usage:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Unroll</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Engine state #engineStateResponseType</span><span class="delimiter">&quot;</span></span>)
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Manually attach detached mock with preconfigured engine state</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">given</span>:
+  <span class="keyword">def</span> car = <span class="keyword">new</span> Car(<span class="key">engine</span>: preconfiguredEngine)
+  <span class="comment">//Now, let's attach the mock to the spec and override its default behaviour.</span>
+  mockUtil.attachMock(preconfiguredEngine, <span class="local-variable">this</span>)
+  preconfiguredEngine.isStarted() &gt;&gt; <span class="predefined-constant">true</span>
+
+  <span class="key">expect</span>:
+  preconfiguredEngine.isStarted()
+  <span class="comment">// The attached mock now behaves differently. Because it has been attached to the</span>
+  <span class="comment">// spec, we can also verify interactions using '1 * ...' or similar, which</span>
+  <span class="comment">// would not be possible without attaching it.</span>
+
+  <span class="key">when</span>:
+  car.drive()
+
+  <span class="key">then</span>:
+  <span class="integer">1</span> * preconfiguredEngine.start()
+  preconfiguredEngine.isStarted()
+
+  <span class="key">when</span>:
+  car.park()
+
+  <span class="key">then</span>:
+  <span class="integer">1</span> * preconfiguredEngine.stop()
+  preconfiguredEngine.isStarted()
+
+  <span class="key">cleanup</span>:
+  mockUtil.detachMock(preconfiguredEngine)
+
+  <span class="key">where</span>:
+  engineStateResponseType | possibleResponsesAfterStart | possibleResponsesAfterStop
+  ALWAYS_STARTED          | [<span class="predefined-constant">true</span>]                      | [<span class="predefined-constant">true</span>]
+  ALWAYS_STOPPED          | [<span class="predefined-constant">false</span>]                     | [<span class="predefined-constant">false</span>]
+  RANDOMLY_STARTED        | [<span class="predefined-constant">true</span>, <span class="predefined-constant">false</span>]               | [<span class="predefined-constant">true</span>, <span class="predefined-constant">false</span>]
+  REAL_RESPONSE           | [<span class="predefined-constant">true</span>]                      | [<span class="predefined-constant">false</span>]
+  preconfiguredEngine = EngineMockCreator.getMock(engineStateResponseType)
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -4956,9 +5233,14 @@ This will acquire a <code>READ_WRITE</code> lock for <code>Resources.SYSTEM_PROP
 <div class="sect3">
 <h4 id="_autoattach"><a class="anchor" href="#_autoattach"></a><a class="link" href="#_autoattach">AutoAttach</a></h4>
 <div class="paragraph">
-<p>Automatically attaches a detached mock to the current <code>Specification</code>. Use this if there is no direct framework
-support available. Spring and Guice dependency injection is automatically handled by the
-<a href="#_spring_module">Spring Module</a> and <a href="#_guice_module">Guice Module</a> respectively.</p>
+<p>Automatically attaches a detached mock to the current specification.
+<code>@AutoAttach</code> can only be used regular instance fields, not on shared or static ones.
+Use this, if there is no direct framework support available.
+To create detached mocks, see <a href="#DetachedMockFactory">Create Mocks Outside Specifications</a></p>
+</div>
+<div class="paragraph">
+<p>Spring and Guice dependency injection is automatically handled by the
+<a href="#_spring_module">Spring Module</a> and <a href="#_guice_module">Guice Module</a>, respectively.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4998,7 +5280,12 @@ annotated object. To prevent cleanup exceptions from being reported, override th
 <p>In order to generate a temporary directory for test and delete it after test, annotate a member field of type
 <code>java.io.File</code>, <code>java.nio.file.Path</code> or untyped using <code>def</code> in a spec class (<code>def</code> will inject a <code>Path</code>).
 Alternatively, you can annotate a field with a custom type that has a public constructor accepting either <code>java.io.File</code> or <code>java.nio.file.Path</code> as its single parameter (see <a href="#file-stystem-fixture">FileSystemFixture</a> for an example).
-If the annotated field is <code>@Shared</code>, the temporary directory will be shared in the corresponding specification, otherwise every feature method and every iteration per parametrized feature method will have their own temporary directories:</p>
+If the annotated field is <code>@Shared</code>, the temporary directory will be shared in the corresponding specification, otherwise every feature method and every iteration per parametrized feature method will have their own temporary directories.</p>
+</div>
+<div class="paragraph">
+<p>Since Spock 2.4, you can also use parameter injection with <code>@TempDir</code>.
+The types follow the same rules as for field injection.
+Valid methods are <code>setup()</code>, <code>setupSpec()</code>, or any feature methods.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -5019,12 +5306,24 @@ Path path1
 <span class="annotation">@TempDir</span>
 FileSystemFixture path4
 
-<span class="keyword">def</span> <span class="function">demo</span>() {
+<span class="comment">// Use for parameter injection of a setupSpec method</span>
+<span class="keyword">def</span> <span class="function">setupSpec</span>(<span class="annotation">@TempDir</span> Path sharedPath) {
+  <span class="keyword">assert</span> sharedPath <span class="keyword">instanceof</span> Path
+}
+
+<span class="comment">// Use for parameter injection of a setup method</span>
+<span class="keyword">def</span> <span class="function">setup</span>(<span class="annotation">@TempDir</span> Path setupPath) {
+  <span class="keyword">assert</span> setupPath <span class="keyword">instanceof</span> Path
+}
+
+<span class="comment">// Use for parameter injection of a feature</span>
+<span class="keyword">def</span> <span class="function">demo</span>(<span class="annotation">@TempDir</span> Path path5) {
   <span class="key">expect</span>:
   path1 <span class="keyword">instanceof</span> Path
   path2 <span class="keyword">instanceof</span> <span class="predefined-type">File</span>
   path3 <span class="keyword">instanceof</span> Path
   path4 <span class="keyword">instanceof</span> FileSystemFixture
+  path5 <span class="keyword">instanceof</span> Path
 }</code></pre>
 </div>
 </div>
@@ -5909,7 +6208,7 @@ The preferred mock maker will be used globally, if no mock maker is explicitly s
 </div>
 </div>
 <div class="sect4">
-<h5 id="_mockito_mock_maker"><a class="anchor" href="#_mockito_mock_maker"></a><a class="link" href="#_mockito_mock_maker">Mockito Mock Maker</a></h5>
+<h5 id="mock-makers-mockito"><a class="anchor" href="#mock-makers-mockito"></a><a class="link" href="#mock-makers-mockito">Mockito Mock Maker</a></h5>
 <div class="paragraph">
 <p>The <code>mockito</code> Mock Maker provides the ability to mock final types, enums and final methods.
 The mocking of final classes is automatically enabled, if <code>org.mockito:mockito-core</code> 4.11+ is on the class path.</p>
@@ -6026,7 +6325,7 @@ are then used during mock creation.</p>
   }
 }
 
-<span class="directive">final</span> <span class="type">class</span> <span class="class">FancyMockMakerSettings</span> <span class="directive">implements</span> IMockMaker.IMockMakerSettings {
+<span class="directive">final</span> <span class="type">class</span> <span class="class">FancyMockMakerSettings</span> <span class="directive">implements</span> IMockMakerSettings {
   <span class="directive">private</span> <span class="type">boolean</span> serialization;
   <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">List</span>&lt;<span class="predefined-type">Type</span>&gt; specialTypes = <span class="keyword">new</span> <span class="predefined-type">ArrayList</span>&lt;&gt;();
 
@@ -6042,7 +6341,7 @@ are then used during mock creation.</p>
   }
 
   <span class="annotation">@Override</span>
-  <span class="directive">public</span> IMockMaker.MockMakerId getMockMakerId() {
+  <span class="directive">public</span> MockMakerId getMockMakerId() {
     <span class="keyword">return</span> FancyMockMaker.ID;
   }
 
@@ -6059,7 +6358,7 @@ are then used during mock creation.</p>
   <span class="comment">/**
    * Public static entry point for the User.
    */</span>
-  <span class="directive">public</span> <span class="directive">static</span> IMockMaker.IMockMakerSettings fancyMock(
+  <span class="directive">public</span> <span class="directive">static</span> IMockMakerSettings fancyMock(
     <span class="annotation">@DelegatesTo</span>(FancyMockMakerSettings.class)
     Closure&lt;?&gt; code) {
     FancyMockMakerSettings settings = <span class="keyword">new</span> FancyMockMakerSettings();
@@ -6813,7 +7112,7 @@ If the features both had <code>READ_WRITE</code> and <code>READ</code> locks for
 </div>
 </div>
 <div class="sect3">
-<h4 id="_isolated_execution"><a class="anchor" href="#_isolated_execution"></a><a class="link" href="#_isolated_execution">Isolated Execution</a></h4>
+<h4 id="isolated-execution"><a class="anchor" href="#isolated-execution"></a><a class="link" href="#isolated-execution">Isolated Execution</a></h4>
 <div class="paragraph">
 <p>Sometimes, you want to modify and test something that affects every other feature, you could put a <code>READ</code> <code>@ResourceLock</code> on <em>every</em> feature, but that is impractical.
 The <code>@Isolated</code> extension enforces, that only this feature runs without any other features running at the same time.
@@ -6930,7 +7229,7 @@ This module does its best to support old features from JUnit 4, however, users a
 It supports the following spring annotations <code>@ContextConfiguration</code> and <code>@ContextHierarchy</code>. Furthermore, it supports the meta-annotation <code>@BootstrapWith</code> and so any annotation that is annotated with <code>@BootstrapWith</code> will also work, such as <code>@SpringBootTest</code>, <code>@WebMvcTest</code>. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-spring"><code>org.spockframework:spock-spring</code></a> to your project.</p>
 </div>
 <div class="sect3">
-<h4 id="_mocks"><a class="anchor" href="#_mocks"></a><a class="link" href="#_mocks">Mocks</a></h4>
+<h4 id="SpringMocks"><a class="anchor" href="#SpringMocks"></a><a class="link" href="#SpringMocks">Mocks</a></h4>
 <div class="paragraph">
 <p>Spock 1.1 introduced the <code>DetachedMockFactory</code> and the <code>SpockMockFactoryBean</code> which allow the creation of Spock mocks outside of a specification.</p>
 </div>
@@ -7332,12 +7631,79 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_2_4_tbd"><a class="anchor" href="#_2_4_tbd"></a><a class="link" href="#_2_4_tbd">2.4 (tbd)</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Spock now supports pluggable <a href="#mock-makers">mock makers</a> loaded via ServiceLoader spockPull:1746[]</p>
+<div class="ulist">
+<ul>
+<li>
+<p>This allows external libraries to contribute mocking logic to Spock and use the same API for the users</p>
+</li>
+<li>
+<p>You can select the used mock maker during mock creation: <code>Mock(mockMaker:MockMakers.byteBuddy)</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Added <a href="#mock-makers-mockito">mockito</a> mock maker spockPull:1753[] which supports:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Mocking of final classes and final methods</p>
+</li>
+<li>
+<p>Requires <code>org.mockito:mockito-core</code> &gt;= 4.11 in the test class path</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Fix issue with mocks of Groovy classes, where the Groovy MOP for <code>@Internal</code> methods was not honored by the <code>byte-buddy</code> mock maker spockPull:1729[]</p>
+<div class="ulist">
+<ul>
+<li>
+<p>This fixes multiple issues with Groovy MOP: spockIssue:1501[], spockIssue:1452[], spockIssue:1608[] and spockIssue:1145[]</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Replaced <code>gentyref</code> code with <a href="https://github.com/leangen/geantyref">geantyref</a> library spockPull:1743[]</p>
+<div class="ulist">
+<ul>
+<li>
+<p>This is now a required dependency used by spock: <code>io.leangen.geantyref:geantyref:1.3.14</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Better support for generic return types for mocks spockPull:1731[]</p>
+<div class="ulist">
+<ul>
+<li>
+<p>This fixes the issues: spockIssue:520[], spockIssue:1163[]</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
 <div class="sect3">
 <h4 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h4>
 <div class="ulist">
 <ul>
 <li>
 <p>Calling <code>old(&#8230;&#8203;)</code> with multiple arguments is now a compilation error. Previously the additional arguments were simply ignored.</p>
+</li>
+<li>
+<p>Creating <code>GroovyMock</code>/<code>GroovyStub</code>/<code>GroovySpy</code> for an already mocked type will now fail.</p>
+</li>
+<li>
+<p>Creating a global <code>GroovyMock</code>/<code>GroovyStub</code>/<code>GroovySpy</code> when <a href="parallel-execution.html#parallel-execution">parallel execution</a> is enabled,
+will now require that the spec is annotated with <a href="parallel-execution.html#isolated-execution">@Isolated</a> or <code>@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)</code>. See <a href="interaction-based-testing.html#global-mocks-parallel-execution">Global mocks and parallel execution</a></p>
 </li>
 </ul>
 </div>
@@ -7350,7 +7716,34 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <p>Add support for <a href="#extension-store">keeping state in extensions</a></p>
 </li>
 <li>
+<p>Add support for parameter injection of <code>@TempDir</code></p>
+</li>
+<li>
+<p>Improve <code>@TempDir</code> field injection, now it happens before field initialization, so it can be used by other field initializers.</p>
+</li>
+<li>
+<p>Fix exception when configured <code>baseDir</code> was not existing, now <code>@TempDir</code> will create the baseDir directory if it is missing.</p>
+</li>
+<li>
 <p>Fix bad error message for collection conditions, when one of the operands is <code>null</code></p>
+</li>
+<li>
+<p>Document <code>@ConditionBlock</code> Annotation spockPull:1709[]</p>
+</li>
+<li>
+<p>Document <code>old</code>-Method spockPull:1708[]</p>
+</li>
+<li>
+<p>Clarify documentation for global Mocks spockPull:1755[]</p>
+</li>
+<li>
+<p>Spock-Compiler does not use wrapper types anymore spockPull:1765[]</p>
+</li>
+<li>
+<p>Reduce lock contention of the <code>byte-buddy</code> mock maker, when multiple mocks are created concurrently spockPull:1778[]</p>
+</li>
+<li>
+<p>Documentation for DetachedMockFactory spockPull:1728[]</p>
 </li>
 </ul>
 </div>
@@ -10530,7 +10923,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-01-24 15:39:39 UTC
+Last updated 2024-01-24 23:16:20 UTC
 </div>
 </div>
 </body>

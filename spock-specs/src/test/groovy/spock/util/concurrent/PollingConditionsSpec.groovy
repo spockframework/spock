@@ -28,6 +28,9 @@ class PollingConditionsSpec extends Specification {
   volatile int num = 0
   volatile String str = null
 
+  private static def noArgClosure = { "test" }
+  private static def throwableArgClosure = { Throwable err -> err.getClass().simpleName }
+
   def "defaults"() {
     expect:
     with(conditions) {
@@ -167,5 +170,48 @@ class PollingConditionsSpec extends Specification {
 
     then: "there will be no second one"
     thrown SpockTimeoutError
+  }
+
+  def "correctly creates timeout error message"() {
+    given:
+    PollingConditions conditions = new PollingConditions()
+    conditions.onTimeout(onTimeoutClosure)
+
+    when:
+    conditions.eventually {
+      1 == 0
+    }
+
+    then:
+    def e = thrown(SpockTimeoutError)
+    e.message ==~ /Condition not satisfied after \d+(\.\d+)? seconds and \d+ attempts/ + expectedMessageSuffix
+
+    where:
+    onTimeoutClosure    || expectedMessageSuffix
+    null                || ""
+    noArgClosure        || ": test"
+    throwableArgClosure || ": ConditionNotSatisfiedError"
+  }
+
+  def "correctly creates timeout error message when onTimeout called multiple times"() {
+    given:
+    PollingConditions conditions = new PollingConditions()
+    conditions.onTimeout(onTimeoutClosure)
+    conditions.onTimeout(secondOnTimeoutClosure)
+
+    when:
+    conditions.eventually {
+      1 == 0
+    }
+
+    then:
+    def e = thrown(SpockTimeoutError)
+    e.message ==~ /Condition not satisfied after \d+(\.\d+)? seconds and \d+ attempts/ + expectedMessageSuffix
+
+    where:
+    onTimeoutClosure    | secondOnTimeoutClosure || expectedMessageSuffix
+    noArgClosure        | null                   || ""
+    null                | noArgClosure           || ": test"
+    throwableArgClosure | noArgClosure           || ": test"
   }
 }

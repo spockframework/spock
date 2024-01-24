@@ -1,0 +1,7 @@
+Condition not satisfied:
+
+a ==~ b
+| |   |
+| |   str
+| false
+null

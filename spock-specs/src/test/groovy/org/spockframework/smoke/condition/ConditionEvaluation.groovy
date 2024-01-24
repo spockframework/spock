@@ -1,17 +1,16 @@
 /*
- * Copyright 2008 the original author or authors.
+ * Copyright 2023 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 package org.spockframework.smoke.condition
@@ -20,13 +19,14 @@ import org.opentest4j.AssertionFailedError
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionFailedWithExceptionError
 import org.spockframework.runtime.ConditionNotSatisfiedError
-
-import spock.lang.Issue
+import org.spockframework.specs.extension.Snapshot
+import org.spockframework.specs.extension.Snapshotter
 import spock.lang.FailsWith
+import spock.lang.Issue
 
+import static java.lang.Integer.MAX_VALUE
 import static java.lang.Math.max
 import static java.lang.Math.min
-import static java.lang.Integer.MAX_VALUE
 import static java.lang.Thread.State.BLOCKED
 
 /**
@@ -387,6 +387,60 @@ class ConditionEvaluation extends EmbeddedSpecification {
 
     where:
     [aType, bType] << ['int[]', 'Integer[]', 'List', 'Queue', 'Deque'].with { [it, it] }.combinations()
+  }
+
+  def "collection conditions work with nulls"(@Snapshot Snapshotter snapshotter) {
+    when:
+    runner.runFeatureBody("""
+        given:
+        def a = ${aType}
+        def b = ${bType}
+        expect:
+        a =~ b
+        """)
+    then:
+    ConditionNotSatisfiedError e = thrown()
+    snapshotter.assertThat(e.message).matchesSnapshot()
+
+    where:
+    aType   | bType
+    '"str"' | 'null'
+    '[1]'   | 'null'
+    'null'  | '[1]'
+    'null'  | '"str"'
+  }
+
+  def "strict collection conditions work with nulls"(@Snapshot Snapshotter snapshotter) {
+    when:
+    runner.runFeatureBody("""
+        given:
+        def a = ${aType}
+        def b = ${bType}
+        expect:
+        a ==~ b
+        """)
+    then:
+    ConditionNotSatisfiedError e = thrown()
+    snapshotter.assertThat(e.message).matchesSnapshot()
+
+    where:
+    aType  | bType
+    '"str"' | 'null'
+    '[1]'   | 'null'
+    'null'  | '[1]'
+    'null'  | '"str"'
+  }
+
+  def "collection conditions work with null equality"() {
+    given:
+    def a = null
+    def b = null
+
+    expect:
+    null ==~ null
+    null =~ null
+    a ==~ b
+    a =~ b
   }
 
   @FailsWith(ConditionFailedWithExceptionError)

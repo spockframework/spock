@@ -53,6 +53,7 @@ public class PollingConditions {
   private double initialDelay = 0;
   private double delay = 0.1;
   private double factor = 1.0;
+  private Closure<String> timeoutMessage = null;
 
   /**
    * Returns the timeout (in seconds) until which the conditions have to be satisfied.
@@ -129,6 +130,21 @@ public class PollingConditions {
   }
 
   /**
+   * Sets the closure that is evaluated when a timeout is reached. 
+   * <p>
+   * The closure can use a {@link Throwable} as an input parameter,
+   * which is thrown by the test conditions when a timeout is reached. The result of this
+   * closure is added to the {@link SpockTimeoutError} message. Calling it with null resets the timeout message.
+   *
+   * @param timeoutMessage the closure that is evaluated when a timeout is reached
+   * @since 2.4
+   */
+   @Beta
+  public void onTimeout(Closure<String> timeoutMessage) {
+    this.timeoutMessage = timeoutMessage;
+  }
+
+  /**
    * Repeatedly evaluates the specified conditions until they are satisfied or the timeout has elapsed.
    *
    * @param conditions the conditions to evaluate
@@ -182,6 +198,9 @@ public class PollingConditions {
     }
 
     String msg = String.format("Condition not satisfied after %1.2f seconds and %d attempts", elapsedTime / 1000d, attempts);
+    if (timeoutMessage != null) {
+      msg = String.format("%s: %s", msg, GroovyRuntimeUtil.invokeClosure(timeoutMessage, testException));
+    }
     throw new SpockTimeoutError(seconds, msg, testException);
   }
 

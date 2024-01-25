@@ -548,10 +548,20 @@ Valid methods are `setup()`, `setupSpec()`, or any feature methods.
 include::{sourcedir}/extension/TempDirDocSpec.groovy[tag=example]
 ----
 
-If you want to customize the parent directory for temporary directories, you can use the <<spock-configuration-file,Spock Configuration File>>.
+[[_temp_dir_cleanup]]
+==== Cleanup
 
-If `keep` is set to `true`, Spock will not delete temporary directories after tests. The default value is taken from
-system property `spock.tempDir.keep` or `false`, if undefined.
+You can configure the cleanup behavior via `@TempDir(cleanup = <mode>)`.
+
+- `DEFAULT` will use the global value
+- `ALWAYS` Spock will delete temporary directories after tests
+- `NEVER` Spock will not delete temporary directories after tests.
+- `ON_SUCCESS` Spock will not delete temporary directories if a test failed.
+
+The global value for `DEFAULT` is taken from system property `spock.tempdir.cleanup`, or the configuration file.
+
+==== Configuration
+If you want to customize the parent directory for temporary directories, you can use the <<spock-configuration-file,Spock Configuration File>>.
 
 .Temporary Directory Configuration
 [source,groovy]
@@ -562,6 +572,9 @@ tempdir {
   baseDir Paths.get("/tmp")
   // boolean, default is system property "spock.tempDir.keep"
   keep true
+  // spock.lang.TempDir.CleanupMode, default ALWAYS
+  // allows to set the default cleanup mode to use
+  cleanup spock.lang.TempDir.CleanupMode.ON_SUCCESS
 }
 ----
 

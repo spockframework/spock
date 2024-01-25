@@ -8,6 +8,13 @@ dependencies {
   compileOnly 'org.asciidoctor:asciidoctorj:2.5.11'
 }
 
+java {
+  toolchain {
+    // IntelliJ currently doesn't support running classes compiled with Java 21 in its preview viewer
+    languageVersion = JavaLanguageVersion.of(17)
+  }
+}
+
 tasks.register('installAsciidocExtension', Copy) {
   from(tasks.named('jar'))
   into('../../.asciidoctor/lib')
@@ -16,4 +23,3 @@ tasks.register('installAsciidocExtension', Copy) {
 tasks.named('ideaModule') {
   it.dependsOn('installAsciidocExtension')
 }
-

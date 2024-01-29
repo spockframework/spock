@@ -723,6 +723,7 @@ runner {
 }
 ----
 
+[[snapshot-testing]]
 === Snapshot testing
 
 Since version 2.4, the `@Snapshot` extension has been added for snapshot testing.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package spock.lang;
 
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.SnapshotExtension;
+import org.spockframework.util.Beta;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,6 +25,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.nio.charset.Charset;
 
+/**
+ * Injects a {@link Snapshotter} instance into a field or parameter.
+ * <p>
+ * It can also inject subclasses of {@link Snapshotter},
+ * as long as they have a public constructor with a single {@link Snapshotter.Store} parameter.
+ *
+ * @author Leonard Brünings
+ * @since 2.4
+ */
+@Beta
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @ExtensionAnnotation(SnapshotExtension.class)

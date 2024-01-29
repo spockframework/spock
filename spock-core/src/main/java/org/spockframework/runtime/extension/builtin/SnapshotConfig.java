@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,14 +15,18 @@
 
 package org.spockframework.runtime.extension.builtin;
 
+import org.spockframework.util.Beta;
+import org.spockframework.util.Nullable;
 import spock.config.ConfigurationObject;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+@Beta
 @ConfigurationObject("snapshots")
 public class SnapshotConfig {
-  Path rootPath = Optional.ofNullable(System.getProperty("spock.snapshots.rootPath")).map(Paths::get).orElse(null);
-  boolean updateSnapshots = Boolean.getBoolean("spock.snapshots.updateSnapshots");
+  @Nullable
+  public Path rootPath = Optional.ofNullable(System.getProperty("spock.snapshots.rootPath")).map(Paths::get).orElse(null);
+  public boolean updateSnapshots = Boolean.getBoolean("spock.snapshots.updateSnapshots");
 }

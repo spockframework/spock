@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,9 +32,11 @@ import spock.lang.Snapshotter;
 import java.nio.charset.Charset;
 
 public class SnapshotExtension implements IAnnotationDrivenExtension<Snapshot> {
+  private final SnapshotConfig config;
+
   public SnapshotExtension(SnapshotConfig config) {
-    this.config = config;
-    Assert.notNull(config.rootPath, "Root path must be set, when using @Snapshot");
+    this.config = Assert.notNull(config);
+    Checks.notNull(config.rootPath, () -> "Root path must be set, when using @Snapshot");
   }
 
   @Override
@@ -47,7 +49,7 @@ public class SnapshotExtension implements IAnnotationDrivenExtension<Snapshot> {
   }
 
   @Override
-  public void visitParameterAnnotation(final Snapshot annotation, ParameterInfo parameter) {
+  public void visitParameterAnnotation(Snapshot annotation, ParameterInfo parameter) {
     Class<?> type = parameter.getReflection().getType();
     Checks.checkArgument(Snapshotter.class.isAssignableFrom(type), () -> "Field must be of type Snapshotter or a valid Subtype");
 
@@ -68,12 +70,13 @@ public class SnapshotExtension implements IAnnotationDrivenExtension<Snapshot> {
     return (Snapshotter) ReflectionUtil.newInstance(type, snapshotStore);
   }
 
-  private final SnapshotConfig config;
+  private class SnapshotInterceptor implements IMethodInterceptor {
+    private final FieldInfo field;
+    private final Snapshot annotation;
 
-  public class SnapshotInterceptor implements IMethodInterceptor {
-    public SnapshotInterceptor(Snapshot annotation, FieldInfo field) {
-      this.field = field;
-      this.annotation = annotation;
+    private SnapshotInterceptor(Snapshot annotation, FieldInfo field) {
+      this.field = Assert.notNull(field);
+      this.annotation = Assert.notNull(annotation);
     }
 
     @Override
@@ -81,8 +84,5 @@ public class SnapshotExtension implements IAnnotationDrivenExtension<Snapshot> {
       field.writeValue(invocation.getInstance(), createSnapshotter(invocation, field.getType(), annotation));
       invocation.proceed();
     }
-
-    private final FieldInfo field;
-    private final Snapshot annotation;
   }
 }

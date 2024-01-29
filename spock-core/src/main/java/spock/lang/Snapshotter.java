@@ -16,12 +16,12 @@
 package spock.lang;
 
 import org.codehaus.groovy.runtime.StringGroovyMethods;
-import org.jetbrains.annotations.NotNull;
 import org.spockframework.runtime.Condition;
 import org.spockframework.runtime.ConditionNotSatisfiedError;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.IterationInfo;
 import org.spockframework.runtime.model.TextPosition;
+import org.spockframework.util.Assert;
 import org.spockframework.util.Beta;
 import org.spockframework.util.Checks;
 import org.spockframework.util.IoUtil;
@@ -32,6 +32,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -40,7 +41,8 @@ import java.util.function.Function;
 /**
  * Allows to perform snapshot testing.
  * <p>
- * Snapshots are stored in a file next to the test class.
+ * Snapshots are stored in a file in the configured {@link org.spockframework.runtime.extension.builtin.SnapshotConfig#rootPath}
+ * with the same package structure as the specification class and grouped by the specification.
  *
  * @author Leonard Brünings
  * @since 2.4
@@ -53,7 +55,7 @@ public class Snapshotter {
   private Function<String, String> normalizer = StringGroovyMethods::normalize;
 
   public Snapshotter(Store snapshotStore) {
-    this.snapshotStore = snapshotStore;
+    this.snapshotStore = Checks.notNull(snapshotStore, () -> "snapshotStore is null");
   }
 
   protected Store getSnapshotStore() {
@@ -61,10 +63,13 @@ public class Snapshotter {
   }
 
   protected String loadSnapshot(String snapshotId) {
+    Checks.notNull(snapshotId, () -> "snapshotId is null");
     return getSnapshotStore().loadSnapshot(snapshotId).map(wrapper::unwrap).orElse("<Missing Snapshot>");
   }
 
   protected void saveSnapshot(String snapshotId, String value) {
+    Checks.notNull(snapshotId, () -> "snapshotId is null");
+    Checks.notNull(value, () -> "value is null");
     snapshotStore.saveSnapshot(snapshotId, wrapper.wrap(value));
   }
 
@@ -75,6 +80,7 @@ public class Snapshotter {
    * instead of using this method directly.
    */
   public Snapshotter wrappedAs(Wrapper wrapper) {
+    Checks.notNull(wrapper, () -> "wrapper is null");
     this.wrapper = wrapper;
     return this;
   }
@@ -85,6 +91,7 @@ public class Snapshotter {
    * The default normalization is line ending normalization.
    */
   public Snapshotter normalizedWith(Function<String, String> normalizer) {
+    Checks.notNull(normalizer, () -> "normalizer is null");
     this.normalizer = normalizer;
     return this;
   }
@@ -96,6 +103,7 @@ public class Snapshotter {
    * @param value the actual value for assertions
    */
   public Snapshot assertThat(String value) {
+    Checks.notNull(value, () -> "value is null");
     return new Snapshot(value);
   }
 
@@ -108,7 +116,7 @@ public class Snapshotter {
     private final String value;
 
     private Snapshot(String value) {
-      this.value = normalizer.apply(value);
+      this.value = normalizer.apply(Checks.notNull(value, () -> "value is null"));
     }
 
     /**
@@ -154,6 +162,9 @@ public class Snapshotter {
      * The matcher must throw an {@link AssertionError} if the values don't match.
      */
     public void matchesSnapshot(String snapshotId, BiConsumer<String, String> snapshotMatcher) {
+      Checks.notNull(snapshotId, () -> "snapshotId is null");
+      Checks.notNull(snapshotMatcher, () -> "snapshotMatcher is null");
+
       String snapshotValue = loadSnapshot(snapshotId);
       try {
         snapshotMatcher.accept(snapshotValue, value);
@@ -186,8 +197,8 @@ public class Snapshotter {
     private final String suffix;
 
     private PrefixSuffixWrapper(String prefix, String suffix) {
-      this.prefix = prefix;
-      this.suffix = suffix;
+      this.prefix = Checks.notNull(prefix, () -> "prefix is null");
+      this.suffix = Checks.notNull(suffix, () -> "suffix is null");
     }
 
     public static PrefixSuffixWrapper of(String prefix, String suffix) {
@@ -195,6 +206,8 @@ public class Snapshotter {
     }
 
     public static PrefixSuffixWrapper asciiDocSample(String prefix, String suffix) {
+      Checks.notNull(prefix, () -> "prefix is null");
+      Checks.notNull(suffix, () -> "suffix is null");
       return new PrefixSuffixWrapper(prefix + "\n/*--------- tag::snapshot[] ---------*/\n", "\n/*--------- end::snapshot[] ---------*/\n" + suffix);
     }
 
@@ -205,6 +218,7 @@ public class Snapshotter {
 
     @Override
     public String unwrap(String value) {
+      Checks.notNull(value, () -> "value is null");
       // check if unwrapping is possible
       if (!value.startsWith(prefix) || !value.endsWith(suffix)) {
         System.err.printf("Cannot unwrap because prefix matches=%s, prefix matches=%s%n", value.startsWith(prefix),value.endsWith(suffix));
@@ -235,10 +249,10 @@ public class Snapshotter {
     private final Path specPath;
 
     public Store(IterationInfo iterationInfo, Path rootPath, boolean updateSnapshots, String extension, Charset charset) {
-      this.iterationInfo = iterationInfo;
-      this.updateSnapshots = updateSnapshots;
-      this.extension = extension;
-      this.charset = charset;
+      this.iterationInfo = Assert.notNull(iterationInfo);
+      this.updateSnapshots = Assert.notNull(updateSnapshots);
+      this.extension = Assert.notNull(extension);
+      this.charset = Assert.notNull(charset);
 
       Class<?> specClass = iterationInfo.getFeature().getSpec().getReflection();
       specPath = rootPath
@@ -253,25 +267,25 @@ public class Snapshotter {
       FeatureInfo feature = iterationInfo.getFeature();
       String safeName = sanitize(feature.getName());
       String featureId = feature.getFeatureMethod().getReflection().getName().substring("$spock_feature_".length());
-      String iterationIndex = feature.isParameterized() ? String.format("-[%d]", iterationInfo.getIterationIndex()) : "";
+      String iterationIndex = feature.isParameterized() ? String.format(Locale.ROOT, "-[%d]", iterationInfo.getIterationIndex()) : "";
       String snapshotIdSuffix = snapshotId.isEmpty() ? "" : "-" + sanitize(snapshotId);
 
       int uniqueSuffixLength = 1 + featureId.length() + 1 + extension.length() + iterationIndex.length() + snapshotIdSuffix.length();
       if (safeName.length() + uniqueSuffixLength > 250) {
         safeName = safeName.substring(0, 250 - uniqueSuffixLength);
-        return String.format("%s%s-%s%s.%s", safeName, snapshotIdSuffix, featureId, iterationIndex, extension);
+        return String.format(Locale.ROOT, "%s%s-%s%s.%s", safeName, snapshotIdSuffix, featureId, iterationIndex, extension);
       }
-      return String.format("%s%s%s.%s", safeName, snapshotIdSuffix, iterationIndex, extension);
+      return String.format(Locale.ROOT, "%s%s%s.%s", safeName, snapshotIdSuffix, iterationIndex, extension);
     }
 
-    @NotNull
     private static String sanitize(String snapshotId) {
-      return snapshotId.replaceAll("[^a-zA-Z0-9]", "_");
+      return Assert.notNull(snapshotId).replaceAll("[^a-zA-Z0-9]", "_");
     }
 
     public Optional<String> loadSnapshot(String snapshotId) {
+      Assert.notNull(snapshotId);
       Path snapshotPath = specPath.resolve(calculateSafeUniqueName(extension, iterationInfo, snapshotId));
-      if (Files.exists(snapshotPath)) {
+      if (Files.isRegularFile(snapshotPath)) {
         try {
           return Optional.of(IoUtil.getText(snapshotPath, charset));
         } catch (IOException e) {
@@ -283,9 +297,15 @@ public class Snapshotter {
 
 
     public void saveSnapshot(String snapshotId, String value) {
-      Path snapshotPath = specPath.resolve(calculateSafeUniqueName(extension, iterationInfo, snapshotId));
-      specPath.toFile().mkdirs();
-      IoUtil.writeText(snapshotPath, value, charset);
+      Assert.notNull(snapshotId);
+      Assert.notNull(value);
+      try {
+        Path snapshotPath = specPath.resolve(calculateSafeUniqueName(extension, iterationInfo, snapshotId));
+        Files.createDirectories(specPath);
+        IoUtil.writeText(snapshotPath, value, charset);
+      } catch (IOException e) {
+        throw new UncheckedIOException("Could not create directories", e);
+      }
     }
 
     public boolean isUpdateSnapshots() {

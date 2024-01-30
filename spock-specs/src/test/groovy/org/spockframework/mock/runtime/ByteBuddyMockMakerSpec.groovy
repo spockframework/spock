@@ -132,6 +132,7 @@ class ByteBuddyMockMakerSpec extends Specification {
 
     when:
     Mock(interfaceClass, mockMaker: MockMakers.byteBuddy)
+    
     then:
     CannotCreateMockException ex = thrown()
     ex.message.startsWith("Cannot create mock for interface Interface. byte-buddy: The class Interface is not visible by the classloader")
@@ -144,6 +145,7 @@ class ByteBuddyMockMakerSpec extends Specification {
 
     when:
     Mock(Runnable, mockMaker: MockMakers.byteBuddy, additionalInterfaces: [additionalInterfaceClass])
+
     then:
     CannotCreateMockException ex = thrown()
     ex.message.startsWith("Cannot create mock for interface java.lang.Runnable. byte-buddy: The class AdditionalInterface is not visible by the classloader")

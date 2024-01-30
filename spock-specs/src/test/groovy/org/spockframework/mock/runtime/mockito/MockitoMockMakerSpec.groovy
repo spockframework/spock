@@ -466,6 +466,7 @@ Can not mock final classes with the following settings :
 
     when:
     def m = Mock(interfaceClass, mockMaker: mockito)
+
     then:
     interfaceClass.isInstance(m)
     mockUtil.isMock(m)
@@ -479,11 +480,12 @@ Can not mock final classes with the following settings :
 
     when:
     def m = Mock(interfaceClass)
+
     then:
     interfaceClass.isInstance(m)
     mockUtil.isMock(m)
   }
-  
+
   def "Mocking with additional interface from different classloader works with mockito MockMaker"() {
     given:
     def mockUtil = new MockUtil()
@@ -492,6 +494,7 @@ Can not mock final classes with the following settings :
 
     when:
     Runnable m = Mock(mockMaker: mockito, additionalInterfaces: [additionalInterfaceClass])
+
     then:
     m instanceof Runnable
     additionalInterfaceClass.isInstance(m)

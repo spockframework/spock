@@ -61,6 +61,7 @@ class JavaProxyMockMakerSpec extends Specification {
 
     when:
     Mock(interfaceClass, mockMaker: MockMakers.javaProxy)
+
     then:
     CannotCreateMockException ex = thrown()
     ex.message.startsWith("Cannot create mock for interface Interface. java-proxy: The class Interface is not visible by the classloader")
@@ -73,6 +74,7 @@ class JavaProxyMockMakerSpec extends Specification {
 
     when:
     Mock(Runnable, mockMaker: MockMakers.javaProxy, additionalInterfaces: [additionalInterfaceClass])
+
     then:
     CannotCreateMockException ex = thrown()
     ex.message.startsWith("Cannot create mock for interface java.lang.Runnable. java-proxy: The class AdditionalInterface is not visible by the classloader")

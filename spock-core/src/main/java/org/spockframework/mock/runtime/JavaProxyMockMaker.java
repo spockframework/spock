@@ -18,6 +18,7 @@ package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.CannotCreateMockException;
 import org.spockframework.mock.ISpockMockObject;
+import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.ThreadSafe;
 import spock.mock.MockMakerId;
 
@@ -71,6 +72,39 @@ public class JavaProxyMockMaker implements IMockMaker {
 
   @Override
   public IMockabilityResult getMockability(IMockCreationSettings settings) {
+    return checkMockClassesAreVisibleInClassloader(settings);
+  }
+
+  /**
+   * Checks if the classes required for the {@code settings} are visible by the {@link ClassLoader}.
+   *
+   * @param settings the mock settings
+   * @return the {@link IMockabilityResult}, if it is mockable
+   */
+  static IMockabilityResult checkMockClassesAreVisibleInClassloader(IMockCreationSettings settings) {
+    ClassLoader classLoader = settings.getClassLoader();
+
+    IMockabilityResult result = checkIfClassIsVisible(settings.getMockType(), classLoader);
+    if (!result.isMockable()) {
+      return result;
+    }
+    result = checkIfClassIsVisible(ISpockMockObject.class, classLoader);
+    if (!result.isMockable()) {
+      return result;
+    }
+    for (Class<?> ifClass : settings.getAdditionalInterface()) {
+      result = checkIfClassIsVisible(ifClass, classLoader);
+      if (!result.isMockable()) {
+        return result;
+      }
+    }
+    return IMockabilityResult.MOCKABLE;
+  }
+
+  private static IMockabilityResult checkIfClassIsVisible(Class<?> mockType, ClassLoader classLoader) {
+    if (!ReflectionUtil.isClassVisibleInClassloader(mockType, classLoader)) {
+      return () -> "The class " + mockType.getName() + " is not visible by the classloader " + classLoader + ".";
+    }
     return IMockabilityResult.MOCKABLE;
   }
 }

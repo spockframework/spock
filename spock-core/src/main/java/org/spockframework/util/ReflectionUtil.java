@@ -314,4 +314,30 @@ public abstract class ReflectionUtil {
     }
     return object;
   }
+
+  /**
+   * Checks if the {@code classToCheck} is visible by the passed {@code classLoader}
+   *
+   * @param classToCheck the class to check
+   * @param classLoader  the classLoader
+   * @return {@code true} if the class is visible
+   */
+  public static boolean isClassVisibleInClassloader(Class<?> classToCheck, ClassLoader classLoader) {
+    try {
+      if (classToCheck.getClassLoader() == null) {
+        //Classes from the bootstrap classloader are always visible
+        return true;
+      }
+      if (classToCheck.getClassLoader() == classLoader) {
+        return true;
+      }
+      Class<?> loadedClass = classLoader.loadClass(classToCheck.getName());
+      if (loadedClass == classToCheck) {
+        return true;
+      }
+    } catch (ClassNotFoundException ignored) {
+      //Ignored
+    }
+    return false;
+  }
 }

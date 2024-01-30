@@ -124,6 +124,30 @@ class ByteBuddyMockMakerSpec extends Specification {
     then:
     s.stringField == "data"
   }
+
+  def "Mocking interface from different classloader shall fail for byteBuddy MockMaker"() {
+    given:
+    def tempClassLoader = new ByteBuddyTestClassLoader()
+    def interfaceClass = tempClassLoader.defineInterface("Interface")
+
+    when:
+    Mock(interfaceClass, mockMaker: MockMakers.byteBuddy)
+    then:
+    CannotCreateMockException ex = thrown()
+    ex.message.startsWith("Cannot create mock for interface Interface. byte-buddy: The class Interface is not visible by the classloader")
+  }
+
+  def "Mocking with additional interface from different classloader shall fail for byteBuddy MockMaker"() {
+    given:
+    def tempClassLoader = new ByteBuddyTestClassLoader()
+    def additionalInterfaceClass = tempClassLoader.defineInterface("AdditionalInterface")
+
+    when:
+    Mock(Runnable, mockMaker: MockMakers.byteBuddy, additionalInterfaces: [additionalInterfaceClass])
+    then:
+    CannotCreateMockException ex = thrown()
+    ex.message.startsWith("Cannot create mock for interface java.lang.Runnable. byte-buddy: The class AdditionalInterface is not visible by the classloader")
+  }
 }
 
 @SuppressWarnings('unused')

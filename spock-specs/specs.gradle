@@ -93,7 +93,7 @@ tasks.register("groovyConsole", JavaExec) {
 
 tasks.named("compileTestGroovy", GroovyCompile) {
   def jacocoAgent = objects.newInstance(JacocoJavaagentProvider)
-  jacocoAgent.jacocoAgent = file(configurations.jacocoAgentRuntime.asPath)
-  jacocoAgent.execResultFile = file("$buildDir/jacoco/compileTestGroovy.exec")
+  jacocoAgent.jacocoAgent.fileProvider(provider { file(configurations.jacocoAgentRuntime.asPath) })
+  jacocoAgent.execResultFile = layout.buildDirectory.file("jacoco/compileTestGroovy.exec")
   groovyOptions.forkOptions.jvmArgumentProviders.add(jacocoAgent)
 }

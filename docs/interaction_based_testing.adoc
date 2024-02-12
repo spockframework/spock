@@ -1041,7 +1041,7 @@ NOTE: Think twice before using this feature.
 [[static-mocks]]
 ==== Static Mocks
 
-You can create static mocks with `MockStatic()`, `StubStatic()` or `SpyStatic()`.
+You can create static mocks with `MockStatic()`, `StubStatic()`, or `SpyStatic()`.
 The semantics are the same as for the non-static variants:
 
 * `MockStatic()`: Mocks static methods of the given type; supports both stubbing and mocking.

@@ -11,15 +11,19 @@
     // as we want to keep one for each major version.
     // The same applies for mockito as we test with both 4 and 5
     {
-      matchPackagePrefixes: ["org.mockito:"],
+      matchPackagePrefixes: ["org.codehaus.groovy:"],
+      matchCurrentValue: "/^2\\./",
+      allowedVersions: "(,3.0)"
+    },
+    {
+      matchPackagePrefixes: ["org.apache.groovy:"],
       matchCurrentValue: "/^4\\./",
       allowedVersions: "(,5.0)"
     },
     {
-      "matchPackagePrefixes": ["org.codehaus.groovy:", "org.apache.groovy:"],
-      "matchManagers": ["regex"],
-      "matchUpdateTypes": ["major"],
-      "enabled": false
+      matchPackagePrefixes: ["org.mockito:"],
+      matchCurrentValue: "/^4\\./",
+      allowedVersions: "(,5.0)"
     }
   ]
 }

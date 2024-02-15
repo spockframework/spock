@@ -1,12 +1,12 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
+  extends: [
     "config:base"
   ],
   // Don't manage versions in spock modules
   // we want to keep low versions for baseline compatibility
-  "ignorePaths": ["spock-*/**"],
-  "packageRules": [
+  ignorePaths: ["spock-*/**"],
+  packageRules: [
     // Disable major version upgrades for Groovy versions
     // as we want to keep one for each major version.
     // The same applies for mockito as we test with both 4 and 5

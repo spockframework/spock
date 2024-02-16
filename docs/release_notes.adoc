@@ -38,6 +38,7 @@ include::include.adoc[]
 * Spock-Compiler does not use wrapper types anymore spockPull:1765[]
 * Reduce lock contention of the `byte-buddy` mock maker, when multiple mocks are created concurrently spockPull:1778[]
 * Documentation for DetachedMockFactory spockPull:1728[]
+* Support creation of global Groovy mocks for abstract classes spockPull:1754[]
 
 == 2.4-M1 (2022-11-30)
 

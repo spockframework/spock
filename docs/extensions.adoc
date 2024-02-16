@@ -770,12 +770,13 @@ You can also extend from the `Snapshotter` class to provide your own convenience
 Check `org.spockframework.specs.extension.SpockSnapshotter` in the spock codebase for an example.
 
 ==== Configuration
+
 The snapshots are stored in the `rootPath` directory, which can be configured either in the  <<spock-configuration-file,Spock Configuration File>>, or via the `spock.snapshots.rootPath` system property.
 The `rootPath` directory is required and the `@Snapshot` extension will throw an exception if it is not configured when the extension is used.
 
 Snapshots can be updated when setting the `spock.snapshots.updateSnapshots` system property to `true`, or via the config file.
 
-You can configure the extension to store the actual value in case of a mismatch by setting the `spock.snapshots.writeActual`  system property to `true`, or via the config file.
+You can configure the extension to store the actual value in case of a mismatch by setting the `spock.snapshots.writeActual` system property to `true`, or via the config file.
 If enabled the extension will store the result in a file next to the original one with an additional `.actual` extension.
 The `.actual` file will automatically be deleted on the next successful run, as long as the feature is still enabled.
 This option is useful, when the snapshot is too large or complex to analyze with the built-in reporting.

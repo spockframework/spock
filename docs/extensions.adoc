@@ -559,8 +559,10 @@ You can configure the cleanup behavior via `@TempDir(cleanup = <mode>)`.
 - `ON_SUCCESS` Spock will not delete temporary directories if a test failed.
 
 The global value for `DEFAULT` is taken from system property `spock.tempdir.cleanup`, or the configuration file.
+If nothing is configured, it will default to `ALWAYS`.
 
 ==== Configuration
+
 If you want to customize the parent directory for temporary directories, you can use the <<spock-configuration-file,Spock Configuration File>>.
 
 .Temporary Directory Configuration

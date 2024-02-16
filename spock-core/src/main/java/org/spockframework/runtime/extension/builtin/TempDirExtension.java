@@ -43,8 +43,7 @@ public class TempDirExtension implements IAnnotationDrivenExtension<TempDir> {
 
   @Override
   public void visitFieldAnnotation(TempDir annotation, FieldInfo field) {
-    TempDir.CleanupMode cleanupMode = annotation.cleanup();
-    cleanupMode = cleanupMode == TempDir.CleanupMode.DEFAULT ? configuration.cleanup : cleanupMode;
+    TempDir.CleanupMode cleanupMode = getCleanupMode(annotation);
     TempDirInterceptor interceptor = TempDirInterceptor.forField(field, configuration.baseDir, annotation, cleanupMode);
 
     SpecInfo specInfo = field.getParent();
@@ -64,8 +63,7 @@ public class TempDirExtension implements IAnnotationDrivenExtension<TempDir> {
 
   @Override
   public void visitParameterAnnotation(TempDir annotation, ParameterInfo parameter) {
-    TempDir.CleanupMode cleanupMode = annotation.cleanup();
-    cleanupMode = cleanupMode == TempDir.CleanupMode.DEFAULT ? configuration.cleanup : cleanupMode;
+    TempDir.CleanupMode cleanupMode = getCleanupMode(annotation);
     MethodInfo methodInfo = parameter.getParent();
     Checks.checkArgument(VALID_METHOD_KINDS.contains(methodInfo.getKind()), () -> "@TempDir can only be used on setup, setupSpec or feature method parameters.");
     TempDirInterceptor interceptor = TempDirInterceptor.forParameter(parameter, configuration.baseDir, annotation, cleanupMode);
@@ -85,5 +83,11 @@ public class TempDirExtension implements IAnnotationDrivenExtension<TempDir> {
           throw new UnreachableCodeError();
       }
     }
+  }
+
+  private TempDir.CleanupMode getCleanupMode(TempDir annotation) {
+    TempDir.CleanupMode cleanupMode = annotation.cleanup();
+    cleanupMode = cleanupMode == TempDir.CleanupMode.DEFAULT ? configuration.cleanup : cleanupMode;
+    return cleanupMode;
   }
 }

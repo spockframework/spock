@@ -23,7 +23,7 @@ import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import java.util.HashMap;
 import java.util.Map;
 
-final class ByteBuddyTestClassLoader extends ClassLoader {
+public final class ByteBuddyTestClassLoader extends ClassLoader {
   private final Map<String, Class<?>> cache = new HashMap<>();
 
   private final ClassLoadingStrategy<ByteBuddyTestClassLoader> loadingStrategy = (loader, types) -> {
@@ -38,12 +38,24 @@ final class ByteBuddyTestClassLoader extends ClassLoader {
   };
 
   /**
+   * Creates a new {@link ByteBuddyTestClassLoader} and defines an interface with the passed name.
+   *
+   * @param name the interface name
+   * @return the classloader
+   */
+  public static ByteBuddyTestClassLoader withInterface(String name) {
+    ByteBuddyTestClassLoader cl = new ByteBuddyTestClassLoader();
+    cl.defineInterface(name);
+    return cl;
+  }
+
+  /**
    * Defines an empty interface with the passed {@code node}.
    *
    * @param name the name of the interface
    * @return the loaded {@code Class}
    */
-  synchronized Class<?> defineInterface(String name) {
+  public synchronized Class<?> defineInterface(String name) {
     //noinspection resource
     return cache.computeIfAbsent(name, nameKey -> new ByteBuddy()
       .makeInterface()

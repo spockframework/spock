@@ -10,6 +10,7 @@ include::include.adoc[]
 ** You can select the used mock maker during mock creation: `Mock(mockMaker:MockMakers.byteBuddy)`
 * Added <<extensions.adoc#mock-makers-mockito,mockito>> mock maker spockPull:1753[] which supports:
 ** Mocking of final classes and final methods
+** Mocking of classes and interface from different classloaders spockPull:1878[]
 ** Requires `org.mockito:mockito-core` >= 4.11 in the test class path
 * Fix issue with mocks of Groovy classes, where the Groovy MOP for `@Internal` methods was not honored by the `byte-buddy` mock maker spockPull:1729[]
 ** This fixes multiple issues with Groovy MOP: spockIssue:1501[], spockIssue:1452[], spockIssue:1608[] and spockIssue:1145[]

@@ -15,6 +15,7 @@
 package org.spockframework.util
 
 import org.junit.platform.commons.annotation.Testable
+import org.spockframework.mock.runtime.ByteBuddyTestClassLoader
 import spock.lang.*
 
 import java.lang.annotation.Annotation
@@ -326,5 +327,19 @@ class ReflectionUtilSpec extends Specification {
   def "isToStringOverridden error"() {
     expect:
     !ReflectionUtil.isToStringOverridden(int.class)
+  }
+
+  def "isClassVisibleInClassloader"(Class<?> cls, ClassLoader loader, boolean expectedResult) {
+    expect:
+    ReflectionUtil.isClassVisibleInClassloader(cls, loader) == expectedResult
+
+    where:
+    cls        | loader                                                  | expectedResult
+    Runnable   | this.class.classLoader                                  | true
+    this.class | this.class.classLoader                                  | true
+    this.class | new URLClassLoader([] as URL[], this.class.classLoader) | true
+
+    this.class | new URLClassLoader([] as URL[], null as ClassLoader)    | false
+    this.class | ByteBuddyTestClassLoader.withInterface(this.class.name) | false
   }
 }

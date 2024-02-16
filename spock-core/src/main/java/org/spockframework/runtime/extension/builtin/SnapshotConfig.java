@@ -41,6 +41,12 @@ public class SnapshotConfig {
    */
   public boolean updateSnapshots = Boolean.getBoolean("spock.snapshots.updateSnapshots");
   /**
+   * Controls whether the {@link spock.lang.Snapshotter} should write actual value next to the snapshot file with the '.actual' extension.
+   * <p>
+   * The file will be deleted upon a successful match.
+   */
+  public boolean writeActualSnapshotOnMismatch = Boolean.getBoolean("spock.snapshots.writeActual");
+  /**
    * The default extension to use.
    */
   public String defaultExtension = "txt";

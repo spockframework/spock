@@ -73,6 +73,17 @@ public class Snapshotter {
     snapshotStore.saveSnapshot(snapshotId, wrapper.wrap(value));
   }
 
+  protected void saveActual(String snapshotId, String value) {
+    Checks.notNull(snapshotId, () -> "snapshotId is null");
+    Checks.notNull(value, () -> "value is null");
+    snapshotStore.saveActual(snapshotId, wrapper.wrap(value));
+  }
+
+  protected void deleteActual(String snapshotId) {
+    Checks.notNull(snapshotId, () -> "snapshotId is null");
+    snapshotStore.deleteActual(snapshotId);
+  }
+
   /**
    * Declares a {@link Wrapper} for wrapping and unwrapping of the reference value.
    * <P>
@@ -171,10 +182,16 @@ public class Snapshotter {
       String snapshotValue = loadSnapshot(snapshotId);
       try {
         snapshotMatcher.accept(snapshotValue, value);
+        if (snapshotStore.isWriteActualContents()) {
+          deleteActual(snapshotId);
+        }
       } catch (AssertionError e) {
         if (snapshotStore.isUpdateSnapshots()) {
           saveSnapshot(snapshotId, value);
         } else {
+          if (snapshotStore.isWriteActualContents()) {
+            saveActual(snapshotId, value);
+          }
           throw e;
         }
       }
@@ -247,13 +264,15 @@ public class Snapshotter {
   public static final class Store {
     private final IterationInfo iterationInfo;
     private final boolean updateSnapshots;
+    private final boolean writeActualContents;
     private final String extension;
     private final Charset charset;
     private final Path specPath;
 
-    public Store(IterationInfo iterationInfo, Path rootPath, boolean updateSnapshots, String extension, Charset charset) {
+    public Store(IterationInfo iterationInfo, Path rootPath, boolean updateSnapshots, boolean writeActualContents, String extension, Charset charset) {
       this.iterationInfo = Assert.notNull(iterationInfo);
       this.updateSnapshots = Assert.notNull(updateSnapshots);
+      this.writeActualContents = writeActualContents;
       this.extension = Assert.notNull(extension);
       this.charset = Assert.notNull(charset);
 
@@ -311,8 +330,35 @@ public class Snapshotter {
       }
     }
 
+    public void saveActual(String snapshotId, String value) {
+      Assert.notNull(snapshotId);
+      Assert.notNull(value);
+      try {
+        Path snapshotPath = specPath.resolve(calculateSafeUniqueName(extension + ".actual", iterationInfo, snapshotId));
+        Files.createDirectories(specPath);
+        IoUtil.writeText(snapshotPath, value, charset);
+        System.err.println("Snapshot actual value has been saved to: " + snapshotPath.toAbsolutePath());
+      } catch (IOException e) {
+        throw new UncheckedIOException("Could not create directories", e);
+      }
+    }
+
+    public void deleteActual(String snapshotId) {
+      Assert.notNull(snapshotId);
+      try {
+        Path snapshotPath = specPath.resolve(calculateSafeUniqueName(extension + ".actual", iterationInfo, snapshotId));
+        Files.deleteIfExists(snapshotPath);
+      } catch (IOException e) {
+        throw new UncheckedIOException("Could not delete file", e);
+      }
+    }
+
     public boolean isUpdateSnapshots() {
       return updateSnapshots;
+    }
+
+    public boolean isWriteActualContents() {
+      return writeActualContents;
     }
   }
 }

@@ -775,12 +775,19 @@ The `rootPath` directory is required and the `@Snapshot` extension will throw an
 
 Snapshots can be updated when setting the `spock.snapshots.updateSnapshots` system property to `true`, or via the config file.
 
+You can configure the extension to store the actual value in case of a mismatch by setting the `spock.snapshots.writeActual`  system property to `true`, or via the config file.
+If enabled the extension will store the result in a file next to the original one with an additional `.actual` extension.
+The `.actual` file will automatically be deleted on the next successful run, as long as the feature is still enabled.
+This option is useful, when the snapshot is too large or complex to analyze with the built-in reporting.
+
 .Example snapshot config
 [source,groovy]
 ----
 snapshots {
   rootPath = Paths.get("src/test/resources")
   updateSnapshots = System.getenv("UPDATE_SNAPSHOTS") == "true"
+  writeActualSnapshotOnMismatch = !System.getenv("CI")
+  defaultExtension = 'snap.groovy'
 }
 ----
 

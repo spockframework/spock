@@ -15,17 +15,20 @@
 
 package org.spockframework.smoke.extension
 
+import org.spockframework.runtime.ConditionNotSatisfiedError
+import org.spockframework.runtime.IStandardStreamsListener
+import org.spockframework.runtime.StandardStreamsCapturer
 import org.spockframework.runtime.model.FeatureInfo
 import org.spockframework.runtime.model.IterationInfo
 import org.spockframework.runtime.model.MethodInfo
-import spock.lang.Snapshotter
-import spock.lang.Specification
-import spock.lang.TempDir
-import spock.lang.Unroll
+import org.spockframework.runtime.model.parallel.Resources
+import spock.lang.*
 
 import java.lang.reflect.Method
 import java.nio.charset.StandardCharsets
+import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 
 class SnapshotterSpec extends Specification {
   @TempDir
@@ -33,7 +36,7 @@ class SnapshotterSpec extends Specification {
 
   def "Snapshotter.Store can store and load correctly (#scenario)"(String value) {
     given:
-    def updatingStore = new Snapshotter.Store(specificationContext.currentIteration, tmpDir, true, 'txt', StandardCharsets.UTF_8)
+    def updatingStore = new Snapshotter.Store(specificationContext.currentIteration, tmpDir, true, false, 'txt', StandardCharsets.UTF_8)
 
     when:
     updatingStore.saveSnapshot("", value)
@@ -92,5 +95,52 @@ class SnapshotterSpec extends Specification {
     then:
     IllegalArgumentException e = thrown()
     e.message.startsWith("'snapshotId' is too long, only 100 characters are allowed, but was 101: aaaaa")
+  }
+
+  @ResourceLock(Resources.SYSTEM_OUT)
+  @ResourceLock(Resources.SYSTEM_ERR)
+  def "snapshotter stores .actual file on mismatch and deletes it on a successful match"() {
+    given:
+    String actualPath
+    def updatingSnapshotter = new Snapshotter(new Snapshotter.Store(specificationContext.currentIteration, tmpDir, true, false, 'txt', StandardCharsets.UTF_8))
+    def verifyingSnapshotter = new Snapshotter(new Snapshotter.Store(specificationContext.currentIteration, tmpDir, false, true, 'txt', StandardCharsets.UTF_8))
+
+    and:
+    def listener = Mock(IStandardStreamsListener)
+    def capturer = new StandardStreamsCapturer().tap {
+      addStandardStreamsListener(listener)
+      start()
+      muteStandardStreams()
+    }
+
+    and:
+    updatingSnapshotter.assertThat("reference").matchesSnapshot(snapshotId)
+
+    when:
+    verifyingSnapshotter.assertThat("different").matchesSnapshot(snapshotId)
+
+    then:
+    thrown(ConditionNotSatisfiedError)
+    1 * listener.standardErr(_) >> { String msg ->
+      actualPath = msg.find(/Snapshot actual value has been saved to: (.*)/) { it[1] }
+    }
+
+    and:
+    actualPath != null
+    def path = Paths.get(actualPath)
+    Files.isRegularFile(path)
+    path.text == 'different'
+
+    when:
+    verifyingSnapshotter.assertThat("reference").matchesSnapshot(snapshotId)
+
+    then:
+    !Files.exists(path)
+
+    cleanup:
+    capturer.stop()
+
+    where:
+    snapshotId << ['', 'my-id']
   }
 }

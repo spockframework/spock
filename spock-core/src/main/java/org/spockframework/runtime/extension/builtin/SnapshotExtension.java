@@ -67,6 +67,7 @@ public class SnapshotExtension implements IAnnotationDrivenExtension<Snapshot> {
       invocation.getMethod().getIteration(),
       config.rootPath,
       config.updateSnapshots,
+      config.writeActualSnapshotOnMismatch,
       extension,
       Charset.forName(annotation.charset()));
     Checks.checkArgument(Snapshotter.class.isAssignableFrom(type), () -> "Target must be of type spock.lang.Snapshotter or a valid subtype");

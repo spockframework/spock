@@ -8,10 +8,10 @@ public java.lang.Object foobar() {
 }
 
 public void $spock_feature_0_0() {
-    def (java.lang.Object foobar, java.lang.Object b) = [null, null]
+    java.lang.Object foobar
     this.getSpecificationContext().setThrownException(null)
     try {
-        (foobar, b) = this.foobar()
+        foobar = this.foobar()
     }
     catch (java.lang.Throwable $spock_ex) {
         this.getSpecificationContext().setThrownException($spock_ex)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.extension.*
 import org.spockframework.runtime.model.MethodKind
 import org.spockframework.runtime.model.SpecInfo
-import org.spockframework.specs.extension.Snapshot
-import org.spockframework.specs.extension.Snapshotter
+import org.spockframework.specs.extension.SpockSnapshotter
+import spock.lang.Snapshot
 import org.spockframework.util.Assert
 import org.spockframework.util.InternalSpockError
 import spock.config.ConfigurationObject
@@ -39,7 +39,7 @@ class StoreSpec extends EmbeddedSpecification {
     runner.addClassMemberImport(MethodKind)
   }
 
-  def "store is created and cleaned for each level"(@Snapshot Snapshotter snapshotter) {
+  def "store is created and cleaned for each level"(@Snapshot SpockSnapshotter snapshotter) {
     given:
     AtomicReference sharedList = new AtomicReference([])
     runner.configClasses << LoggingStoreConfig

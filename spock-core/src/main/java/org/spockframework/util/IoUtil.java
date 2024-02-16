@@ -1,20 +1,28 @@
 /*
- * Copyright 2010 the original author or authors.
+ * Copyright 2023 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *     https://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
  */
 
 package org.spockframework.util;
 
+import org.codehaus.groovy.runtime.IOGroovyMethods;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 import static java.util.Collections.emptyList;
@@ -27,17 +35,22 @@ public class IoUtil {
    */
   public static String getText(Reader reader) throws IOException {
     try(BufferedReader buffered = new BufferedReader(reader)) {
-      StringBuilder source = new StringBuilder();
+      return readFully(buffered);
+    }
+  }
 
-      String line = buffered.readLine();
+  private static String readFully(BufferedReader buffered) throws IOException {
+    // use Groovy's methods as they keep the correct line endings
+    return IOGroovyMethods.getText(buffered);
+  }
 
-      while (line != null) {
-        source.append(line);
-        source.append('\n');
-        line = buffered.readLine();
-      }
+  public static String getText(Path path) throws IOException {
+    return getText(path, StandardCharsets.UTF_8);
+  }
 
-      return source.toString();
+  public static String getText(Path path, Charset charset) throws IOException {
+    try(BufferedReader buffered = Files.newBufferedReader(path, charset)) {
+      return readFully(buffered);
     }
   }
 
@@ -45,7 +58,7 @@ public class IoUtil {
    * Returns the text read from the given file as a String.
    */
   public static String getText(File path) throws IOException {
-    return getText(new FileReader(path));
+    return getText(path.toPath());
   }
 
   /**
@@ -54,6 +67,14 @@ public class IoUtil {
    */
   public static String getText(InputStream stream) throws IOException {
     return getText(new InputStreamReader(stream));
+  }
+
+  public static void writeText(Path path, String content, Charset charset) {
+    try (BufferedWriter writer = Files.newBufferedWriter(path, charset)) {
+      writer.write(content);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 
   public static void createDirectory(File dir) throws IOException {

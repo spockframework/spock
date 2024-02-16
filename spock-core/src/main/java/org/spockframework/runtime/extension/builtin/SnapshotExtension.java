@@ -41,7 +41,7 @@ public class SnapshotExtension implements IAnnotationDrivenExtension<Snapshot> {
 
   @Override
   public void visitFieldAnnotation(Snapshot annotation, FieldInfo field) {
-    Checks.checkArgument(Snapshotter.class.isAssignableFrom(field.getType()), () -> "Field must be of type Snapshotter or a valid Subtype");
+    Checks.checkArgument(Snapshotter.class.isAssignableFrom(field.getType()), () -> "Field must be of type spock.lang.Snapshotter or a valid subtype");
 
     SpecInfo spec = field.getParent().getBottomSpec();
     spec.getAllFeatures().forEach(featureInfo -> featureInfo.addTestTag("snapshot"));
@@ -51,7 +51,7 @@ public class SnapshotExtension implements IAnnotationDrivenExtension<Snapshot> {
   @Override
   public void visitParameterAnnotation(Snapshot annotation, ParameterInfo parameter) {
     Class<?> type = parameter.getReflection().getType();
-    Checks.checkArgument(Snapshotter.class.isAssignableFrom(type), () -> "Field must be of type Snapshotter or a valid Subtype");
+    Checks.checkArgument(Snapshotter.class.isAssignableFrom(type), () -> "Field must be of type spock.lang.Snapshotter or a valid subtype");
 
     MethodInfo method = parameter.getParent();
     method.getFeature().addTestTag("snapshot");
@@ -60,13 +60,16 @@ public class SnapshotExtension implements IAnnotationDrivenExtension<Snapshot> {
   }
 
   private Snapshotter createSnapshotter(IMethodInvocation invocation, Class<?> type, Snapshot annotation) {
+    String extension = annotation.extension().equals("<default>")
+      ? Checks.notNull(config.defaultExtension, () -> "'snapshot.defaultExtension' must not be null.")
+      : annotation.extension();
     Snapshotter.Store snapshotStore = new Snapshotter.Store(
       invocation.getMethod().getIteration(),
       config.rootPath,
       config.updateSnapshots,
-      annotation.extension(),
+      extension,
       Charset.forName(annotation.charset()));
-    Checks.checkArgument(Snapshotter.class.isAssignableFrom(type), () -> "Target must be of type Snapshotter or a valid Subtype");
+    Checks.checkArgument(Snapshotter.class.isAssignableFrom(type), () -> "Target must be of type spock.lang.Snapshotter or a valid subtype");
     return (Snapshotter) ReflectionUtil.newInstance(type, snapshotStore);
   }
 

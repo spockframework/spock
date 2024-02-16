@@ -41,9 +41,9 @@ import java.nio.charset.Charset;
 public @interface Snapshot {
   /**
    * The file extension to use for the snapshot files.
-   * Defaults to "txt".
+   * Defaults to what is configured in the {@link org.spockframework.runtime.extension.builtin.SnapshotConfig}.
    */
-  String extension() default "txt";
+  String extension() default "<default>";
 
   /**
    * The name of the {@link Charset} to use when storing and reading the snapshot.

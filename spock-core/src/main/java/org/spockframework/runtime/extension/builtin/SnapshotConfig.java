@@ -23,10 +23,25 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+/**
+ * Configuration for the {@link spock.lang.Snapshot} extension.
+ *
+ * @since 2.4
+ */
 @Beta
 @ConfigurationObject("snapshots")
 public class SnapshotConfig {
+  /**
+   * Controls the where the snapshots are stored.
+   */
   @Nullable
   public Path rootPath = Optional.ofNullable(System.getProperty("spock.snapshots.rootPath")).map(Paths::get).orElse(null);
+  /**
+   * Instructs the {@link spock.lang.Snapshotter} to update the snapshot instead of failing on a mismatch or missing snapshot.
+   */
   public boolean updateSnapshots = Boolean.getBoolean("spock.snapshots.updateSnapshots");
+  /**
+   * The default extension to use.
+   */
+  public String defaultExtension = "txt";
 }

@@ -16,10 +16,13 @@
 package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.model.parallel.Resources
 import spock.lang.*
 import spock.util.io.FileSystemFixture
 
-import java.nio.file.*
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * @author dqyuan
@@ -126,6 +129,7 @@ def method1() {
 
   static List<Path> pathFromEmbedded
 
+  @ResourceLock(Resources.SYSTEM_ERR)
   def "cleanup mode can be controlled"(boolean testSucceeds, TempDir.CleanupMode cleanupMode, boolean expectKeep) {
     given:
     runner.addClassImport(Path)
@@ -183,6 +187,7 @@ def method1(@TempDir(cleanup = ${cleanupMode}) Path param) {
     expectKeep = (!testSucceeds && cleanupMode == TempDir.CleanupMode.ON_SUCCESS) || cleanupMode == TempDir.CleanupMode.NEVER
   }
 
+  @ResourceLock(Resources.SYSTEM_ERR)
   def "define cleanup using configuration script"(boolean testSucceeds, TempDir.CleanupMode cleanupMode, boolean expectKeep) {
     given:
     runner.configurationScript {

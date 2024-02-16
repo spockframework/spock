@@ -1,3 +1,18 @@
+/*
+ * Copyright 2024 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package org.spockframework.runtime.extension.builtin;
 
 import org.codehaus.groovy.runtime.ResourceGroovyMethods;
@@ -8,6 +23,7 @@ import org.spockframework.runtime.extension.IStore;
 import org.spockframework.runtime.model.FieldInfo;
 import org.spockframework.runtime.model.ParameterInfo;
 import org.spockframework.util.*;
+import spock.lang.TempDir;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +36,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.regex.Pattern;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
-import static org.spockframework.runtime.model.MethodInfo.MISSING_ARGUMENT;
 
 /**
  * @author dqyuan
@@ -36,18 +51,21 @@ public class TempDirInterceptor implements IMethodInterceptor {
   private final IThrowableBiConsumer<IMethodInvocation, Path, Exception> valueSetter;
   private final String name;
   private final Path parentDir;
-  private final boolean keep;
+  private final TempDir annotation;
+  private final TempDir.CleanupMode cleanupMode;
 
   private TempDirInterceptor(
     IThrowableBiConsumer<IMethodInvocation, Path, Exception> valueSetter,
     String name,
     Path parentDir,
-    boolean keep) {
+    TempDir annotation,
+    TempDir.CleanupMode cleanupMode) {
 
     this.valueSetter = valueSetter;
     this.name = name;
     this.parentDir = parentDir;
-    this.keep = keep;
+    this.annotation = annotation;
+    this.cleanupMode = cleanupMode;
   }
 
   private String dirPrefix(IMethodInvocation invocation) {
@@ -88,7 +106,9 @@ public class TempDirInterceptor implements IMethodInterceptor {
   @Override
   public void intercept(IMethodInvocation invocation) throws Throwable {
     Path path = setUp(invocation);
-    invocation.getStore(NAMESPACE).put(path, new TempDirContainer(path, keep));
+    // not super thrilled about identityHashCode, but apparently annotations use field equality and not identity
+    TempDirContainer old = invocation.getStore(NAMESPACE).put(System.identityHashCode(annotation), new TempDirContainer(path, cleanupMode, name));
+    Checks.checkState(old == null, () -> "Replaced other value: " + old.path);
     invocation.proceed();
   }
 
@@ -149,16 +169,17 @@ public class TempDirInterceptor implements IMethodInterceptor {
     }
   }
 
-  static TempDirInterceptor forField(FieldInfo fieldInfo, Path parentDir, boolean keep) {
+  static TempDirInterceptor forField(FieldInfo fieldInfo, Path parentDir, TempDir annotation, TempDir.CleanupMode cleanupMode) {
     IThrowableFunction<Path, ?, Exception> typeMapper = createPathToTypeMapper(fieldInfo.getType());
     return new TempDirInterceptor(
       (invocation, path) -> fieldInfo.writeValue(invocation.getInstance(), typeMapper.apply(path)),
       fieldInfo.getName(),
       parentDir,
-      keep);
+      annotation,
+      cleanupMode);
   }
 
-  static TempDirInterceptor forParameter(ParameterInfo parameterInfo, Path parentDir, boolean keep) {
+  static TempDirInterceptor forParameter(ParameterInfo parameterInfo, Path parentDir, TempDir annotation, TempDir.CleanupMode cleanupMode) {
     IThrowableFunction<Path, ?, Exception> typeMapper = createPathToTypeMapper(parameterInfo.getReflection().getType());
     return new TempDirInterceptor(
       (IMethodInvocation invocation, Path path) -> {
@@ -166,27 +187,72 @@ public class TempDirInterceptor implements IMethodInterceptor {
       },
       parameterInfo.getName(),
       parentDir,
-      keep);
+      annotation,
+      cleanupMode);
+  }
+
+  static class FailureTracker implements IMethodInterceptor {
+    private final TempDir annotation;
+
+    FailureTracker(TempDir annotation) {
+      this.annotation = annotation;
+    }
+
+    @Override
+    public void intercept(IMethodInvocation invocation) throws Throwable {
+      TempDirContainer tempDirContainer = invocation.getStore(NAMESPACE).get(System.identityHashCode(annotation), TempDirContainer.class);
+      try {
+        invocation.proceed();
+      } catch (Throwable t) {
+        tempDirContainer.markFailed();
+        throw t;
+      }
+    }
   }
 
   static class TempDirContainer implements AutoCloseable {
     private final Path path;
-    private final boolean keep;
+    private final TempDir.CleanupMode cleanupMode;
+    private final String name;
+    private volatile boolean failed = false;
 
-    TempDirContainer(Path path, boolean keep) {
+    TempDirContainer(Path path, TempDir.CleanupMode cleanupMode, String name) {
       this.path = path;
-      this.keep = keep;
+      this.cleanupMode = cleanupMode;
+      this.name = name;
+    }
+
+    void markFailed() {
+      failed = true;
+    }
+
+    private void destroy(Path path) throws IOException {
+      switch (cleanupMode) {
+        case ON_SUCCESS:
+          if (failed) {
+            System.err.printf("TempDir named '%s' with path '%s' not deleted because the test failed, please delete it manually after investigation.%n",
+              name,
+              path.toAbsolutePath());
+            return;
+          }
+        case ALWAYS:
+        case DEFAULT:
+          deleteTempDir(path);
+          break;
+        case NEVER:
+          break;
+        default:
+          throw new IllegalStateException("Unknown cleanup mode: " + cleanupMode);
+      }
     }
 
     @Override
     public void close() {
-      if (!keep) {
         try {
-          deleteTempDir(path);
+          destroy(path);
         } catch (IOException e) {
           ExceptionUtil.sneakyThrow(e);
         }
-      }
     }
   }
 }

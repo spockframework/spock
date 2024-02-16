@@ -1,15 +1,16 @@
 /*
- * Copyright 2010 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *     https://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
  */
 
 package org.spockframework.builder
@@ -148,6 +149,23 @@ class PojoBuilderSpec extends Specification {
     then:
     person.address.street == aField
   }
+
+  def "parse enum value"() {
+    when:
+    def enums = new Enums()
+    builder.build(enums) {
+      byObject Values.A
+      byString "B"
+      value Values.A
+      value "B"
+    }
+
+    then:
+    enums.byObject == Values.A
+    enums.byString == Values.B
+    enums.values == [Values.A, Values.B]
+  }
+
 }
 
 class Person {
@@ -184,4 +202,14 @@ class Primitives {
   double aDouble
   char aChar
   boolean aBoolean
+}
+
+class Enums {
+  Values byObject
+  Values byString
+  List<Values> values
+}
+
+enum Values {
+  A, B ,C
 }

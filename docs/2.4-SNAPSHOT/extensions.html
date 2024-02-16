@@ -888,12 +888,36 @@ FileSystemFixture path4
 }</code></pre>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_temp_dir_cleanup"><a class="anchor" href="#_temp_dir_cleanup"></a><a class="link" href="#_temp_dir_cleanup">Cleanup</a></h4>
 <div class="paragraph">
-<p>If you want to customize the parent directory for temporary directories, you can use the <a href="#spock-configuration-file">Spock Configuration File</a>.</p>
+<p>You can configure the cleanup behavior via <code>@TempDir(cleanup = &lt;mode&gt;)</code>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>DEFAULT</code> will use the global value</p>
+</li>
+<li>
+<p><code>ALWAYS</code> Spock will delete temporary directories after tests</p>
+</li>
+<li>
+<p><code>NEVER</code> Spock will not delete temporary directories after tests.</p>
+</li>
+<li>
+<p><code>ON_SUCCESS</code> Spock will not delete temporary directories if a test failed.</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>If <code>keep</code> is set to <code>true</code>, Spock will not delete temporary directories after tests. The default value is taken from
-system property <code>spock.tempDir.keep</code> or <code>false</code>, if undefined.</p>
+<p>The global value for <code>DEFAULT</code> is taken from system property <code>spock.tempdir.cleanup</code>, or the configuration file.
+If nothing is configured, it will default to <code>ALWAYS</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_configuration"><a class="anchor" href="#_configuration"></a><a class="link" href="#_configuration">Configuration</a></h4>
+<div class="paragraph">
+<p>If you want to customize the parent directory for temporary directories, you can use the <a href="#spock-configuration-file">Spock Configuration File</a>.</p>
 </div>
 <div class="listingblock">
 <div class="title">Temporary Directory Configuration</div>
@@ -904,7 +928,11 @@ system property <code>spock.tempDir.keep</code> or <code>false</code>, if undefi
   baseDir Paths.get(<span class="string"><span class="delimiter">&quot;</span><span class="content">/tmp</span><span class="delimiter">&quot;</span></span>)
   <span class="comment">// boolean, default is system property &quot;spock.tempDir.keep&quot;</span>
   keep <span class="predefined-constant">true</span>
+  <span class="comment">// spock.lang.TempDir.CleanupMode, default ALWAYS</span>
+  <span class="comment">// allows to set the default cleanup mode to use</span>
+  cleanup spock.lang.TempDir.CleanupMode.ON_SUCCESS
 }</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -1139,6 +1167,125 @@ This behaviour can be enabled according to the <a href="#spock-configuration-fil
 <pre class="CodeRay highlight"><code data-lang="groovy">runner {
   optimizeRunOrder <span class="predefined-constant">true</span>
 }</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="snapshot-testing"><a class="anchor" href="#snapshot-testing"></a><a class="link" href="#snapshot-testing">Snapshot testing</a></h3>
+<div class="paragraph">
+<p>Since version 2.4, the <code>@Snapshot</code> extension has been added for snapshot testing.
+This type of testing compares the current output of your code with a saved version (a snapshot) to check for any changes.
+It&#8217;s especially useful for checking if your code still produces the right text outputs after changes.
+The <code>@Snapshot</code> extension also makes it easy to create and update these snapshots.</p>
+</div>
+<div class="paragraph">
+<p>You use the <code>@Snapshot</code> extension along with the <code>Snapshotter</code> class.
+The <code>Snapshotter</code> class provides the entrypoint for the tests.
+You can use <code>@Snapshot</code> in two ways: you can add it to a field in your code, or you can use it as a parameter in a method.
+The examples below will show you how to do both.</p>
+</div>
+<div class="listingblock">
+<div class="title">Snapshot Extension as field</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">  <span class="annotation">@Snapshot</span>
+  Snapshotter snapshotter
+
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">using field based snapshot</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">expect</span>:
+    snapshotter.assertThat(<span class="string"><span class="delimiter">&quot;</span><span class="content">from field</span><span class="delimiter">&quot;</span></span>).matchesSnapshot()
+  }</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Snapshot Extension as parameter</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">using parameter based snapshot</span><span class="delimiter">&quot;</span></span>(<span class="annotation">@Snapshot</span> Snapshotter snapshotter) {
+    <span class="key">expect</span>:
+    snapshotter.assertThat(<span class="string"><span class="delimiter">&quot;</span><span class="content">from parameter</span><span class="delimiter">&quot;</span></span>).matchesSnapshot()
+  }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can store and assert over multiple snapshots by providing an optional snapshotId as identifier.</p>
+</div>
+<div class="listingblock">
+<div class="title">Multiple snapshots</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">multi snapshot</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">expect</span>:
+    snapshotter.assertThat(<span class="string"><span class="delimiter">&quot;</span><span class="content">from parameter</span><span class="delimiter">&quot;</span></span>).matchesSnapshot()
+    snapshotter.assertThat(<span class="string"><span class="delimiter">&quot;</span><span class="content">other parameter</span><span class="delimiter">&quot;</span></span>).matchesSnapshot(<span class="string"><span class="delimiter">&quot;</span><span class="content">otherId</span><span class="delimiter">&quot;</span></span>)
+  }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>By default, snapshots are stored and compared as plain text.
+However, you can plug your own matching logic.
+For example, you could compare two json structures with a third-party library.</p>
+</div>
+<div class="listingblock">
+<div class="title">Custom matching</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">custom matching</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">expect</span>:
+    snapshotter.assertThat(<span class="string"><span class="delimiter">&quot;</span><span class="content">data</span><span class="delimiter">&quot;</span></span>).matchesSnapshot { snapshot, actual -&gt;
+      <span class="comment">/* Hamcrest matchers */</span>
+      assertThat(actual, equalTo(snapshot))
+    }
+  }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can also extend from the <code>Snapshotter</code> class to provide your own convenience methods.
+Check <code>org.spockframework.specs.extension.SpockSnapshotter</code> in the spock codebase for an example.</p>
+</div>
+<div class="sect3">
+<h4 id="_configuration_2"><a class="anchor" href="#_configuration_2"></a><a class="link" href="#_configuration_2">Configuration</a></h4>
+<div class="paragraph">
+<p>The snapshots are stored in the <code>rootPath</code> directory, which can be configured either in the  <a href="#spock-configuration-file">Spock Configuration File</a>, or via the <code>spock.snapshots.rootPath</code> system property.
+The <code>rootPath</code> directory is required and the <code>@Snapshot</code> extension will throw an exception if it is not configured when the extension is used.</p>
+</div>
+<div class="paragraph">
+<p>Snapshots can be updated when setting the <code>spock.snapshots.updateSnapshots</code> system property to <code>true</code>, or via the config file.</p>
+</div>
+<div class="paragraph">
+<p>You can configure the extension to store the actual value in case of a mismatch by setting the <code>spock.snapshots.writeActual</code> system property to <code>true</code>, or via the config file.
+If enabled the extension will store the result in a file next to the original one with an additional <code>.actual</code> extension.
+The <code>.actual</code> file will automatically be deleted on the next successful run, as long as the feature is still enabled.
+This option is useful, when the snapshot is too large or complex to analyze with the built-in reporting.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example snapshot config</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">snapshots {
+  rootPath = Paths.get(<span class="string"><span class="delimiter">&quot;</span><span class="content">src/test/resources</span><span class="delimiter">&quot;</span></span>)
+  updateSnapshots = <span class="predefined-type">System</span>.getenv(<span class="string"><span class="delimiter">&quot;</span><span class="content">UPDATE_SNAPSHOTS</span><span class="delimiter">&quot;</span></span>) == <span class="string"><span class="delimiter">&quot;</span><span class="content">true</span><span class="delimiter">&quot;</span></span>
+  writeActualSnapshotOnMismatch = !<span class="predefined-type">System</span>.getenv(<span class="string"><span class="delimiter">&quot;</span><span class="content">CI</span><span class="delimiter">&quot;</span></span>)
+  defaultExtension = <span class="string"><span class="delimiter">'</span><span class="content">snap.groovy</span><span class="delimiter">'</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>@Snapshot</code> extension will also set the <code>snapshot</code> <a href="#test-tag-extension">tag</a> on the affected features.
+This can be utilized to only run the features that produce snapshots when updating them.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example Gradle config for snapshot testing</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">tasks.named(<span class="string"><span class="delimiter">&quot;</span><span class="content">test</span><span class="delimiter">&quot;</span></span>, Test) {
+  useJUnitPlatform()
+  <span class="comment">// set the snapshot directory, as resources are already an input we don't need to track them separately</span>
+  systemProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">spock.snapshots.rootPath</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">src/test/resources</span><span class="delimiter">&quot;</span></span>)
+  <span class="comment">// allow updating the snapshots with running `gradlew test -PupdateSnapshots`</span>
+  <span class="keyword">if</span> (project.hasProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">updateSnapshots</span><span class="delimiter">&quot;</span></span>)) {
+    systemProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">spock.snapshots.updateSnapshots</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">true</span><span class="delimiter">&quot;</span></span>)
+    <span class="comment">// not strictly necessary but speeds up the process by only executing snapshot tests</span>
+    useJUnitPlatform {
+      includeTags(<span class="string"><span class="delimiter">&quot;</span><span class="content">snapshot</span><span class="delimiter">&quot;</span></span>)
+    }
+  }
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -2138,7 +2285,7 @@ The extension uses this to print a report of the collected exception statistics.
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-02-16 14:13:02 UTC
+Last updated 2024-02-16 22:13:41 UTC
 </div>
 </div>
 </body>

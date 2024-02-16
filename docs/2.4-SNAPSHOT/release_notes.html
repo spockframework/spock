@@ -98,6 +98,9 @@
 <p>Creating a global <code>GroovyMock</code>/<code>GroovyStub</code>/<code>GroovySpy</code> when <a href="parallel-execution.html#parallel-execution">parallel execution</a> is enabled,
 will now require that the spec is annotated with <a href="parallel-execution.html#isolated-execution">@Isolated</a> or <code>@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)</code>. See <a href="interaction-based-testing.html#global-mocks-parallel-execution">Global mocks and parallel execution</a></p>
 </li>
+<li>
+<p><code>@TempDir</code> <code>spock.tempDir.keep</code> has been replaced by <code>spock.tempdir.cleanup</code>. See <a href="extensions.html#_temp_dir_cleanup">TempDir Cleanup</a></p>
+</li>
 </ul>
 </div>
 </div>
@@ -110,6 +113,9 @@ will now require that the spec is annotated with <a href="parallel-execution.htm
 </li>
 <li>
 <p>Add support for parameter injection of <code>@TempDir</code></p>
+</li>
+<li>
+<p>Add <code>@Snapshot</code> extension for <a href="extensions.html#snapshot-testing">snapshot testing</a></p>
 </li>
 <li>
 <p>Improve <code>@TempDir</code> field injection, now it happens before field initialization, so it can be used by other field initializers.</p>
@@ -2755,7 +2761,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-02-16 14:13:02 UTC
+Last updated 2024-02-16 22:13:42 UTC
 </div>
 </div>
 </body>

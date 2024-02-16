@@ -116,7 +116,10 @@ public class Snapshotter {
     private final String value;
 
     private Snapshot(String value) {
-      this.value = normalizer.apply(Checks.notNull(value, () -> "value is null"));
+      this.value = Checks.notNull(
+        normalizer.apply(Checks.notNull(value, () -> "value is null")),
+        () -> "normalizer returned null value"
+      );
     }
 
     /**

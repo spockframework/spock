@@ -30,6 +30,8 @@ import java.nio.charset.Charset;
  * <p>
  * It can also inject subclasses of {@link Snapshotter},
  * as long as they have a public constructor with a single {@link Snapshotter.Store} parameter.
+ * <p>
+ * Default values are configured via the {@link org.spockframework.runtime.extension.builtin.SnapshotConfig}.
  *
  * @author Leonard Brünings
  * @since 2.4

@@ -71,7 +71,7 @@ loadScripts(document, 'script');</script>
 <ul class="summary-list">
 <li>
 <div id="class-summary">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab2" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab2', 2)" class="table-tab">Classes</button><button id="class-summary-tab3" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab3', 2)" class="table-tab">Enums</button><button id="class-summary-tab7" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab7', 2)" class="table-tab">Annotation Types</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab1" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab1', 2)" class="table-tab">Interfaces</button><button id="class-summary-tab2" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab2', 2)" class="table-tab">Classes</button><button id="class-summary-tab3" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab3', 2)" class="table-tab">Enums</button><button id="class-summary-tab7" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab7', 2)" class="table-tab">Annotation Types</button></div>
 <div id="class-summary.tabpanel" role="tabpanel">
 <div class="summary-table two-column-summary" aria-labelledby="class-summary-tab0">
 <div class="table-header col-first">Class</div>
@@ -168,29 +168,45 @@ loadScripts(document, 'script');</script>
 <div class="block">Indicates that a field is shared among all feature methods in a
  specification.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Specification.html" title="class in spock.lang">Specification</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab7"><a href="Snapshot.html" title="annotation in spock.lang">Snapshot</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab7">
+<div class="block">Injects a <a href="Snapshotter.html" title="class in spock.lang"><code>Snapshotter</code></a> instance into a field or parameter.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="Snapshotter.html" title="class in spock.lang">Snapshotter</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Allows to perform snapshot testing.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Snapshotter.PrefixSuffixWrapper.html" title="class in spock.lang">Snapshotter.PrefixSuffixWrapper</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="Snapshotter.Store.html" title="class in spock.lang">Snapshotter.Store</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="Snapshotter.Wrapper.html" title="interface in spock.lang">Snapshotter.Wrapper</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">&nbsp;</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="Specification.html" title="class in spock.lang">Specification</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Base class for Spock specifications.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab7"><a href="Stepwise.html" title="annotation in spock.lang">Stepwise</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab7">
+<div class="col-first odd-row-color class-summary class-summary-tab7"><a href="Stepwise.html" title="annotation in spock.lang">Stepwise</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab7">
 <div class="block"><b>When applied to a spec,</b> the annotation indicates that the spec's feature methods should be run sequentially
  in their declared order (even in the presence of a parallel spec runner), always starting from the first method.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab7"><a href="Subject.html" title="annotation in spock.lang">Subject</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab7">
+<div class="col-first even-row-color class-summary class-summary-tab7"><a href="Subject.html" title="annotation in spock.lang">Subject</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab7">
 <div class="block">Indicates which objects/classes are the subjects of a specification.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab7"><a href="Subject.Container.html" title="annotation in spock.lang">Subject.Container</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab7">&nbsp;</div>
-<div class="col-first odd-row-color class-summary class-summary-tab7"><a href="Tag.html" title="annotation in spock.lang">Tag</a></div>
+<div class="col-first odd-row-color class-summary class-summary-tab7"><a href="Subject.Container.html" title="annotation in spock.lang">Subject.Container</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab7">&nbsp;</div>
-<div class="col-first even-row-color class-summary class-summary-tab7"><a href="Tag.Container.html" title="annotation in spock.lang">Tag.Container</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab7"><a href="Tag.html" title="annotation in spock.lang">Tag</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab7">&nbsp;</div>
-<div class="col-first odd-row-color class-summary class-summary-tab7"><a href="TempDir.html" title="annotation in spock.lang">TempDir</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab7">
+<div class="col-first odd-row-color class-summary class-summary-tab7"><a href="Tag.Container.html" title="annotation in spock.lang">Tag.Container</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab7">&nbsp;</div>
+<div class="col-first even-row-color class-summary class-summary-tab7"><a href="TempDir.html" title="annotation in spock.lang">TempDir</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab7">
 <div class="block">Generate a temp directory for test, and delete it after test.</div>
 </div>
+<div class="col-first odd-row-color class-summary class-summary-tab3"><a href="TempDir.CleanupMode.html" title="enum in spock.lang">TempDir.CleanupMode</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab3">&nbsp;</div>
 <div class="col-first even-row-color class-summary class-summary-tab7"><a href="Timeout.html" title="annotation in spock.lang">Timeout</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab7">
 <div class="block">Indicates that the execution of a method should time out

@@ -90,6 +90,10 @@ loadScripts(document, 'script');</script>
 <li class="circle">spock.config.<a href="spock/config/ParallelConfiguration.html" class="type-name-link" title="class in spock.config">ParallelConfiguration</a></li>
 <li class="circle">spock.util.concurrent.<a href="spock/util/concurrent/PollingConditions.html" class="type-name-link" title="class in spock.util.concurrent">PollingConditions</a></li>
 <li class="circle">spock.config.<a href="spock/config/RunnerConfiguration.html" class="type-name-link" title="class in spock.config">RunnerConfiguration</a></li>
+<li class="circle">spock.lang.<a href="spock/lang/Snapshotter.html" class="type-name-link" title="class in spock.lang">Snapshotter</a></li>
+<li class="circle">spock.lang.<a href="spock/lang/Snapshotter.PrefixSuffixWrapper.html" class="type-name-link" title="class in spock.lang">Snapshotter.PrefixSuffixWrapper</a> (implements spock.lang.<a href="spock/lang/Snapshotter.Wrapper.html" title="interface in spock.lang">Snapshotter.Wrapper</a>)</li>
+<li class="circle">spock.lang.<a href="spock/lang/Snapshotter.Snapshot.html" class="type-name-link" title="class in spock.lang">Snapshotter.Snapshot</a></li>
+<li class="circle">spock.lang.<a href="spock/lang/Snapshotter.Store.html" class="type-name-link" title="class in spock.lang">Snapshotter.Store</a></li>
 <li class="circle">org.spockframework.lang.SpecInternals
 <ul>
 <li class="circle">spock.mock.<a href="spock/mock/MockingApi.html" class="type-name-link" title="class in spock.mock">MockingApi</a> (implements spock.mock.<a href="spock/mock/MockFactory.html" title="interface in spock.mock">MockFactory</a>)
@@ -122,6 +126,7 @@ loadScripts(document, 'script');</script>
 <li class="circle">spock.util.io.<a href="spock/util/io/DirectoryFixture.html" class="type-name-link" title="interface in spock.util.io">DirectoryFixture</a></li>
 <li class="circle">spock.mock.<a href="spock/mock/IMockMakerSettings.html" class="type-name-link" title="interface in spock.mock">IMockMakerSettings</a></li>
 <li class="circle">spock.mock.<a href="spock/mock/MockFactory.html" class="type-name-link" title="interface in spock.mock">MockFactory</a></li>
+<li class="circle">spock.lang.<a href="spock/lang/Snapshotter.Wrapper.html" class="type-name-link" title="interface in spock.lang">Snapshotter.Wrapper</a></li>
 </ul>
 </section>
 <section class="hierarchy">
@@ -156,6 +161,7 @@ loadScripts(document, 'script');</script>
 <li class="circle">spock.lang.<a href="spock/lang/See.html" class="type-name-link" title="annotation in spock.lang">See</a> (implements java.lang.annotation.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>)</li>
 <li class="circle">spock.lang.<a href="spock/lang/See.Container.html" class="type-name-link" title="annotation in spock.lang">See.Container</a> (implements java.lang.annotation.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>)</li>
 <li class="circle">spock.lang.<a href="spock/lang/Shared.html" class="type-name-link" title="annotation in spock.lang">Shared</a> (implements java.lang.annotation.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>)</li>
+<li class="circle">spock.lang.<a href="spock/lang/Snapshot.html" class="type-name-link" title="annotation in spock.lang">Snapshot</a> (implements java.lang.annotation.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>)</li>
 <li class="circle">spock.lang.<a href="spock/lang/Stepwise.html" class="type-name-link" title="annotation in spock.lang">Stepwise</a> (implements java.lang.annotation.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>)</li>
 <li class="circle">spock.lang.<a href="spock/lang/Subject.html" class="type-name-link" title="annotation in spock.lang">Subject</a> (implements java.lang.annotation.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>)</li>
 <li class="circle">spock.lang.<a href="spock/lang/Subject.Container.html" class="type-name-link" title="annotation in spock.lang">Subject.Container</a> (implements java.lang.annotation.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Annotation.html" title="class or interface in java.lang.annotation" class="external-link">Annotation</a>)</li>
@@ -181,6 +187,7 @@ loadScripts(document, 'script');</script>
 <ul>
 <li class="circle">spock.util.environment.<a href="spock/util/environment/OperatingSystem.Family.html" class="type-name-link" title="enum in spock.util.environment">OperatingSystem.Family</a></li>
 <li class="circle">spock.lang.<a href="spock/lang/Retry.Mode.html" class="type-name-link" title="enum in spock.lang">Retry.Mode</a></li>
+<li class="circle">spock.lang.<a href="spock/lang/TempDir.CleanupMode.html" class="type-name-link" title="enum in spock.lang">TempDir.CleanupMode</a></li>
 </ul>
 </li>
 </ul>

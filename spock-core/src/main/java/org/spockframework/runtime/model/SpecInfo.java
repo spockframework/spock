@@ -1,25 +1,29 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 package org.spockframework.runtime.model;
 
-import org.spockframework.runtime.*;
+import org.spockframework.runtime.IFeatureFilter;
+import org.spockframework.runtime.IFeatureSortOrder;
+import org.spockframework.runtime.IMethodNameMapper;
+import org.spockframework.runtime.IRunListener;
 import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.model.parallel.*;
-import org.spockframework.util.*;
+import org.spockframework.runtime.model.parallel.ExclusiveResource;
+import org.spockframework.runtime.model.parallel.ExecutionMode;
+import org.spockframework.util.CollectionUtil;
+import org.spockframework.util.InternalIdentifiers;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -287,7 +291,10 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     if (superSpec != null) {
       superSpec.collectAll(accumulator, getter, combiner);
     }
-    combiner.accept(accumulator, getter.apply(this));
+    U value = getter.apply(this);
+    if (value != null) {
+      combiner.accept(accumulator, value);
+    }
   }
 
   public void addFeature(FeatureInfo feature) {

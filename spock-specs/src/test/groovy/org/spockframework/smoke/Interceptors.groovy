@@ -19,7 +19,6 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.extension.ExtensionAnnotation
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension
 import org.spockframework.runtime.extension.IMethodInvocation
-import org.spockframework.runtime.model.FeatureInfo
 import org.spockframework.runtime.model.SpecInfo
 import org.spockframework.specs.extension.SpockSnapshotter
 import spock.lang.Snapshot
@@ -188,6 +187,26 @@ class SubSpec extends SuperSpec {
       specInfo.allInitializerMethods*.addInterceptor {
         assertIterationMethodContext(it)
         proceed(it, 'initializer method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
+      }
+      allFeatures.each { feature ->
+        specInfo.allInitializerMethods.each { mi ->
+          feature.addScopedMethodInterceptor(mi)  {
+            assertIterationMethodContext(it)
+            proceed(it, 'feature scoped initializer method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name() / from $feature.name")
+          }
+        }
+        specInfo.allSetupMethods.each { mi ->
+          feature.addScopedMethodInterceptor(mi) {
+            assertIterationMethodContext(it)
+            proceed(it, 'feature scoped setup method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name() / from $feature.name")
+          }
+        }
+        specInfo.allCleanupMethods.each { mi ->
+          feature.addScopedMethodInterceptor(mi) {
+            assertIterationMethodContext(it)
+            proceed(it, 'feature scoped cleanup method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name() / from $feature.name")
+          }
+        }
       }
       allFeatures*.addInitializerInterceptor {
         assertIterationContext(it)

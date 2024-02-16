@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,10 +16,15 @@
 package org.spockframework.runtime.extension;
 
 import org.spockframework.runtime.StoreProvider;
-import org.spockframework.runtime.model.*;
+import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.runtime.model.IterationInfo;
+import org.spockframework.runtime.model.MethodInfo;
+import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.Checks;
+import org.spockframework.util.CollectionUtil;
 
 import java.util.Iterator;
+import java.util.List;
 
 import static org.spockframework.runtime.model.MethodInfo.MISSING_ARGUMENT;
 
@@ -40,7 +45,7 @@ public class MethodInvocation implements IMethodInvocation {
   private final StoreProvider storeProvider;
 
   public MethodInvocation(FeatureInfo feature, IterationInfo iteration, StoreProvider storeProvider, Object sharedInstance,
-                          Object instance, Object target, MethodInfo method, Object[] arguments) {
+                          Object instance, Object target, MethodInfo method, List<IMethodInterceptor> scopedInterceptors, Object[] arguments) {
     this.feature = feature;
     this.iteration = iteration;
     this.storeProvider = storeProvider;
@@ -49,7 +54,9 @@ public class MethodInvocation implements IMethodInvocation {
     this.target = target;
     this.method = method;
     this.arguments = arguments;
-    interceptors = method.getInterceptors().iterator();
+    interceptors = scopedInterceptors.isEmpty()
+      ? method.getInterceptors().iterator()
+      : CollectionUtil.concat(scopedInterceptors, method.getInterceptors()).iterator();
   }
 
   @Override

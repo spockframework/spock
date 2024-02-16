@@ -1,9 +1,26 @@
+/*
+ * Copyright 2024 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package org.spockframework.runtime.model;
 
 import org.spockframework.runtime.extension.IDataDriver;
 import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.model.parallel.*;
+import org.spockframework.runtime.model.parallel.ExclusiveResource;
+import org.spockframework.runtime.model.parallel.ExecutionMode;
 import org.spockframework.util.Beta;
+import org.spockframework.util.Checks;
 import org.spockframework.util.Nullable;
 
 import java.lang.reflect.AnnotatedElement;
@@ -23,6 +40,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
   private final List<IMethodInterceptor> setupInterceptors = new ArrayList<>();
   private final List<IMethodInterceptor> cleanupInterceptors = new ArrayList<>();
   private final List<IMethodInterceptor> initializerInterceptors = new ArrayList<>();
+  private final Map<MethodInfo, List<IMethodInterceptor>> scopedMethodInterceptors = new HashMap<>();
 
   private final Set<ExclusiveResource> exclusiveResources = new HashSet<>();
 
@@ -140,6 +158,41 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
   @Beta
   public void addInitializerInterceptor(IMethodInterceptor interceptor) {
     initializerInterceptors.add(interceptor);
+  }
+
+  /**
+   * Allows to intercept initializer, setup, and cleanup methods in the scope of a single feature.
+   * <p>
+   * You need to locate the method you want to intercept from the {@link SpecInfo} or its parent and use its {@link MethodInfo} as key.
+   * <pre>{@code
+   *   visitFeatureAnnotations(MyAnnotation an, FeatureInfo featureInfo) {
+   *     featureInfo.addScopedMethodInterceptor(featureInfo.getParent().getInitializerMethod(), invocation -> invocation.proceed());
+   *   }
+   * }
+   * </pre>
+   * <p>
+   * Only use this if you absolutely must intercept the method invocation itself, otherwise prefer to use one of
+   * {@link #addInitializerInterceptor(IMethodInterceptor)},
+   * {@link #addSetupInterceptor(IMethodInterceptor)},
+   * {@link #addCleanupInterceptor(IMethodInterceptor)}.
+   *
+   * @since 2.4
+   */
+  @Beta
+  public void addScopedMethodInterceptor(MethodInfo targetMethod, IMethodInterceptor interceptor) {
+    Checks.checkArgument(
+      targetMethod.getKind().isFeatureScopedFixtureMethod() || targetMethod.getKind() == MethodKind.INITIALIZER,
+      () -> "Only feature scoped initializer and fixture methods can be intercepted, but was: " + targetMethod.getKind()
+    );
+    scopedMethodInterceptors.computeIfAbsent(targetMethod, __ -> new ArrayList<>()).add(interceptor);
+  }
+
+  /**
+   * @since 2.4
+   */
+  @Beta
+  public List<IMethodInterceptor> getScopedMethodInterceptors(MethodInfo targetMethod) {
+    return scopedMethodInterceptors.getOrDefault(targetMethod, Collections.emptyList());
   }
 
   public List<IMethodInterceptor> getIterationInterceptors() {

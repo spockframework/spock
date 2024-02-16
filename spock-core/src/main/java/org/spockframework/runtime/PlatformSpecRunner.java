@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,12 +15,16 @@
 
 package org.spockframework.runtime;
 
-import org.spockframework.runtime.extension.*;
+import org.spockframework.runtime.extension.IMethodInterceptor;
+import org.spockframework.runtime.extension.MethodInvocation;
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.*;
+import org.spockframework.util.CollectionUtil;
+import org.spockframework.util.InternalSpockError;
 import spock.lang.Specification;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static java.lang.System.arraycopy;
 import static java.util.Arrays.copyOfRange;
@@ -408,15 +412,20 @@ public class PlatformSpecRunner {
       Arrays.fill(methodArguments, arguments.length, parameterCount, MISSING_ARGUMENT);
     }
 
+    List<IMethodInterceptor> scopedInterceptors = Collections.emptyList();
+    if (context.getCurrentFeature() != null) {
+      scopedInterceptors = context.getCurrentFeature().getScopedMethodInterceptors(method);
+    }
+
     // fast lane
-    if (method.getInterceptors().isEmpty()) {
+    if (method.getInterceptors().isEmpty() && scopedInterceptors.isEmpty()) {
       invokeRaw(context, target, method, methodArguments);
       return;
     }
 
     // slow lane
     MethodInvocation invocation = new MethodInvocation(context.getCurrentFeature(),
-      context.getCurrentIteration(), context.getStoreProvider(), context.getSharedInstance(), context.getCurrentInstance(), target, method, methodArguments);
+      context.getCurrentIteration(), context.getStoreProvider(), context.getSharedInstance(), context.getCurrentInstance(), target, method, scopedInterceptors, methodArguments);
     try {
       invocation.proceed();
     } catch (Throwable throwable) {

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2024 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package org.spockframework.docs.extension
 
 import org.spockframework.runtime.extension.AbstractMethodInterceptor
@@ -78,6 +93,16 @@ class InterceptorDemoExtension implements IAnnotationDrivenExtension<Interceptor
     featureInfo.addInitializerInterceptor new I('feature scoped initializer')
     featureInfo.addSetupInterceptor new I('feature scoped setup')
     featureInfo.addCleanupInterceptor new I('feature scoped cleanup')
+    // you call also perform a feature scoped interception of spec methods
+    featureInfo.parent.allInitializerMethods.each { method ->
+      featureInfo.addScopedMethodInterceptor(method, new I('feature scoped initializer method'))
+    }
+    featureInfo.parent.allSetupMethods.each { method ->
+      featureInfo.addScopedMethodInterceptor(method, new I('feature scoped setup method'))
+    }
+    featureInfo.parent.allCleanupMethods.each { method ->
+      featureInfo.addScopedMethodInterceptor(method, new I('feature scoped cleanup method'))
+    }
 
 // end::interceptor-register-feature[]
   }

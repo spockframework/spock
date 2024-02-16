@@ -673,6 +673,89 @@ or it can be used without a target.
 
 Like `with` you can also optionally define a type hint for the IDE.
 
+== Using `verifyEach` to assert on each element of an `Iterable`
+
+There are several ways to do assertions on `Iterable` or `Collection`.
+
+=== List Equality
+
+List equality is useful when the expected values are few and can be easily constructed.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/primer/VerifyEachDocSpec.groovy[tag=simple-list-equality]
+----
+
+will be rendered as
+
+----
+include::{sourcedir}/primer/VerifyEachDocSpec.groovy[tag=simple-list-equality-result]
+----
+
+=== Set Equality
+
+As with list equality, set equality is useful when the expected values are few and can be easily constructed.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/primer/VerifyEachDocSpec.groovy[tag=simple-set-equality]
+----
+
+will be rendered as
+
+----
+include::{sourcedir}/primer/VerifyEachDocSpec.groovy[tag=simple-set-equality-result]
+----
+
+=== Every Method
+You can also use the standard Groovy method `every` to do assertions.
+The downside is, that you don't get any insight into which element failed, or why.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/primer/VerifyEachDocSpec.groovy[tag=every-method]
+----
+
+will be rendered as
+
+----
+include::{sourcedir}/primer/VerifyEachDocSpec.groovy[tag=every-method-result]
+----
+
+[[verify-each]]
+=== VerifyEach Method
+Since 2.4, you can use the `verifyEach` method to perform assertions on every element of an iterable.
+In contrast to `every`, it will not stop at the first failure and instead check every element and provide a comprehensive report at the end.
+It won't render the full list of items, which makes it useful in cases of a large number of items.
+Like `with` the current item will be set as the delegate and passed as parameter to the closure.
+The statements in the closure will also be treated as implicit assertions.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/primer/VerifyEachDocSpec.groovy[tag=verify-each]
+----
+
+will be rendered as
+
+----
+include::{snapshotdir}/primer/VerifyEachDocSpec/verifyEach_method.txt[]
+----
+
+By default, the item will be rendered with a simple `toString()`.
+However, you can provide a custom "namer"-method to provide your own representation.
+This is useful when the item either has no useful `toString()` method or if it is too verbose.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/primer/VerifyEachDocSpec.groovy[tag=verify-each-namer]
+----
+
+will be rendered as
+
+----
+include::{snapshotdir}/primer/VerifyEachDocSpec/verifyEach_with_namer_method.txt[]
+----
+
 [[specifications_as_documentation]]
 == Specifications as Documentation
 

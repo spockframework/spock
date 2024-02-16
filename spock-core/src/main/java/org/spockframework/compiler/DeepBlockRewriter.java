@@ -1,32 +1,32 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 package org.spockframework.compiler;
 
-import org.spockframework.compiler.model.*;
-import org.spockframework.util.*;
-
-import java.util.*;
-
 import org.codehaus.groovy.ast.Parameter;
 import org.codehaus.groovy.ast.expr.*;
-import org.codehaus.groovy.ast.stmt.*;
+import org.codehaus.groovy.ast.stmt.AssertStatement;
+import org.codehaus.groovy.ast.stmt.ExpressionStatement;
+import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.groovy.syntax.Types;
+import org.spockframework.compiler.model.*;
+import org.spockframework.util.Identifiers;
+import org.spockframework.util.Nullable;
 
-import static java.util.Arrays.asList;
+import java.util.List;
+
 import static org.codehaus.groovy.ast.expr.MethodCallExpression.NO_ARGUMENTS;
 
 /**
@@ -78,7 +78,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     InteractionRewriter rewriter = visitInteractionAwareExpressionStatement(stat);
 
     if (!pastSpecialMethodCallStats.contains(stat)
-      || currSpecialMethodCall.isWithCall()
+      || currSpecialMethodCall.isConditionMethodCall()
       || currSpecialMethodCall.isGroupConditionBlock()) {
 
       boolean handled = handleInteraction(rewriter, stat);
@@ -192,7 +192,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
 
   private boolean handleImplicitCondition(ExpressionStatement stat) {
     if (!(stat == currTopLevelStat && isThenOrExpectBlock()
-        || currSpecialMethodCall.isWithCall()
+        || currSpecialMethodCall.isConditionMethodCall()
         || currSpecialMethodCall.isConditionBlock()
         || currSpecialMethodCall.isGroupConditionBlock()
         || (insideInteraction && interactionClosureDepth == 1))) {
@@ -202,18 +202,18 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
 
     checkIsValidImplicitCondition(stat);
 
-    boolean withOrVerifyAll = Identifiers.WITH.equals(AstUtil.getMethodName(stat.getExpression()))
-      || Identifiers.VERIFY_ALL.equals(AstUtil.getMethodName(stat.getExpression()));
+    String methodName = AstUtil.getMethodName(stat.getExpression());
+    boolean isConditionMethodCall = Identifiers.CONDITION_METHODS.contains(methodName);
 
-    if (withOrVerifyAll) {
+    if (isConditionMethodCall) {
       groupConditionFound = currSpecialMethodCall.isGroupConditionBlock();
     } else {
       conditionFound();
     }
 
-    if ((currSpecialMethodCall.isWithCall() || currSpecialMethodCall.isGroupConditionBlock())
+    if ((currSpecialMethodCall.isConditionMethodCall() || currSpecialMethodCall.isGroupConditionBlock())
       && AstUtil.isInvocationWithImplicitThis(stat.getExpression())
-      && !withOrVerifyAll) {
+      && !isConditionMethodCall) {
       replaceObjectExpressionWithCurrentClosure(stat);
     }
 

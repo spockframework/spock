@@ -1,22 +1,23 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 package org.spockframework.util;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 
@@ -79,6 +80,7 @@ public abstract class Identifiers {
   public static final String WITH = "with";
 
   public static final String VERIFY_ALL = "verifyAll";
+  public static final String VERIFY_EACH = "verifyEach";
 
   public static final String STUB = "Stub";
   public static final String MOCK = "Mock";
@@ -96,8 +98,12 @@ public abstract class Identifiers {
 
   public static final String OLD = "old";
 
+  /**
+   * Well-known methods that perform implicit assertions
+   */
+  public static final Set<String> CONDITION_METHODS = new HashSet<>(asList(WITH, VERIFY_ALL, VERIFY_EACH));
   public static final Set<String> BUILT_IN_METHODS = new HashSet<>(asList(THROWN, NOT_THROWN,
-    NO_EXCEPTION_THROWN, OLD, WITH, VERIFY_ALL, INTERACTION, STUB, MOCK, SPY, GROOVY_STUB, GROOVY_MOCK, GROOVY_SPY, SPY_STATIC));
+    NO_EXCEPTION_THROWN, OLD, WITH, VERIFY_ALL, VERIFY_EACH, INTERACTION, STUB, MOCK, SPY, GROOVY_STUB, GROOVY_MOCK, GROOVY_SPY, SPY_STATIC));
 
   public static final Set<String> TEST_DOUBLE_METHODS = new HashSet<>(
     asList(STUB, MOCK, SPY, GROOVY_STUB, GROOVY_MOCK, GROOVY_SPY, SPY_STATIC));

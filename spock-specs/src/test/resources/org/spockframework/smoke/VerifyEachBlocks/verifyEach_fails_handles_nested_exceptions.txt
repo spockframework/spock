@@ -1,0 +1,22 @@
+Multiple Failures (2 failures)
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[4] 5:
+Condition failed with Exception:
+
+checks(it)
+|      |
+|      5
+java.lang.RuntimeException: x == 5
+	at org.spockframework.smoke.VerifyEachBlocks.nestedException(VerifyEachBlocks.groovy:111)
+	at org.spockframework.smoke.VerifyEachBlocks.doCheck(VerifyEachBlocks.groovy:106)
+	at org.spockframework.smoke.VerifyEachBlocks.checks(VerifyEachBlocks.groovy:101)
+	at org.spockframework.smoke.VerifyEachBlocks.$spock_feature_1_4_closure7(VerifyEachBlocks.groovy:92)
+	at spock.lang.Specification.verifyEach(Specification.java:353)
+	at spock.lang.Specification.verifyEach(Specification.java:325)
+	at org.spockframework.smoke.VerifyEachBlocks.$spock_feature_1_4(VerifyEachBlocks.groovy:91)
+
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[6] 7:
+Condition not satisfied:
+
+x != 7
+| |
+7 false

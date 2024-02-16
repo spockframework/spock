@@ -17,6 +17,7 @@ include::include.adoc[]
 ** Requires `org.mockito:mockito-core` >= 4.11 in the test class path
 * Added support for mocking of static methods also for Java code with the new API `SpyStatic()` spockPull:1756[]
 ** The <<interaction-based-testing.adoc#static-mocks,static mock methods>> will delegate the creation to the mock makers
+* Add <<spock_primer.adoc#verify-each,verifyEach>> method to perform assertions on each element of an `Iterable` spockPull:1887[]
 * Add <<extensions.adoc#parameter-injection,annotation extensions for parameters>> spockPull:1599[]
 * Add support for <<extensions.adoc#extension-store,keeping state in extensions>> spockPull:1692[]
 * Add <<extensions.adoc#spock-interceptors,feature-scoped interceptors>> spockPull:1844[]

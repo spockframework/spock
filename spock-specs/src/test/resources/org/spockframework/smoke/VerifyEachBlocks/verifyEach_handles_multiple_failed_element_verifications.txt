@@ -1,0 +1,35 @@
+Multiple Failures (5 failures)
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[0] 1:
+Condition not satisfied:
+
+it % 2 == 0
+|  |   |
+1  1   false
+
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[2] 3:
+Condition not satisfied:
+
+it % 2 == 0
+|  |   |
+3  1   false
+
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[4] 5:
+Condition not satisfied:
+
+it % 2 == 0
+|  |   |
+5  1   false
+
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[6] 7:
+Condition not satisfied:
+
+it % 2 == 0
+|  |   |
+7  1   false
+
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[8] 9:
+Condition not satisfied:
+
+it % 2 == 0
+|  |   |
+9  1   false

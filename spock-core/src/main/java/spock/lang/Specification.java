@@ -1,29 +1,34 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 package spock.lang;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+import groovy.transform.stc.ClosureParams;
+import groovy.transform.stc.FirstParam;
+import groovy.transform.stc.SecondParam;
+import org.junit.platform.commons.annotation.Testable;
 import org.spockframework.lang.Wildcard;
 import org.spockframework.runtime.*;
-import org.spockframework.util.*;
+import org.spockframework.util.Beta;
+import org.spockframework.util.ExceptionUtil;
 import spock.mock.MockingApi;
 
-import groovy.lang.*;
-import groovy.transform.stc.*;
-import org.junit.platform.commons.annotation.Testable;
+import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * Base class for Spock specifications. All specifications must inherit from
@@ -298,5 +303,53 @@ public abstract class Specification extends MockingApi {
         type, target.getClass().getName()));
     }
     verifyAll(target, closure);
+  }
+
+  /**
+   * Performs assertions on each item, collecting up failures instead of stopping at first.
+   * <p>
+   * Exception messages will contain a toString() of the item to identify it.
+   *
+   * @param things the iterable to inspect
+   * @param closure a code block containing top-level conditions
+   * @param <U> type of items in things
+   * @since 2.4
+   */
+  @Beta
+  public <U> void verifyEach(
+    Iterable<U> things,
+    @ClosureParams(value = FirstParam.FirstGenericType.class)
+    @DelegatesTo(type = "U", strategy = Closure.DELEGATE_FIRST)
+    Closure<?> closure
+  ) {
+    verifyEach(things, Objects::toString, closure);
+  }
+
+  /**
+   * Performs assertions on each item, collecting up failures instead of stopping at first.
+   * <p>
+   * Exception messages will contain the result of calling the namer for an item to identify it.
+   *
+   * @param things the iterable to inspect
+   * @param namer the namer function to use when rendering the exception
+   * @param closure a code block containing top-level conditions
+   * @param <U> type of items in things
+   * @since 2.4
+   */
+  @Beta
+  public <U> void verifyEach(
+    Iterable<U> things,
+    Function<? super U, ?> namer,
+    @ClosureParams(value = FirstParam.FirstGenericType.class)
+    @DelegatesTo(type = "U", strategy = Closure.DELEGATE_FIRST)
+    Closure<?> closure
+  ) {
+    if (things == null) {
+      throw new SpockAssertionError("Target of 'verifyEach' block must not be null");
+    }
+    if (namer == null) {
+      throw new SpockAssertionError("Namer for a 'verifyEach' block must not be null");
+    }
+    SpockRuntime.verifyEach(things, namer, closure);
   }
 }

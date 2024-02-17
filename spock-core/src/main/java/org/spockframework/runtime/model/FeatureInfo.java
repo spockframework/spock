@@ -121,6 +121,10 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
   }
 
   /**
+   * Adds a setup interceptor for this feature.
+   * <p>
+   * The feature-scoped interceptors will execute before the spec interceptors.
+   *
    * @since 2.4
    */
   @Beta
@@ -137,6 +141,10 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
   }
 
   /**
+   * Adds a cleanup interceptor for this feature.
+   * <p>
+   * The feature-scoped interceptors will execute before the spec interceptors.
+   *
    * @since 2.4
    */
   @Beta
@@ -153,6 +161,10 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
   }
 
   /**
+   * Adds a initializer interceptor for this feature.
+   * <p>
+   * The feature-scoped interceptors will execute before the spec interceptors.
+   *
    * @since 2.4
    */
   @Beta
@@ -175,6 +187,8 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
    * {@link #addInitializerInterceptor(IMethodInterceptor)},
    * {@link #addSetupInterceptor(IMethodInterceptor)},
    * {@link #addCleanupInterceptor(IMethodInterceptor)}.
+   * <p>
+   * The feature-scoped interceptors will execute before the spec interceptors.
    *
    * @since 2.4
    */

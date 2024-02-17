@@ -89,7 +89,8 @@ class InterceptorDemoExtension implements IAnnotationDrivenExtension<Interceptor
     featureInfo.addIterationInterceptor new I('iteration')
     featureInfo.featureMethod.addInterceptor new I('feature method')
 
-    // since Spock 2.4 there are also feature scoped interceptors that only apply for a single feature
+    // since Spock 2.4 there are also feature-scoped interceptors that only apply for a single feature
+    // they will execute before the spec interceptors
     featureInfo.addInitializerInterceptor new I('feature scoped initializer')
     featureInfo.addSetupInterceptor new I('feature scoped setup')
     featureInfo.addCleanupInterceptor new I('feature scoped cleanup')

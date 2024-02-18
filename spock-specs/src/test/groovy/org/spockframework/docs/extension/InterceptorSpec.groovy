@@ -94,7 +94,7 @@ class InterceptorDemoExtension implements IAnnotationDrivenExtension<Interceptor
     featureInfo.addInitializerInterceptor new I('feature scoped initializer')
     featureInfo.addSetupInterceptor new I('feature scoped setup')
     featureInfo.addCleanupInterceptor new I('feature scoped cleanup')
-    // you call also perform a feature scoped interception of spec methods
+    // you can also perform a feature-scoped interception of spec methods
     featureInfo.parent.allInitializerMethods.each { method ->
       featureInfo.addScopedMethodInterceptor(method, new I('feature scoped initializer method'))
     }

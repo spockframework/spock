@@ -127,6 +127,16 @@ will now require that the spec is annotated with <a href="parallel-execution.htm
 <p>Fix bad error message for collection conditions, when one of the operands is <code>null</code></p>
 </li>
 <li>
+<p>Fix possible deadlock, when blocking in mock response generators spockPull:1885[]</p>
+<div class="ulist">
+<ul>
+<li>
+<p>This fixes the issues: spockIssue:583[], spockIssue:1882[]</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
 <p>Document <code>@ConditionBlock</code> Annotation spockPull:1709[]</p>
 </li>
 <li>
@@ -2761,7 +2771,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-02-16 22:13:42 UTC
+Last updated 2024-02-18 21:27:22 UTC
 </div>
 </div>
 </body>

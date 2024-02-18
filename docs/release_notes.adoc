@@ -35,7 +35,7 @@ include::include.adoc[]
 * Fix exception when configured `baseDir` was not existing, now `@TempDir` will create the baseDir directory if it is missing.
 * Fix bad error message for collection conditions, when one of the operands is `null`
 * Fix possible deadlock, when blocking in mock response generators spockPull:1885[]
-** This fixes the issues: spockIssue:583[], spockIssue:1182[]
+** This fixes the issues: spockIssue:583[], spockIssue:1882[]
 * Document `@ConditionBlock` Annotation spockPull:1709[]
 * Document `old`-Method spockPull:1708[]
 * Clarify documentation for global Mocks spockPull:1755[]

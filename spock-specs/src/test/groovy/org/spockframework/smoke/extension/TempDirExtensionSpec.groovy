@@ -1,10 +1,28 @@
+/*
+ * Copyright 2024 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.model.parallel.Resources
 import spock.lang.*
 import spock.util.io.FileSystemFixture
 
-import java.nio.file.*
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * @author dqyuan
@@ -82,15 +100,12 @@ class TempDirExtensionSpec extends EmbeddedSpecification {
     i << [0, 1]
   }
 
-  static Path pathFromEmbedded
-
-  def "define temp directory location and keep temp directory using configuration script"() {
+  def "define temp directory location using configuration script"() {
     given:
     def userDefinedBase = untypedPath.resolve("build")
     runner.configurationScript {
       tempdir {
         baseDir userDefinedBase
-        keep true
       }
     }
     runner.addClassImport(Path)
@@ -105,20 +120,134 @@ Path temp
 def method1() {
   expect:
   temp.parent.fileName.toString() == "build"
-
-  cleanup:
-  TempDirExtensionSpec.pathFromEmbedded = temp
 }
 """)
 
     then:
     result.testsSucceededCount == 1
-    Files.exists(pathFromEmbedded)
-
-    cleanup:
-    Files.delete(pathFromEmbedded)
   }
 
+  static List<Path> pathFromEmbedded
+
+  @ResourceLock(Resources.SYSTEM_ERR)
+  def "cleanup mode can be controlled"(boolean testSucceeds, TempDir.CleanupMode cleanupMode, boolean expectKeep) {
+    given:
+    runner.addClassImport(Path)
+    runner.addClassImport(getClass())
+    runner.addClassMemberImport(TempDir.CleanupMode)
+    runner.throwFailure = false
+
+    and:
+    pathFromEmbedded = []
+
+    when:
+    def result = runner.runSpecBody("""
+@Shared
+@TempDir(cleanup = ${cleanupMode})
+Path sharedTemp
+
+@TempDir(cleanup = ${cleanupMode})
+Path temp
+
+def setupSpec(@TempDir(cleanup = ${cleanupMode}) Path setupSpecParam) {
+  TempDirExtensionSpec.pathFromEmbedded << setupSpecParam
+}
+
+def setup(@TempDir(cleanup = ${cleanupMode}) Path setupParam) {
+  TempDirExtensionSpec.pathFromEmbedded << setupParam
+}
+
+def method1(@TempDir(cleanup = ${cleanupMode}) Path param) {
+  given:
+  TempDirExtensionSpec.pathFromEmbedded << sharedTemp
+  TempDirExtensionSpec.pathFromEmbedded << temp
+  TempDirExtensionSpec.pathFromEmbedded << param
+
+  expect:
+  $testSucceeds
+}
+""")
+
+    then:
+    result.testsSucceededCount == (testSucceeds ? 1 : 0)
+    result.testsFailedCount == (testSucceeds ? 0 : 1)
+    pathFromEmbedded.forEach {
+      assert Files.exists(it) == expectKeep
+    }
+
+    cleanup:
+    pathFromEmbedded.forEach {
+      Files.deleteIfExists(it)
+    }
+    pathFromEmbedded = null
+
+    where:
+    [testSucceeds, cleanupMode] << [[true, false], TempDir.CleanupMode.values()].combinations()
+
+    expectKeep = (!testSucceeds && cleanupMode == TempDir.CleanupMode.ON_SUCCESS) || cleanupMode == TempDir.CleanupMode.NEVER
+  }
+
+  @ResourceLock(Resources.SYSTEM_ERR)
+  def "define cleanup using configuration script"(boolean testSucceeds, TempDir.CleanupMode cleanupMode, boolean expectKeep) {
+    given:
+    runner.configurationScript {
+      tempdir {
+        cleanup cleanupMode
+      }
+    }
+    runner.addClassImport(Path)
+    runner.addClassImport(getClass())
+    runner.throwFailure = false
+
+    and:
+    pathFromEmbedded = []
+
+    when:
+    def result = runner.runSpecBody("""
+@Shared
+@TempDir
+Path sharedTemp
+
+@TempDir
+Path temp
+
+def setupSpec(@TempDir Path setupSpecParam) {
+  TempDirExtensionSpec.pathFromEmbedded << setupSpecParam
+}
+
+def setup(@TempDir Path setupParam) {
+  TempDirExtensionSpec.pathFromEmbedded << setupParam
+}
+
+def method1(@TempDir Path param) {
+  given:
+  TempDirExtensionSpec.pathFromEmbedded << sharedTemp
+  TempDirExtensionSpec.pathFromEmbedded << temp
+  TempDirExtensionSpec.pathFromEmbedded << param
+
+  expect:
+  $testSucceeds
+}
+""")
+
+    then:
+    result.testsSucceededCount == (testSucceeds ? 1 : 0)
+    result.testsFailedCount == (testSucceeds ? 0 : 1)
+    pathFromEmbedded.forEach {
+      assert Files.exists(it) == expectKeep
+    }
+
+    cleanup:
+    pathFromEmbedded.forEach {
+      Files.deleteIfExists(it)
+    }
+    pathFromEmbedded = null
+
+    where:
+    [testSucceeds, cleanupMode] << [[true, false], TempDir.CleanupMode.values()].combinations()
+
+    expectKeep = (!testSucceeds && cleanupMode == TempDir.CleanupMode.ON_SUCCESS) || cleanupMode == TempDir.CleanupMode.NEVER
+  }
 }
 
 abstract class TempDirBaseSpec extends Specification {

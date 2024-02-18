@@ -65,6 +65,6 @@ public class CglibMockMaker implements IMockMaker {
     if(Jvm.getCurrent().isJava21Compatible()){
       return () -> "Mocking with cglib is not supported on Java 21 or newer.";
     }
-    return IMockabilityResult.MOCKABLE;
+    return JavaProxyMockMaker.checkMockClassesAreVisibleInClassloader(settings);
   }
 }

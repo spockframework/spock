@@ -21,6 +21,7 @@ import org.mockito.Mockito
 import org.mockito.exceptions.base.MockitoException
 import org.spockframework.mock.CannotCreateMockException
 import org.spockframework.mock.MockUtil
+import org.spockframework.mock.runtime.ByteBuddyTestClassLoader
 import org.spockframework.runtime.GroovyRuntimeUtil
 import spock.lang.Issue
 import spock.lang.Requires
@@ -455,6 +456,49 @@ Can not mock final classes with the following settings :
 
     then:
     mock != null
+  }
+
+  def "Mocking interface from different classloader works with mockito MockMaker"() {
+    given:
+    def mockUtil = new MockUtil()
+    def tempClassLoader = new ByteBuddyTestClassLoader()
+    def interfaceClass = tempClassLoader.defineInterface("Interface")
+
+    when:
+    def m = Mock(interfaceClass, mockMaker: mockito)
+
+    then:
+    interfaceClass.isInstance(m)
+    mockUtil.isMock(m)
+  }
+
+  def "Mocking interface from different classloader works with default MockMaker"() {
+    given:
+    def mockUtil = new MockUtil()
+    def tempClassLoader = new ByteBuddyTestClassLoader()
+    def interfaceClass = tempClassLoader.defineInterface("Interface")
+
+    when:
+    def m = Mock(interfaceClass)
+
+    then:
+    interfaceClass.isInstance(m)
+    mockUtil.isMock(m)
+  }
+
+  def "Mocking with additional interface from different classloader works with mockito MockMaker"() {
+    given:
+    def mockUtil = new MockUtil()
+    def tempClassLoader = new ByteBuddyTestClassLoader()
+    def additionalInterfaceClass = tempClassLoader.defineInterface("AdditionalInterface1")
+
+    when:
+    Runnable m = Mock(mockMaker: mockito, additionalInterfaces: [additionalInterfaceClass])
+
+    then:
+    m instanceof Runnable
+    additionalInterfaceClass.isInstance(m)
+    mockUtil.isMock(m)
   }
 }
 

@@ -71,6 +71,6 @@ public class ByteBuddyMockMaker implements IMockMaker {
     if (!byteBuddyAvailable) {
       return () -> "The byte-buddy library is missing on the class path.";
     }
-    return IMockabilityResult.MOCKABLE;
+    return JavaProxyMockMaker.checkMockClassesAreVisibleInClassloader(settings);
   }
 }

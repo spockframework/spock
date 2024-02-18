@@ -548,10 +548,22 @@ Valid methods are `setup()`, `setupSpec()`, or any feature methods.
 include::{sourcedir}/extension/TempDirDocSpec.groovy[tag=example]
 ----
 
-If you want to customize the parent directory for temporary directories, you can use the <<spock-configuration-file,Spock Configuration File>>.
+[[_temp_dir_cleanup]]
+==== Cleanup
 
-If `keep` is set to `true`, Spock will not delete temporary directories after tests. The default value is taken from
-system property `spock.tempDir.keep` or `false`, if undefined.
+You can configure the cleanup behavior via `@TempDir(cleanup = <mode>)`.
+
+- `DEFAULT` will use the global value
+- `ALWAYS` Spock will delete temporary directories after tests
+- `NEVER` Spock will not delete temporary directories after tests.
+- `ON_SUCCESS` Spock will not delete temporary directories if a test failed.
+
+The global value for `DEFAULT` is taken from system property `spock.tempdir.cleanup`, or the configuration file.
+If nothing is configured, it will default to `ALWAYS`.
+
+==== Configuration
+
+If you want to customize the parent directory for temporary directories, you can use the <<spock-configuration-file,Spock Configuration File>>.
 
 .Temporary Directory Configuration
 [source,groovy]
@@ -562,6 +574,9 @@ tempdir {
   baseDir Paths.get("/tmp")
   // boolean, default is system property "spock.tempDir.keep"
   keep true
+  // spock.lang.TempDir.CleanupMode, default ALWAYS
+  // allows to set the default cleanup mode to use
+  cleanup spock.lang.TempDir.CleanupMode.ON_SUCCESS
 }
 ----
 
@@ -720,6 +735,96 @@ This behaviour can be enabled according to the <<spock-configuration-file,Spock 
 ----
 runner {
   optimizeRunOrder true
+}
+----
+
+[[snapshot-testing]]
+=== Snapshot testing
+
+Since version 2.4, the `@Snapshot` extension has been added for snapshot testing.
+This type of testing compares the current output of your code with a saved version (a snapshot) to check for any changes.
+It's especially useful for checking if your code still produces the right text outputs after changes.
+The `@Snapshot` extension also makes it easy to create and update these snapshots.
+
+You use the `@Snapshot` extension along with the `Snapshotter` class.
+The `Snapshotter` class provides the entrypoint for the tests.
+You can use `@Snapshot` in two ways: you can add it to a field in your code, or you can use it as a parameter in a method.
+The examples below will show you how to do both.
+
+.Snapshot Extension as field
+[source,groovy]
+----
+include::{sourcedir}/extension/SnapshotDocSpec.groovy[tag=field]
+----
+
+.Snapshot Extension as parameter
+[source,groovy]
+----
+include::{sourcedir}/extension/SnapshotDocSpec.groovy[tag=parameter]
+----
+
+You can store and assert over multiple snapshots by providing an optional snapshotId as identifier.
+
+.Multiple snapshots
+[source,groovy]
+----
+include::{sourcedir}/extension/SnapshotDocSpec.groovy[tag=multi-snapshot]
+----
+
+By default, snapshots are stored and compared as plain text.
+However, you can plug your own matching logic.
+For example, you could compare two json structures with a third-party library.
+
+.Custom matching
+[source,groovy]
+----
+include::{sourcedir}/extension/SnapshotDocSpec.groovy[tag=custom-matching]
+----
+
+You can also extend from the `Snapshotter` class to provide your own convenience methods.
+Check `org.spockframework.specs.extension.SpockSnapshotter` in the spock codebase for an example.
+
+==== Configuration
+
+The snapshots are stored in the `rootPath` directory, which can be configured either in the  <<spock-configuration-file,Spock Configuration File>>, or via the `spock.snapshots.rootPath` system property.
+The `rootPath` directory is required and the `@Snapshot` extension will throw an exception if it is not configured when the extension is used.
+
+Snapshots can be updated when setting the `spock.snapshots.updateSnapshots` system property to `true`, or via the config file.
+
+You can configure the extension to store the actual value in case of a mismatch by setting the `spock.snapshots.writeActual` system property to `true`, or via the config file.
+If enabled the extension will store the result in a file next to the original one with an additional `.actual` extension.
+The `.actual` file will automatically be deleted on the next successful run, as long as the feature is still enabled.
+This option is useful, when the snapshot is too large or complex to analyze with the built-in reporting.
+
+.Example snapshot config
+[source,groovy]
+----
+snapshots {
+  rootPath = Paths.get("src/test/resources")
+  updateSnapshots = System.getenv("UPDATE_SNAPSHOTS") == "true"
+  writeActualSnapshotOnMismatch = !System.getenv("CI")
+  defaultExtension = 'snap.groovy'
+}
+----
+
+The `@Snapshot` extension will also set the `snapshot` <<test-tag-extension,tag>> on the affected features.
+This can be utilized to only run the features that produce snapshots when updating them.
+
+.Example Gradle config for snapshot testing
+[source,groovy]
+----
+tasks.named("test", Test) {
+  useJUnitPlatform()
+  // set the snapshot directory, as resources are already an input we don't need to track them separately
+  systemProperty("spock.snapshots.rootPath", "src/test/resources")
+  // allow updating the snapshots with running `gradlew test -PupdateSnapshots`
+  if (project.hasProperty("updateSnapshots")) {
+    systemProperty("spock.snapshots.updateSnapshots", "true")
+    // not strictly necessary but speeds up the process by only executing snapshot tests
+    useJUnitPlatform {
+      includeTags("snapshot")
+    }
+  }
 }
 ----
 

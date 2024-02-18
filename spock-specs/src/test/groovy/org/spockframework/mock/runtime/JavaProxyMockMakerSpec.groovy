@@ -53,4 +53,30 @@ class JavaProxyMockMakerSpec extends Specification {
     CannotCreateMockException ex = thrown()
     ex.message == "Cannot create mock for interface java.lang.Runnable. java-proxy: Explicit constructor arguments are not supported."
   }
+
+  def "Mocking interface from different classloader shall fail for javaProxy MockMaker"() {
+    given:
+    def tempClassLoader = new ByteBuddyTestClassLoader()
+    def interfaceClass = tempClassLoader.defineInterface("Interface")
+
+    when:
+    Mock(interfaceClass, mockMaker: MockMakers.javaProxy)
+
+    then:
+    CannotCreateMockException ex = thrown()
+    ex.message.startsWith("Cannot create mock for interface Interface. java-proxy: The class Interface is not visible by the classloader")
+  }
+
+  def "Mocking with additional interface from different classloader shall fail for javaProxy MockMaker"() {
+    given:
+    def tempClassLoader = new ByteBuddyTestClassLoader()
+    def additionalInterfaceClass = tempClassLoader.defineInterface("AdditionalInterface")
+
+    when:
+    Mock(Runnable, mockMaker: MockMakers.javaProxy, additionalInterfaces: [additionalInterfaceClass])
+
+    then:
+    CannotCreateMockException ex = thrown()
+    ex.message.startsWith("Cannot create mock for interface java.lang.Runnable. java-proxy: The class AdditionalInterface is not visible by the classloader")
+  }
 }

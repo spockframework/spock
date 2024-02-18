@@ -11,6 +11,7 @@ include::include.adoc[]
 * Added <<extensions.adoc#mock-makers-mockito,mockito>> mock maker spockPull:1753[] which supports:
 ** Mocking of final classes and final methods
 ** Mocking of static methods
+** Mocking of classes and interface from different classloaders spockPull:1878[]
 ** Requires `org.mockito:mockito-core` >= 4.11 in the test class path
 * Fix issue with mocks of Groovy classes, where the Groovy MOP for `@Internal` methods was not honored by the `byte-buddy` mock maker spockPull:1729[]
 ** This fixes multiple issues with Groovy MOP: spockIssue:1501[], spockIssue:1452[], spockIssue:1608[] and spockIssue:1145[]
@@ -27,10 +28,12 @@ include::include.adoc[]
 * Creating `GroovyMock`/`GroovyStub`/`GroovySpy` for an already mocked type will now fail.
 * Creating a global `GroovyMock`/`GroovyStub`/`GroovySpy` when <<parallel-execution.adoc#parallel-execution, parallel execution>> is enabled,
   will now require that the spec is annotated with <<parallel-execution.adoc#isolated-execution, @Isolated>> or `@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)`. See <<interaction-based-testing.adoc#global-mocks-parallel-execution, Global mocks and parallel execution>>
+* `@TempDir` `spock.tempDir.keep` has been replaced by `spock.tempdir.cleanup`. See <<extensions.adoc#_temp_dir_cleanup,TempDir Cleanup>>
 
 === Misc
 * Add support for <<extensions.adoc#extension-store,keeping state in extensions>>
 * Add support for parameter injection of `@TempDir`
+* Add `@Snapshot` extension for <<extensions.adoc#snapshot-testing,snapshot testing>>
 * Improve `@TempDir` field injection, now it happens before field initialization, so it can be used by other field initializers.
 * Fix exception when configured `baseDir` was not existing, now `@TempDir` will create the baseDir directory if it is missing.
 * Fix bad error message for collection conditions, when one of the operands is `null`
@@ -40,6 +43,7 @@ include::include.adoc[]
 * Spock-Compiler does not use wrapper types anymore spockPull:1765[]
 * Reduce lock contention of the `byte-buddy` mock maker, when multiple mocks are created concurrently spockPull:1778[]
 * Documentation for DetachedMockFactory spockPull:1728[]
+* Support creation of global Groovy mocks for abstract classes spockPull:1754[]
 
 == 2.4-M1 (2022-11-30)
 

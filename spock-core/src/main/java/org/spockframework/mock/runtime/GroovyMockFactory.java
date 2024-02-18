@@ -75,6 +75,9 @@ public class GroovyMockFactory implements IMockFactory {
       }
       GroovyRuntimeUtil.setMetaClass(type, newMetaClass);
       specification.getSpecificationContext().getCurrentIteration().addCleanup(() -> GroovyRuntimeUtil.setMetaClass(type, oldMetaClass));
+      if (isAbstractClass(type)) {
+        return createProxyObjectForAbstractGlobalMock(configuration, specification, newMetaClass);
+      }
       return MockInstantiator.instantiate(type, type, configuration.getConstructorArgs(), configuration.isUseObjenesis());
     }
 
@@ -89,13 +92,8 @@ public class GroovyMockFactory implements IMockFactory {
 
       return instance;
     }
-
     GroovyMockInterceptor mockInterceptor = new GroovyMockInterceptor(configuration, specification, newMetaClass);
-    IMockMaker.IMockCreationSettings mockCreationSettings = MockCreationSettings.settingsFromMockConfiguration(configuration,
-      mockInterceptor,
-      specification.getClass().getClassLoader());
-    mockCreationSettings.getAdditionalInterface().add(GroovyObject.class);
-    Object proxy = RunContext.get().getMockMakerRegistry().makeMock(mockCreationSettings);
+    Object proxy = createMockObject(configuration, specification, mockInterceptor);
 
     if (hasAdditionalInterfaces) {
       //Issue #1405: We need to update the mockMetaClass to reflect the methods of the additional interfaces
@@ -131,8 +129,29 @@ public class GroovyMockFactory implements IMockFactory {
     return feature.getExclusiveResources().contains(META_CLASS_REGISTRY_RW);
   }
 
+  private Object createProxyObjectForAbstractGlobalMock(IMockConfiguration configuration, Specification specification, GroovyMockMetaClass mockMetaClass) {
+    IProxyBasedMockInterceptor mockInterceptor = new GroovyMockInterceptor(configuration, specification, mockMetaClass);
+    //Issue #464: We need to create a subclass mock here to be able to instantiate the abstract class.
+    Object proxy = createMockObject(configuration, specification, mockInterceptor);
+    //We need also to replace the metaClass of the Proxy Object to ensure correct usage of the mock object.
+    GroovyRuntimeUtil.setMetaClass(proxy, mockMetaClass);
+    return proxy;
+  }
+
+  private Object createMockObject(IMockConfiguration configuration, Specification specification, IProxyBasedMockInterceptor mockInterceptor) {
+    IMockMaker.IMockCreationSettings mockCreationSettings = MockCreationSettings.settingsFromMockConfiguration(configuration,
+      mockInterceptor,
+      specification.getClass().getClassLoader());
+    mockCreationSettings.getAdditionalInterface().add(GroovyObject.class);
+    return RunContext.get().getMockMakerRegistry().makeMock(mockCreationSettings);
+  }
+
   private boolean isFinalClass(Class<?> type) {
     return !type.isInterface() && Modifier.isFinal(type.getModifiers());
+  }
+
+  private boolean isAbstractClass(Class<?> type) {
+    return !type.isInterface() && Modifier.isAbstract(type.getModifiers());
   }
 
   @Override

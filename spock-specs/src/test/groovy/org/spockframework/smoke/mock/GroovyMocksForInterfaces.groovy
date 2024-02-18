@@ -14,6 +14,9 @@
 
 package org.spockframework.smoke.mock
 
+import org.spockframework.mock.CannotCreateMockException
+import org.spockframework.runtime.model.parallel.Resources
+import spock.lang.ResourceLock
 import spock.lang.Specification
 
 class GroovyMocksForInterfaces extends Specification {
@@ -109,9 +112,21 @@ class GroovyMocksForInterfaces extends Specification {
     1 * person.setMetaClass(null)
   }
 
+  @ResourceLock(Resources.META_CLASS_REGISTRY)
+  def "Mock global interface is not supported"() {
+    when:
+    GroovyMock(Runnable, global: true)
+
+    then:
+    CannotCreateMockException ex = thrown()
+    ex.message == "Cannot create mock for interface java.lang.Runnable. Global mocking is only possible for classes, but not for interfaces."
+  }
+
   interface Person {
     String getName()
+
     void setName(String name)
+
     void sing(String song)
   }
 }

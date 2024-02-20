@@ -80,5 +80,9 @@ public abstract class Block extends Node<Method, List<Statement>> {
     return isFirst() || getClass() != prev.getClass();
   }
 
+  public boolean isLastInChain() {
+    return isLast() || getClass() != next.getClass();
+  }
+
   public abstract BlockParseInfo getParseInfo();
 }

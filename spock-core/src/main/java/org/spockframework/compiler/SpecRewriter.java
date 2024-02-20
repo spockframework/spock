@@ -439,10 +439,17 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     statsBeforeWhenBlock.addAll(interactions);
 
-    if (block.isFirstInChain())
+    if (block.isLastInChain()) {
+      //Insert a freezeScope after the last moved interaction from "then" block to guarantee correct Scope behavior for interactions in the "when" block
+      //See Ticket #1759: Interactions in when blocks are not preserved if the then block contains an interaction
+      statsBeforeWhenBlock.add(createMockControllerCall(nodeCache.MockController_FreezeScope));
+    }
+
+    if (block.isFirstInChain()) {
       // insert at beginning of then-block rather than end of when-block
       // s.t. it's outside of try-block inserted for exception conditions
       block.getAst().add(0, createMockControllerCall(nodeCache.MockController_LeaveScope));
+    }
   }
 
   private Statement createMockControllerCall(MethodNode method) {

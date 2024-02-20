@@ -1553,11 +1553,16 @@ can of course build two different interceptors or add a parameter to your interc
 each at addition time whether it is attached to the method interceptor or the other one.</p>
 </div>
 <div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">I</span> <span class="directive">extends</span> AbstractMethodInterceptor {
+  I(<span class="keyword">def</span> s) {}
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
 <div class="title">Add All Interceptors</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">I</span> <span class="directive">extends</span> AbstractMethodInterceptor { I(<span class="keyword">def</span> s) {} }
-
-<span class="comment">// DISCLAIMER: The following shows all possible injection points that you could use</span>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// DISCLAIMER: The following shows all possible injection points that you could use</span>
 <span class="comment">//             depending on need and situation. You should normally not need to</span>
 <span class="comment">//             register a listener to all these places.</span>
 <span class="comment">//</span>
@@ -1589,7 +1594,23 @@ specInfo.allFixtureMethods*.addInterceptor <span class="keyword">new</span> I(<s
 <span class="comment">// on FeatureInfo (already included above, handling all features)</span>
 featureInfo.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">feature</span><span class="delimiter">'</span></span>)
 featureInfo.addIterationInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">iteration</span><span class="delimiter">'</span></span>)
-featureInfo.featureMethod.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">feature method</span><span class="delimiter">'</span></span>)</code></pre>
+featureInfo.featureMethod.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">feature method</span><span class="delimiter">'</span></span>)
+
+<span class="comment">// since Spock 2.4 there are also feature-scoped interceptors that only apply for a single feature</span>
+<span class="comment">// they will execute before the spec interceptors</span>
+featureInfo.addInitializerInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">feature scoped initializer</span><span class="delimiter">'</span></span>)
+featureInfo.addSetupInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">feature scoped setup</span><span class="delimiter">'</span></span>)
+featureInfo.addCleanupInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">feature scoped cleanup</span><span class="delimiter">'</span></span>)
+<span class="comment">// you can also perform a feature-scoped interception of spec methods</span>
+featureInfo.parent.allInitializerMethods.each { method -&gt;
+  featureInfo.addScopedMethodInterceptor(method, <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">feature scoped initializer method</span><span class="delimiter">'</span></span>))
+}
+featureInfo.parent.allSetupMethods.each { method -&gt;
+  featureInfo.addScopedMethodInterceptor(method, <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">feature scoped setup method</span><span class="delimiter">'</span></span>))
+}
+featureInfo.parent.allCleanupMethods.each { method -&gt;
+  featureInfo.addScopedMethodInterceptor(method, <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">feature scoped cleanup method</span><span class="delimiter">'</span></span>))
+}</code></pre>
 </div>
 </div>
 <div class="sect3">
@@ -2285,7 +2306,7 @@ The extension uses this to print a report of the collected exception statistics.
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-02-18 21:27:22 UTC
+Last updated 2024-02-20 16:47:17 UTC
 </div>
 </div>
 </body>

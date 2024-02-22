@@ -27,7 +27,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * @author Peter Niederwieser
  */
-public class MockController implements IMockController, IStaticMockController {
+public class MockController implements IMockController, IThreadAwareMockController {
   private final Deque<IInteractionScope> scopes = new LinkedList<>();
   private final List<InteractionNotSatisfiedError> errors = new ArrayList<>();
   private final List<IMockMaker.IStaticMock> staticMocks = new ArrayList<>();
@@ -93,7 +93,15 @@ public class MockController implements IMockController, IStaticMockController {
     }
   }
 
-  void enableStaticMocksOnCurrentThread() {
+  private void enableThreadAwareMocksOnCurrentThread() {
+    enableStaticMocksOnCurrentThread();
+  }
+
+  private void disableThreadAwareMocksOnCurrentThread() {
+    disableStaticMocksOnCurrentThread();
+  }
+
+  private void enableStaticMocksOnCurrentThread() {
     synchronized (staticMocks) {
       for (IMockMaker.IStaticMock mock : staticMocks) {
         mock.enable();
@@ -101,7 +109,7 @@ public class MockController implements IMockController, IStaticMockController {
     }
   }
 
-  void disableStaticMocksOnCurrentThread() {
+  private void disableStaticMocksOnCurrentThread() {
     synchronized (staticMocks) {
       for (IMockMaker.IStaticMock mock : staticMocks) {
         mock.disable();
@@ -110,24 +118,24 @@ public class MockController implements IMockController, IStaticMockController {
   }
 
   @Override
-  public void runWithActiveStaticMocks(Runnable code) {
-    enableStaticMocksOnCurrentThread();
+  public void runWithThreadAwareMocks(Runnable code) {
+    enableThreadAwareMocksOnCurrentThread();
     try {
       code.run();
     } finally {
-      disableStaticMocksOnCurrentThread();
+      disableThreadAwareMocksOnCurrentThread();
     }
   }
 
   @Override
-  public <R> R withActiveStaticMocks(Callable<R> code) {
-    enableStaticMocksOnCurrentThread();
+  public <R> R withActiveThreadAwareMocks(Callable<R> code) {
+    enableThreadAwareMocksOnCurrentThread();
     try {
       return code.call();
     } catch (Exception ex) {
       return ExceptionUtil.sneakyThrow(ex);
     } finally {
-      disableStaticMocksOnCurrentThread();
+      disableThreadAwareMocksOnCurrentThread();
     }
   }
 }

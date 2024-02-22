@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -320,7 +320,7 @@ class MockitoStaticMocksSpec extends Specification {
     def future = executor.submit({
       assert StaticClass.staticMethod() == REAL_VALUE
       assert !mockUtil.isStaticMock(StaticClass)
-      def callableResult = withActiveStaticMocks {
+      def callableResult = withActiveThreadAwareMocks {
         assert StaticClass.staticMethod() == MOCK_VALUE
         assert mockUtil.isStaticMock(StaticClass)
         return StaticClass.staticMethod()
@@ -354,7 +354,7 @@ class MockitoStaticMocksSpec extends Specification {
     def future = executor.submit({
       assert StaticClass.staticMethod() == REAL_VALUE
       assert StaticClass2.staticMethod() == REAL_VALUE
-      def callableResult = withActiveStaticMocks {
+      def callableResult = withActiveThreadAwareMocks {
         assert StaticClass.staticMethod() == MOCK_VALUE
         assert StaticClass2.staticMethod() == MOCK_VALUE2
         return StaticClass.staticMethod()
@@ -379,7 +379,7 @@ class MockitoStaticMocksSpec extends Specification {
     MockStatic(StaticClass)
 
     when:
-    runWithActiveStaticMocks {
+    runWithThreadAwareMocks {
       assert StaticClass.staticMethod() == null
     }
 

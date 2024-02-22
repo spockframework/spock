@@ -1579,7 +1579,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * </pre>
    *
    * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
    *
    * @param type the type of which the static methods shall be mocked
    */
@@ -1598,7 +1598,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * </pre>
    *
    * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
    *
    * @param options options for creating the mock (see {@link org.spockframework.mock.IMockConfiguration} for available options)
    * @param type    the type of which the static methods shall be mocked
@@ -1627,7 +1627,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * </pre>
    *
    * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
    *
    * @param type         the type of which the static methods shall be mocked
    * @param interactions a description of the static mock interactions
@@ -1653,7 +1653,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * </pre>
    *
    * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
    *
    * @param options      options for creating the mock (see {@link org.spockframework.mock.IMockConfiguration} for available options)
    * @param type         the type of which the static methods shall be mocked
@@ -1684,7 +1684,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * </pre>
    *
    * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
    *
    * @param type the type of which the static methods shall be stubbed
    */
@@ -1703,7 +1703,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * </pre>
    *
    * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
    *
    * @param options options for creating the stub (see {@link org.spockframework.mock.IMockConfiguration} for available options)
    * @param type    the type of which the static methods shall be stubbed
@@ -1732,7 +1732,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * </pre>
    *
    * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
    *
    * @param type         the type of which the static methods shall be stubbed
    * @param interactions a description of the static stub interactions
@@ -1758,7 +1758,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * </pre>
    *
    * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
    *
    * @param options      options for creating the stub (see {@link org.spockframework.mock.IMockConfiguration} for available options)
    * @param type         the type of which the static methods shall be stubbed
@@ -1789,7 +1789,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * </pre>
    *
    * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
    *
    * @param type the type of which the static methods shall be spied
    */
@@ -1808,7 +1808,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * </pre>
    *
    * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
    *
    * @param options options for creating the spy (see {@link org.spockframework.mock.IMockConfiguration} for available options)
    * @param type    the type of which the static methods shall be spied
@@ -1837,7 +1837,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * </pre>
    *
    * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
    *
    * @param type         the type of which the static methods shall be spied.
    * @param interactions a description of the static spy interactions
@@ -1863,7 +1863,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * </pre>
    *
    * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithActiveStaticMocks(Runnable)} on the different {@code Thread}.
+   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
    *
    * @param options      options for creating the spy (see {@link org.spockframework.mock.IMockConfiguration} for available options)
    * @param type         the type of which the static methods shall be spied.
@@ -1885,29 +1885,29 @@ public class MockingApi extends SpecInternals implements MockFactory {
   }
 
   /**
-   * Runs the code with the static mocks activated on the current {@link Thread}.
+   * Runs the code with the thread-aware mocks activated on the current {@link Thread}.
    *
    * <p>Note: You only need this if your current {@code Thread} is not the test thread.
-   * On the test {@code Thread}, the static mocks is automatically activated.</p>
+   * On the test {@code Thread}, the thread-aware mocks are automatically activated.</p>
    *
    * @param code the code to execute
    */
-  public void runWithActiveStaticMocks(Runnable code) {
-    getSpecificationContext().getStaticMockController().runWithActiveStaticMocks(code);
+  public void runWithThreadAwareMocks(Runnable code) {
+    getSpecificationContext().getThreadAwareMockController().runWithThreadAwareMocks(code);
   }
 
   /**
-   * Runs the code with the static mocks activated on the current {@link Thread}.
+   * Runs the code with the thread-aware mocks activated on the current {@link Thread}.
    *
    * <p>Note: You only need this if your current {@code Thread} is not the test thread.
-   * On the test {@code Thread}, the static mocks is automatically activated.</p>
+   * On the test {@code Thread}, the thread-aware mocks are automatically activated.</p>
    *
    * @param <R>  the return type
    * @param code the code to execute
    * @return the return value of the executed code
    */
-  public <R> R withActiveStaticMocks(Callable<R> code) {
-    return getSpecificationContext().getStaticMockController().withActiveStaticMocks(code);
+  public <R> R withActiveThreadAwareMocks(Callable<R> code) {
+    return getSpecificationContext().getThreadAwareMockController().withActiveThreadAwareMocks(code);
   }
 
   private InvalidSpecException invalidMockCreation() {

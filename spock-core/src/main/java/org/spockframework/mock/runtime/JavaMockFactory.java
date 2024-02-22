@@ -94,6 +94,6 @@ public class JavaMockFactory implements IMockFactory {
     mockMakerStaticMock.enable();
     ISpecificationContext specificationContext = specification.getSpecificationContext();
     specificationContext.getCurrentIteration().addCleanup(mockMakerStaticMock::disable);
-    specificationContext.getStaticMockController().registerStaticMock(mockMakerStaticMock);
+    specificationContext.getThreadAwareMockController().registerStaticMock(mockMakerStaticMock);
   }
 }

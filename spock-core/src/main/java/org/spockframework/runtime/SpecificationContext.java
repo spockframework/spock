@@ -2,7 +2,7 @@ package org.spockframework.runtime;
 
 import org.spockframework.lang.ISpecificationContext;
 import org.spockframework.mock.IMockController;
-import org.spockframework.mock.IStaticMockController;
+import org.spockframework.mock.IThreadAwareMockController;
 import org.spockframework.mock.runtime.MockController;
 import org.spockframework.runtime.model.*;
 import spock.lang.Specification;
@@ -77,7 +77,7 @@ public class SpecificationContext implements ISpecificationContext {
   }
 
   @Override
-  public IStaticMockController getStaticMockController() {
+  public IThreadAwareMockController getThreadAwareMockController() {
     return mockController;
   }
 }

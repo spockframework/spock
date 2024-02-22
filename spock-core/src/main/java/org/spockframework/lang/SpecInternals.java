@@ -326,8 +326,7 @@ public abstract class SpecInternals {
 
   private void createStaticMockImpl(MockNature nature, Class<?> specifiedType, @Nullable IMockMakerSettings mockMakerSettings) {
     if (specifiedType == null) {
-      throw new InvalidSpecException("Mock object type cannot be inferred. " +
-        "Please specify a type explicitly (e.g. 'SpyStatic(Person)').");
+      throw new InvalidSpecException("The type must not be null.");
     }
     Map<String, Object> options = emptyMap();
     if (mockMakerSettings != null) {

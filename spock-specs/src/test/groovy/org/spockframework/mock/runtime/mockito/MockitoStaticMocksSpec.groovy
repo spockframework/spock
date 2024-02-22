@@ -467,7 +467,7 @@ class MockitoStaticMocksSpec extends Specification {
 
     then:
     InvalidSpecException ex = thrown()
-    ex.message == "Mock object type cannot be inferred. Please specify a type explicitly (e.g. 'SpyStatic(Person)')."
+    ex.message == "The type must not be null."
   }
 
   def "Invalid mockito static mock shall throw spock exception instead of Mockito exception"() {

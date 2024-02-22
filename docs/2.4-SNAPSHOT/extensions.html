@@ -1920,7 +1920,7 @@ if it can mock the requested type. Spock will use the first mock maker which is 
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
-<td class="tableblock halign-center valign-middle"><p class="tableblock">✘</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">✔</p></td>
 </tr>
 </tbody>
 </table>
@@ -1985,7 +1985,9 @@ If you try to mock a final method without a Mock Maker supporting it,
 <div class="paragraph">
 <p>The <code>mockito</code> mock maker uses <code>org.mockito.MockMakers.INLINE</code> under the hood,
 please see the Mockito manual "Mocking final types, enums and final methods" for all pros and cons,
-when using <code>org.mockito.MockMakers.INLINE</code>.</p>
+when using <code>org.mockito.MockMakers.INLINE</code>.
+It also supports mocking of static methods of classes and interfaces with <code>Mock/Stub/SpyStatic</code>.
+See <a href="interaction_based_testing.html#static-mocks">static mocks</a> section for more details.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2306,7 +2308,7 @@ The extension uses this to print a report of the collected exception statistics.
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-02-20 16:47:17 UTC
+Last updated 2024-02-22 20:17:52 UTC
 </div>
 </div>
 </body>

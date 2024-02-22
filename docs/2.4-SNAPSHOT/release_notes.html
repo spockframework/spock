@@ -44,6 +44,9 @@
 <p>Mocking of final classes and final methods</p>
 </li>
 <li>
+<p>Mocking of static methods</p>
+</li>
+<li>
 <p>Mocking of classes and interface from different classloaders spockPull:1878[]</p>
 </li>
 <li>
@@ -78,6 +81,16 @@
 <ul>
 <li>
 <p>This fixes the issues: spockIssue:520[], spockIssue:1163[]</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Added support for mocking of static methods also for Java code with the new API <code>SpyStatic()</code> spockPull:1756[]</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The <a href="interaction-based-testing.html#static-mocks">static mock methods</a> will delegate the creation to the mock makers</p>
 </li>
 </ul>
 </div>
@@ -2774,7 +2787,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-02-20 16:47:17 UTC
+Last updated 2024-02-22 20:17:52 UTC
 </div>
 </div>
 </body>

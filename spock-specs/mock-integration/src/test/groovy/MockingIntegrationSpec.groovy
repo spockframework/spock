@@ -147,8 +147,8 @@ class MockingIntegrationSpec extends Specification {
     def result = StaticClass.staticMethod()
 
     then:
-    result == null
-    1 * StaticClass.staticMethod()
+    result == "Mock"
+    1 * StaticClass.staticMethod() >> "Mock"
   }
 
   private static final class FinalClass {

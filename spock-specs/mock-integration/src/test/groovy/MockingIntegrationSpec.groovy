@@ -141,7 +141,7 @@ class MockingIntegrationSpec extends Specification {
   @Requires({ TEST_TYPE.startsWith("mockito") })
   def "mockito - test mocking static methods"() {
     given:
-    MockStatic(StaticClass)
+    SpyStatic(StaticClass)
 
     when:
     def result = StaticClass.staticMethod()

@@ -1032,7 +1032,7 @@ a subscriber named Barney instead.
 
 Spock supports two ways of mocking static methods:
 
-* `Mock/Stub/SpyStatic` static mocks: Works with Java and Groovy, but requires a mock maker supporting this, e.g. <<extensions.adoc#mock-makers-mockito,mockito>> Mock Maker.
+* `SpyStatic()` static mocks: Works with Java and Groovy, but requires a mock maker supporting this, e.g. <<extensions.adoc#mock-makers-mockito,mockito>> Mock Maker.
 * Global Groovy mocks: Work only for Groovy code not for Java. If parallel execution is enabled, then the test must be annotated with `@ResourceLock(Resources.META_CLASS_REGISTRY)` or `@Isolated`.
 
 NOTE: Think twice before using this feature.
@@ -1041,11 +1041,9 @@ NOTE: Think twice before using this feature.
 [[static-mocks]]
 ==== Static Mocks
 
-You can create static mocks with `MockStatic()`, `StubStatic()`, or `SpyStatic()`.
+You can create static mocks with `SpyStatic()`.
 The semantics are the same as for the non-static variants:
 
-* `MockStatic()`: Mocks static methods of the given type; supports both stubbing and mocking.
-* `StubStatic()`: Mocks static methods of the given type; supports stubbing but not mocking.
 * `SpyStatic()`: Mocks static methods of the given type; by default, delegates all calls to the real static methods.
                  Supports both stubbing and mocking.
 
@@ -1059,33 +1057,18 @@ include::{sourcedir}/interaction/StaticMocksDocSpec.groovy[tag=mock-static-class
 
 We want to mock the method `staticMethod()`, so we can create a static mock for the `StaticClass` type:
 
-.Mock static method of a class
+.Mock static method of a class with SpyStatic()
 [source,groovy,indent=0]
 ----
 include::{sourcedir}/interaction/StaticMocksDocSpec.groovy[tag=mock-static1]
 ----
 
-You can also specify the answers during construction:
-
-.Mock static method of a class with answers during construction
-[source,groovy,indent=0]
-----
-include::{sourcedir}/interaction/StaticMocksDocSpec.groovy[tag=mock-static-answers]
-----
-
-Or by defining the interactions as for a normal mock:
+You can also specify the answers after construction by defining the interactions as for a normal mock:
 
 .Mock static method of a class with interactions
 [source,groovy,indent=0]
 ----
 include::{sourcedir}/interaction/StaticMocksDocSpec.groovy[tag=mock-static-interactions]
-----
-
-When using `SpyStatic()` all calls will be delegated to the real methods by default:
-
-[source,groovy,indent=0]
-----
-include::{sourcedir}/interaction/StaticMocksDocSpec.groovy[tag=spy-static]
 ----
 
 NOTE: The static mocks require a mock maker supporting static methods, e.g. <<extensions.adoc#mock-makers-mockito,mockito>>.

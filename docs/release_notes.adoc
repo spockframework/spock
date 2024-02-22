@@ -19,7 +19,7 @@ include::include.adoc[]
 ** This is now a required dependency used by spock: `io.leangen.geantyref:geantyref:1.3.14`
 * Better support for generic return types for mocks spockPull:1731[]
 ** This fixes the issues: spockIssue:520[], spockIssue:1163[]
-* Added support for mocking of static methods also for Java code with the new API `MockStatic/StubStatic/SpyStatic` spockPull:1756[]
+* Added support for mocking of static methods also for Java code with the new API `SpyStatic()` spockPull:1756[]
 ** The <<interaction-based-testing.adoc#static-mocks,static mock methods>> will delegate the creation to the mock makers
 
 === Breaking Changes

@@ -46,11 +46,7 @@ import groovy.lang.Closure;
  *   <dd>Creates a Stub() with additional, Groovy-specific features.</dd>
  *   <dt>GroovySpy() </dt>
  *   <dd>Creates a Spy() with additional, Groovy-specific features.</dd>
- *   <dt>MockStatic()</dt>
- *   <dd>Mocks static methods of the given type that supports both stubbing and mocking.</dd>
- *   <dt>StubStatic()</dt>
- *   <dd>Mocks static methods of the given type that supports stubbing but not mocking.</dd>
- *   <dt>MockStatic()</dt>
+ *   <dt>SpyStatic()</dt>
  *   <dd>Mocks static methods of the given type that, by default, delegates all calls to the real static methods. Supports both stubbing and mocking.</dd>
  * </dl>
  *
@@ -1570,216 +1566,6 @@ public class MockingApi extends SpecInternals implements MockFactory {
   }
 
   /**
-   * Creates a thread-local mock for all static methods of the passed type.
-   * <p>
-   * Example:
-   *
-   * <pre>
-   *   MockStatic(Person) // type is Person.class
-   * </pre>
-   *
-   * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
-   *
-   * @param type the type of which the static methods shall be mocked
-   */
-  @Beta
-  public <T> void MockStatic(Class<T> type) {
-    throw invalidMockCreation();
-  }
-
-  /**
-   * Creates a thread-local mock for all static methods of the passed type.
-   * <p>
-   * Example:
-   *
-   * <pre>
-   *   MockStatic(Person, mockMaker: spock.mock.MockMakers.mockitoInline)
-   * </pre>
-   *
-   * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
-   *
-   * @param options options for creating the mock (see {@link org.spockframework.mock.IMockConfiguration} for available options)
-   * @param type    the type of which the static methods shall be mocked
-   */
-  @Beta
-  public <T> void MockStatic(
-    @NamedParams({
-      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
-      @NamedParam(value = "verified", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
-    })
-    Map<String, Object> options,
-    Class<T> type) {
-    throw invalidMockCreation();
-  }
-
-  /**
-   * Creates a thread-local mock for all static methods of the passed type.
-   * <p>
-   * Example:
-   *
-   * <pre>
-   *   MockStatic(Person){
-   *     staticMethod() >> "Return Value"
-   *   }
-   * </pre>
-   *
-   * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
-   *
-   * @param type         the type of which the static methods shall be mocked
-   * @param interactions a description of the static mock interactions
-   */
-  @Beta
-  public <T> void MockStatic(
-    @DelegatesTo.Target
-    Class<T> type,
-    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
-    Closure<?> interactions) {
-    throw invalidMockCreation();
-  }
-
-  /**
-   * Creates a thread-local mock for all static methods of the passed type.
-   * <p>
-   * Example:
-   *
-   * <pre>
-   *   MockStatic(Person, mockMaker: spock.mock.MockMakers.mockitoInline){
-   *     staticMethod() >> "Return Value"
-   *   }
-   * </pre>
-   *
-   * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
-   *
-   * @param options      options for creating the mock (see {@link org.spockframework.mock.IMockConfiguration} for available options)
-   * @param type         the type of which the static methods shall be mocked
-   * @param interactions a description of the static mock interactions
-   */
-  @Beta
-  public <T> void MockStatic(
-    @NamedParams({
-      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
-      @NamedParam(value = "verified", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
-    })
-    Map<String, Object> options,
-    @DelegatesTo.Target
-    Class<T> type,
-    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
-    Closure<?> interactions) {
-    throw invalidMockCreation();
-  }
-
-  /**
-   * Creates a thread-local stub for all static methods of the passed type.
-   * <p>
-   * Example:
-   *
-   * <pre>
-   *   StubStatic(Person)
-   * </pre>
-   *
-   * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
-   *
-   * @param type the type of which the static methods shall be stubbed
-   */
-  @Beta
-  public <T> void StubStatic(Class<T> type) {
-    throw invalidMockCreation();
-  }
-
-  /**
-   * Creates a thread-local stub for all static methods of the passed type.
-   * <p>
-   * Example:
-   *
-   * <pre>
-   *   StubStatic(Person, mockMaker: spock.mock.MockMakers.mockitoInline)
-   * </pre>
-   *
-   * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
-   *
-   * @param options options for creating the stub (see {@link org.spockframework.mock.IMockConfiguration} for available options)
-   * @param type    the type of which the static methods shall be stubbed
-   */
-  @Beta
-  public <T> void StubStatic(
-    @NamedParams({
-      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
-      @NamedParam(value = "verified", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
-    })
-    Map<String, Object> options,
-    Class<T> type) {
-    throw invalidMockCreation();
-  }
-
-  /**
-   * Creates a thread-local stub for all static methods of the passed type.
-   * <p>
-   * Example:
-   *
-   * <pre>
-   *   StubStatic(Person){
-   *     staticMethod() >> "Return Value"
-   *   }
-   * </pre>
-   *
-   * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
-   *
-   * @param type         the type of which the static methods shall be stubbed
-   * @param interactions a description of the static stub interactions
-   */
-  @Beta
-  public <T> void StubStatic(
-    @DelegatesTo.Target
-    Class<T> type,
-    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
-    Closure<?> interactions) {
-    throw invalidMockCreation();
-  }
-
-  /**
-   * Creates a thread-local stub for all static methods of the passed type.
-   * <p>
-   * Example:
-   *
-   * <pre>
-   *   StubStatic(Person, mockMaker: spock.mock.MockMakers.mockitoInline){
-   *     staticMethod() >> "Return Value"
-   *   }
-   * </pre>
-   *
-   * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
-   *
-   * @param options      options for creating the stub (see {@link org.spockframework.mock.IMockConfiguration} for available options)
-   * @param type         the type of which the static methods shall be stubbed
-   * @param interactions a description of the static stub interactions
-   */
-  @Beta
-  public <T> void StubStatic(
-    @NamedParams({
-      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
-      @NamedParam(value = "verified", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
-    })
-    Map<String, Object> options,
-    @DelegatesTo.Target
-    Class<T> type,
-    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
-    Closure<?> interactions) {
-    throw invalidMockCreation();
-  }
-
-  /**
    * Creates a thread-local spy for all static methods of the passed type.
    * <p>
    * Example:
@@ -1804,85 +1590,20 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * Example:
    *
    * <pre>
-   *   SpyStatic(Person, mockMaker: spock.mock.MockMakers.mockitoInline)
+   *   SpyStatic(Person, spock.mock.MockMakers.mockitoInline)
    * </pre>
    *
    * <p>If you want to activate the static mocks on a different {@code Thread},
    * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
    *
-   * @param options options for creating the spy (see {@link org.spockframework.mock.IMockConfiguration} for available options)
    * @param type    the type of which the static methods shall be spied
+   * @param mockMakerSettings the mock maker settings to apply to the static spy
    */
   @Beta
-  public <T> void SpyStatic(
-    @NamedParams({
-      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
-      @NamedParam(value = "verified", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
-    })
-    Map<String, Object> options,
-    Class<T> type) {
+  public <T> void SpyStatic(Class<T> type, IMockMakerSettings mockMakerSettings) {
     throw invalidMockCreation();
   }
 
-  /**
-   * Creates a thread-local spy for all static methods of the passed type.
-   * <p>
-   * Example:
-   *
-   * <pre>
-   *   SpyStatic(Person){
-   *     staticMethod() >> "Return Value"
-   *   }
-   * </pre>
-   *
-   * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
-   *
-   * @param type         the type of which the static methods shall be spied.
-   * @param interactions a description of the static spy interactions
-   */
-  @Beta
-  public <T> void SpyStatic(
-    @DelegatesTo.Target
-    Class<T> type,
-    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
-    Closure<?> interactions) {
-    throw invalidMockCreation();
-  }
-
-  /**
-   * Creates a thread-local spy for all static methods of the passed type.
-   * <p>
-   * Example:
-   *
-   * <pre>
-   *   SpyStatic(Person, mockMaker: spock.mock.MockMakers.mockitoInline){
-   *     staticMethod() >> "Return Value"
-   *   }
-   * </pre>
-   *
-   * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
-   *
-   * @param options      options for creating the spy (see {@link org.spockframework.mock.IMockConfiguration} for available options)
-   * @param type         the type of which the static methods shall be spied.
-   * @param interactions a description of the static spy interactions
-   */
-  @Beta
-  public <T> void SpyStatic(
-    @NamedParams({
-      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
-      @NamedParam(value = "verified", type = Boolean.class),
-      @NamedParam(value = "mockMaker", type = IMockMakerSettings.class)
-    })
-    Map<String, Object> options,
-    @DelegatesTo.Target
-    Class<T> type,
-    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
-    Closure<?> interactions) {
-    throw invalidMockCreation();
-  }
 
   /**
    * Runs the code with the thread-aware mocks activated on the current {@link Thread}.

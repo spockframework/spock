@@ -94,19 +94,7 @@ class MockingApiInvalidUsageSpec extends Specification {
     "GroovySpy"  | [OPTS, CLOSURE]
     "GroovySpy"  | [CLOSURE]
 
-    "MockStatic" | [Runnable]
-    "MockStatic" | [OPTS, Runnable]
-    "MockStatic" | [OPTS, Runnable, CLOSURE]
-    "MockStatic" | [Runnable, CLOSURE]
-
-    "StubStatic" | [Runnable]
-    "StubStatic" | [OPTS, Runnable]
-    "StubStatic" | [OPTS, Runnable, CLOSURE]
-    "StubStatic" | [Runnable, CLOSURE]
-
     "SpyStatic"  | [Runnable]
-    "SpyStatic"  | [OPTS, Runnable]
-    "SpyStatic"  | [OPTS, Runnable, CLOSURE]
-    "SpyStatic"  | [Runnable, CLOSURE]
+    "SpyStatic" | [Runnable, MockMakers.mockito]
   }
 }

@@ -26,10 +26,10 @@ class StaticMocksDocSpec extends Specification {
   def "StaticMock"() {
     // tag::mock-static1[]
     given:
-    MockStatic(StaticClass)
+    SpyStatic(StaticClass)
 
-    expect: "By default MockStatic() will return null"
-    StaticClass.staticMethod() == null
+    expect: "By default SpyStatic() will return the real value"
+    StaticClass.staticMethod() == "RealValue"
 
     when:
     def result = StaticClass.staticMethod()
@@ -40,22 +40,10 @@ class StaticMocksDocSpec extends Specification {
     // end::mock-static1[]
   }
 
-  def "StaticMock with answers"() {
-    // tag::mock-static-answers[]
-    given:
-    MockStatic(StaticClass) {
-      staticMethod() >> "MockValue"
-    }
-
-    expect:
-    StaticClass.staticMethod() == "MockValue"
-    // end::mock-static-answers[]
-  }
-
   def "StaticMock with interactions"() {
     // tag::mock-static-interactions[]
     given:
-    MockStatic(StaticClass)
+    SpyStatic(StaticClass)
     StaticClass.staticMethod() >> "MockValue"
 
     expect:
@@ -63,29 +51,11 @@ class StaticMocksDocSpec extends Specification {
     // end::mock-static-interactions[]
   }
 
-  def "SpyStatic"() {
-    // tag::spy-static[]
-    given:
-    SpyStatic(StaticClass)
-
-    expect:
-    StaticClass.staticMethod() == "RealValue"
-
-    when:
-    def result = StaticClass.staticMethod()
-
-    then:
-    1 * StaticClass.staticMethod() >> "MockValue"
-    result == "MockValue"
-    // end::spy-static[]
-  }
-
   def "StaticMock in a different thread"() {
     // tag::mock-static-different-thread[]
     given:
-    MockStatic(StaticClass) {
-      staticMethod() >> "MockValue"
-    }
+    SpyStatic(StaticClass)
+    StaticClass.staticMethod() >> "MockValue"
 
     when:
     def executor = Executors.newSingleThreadExecutor()

@@ -20,8 +20,6 @@ import org.mockito.Answers
 import org.mockito.Mockito
 import org.mockito.exceptions.base.MockitoException
 import org.spockframework.mock.CannotCreateMockException
-import org.spockframework.mock.IDefaultResponse
-import org.spockframework.mock.IMockInvocation
 import org.spockframework.mock.MockUtil
 import org.spockframework.runtime.InvalidSpecException
 import spock.lang.Shared
@@ -94,9 +92,8 @@ class MockitoStaticMocksSpec extends Specification {
     }.thenReturn(MOCK_VALUE)
 
     when:
-    MockStatic(StaticClass) {
-      staticMethod() >> MOCK_VALUE2
-    }
+    SpyStatic(StaticClass)
+    StaticClass.staticMethod() >> MOCK_VALUE2
 
     then:
     CannotCreateMockException ex = thrown()
@@ -108,9 +105,8 @@ class MockitoStaticMocksSpec extends Specification {
 
   def "Mockito and Spock API Test static mock on same class inverse Spock first"() {
     given:
-    MockStatic(StaticClass) {
-      staticMethod() >> MOCK_VALUE2
-    }
+    SpyStatic(StaticClass)
+    StaticClass.staticMethod() >> MOCK_VALUE2
 
     when:
     Mockito.mockStatic(StaticClass)
@@ -127,9 +123,8 @@ class MockitoStaticMocksSpec extends Specification {
       StaticClass.staticMethod()
     }.thenReturn(MOCK_VALUE)
 
-    MockStatic(StaticClass2) {
-      staticMethod() >> MOCK_VALUE2
-    }
+    SpyStatic(StaticClass2)
+    StaticClass2.staticMethod() >> MOCK_VALUE2
 
     when:
     def result = StaticClass.staticMethod()
@@ -152,9 +147,8 @@ class MockitoStaticMocksSpec extends Specification {
 
   def "Mockito and Spock API Test static mock on different classes Spock first"() {
     given:
-    MockStatic(StaticClass2) {
-      staticMethod() >> MOCK_VALUE2
-    }
+    SpyStatic(StaticClass2)
+    StaticClass2.staticMethod() >> MOCK_VALUE2
 
     def mock = Mockito.mockStatic(StaticClass)
     mock.when {
@@ -197,25 +191,25 @@ class MockitoStaticMocksSpec extends Specification {
     mock.close()
   }
 
-  def "MockStatic Spock API"() {
+  def "SpyStatic Spock API"() {
     given:
-    MockStatic(StaticClass)
+    SpyStatic(StaticClass)
 
     when:
     def result = StaticClass.staticMethod()
 
     then:
-    result == null
+    result == REAL_VALUE
     1 * StaticClass.staticMethod()
     mockUtil.isStaticMock(StaticClass)
   }
 
   def "Spock API mocking same class twice shall fail"() {
     given:
-    MockStatic(StaticClass)
+    SpyStatic(StaticClass)
 
     when:
-    MockStatic(StaticClass)
+    SpyStatic(StaticClass)
 
     then:
     CannotCreateMockException ex = thrown()
@@ -224,12 +218,12 @@ class MockitoStaticMocksSpec extends Specification {
 
   def "Spock API mocking two different classes"() {
     given:
-    MockStatic(StaticClass) {
-      staticMethod() >> MOCK_VALUE
-    }
-    MockStatic(StaticClass2) {
-      staticMethod() >> MOCK_VALUE2
-    }
+    SpyStatic(StaticClass)
+    StaticClass.staticMethod() >> MOCK_VALUE
+
+    SpyStatic(StaticClass2)
+    StaticClass2.staticMethod() >> MOCK_VALUE2
+
 
     expect:
     StaticClass.staticMethod() == MOCK_VALUE
@@ -238,9 +232,9 @@ class MockitoStaticMocksSpec extends Specification {
 
   def "static mock and real instance at the same time"() {
     given:
-    MockStatic(StaticClass) {
-      staticMethod() >> MOCK_VALUE
-    }
+    SpyStatic(StaticClass)
+    StaticClass.staticMethod() >> MOCK_VALUE
+
     StaticClass instMock = new StaticClass()
 
     expect:
@@ -250,9 +244,9 @@ class MockitoStaticMocksSpec extends Specification {
 
   def "static and instance mock at the same time"() {
     given:
-    MockStatic(StaticClass) {
-      staticMethod() >> MOCK_VALUE
-    }
+    SpyStatic(StaticClass)
+    StaticClass.staticMethod() >> MOCK_VALUE
+
     StaticClass instMock = Mock()
 
     expect:
@@ -262,9 +256,9 @@ class MockitoStaticMocksSpec extends Specification {
 
   def "static and instance mock at the same time with interactions"() {
     given:
-    MockStatic(StaticClass) {
-      staticMethod() >> MOCK_VALUE
-    }
+    SpyStatic(StaticClass)
+    StaticClass.staticMethod() >> MOCK_VALUE
+
     StaticClass instMock = Mock() {
       instanceMethod() >> MOCK_VALUE2
     }
@@ -276,9 +270,9 @@ class MockitoStaticMocksSpec extends Specification {
 
   def "static and instance mock at the same time with Mockito mock maker"() {
     given:
-    MockStatic(StaticClass) {
-      staticMethod() >> MOCK_VALUE
-    }
+    SpyStatic(StaticClass)
+    StaticClass.staticMethod() >> MOCK_VALUE
+
     StaticClass instMock = Mock(mockMaker: MockMakers.mockito) {
       instanceMethod() >> MOCK_VALUE2
     }
@@ -288,18 +282,18 @@ class MockitoStaticMocksSpec extends Specification {
     instMock.instanceMethod() == MOCK_VALUE2
   }
 
-  def "MockStatic interactions in given"() {
+  def "SpyStatic interactions in given"() {
     given:
-    MockStatic(StaticClass)
+    SpyStatic(StaticClass)
     StaticClass.staticMethod() >> MOCK_VALUE
 
     expect:
     StaticClass.staticMethod() == MOCK_VALUE
   }
 
-  def "MockStatic interactions in when"() {
+  def "SpyStatic interactions in when"() {
     given:
-    MockStatic(StaticClass)
+    SpyStatic(StaticClass)
 
     when:
     StaticClass.staticMethod() >> MOCK_VALUE
@@ -309,11 +303,10 @@ class MockitoStaticMocksSpec extends Specification {
     result == MOCK_VALUE
   }
 
-  def "MockStatic can activate the static mocks on different Thread"() {
+  def "SpyStatic can activate the static mocks on different Thread"() {
     given:
-    MockStatic(StaticClass) {
-      staticMethod() >> MOCK_VALUE
-    }
+    SpyStatic(StaticClass)
+    StaticClass.staticMethod() >> MOCK_VALUE
 
     when:
     def executor = Executors.newSingleThreadExecutor()
@@ -340,14 +333,13 @@ class MockitoStaticMocksSpec extends Specification {
     executor.shutdown()
   }
 
-  def "MockStatic can activate two mocked static classes on different Thread"() {
+  def "SpyStatic can activate two mocked static classes on different Thread"() {
     given:
-    MockStatic(StaticClass) {
-      staticMethod() >> MOCK_VALUE
-    }
-    MockStatic(StaticClass2) {
-      staticMethod() >> MOCK_VALUE2
-    }
+    SpyStatic(StaticClass)
+    StaticClass.staticMethod() >> MOCK_VALUE
+
+    SpyStatic(StaticClass2)
+    StaticClass2.staticMethod() >> MOCK_VALUE2
 
     when:
     def executor = Executors.newSingleThreadExecutor()
@@ -376,154 +368,21 @@ class MockitoStaticMocksSpec extends Specification {
 
   def "Static Mocks can be activated twice on the same thread"() {
     given:
-    MockStatic(StaticClass)
+    SpyStatic(StaticClass)
+    StaticClass.staticMethod() >> MOCK_VALUE
 
     when:
     runWithThreadAwareMocks {
-      assert StaticClass.staticMethod() == null
+      assert StaticClass.staticMethod() == MOCK_VALUE
     }
 
     then:
-    StaticClass.staticMethod() == null
+    StaticClass.staticMethod() == MOCK_VALUE
   }
 
   def "No mock"() {
     expect:
     StaticClass.staticMethod() == REAL_VALUE
-  }
-
-  def "MockStatic Spock API with response"() {
-    given:
-    MockStatic(StaticClass)
-
-    when:
-    def result = StaticClass.staticMethod()
-
-    then:
-    result == MOCK_VALUE
-    1 * StaticClass.staticMethod() >> MOCK_VALUE
-
-    when: "After first response it shall fallback to null"
-    result = StaticClass.staticMethod()
-
-    then:
-    result == null
-  }
-
-  def "MockStatic Spock API with closure response"() {
-    given:
-    MockStatic(StaticClass) {
-      staticMethod() >> MOCK_VALUE
-      StaticClass.staticMethod2() >> MOCK_VALUE
-    }
-
-    expect:
-    StaticClass.staticMethod() == MOCK_VALUE
-    StaticClass.staticMethod2() == MOCK_VALUE
-  }
-
-  def "MockStatic Spock API without response"() {
-    given:
-    MockStatic(StaticClass)
-
-    when:
-    def result = StaticClass.staticMethod()
-
-    then:
-    result == null
-    1 * StaticClass.staticMethod()
-  }
-
-  def "MockStatic with explicit mock-maker"() {
-    given:
-    MockStatic(mockMaker: MockMakers.mockito, StaticClass)
-
-    when:
-    def result = StaticClass.staticMethod()
-
-    then:
-    1 * StaticClass.staticMethod() >> MOCK_VALUE
-    0 * StaticClass._
-    result == MOCK_VALUE
-  }
-
-  def "MockStatic with explicit mock-maker with closure response"() {
-    given:
-    MockStatic(mockMaker: MockMakers.mockito, StaticClass) {
-      staticMethod() >> MOCK_VALUE
-    }
-
-    when:
-    def result = StaticClass.staticMethod()
-
-    then:
-    result == MOCK_VALUE
-  }
-
-  def "StubStatic Spock API without response"() {
-    given:
-    StubStatic(StaticClass)
-
-    when:
-    def result = StaticClass.staticMethod()
-
-    then:
-    result == ""
-  }
-
-  def "StubStatic Spock API with closure response"() {
-    given:
-    StubStatic(StaticClass) {
-      staticMethod() >> MOCK_VALUE
-    }
-
-    expect:
-    StaticClass.staticMethod() == MOCK_VALUE
-    StaticClass.staticMethod2() == ""
-  }
-
-  def "StubStatic with explicit mock-maker"() {
-    given:
-    StubStatic(mockMaker: MockMakers.mockito, StaticClass)
-
-    expect:
-    StaticClass.staticMethod() == ""
-    StaticClass.staticMethod2() == ""
-  }
-
-  def "StubStatic with explicit mock-maker with closure response"() {
-    given:
-    StubStatic(mockMaker: MockMakers.mockito, StaticClass) {
-      staticMethod() >> MOCK_VALUE
-    }
-
-    when:
-    def result = StaticClass.staticMethod()
-
-    then:
-    result == MOCK_VALUE
-  }
-
-  def "SpyStatic Spock API without response"() {
-    given:
-    SpyStatic(StaticClass)
-
-    when:
-    def result = StaticClass.staticMethod()
-
-    then:
-    result == REAL_VALUE
-  }
-
-  def "SpyStatic Spock API with closure response"() {
-    given:
-    SpyStatic(StaticClass) {
-      staticMethod() >> MOCK_VALUE
-    }
-
-    expect:
-    StaticClass.staticMethod() == MOCK_VALUE
-    StaticClass.staticMethod2() == REAL_VALUE
   }
 
   def "SpyStatic Spock API with response"() {
@@ -537,16 +396,40 @@ class MockitoStaticMocksSpec extends Specification {
     result == MOCK_VALUE
     1 * StaticClass.staticMethod() >> MOCK_VALUE
 
-    when:
-    result = StaticClass.staticMethod2()
+    when: "After first response it shall fallback to null"
+    result = StaticClass.staticMethod()
 
     then:
     result == REAL_VALUE
   }
 
+  def "SpyStatic Spock API with closure response"() {
+    given:
+    SpyStatic(StaticClass)
+    StaticClass.staticMethod() >> MOCK_VALUE
+    StaticClass.staticMethod2() >> MOCK_VALUE
+
+
+    expect:
+    StaticClass.staticMethod() == MOCK_VALUE
+    StaticClass.staticMethod2() == MOCK_VALUE
+  }
+
+  def "SpyStatic Spock API without response"() {
+    given:
+    SpyStatic(StaticClass)
+
+    when:
+    def result = StaticClass.staticMethod()
+
+    then:
+    result == REAL_VALUE
+    1 * StaticClass.staticMethod()
+  }
+
   def "SpyStatic with explicit mock-maker"() {
     given:
-    SpyStatic(mockMaker: MockMakers.mockito, StaticClass)
+    SpyStatic(StaticClass, MockMakers.mockito)
 
     when:
     def result = StaticClass.staticMethod()
@@ -559,24 +442,8 @@ class MockitoStaticMocksSpec extends Specification {
 
   def "SpyStatic with explicit mock-maker with closure response"() {
     given:
-    SpyStatic(mockMaker: MockMakers.mockito, StaticClass) {
-      staticMethod() >> MOCK_VALUE
-    }
-
-    when:
-    def result = StaticClass.staticMethod()
-
-    then:
-    result == MOCK_VALUE
-  }
-
-  def "Static mock with default response"() {
-    given:
-    MockStatic(defaultResponse: { IMockInvocation invocation ->
-      if (invocation.method.name == "staticMethod") {
-        return MOCK_VALUE
-      }
-    } as IDefaultResponse, StaticClass)
+    SpyStatic(StaticClass, MockMakers.mockito)
+    StaticClass.staticMethod() >> MOCK_VALUE
 
     when:
     def result = StaticClass.staticMethod()
@@ -587,7 +454,7 @@ class MockitoStaticMocksSpec extends Specification {
 
   def "Static mock for non-supporting mock-maker shall fail"() {
     when:
-    MockStatic(mockMaker: MockMakers.javaProxy, StaticClass)
+    SpyStatic(StaticClass, MockMakers.javaProxy)
 
     then:
     CannotCreateMockException ex = thrown()
@@ -596,27 +463,16 @@ class MockitoStaticMocksSpec extends Specification {
 
   def "no static type specified"() {
     when:
-    MockStatic(null)
+    SpyStatic(null)
 
     then:
     InvalidSpecException ex = thrown()
-    ex.message == "Mock object type cannot be inferred. Please specify a type explicitly (e.g. 'MockStatic(Person)')."
-  }
-
-  def "Static type in options"() {
-    given:
-    MockStatic(null, type: StaticClass)
-
-    when:
-    def result = StaticClass.staticMethod()
-
-    then:
-    result == null
+    ex.message == "Mock object type cannot be inferred. Please specify a type explicitly (e.g. 'SpyStatic(Person)')."
   }
 
   def "Invalid mockito static mock shall throw spock exception instead of Mockito exception"() {
     when:
-    MockStatic(Thread)
+    SpyStatic(Thread)
     then:
     CannotCreateMockException ex = thrown()
     ex.message.contains("It is not possible to mock static methods of java.lang.Thread")

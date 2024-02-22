@@ -27,6 +27,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 import groovy.lang.Closure;
+import spock.mock.IMockMakerSettings;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
@@ -60,13 +61,9 @@ public abstract class SpecInternals {
   }
 
   private void createStaticMock(Type type, MockNature nature,
-                                              Map<String, Object> options,
-                                              @Nullable Closure<?> closure) {
+                                Map<String, Object> options) {
     MockConfiguration configuration = new MockConfiguration(null, type, null, nature, MockImplementation.JAVA, options);
     JavaMockFactory.INSTANCE.createStaticMock(configuration, (Specification) this);
-    if (closure != null) {
-      GroovyRuntimeUtil.invokeClosure(closure, type);
-    }
   }
 
   <T> T oldImpl(T expression) {
@@ -319,64 +316,23 @@ public abstract class SpecInternals {
     return createMock(inferredName, instance, effectiveType, nature, implementation, options, closure);
   }
 
-  void MockStaticImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType) {
-    createStaticMockImpl(MockNature.MOCK, specifiedType, null);
-  }
-
-  void MockStaticImpl(String inferredName, Class<?> inferredType, Map<String, Object> options, Class<?> specifiedType) {
-    createStaticMockImpl(MockNature.MOCK, options, specifiedType, null);
-  }
-
-  void MockStaticImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType, Closure<?> closure) {
-    createStaticMockImpl(MockNature.MOCK, specifiedType, closure);
-  }
-
-  void MockStaticImpl(String inferredName, Class<?> inferredType, Map<String, Object> options, Class<?> specifiedType, Closure<?> closure) {
-    createStaticMockImpl(MockNature.MOCK, options, specifiedType, closure);
-  }
-
-  void StubStaticImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType) {
-    createStaticMockImpl(MockNature.STUB, specifiedType, null);
-  }
-
-  void StubStaticImpl(String inferredName, Class<?> inferredType, Map<String, Object> options, Class<?> specifiedType) {
-    createStaticMockImpl(MockNature.STUB, options, specifiedType, null);
-  }
-
-  void StubStaticImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType, Closure<?> closure) {
-    createStaticMockImpl(MockNature.STUB, specifiedType, closure);
-  }
-
-  void StubStaticImpl(String inferredName, Class<?> inferredType, Map<String, Object> options, Class<?> specifiedType, Closure<?> closure) {
-    createStaticMockImpl(MockNature.STUB, options, specifiedType, closure);
-  }
-
   void SpyStaticImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType) {
     createStaticMockImpl(MockNature.SPY, specifiedType, null);
   }
 
-  void SpyStaticImpl(String inferredName, Class<?> inferredType, Map<String, Object> options, Class<?> specifiedType) {
-    createStaticMockImpl(MockNature.SPY, options, specifiedType, null);
+  void SpyStaticImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType, IMockMakerSettings mockMakerSettings) {
+    createStaticMockImpl(MockNature.SPY, specifiedType, mockMakerSettings);
   }
 
-  void SpyStaticImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType, Closure<?> closure) {
-    createStaticMockImpl(MockNature.SPY, specifiedType, closure);
-  }
-
-  void SpyStaticImpl(String inferredName, Class<?> inferredType, Map<String, Object> options, Class<?> specifiedType, Closure<?> closure) {
-    createStaticMockImpl(MockNature.SPY, options, specifiedType, closure);
-  }
-
-  private void createStaticMockImpl(MockNature nature, Class<?> specifiedType, @Nullable Closure<?> closure) {
-    createStaticMockImpl(nature, emptyMap(), specifiedType, closure);
-  }
-
-  private void createStaticMockImpl(MockNature nature, Map<String, Object> options, Class<?> specifiedType, @Nullable Closure<?> closure) {
-    Type effectiveType = specifiedType != null ? specifiedType : options.containsKey("type") ? (Type) options.get("type") : null;
-    if (effectiveType == null) {
+  private void createStaticMockImpl(MockNature nature, Class<?> specifiedType, @Nullable IMockMakerSettings mockMakerSettings) {
+    if (specifiedType == null) {
       throw new InvalidSpecException("Mock object type cannot be inferred. " +
-        "Please specify a type explicitly (e.g. 'MockStatic(Person)').");
+        "Please specify a type explicitly (e.g. 'SpyStatic(Person)').");
     }
-    createStaticMock(effectiveType, nature, options, closure);
+    Map<String, Object> options = emptyMap();
+    if (mockMakerSettings != null) {
+      options = Collections.singletonMap("mockMaker", mockMakerSettings);
+    }
+    createStaticMock(specifiedType, nature, options);
   }
 }

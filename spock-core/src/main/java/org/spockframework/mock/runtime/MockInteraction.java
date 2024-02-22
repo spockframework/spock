@@ -20,6 +20,7 @@ import org.spockframework.mock.*;
 import org.spockframework.util.TextUtil;
 
 import java.util.*;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * An anticipated interaction between the SUT and one or more mock objects.
@@ -34,8 +35,8 @@ public class MockInteraction implements IMockInteraction {
   private final int maxCount;
   private final List<IInvocationConstraint> constraints;
   private final IResponseGenerator responseGenerator;
-
   private final List<IMockInvocation> acceptedInvocations = new ArrayList<>();
+  private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
   public MockInteraction(int line, int column, String text, int minCount,
       int maxCount, List<IInvocationConstraint> constraints,
@@ -65,12 +66,17 @@ public class MockInteraction implements IMockInteraction {
 
   @Override
   public Object accept(IMockInvocation invocation) {
-    acceptedInvocations.add(invocation);
-    if (acceptedInvocations.size() > maxCount) {
-      throw new TooManyInvocationsError(this, acceptedInvocations);
-    }
+    lock.writeLock().lock();
+    try {
+      acceptedInvocations.add(invocation);
+      if (acceptedInvocations.size() > maxCount) {
+        throw new TooManyInvocationsError(this, acceptedInvocations);
+      }
 
-    return responseGenerator == null ? null : responseGenerator.respond(invocation);
+      return responseGenerator == null ? null : responseGenerator.respond(invocation);
+    } finally {
+      lock.writeLock().unlock();
+    }
   }
 
   @Override
@@ -121,12 +127,22 @@ public class MockInteraction implements IMockInteraction {
 
   @Override
   public boolean isSatisfied() {
-    return acceptedInvocations.size() >= minCount;
+    lock.readLock().lock();
+    try {
+      return acceptedInvocations.size() >= minCount;
+    } finally {
+      lock.readLock().unlock();
+    }
   }
 
   @Override
   public boolean isExhausted() {
-    return acceptedInvocations.size() >= maxCount;
+    lock.readLock().lock();
+    try {
+      return acceptedInvocations.size() >= maxCount;
+    } finally {
+      lock.readLock().unlock();
+    }
   }
 
   @Override
@@ -150,8 +166,11 @@ public class MockInteraction implements IMockInteraction {
   }
 
   public String toString() {
-    return String.format("%s   (%d %s)", text, acceptedInvocations.size(), acceptedInvocations.size() == 1 ? "invocation" : "invocations");
+    lock.readLock().lock();
+    try {
+      return String.format("%s   (%d %s)", text, acceptedInvocations.size(), acceptedInvocations.size() == 1 ? "invocation" : "invocations");
+    } finally {
+      lock.readLock().unlock();
+    }
   }
 }
-
-

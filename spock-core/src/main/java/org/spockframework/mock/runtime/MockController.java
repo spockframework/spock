@@ -37,22 +37,32 @@ public class MockController implements IMockController, IThreadAwareMockControll
   }
 
   @Override
-  public synchronized Object handle(IMockInvocation invocation) {
+  public Object handle(IMockInvocation invocation) {
+    Optional<IMockInteraction> interaction = findInteraction(invocation);
+    if (interaction.isPresent()) {
+      try {
+        return interaction.get().accept(invocation);
+      } catch (InteractionNotSatisfiedError e) {
+        synchronized (this) {
+          errors.add(e);
+        }
+        throw e;
+      }
+    }
+    return invocation.getMockObject().getDefaultResponse().respond(invocation);
+  }
+
+  private synchronized Optional<IMockInteraction> findInteraction(IMockInvocation invocation) {
     for (IInteractionScope scope : scopes) {
       IMockInteraction interaction = scope.match(invocation);
       if (interaction != null) {
-        try {
-          return interaction.accept(invocation);
-        } catch (InteractionNotSatisfiedError e) {
-          errors.add(e);
-          throw e;
-        }
+          return Optional.of(interaction);
       }
     }
     for (IInteractionScope scope : scopes) {
       scope.addUnmatchedInvocation(invocation);
     }
-    return invocation.getMockObject().getDefaultResponse().respond(invocation);
+    return Optional.empty();
   }
 
   public static final String ADD_INTERACTION = "addInteraction";

@@ -1013,45 +1013,16 @@ interceptor`. If you attach your interceptor to both of them and need a differen
 can of course build two different interceptors or add a parameter to your interceptor and create two instances, telling
 each at addition time whether it is attached to the method interceptor or the other one.
 
-.Add All Interceptors
-[source,groovy]
+[source,groovy,indent=0]
 ----
-class I extends AbstractMethodInterceptor { I(def s) {} }
+include::{sourcedir}/extension/InterceptorSpec.groovy[tag=interceptor-class]
+----
+.Add All Interceptors
+[source,groovy,indent=0]
+----
+include::{sourcedir}/extension/InterceptorSpec.groovy[tag=interceptor-register-spec]
 
-// DISCLAIMER: The following shows all possible injection points that you could use
-//             depending on need and situation. You should normally not need to
-//             register a listener to all these places.
-//
-//             Also, when building an annotation driven local extension, you should
-//             consider where you want the effects to be present, for example only
-//             for the features in the same class (specInfo.features), or for features
-//             in the same and superclasses (specInfo.allFeatures), or also for
-//             features in subclasses (specInfo.bottomSpec.allFeatures), and so on.
-
-// on SpecInfo
-specInfo.specsBottomToTop*.addSharedInitializerInterceptor new I('shared initializer')
-specInfo.allSharedInitializerMethods*.addInterceptor new I('shared initializer method')
-specInfo.addInterceptor new I('specification')
-specInfo.specsBottomToTop*.addSetupSpecInterceptor new I('setup spec')
-specInfo.allSetupSpecMethods*.addInterceptor new I('setup spec method')
-specInfo.allFeatures*.addInterceptor new I('feature')
-specInfo.specsBottomToTop*.addInitializerInterceptor new I('initializer')
-specInfo.allInitializerMethods*.addInterceptor new I('initializer method')
-specInfo.allFeatures*.addIterationInterceptor new I('iteration')
-specInfo.specsBottomToTop*.addSetupInterceptor new I('setup')
-specInfo.allSetupMethods*.addInterceptor new I('setup method')
-specInfo.allFeatures*.featureMethod*.addInterceptor new I('feature method')
-specInfo.specsBottomToTop*.addCleanupInterceptor new I('cleanup')
-specInfo.allCleanupMethods*.addInterceptor new I('cleanup method')
-specInfo.specsBottomToTop*.addCleanupSpecInterceptor new I('cleanup spec')
-specInfo.allCleanupSpecMethods*.addInterceptor new I('cleanup spec method')
-specInfo.allFixtureMethods*.addInterceptor new I('fixture method')
-
-// on FeatureInfo (already included above, handling all features)
-featureInfo.addInterceptor new I('feature')
-featureInfo.addIterationInterceptor new I('iteration')
-featureInfo.featureMethod.addInterceptor new I('feature method')
-
+include::{sourcedir}/extension/InterceptorSpec.groovy[tag=interceptor-register-feature]
 ----
 
 ==== Injecting Method Parameters

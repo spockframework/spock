@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,12 +15,16 @@
 
 package org.spockframework.runtime;
 
-import org.spockframework.runtime.extension.*;
+import org.spockframework.runtime.extension.IMethodInterceptor;
+import org.spockframework.runtime.extension.MethodInvocation;
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.*;
+import org.spockframework.util.CollectionUtil;
+import org.spockframework.util.InternalSpockError;
 import spock.lang.Specification;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static java.lang.System.arraycopy;
 import static java.util.Arrays.copyOfRange;
@@ -66,8 +70,7 @@ public class PlatformSpecRunner {
     SpecInfo spec = context.getSpec();
     result.setParent(spec);
     result.setKind(MethodKind.SPEC_EXECUTION);
-    for (IMethodInterceptor interceptor : spec.getInterceptors())
-      result.addInterceptor(interceptor);
+    spec.getInterceptors().forEach(result::addInterceptor);
     return result;
   }
 
@@ -108,8 +111,7 @@ public class PlatformSpecRunner {
     );
     result.setParent(spec);
     result.setKind(MethodKind.SHARED_INITIALIZER);
-    for (IMethodInterceptor interceptor : spec.getSharedInitializerInterceptors())
-      result.addInterceptor(interceptor);
+    spec.getSharedInitializerInterceptors().forEach(result::addInterceptor);
     return result;
   }
 
@@ -136,8 +138,7 @@ public class PlatformSpecRunner {
     );
     result.setParent(spec);
     result.setKind(MethodKind.SETUP_SPEC);
-    for (IMethodInterceptor interceptor : spec.getSetupSpecInterceptors())
-      result.addInterceptor(interceptor);
+    spec.getSetupSpecInterceptors().forEach(result::addInterceptor);
     return result;
   }
 
@@ -166,8 +167,7 @@ public class PlatformSpecRunner {
     );
     result.setParent(spec);
     result.setKind(MethodKind.CLEANUP_SPEC);
-    for (IMethodInterceptor interceptor : spec.getCleanupSpecInterceptors())
-      result.addInterceptor(interceptor);
+    spec.getCleanupSpecInterceptors().forEach(result::addInterceptor);
     return result;
   }
 
@@ -207,8 +207,7 @@ public class PlatformSpecRunner {
     result.setParent(currentFeature.getParent());
     result.setKind(MethodKind.FEATURE_EXECUTION);
     result.setFeature(currentFeature);
-    for (IMethodInterceptor interceptor : currentFeature.getInterceptors())
-      result.addInterceptor(interceptor);
+    currentFeature.getInterceptors().forEach(result::addInterceptor);
     return result;
   }
 
@@ -247,8 +246,7 @@ public class PlatformSpecRunner {
     result.setKind(MethodKind.ITERATION_EXECUTION);
     result.setFeature(currentFeature);
     result.setIteration(context.getCurrentIteration());
-    for (IMethodInterceptor interceptor : currentFeature.getIterationInterceptors())
-      result.addInterceptor(interceptor);
+    currentFeature.getIterationInterceptors().forEach(result::addInterceptor);
     return result;
   }
 
@@ -277,8 +275,10 @@ public class PlatformSpecRunner {
     result.setParent(currentFeature.getParent());
     result.setKind(MethodKind.INITIALIZER);
     result.setFeature(currentFeature);
-    for (IMethodInterceptor interceptor : spec.getInitializerInterceptors())
-      result.addInterceptor(interceptor);
+    if (spec.getIsBottomSpec()) {
+      currentFeature.getInitializerInterceptors().forEach(result::addInterceptor);
+    }
+    spec.getInitializerInterceptors().forEach(result::addInterceptor);
     return result;
   }
 
@@ -308,8 +308,10 @@ public class PlatformSpecRunner {
     result.setKind(MethodKind.SETUP);
     result.setFeature(currentFeature);
     result.setIteration(context.getCurrentIteration());
-    for (IMethodInterceptor interceptor : spec.getSetupInterceptors())
-      result.addInterceptor(interceptor);
+    if (spec.getIsBottomSpec()) {
+      currentFeature.getSetupInterceptors().forEach(result::addInterceptor);
+    }
+    spec.getSetupInterceptors().forEach(result::addInterceptor);
     return result;
   }
 
@@ -352,8 +354,10 @@ public class PlatformSpecRunner {
     result.setKind(MethodKind.CLEANUP);
     result.setFeature(currentFeature);
     result.setIteration(context.getCurrentIteration());
-    for (IMethodInterceptor interceptor : spec.getCleanupInterceptors())
-      result.addInterceptor(interceptor);
+    if (spec.getIsBottomSpec()) {
+      currentFeature.getCleanupInterceptors().forEach(result::addInterceptor);
+    }
+    spec.getCleanupInterceptors().forEach(result::addInterceptor);
     return result;
   }
 
@@ -408,15 +412,20 @@ public class PlatformSpecRunner {
       Arrays.fill(methodArguments, arguments.length, parameterCount, MISSING_ARGUMENT);
     }
 
+    List<IMethodInterceptor> scopedInterceptors = Collections.emptyList();
+    if (context.getCurrentFeature() != null) {
+      scopedInterceptors = context.getCurrentFeature().getScopedMethodInterceptors(method);
+    }
+
     // fast lane
-    if (method.getInterceptors().isEmpty()) {
+    if (method.getInterceptors().isEmpty() && scopedInterceptors.isEmpty()) {
       invokeRaw(context, target, method, methodArguments);
       return;
     }
 
     // slow lane
     MethodInvocation invocation = new MethodInvocation(context.getCurrentFeature(),
-      context.getCurrentIteration(), context.getStoreProvider(), context.getSharedInstance(), context.getCurrentInstance(), target, method, methodArguments);
+      context.getCurrentIteration(), context.getStoreProvider(), context.getSharedInstance(), context.getCurrentInstance(), target, method, scopedInterceptors, methodArguments);
     try {
       invocation.proceed();
     } catch (Throwable throwable) {

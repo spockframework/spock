@@ -34,9 +34,12 @@ include::include.adoc[]
 * Add support for <<extensions.adoc#extension-store,keeping state in extensions>>
 * Add support for parameter injection of `@TempDir`
 * Add `@Snapshot` extension for <<extensions.adoc#snapshot-testing,snapshot testing>>
+* Add <<extensions.adoc#spock-interceptors,feature-scoped interceptors>> spockPull:1844[]
 * Improve `@TempDir` field injection, now it happens before field initialization, so it can be used by other field initializers.
 * Fix exception when configured `baseDir` was not existing, now `@TempDir` will create the baseDir directory if it is missing.
 * Fix bad error message for collection conditions, when one of the operands is `null`
+* Fix possible deadlock, when blocking in mock response generators spockPull:1885[]
+** This fixes the issues: spockIssue:583[], spockIssue:1882[]
 * Document `@ConditionBlock` Annotation spockPull:1709[]
 * Document `old`-Method spockPull:1708[]
 * Clarify documentation for global Mocks spockPull:1755[]

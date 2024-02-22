@@ -2,6 +2,7 @@ package org.spockframework.runtime;
 
 import org.spockframework.lang.ISpecificationContext;
 import org.spockframework.mock.IMockController;
+import org.spockframework.mock.IThreadAwareMockController;
 import org.spockframework.mock.runtime.MockController;
 import org.spockframework.runtime.model.*;
 import spock.lang.Specification;
@@ -15,7 +16,7 @@ public class SpecificationContext implements ISpecificationContext {
 
   private volatile Throwable thrownException;
 
-  private final IMockController mockController = new MockController();
+  private final MockController mockController = new MockController();
 
   public static final String GET_SHARED_INSTANCE = "getSharedInstance";
   public Specification getSharedInstance() {
@@ -72,6 +73,11 @@ public class SpecificationContext implements ISpecificationContext {
   public static String GET_MOCK_CONTROLLER = "getMockController";
   @Override
   public IMockController getMockController() {
+    return mockController;
+  }
+
+  @Override
+  public IThreadAwareMockController getThreadAwareMockController() {
     return mockController;
   }
 }

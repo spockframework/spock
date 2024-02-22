@@ -17,6 +17,7 @@
 package org.spockframework.mock.runtime;
 
 import groovy.lang.GroovyObject;
+import org.spockframework.lang.ISpecificationContext;
 import org.spockframework.mock.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.RunContext;
@@ -48,14 +49,11 @@ public class JavaMockFactory implements IMockFactory {
 
   private Object createInternal(IMockConfiguration configuration, Specification specification, ClassLoader classLoader) {
     Class<?> type = configuration.getType();
-    if (configuration.isGlobal()) {
-      throw new CannotCreateMockException(type,
-          " because Java mocks cannot mock globally. If the code under test is written in Groovy, use a Groovy mock.");
-    }
+    checkNotGlobal(configuration);
 
     MetaClass mockMetaClass = GroovyRuntimeUtil.getMetaClass(type);
     JavaMockInterceptor interceptor = new JavaMockInterceptor(configuration, specification, mockMetaClass);
-    Object proxy = RunContext.get().getMockMakerRegistry().makeMock(MockCreationSettings.settingsFromMockConfiguration(configuration, interceptor, classLoader));
+    Object proxy = getMockMakerRegistry().makeMock(MockCreationSettings.settingsFromMockConfiguration(configuration, interceptor, classLoader));
     List<Class<?>> additionalInterfaces = configuration.getAdditionalInterfaces();
     if (!additionalInterfaces.isEmpty() && GroovyObject.class.isAssignableFrom(type)) {
       //Issue #1405: We need to update the mockMetaClass to reflect the methods of the additional interfaces
@@ -73,5 +71,29 @@ public class JavaMockFactory implements IMockFactory {
       }
     }
     return proxy;
+  }
+
+  private MockMakerRegistry getMockMakerRegistry() {
+    return RunContext.get().getMockMakerRegistry();
+  }
+
+  private static void checkNotGlobal(IMockConfiguration configuration) {
+    if (configuration.isGlobal()) {
+      throw new CannotCreateMockException(configuration.getType(),
+        " because Java mocks cannot mock globally. If the code under test is written in Groovy, use a Groovy mock.");
+    }
+  }
+
+  public void createStaticMock(MockConfiguration configuration, Specification specification) {
+    checkNotGlobal(configuration);
+    MetaClass mockMetaClass = GroovyRuntimeUtil.getMetaClass(configuration.getType());
+    IProxyBasedMockInterceptor interceptor = new JavaMockInterceptor(configuration, specification, mockMetaClass);
+
+    MockCreationSettings creationSettings = MockCreationSettings.settingsFromMockConfigurationForStaticMock(configuration, interceptor, specification.getClass().getClassLoader());
+    IMockMaker.IStaticMock mockMakerStaticMock = getMockMakerRegistry().makeStaticMock(creationSettings);
+    mockMakerStaticMock.enable();
+    ISpecificationContext specificationContext = specification.getSpecificationContext();
+    specificationContext.getCurrentIteration().addCleanup(mockMakerStaticMock::disable);
+    specificationContext.getThreadAwareMockController().registerStaticMock(mockMakerStaticMock);
   }
 }

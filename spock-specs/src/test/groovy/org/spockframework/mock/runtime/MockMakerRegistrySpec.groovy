@@ -247,25 +247,6 @@ class MockMakerRegistrySpec extends Specification {
     ex.message == "Can't mock instance mocks with makeStaticMock()."
   }
 
-  def "Static Mock shall currently fail"() {
-    given:
-    IMockCreationSettings settings = Stub() {
-      mockType >> File
-      staticMock >> true
-      mockMakerSettings >> null
-    }
-    when:
-    defaultMockMakerRegistry.makeStaticMock(settings)
-    then:
-    CannotCreateMockException ex = thrown()
-    ex.message == """Cannot create mock for class java.io.File.
-java-proxy: Cannot mock classes.
-byte-buddy: Cannot mock static methods.
-cglib: Cannot mock static methods.
-mockito: Cannot mock static methods.
-fancy: Cannot mock static methods."""
-  }
-
   def "makeStaticMock"() {
     given:
     IMockMaker mockMaker = Mock {

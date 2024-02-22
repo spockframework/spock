@@ -27,6 +27,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 import groovy.lang.Closure;
+import spock.mock.IMockMakerSettings;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
@@ -57,6 +58,12 @@ public abstract class SpecInternals {
       GroovyRuntimeUtil.invokeClosure(closure, mock);
     }
     return uncheckedCast(mock);
+  }
+
+  private void createStaticMock(Type type, MockNature nature,
+                                Map<String, Object> options) {
+    MockConfiguration configuration = new MockConfiguration(null, type, null, nature, MockImplementation.JAVA, options);
+    JavaMockFactory.INSTANCE.createStaticMock(configuration, (Specification) this);
   }
 
   <T> T oldImpl(T expression) {
@@ -307,5 +314,24 @@ public abstract class SpecInternals {
           "Please specify a type explicitly (e.g. 'Mock(Person)').");
     }
     return createMock(inferredName, instance, effectiveType, nature, implementation, options, closure);
+  }
+
+  void SpyStaticImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType) {
+    createStaticMockImpl(MockNature.SPY, specifiedType, null);
+  }
+
+  void SpyStaticImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType, IMockMakerSettings mockMakerSettings) {
+    createStaticMockImpl(MockNature.SPY, specifiedType, mockMakerSettings);
+  }
+
+  private void createStaticMockImpl(MockNature nature, Class<?> specifiedType, @Nullable IMockMakerSettings mockMakerSettings) {
+    if (specifiedType == null) {
+      throw new InvalidSpecException("The type must not be null.");
+    }
+    Map<String, Object> options = emptyMap();
+    if (mockMakerSettings != null) {
+      options = Collections.singletonMap("mockMaker", mockMakerSettings);
+    }
+    createStaticMock(specifiedType, nature, options);
   }
 }

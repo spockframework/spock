@@ -1030,7 +1030,67 @@ a subscriber named Barney instead.
 [MockingStaticMethods]
 === Mocking Static Methods
 
-(Think twice before using this feature. It might be better to change the design of the code under specification.)
+Spock supports two ways of mocking static methods:
+
+* `SpyStatic()` static mocks: Works with Java and Groovy, but requires a mock maker supporting this, e.g. <<extensions.adoc#mock-makers-mockito,mockito>> Mock Maker.
+* Global Groovy mocks: Work only for Groovy code not for Java. If parallel execution is enabled, then the test must be annotated with `@ResourceLock(Resources.META_CLASS_REGISTRY)` or `@Isolated`.
+
+NOTE: Think twice before using this feature.
+      It might be better to change the design of the code under specification.
+
+[[static-mocks]]
+==== Static Mocks
+
+You can create static mocks with `SpyStatic()`.
+The semantics are the same as for the non-static variants:
+
+* `SpyStatic()`: Mocks static methods of the given type; by default, delegates all calls to the real static methods.
+                 Supports both stubbing and mocking.
+
+We are using the class `StaticClass` in the examples:
+
+.Example static class used in the test examples
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/StaticSpyDocSpec.groovy[tag=mock-static-class]
+----
+
+We want to mock the method `staticMethod()`, so we can create a static mock for the `StaticClass` type:
+
+.Mock static method of a class with SpyStatic()
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/StaticSpyDocSpec.groovy[tag=mock-static1]
+----
+
+You can also specify the answers after construction by defining the interactions as for a normal mock:
+
+.Mock static method of a class with interactions
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/StaticSpyDocSpec.groovy[tag=mock-static-interactions]
+----
+
+NOTE: The static mocks require a mock maker supporting static methods, e.g. <<extensions.adoc#mock-makers-mockito,mockito>>.
+See <<extensions.adoc#mock-makers,mock makers>> table for mock makers supporting it.
+
+===== Static Mocks and Threading
+
+The static mocks are thread-local, so they do not interfere with concurrent test execution.
+But this also means that a static mock will not be active, if your code under test will use other threads.
+
+A static mock is activated on the thread, which created the mock, up until the feature execution ends.
+You can activate all static mocks on a different thread by hand:
+
+.Use static mocks in a different Thread
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/StaticSpyDocSpec.groovy[tag=mock-static-different-thread]
+----
+
+The interface `spock.mock.IStaticMock` provides API to activate a static mock on other threads.
+
+==== Global Groovy Mocks for Static Methods
 
 Global mocks support mocking and stubbing of static methods:
 
@@ -1050,6 +1110,8 @@ the mock's instance isn't really needed. In such a case one can just write:
 ----
 GroovySpy(RealSubscriber, global: true)
 ----
+
+NOTE: Global mocks will only work for Groovy code under test not for Java code.
 
 == Advanced Features
 

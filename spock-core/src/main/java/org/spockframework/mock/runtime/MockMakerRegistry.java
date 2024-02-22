@@ -172,6 +172,22 @@ public final class MockMakerRegistry {
     return null;
   }
 
+  /**
+   * Returns {@code true} if the passed class is a Spock static mock currently active on the current {@link Thread}.
+   *
+   * @param clazz the class to check
+   * @return {@code true} if this class is a Spock static mock currently active on the current {@code Thread}
+   */
+  public boolean isStaticMock(Class<?> clazz) {
+    requireNonNull(clazz);
+    for (IMockMaker mockMaker : makerList) {
+      if (mockMaker.isStaticMock(clazz)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private <T> T createWithAppropriateMockMaker(IMockCreationSettings settings, BiFunction<IMockMaker, IMockCreationSettings, T> code) {
     for (IMockMaker mockMaker : makerList) {
       if (isMockable(mockMaker, settings).isMockable()) {

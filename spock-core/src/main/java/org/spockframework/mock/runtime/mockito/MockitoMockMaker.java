@@ -39,7 +39,8 @@ public class MockitoMockMaker implements IMockMaker {
     MockMakerCapability.ADDITIONAL_INTERFACES,
     MockMakerCapability.EXPLICIT_CONSTRUCTOR_ARGUMENTS,
     MockMakerCapability.FINAL_CLASS,
-    MockMakerCapability.FINAL_METHOD
+    MockMakerCapability.FINAL_METHOD,
+    MockMakerCapability.STATIC_METHOD
   ));
 
   private final MockitoMockMakerImpl impl;
@@ -78,6 +79,15 @@ public class MockitoMockMaker implements IMockMaker {
   @Override
   public Object makeMock(IMockCreationSettings settings) throws CannotCreateMockException {
     return Objects.requireNonNull(impl).makeMock(settings);
+  }
+
+  @Override
+  public IStaticMock makeStaticMock(IMockCreationSettings settings) throws CannotCreateMockException {
+    return Objects.requireNonNull(impl).makeStaticMock(settings);
+  }
+
+  public boolean isStaticMock(Class<?> clazz) {
+    return Objects.requireNonNull(impl).isStaticMock(clazz);
   }
 
   @Override

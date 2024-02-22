@@ -35,15 +35,18 @@ import org.spockframework.mock.ISpockMockObject;
 import org.spockframework.mock.MockNature;
 import org.spockframework.mock.runtime.IMockMaker;
 import org.spockframework.mock.runtime.IProxyBasedMockInterceptor;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.ExceptionUtil;
 import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.ThreadSafe;
 import spock.mock.IMockMakerSettings;
 
 import java.lang.reflect.Method;
+import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 import static org.mockito.MockMakers.INLINE;
+import static org.spockframework.util.ObjectUtil.uncheckedCast;
 
 @ThreadSafe
 class MockitoMockMakerImpl {
@@ -95,6 +98,12 @@ class MockitoMockMakerImpl {
     return null;
   }
 
+  public boolean isStaticMock(Class<?> clazz) {
+    requireNonNull(clazz);
+    MockHandler<?> mockHandler = inlineMockMaker.getHandler(clazz);
+    return mockHandler instanceof SpockMockHandler;
+  }
+
   Object makeMock(IMockMaker.IMockCreationSettings settings) throws CannotCreateMockException {
     try {
       MockSettings mockitoSettings = Mockito.withSettings();
@@ -137,6 +146,100 @@ class MockitoMockMakerImpl {
       return IMockMaker.IMockabilityResult.MOCKABLE;
     }
     return result::nonMockableReason;
+  }
+
+  public IMockMaker.IStaticMock makeStaticMock(IMockMaker.IMockCreationSettings settings) {
+    try {
+      MockSettings mockitoSettings = Mockito.withSettings();
+      mockitoSettings.mockMaker(INLINE);
+      //We do not need the verification logic of Mockito
+      mockitoSettings.stubOnly();
+
+      applyMockMakerSettingsFromUser(settings, mockitoSettings);
+      Class<?> type = settings.getMockType();
+      MockCreationSettings<Object> mockitoCreationSettings = mockitoSettings.build(uncheckedCast(type));
+      SpockMockHandler handler = new SpockMockHandler(settings.getMockInterceptor());
+
+      return new MockitoStaticMock(type, () -> inlineMockMaker.createStaticMock(uncheckedCast(type), mockitoCreationSettings, handler));
+    } catch (MockitoException ex) {
+      throw cannotCreateMockException(settings.getMockType(), ex);
+    }
+  }
+
+  private static final class MockitoStaticMock implements IMockMaker.IStaticMock {
+    private final Class<?> type;
+    private final ThreadLocal<MockThreadData> threadData;
+
+    MockitoStaticMock(Class<?> type, Supplier<MockMaker.StaticMockControl<Object>> staticMockControlCreation) {
+      requireNonNull(staticMockControlCreation);
+      this.type = requireNonNull(type);
+      threadData = ThreadLocal.withInitial(() -> new MockThreadData(staticMockControlCreation));
+      //Initialize the mock for the calling thread, to ensure that mockito exceptions are thrown during creation.
+      threadLocalMockData();
+    }
+
+    private MockThreadData threadLocalMockData() {
+      try {
+        return threadData.get();
+      } catch (MockitoException ex) {
+        throw cannotCreateMockException(getType(), ex);
+      }
+    }
+
+    @Override
+    public Class<?> getType() {
+      return type;
+    }
+
+    @Override
+    public void enable() {
+      threadLocalMockData().enable();
+    }
+
+    @Override
+    public void disable() {
+      if (threadLocalMockData().disable()) {
+        threadData.remove();
+      }
+    }
+
+    private static class MockThreadData {
+      private final MockMaker.StaticMockControl<Object> mockControl;
+      private int activations;
+
+      MockThreadData(Supplier<MockMaker.StaticMockControl<Object>> staticMockControlCreation) {
+        this.mockControl = staticMockControlCreation.get();
+      }
+
+      void enable() {
+        if (activations == 0) {
+          try {
+            mockControl.enable();
+          } catch (MockitoException ex) {
+            throw cannotCreateMockException(mockControl.getType(), ex);
+          }
+        }
+        activations++;
+        if (activations < 0) {
+          throw new IllegalStateException("Activations overflowed.");
+        }
+      }
+
+      boolean disable() {
+        activations--;
+        if (activations < 0) {
+          throw new IllegalStateException("disable() called, but there is no activation on the current thread.");
+        } else if (activations == 0) {
+          try {
+            mockControl.disable();
+            return true;
+          } catch (MockitoException ex) {
+            throw cannotCreateMockException(mockControl.getType(), ex);
+          }
+        }
+        return false;
+      }
+    }
   }
 
   private static CannotCreateMockException cannotCreateMockException(Class<?> mockType, MockitoException ex) {

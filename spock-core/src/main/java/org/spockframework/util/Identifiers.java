@@ -86,6 +86,7 @@ public abstract class Identifiers {
   public static final String GROOVY_STUB = "GroovyStub";
   public static final String GROOVY_MOCK = "GroovyMock";
   public static final String GROOVY_SPY = "GroovySpy";
+  public static final String SPY_STATIC = "SpyStatic";
 
   public static final String THROWN = "thrown";
   public static final String NOT_THROWN = "notThrown";
@@ -96,10 +97,10 @@ public abstract class Identifiers {
   public static final String OLD = "old";
 
   public static final Set<String> BUILT_IN_METHODS = new HashSet<>(asList(THROWN, NOT_THROWN,
-    NO_EXCEPTION_THROWN, OLD, WITH, VERIFY_ALL, INTERACTION, STUB, MOCK, SPY, GROOVY_STUB, GROOVY_MOCK, GROOVY_SPY));
+    NO_EXCEPTION_THROWN, OLD, WITH, VERIFY_ALL, INTERACTION, STUB, MOCK, SPY, GROOVY_STUB, GROOVY_MOCK, GROOVY_SPY, SPY_STATIC));
 
   public static final Set<String> TEST_DOUBLE_METHODS = new HashSet<>(
-    asList(STUB, MOCK, SPY, GROOVY_STUB, GROOVY_MOCK, GROOVY_SPY));
+    asList(STUB, MOCK, SPY, GROOVY_STUB, GROOVY_MOCK, GROOVY_SPY, SPY_STATIC));
 
   public static final Set<String> EXCEPTION_CONDITION_METHODS = new HashSet<>(asList(THROWN, NOT_THROWN, NO_EXCEPTION_THROWN));
 }

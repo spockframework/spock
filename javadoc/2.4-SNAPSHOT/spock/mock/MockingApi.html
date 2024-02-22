@@ -104,6 +104,8 @@ implements <a href="MockFactory.html" title="interface in spock.mock">MockFactor
    <dd>Creates a Stub() with additional, Groovy-specific features.</dd>
    <dt>GroovySpy() </dt>
    <dd>Creates a Spy() with additional, Groovy-specific features.</dd>
+   <dt>SpyStatic()</dt>
+   <dd>Mocks static methods of the given type that, by default, delegates all calls to the real static methods. Supports both stubbing and mocking.</dd>
  </dl>
 
  Each factory method accepts up to three parameters, each of which is optional (resulting in eight method overloads):
@@ -354,112 +356,133 @@ implements <a href="MockFactory.html" title="interface in spock.mock">MockFactor
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a mock with the specified options, type, and interactions.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Spy()" class="member-name-link">Spy</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#runWithThreadAwareMocks(java.lang.Runnable)" class="member-name-link">runWithThreadAwareMocks</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;code)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Creates a spy whose type and name are inferred from the left-hand side of the enclosing variable assignment.</div>
+<div class="block">Runs the code with the thread-aware mocks activated on the current <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html" title="class or interface in java.lang" class="external-link"><code>Thread</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Spy(groovy.lang.Closure)" class="member-name-link">Spy</a><wbr>(<a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;interactions)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Spy()" class="member-name-link">Spy</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Creates a spy whose type and name are inferred from the left-hand side of the enclosing variable assignment.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Spy(groovy.lang.Closure)" class="member-name-link">Spy</a><wbr>(<a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;interactions)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a spy with the specified interactions whose type and name are inferred
  from the left-hand side of the enclosing assignment.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Spy(java.lang.Class)" class="member-name-link">Spy</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Spy(java.lang.Class)" class="member-name-link">Spy</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a spy with the specified type.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Spy(java.lang.Class,groovy.lang.Closure)" class="member-name-link">Spy</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Spy(java.lang.Class,groovy.lang.Closure)" class="member-name-link">Spy</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type,
  <a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;interactions)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a spy with the specified type and interactions.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Spy(java.util.Map)" class="member-name-link">Spy</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;options)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Spy(java.util.Map)" class="member-name-link">Spy</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;options)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a spy with the specified options whose type and name are inferred from the left-hand side of the
  enclosing variable assignment.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Spy(java.util.Map,groovy.lang.Closure)" class="member-name-link">Spy</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;options,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Spy(java.util.Map,groovy.lang.Closure)" class="member-name-link">Spy</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;options,
  <a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;interactions)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a spy with the specified options and interactions whose type and name are inferred
  from the left-hand side of the enclosing assignment.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Spy(java.util.Map,java.lang.Class)" class="member-name-link">Spy</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;options,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Spy(java.util.Map,java.lang.Class)" class="member-name-link">Spy</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;options,
  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a spy with the specified options and type.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Spy(java.util.Map,java.lang.Class,groovy.lang.Closure)" class="member-name-link">Spy</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;options,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Spy(java.util.Map,java.lang.Class,groovy.lang.Closure)" class="member-name-link">Spy</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;options,
  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type,
  <a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;interactions)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a spy with the specified options, type, and interactions.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Spy(T)" class="member-name-link">Spy</a><wbr>(T&nbsp;obj)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Spy(T)" class="member-name-link">Spy</a><wbr>(T&nbsp;obj)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a spy wrapping a provided instance.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Spy(T,groovy.lang.Closure)" class="member-name-link">Spy</a><wbr>(T&nbsp;obj,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Spy(T,groovy.lang.Closure)" class="member-name-link">Spy</a><wbr>(T&nbsp;obj,
  <a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;interactions)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a spy with the specified interactions wrapping a provided instance.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Stub()" class="member-name-link">Stub</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#SpyStatic(java.lang.Class)" class="member-name-link">SpyStatic</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Creates a thread-local spy for all static methods of the passed type.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#SpyStatic(java.lang.Class,spock.mock.IMockMakerSettings)" class="member-name-link">SpyStatic</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type,
+ <a href="IMockMakerSettings.html" title="interface in spock.mock">IMockMakerSettings</a>&nbsp;mockMakerSettings)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Creates a stub whose type and name are inferred from the left-hand side of the enclosing variable assignment.</div>
+<div class="block">Creates a thread-local spy for all static methods of the passed type.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Stub(groovy.lang.Closure)" class="member-name-link">Stub</a><wbr>(<a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;interactions)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Stub()" class="member-name-link">Stub</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Creates a stub whose type and name are inferred from the left-hand side of the enclosing variable assignment.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Stub(groovy.lang.Closure)" class="member-name-link">Stub</a><wbr>(<a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;interactions)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a stub with the specified interactions whose type and name are inferred
  from the left-hand side of the enclosing assignment.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Stub(java.lang.Class)" class="member-name-link">Stub</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Stub(java.lang.Class)" class="member-name-link">Stub</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a stub with the specified type.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Stub(java.lang.Class,groovy.lang.Closure)" class="member-name-link">Stub</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Stub(java.lang.Class,groovy.lang.Closure)" class="member-name-link">Stub</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type,
  <a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;interactions)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a stub with the specified type and interactions.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Stub(java.util.Map)" class="member-name-link">Stub</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;options)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Stub(java.util.Map)" class="member-name-link">Stub</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;options)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a stub with the specified options whose type and name are inferred from the left-hand side of the
  enclosing variable assignment.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Stub(java.util.Map,groovy.lang.Closure)" class="member-name-link">Stub</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;options,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Stub(java.util.Map,groovy.lang.Closure)" class="member-name-link">Stub</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;options,
  <a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;interactions)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a stub with the specified options and interactions whose type and name are inferred
  from the left-hand side of the enclosing assignment.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Stub(java.util.Map,java.lang.Class)" class="member-name-link">Stub</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;options,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Stub(java.util.Map,java.lang.Class)" class="member-name-link">Stub</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;options,
  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a stub with the specified options and type.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Stub(java.util.Map,java.lang.Class,groovy.lang.Closure)" class="member-name-link">Stub</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;options,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#Stub(java.util.Map,java.lang.Class,groovy.lang.Closure)" class="member-name-link">Stub</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;options,
  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type,
  <a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;interactions)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a stub with the specified options, type, and interactions.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;R&gt;&nbsp;R</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withActiveThreadAwareMocks(java.util.concurrent.Callable)" class="member-name-link">withActiveThreadAwareMocks</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/Callable.html" title="class or interface in java.util.concurrent" class="external-link">Callable</a>&lt;R&gt;&nbsp;code)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Runs the code with the thread-aware mocks activated on the current <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html" title="class or interface in java.lang" class="external-link"><code>Thread</code></a>.</div>
 </div>
 </div>
 </div>
@@ -1837,11 +1860,87 @@ implements <a href="MockFactory.html" title="interface in spock.mock">MockFactor
 <dt>Type Parameters:</dt>
 <dd><code>T</code> - the class type of the Groovy spy</dd>
 <dt>Parameters:</dt>
-<dd><code>options</code> - options for creating the Groovy spy (see <code>IMockConfiguration</code> for available options})</dd>
+<dd><code>options</code> - options for creating the Groovy spy (see <code>IMockConfiguration</code> for available options)</dd>
 <dd><code>type</code> - the class type of the Groovy spy</dd>
 <dd><code>interactions</code> - a description of the Groovy spy's interactions</dd>
 <dt>Returns:</dt>
 <dd>a Groovy spy with the specified options, type, and interactions</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="SpyStatic(java.lang.Class)">
+<h3>SpyStatic</h3>
+<div class="member-signature"><span class="annotations">@Beta
+</span><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">SpyStatic</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type)</span></div>
+<div class="block">Creates a thread-local spy for all static methods of the passed type.
+ <p>
+ Example:
+
+ <pre>
+   SpyStatic(Person)
+ </pre>
+
+ <p>If you want to activate the static mocks on a different <code>Thread</code>,
+ please call <a href="#runWithThreadAwareMocks(java.lang.Runnable)"><code>runWithThreadAwareMocks(Runnable)</code></a> on the different <code>Thread</code>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>type</code> - the type of which the static methods shall be spied</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="SpyStatic(java.lang.Class,spock.mock.IMockMakerSettings)">
+<h3>SpyStatic</h3>
+<div class="member-signature"><span class="annotations">@Beta
+</span><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">SpyStatic</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type,
+ <a href="IMockMakerSettings.html" title="interface in spock.mock">IMockMakerSettings</a>&nbsp;mockMakerSettings)</span></div>
+<div class="block">Creates a thread-local spy for all static methods of the passed type.
+ <p>
+ Example:
+
+ <pre>
+   SpyStatic(Person, spock.mock.MockMakers.mockitoInline)
+ </pre>
+
+ <p>If you want to activate the static mocks on a different <code>Thread</code>,
+ please call <a href="#runWithThreadAwareMocks(java.lang.Runnable)"><code>runWithThreadAwareMocks(Runnable)</code></a> on the different <code>Thread</code>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>type</code> - the type of which the static methods shall be spied</dd>
+<dd><code>mockMakerSettings</code> - the mock maker settings to apply to the static spy</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="runWithThreadAwareMocks(java.lang.Runnable)">
+<h3>runWithThreadAwareMocks</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">runWithThreadAwareMocks</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;code)</span></div>
+<div class="block">Runs the code with the thread-aware mocks activated on the current <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html" title="class or interface in java.lang" class="external-link"><code>Thread</code></a>.
+
+ <p>Note: You only need this if your current <code>Thread</code> is not the test thread.
+ On the test <code>Thread</code>, the thread-aware mocks are automatically activated.</p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>code</code> - the code to execute</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="withActiveThreadAwareMocks(java.util.concurrent.Callable)">
+<h3>withActiveThreadAwareMocks</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type">R</span>&nbsp;<span class="element-name">withActiveThreadAwareMocks</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/Callable.html" title="class or interface in java.util.concurrent" class="external-link">Callable</a>&lt;R&gt;&nbsp;code)</span></div>
+<div class="block">Runs the code with the thread-aware mocks activated on the current <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html" title="class or interface in java.lang" class="external-link"><code>Thread</code></a>.
+
+ <p>Note: You only need this if your current <code>Thread</code> is not the test thread.
+ On the test <code>Thread</code>, the thread-aware mocks are automatically activated.</p></div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>R</code> - the return type</dd>
+<dt>Parameters:</dt>
+<dd><code>code</code> - the code to execute</dd>
+<dt>Returns:</dt>
+<dd>the return value of the executed code</dd>
 </dl>
 </section>
 </li>

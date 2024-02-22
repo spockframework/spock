@@ -1122,6 +1122,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="spock/config/RunnerConfiguration.html#%3Cinit%3E()" class="member-name-link">RunnerConfiguration()</a> - Constructor for class spock.config.<a href="spock/config/RunnerConfiguration.html" title="class in spock.config">RunnerConfiguration</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="spock/mock/MockingApi.html#runWithThreadAwareMocks(java.lang.Runnable)" class="member-name-link">runWithThreadAwareMocks(Runnable)</a> - Method in class spock.mock.<a href="spock/mock/MockingApi.html" title="class in spock.mock">MockingApi</a></dt>
+<dd>
+<div class="block">Runs the code with the thread-aware mocks activated on the current <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html" title="class or interface in java.lang" class="external-link"><code>Thread</code></a>.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:S">S</h2>
 <dl class="index">
@@ -1308,6 +1312,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="spock/mock/MockingApi.html#Spy(T,groovy.lang.Closure)" class="member-name-link">Spy(T, Closure)</a> - Method in class spock.mock.<a href="spock/mock/MockingApi.html" title="class in spock.mock">MockingApi</a></dt>
 <dd>
 <div class="block">Creates a spy with the specified interactions wrapping a provided instance.</div>
+</dd>
+<dt><a href="spock/mock/MockingApi.html#SpyStatic(java.lang.Class)" class="member-name-link">SpyStatic(Class&lt;T&gt;)</a> - Method in class spock.mock.<a href="spock/mock/MockingApi.html" title="class in spock.mock">MockingApi</a></dt>
+<dd>
+<div class="block">Creates a thread-local spy for all static methods of the passed type.</div>
+</dd>
+<dt><a href="spock/mock/MockingApi.html#SpyStatic(java.lang.Class,spock.mock.IMockMakerSettings)" class="member-name-link">SpyStatic(Class&lt;T&gt;, IMockMakerSettings)</a> - Method in class spock.mock.<a href="spock/mock/MockingApi.html" title="class in spock.mock">MockingApi</a></dt>
+<dd>
+<div class="block">Creates a thread-local spy for all static methods of the passed type.</div>
 </dd>
 <dt><a href="spock/lang/Stepwise.html" class="type-name-link" title="annotation in spock.lang">Stepwise</a> - Annotation Type in <a href="spock/lang/package-summary.html">spock.lang</a></dt>
 <dd>
@@ -1605,6 +1617,10 @@ the order they are declared.</div>
 <div class="block">Sets the specified object as the implicit target of the top-level conditions and/or
  interactions contained in the specified code block, thereby avoiding the need to repeat
  the same expression multiple times.</div>
+</dd>
+<dt><a href="spock/mock/MockingApi.html#withActiveThreadAwareMocks(java.util.concurrent.Callable)" class="member-name-link">withActiveThreadAwareMocks(Callable&lt;R&gt;)</a> - Method in class spock.mock.<a href="spock/mock/MockingApi.html" title="class in spock.mock">MockingApi</a></dt>
+<dd>
+<div class="block">Runs the code with the thread-aware mocks activated on the current <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html" title="class or interface in java.lang" class="external-link"><code>Thread</code></a>.</div>
 </dd>
 <dt><a href="spock/util/concurrent/PollingConditions.html#within(double,groovy.lang.Closure)" class="member-name-link">within(double, Closure&lt;?&gt;)</a> - Method in class spock.util.concurrent.<a href="spock/util/concurrent/PollingConditions.html" title="class in spock.util.concurrent">PollingConditions</a></dt>
 <dd>

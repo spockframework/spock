@@ -149,6 +149,12 @@ class MockingIntegrationSpec extends Specification {
     then:
     result == "Mock"
     1 * StaticClass.staticMethod() >> "Mock"
+
+    when: "no interaction specified in then"
+    result = StaticClass.staticMethod()
+
+    then:
+    result == "RealValue"
   }
 
   private static final class FinalClass {

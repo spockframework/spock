@@ -21,9 +21,9 @@ import spock.lang.Specification
 
 import java.util.concurrent.Executors
 
-class StaticMocksDocSpec extends Specification {
+class StaticSpyDocSpec extends Specification {
 
-  def "StaticMock"() {
+  def "SpyStatic"() {
     // tag::mock-static1[]
     given:
     SpyStatic(StaticClass)
@@ -40,7 +40,7 @@ class StaticMocksDocSpec extends Specification {
     // end::mock-static1[]
   }
 
-  def "StaticMock with interactions"() {
+  def "SpyStatic with interactions"() {
     // tag::mock-static-interactions[]
     given:
     SpyStatic(StaticClass)
@@ -51,7 +51,7 @@ class StaticMocksDocSpec extends Specification {
     // end::mock-static-interactions[]
   }
 
-  def "StaticMock in a different thread"() {
+  def "SpyStatic in a different thread"() {
     // tag::mock-static-different-thread[]
     given:
     SpyStatic(StaticClass)

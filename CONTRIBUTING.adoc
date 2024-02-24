@@ -40,11 +40,11 @@ IMPORTANT: *We appreciate your effort, and want to avoid a situation where a con
 
 When reviewing pull requests, we value the following qualities (in no particular order):
 
-* Carefully crafted, clean and concise code
+* Carefully crafted, clean, and concise code
 * Small, focused commits that tackle one thing at a time
 * New code blends in well with existing code, respecting established coding standards and practices
-* Tests are updated/added along with the code, communicate intent and cover important cases (see <<Tests,Tests>> for additional information)
-* Documentation (Javadoc, Groovydoc, reference documentation) is updated/added along with the code
+* Tests are updated/added along with the code, communicate intent, and cover important cases (see <<Tests,Tests>> for additional information)
+* Documentation (Javadoc, Groovydoc, reference documentation, release notes) is updated/added along with the code
 * A good commit message that follows the https://chris.beams.io/posts/git-commit/[seven rules]
 
 Don't be intimidated by these words.
@@ -55,20 +55,20 @@ Before doing so, we may ask for some concrete improvements to be made, in which 
 
 ==== Try to avoid breaking stuff
 
-Spock has been around for a long time and people have built a large suite of tests that rely on Spock.
-People want their tests to fail if they made an error, they don't want to update their tests because their testing framework broke stuff.
+Spock has been around for a long time, and people have built a large suite of tests that rely on Spock.
+People want their tests to fail if they make an error; they don't want to update their tests because their testing framework broke stuff.
 
-Unless there is a compelling reason to break something don't do it.
+Unless there is a compelling reason to break something, don't do it.
 The potential impact also has to be considered, if the change only affects a niche use-case then it is easier to include than something that breaks every use-case.
 
-If a behavior has been around long enough it might become a https://xkcd.com/1172/[feature], even if that was never intend or was even a bug.
-In some cases we will decide to keep the existing behavior, even if we'd do it differently when starting from a blank slate.
+If a behavior has been around long enough it might become a https://xkcd.com/1172/[feature], even if that was never intended or was even a bug.
+In some cases, we will decide to keep the existing behavior, even if we'd do it differently when starting from a blank slate.
 
 ==== Can it be solved with an extension instead?
 
 Don't add specialized code to `spock-core` if it can be achieved by Spock's powerful extension system.
 
-If it is not possible at the moment, can the extension system be improved, so that it can cover this use-case instead.
+If it is not possible at the moment, can the extension system be improved so that it can cover this use-case instead?
 
 ===== Can it be a third-party extension?
 
@@ -80,10 +80,10 @@ You can find a list of third-party extensions in the https://github.com/spockfra
 
 A non-exhaustive list :
 
-* Indent with 2 spaces (should be already be set by `.editorconfig`)
+* Indent with 2 spaces (should already be set by `.editorconfig`)
 * One-line `if` expression can only be used as a `return` guard, e.g., `if (!ok) return;`.
-  For other cases put the body in the next line and add braces.
-* Prefer to use `Type mock = Mock()` instead of `def mock = Mock(Type)`, unless you are explicitly testing the other syntax.
+  For other cases, put the body next to the line and add braces.
+* Prefer to use `Type mock = Mock()` instead of `def mock = Mock(Type)` unless you are explicitly testing the other syntax.
 * Add a blank line before a block label, excluding the first block in a feature.
 +
 [source,groovy]
@@ -98,8 +98,8 @@ def "a feature"() {
 ----
 * Don't put code in the same line as a block label.
 * Use `given` instead of `setup`
-* Don't add `noExceptionThrown()` if there are other assertions present.
-* Use explicit parameter types when using non-primitive data variables, unless you are explicitly testing the other syntax.
+* Don't add `noExceptionThrown()` if other assertions are present.
+* Use explicit parameter types when using non-primitive data variables unless you are explicitly testing the other syntax.
 * If you use unroll patterns, prefer to have a feature name describing the general use case and use the `@Unroll` extension to provide the pattern for the iteration.
 +
 [source,groovy]
@@ -129,7 +129,7 @@ The same goes for changes to user-visible behavior.
 === Tests
 
 All tests are written in Spock. Tests for `spock-core` are located in the `spock-specs` project; all other projects have co-located tests.
-For each user-visible behavior, a functional test is required.
+A functional test is required for each user-visible behavior.
 Functional tests for `spock-core` are located under https://github.spockframework.org/spock/tree/master/spock-specs/src/test/groovy/org/spockframework/smoke[`spock-specs/src/test/groovy/org/spockframework/smoke`].
 
 == Development Tools
@@ -166,7 +166,7 @@ To generate an IDEA project configuration:
 
 NOTE: You can provide an optional 'variant' flag to the gradle build `-Dvariant=[2.5|3.0|4.0]` that specifies the version of groovy you wish to use.
 For example, if we wish to use groovy 3.0, we would run `./gradlew cleanIdea idea -Dvariant=3.0` and import the generated `spock-3.0.ipr` into Intellij.
-You can also use the helper script `allVariants`, e.g., `./allVariants idea` will create or update the project for all three variants.
+You can also use the helper script `allVariants`, e.g., `./allVariants idea`, which will create or update the project for all three variants.
 
 This should result in a fully functional IDE setup where:
 
@@ -175,8 +175,8 @@ This should result in a fully functional IDE setup where:
 * Both Java and Groovy code compiles without problems
 * All tests can be run without problems
 
-From time to time (e.g. when someone has added a new dependency), it may be necessary to resync the IDEA project with the Gradle build.
-This is done by rerunning the steps above.
+From time to time (e.g. when someone has added a new dependency), it may be necessary to re-sync the IDEA project with the Gradle build.
+This is done by re-running the steps above.
 
 Note: Unfortunately there are currently https://github.com/spockframework/spock/issues/70[some issues] with Intellij's Gradle support that prevent integration with the Spock project.
 Please use the method described above rather than importing the top-level `build.gradle` file.

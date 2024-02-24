@@ -16,8 +16,14 @@
 
 package spock.util.mop
 
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.model.parallel.ExecutionMode
+import spock.lang.Isolated
+import spock.lang.Requires
 import spock.lang.Specification
+
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 class UseOnMethods extends Specification {
   // can be applied to a fixture method
@@ -30,12 +36,6 @@ class UseOnMethods extends Specification {
   def "can be applied to a feature method"() {
     expect:
     "foo".duplicate() == "foofoo"
-  }
-
-  @Use(StringExtensions)
-  def "sets feature execution mode to SAME_THREAD"() {
-    expect:
-    specificationContext.currentFeature.executionMode.get() == ExecutionMode.SAME_THREAD
   }
 
   @Use([StringExtensions, IntegerExtensions])
@@ -80,6 +80,69 @@ class UseOnMethods extends Specification {
       "foo".duplicate()
       assert false
     } catch (MissingMethodException expected) {}
+  }
+}
+
+@Isolated("Isolate from other tests to have full access to cores for the embedded tests.")
+@Requires({ Runtime.runtime.availableProcessors() >= 2 })
+class IsolatedUseSpec extends EmbeddedSpecification {
+  def setup() {
+    runner.addClassImport(Use)
+    runner.addClassImport(CountDownLatch)
+    runner.addClassImport(StringExtensions)
+    runner.addClassImport(ExecutionMode)
+    runner.addClassImport(TimeUnit)
+    runner.configurationScript {
+      runner {
+        parallel {
+          enabled true
+          fixed(4)
+        }
+      }
+    }
+  }
+
+  def "executing iterations in parallel is prevented with annotated specification"() {
+    given:
+    runner.throwFailure = false
+
+    when:
+    def result = runner.runWithImports '''
+      @Use(StringExtensions)
+      class ASpec extends Specification {
+        def feature() {
+          expect:
+          specificationContext.currentSpec.childExecutionMode.orElse(null) == ExecutionMode.SAME_THREAD
+        }
+      }
+    '''
+
+    then:
+    result.testsSucceededCount == 1
+  }
+
+  def "executing iterations in parallel works with annotated feature"() {
+    when:
+    def result = runner.runSpecBody '''
+      @Shared
+      CountDownLatch latch = new CountDownLatch(2)
+
+      @Use(StringExtensions)
+      def feature() {
+        given:
+        latch.countDown()
+
+        expect:
+        latch.await(10, TimeUnit.SECONDS)
+        "foo".duplicate() == "foofoo"
+
+        where:
+        i << (1..2)
+      }
+    '''
+
+    then:
+    result.testsSucceededCount == 3
   }
 }
 

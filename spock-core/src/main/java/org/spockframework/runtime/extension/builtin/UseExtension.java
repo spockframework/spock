@@ -41,7 +41,6 @@ public class UseExtension implements IAnnotationDrivenExtension<Use> {
   @Override
   public void visitFeatureAnnotations(List<Use> annotations, FeatureInfo feature) {
     addInterceptor(annotations, feature.getFeatureMethod());
-    feature.setExecutionMode(ExecutionMode.SAME_THREAD);
   }
 
   @Override

@@ -294,6 +294,7 @@ This will pass for the first two iterations, fail on the third and skip the rema
 
 NOTE: For backward compatibility with Spock versions prior to 2.2, applying the annotation on spec level will _not_ automatically skip subsequent feature method iterations upon failure in a previous iteration. If you want that in addition to (or instead of) step-wise spec mode, you do have to annotate each individual feature method you wish to have that capability. This also conforms to the principle that if you want to skip tests under whatever conditions, you ought to document your intent explicitly.
 
+[[timeout-extension]]
 === Timeout
 
 To fail a feature method, fixture, or class that exceeds a given execution duration, use `spock.lang.Timeout`,
@@ -1026,6 +1027,7 @@ include::{sourcedir}/extension/InterceptorSpec.groovy[tag=interceptor-register-s
 include::{sourcedir}/extension/InterceptorSpec.groovy[tag=interceptor-register-feature]
 ----
 
+[[parameter-injection]]
 ==== Injecting Method Parameters
 
 Starting with Spock 2.4, it is possible to create `IAnnotationDrivenExtension` that target method parameters directly.

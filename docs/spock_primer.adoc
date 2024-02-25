@@ -242,6 +242,7 @@ def setup() {
 
 If an explicit condition is violated, it will produce the same nice diagnostic message as an implicit condition.
 
+[[opt-out-of-condition-handling]]
 ====== Opt-out of condition handling
 
 Sometimes, you may want to use a top-level expression that is not treated as a condition.

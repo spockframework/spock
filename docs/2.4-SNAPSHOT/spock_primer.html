@@ -949,6 +949,156 @@ failing the test to have more information, this behavior is also known as soft a
 </div>
 </div>
 <div class="sect1">
+<h2 id="_using_verifyeach_to_assert_on_each_element_of_an_iterable"><a class="anchor" href="#_using_verifyeach_to_assert_on_each_element_of_an_iterable"></a><a class="link" href="#_using_verifyeach_to_assert_on_each_element_of_an_iterable">Using <code>verifyEach</code> to assert on each element of an <code>Iterable</code></a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There are several ways to do assertions on <code>Iterable</code> or <code>Collection</code>.</p>
+</div>
+<div class="sect2">
+<h3 id="_list_equality"><a class="anchor" href="#_list_equality"></a><a class="link" href="#_list_equality">List Equality</a></h3>
+<div class="paragraph">
+<p>List equality is useful when the expected values are few and can be easily constructed.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> list = [<span class="integer">1</span>, <span class="integer">2</span>, <span class="integer">3</span>]
+<span class="keyword">assert</span> list == [<span class="integer">1</span>, <span class="integer">2</span>, <span class="integer">4</span>]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>will be rendered as</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>list == [1, 2, 4]
+|    |
+|    false
+[1, 2, 3]</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_equality"><a class="anchor" href="#_set_equality"></a><a class="link" href="#_set_equality">Set Equality</a></h3>
+<div class="paragraph">
+<p>As with list equality, set equality is useful when the expected values are few and can be easily constructed.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> set = [<span class="integer">2</span>, <span class="integer">3</span>, <span class="integer">1</span>] <span class="keyword">as</span> <span class="predefined-type">Set</span>
+<span class="keyword">assert</span> set == [<span class="integer">1</span>, <span class="integer">2</span>, <span class="integer">4</span>] <span class="keyword">as</span> <span class="predefined-type">Set</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>will be rendered as</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>set == [1, 2, 4] as Set
+|   |
+|   false
+|   2 differences (66% similarity, 1 missing, 1 extra)
+|   missing: [4]
+|   extra: [3]
+[2, 3, 1]</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_every_method"><a class="anchor" href="#_every_method"></a><a class="link" href="#_every_method">Every Method</a></h3>
+<div class="paragraph">
+<p>You can also use the standard Groovy method <code>every</code> to do assertions.
+The downside is, that you don&#8217;t get any insight into which element failed, or why.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> list = [<span class="integer">1</span>, <span class="integer">2</span>, <span class="integer">3</span>]
+<span class="keyword">assert</span> list.every { <span class="local-variable">it</span> == <span class="integer">2</span> }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>will be rendered as</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>list.every { it == 2 }
+|    |
+|    false
+[1, 2, 3]</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="verify-each"><a class="anchor" href="#verify-each"></a><a class="link" href="#verify-each">VerifyEach Method</a></h3>
+<div class="paragraph">
+<p>Since 2.4, you can use the <code>verifyEach</code> method to perform assertions on every element of an iterable.
+In contrast to <code>every</code>, it will not stop at the first failure and instead check every element and provide a comprehensive report at the end.
+It won&#8217;t render the full list of items, which makes it useful in cases of a large number of items.
+Like <code>with</code> the current item will be set as the delegate and passed as parameter to the closure.
+The statements in the closure will also be treated as implicit assertions.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> list = [<span class="integer">1</span>, <span class="integer">2</span>, <span class="integer">3</span>]
+verifyEach(list) { <span class="local-variable">it</span> == <span class="integer">2</span> }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>will be rendered as</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Multiple Failures (2 failures)
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[0] 1:
+Condition not satisfied:
+
+it == 2
+|  |
+1  false
+
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[2] 3:
+Condition not satisfied:
+
+it == 2
+|  |
+3  false</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>By default, the item will be rendered with a simple <code>toString()</code>.
+However, you can provide a custom "namer"-method to provide your own representation.
+This is useful when the item either has no useful <code>toString()</code> method or if it is too verbose.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> list = [<span class="integer">1</span>, <span class="integer">2</span>, <span class="integer">3</span>]
+verifyEach(list, { <span class="string"><span class="delimiter">&quot;</span><span class="content">int(</span><span class="inline"><span class="inline-delimiter">$</span><span class="local-variable">it</span></span><span class="content">)</span><span class="delimiter">&quot;</span></span> }) { <span class="local-variable">it</span> == <span class="integer">2</span> }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>will be rendered as</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Multiple Failures (2 failures)
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[0] int(1):
+Condition not satisfied:
+
+it == 2
+|  |
+1  false
+
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[2] int(3):
+Condition not satisfied:
+
+it == 2
+|  |
+3  false</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="specifications_as_documentation"><a class="anchor" href="#specifications_as_documentation"></a><a class="link" href="#specifications_as_documentation">Specifications as Documentation</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1125,7 +1275,7 @@ used (like specifying the behavior of exception conditions). In all other cases,
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-02-26 09:07:28 UTC
+Last updated 2024-02-26 19:22:25 UTC
 </div>
 </div>
 </body>

@@ -14,8 +14,8 @@ description = "Spock Framework"
 
 ext {
   baseVersion = "2.4"
-  snapshotVersion = false
-  milestone = 2
+  snapshotVersion = true
+  milestone = 0
   javaVersions = [8, 11, 17, 21] // ensure that latest version is actually build on GH actions and added to gradle.properties, otherwise no docs get published
   javaVersion = (System.getProperty("javaVersion") ?: 8) as int
   variants = [2.5, 3.0, 4.0]

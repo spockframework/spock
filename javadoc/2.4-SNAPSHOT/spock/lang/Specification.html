@@ -181,6 +181,19 @@ loadScripts(document, 'script');</script>
 <div class="block">A combination of <a href="#with(U,groovy.lang.Closure)"><code>with(Object, Closure)</code></a> and <a href="#verifyAll(groovy.lang.Closure)"><code>verifyAll(Closure)</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;U&gt;&nbsp;void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#verifyEach(java.lang.Iterable,groovy.lang.Closure)" class="member-name-link">verifyEach</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link">Iterable</a>&lt;U&gt;&nbsp;things,
+ <a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Performs assertions on each item, collecting up failures instead of stopping at first.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;U&gt;&nbsp;void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#verifyEach(java.lang.Iterable,java.util.function.Function,groovy.lang.Closure)" class="member-name-link">verifyEach</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link">Iterable</a>&lt;U&gt;&nbsp;things,
+ <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super U,<wbr>?&gt;&nbsp;namer,
+ <a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Performs assertions on each item, collecting up failures instead of stopping at first.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;U&gt;&nbsp;void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#with(java.lang.Object,java.lang.Class,groovy.lang.Closure)" class="member-name-link">with</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;target,
  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;U&gt;&nbsp;type,
  <a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;closure)</code></div>
@@ -495,6 +508,50 @@ loadScripts(document, 'script');</script>
 <dd><code>closure</code> - a code block containing top-level conditions and/or interactions</dd>
 <dt>Since:</dt>
 <dd>1.2</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="verifyEach(java.lang.Iterable,groovy.lang.Closure)">
+<h3>verifyEach</h3>
+<div class="member-signature"><span class="annotations">@Beta
+</span><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;U&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">verifyEach</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link">Iterable</a>&lt;U&gt;&nbsp;things,
+ <a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/DelegatesTo.html" title="class or interface in groovy.lang" class="external-link">@DelegatesTo</a>(<a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/DelegatesTo.html#type--" title="class or interface in groovy.lang" class="external-link">type</a>="U",<a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/DelegatesTo.html#strategy--" title="class or interface in groovy.lang" class="external-link">strategy</a>=1)
+ <a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</span></div>
+<div class="block">Performs assertions on each item, collecting up failures instead of stopping at first.
+ <p>
+ Exception messages will contain a toString() of the item to identify it.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>U</code> - type of items in things</dd>
+<dt>Parameters:</dt>
+<dd><code>things</code> - the iterable to inspect</dd>
+<dd><code>closure</code> - a code block containing top-level conditions</dd>
+<dt>Since:</dt>
+<dd>2.4</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="verifyEach(java.lang.Iterable,java.util.function.Function,groovy.lang.Closure)">
+<h3>verifyEach</h3>
+<div class="member-signature"><span class="annotations">@Beta
+</span><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;U&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">verifyEach</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link">Iterable</a>&lt;U&gt;&nbsp;things,
+ <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super U,<wbr>?&gt;&nbsp;namer,
+ <a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/DelegatesTo.html" title="class or interface in groovy.lang" class="external-link">@DelegatesTo</a>(<a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/DelegatesTo.html#type--" title="class or interface in groovy.lang" class="external-link">type</a>="U",<a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/DelegatesTo.html#strategy--" title="class or interface in groovy.lang" class="external-link">strategy</a>=1)
+ <a href="https://docs.groovy-lang.org/docs/groovy-4.0.18/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</span></div>
+<div class="block">Performs assertions on each item, collecting up failures instead of stopping at first.
+ <p>
+ Exception messages will contain the result of calling the namer for an item to identify it.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>U</code> - type of items in things</dd>
+<dt>Parameters:</dt>
+<dd><code>things</code> - the iterable to inspect</dd>
+<dd><code>namer</code> - the namer function to use when rendering the exception</dd>
+<dd><code>closure</code> - a code block containing top-level conditions</dd>
+<dt>Since:</dt>
+<dd>2.4</dd>
 </dl>
 </section>
 </li>

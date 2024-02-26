@@ -162,7 +162,7 @@
 <li><a href="#_pendingfeature">PendingFeature</a></li>
 <li><a href="#_pendingfeatureif">PendingFeatureIf</a></li>
 <li><a href="#_stepwise">Stepwise</a></li>
-<li><a href="#_timeout">Timeout</a></li>
+<li><a href="#timeout-extension">Timeout</a></li>
 <li><a href="#_retry">Retry</a></li>
 <li><a href="#_use">Use</a></li>
 <li><a href="#_confinemetaclasschanges">ConfineMetaClassChanges</a></li>
@@ -256,8 +256,9 @@
 </li>
 <li><a href="#_release_notes">Release Notes</a>
 <ul class="sectlevel2">
-<li><a href="#_2_4_tbd">2.4 (tbd)</a>
+<li><a href="#_2_4_m2_tbd">2.4-M2 (tbd)</a>
 <ul class="sectlevel3">
+<li><a href="#_highlights">Highlights</a></li>
 <li><a href="#_breaking_changes">Breaking Changes</a></li>
 <li><a href="#_misc">Misc</a></li>
 </ul>
@@ -274,14 +275,14 @@
 <li><a href="#_2_1_m2_2021_11_12">2.1-M2 (2021-11-12)</a></li>
 <li><a href="#_2_1_m1_2021_11_12">2.1-M1 (2021-11-12)</a>
 <ul class="sectlevel3">
-<li><a href="#_highlights">Highlights</a></li>
+<li><a href="#_highlights_2">Highlights</a></li>
 <li><a href="#_breaking_changes_2">Breaking Changes</a></li>
 <li><a href="#_misc_3">Misc</a></li>
 </ul>
 </li>
 <li><a href="#_2_0_2021_05_17">2.0 (2021-05-17)</a>
 <ul class="sectlevel3">
-<li><a href="#_highlights_2">Highlights</a></li>
+<li><a href="#_highlights_3">Highlights</a></li>
 <li><a href="#_migrating_from_1_x">Migrating from 1.x</a></li>
 <li><a href="#_breaking_changes_from_2_0_m5">Breaking Changes (from 2.0-M5)</a></li>
 <li><a href="#_misc_4">Misc</a></li>
@@ -842,7 +843,7 @@ To use conditions in other places, you need to designate them with Groovy&#8217;
 <p>If an explicit condition is violated, it will produce the same nice diagnostic message as an implicit condition.</p>
 </div>
 <div class="sect6">
-<h7 id="_opt_out_of_condition_handling"><a class="anchor" href="#_opt_out_of_condition_handling"></a><a class="link" href="#_opt_out_of_condition_handling">Opt-out of condition handling</a></h7>
+<h7 id="opt-out-of-condition-handling"><a class="anchor" href="#opt-out-of-condition-handling"></a><a class="link" href="#opt-out-of-condition-handling">Opt-out of condition handling</a></h7>
 <div class="paragraph">
 <p>Sometimes, you may want to use a top-level expression that is not treated as a condition.</p>
 </div>
@@ -5077,7 +5078,7 @@ For backward compatibility with Spock versions prior to 2.2, applying the annota
 </div>
 </div>
 <div class="sect3">
-<h4 id="_timeout"><a class="anchor" href="#_timeout"></a><a class="link" href="#_timeout">Timeout</a></h4>
+<h4 id="timeout-extension"><a class="anchor" href="#timeout-extension"></a><a class="link" href="#timeout-extension">Timeout</a></h4>
 <div class="paragraph">
 <p>To fail a feature method, fixture, or class that exceeds a given execution duration, use <code>spock.lang.Timeout</code>,
 followed by a duration, and optionally a time unit. The default time unit is seconds.</p>
@@ -6118,7 +6119,7 @@ on the order they are added, but there should not be made any order assumptions 
 </div>
 <div class="paragraph">
 <p>The <code>&#8230;&#8203; method interceptors</code> are of course only run if there are actual methods of this type to be executed (the white
-boxes) and those can <a href="#_injecting_method_parameters">inject parameters</a> to be given to the method that will be run.</p>
+boxes) and those can <a href="#parameter-injection">inject parameters</a> to be given to the method that will be run.</p>
 </div>
 <div class="paragraph">
 <p>The shared initializer method interceptor and initializer method interceptor are called around two methods that are
@@ -6209,7 +6210,7 @@ featureInfo.parent.allCleanupMethods.each { method -&gt;
 </div>
 </div>
 <div class="sect4">
-<h5 id="_injecting_method_parameters"><a class="anchor" href="#_injecting_method_parameters"></a><a class="link" href="#_injecting_method_parameters">Injecting Method Parameters</a></h5>
+<h5 id="parameter-injection"><a class="anchor" href="#parameter-injection"></a><a class="link" href="#parameter-injection">Injecting Method Parameters</a></h5>
 <div class="paragraph">
 <p>Starting with Spock 2.4, it is possible to create <code>IAnnotationDrivenExtension</code> that target method parameters directly.
 The extension annotation must use the <code>@Target({ElementType.PARAMETER})</code> and the extension must implement <code>IAnnotationDrivenExtension.visitParameterAnnotation(T annotation, ParameterInfo parameter)</code>.
@@ -7960,7 +7961,9 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <h2 id="_release_notes"><a class="anchor" href="#_release_notes"></a><a class="link" href="#_release_notes">Release Notes</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_2_4_tbd"><a class="anchor" href="#_2_4_tbd"></a><a class="link" href="#_2_4_tbd">2.4 (tbd)</a></h3>
+<h3 id="_2_4_m2_tbd"><a class="anchor" href="#_2_4_m2_tbd"></a><a class="link" href="#_2_4_m2_tbd">2.4-M2 (tbd)</a></h3>
+<div class="sect3">
+<h4 id="_highlights"><a class="anchor" href="#_highlights"></a><a class="link" href="#_highlights">Highlights</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -7996,36 +7999,6 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 </div>
 </li>
 <li>
-<p>Fix issue with mocks of Groovy classes, where the Groovy MOP for <code>@Internal</code> methods was not honored by the <code>byte-buddy</code> mock maker spockPull:1729[]</p>
-<div class="ulist">
-<ul>
-<li>
-<p>This fixes multiple issues with Groovy MOP: spockIssue:1501[], spockIssue:1452[], spockIssue:1608[] and spockIssue:1145[]</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Replaced <code>gentyref</code> code with <a href="https://github.com/leangen/geantyref">geantyref</a> library spockPull:1743[]</p>
-<div class="ulist">
-<ul>
-<li>
-<p>This is now a required dependency used by spock: <code>io.leangen.geantyref:geantyref:1.3.14</code></p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Better support for generic return types for mocks spockPull:1731[]</p>
-<div class="ulist">
-<ul>
-<li>
-<p>This fixes the issues: spockIssue:520[], spockIssue:1163[]</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
 <p>Added support for mocking of static methods also for Java code with the new API <code>SpyStatic()</code> spockPull:1756[]</p>
 <div class="ulist">
 <ul>
@@ -8035,7 +8008,23 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 </ul>
 </div>
 </li>
+<li>
+<p>Add <a href="#parameter-injection">annotation extensions for parameters</a> spockPull:1599[]</p>
+</li>
+<li>
+<p>Add support for <a href="#extension-store">keeping state in extensions</a> spockPull:1692[]</p>
+</li>
+<li>
+<p>Add <a href="#spock-interceptors">feature-scoped interceptors</a> spockPull:1844[]</p>
+</li>
+<li>
+<p>Add <code>@Snapshot</code> extension for <a href="#snapshot-testing">snapshot testing</a> spockPull:1873[]</p>
+</li>
+<li>
+<p>Add <code>!!</code> as <a href="spock-primer.html#opt-out-of-condition-handling">opt-out operator for assertions</a> spockPull:1532[]</p>
+</li>
 </ul>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h4>
@@ -8049,10 +8038,10 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 </li>
 <li>
 <p>Creating a global <code>GroovyMock</code>/<code>GroovyStub</code>/<code>GroovySpy</code> when <a href="parallel-execution.html#parallel-execution">parallel execution</a> is enabled,
-will now require that the spec is annotated with <a href="parallel-execution.html#isolated-execution">@Isolated</a> or <code>@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)</code>. See <a href="interaction-based-testing.html#global-mocks-parallel-execution">Global mocks and parallel execution</a></p>
+will now require that the spec is annotated with <a href="parallel-execution.html#isolated-execution">@Isolated</a> or <code>@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)</code>. See <a href="interaction-based-testing.html#global-mocks-parallel-execution">Global mocks and parallel execution</a> spockPull:1848[]</p>
 </li>
 <li>
-<p><code>@TempDir</code> <code>spock.tempDir.keep</code> has been replaced by <code>spock.tempdir.cleanup</code>. See <a href="#_temp_dir_cleanup">TempDir Cleanup</a></p>
+<p><code>@TempDir</code> <code>spock.tempDir.keep</code> has been replaced by <code>spock.tempdir.cleanup</code>. See <a href="#_temp_dir_cleanup">TempDir Cleanup</a> spockPull:1525[]</p>
 </li>
 </ul>
 </div>
@@ -8062,25 +8051,125 @@ will now require that the spec is annotated with <a href="parallel-execution.htm
 <div class="ulist">
 <ul>
 <li>
-<p>Add support for <a href="#extension-store">keeping state in extensions</a></p>
-</li>
-<li>
 <p>Add support for parameter injection of <code>@TempDir</code></p>
 </li>
 <li>
-<p>Add <code>@Snapshot</code> extension for <a href="#snapshot-testing">snapshot testing</a></p>
+<p>Add cleanup switch for <code>@TempDir</code> spockPull:1525[]</p>
 </li>
 <li>
-<p>Add <a href="#spock-interceptors">feature-scoped interceptors</a> spockPull:1844[]</p>
+<p>Add support for creation of global Groovy mocks for abstract classes spockPull:1754[]</p>
+</li>
+<li>
+<p>Add optional reason to <code>@ResourceLock</code> spockPull:1890[]</p>
+</li>
+<li>
+<p>Add optional reason to <code>@Execution</code> spockPull:1576[]</p>
+</li>
+<li>
+<p>Add <code>onTimeout</code> support for <code>PollingConditions</code> spockPull:1853[]</p>
+</li>
+<li>
+<p>Add <code>SpecInfo#getAll&#8230;&#8203;Methods()</code> methods spockPull:1770[]</p>
+</li>
+<li>
+<p>Add array support to collection conditions spockPull:1734[]</p>
+</li>
+<li>
+<p>Add support for logging thread dumps when <a href="#timeout-extension">@Timeout interrupts</a> are ignored spockPull:1658[]</p>
+</li>
+<li>
+<p>Add implied features to force execution of features even when removed by a build tool spockPull:1598[]</p>
+</li>
+<li>
+<p>Improve StackTraceFilter by ignoring <code>java.lang.invoke.*</code> spockPull:1892[]</p>
 </li>
 <li>
 <p>Improve <code>@TempDir</code> field injection, now it happens before field initialization, so it can be used by other field initializers.</p>
+</li>
+<li>
+<p>Improve Spock-Compiler does not use wrapper types anymore spockPull:1765[]</p>
+</li>
+<li>
+<p>Improve reduce lock contention of the <code>byte-buddy</code> mock maker, when multiple mocks are created concurrently spockPull:1778[]</p>
+</li>
+<li>
+<p>Improve <code>@Use</code> on feature and fixture method for parallel execution spockPull:1691[]</p>
+</li>
+<li>
+<p>Improve IDE support</p>
+<div class="ulist">
+<ul>
+<li>
+<p>by adding a closure signature hint that derives closure argument type from variable type spockPull:1785[]</p>
+</li>
+<li>
+<p>by adding missing closure hints for Spy(T, Closure) spockPull:1786[]</p>
+</li>
+<li>
+<p>by adding GDSL/DSLD for ConditionalExtension&#8217;s annotations spockPull:1808[]</p>
+</li>
+<li>
+<p>by making <code>spock.gdsl</code> fail-safe and cover some more cases spockPull:1783[]</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Improve RunContexts behavior in multithreaded executions spockPull:1758[], spockPull:1846[]</p>
+</li>
+<li>
+<p>Improve generic handling by replacing <code>gentyref</code> code with <a href="https://github.com/leangen/geantyref">geantyref</a> library spockPull:1743[]</p>
+<div class="ulist">
+<ul>
+<li>
+<p>This is now a required dependency used by spock: <code>io.leangen.geantyref:geantyref:1.3.14</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Improve handling of passing <code>null</code> to <code>thrown()</code> to be consistent with mock object creation spockPull:1799[]</p>
+</li>
+<li>
+<p>Improve <code>old(&#8230;&#8203;)</code> calls by validating their argument count spockPull:1810[]</p>
+</li>
+<li>
+<p>Improve robustness of the AST transformation against missing classes in the compile classpath spockPull:1704[]</p>
+</li>
+<li>
+<p>Improve handling of <code>shared.</code> conditions in <code>@IgnoreIf</code>/<code>@Requires</code>, the condition is now checked before creating data providers spockPull:1711[]</p>
+</li>
+<li>
+<p>Fix issue with mocks of Groovy classes, where the Groovy MOP for <code>@Internal</code> methods was not honored by the <code>byte-buddy</code> mock maker spockPull:1729[]</p>
+<div class="ulist">
+<ul>
+<li>
+<p>This fixes multiple issues with Groovy MOP: spockIssue:1501[], spockIssue:1452[], spockIssue:1608[] and spockIssue:1145[]</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Improve support for generic return types for mocks spockPull:1731[]</p>
+<div class="ulist">
+<ul>
+<li>
+<p>This fixes the issues: spockIssue:520[], spockIssue:1163[]</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Fix the lifecycle of simple features spockPull:1675[]</p>
 </li>
 <li>
 <p>Fix exception when configured <code>baseDir</code> was not existing, now <code>@TempDir</code> will create the baseDir directory if it is missing.</p>
 </li>
 <li>
 <p>Fix bad error message for collection conditions, when one of the operands is <code>null</code></p>
+</li>
+<li>
+<p>Fix docs about initializer method interceptors spockPull:1666[]</p>
 </li>
 <li>
 <p>Fix possible deadlock, when blocking in mock response generators spockPull:1885[]</p>
@@ -8093,27 +8182,42 @@ will now require that the spec is annotated with <a href="parallel-execution.htm
 </div>
 </li>
 <li>
+<p>Fix SpringSpy not working with <code>DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD</code> spockPull:1869[]</p>
+</li>
+<li>
+<p>Fix null handling for collection conditions spockPull:1858[]</p>
+</li>
+<li>
+<p>Fix interceptor contexts spockPull:1676[]</p>
+</li>
+<li>
+<p>Fix properly call <code>IRunListener.specSkipped</code> and <code>.featureSkipped</code> spockPull:1811[]</p>
+</li>
+<li>
+<p>Fix defining responses for additionalInterfaces spockPull:1730[]</p>
+</li>
+<li>
+<p>Fix lost execution mode for iteration nodes of implied data-driven features spockPull:1615[]</p>
+</li>
+<li>
+<p>Fix docs how to register all possible interceptors spockPull:1667[], spockPull:1824[]</p>
+</li>
+<li>
 <p>Document <code>@ConditionBlock</code> Annotation spockPull:1709[]</p>
 </li>
 <li>
 <p>Document <code>old</code>-Method spockPull:1708[]</p>
 </li>
 <li>
+<p>Document for DetachedMockFactory spockPull:1728[]</p>
+</li>
+<li>
 <p>Clarify documentation for global Mocks spockPull:1755[]</p>
 </li>
-<li>
-<p>Spock-Compiler does not use wrapper types anymore spockPull:1765[]</p>
-</li>
-<li>
-<p>Reduce lock contention of the <code>byte-buddy</code> mock maker, when multiple mocks are created concurrently spockPull:1778[]</p>
-</li>
-<li>
-<p>Documentation for DetachedMockFactory spockPull:1728[]</p>
-</li>
-<li>
-<p>Support creation of global Groovy mocks for abstract classes spockPull:1754[]</p>
-</li>
 </ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release:  Andreas Turban, Björn Kautler, Goooler, Jérôme Prinet, Marcin Zajączkowski, Michał Wiśniewski, Nelson Osacky, Pavlo Shevchenko, RahulGautamSingh, Said Boudjelda, Tasuku Nakagawa, jochenberger, soosue</p>
 </div>
 </div>
 </div>
@@ -8329,7 +8433,7 @@ Many thanks to Ayşe Altınsoy (@AltinsoyAyse) for creating the logo through man
 <div class="sect2">
 <h3 id="_2_1_m1_2021_11_12"><a class="anchor" href="#_2_1_m1_2021_11_12"></a><a class="link" href="#_2_1_m1_2021_11_12">2.1-M1 (2021-11-12)</a></h3>
 <div class="sect3">
-<h4 id="_highlights"><a class="anchor" href="#_highlights"></a><a class="link" href="#_highlights">Highlights</a></h4>
+<h4 id="_highlights_2"><a class="anchor" href="#_highlights_2"></a><a class="link" href="#_highlights_2">Highlights</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -8429,7 +8533,7 @@ to match such methods when executing tests matching a mask (e.g., via
 <div class="sect2">
 <h3 id="_2_0_2021_05_17"><a class="anchor" href="#_2_0_2021_05_17"></a><a class="link" href="#_2_0_2021_05_17">2.0 (2021-05-17)</a></h3>
 <div class="sect3">
-<h4 id="_highlights_2"><a class="anchor" href="#_highlights_2"></a><a class="link" href="#_highlights_2">Highlights</a></h4>
+<h4 id="_highlights_3"><a class="anchor" href="#_highlights_3"></a><a class="link" href="#_highlights_3">Highlights</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -11291,7 +11395,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-02-22 22:10:37 UTC
+Last updated 2024-02-26 09:07:28 UTC
 </div>
 </div>
 </body>

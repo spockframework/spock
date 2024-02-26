@@ -3,7 +3,7 @@
 
 include::include.adoc[]
 
-== 2.4-M2 (tbd)
+== 2.4-M2 (2024-02-26)
 
 === Highlights
 

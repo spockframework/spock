@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,19 +15,28 @@
 
 package org.spockframework.runtime;
 
-import static java.util.stream.Collectors.toList;
-import static org.spockframework.util.ReflectionUtil.isArray;
-
-import org.spockframework.runtime.model.*;
-import org.spockframework.util.*;
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+import groovy.transform.stc.ClosureParams;
+import groovy.transform.stc.FirstParam;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
+import org.hamcrest.collection.IsIterableContainingInAnyOrder;
+import org.opentest4j.MultipleFailuresError;
+import org.spockframework.runtime.model.ExpressionInfo;
+import org.spockframework.runtime.model.TextPosition;
+import org.spockframework.util.CollectionUtil;
+import org.spockframework.util.ExceptionUtil;
+import org.spockframework.util.Nullable;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Pattern;
-import java.util.stream.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
-import groovy.lang.Closure;
-import org.hamcrest.*;
-import org.hamcrest.collection.IsIterableContainingInAnyOrder;
+import static java.util.stream.Collectors.toList;
+import static org.spockframework.util.ReflectionUtil.isArray;
 
 /**
  * @author Peter Niederwieser
@@ -35,6 +44,7 @@ import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 @SuppressWarnings("UnusedDeclaration")
 public abstract class SpockRuntime {
   public static final String VERIFY_CONDITION = "verifyCondition";
+  private static final StackTraceElement[] EMPTY_STACK_TRACE_ELEMENTS = new StackTraceElement[0];
 
   // condition can be null too, but not in the sense of "not available"
   public static void verifyCondition(ErrorCollector errorCollector, @Nullable ValueRecorder recorder,
@@ -129,6 +139,45 @@ public abstract class SpockRuntime {
   public static final String MATCH_COLLECTIONS_IN_ANY_ORDER = "matchCollectionsInAnyOrder";
 
   public static void matchCollectionsInAnyOrder(Object a, Object b) {
+  }
+
+
+  public static <T> void verifyEach(
+    Iterable<T> things,
+    Function<? super T, ?> namer,
+    @ClosureParams(value = FirstParam.FirstGenericType.class)
+    @DelegatesTo(type = "T", strategy = Closure.DELEGATE_FIRST)
+    Closure<?> closure
+  ) {
+    List<InternalItemFailure<T>> failures = new ArrayList<>();
+    int index = -1;
+    // use plain loop here, so we don't generate an extra stack element on failure
+    for (T thing : things) {
+      index++;
+      try {
+        closure.setDelegate(thing); // for conditions
+        closure.setResolveStrategy(Closure.DELEGATE_FIRST);
+        GroovyRuntimeUtil.invokeClosure(closure, thing);
+      } catch (Throwable throwable) {
+        failures.add(new InternalItemFailure<>(thing, index, throwable));
+      }
+    }
+
+    if (failures.size() == 1) {
+      throw getAssertionFailedError(namer, failures.get(0));
+    } else if (!failures.isEmpty()) {
+      List<SpockAssertionError> processedFailures = failures.stream()
+        .map(failure -> getAssertionFailedError(namer, failure))
+        .collect(toList());
+
+      throw new MultipleFailuresError("", processedFailures);
+    }
+  }
+
+  private static <T> SpockAssertionError getAssertionFailedError(Function<? super T, ?> namer, InternalItemFailure<T> failure) {
+    SpockAssertionError error = new SpockAssertionError(String.format("Assertions failed for item[%d] %s:\n%s", failure.index, namer.apply(failure.item), failure.throwable.getMessage()));
+    error.setStackTrace(failure.throwable.getStackTrace());
+    return error;
   }
 
   private static boolean isVoidMethod(@Nullable Object target, String method, Object... args) {
@@ -322,5 +371,17 @@ public abstract class SpockRuntime {
       return  GroovyRuntimeUtil.coerce(o, List.class);
     }
     return o;
+  }
+
+  private static final class InternalItemFailure<T> {
+    private final T item;
+    private final int index;
+    private final Throwable throwable;
+
+    InternalItemFailure(T item, int index, Throwable throwable) {
+      this.item = item;
+      this.index = index;
+      this.throwable = throwable;
+    }
   }
 }

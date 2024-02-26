@@ -17,8 +17,10 @@ package org.spockframework.runtime;
 
 import org.spockframework.util.InternalIdentifiers;
 
-import java.util.*;
-import java.util.regex.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Filters an exception's stack trace. Removes internal Groovy and Spock methods, and
@@ -32,6 +34,7 @@ import java.util.regex.*;
 public class StackTraceFilter implements IStackTraceFilter {
   private static final Pattern FILTERED_CLASSES = Pattern.compile(
       "\\Qorg.codehaus.groovy.runtime.\\E.*" +
+      "|\\Qgroovy.lang.Closure\\E" +
       "|\\Qorg.codehaus.groovy.reflection.\\E.*" +
       "|\\Qorg.codehaus.groovy.\\E.*MetaClass.*" +
       "|\\Qorg.codehaus.groovy.vmplugin.v8.\\E.*" +

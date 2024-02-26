@@ -1,0 +1,14 @@
+Multiple Failures (2 failures)
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[0] int(1):
+Condition not satisfied:
+
+it == 2
+|  |
+1  false
+
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[2] int(3):
+Condition not satisfied:
+
+it == 2
+|  |
+3  false

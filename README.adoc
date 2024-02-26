@@ -179,6 +179,7 @@ repository].
 * Issue Tracker -- https://github.com/spockframework/spock/issues[https://github.com/spockframework/spock/issues]
 * Spock Example Project -- https://github.com/spockframework/spock-example[https://github.com/spockframework/spock-example]
 * Twitter -- https://twitter.com/SpockFramework[https://twitter.com/SpockFramework]
+* Mastodon -- https://fosstodon.org/@spockframework[https://fosstodon.org/@spockframework]
 
 🖖 Live Long And Prosper!
 

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.18">
+<meta name="author" content="Peter Niederwieser, Leonard Brünings, The Spock Framework Team">
+<title>Utilities</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+</head>
+<body id="utilities" class="article">
+<div id="header">
+<h1>Utilities</h1>
+<div class="details">
+<span id="author" class="author">Peter Niederwieser, Leonard Brünings, The Spock Framework Team</span><br>
+<span id="revnumber">version 2.4-M2</span>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="mutable-clock"><a class="anchor" href="#mutable-clock"></a><a class="link" href="#mutable-clock">Testing Time with <code>MutableClock</code></a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When working with dates or time we often have the problem of writing stable tests.
+Java only provides a <code>FixedClock</code> for testing.
+However, often time related code has to deal with the change of time,
+so a fixed clock is not enough or makes the test harder to follow.</p>
+</div>
+<div class="paragraph">
+<p>The prerequisite for using both <code>FixedClock</code> and Spocks <code>MutableClock</code> is that the production code,
+actually uses a configurable <code>Clock</code> and not just the parameterless <code>Instant.now()</code>
+or the corresponding methods in the other <code>java.time.*</code> classes.</p>
+</div>
+<div class="sect2">
+<h3 id="_example"><a class="anchor" href="#_example"></a><a class="link" href="#_example">Example</a></h3>
+<div class="listingblock">
+<div class="title">Class under Test</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="directive">public</span> <span class="type">class</span> <span class="class">AgeFilter</span> <span class="directive">implements</span> <span class="predefined-type">Predicate</span>&lt;LocalDate&gt; {
+  <span class="directive">private</span> <span class="directive">final</span> Clock clock;
+  <span class="directive">private</span> <span class="directive">final</span> <span class="type">int</span> age;
+
+  <span class="directive">public</span> AgeFilter(Clock clock, <span class="type">int</span> age) {                                       // <b class="conum">(1)</b>
+    <span class="local-variable">this</span>.clock = clock;
+    <span class="local-variable">this</span>.age = age;
+  }
+
+  <span class="annotation">@Override</span>
+  <span class="directive">public</span> <span class="type">boolean</span> test(LocalDate date) {
+    <span class="keyword">return</span> Period.between(date, LocalDate.now(clock)).getYears() &gt;= age;         // <b class="conum">(2)</b>
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p><code>Clock</code> is injected via constructor</p>
+</li>
+<li>
+<p><code>Clock</code> is used to get the current date</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="title">Test</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">AgeFilter reacts to time</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">given</span>:
+  ZonedDateTime defaultTime = ZonedDateTime.of(<span class="integer">2018</span>, <span class="integer">6</span>, <span class="integer">5</span>, <span class="integer">0</span>, <span class="integer">0</span>, <span class="integer">0</span>, <span class="integer">0</span>, ZoneId.of(<span class="string"><span class="delimiter">'</span><span class="content">UTC</span><span class="delimiter">'</span></span>))
+  MutableClock clock = <span class="keyword">new</span> MutableClock(defaultTime)                                       // <b class="conum">(1)</b>
+  AgeFilter ageFilter = <span class="keyword">new</span> AgeFilter(clock,<span class="integer">18</span>)                                            // <b class="conum">(2)</b>
+
+  LocalDate birthday = defaultTime.minusYears(<span class="integer">18</span>).plusDays(<span class="integer">1</span>).toLocalDate()
+
+  <span class="key">expect</span>:
+  !ageFilter.test(birthday)                                                                // <b class="conum">(3)</b>
+
+  <span class="key">when</span>:
+  clock + <span class="predefined-type">Duration</span>.ofDays(<span class="integer">1</span>)                                                               // <b class="conum">(4)</b>
+
+  <span class="key">then</span>:
+  ageFilter.test(birthday)                                                                 // <b class="conum">(5)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p><code>MutableClock</code> created with a well known time</p>
+</li>
+<li>
+<p><code>Clock</code> is injected via constructor</p>
+</li>
+<li>
+<p><code>age</code> is less than <code>18</code> so the result is <code>false</code></p>
+</li>
+<li>
+<p>the clock is advanced by one day</p>
+</li>
+<li>
+<p><code>age</code> is equal to <code>18</code> so the result is <code>true</code></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>There are many more ways to modify <code>MutableClock</code> just have a look at the JavaDocs, or the test code <code>spock.util.time.MutableClockSpec</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="collection-conditions"><a class="anchor" href="#collection-conditions"></a><a class="link" href="#collection-conditions">Collection Conditions</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Sometimes, you want to assert the elements of a collection regardless of their order.
+The Groovy way to do this is to cast both to <code>Set</code>, i.e. <code>x as Set == [1, 2, 3] as Set</code>.
+While this works, it is very noisy.</p>
+</div>
+<div class="paragraph">
+<p>Since Spock 2.1 you can use two new conditions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>x =~ [1, 2, 3]</code> is a lenient match, i.e., checking that x contains at least one instance of every item in the list (same semantics as casting both to <code>Set</code> before comparing).</p>
+</li>
+<li>
+<p><code>x ==~ [1, 2, 3, 3]</code> is a strict match, i.e., checking that x contains exactly the items in the list regardless of their order (using Hamcrest&#8217;s <code>containsInAnyOrder</code> under the hood).</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_lenient_match"><a class="anchor" href="#_lenient_match"></a><a class="link" href="#_lenient_match">Lenient Match</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> x = [<span class="integer">2</span>, <span class="integer">2</span>, <span class="integer">1</span>, <span class="integer">3</span>, <span class="integer">3</span>]
+<span class="keyword">assert</span> x =~ [<span class="integer">4</span>, <span class="integer">1</span>, <span class="integer">2</span>]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>x =~ [4, 1, 2]
+| |
+| false
+| 2 differences (66% similarity, 1 missing, 1 extra)
+| missing: [4]
+| extra: [3]
+[2, 1, 3]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_strict_match"><a class="anchor" href="#_strict_match"></a><a class="link" href="#_strict_match">Strict Match</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> x = [<span class="integer">2</span>, <span class="integer">2</span>, <span class="integer">1</span>, <span class="integer">3</span>, <span class="integer">3</span>]
+<span class="keyword">assert</span> x ==~ [<span class="integer">4</span>, <span class="integer">1</span>, <span class="integer">2</span>]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>x ==~ [4, 1, 2]
+| |
+| false
+[2, 2, 1, 3, 3]
+
+Expected: iterable with items [&lt;4&gt;, &lt;1&gt;, &lt;2&gt;] in any order
+     but: not matched: <b class="conum">(2)</b></code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Both operands must either be <code>Iterable</code> or an array for this to work.
+Otherwise, it will be treated like the standard groovy <a href="https://groovy-lang.org/operators.html#_find_operator">find operator</a> or <a href="https://groovy-lang.org/operators.html#_match_operator">match operators</a>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="file-stystem-fixture"><a class="anchor" href="#file-stystem-fixture"></a><a class="link" href="#file-stystem-fixture">Interact with the file system using <code>FileSystemFixture</code></a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In integration tests you often have to prepare the file system for a test.
+For trivial cases like creating a single temp directory, you can use the <a href="extensions.html#_temp_dir">@TempDir</a> extension directly.
+However, for more complex cases like creating a directory tree <code>FileSystemFixture</code> offers convenience and better readability.</p>
+</div>
+<div class="sect2">
+<h3 id="_examples"><a class="anchor" href="#_examples"></a><a class="link" href="#_examples">Examples</a></h3>
+<div class="listingblock">
+<div class="title">Creating a directory tree</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@TempDir</span>
+FileSystemFixture fsFixture
+
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">FileSystemFixture can create a directory structure</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">when</span>:
+  fsFixture.create {
+    dir(<span class="string"><span class="delimiter">'</span><span class="content">src</span><span class="delimiter">'</span></span>) {
+      dir(<span class="string"><span class="delimiter">'</span><span class="content">main</span><span class="delimiter">'</span></span>) {
+        dir(<span class="string"><span class="delimiter">'</span><span class="content">groovy</span><span class="delimiter">'</span></span>) {
+          file(<span class="string"><span class="delimiter">'</span><span class="content">HelloWorld.java</span><span class="delimiter">'</span></span>) &lt;&lt; <span class="string"><span class="delimiter">'</span><span class="content">println &quot;Hello World&quot;</span><span class="delimiter">'</span></span>
+        }
+      }
+      dir(<span class="string"><span class="delimiter">'</span><span class="content">test/resources</span><span class="delimiter">'</span></span>) {
+        file(<span class="string"><span class="delimiter">'</span><span class="content">META-INF/MANIFEST.MF</span><span class="delimiter">'</span></span>) &lt;&lt; <span class="string"><span class="delimiter">'</span><span class="content">bogus entry</span><span class="delimiter">'</span></span>
+        copyFromClasspath(<span class="string"><span class="delimiter">'</span><span class="content">/org/spockframework/smoke/extension/SampleFile.txt</span><span class="delimiter">'</span></span>)
+      }
+    }
+  }
+
+  <span class="key">then</span>:
+  Files.isDirectory(fsFixture.resolve(<span class="string"><span class="delimiter">'</span><span class="content">src/main/groovy</span><span class="delimiter">'</span></span>))
+  Files.isDirectory(fsFixture.resolve(<span class="string"><span class="delimiter">'</span><span class="content">src/test/resources/META-INF</span><span class="delimiter">'</span></span>))
+  fsFixture.resolve(<span class="string"><span class="delimiter">'</span><span class="content">src/main/groovy/HelloWorld.java</span><span class="delimiter">'</span></span>).text == <span class="string"><span class="delimiter">'</span><span class="content">println &quot;Hello World&quot;</span><span class="delimiter">'</span></span>
+  fsFixture.resolve(<span class="string"><span class="delimiter">'</span><span class="content">src/test/resources/META-INF/MANIFEST.MF</span><span class="delimiter">'</span></span>).text == <span class="string"><span class="delimiter">'</span><span class="content">bogus entry</span><span class="delimiter">'</span></span>
+  fsFixture.resolve(<span class="string"><span class="delimiter">'</span><span class="content">src/test/resources/SampleFile.txt</span><span class="delimiter">'</span></span>).text == <span class="string"><span class="delimiter">'</span><span class="content">HelloWorld\n</span><span class="delimiter">'</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+To get the nice Groovy methods for <code>Path</code>, you need to add a dependency on <code>groovy-nio</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="old-method"><a class="anchor" href="#old-method"></a><a class="link" href="#old-method">Capture Values for Assertions with <code>old()</code></a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It can be helpful to know the old value of an expression before the <code>when:</code> was executed.
+This allows you to compare the changes made by a <code>when:</code> block.</p>
+</div>
+<div class="paragraph">
+<p>You can capture the old value of an expression with <code>old(&lt;expr&gt;)</code> in a <code>then:</code> block,
+which will return the value of the <code>&lt;expr&gt;</code> before the previous <code>when:</code> block is executed.</p>
+</div>
+<div class="paragraph">
+<p>The usage of the <code>old()</code> method makes a test less fragile, because you can assert the difference,
+which was made by the <code>when:</code> block.</p>
+</div>
+<div class="sect2">
+<h3 id="_example_2"><a class="anchor" href="#_example_2"></a><a class="link" href="#_example_2">Example</a></h3>
+<div class="listingblock">
+<div class="title">Using <code>old()</code> to capture the old value of <code>x</code></div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Usage of the old() method</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">given</span>:
+  <span class="keyword">def</span> x = <span class="integer">0</span>
+
+  <span class="key">when</span>:
+  x++
+
+  <span class="key">then</span>:
+  x == old(x) + <span class="integer">1</span>
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 2.4-M2<br>
+Last updated 2024-02-26 19:43:36 UTC
+</div>
+</div>
+</body>
+</html>

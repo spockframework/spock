@@ -18,20 +18,20 @@ include::include.adoc[]
 ** Mocking of classes and interface from different classloaders spockPull:1878[]
 ** Requires `org.mockito:mockito-core` >= 4.11 in the test class path
 * Added support for mocking of static methods also for Java code with the new API `SpyStatic()` spockPull:1756[]
-** The <<interaction-based-testing.adoc#static-mocks,static mock methods>> will delegate the creation to the mock makers
+** The <<interaction_based_testing.adoc#static-mocks,static mock methods>> will delegate the creation to the mock makers
 * Add <<spock_primer.adoc#verify-each,verifyEach>> method to perform assertions on each element of an `Iterable` spockPull:1887[]
 * Add <<extensions.adoc#parameter-injection,annotation extensions for parameters>> spockPull:1599[]
 * Add support for <<extensions.adoc#extension-store,keeping state in extensions>> spockPull:1692[]
 * Add <<extensions.adoc#spock-interceptors,feature-scoped interceptors>> spockPull:1844[]
 * Add `@Snapshot` extension for <<extensions.adoc#snapshot-testing,snapshot testing>> spockPull:1873[]
-* Add `!!` as <<spock-primer.adoc#opt-out-of-condition-handling,opt-out operator for assertions>> spockPull:1532[]
+* Add `!!` as <<spock_primer.adoc#opt-out-of-condition-handling,opt-out operator for assertions>> spockPull:1532[]
 
 === Breaking Changes
 
 * Calling `old(...)` with multiple arguments is now a compilation error. Previously the additional arguments were simply ignored.
 * Creating `GroovyMock`/`GroovyStub`/`GroovySpy` for an already mocked type will now fail.
-* Creating a global `GroovyMock`/`GroovyStub`/`GroovySpy` when <<parallel-execution.adoc#parallel-execution, parallel execution>> is enabled,
-  will now require that the spec is annotated with <<parallel-execution.adoc#isolated-execution, @Isolated>> or `@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)`. See <<interaction-based-testing.adoc#global-mocks-parallel-execution, Global mocks and parallel execution>> spockPull:1848[]
+* Creating a global `GroovyMock`/`GroovyStub`/`GroovySpy` when <<parallel_execution.adoc#parallel-execution, parallel execution>> is enabled,
+  will now require that the spec is annotated with <<parallel_execution.adoc#isolated-execution, @Isolated>> or `@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)`. See <<interaction_based_testing.adoc#global-mocks-parallel-execution, Global mocks and parallel execution>> spockPull:1848[]
 * `@TempDir` `spock.tempDir.keep` has been replaced by `spock.tempdir.cleanup`. See <<extensions.adoc#_temp_dir_cleanup,TempDir Cleanup>> spockPull:1525[]
 
 === Misc
@@ -123,7 +123,7 @@ Thanks to all the contributors to this release: Marc Philipp
 
 * Add junit-platform `TestTag` support with the <<extensions.adoc#test-tag-extension,@Tag>> extension spockPull:1467[]
 * Add `IDataDriver` extension point and refactor data provider handling spockPull:1479[]
-* Add <<data-driven-testing.adoc#multi-data-pipe-named, named deconstruction>> for multi variable datapipes.
+* Add <<data_driven_testing.adoc#multi-data-pipe-named, named deconstruction>> for multi variable datapipes.
   This might lead to changed behavior results if the data object implements `Map` but supports both positional `getAt(int)` and named `getAt(String)` access. In earlier versions, the positional access was used, but now the named access will be used. spockPull:1463[]
 * Add custom class support to `@TempDir`, you can use any class that has a single `java.io.File` or `java.nio.file.Path` as constructor parameter spockPull:1430[]
 * Improve `@Stepwise` can be applied to data-driven feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations is one iteration fails. spockPull:1442[]

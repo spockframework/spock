@@ -8164,7 +8164,7 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <div class="ulist">
 <ul>
 <li>
-<p>The <a href="interaction-based-testing.html#static-mocks">static mock methods</a> will delegate the creation to the mock makers</p>
+<p>The <a href="#static-mocks">static mock methods</a> will delegate the creation to the mock makers</p>
 </li>
 </ul>
 </div>
@@ -8185,7 +8185,7 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <p>Add <code>@Snapshot</code> extension for <a href="#snapshot-testing">snapshot testing</a> spockPull:1873[]</p>
 </li>
 <li>
-<p>Add <code>!!</code> as <a href="spock-primer.html#opt-out-of-condition-handling">opt-out operator for assertions</a> spockPull:1532[]</p>
+<p>Add <code>!!</code> as <a href="#opt-out-of-condition-handling">opt-out operator for assertions</a> spockPull:1532[]</p>
 </li>
 </ul>
 </div>
@@ -8201,8 +8201,8 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <p>Creating <code>GroovyMock</code>/<code>GroovyStub</code>/<code>GroovySpy</code> for an already mocked type will now fail.</p>
 </li>
 <li>
-<p>Creating a global <code>GroovyMock</code>/<code>GroovyStub</code>/<code>GroovySpy</code> when <a href="parallel-execution.html#parallel-execution">parallel execution</a> is enabled,
-will now require that the spec is annotated with <a href="parallel-execution.html#isolated-execution">@Isolated</a> or <code>@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)</code>. See <a href="interaction-based-testing.html#global-mocks-parallel-execution">Global mocks and parallel execution</a> spockPull:1848[]</p>
+<p>Creating a global <code>GroovyMock</code>/<code>GroovyStub</code>/<code>GroovySpy</code> when <a href="#parallel-execution">parallel execution</a> is enabled,
+will now require that the spec is annotated with <a href="#isolated-execution">@Isolated</a> or <code>@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)</code>. See <a href="#global-mocks-parallel-execution">Global mocks and parallel execution</a> spockPull:1848[]</p>
 </li>
 <li>
 <p><code>@TempDir</code> <code>spock.tempDir.keep</code> has been replaced by <code>spock.tempdir.cleanup</code>. See <a href="#_temp_dir_cleanup">TempDir Cleanup</a> spockPull:1525[]</p>
@@ -8480,7 +8480,7 @@ Until now, the mock would return <code>0</code> for default invocations, which w
 <p>Add <code>IDataDriver</code> extension point and refactor data provider handling spockPull:1479[]</p>
 </li>
 <li>
-<p>Add <a href="data-driven-testing.html#multi-data-pipe-named">named deconstruction</a> for multi variable datapipes.
+<p>Add <a href="#multi-data-pipe-named">named deconstruction</a> for multi variable datapipes.
 This might lead to changed behavior results if the data object implements <code>Map</code> but supports both positional <code>getAt(int)</code> and named <code>getAt(String)</code> access. In earlier versions, the positional access was used, but now the named access will be used. spockPull:1463[]</p>
 </li>
 <li>
@@ -11559,7 +11559,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-02-26 19:51:49 UTC
+Last updated 2024-02-27 09:40:52 UTC
 </div>
 </div>
 </body>

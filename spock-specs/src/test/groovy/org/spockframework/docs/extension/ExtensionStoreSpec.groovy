@@ -90,15 +90,16 @@ class ExtensionStoreSpec extends EmbeddedSpecification {
 }
 // tag::example-extension[]
 class ExceptionCounterGlobalExtension implements IGlobalExtension {
-  private static final Namespace EXAMPLE_NS = Namespace.create(ExceptionCounterGlobalExtension)    // <1>
+  private static final Namespace EXAMPLE_NS =                             // <1>
+    Namespace.create(ExceptionCounterGlobalExtension)
   private static final String ACCUMULATOR = "accumulator"
   private static final IMethodInterceptor INTERCEPTOR =  {
     try {
       it.proceed()
     } catch (Exception e) {
-      it.getStore(EXAMPLE_NS)                                                                      // <6>
-        .get(ACCUMULATOR, ConcurrentHashMap)                                                       // <7>
-        .computeIfAbsent(e.class.name, { __ -> new AtomicInteger() })                              // <8>
+      it.getStore(EXAMPLE_NS)                                             // <6>
+        .get(ACCUMULATOR, ConcurrentHashMap)                              // <7>
+        .computeIfAbsent(e.class.name, { __ -> new AtomicInteger() })     // <8>
         .incrementAndGet()
       throw e
     }
@@ -106,18 +107,18 @@ class ExceptionCounterGlobalExtension implements IGlobalExtension {
 
   @Override
   void visitSpec(SpecInfo spec) {
-    spec.allFeatures.featureMethod*.addInterceptor(INTERCEPTOR)                                    // <2>
+    spec.allFeatures.featureMethod*.addInterceptor(INTERCEPTOR)           // <2>
   }
 
   @Override
-  void executionStart(ISpockExecution spockExecution) {                                            // <3>
-    spockExecution.getStore(EXAMPLE_NS)                                                            // <4>
-      .put(ACCUMULATOR, new ConcurrentHashMap())                                                   // <5>
+  void executionStart(ISpockExecution spockExecution) {                   // <3>
+    spockExecution.getStore(EXAMPLE_NS)                                   // <4>
+      .put(ACCUMULATOR, new ConcurrentHashMap())                          // <5>
   }
 
   @Override
-  void executionStop(ISpockExecution spockExecution) {                                             // <9>
-    def results = spockExecution.getStore(EXAMPLE_NS)                                              // <10>
+  void executionStop(ISpockExecution spockExecution) {                    // <9>
+    def results = spockExecution.getStore(EXAMPLE_NS)
       .get(ACCUMULATOR, ConcurrentHashMap)
 
     if (!results.isEmpty()) {

@@ -946,16 +946,16 @@ You can also specify the answers after construction by defining the interactions
 include::{sourcedir}/interaction/StaticSpyDocSpec.groovy[tag=mock-static-interactions]
 ----
 
-NOTE: The static mocks require a mock maker supporting static methods, e.g. <<extensions.adoc#mock-makers-mockito,mockito>>.
-See <<extensions.adoc#mock-makers,mock makers>> table for mock makers supporting it.
-
-It is also possible to stub all static methods like a `Stub` would do:
+It is also possible to stub all static methods of a class like a `Stub` would do:
 
 .Stub all static methods of a class with default interaction
 [source,groovy,indent=0]
 ----
 include::{sourcedir}/interaction/StaticSpyDocSpec.groovy[tag=stub-all-static-methods]
 ----
+
+NOTE: The static mocks require a mock maker supporting static methods, e.g. <<extensions.adoc#mock-makers-mockito,mockito>>.
+See <<extensions.adoc#mock-makers,mock makers>> table for mock makers supporting it.
 
 === Static Mocks and Threading
 

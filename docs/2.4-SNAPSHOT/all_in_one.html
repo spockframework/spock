@@ -135,12 +135,18 @@
 <li><a href="#PartialMocks">Partial Mocks</a></li>
 </ul>
 </li>
+<li><a href="#MockingStaticMethods">Mocking Static Methods</a>
+<ul class="sectlevel3">
+<li><a href="#static-mocks">Static Mocks</a></li>
+<li><a href="#_static_mocks_and_threading">Static Mocks and Threading</a></li>
+</ul>
+</li>
 <li><a href="#GroovyMocks">Groovy Mocks</a>
 <ul class="sectlevel3">
 <li><a href="#_mocking_dynamic_methods">Mocking Dynamic Methods</a></li>
 <li><a href="#MockingAllInstancesOfAType">Mocking All Instances of a Type</a></li>
 <li><a href="#MockingConstructors">Mocking Constructors</a></li>
-<li><a href="#_mocking_static_methods">Mocking Static Methods</a></li>
+<li><a href="#global-groovy-mock-static-methods">Global Groovy Mocks for Static Methods</a></li>
 </ul>
 </li>
 <li><a href="#_advanced_features">Advanced Features</a>
@@ -4045,6 +4051,179 @@ persister.receive(<span class="string"><span class="delimiter">&quot;</span><spa
 </div>
 </div>
 <div class="sect2">
+<h3 id="MockingStaticMethods"><a class="anchor" href="#MockingStaticMethods"></a><a class="link" href="#MockingStaticMethods">Mocking Static Methods</a></h3>
+<div class="paragraph">
+<p>Spock supports two ways of mocking static methods:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>SpyStatic()</code> static mocks: Works with Java and Groovy, but requires a mock maker supporting this, e.g. <a href="#mock-makers-mockito">mockito</a> Mock Maker.</p>
+</li>
+<li>
+<p><a href="#global-groovy-mock-static-methods">Global Groovy mocks</a>: Work only for Groovy code not for Java.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Think twice before using this feature.
+It might be better to change the design of the code under specification.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="static-mocks"><a class="anchor" href="#static-mocks"></a><a class="link" href="#static-mocks">Static Mocks</a></h4>
+<div class="paragraph">
+<p>You can create static mocks with <code>SpyStatic()</code>.</p>
+</div>
+<div class="paragraph">
+<p><code>SpyStatic(&lt;Type&gt;)</code> mocks the static methods of the given type; by default, delegates all calls to the real static methods.
+Supports both stubbing and mocking.</p>
+</div>
+<div class="paragraph">
+<p>We are using the class <code>StaticClass</code> in the examples:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example static class used in the test examples</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="directive">private</span> <span class="directive">static</span> <span class="type">class</span> <span class="class">StaticClass</span> {
+  <span class="directive">static</span> <span class="predefined-type">String</span> staticMethod() {
+    <span class="keyword">return</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">RealValue</span><span class="delimiter">&quot;</span></span>
+  }
+
+  <span class="directive">static</span> <span class="predefined-type">String</span> otherStaticMethod() {
+    <span class="keyword">return</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">OtherValue</span><span class="delimiter">&quot;</span></span>
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We want to mock the method <code>staticMethod()</code>, so we can create a static mock for the <code>StaticClass</code> type:</p>
+</div>
+<div class="listingblock">
+<div class="title">Mock static method of a class with SpyStatic()</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">given</span>:
+SpyStatic(StaticClass)
+
+<span class="key">expect</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">By default SpyStatic() will return the real value</span><span class="delimiter">&quot;</span></span>
+StaticClass.staticMethod() == <span class="string"><span class="delimiter">&quot;</span><span class="content">RealValue</span><span class="delimiter">&quot;</span></span>
+
+<span class="key">when</span>:
+<span class="keyword">def</span> result = StaticClass.staticMethod()
+
+<span class="key">then</span>:
+<span class="integer">1</span> * StaticClass.staticMethod() &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">MockValue</span><span class="delimiter">&quot;</span></span>
+result == <span class="string"><span class="delimiter">&quot;</span><span class="content">MockValue</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can also specify the answers after construction by defining the interactions as for a normal mock:</p>
+</div>
+<div class="listingblock">
+<div class="title">Mock static method of a class with interactions</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">given</span>:
+SpyStatic(StaticClass)
+StaticClass.staticMethod() &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">MockValue</span><span class="delimiter">&quot;</span></span>
+
+<span class="key">expect</span>:
+StaticClass.staticMethod() == <span class="string"><span class="delimiter">&quot;</span><span class="content">MockValue</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It is also possible to stub all static methods of a class like a <code>Stub</code> would do:</p>
+</div>
+<div class="listingblock">
+<div class="title">Stub all static methods of a class with default interaction</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">given</span>:
+SpyStatic(StaticClass)
+StaticClass._ &gt;&gt; _
+
+<span class="key">expect</span>:
+StaticClass.staticMethod() == <span class="string"><span class="delimiter">&quot;</span><span class="delimiter">&quot;</span></span>
+StaticClass.otherStaticMethod() == <span class="string"><span class="delimiter">&quot;</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The static mocks require a mock maker supporting static methods, e.g. <a href="#mock-makers-mockito">mockito</a>.
+See <a href="#mock-makers">mock makers</a> table for mock makers supporting it.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_static_mocks_and_threading"><a class="anchor" href="#_static_mocks_and_threading"></a><a class="link" href="#_static_mocks_and_threading">Static Mocks and Threading</a></h4>
+<div class="paragraph">
+<p>The static mocks are thread-local, so they do not interfere with concurrent test execution.
+But this also means that a static mock will not be active, if your code under test will use other threads.</p>
+</div>
+<div class="paragraph">
+<p>A static mock is activated on the thread, which created the mock, up until the feature execution ends.
+You can activate all static mocks on a different thread by hand:</p>
+</div>
+<div class="listingblock">
+<div class="title">Use static mocks in a different Thread</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">given</span>:
+SpyStatic(StaticClass)
+StaticClass.staticMethod() &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">MockValue</span><span class="delimiter">&quot;</span></span>
+
+<span class="key">when</span>:
+<span class="keyword">def</span> executor = <span class="predefined-type">Executors</span>.newSingleThreadExecutor()
+<span class="keyword">def</span> wasCalled = <span class="predefined-constant">false</span>
+<span class="keyword">def</span> future = executor.submit {
+  <span class="keyword">assert</span> StaticClass.staticMethod() == <span class="string"><span class="delimiter">&quot;</span><span class="content">RealValue</span><span class="delimiter">&quot;</span></span>
+
+  withActiveThreadAwareMocks {
+    <span class="comment">//Now the static methods of StaticClass are mocked:</span>
+    <span class="keyword">assert</span> StaticClass.staticMethod() == <span class="string"><span class="delimiter">&quot;</span><span class="content">MockValue</span><span class="delimiter">&quot;</span></span>
+    wasCalled = <span class="predefined-constant">true</span>
+  }
+
+  <span class="keyword">assert</span> StaticClass.staticMethod() == <span class="string"><span class="delimiter">&quot;</span><span class="content">RealValue</span><span class="delimiter">&quot;</span></span>
+}
+future.get()
+
+<span class="key">then</span>:
+StaticClass.staticMethod() == <span class="string"><span class="delimiter">&quot;</span><span class="content">MockValue</span><span class="delimiter">&quot;</span></span>
+wasCalled
+
+<span class="key">cleanup</span>:
+executor.shutdown()</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>spock.mock.MockingApi</code> provides methods to activate a static mock on other threads:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>runWithThreadAwareMocks(Runnable)</code></p>
+</li>
+<li>
+<p><code>withActiveThreadAwareMocks(Callable)</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="GroovyMocks"><a class="anchor" href="#GroovyMocks"></a><a class="link" href="#GroovyMocks">Groovy Mocks</a></h3>
 <div class="paragraph">
 <p>So far, all the mocking features we have seen work the same no matter if the calling code is written in Java or Groovy.
@@ -4256,157 +4435,10 @@ a subscriber named Barney instead.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_mocking_static_methods"><a class="anchor" href="#_mocking_static_methods"></a><a class="link" href="#_mocking_static_methods">Mocking Static Methods</a></h4>
+<h4 id="global-groovy-mock-static-methods"><a class="anchor" href="#global-groovy-mock-static-methods"></a><a class="link" href="#global-groovy-mock-static-methods">Global Groovy Mocks for Static Methods</a></h4>
 <div class="paragraph">
-<p>Spock supports two ways of mocking static methods:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>SpyStatic()</code> static mocks: Works with Java and Groovy, but requires a mock maker supporting this, e.g. <a href="#mock-makers-mockito">mockito</a> Mock Maker.</p>
-</li>
-<li>
-<p>Global Groovy mocks: Work only for Groovy code not for Java. If parallel execution is enabled, then the test must be annotated with <code>@ResourceLock(Resources.META_CLASS_REGISTRY)</code> or <code>@Isolated</code>.</p>
-</li>
-</ul>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-Think twice before using this feature.
-      It might be better to change the design of the code under specification.
-</td>
-</tr>
-</table>
-</div>
-<div class="sect4">
-<h5 id="static-mocks"><a class="anchor" href="#static-mocks"></a><a class="link" href="#static-mocks">Static Mocks</a></h5>
-<div class="paragraph">
-<p>You can create static mocks with <code>SpyStatic()</code>.
-The semantics are the same as for the non-static variants:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>SpyStatic()</code>: Mocks static methods of the given type; by default, delegates all calls to the real static methods.
-Supports both stubbing and mocking.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>We are using the class <code>StaticClass</code> in the examples:</p>
-</div>
-<div class="listingblock">
-<div class="title">Example static class used in the test examples</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="directive">private</span> <span class="directive">static</span> <span class="type">class</span> <span class="class">StaticClass</span> {
-  <span class="directive">static</span> <span class="predefined-type">String</span> staticMethod() {
-    <span class="keyword">return</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">RealValue</span><span class="delimiter">&quot;</span></span>
-  }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>We want to mock the method <code>staticMethod()</code>, so we can create a static mock for the <code>StaticClass</code> type:</p>
-</div>
-<div class="listingblock">
-<div class="title">Mock static method of a class with SpyStatic()</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">given</span>:
-SpyStatic(StaticClass)
-
-<span class="key">expect</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">By default SpyStatic() will return the real value</span><span class="delimiter">&quot;</span></span>
-StaticClass.staticMethod() == <span class="string"><span class="delimiter">&quot;</span><span class="content">RealValue</span><span class="delimiter">&quot;</span></span>
-
-<span class="key">when</span>:
-<span class="keyword">def</span> result = StaticClass.staticMethod()
-
-<span class="key">then</span>:
-<span class="integer">1</span> * StaticClass.staticMethod() &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">MockValue</span><span class="delimiter">&quot;</span></span>
-result == <span class="string"><span class="delimiter">&quot;</span><span class="content">MockValue</span><span class="delimiter">&quot;</span></span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You can also specify the answers after construction by defining the interactions as for a normal mock:</p>
-</div>
-<div class="listingblock">
-<div class="title">Mock static method of a class with interactions</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">given</span>:
-SpyStatic(StaticClass)
-StaticClass.staticMethod() &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">MockValue</span><span class="delimiter">&quot;</span></span>
-
-<span class="key">expect</span>:
-StaticClass.staticMethod() == <span class="string"><span class="delimiter">&quot;</span><span class="content">MockValue</span><span class="delimiter">&quot;</span></span></code></pre>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-The static mocks require a mock maker supporting static methods, e.g. <a href="#mock-makers-mockito">mockito</a>.
-See <a href="#mock-makers">mock makers</a> table for mock makers supporting it.
-</td>
-</tr>
-</table>
-</div>
-<div class="sect5">
-<h6 id="_static_mocks_and_threading"><a class="anchor" href="#_static_mocks_and_threading"></a><a class="link" href="#_static_mocks_and_threading">Static Mocks and Threading</a></h6>
-<div class="paragraph">
-<p>The static mocks are thread-local, so they do not interfere with concurrent test execution.
-But this also means that a static mock will not be active, if your code under test will use other threads.</p>
-</div>
-<div class="paragraph">
-<p>A static mock is activated on the thread, which created the mock, up until the feature execution ends.
-You can activate all static mocks on a different thread by hand:</p>
-</div>
-<div class="listingblock">
-<div class="title">Use static mocks in a different Thread</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">given</span>:
-SpyStatic(StaticClass)
-StaticClass.staticMethod() &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">MockValue</span><span class="delimiter">&quot;</span></span>
-
-<span class="key">when</span>:
-<span class="keyword">def</span> executor = <span class="predefined-type">Executors</span>.newSingleThreadExecutor()
-<span class="keyword">def</span> wasCalled = <span class="predefined-constant">false</span>
-<span class="keyword">def</span> future = executor.submit {
-  <span class="keyword">assert</span> StaticClass.staticMethod() == <span class="string"><span class="delimiter">&quot;</span><span class="content">RealValue</span><span class="delimiter">&quot;</span></span>
-
-  withActiveThreadAwareMocks {
-    <span class="comment">//Now the static methods of StaticClass are mocked:</span>
-    <span class="keyword">assert</span> StaticClass.staticMethod() == <span class="string"><span class="delimiter">&quot;</span><span class="content">MockValue</span><span class="delimiter">&quot;</span></span>
-    wasCalled = <span class="predefined-constant">true</span>
-  }
-
-  <span class="keyword">assert</span> StaticClass.staticMethod() == <span class="string"><span class="delimiter">&quot;</span><span class="content">RealValue</span><span class="delimiter">&quot;</span></span>
-}
-future.get()
-
-<span class="key">then</span>:
-StaticClass.staticMethod() == <span class="string"><span class="delimiter">&quot;</span><span class="content">MockValue</span><span class="delimiter">&quot;</span></span>
-wasCalled
-
-<span class="key">cleanup</span>:
-executor.shutdown()</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The interface <code>spock.mock.IStaticMock</code> provides API to activate a static mock on other threads.</p>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_global_groovy_mocks_for_static_methods"><a class="anchor" href="#_global_groovy_mocks_for_static_methods"></a><a class="link" href="#_global_groovy_mocks_for_static_methods">Global Groovy Mocks for Static Methods</a></h5>
-<div class="paragraph">
-<p>Global mocks support mocking and stubbing of static methods:</p>
+<p>Global mocks support mocking and stubbing of static methods in Groovy code.
+If you want to mock static methods for Java code please use <a href="#static-mocks">Static Mocks</a>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4438,7 +4470,6 @@ Global mocks will only work for Groovy code under test not for Java code.
 </td>
 </tr>
 </table>
-</div>
 </div>
 </div>
 </div>
@@ -6739,7 +6770,7 @@ If you try to mock a final method without a Mock Maker supporting it,
 <p>The <code>mockito</code> mock maker uses <code>org.mockito.MockMakers.INLINE</code> under the hood,
 please see the Mockito manual "Mocking final types, enums and final methods" for all pros and cons,
 when using <code>org.mockito.MockMakers.INLINE</code>.
-It also supports mocking of static methods of classes and interfaces with <code>Mock/Stub/SpyStatic</code>.
+It also supports mocking of static methods of classes and interfaces with <code>SpyStatic</code>.
 See <a href="#static-mocks">static mocks</a> section for more details.</p>
 </div>
 </div>
@@ -11559,7 +11590,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-03-03 10:27:26 UTC
+Last updated 2024-03-03 19:04:59 UTC
 </div>
 </div>
 </body>

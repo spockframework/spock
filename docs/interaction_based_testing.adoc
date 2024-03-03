@@ -1103,7 +1103,8 @@ a subscriber named Barney instead.
 [[global-groovy-mock-static-methods]]
 === Global Groovy Mocks for Static Methods
 
-Global mocks support mocking and stubbing of static methods:
+Global mocks support mocking and stubbing of static methods in Groovy code.
+If you want to mock static methods for Java code please use <<#static-mocks,Static Mocks>>.
 
 [source,groovy]
 ----

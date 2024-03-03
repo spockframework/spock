@@ -1220,7 +1220,7 @@ include::{sourcedir}/interaction/MockMakerDocSpec.groovy[tag=mock-serializable]
 The `mockito` mock maker uses `org.mockito.MockMakers.INLINE` under the hood,
 please see the Mockito manual "Mocking final types, enums and final methods" for all pros and cons,
 when using `org.mockito.MockMakers.INLINE`.
-It also supports mocking of static methods of classes and interfaces with `Mock/Stub/SpyStatic`.
+It also supports mocking of static methods of classes and interfaces with `SpyStatic`.
 See <<interaction_based_testing.adoc#static-mocks,static mocks>> section for more details.
 
 ==== Custom Mock Maker

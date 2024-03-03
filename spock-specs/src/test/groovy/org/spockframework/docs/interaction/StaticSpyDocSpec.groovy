@@ -16,7 +16,7 @@
 
 package org.spockframework.docs.interaction
 
-
+import org.spockframework.mock.ZeroOrNullResponse
 import spock.lang.Specification
 
 import java.util.concurrent.Executors
@@ -49,6 +49,28 @@ class StaticSpyDocSpec extends Specification {
     expect:
     StaticClass.staticMethod() == "MockValue"
     // end::mock-static-interactions[]
+  }
+
+  def "SpyStatic mock all static methods"() {
+    given:
+    SpyStatic(StaticClass)
+    StaticClass._ >> { ZeroOrNullResponse.INSTANCE.respond(delegate) }
+
+    expect:
+    StaticClass.staticMethod() == null
+    StaticClass.otherStaticMethod() == null
+  }
+
+  def "SpyStatic stub all static methods"() {
+    // tag::stub-all-static-methods[]
+    given:
+    SpyStatic(StaticClass)
+    StaticClass._ >> _
+
+    expect:
+    StaticClass.staticMethod() == ""
+    StaticClass.otherStaticMethod() == ""
+    // end::stub-all-static-methods[]
   }
 
   def "SpyStatic in a different thread"() {
@@ -86,6 +108,10 @@ class StaticSpyDocSpec extends Specification {
   private static class StaticClass {
     static String staticMethod() {
       return "RealValue"
+    }
+
+    static String otherStaticMethod() {
+      return "OtherValue"
     }
   }
 // end::mock-static-class[]

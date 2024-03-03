@@ -371,6 +371,7 @@ dependencies {
 }
 
 asciidoctorj {
+  version = libs.versions.asciidoctorj
   modules {
     diagram.use()
   }

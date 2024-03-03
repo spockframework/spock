@@ -371,12 +371,15 @@ dependencies {
 }
 
 asciidoctorj {
+  version = libs.versions.asciidoctorj
   modules {
     diagram.use()
   }
 }
 
 tasks.named("asciidoctor") {
+  // work-around for https://github.com/asciidoctor/asciidoctor-gradle-plugin/issues/721
+  dependsOn(project.configurations.asciidoctorExtensions)
   configurations 'asciidoctorExtensions'
   sourceDir = "docs"
   baseDirFollowsSourceDir()

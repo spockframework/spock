@@ -107,7 +107,7 @@ jobs:
         run: |
           git checkout -b "docs-$GITHUB_SHA"
       - name: Install GraphViz
-        run: sudo apt install --yes graphviz
+        run: sudo apt update && sudo apt install --yes graphviz
       - name: 'Publish Docs'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

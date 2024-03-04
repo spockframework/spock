@@ -2,8 +2,14 @@ package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
+import org.spockframework.runtime.extension.ExtensionAnnotation
+import org.spockframework.runtime.extension.IAnnotationDrivenExtension
+import org.spockframework.runtime.extension.builtin.RetryIterationInterceptor
+import org.spockframework.runtime.model.FeatureInfo
 import spock.lang.*
 
+import java.lang.annotation.Retention
+import java.lang.annotation.RetentionPolicy
 import java.util.concurrent.atomic.AtomicInteger
 
 import org.opentest4j.MultipleFailuresError
@@ -128,6 +134,47 @@ class Foo extends Specification {
     Retry.Mode.SETUP_FEATURE_CLEANUP.name() || 4             || false
     Retry.Mode.ITERATION.name()             || 1             || true
     Retry.Mode.SETUP_FEATURE_CLEANUP.name() || 4             || true
+  }
+
+  def "@Retry mode SETUP_FEATURE_CLEANUP is safe against offloading iteration execution to a different thread"() {
+    given:
+    runner.throwFailure = true
+    runner.addClassImport(ChangeThread)
+
+    when:
+    runner.runSpecBody("""
+      @Retry(mode = Retry.Mode.SETUP_FEATURE_CLEANUP)
+      @ChangeThread
+      def foo() {
+        expect: false
+      }
+    """)
+
+    then:
+    MultipleFailuresError e = thrown()
+    e.failures.size() == 4
+    e.failures.collect { it.getClass() } =~ [ConditionNotSatisfiedError]
+  }
+
+  def "@Retry mode SETUP_FEATURE_CLEANUP is safe against offloading iteration execution to a different thread in data driven feature"() {
+    given:
+    runner.addClassImport(ChangeThread)
+
+    when:
+    def result = runner.runSpecBody("""
+      @Retry(mode = Retry.Mode.SETUP_FEATURE_CLEANUP)
+      @ChangeThread
+      def foo() {
+        expect: false
+        where: i << (1..2)
+      }
+    """)
+
+    then:
+    result.failures.size() == 2
+    result.failures.collect { it.exception.getClass() } =~ [MultipleFailuresError]
+    result.failures.collect { it.exception.failures.size() } =~ [4]
+    result.failures.collectMany { it.exception.failures*.getClass() } =~ [ConditionNotSatisfiedError]
   }
 
   def "@Retry mode #mode executes setup and cleanup #expectedCount times for @Unroll'ed feature (parallel: #parallel)"(String mode, int expectedCount) {
@@ -735,4 +782,21 @@ class Foo extends Specification {
     }
   }
 
+  static class ChangeThreadExtension implements IAnnotationDrivenExtension<ChangeThread> {
+    @Override
+    void visitFeatureAnnotation(ChangeThread annotation, FeatureInfo feature) {
+      assert feature.iterationInterceptors.any { it instanceof RetryIterationInterceptor }: "RetryIterationInterceptor must be added first"
+      feature.addIterationInterceptor { invocation ->
+        new Thread({ invocation.proceed() }).tap {
+          it.start()
+          it.join()
+        }
+      }
+    }
+  }
+}
+
+@Retention(RetentionPolicy.RUNTIME)
+@ExtensionAnnotation(RetryFeatureExtensionSpec.ChangeThreadExtension)
+@interface ChangeThread {
 }

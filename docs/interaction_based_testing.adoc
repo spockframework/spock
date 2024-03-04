@@ -813,7 +813,8 @@ Subscriber subscriber = Stub {
 [[Spies]]
 === Spies
 
-(Think twice before using this feature. It might be better to change the design of the code under specification.)
+NOTE: Think twice before using this feature.
+It might be better to change the design of the code under specification.
 
 A _spy_ is created with the `MockingApi.Spy` factory method:
 
@@ -883,7 +884,8 @@ i.e. for interface mocks there must be a default method, for class mocks there m
 [[PartialMocks]]
 === Partial Mocks
 
-(Think twice before using this feature. It might be better to change the design of the code under specification.)
+NOTE: Think twice before using this feature.
+It might be better to change the design of the code under specification.
 
 Spies can also be used as partial mocks:
 
@@ -906,13 +908,13 @@ then:
 [[MockingStaticMethods]]
 == Mocking Static Methods
 
+NOTE: Think twice before using this feature.
+It might be better to change the design of the code under specification.
+
 Spock supports two ways of mocking static methods:
 
 * `SpyStatic()` static mocks: Works with Java and Groovy, but requires a mock maker supporting this, e.g. <<extensions.adoc#mock-makers-mockito,mockito>> Mock Maker.
 * <<#global-groovy-mock-static-methods,Global Groovy mocks>>: Work only for Groovy code not for Java.
-
-NOTE: Think twice before using this feature.
-It might be better to change the design of the code under specification.
 
 [[static-mocks]]
 === Static Mocks
@@ -1004,7 +1006,8 @@ Subscriber subscriber = GroovyMock()
 [[MockingAllInstancesOfAType]]
 === Mocking All Instances of a Type
 
-(Think twice before using this feature. It might be better to change the design of the code under specification.)
+NOTE: Think twice before using this feature.
+It might be better to change the design of the code under specification.
 
 Usually, Groovy mocks need to be injected into the code under specification just like regular mocks.
 However, when a Groovy mock is created as _global_, it automagically replaces all real instances
@@ -1078,7 +1081,8 @@ Since a global Groovy mock is still based on a proxy class, it will retain its g
 [[MockingConstructors]]
 === Mocking Constructors
 
-(Think twice before using this feature. It might be better to change the design of the code under specification.)
+NOTE: Think twice before using this feature.
+It might be better to change the design of the code under specification.
 
 Global mocks support mocking of constructors:
 
@@ -1102,6 +1106,9 @@ a subscriber named Barney instead.
 
 [[global-groovy-mock-static-methods]]
 === Global Groovy Mocks for Static Methods
+
+NOTE: Think twice before using this feature.
+It might be better to change the design of the code under specification.
 
 Global mocks support mocking and stubbing of static methods in Groovy code.
 If you want to mock static methods for Java code please use <<#static-mocks,Static Mocks>>.

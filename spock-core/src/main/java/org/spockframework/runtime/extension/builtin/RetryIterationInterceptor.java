@@ -16,28 +16,26 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.*;
-import org.spockframework.runtime.model.IterationInfo;
+import groovy.lang.Closure;
+import org.opentest4j.MultipleFailuresError;
+import org.spockframework.runtime.extension.IMethodInterceptor;
+import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.extension.IStore.Namespace;
 import org.spockframework.runtime.model.MethodInfo;
 import org.spockframework.util.ThreadSafe;
 import spock.lang.Retry;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import groovy.lang.Closure;
-import org.opentest4j.MultipleFailuresError;
 
 /**
  * @author Leonard Brünings
  * @since 1.2
  */
 public class RetryIterationInterceptor extends RetryBaseInterceptor implements IMethodInterceptor {
-
-  private final IterationState iterationState = new IterationState();
+  private static final Namespace NAMESPACE = Namespace.create(RetryIterationInterceptor.class);
+  private static final String ITERATION_STATE = "iterationState";
 
   public RetryIterationInterceptor(Retry retry, MethodInfo featureMethod) {
     super(retry);
@@ -46,10 +44,12 @@ public class RetryIterationInterceptor extends RetryBaseInterceptor implements I
 
   @Override
   public void intercept(IMethodInvocation invocation) throws Throwable {
+    IterationState iterationState = new IterationState();
+    invocation.getStore(NAMESPACE).put(ITERATION_STATE, iterationState);
     for (int i = 0; i <= retry.count(); i++) {
-      iterationState.setRetryAttempt(invocation.getIteration(), i);
+      iterationState.setRetryAttempt(i);
       invocation.proceed();
-      if (iterationState.notFailed(invocation.getIteration())) {
+      if (iterationState.notFailed()) {
         break;
       } else {
         if (retry.delay() > 0) Thread.sleep(retry.delay());
@@ -65,12 +65,13 @@ public class RetryIterationInterceptor extends RetryBaseInterceptor implements I
 
     @Override
     public void intercept(IMethodInvocation invocation) throws Throwable {
+      IterationState iterationState = invocation.getStore(NAMESPACE).get(ITERATION_STATE);
       try {
         invocation.proceed();
-        iterationState.resetFailures(invocation.getIteration());
+        iterationState.resetFailures();
       } catch (Throwable e) {
         if (isExpected(invocation, e)) {
-          iterationState.failIteration(invocation.getIteration(), e);
+          iterationState.failIteration(e);
         } else {
           throw e;
         }
@@ -80,34 +81,26 @@ public class RetryIterationInterceptor extends RetryBaseInterceptor implements I
 
   @ThreadSafe
   private class IterationState {
-    private final ConcurrentMap<IterationInfo, AtomicBoolean> finalIteration = new ConcurrentHashMap<>();
-    private final ConcurrentMap<IterationInfo, CopyOnWriteArrayList<Throwable>> throwablesByIteration = new ConcurrentHashMap<>();
+    private final AtomicBoolean finalIteration = new AtomicBoolean(false);
+    private final List<Throwable> throwables = new CopyOnWriteArrayList<>();
 
-    void resetFailures(IterationInfo iteration) {
-      this.throwablesByIteration.computeIfPresent(iteration, (key, throwables) -> {
-        throwables.clear();
-        return throwables;
-      });
+    void resetFailures() {
+      throwables.clear();
     }
 
-    void setRetryAttempt(IterationInfo iteration, int retryAttempt) {
-      finalIteration
-        .computeIfAbsent(iteration, key -> new AtomicBoolean(false))
-        .set(retryAttempt == retry.count());
+    void setRetryAttempt(int retryAttempt) {
+      finalIteration.set(retryAttempt == retry.count());
     }
 
-    void failIteration(IterationInfo iteration, Throwable failure) {
-      List<Throwable> throwables = this.throwablesByIteration.computeIfAbsent(iteration, key -> new CopyOnWriteArrayList<>());
+    void failIteration(Throwable failure) {
       throwables.add(failure);
-      AtomicBoolean finalIterationValue = finalIteration.get(iteration);
-      if ((finalIterationValue != null) && finalIterationValue.get()) {
+      if (finalIteration.get()) {
         throw new MultipleFailuresError("Retries exhausted", throwables);
       }
     }
 
-    boolean notFailed(IterationInfo iteration) {
-      List<Throwable> throwables = throwablesByIteration.get(iteration);
-      return (throwables == null) || throwables.isEmpty();
+    boolean notFailed() {
+      return throwables.isEmpty();
     }
   }
 }

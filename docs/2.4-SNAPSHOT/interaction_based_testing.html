@@ -1188,8 +1188,18 @@ If the response type of the method is a final class or if it requires a class-mo
 </div>
 <div class="sect2">
 <h3 id="Spies"><a class="anchor" href="#Spies"></a><a class="link" href="#Spies">Spies</a></h3>
-<div class="paragraph">
-<p>(Think twice before using this feature. It might be better to change the design of the code under specification.)</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Think twice before using this feature.
+It might be better to change the design of the code under specification.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>A <em>spy</em> is created with the <code>MockingApi.Spy</code> factory method:</p>
@@ -1272,8 +1282,18 @@ i.e. for interface mocks there must be a default method, for class mocks there m
 </div>
 <div class="sect2">
 <h3 id="PartialMocks"><a class="anchor" href="#PartialMocks"></a><a class="link" href="#PartialMocks">Partial Mocks</a></h3>
-<div class="paragraph">
-<p>(Think twice before using this feature. It might be better to change the design of the code under specification.)</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Think twice before using this feature.
+It might be better to change the design of the code under specification.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Spies can also be used as partial mocks:</p>
@@ -1300,19 +1320,6 @@ persister.receive(<span class="string"><span class="delimiter">&quot;</span><spa
 <div class="sect1">
 <h2 id="MockingStaticMethods"><a class="anchor" href="#MockingStaticMethods"></a><a class="link" href="#MockingStaticMethods">Mocking Static Methods</a></h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Spock supports two ways of mocking static methods:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>SpyStatic()</code> static mocks: Works with Java and Groovy, but requires a mock maker supporting this, e.g. <a href="extensions.html#mock-makers-mockito">mockito</a> Mock Maker.</p>
-</li>
-<li>
-<p><a href="#global-groovy-mock-static-methods">Global Groovy mocks</a>: Work only for Groovy code not for Java.</p>
-</li>
-</ul>
-</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -1325,6 +1332,19 @@ It might be better to change the design of the code under specification.
 </td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>Spock supports two ways of mocking static methods:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>SpyStatic()</code> static mocks: Works with Java and Groovy, but requires a mock maker supporting this, e.g. <a href="extensions.html#mock-makers-mockito">mockito</a> Mock Maker.</p>
+</li>
+<li>
+<p><a href="#global-groovy-mock-static-methods">Global Groovy mocks</a>: Work only for Groovy code not for Java.</p>
+</li>
+</ul>
 </div>
 <div class="sect2">
 <h3 id="static-mocks"><a class="anchor" href="#static-mocks"></a><a class="link" href="#static-mocks">Static Mocks</a></h3>
@@ -1512,8 +1532,18 @@ dynamic methods as if they were physically declared methods:</p>
 </div>
 <div class="sect2">
 <h3 id="MockingAllInstancesOfAType"><a class="anchor" href="#MockingAllInstancesOfAType"></a><a class="link" href="#MockingAllInstancesOfAType">Mocking All Instances of a Type</a></h3>
-<div class="paragraph">
-<p>(Think twice before using this feature. It might be better to change the design of the code under specification.)</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Think twice before using this feature.
+It might be better to change the design of the code under specification.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Usually, Groovy mocks need to be injected into the code under specification just like regular mocks.
@@ -1657,8 +1687,18 @@ Since a global Groovy mock is still based on a proxy class, it will retain its g
 </div>
 <div class="sect2">
 <h3 id="MockingConstructors"><a class="anchor" href="#MockingConstructors"></a><a class="link" href="#MockingConstructors">Mocking Constructors</a></h3>
-<div class="paragraph">
-<p>(Think twice before using this feature. It might be better to change the design of the code under specification.)</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Think twice before using this feature.
+It might be better to change the design of the code under specification.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Global mocks support mocking of constructors:</p>
@@ -1686,6 +1726,19 @@ a subscriber named Barney instead.</p>
 </div>
 <div class="sect2">
 <h3 id="global-groovy-mock-static-methods"><a class="anchor" href="#global-groovy-mock-static-methods"></a><a class="link" href="#global-groovy-mock-static-methods">Global Groovy Mocks for Static Methods</a></h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Think twice before using this feature.
+It might be better to change the design of the code under specification.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>Global mocks support mocking and stubbing of static methods in Groovy code.
 If you want to mock static methods for Java code please use <a href="#static-mocks">Static Mocks</a>.</p>
@@ -2086,7 +2139,7 @@ is attached to a spec before usage:</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-03-03 19:04:59 UTC
+Last updated 2024-03-04 00:35:15 UTC
 </div>
 </div>
 </body>

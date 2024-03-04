@@ -2,27 +2,21 @@
 :revnumber: X-replaced-by-gradle
 :sectlinks: true
 :icons: font
-
 :github-base: https://github.com/spockframework/spock
 :github-blob-base: {github-base}/blob
 :commit-ish: master
-
 :base-sourcedir: spock-specs/src/test/groovy/org/spockframework/docs
 :sourcedir: ../{base-sourcedir}
 :github-sourcedir: {github-blob-base}/{commit-ish}/{base-sourcedir}
-
 :base-snapshotdir: spock-specs/src/test/resources/snapshots/org/spockframework/docs
 :snapshotdir: ../{base-snapshotdir}
 :github-snapshotdir: {github-blob-base}/{commit-ish}/{base-snapshotdir}
-
 :base-sourcedir-spring: spock-spring/src/test/groovy/org/spockframework/spring/docs
 :sourcedir-spring: ../{base-sourcedir-spring}
 :github-sourcedir-spring: {github-blob-base}/{commit-ish}/{base-sourcedir-spring}
-
 :base-resourcedir-spring: spock-spring/src/test/resources/org/spockframework/spring/docs
 :resourcedir-spring: ../{base-resourcedir-spring}
 :github-resourcedir-spring: {github-blob-base}/{commit-ish}/{base-resourcedir-spring}
-
 :base-sourcedir-spring-boot: spock-spring/boot2-test/src/test/groovy/org/spockframework/boot2
 :sourcedir-spring-boot: ../{base-sourcedir-spring-boot}
 :github-sourcedir-spring-boot: {github-blob-base}/{commit-ish}/{base-sourcedir-spring-boot}

@@ -10,9 +10,6 @@ public class SpockExtension implements ExtensionRegistry {
     var registry = asciidoctor.javaExtensionRegistry();
     registry.inlineMacro(SpockIssueInlineMacroProcessor.class);
     registry.inlineMacro(SpockPullInlineMacroProcessor.class);
-
-    IncludedSourceLinker includedSourceLinker = new IncludedSourceLinker();
-    registry.includeProcessor(includedSourceLinker.getIncludeProcessor());
-    registry.treeprocessor(includedSourceLinker.getTreeprocessor());
+    new IncludedSourceLinker().register(registry);
   }
 }

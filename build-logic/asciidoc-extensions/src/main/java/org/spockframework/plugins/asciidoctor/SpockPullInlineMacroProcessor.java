@@ -14,7 +14,7 @@ public class SpockPullInlineMacroProcessor extends InlineMacroProcessor {
   public Object process(
     ContentNode parent, String target, Map<String, Object> attributes) {
 
-    String href = "https://github.com/spockframework/spock/pull/" + target;
+    String href = parent.getDocument().getAttribute("github-base") + "/pull/" + target;
 
     Map<String, Object> options = new HashMap<>();
     options.put("type", ":link");

@@ -15,16 +15,15 @@
 
 package org.spockframework.smoke.ast
 
+import org.codehaus.groovy.control.CompilePhase
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.specs.extension.SpockSnapshotter
-import spock.lang.Snapshot
 import org.spockframework.util.GroovyReleaseInfo
 import org.spockframework.util.VersionNumber
 import spock.lang.Requires
+import spock.lang.Snapshot
 import spock.util.Show
-
-import org.codehaus.groovy.control.CompilePhase
 
 class AstSpec extends EmbeddedSpecification {
   @Snapshot(extension = 'groovy')
@@ -134,6 +133,10 @@ class Foo {
   }
 
   def "enums"() {
+    given:
+    // groovy 4 renders differently
+    def snapshotId = GroovyRuntimeUtil.groovy4orNewer ? "groovy4" : ""
+
     when:
     def result = compiler.transpile('''
     enum Alpha {
@@ -144,7 +147,7 @@ class Foo {
     })
 
     then:
-    snapshotter.assertThat(result.source).matchesSnapshot()
+    snapshotter.assertThat(result.source).matchesSnapshot(snapshotId)
   }
 
   def "full feature exercise"() {

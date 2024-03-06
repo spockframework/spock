@@ -19,7 +19,7 @@
 @file:Import("common.main.kts")
 
 import io.github.typesafegithub.workflows.actions.actions.CheckoutV4
-import io.github.typesafegithub.workflows.actions.codecov.CodecovActionV3
+import io.github.typesafegithub.workflows.actions.codecov.CodecovActionV4
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
@@ -102,7 +102,7 @@ workflow(
         )
         uses(
             name = "Upload to Codecov.io",
-            action = CodecovActionV3()
+            action = CodecovActionV4()
         )
     }
 }.writeToFile()

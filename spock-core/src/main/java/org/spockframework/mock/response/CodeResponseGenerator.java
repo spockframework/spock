@@ -21,6 +21,8 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
 
 import groovy.lang.Closure;
 
+import static org.spockframework.util.ObjectUtil.uncheckedCast;
+
 /**
  *
  * @author Peter Niederwieser
@@ -49,6 +51,7 @@ public class CodeResponseGenerator extends SingleResponseGenerator {
       return GroovyRuntimeUtil.invokeClosure(code, invocation);
     }
 
+    Closure<?> code = uncheckedCast(this.code.clone());
     code.setDelegate(invocation);
     code.setResolveStrategy(Closure.DELEGATE_FIRST);
     return GroovyRuntimeUtil.invokeClosure(code, invocation.getArguments());

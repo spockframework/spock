@@ -17,6 +17,7 @@ package org.spockframework.mock.runtime;
 import org.spockframework.mock.*;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public abstract class MockInteractionDecorator implements IMockInteraction {
   protected final IMockInteraction decorated;
@@ -46,7 +47,7 @@ public abstract class MockInteractionDecorator implements IMockInteraction {
   }
 
   @Override
-  public Object accept(IMockInvocation invocation) {
+  public Supplier<Object> accept(IMockInvocation invocation) {
     return decorated.accept(invocation);
   }
 

@@ -40,7 +40,7 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
   @SuppressWarnings("rawtypes")
   public Object respond(IMockInvocation invocation) {
     IMockInteraction interaction = DefaultJavaLangObjectInteractions.INSTANCE.match(invocation);
-    if (interaction != null) return interaction.accept(invocation);
+    if (interaction != null) return interaction.accept(invocation).get();
 
     Class<?> returnType = invocation.getMethod().getReturnType();
 

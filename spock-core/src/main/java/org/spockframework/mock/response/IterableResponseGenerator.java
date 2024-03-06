@@ -28,6 +28,7 @@ import java.util.Iterator;
  * @author Peter Niederwieser
  */
 public class IterableResponseGenerator implements IChainableResponseGenerator {
+  private final Object lock = new Object();
   private final Iterator<?> iterator;
   private Object nextValue;
 
@@ -37,12 +38,16 @@ public class IterableResponseGenerator implements IChainableResponseGenerator {
 
   @Override
   public boolean isAtEndOfCycle() {
-    return !iterator.hasNext();
+    synchronized (lock) {
+      return !iterator.hasNext();
+    }
   }
 
   @Override
   public Object respond(IMockInvocation invocation) {
-    if (iterator.hasNext()) nextValue = iterator.next();
-    return GroovyRuntimeUtil.coerce(nextValue, invocation.getMethod().getReturnType());
+    synchronized (lock) {
+      if (iterator.hasNext()) nextValue = iterator.next();
+      return GroovyRuntimeUtil.coerce(nextValue, invocation.getMethod().getReturnType());
+    }
   }
 }

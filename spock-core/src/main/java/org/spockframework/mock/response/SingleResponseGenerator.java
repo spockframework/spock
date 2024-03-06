@@ -19,7 +19,7 @@ package org.spockframework.mock.response;
 import org.spockframework.mock.*;
 
 public abstract class SingleResponseGenerator implements IChainableResponseGenerator {
-  private boolean endOfCycle = false;
+  private volatile boolean endOfCycle = false;
 
   @Override
   public boolean isAtEndOfCycle() {

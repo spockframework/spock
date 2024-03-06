@@ -22,25 +22,34 @@ import org.spockframework.util.InternalSpockError;
 import java.util.LinkedList;
 
 public class ResponseGeneratorChain implements IResponseGenerator {
+  private final Object lock = new Object();
   private IChainableResponseGenerator current;
   private final LinkedList<IChainableResponseGenerator> remaining = new LinkedList<>();
 
   public void addFirst(IChainableResponseGenerator generator) {
-    if (current != null) remaining.addFirst(current);
-    current = generator;
+    synchronized (lock) {
+      if (current != null) remaining.addFirst(current);
+      current = generator;
+    }
   }
 
   public boolean isEmpty() {
-    return current == null;
+    synchronized (lock) {
+      return current == null;
+    }
   }
 
   @Override
   public Object respond(IMockInvocation invocation) {
-    if (isEmpty()) throw new InternalSpockError("ResultGeneratorChain should never be empty");
+    IChainableResponseGenerator responseGenerator;
+    synchronized (lock) {
+      if (isEmpty()) throw new InternalSpockError("ResultGeneratorChain should never be empty");
 
-    while (current.isAtEndOfCycle() && !remaining.isEmpty()) {
-      current = remaining.removeFirst();
+      while (current.isAtEndOfCycle() && !remaining.isEmpty()) {
+        current = remaining.removeFirst();
+      }
+      responseGenerator = current;
     }
-    return current.respond(invocation);
+    return responseGenerator.respond(invocation);
   }
 }

@@ -5,6 +5,22 @@ include::include.adoc[]
 
 == 2.4 (tbd)
 
+=== Breaking Changes
+
+* Calculated responses for interactions (`>> { ... }`) previously were all executed synchronized on the respective mock
+  controller instance, so could safely mutate shared state to a certain degree, even if the invocations were happening
+  on different threads. This also caused that one response calculation could not wait on something happening
+  in another response calculation, as they were all executed sequentially due to the synchronization.
+  Starting with this release, the response calculations are no longer happening synchronized.
+  If you depend on shared state in such calculations, you now have to make sure yourself, that this is done in a
+  thread-safe manner. Most users will probably be unaffected by this change as it only becomes relevant in a
+  multi-threaded situation where multiple threads do interaction invocations that care about shared state.
+
+=== Misc
+
+* Properly fix possible deadlock, when blocking in mock response generators and fix fallout of spockPull:1885[]
+** This actually fixes the issues: spockIssue:583[], spockIssue:1882[], spockIssue:1899[]
+
 == 2.4-M2 (2024-02-26)
 
 === Highlights
@@ -70,8 +86,8 @@ include::include.adoc[]
 * Fix exception when configured `baseDir` was not existing, now `@TempDir` will create the baseDir directory if it is missing.
 * Fix bad error message for collection conditions, when one of the operands is `null`
 * Fix docs about initializer method interceptors spockPull:1666[]
-* Fix possible deadlock, when blocking in mock response generators spockPull:1885[]
-** This fixes the issues: spockIssue:583[], spockIssue:1882[]
+* [.line-through]#Fix possible deadlock, when blocking in mock response generators spockPull:1885[]#
+** [.line-through]#This fixes the issues: spockIssue:583[], spockIssue:1882[]#
 * Fix SpringSpy not working with `DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD` spockPull:1869[]
 * Fix null handling for collection conditions spockPull:1858[]
 * Fix interceptor contexts spockPull:1676[]

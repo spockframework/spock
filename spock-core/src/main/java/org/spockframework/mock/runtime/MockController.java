@@ -17,10 +17,13 @@
 package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
+import org.spockframework.util.Checks;
 import org.spockframework.util.ExceptionUtil;
 
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
@@ -29,7 +32,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class MockController implements IMockController, IThreadAwareMockController {
   private final Deque<IInteractionScope> scopes = new LinkedList<>();
-  private final List<InteractionNotSatisfiedError> errors = new ArrayList<>();
+  private final List<InteractionNotSatisfiedError> errors = new CopyOnWriteArrayList<>();
   private final List<IMockMaker.IStaticMock> staticMocks = new ArrayList<>();
 
   public MockController() {
@@ -38,31 +41,31 @@ public class MockController implements IMockController, IThreadAwareMockControll
 
   @Override
   public Object handle(IMockInvocation invocation) {
-    Optional<IMockInteraction> interaction = findInteraction(invocation);
-    if (interaction.isPresent()) {
-      try {
-        return interaction.get().accept(invocation);
-      } catch (InteractionNotSatisfiedError e) {
-        synchronized (this) {
-          errors.add(e);
+    Supplier<Object> resultSupplier = null;
+    synchronized (this) {
+      for (IInteractionScope scope : scopes) {
+        IMockInteraction interaction = scope.match(invocation);
+        if (interaction != null) {
+          resultSupplier = requireNonNull(interaction.accept(invocation), "interaction must not return null");
+          break;
         }
+      }
+      if (resultSupplier == null) {
+        for (IInteractionScope scope : scopes) {
+          scope.addUnmatchedInvocation(invocation);
+        }
+      }
+    }
+    if (resultSupplier == null) {
+      return invocation.getMockObject().getDefaultResponse().respond(invocation);
+    } else {
+      try {
+        return resultSupplier.get();
+      } catch (InteractionNotSatisfiedError e) {
+        errors.add(e);
         throw e;
       }
     }
-    return invocation.getMockObject().getDefaultResponse().respond(invocation);
-  }
-
-  private synchronized Optional<IMockInteraction> findInteraction(IMockInvocation invocation) {
-    for (IInteractionScope scope : scopes) {
-      IMockInteraction interaction = scope.match(invocation);
-      if (interaction != null) {
-          return Optional.of(interaction);
-      }
-    }
-    for (IInteractionScope scope : scopes) {
-      scope.addUnmatchedInvocation(invocation);
-    }
-    return Optional.empty();
   }
 
   public static final String ADD_INTERACTION = "addInteraction";

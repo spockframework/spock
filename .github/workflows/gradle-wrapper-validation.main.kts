@@ -19,7 +19,7 @@
 @file:Import("common.main.kts")
 
 import io.github.typesafegithub.workflows.actions.actions.CheckoutV4
-import io.github.typesafegithub.workflows.actions.gradle.WrapperValidationActionV1
+import io.github.typesafegithub.workflows.actions.gradle.WrapperValidationActionV2
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
 import io.github.typesafegithub.workflows.domain.triggers.MergeGroup
 import io.github.typesafegithub.workflows.domain.triggers.PullRequest
@@ -48,7 +48,7 @@ workflow(
         )
         uses(
             name = "Validate Wrapper",
-            action = WrapperValidationActionV1()
+            action = WrapperValidationActionV2()
         )
     }
 }.writeToFile()

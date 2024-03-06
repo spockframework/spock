@@ -32,4 +32,4 @@ jobs:
       uses: 'actions/checkout@v4'
     - id: 'step-1'
       name: 'Validate Wrapper'
-      uses: 'gradle/wrapper-validation-action@v1'
+      uses: 'gradle/wrapper-validation-action@v2'

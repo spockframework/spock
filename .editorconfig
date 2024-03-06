@@ -16,5 +16,8 @@ indent_size = 2
 trim_trailing_whitespace = false
 
 [*.{kt,kts}]
+indent_size = 4
 ij_kotlin_allow_trailing_comma = false
 ij_kotlin_allow_trailing_comma_on_call_site = false
+ktlint_code_style = intellij_idea
+ktlint_standard_function-signature = disabled

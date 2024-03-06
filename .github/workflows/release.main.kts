@@ -20,7 +20,7 @@
 
 import io.github.typesafegithub.workflows.actions.actions.CheckoutV4
 import io.github.typesafegithub.workflows.actions.actions.CheckoutV4.FetchDepth
-import io.github.typesafegithub.workflows.actions.codecov.CodecovActionV3
+import io.github.typesafegithub.workflows.actions.codecov.CodecovActionV4
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.dsl.expressions.Contexts.github
@@ -86,7 +86,7 @@ workflow(
         )
         uses(
             name = "Upload to Codecov.io",
-            action = CodecovActionV3()
+            action = CodecovActionV4()
         )
     }
     val releaseSpock = job(
@@ -157,6 +157,10 @@ workflow(
         run(
             name = "Create Temporary Branch",
             command = "git checkout -b \"docs-\$GITHUB_SHA\""
+        )
+        run(
+            name = "Install GraphViz",
+            command = "sudo apt update && sudo apt install --yes graphviz"
         )
         run(
             name = "Publish Docs",

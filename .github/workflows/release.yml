@@ -92,7 +92,7 @@ jobs:
       run: './gradlew --stop'
     - id: 'step-4'
       name: 'Upload to Codecov.io'
-      uses: 'codecov/codecov-action@v3'
+      uses: 'codecov/codecov-action@v4'
   release-spock:
     name: 'Release Spock'
     runs-on: '${{ matrix.os }}'
@@ -156,6 +156,9 @@ jobs:
       name: 'Create Temporary Branch'
       run: 'git checkout -b "docs-$GITHUB_SHA"'
     - id: 'step-3'
+      name: 'Install GraphViz'
+      run: 'sudo apt update && sudo apt install --yes graphviz'
+    - id: 'step-4'
       name: 'Publish Docs'
       env:
         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'

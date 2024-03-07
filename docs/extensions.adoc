@@ -281,7 +281,7 @@ failure are skipped.
 `Stepwise` does not override the behaviour of annotations such as `Ignore`, `IgnoreRest`, and `IgnoreIf`, so care
 should be taken when ignoring feature methods in spec classes annotated with `Stepwise`.
 
-NOTE: This will also set the execution mode to `SAME_THREAD`, see <<parallel-execution.adoc#parallel-execution, Parallel Execution>> for more information.
+NOTE: This will also set the execution mode to `SAME_THREAD`, see <<parallel_execution.adoc#parallel-execution, Parallel Execution>> for more information.
 
 Since Spock 2.2, `Stepwise` can be applied to data-driven feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations if one iteration fails:
 
@@ -446,7 +446,7 @@ methods.
 To use multiple categories, you can either give multiple categories to the `value` attribute
 of the annotation or you can apply the annotation multiple times to the same target.
 
-NOTE: This will also set the execution mode to `SAME_THREAD` if applied on a `Specification`, see <<parallel-execution.adoc#parallel-execution, Parallel Execution>> for more information.
+NOTE: This will also set the execution mode to `SAME_THREAD` if applied on a `Specification`, see <<parallel_execution.adoc#parallel-execution, Parallel Execution>> for more information.
 
 === ConfineMetaClassChanges
 
@@ -470,7 +470,7 @@ CAUTION: Temporarily changing the meta classes is only safe when specs are
 run in a single thread per JVM. Even though many execution environments do limit themselves to one thread
 per JVM, keep in mind that Spock cannot enforce this.
 
-NOTE: This will acquire a `READ_WRITE` lock for `Resources.META_CLASS_REGISTRY`, see <<parallel-execution.adoc#parallel-execution, Parallel Execution>> for more information.
+NOTE: This will acquire a `READ_WRITE` lock for `Resources.META_CLASS_REGISTRY`, see <<parallel_execution.adoc#parallel-execution, Parallel Execution>> for more information.
 
 === RestoreSystemProperties
 Saves system properties before the annotated feature method (including any setup and cleanup methods) gets run,
@@ -494,7 +494,7 @@ CAUTION: Temporarily changing the values of system properties is only safe when 
 run in a single thread per JVM. Even though many execution environments do limit themselves to one thread
 per JVM, keep in mind that Spock cannot enforce this.
 
-NOTE: This will acquire a `READ_WRITE` lock for `Resources.SYSTEM_PROPERTIES`, see <<parallel-execution.adoc#parallel-execution, Parallel Execution>> for more information.
+NOTE: This will acquire a `READ_WRITE` lock for `Resources.SYSTEM_PROPERTIES`, see <<parallel_execution.adoc#parallel-execution, Parallel Execution>> for more information.
 
 === AutoAttach
 

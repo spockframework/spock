@@ -472,12 +472,25 @@ tasks.named("asciidoctor") {
         )
 
         // verify there are no dead in-document anchors in the generated docs
-        return result + relativeLinkTargets
-          .findAll { !it.path }
-          *.fragment
-          .findAll { fragment -> !subject.'**'.find { it.@id == fragment } }
-          .collect { "$file.name contains a dead anchor to $it" }
+        result.addAll(
+          relativeLinkTargets
+            .findAll { !it.path }
+            *.fragment
+            .findAll { fragment -> !subject.'**'.find { it.@id == fragment } }
+            .collect { "$file.name contains a dead anchor to $it" }
+            .findAll()
+        )
+
+        // verify there are no duplicate anchors in the generated docs
+        return result + subject
+          .'**'
+          *.@id
+          *.text()
           .findAll()
+          .groupBy()
+          .findAll { key, value -> value.size() > 1 }
+          *.key
+          .collect { "$file.name contains multiple anchors with the name '$it'" }
       }
       .tap {
         if (it) {

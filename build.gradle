@@ -419,14 +419,17 @@ tasks.named("asciidoctor") {
   }
 
   doLast {
-    // verify there are no dead links in the generated docs
     outputs
       .files
       .asFileTree
       .matching { include('*.html') }
       .collectMany { file ->
-        new XmlSlurper(new Parser())
-          .parse(file)
+        def xmlSlurper = new XmlSlurper(new Parser())
+
+        def subject = xmlSlurper.parse(file)
+
+        // collect all relative link targets
+        def relativeLinkTargets = subject
           .'**'
           .findAll { it.name() == 'a' }
           *.@href
@@ -437,12 +440,44 @@ tasks.named("asciidoctor") {
               !it.authority &&
               !it.userInfo &&
               !it.host &&
-              it.port == -1 &&
-              it.path
+              it.port == -1
           }
+
+        // verify there are no dead links in the generated docs
+        def result = relativeLinkTargets
+          .findAll { it.path }
           *.path
           .findAll { !new File(file.parentFile, it).file }
           .collect { "$file.name contains a dead link to $it" }
+
+        // verify there are no dead cross-document anchors in the generated docs
+        result.addAll(
+          relativeLinkTargets
+            .findAll { it.path }
+            .collect { linkTarget ->
+              def linkTargetFile = new File(file.parentFile, linkTarget.path)
+              if (!linkTargetFile.file || !linkTarget.fragment) {
+                return
+              }
+              if (
+                !xmlSlurper
+                  .parse(linkTargetFile)
+                  .'**'
+                  .find { it.@id == linkTarget.fragment }
+              ) {
+                return "$file.name contains a dead anchor to $linkTarget"
+              }
+            }
+            .findAll()
+        )
+
+        // verify there are no dead in-document anchors in the generated docs
+        return result + relativeLinkTargets
+          .findAll { !it.path }
+          *.fragment
+          .findAll { fragment -> !subject.'**'.find { it.@id == fragment } }
+          .collect { "$file.name contains a dead anchor to $it" }
+          .findAll()
       }
       .tap {
         if (it) {

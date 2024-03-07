@@ -119,7 +119,7 @@ followed by a predicate and an optional reason:
 include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-a]
 ----
 
-[[precondition_context]]
+[[precondition-context]]
 ==== Precondition Context
 To make predicates easier to read and write, the following properties are available inside the closure:
 
@@ -532,7 +532,7 @@ annotated object. To prevent cleanup exceptions from being reported, override th
 def ignoreMyExceptions
 ----
 
-[[_temp_dir]]
+[[temp-dir]]
 === TempDir
 
 In order to generate a temporary directory for test and delete it after test, annotate a member field of type
@@ -549,7 +549,7 @@ Valid methods are `setup()`, `setupSpec()`, or any feature methods.
 include::{sourcedir}/extension/TempDirDocSpec.groovy[tag=example]
 ----
 
-[[_temp_dir_cleanup]]
+[[temp-dir-cleanup]]
 ==== Cleanup
 
 You can configure the cleanup behavior via `@TempDir(cleanup = <mode>)`.

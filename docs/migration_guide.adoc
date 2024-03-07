@@ -3,10 +3,10 @@ include::include.adoc[]
 
 This page explains incompatible changes between successive versions and provides suggestions on how to deal with them.
 
-[[_migration_guide_2_0]]
+[[migration-guide-2-0]]
 == 2.0
 
-NOTE: This section only touches on the breaking changes, see the <<release_notes.adoc#_release_notes, Release Notes>> for a full list of changes and new features.
+NOTE: This section only touches on the breaking changes, see the <<release_notes.adoc#release-notes, Release Notes>> for a full list of changes and new features.
 
 Spock 2.0 aims to be as compatible as possible for existing code bases, while making the necessary changes to stay a modern test framework.
 
@@ -19,7 +19,7 @@ See the https://junit.org/junit5/docs/current/user-guide/#running-tests-build[JU
 
 Support for JUnit 4 has been removed from `spock-core`, you can use the new `spock-junit4` module if you still need JUnit 4 features, such as `@Rule`.
 
-You can replace the `TemporaryFolder` rule with the new built-in `@TempDir` <<extensions.adoc#_temp_dir, extension>>.
+You can replace the `TemporaryFolder` rule with the new built-in `@TempDir` <<extensions.adoc#temp-dir, extension>>.
 
 Spock 2.0 also removed the `Sputnik` runner, so if you have used `PowerMockRunnerDelegate` or other things that relied on the runner, you'll have to find other solutions.
 Take a look at https://github.com/spockframework/spock/wiki/Third-Party-Extensions[Third-Party-Extensions] for solutions.
@@ -178,12 +178,3 @@ that answer, closeTo(42, 0.001)
 ----
 
 A future version of Spock will likely remove the former syntax and strengthen the latter one.
-
-
-
-
-
-
-
-
-

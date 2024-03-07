@@ -545,7 +545,7 @@ string, this value is used as unroll-pattern. This could for example be set to
 - `#iterationName` if you make sure that in each data-driven feature you also set
   a data variable called `iterationName` that is then used for reporting
 
-[[unroll_tokens]]
+[[unroll-tokens]]
 === Special Tokens
 
 This is the complete list of special tokens:

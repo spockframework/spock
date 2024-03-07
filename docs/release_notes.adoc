@@ -880,7 +880,7 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 
 * Add support for Java 11+ (spockIssue:895[], spockIssue:902[], spockIssue:903[])
 * Add Groovy 2.5.0 Variant for better Java 10+ Support
-* Add `@SpringBean` and `@SpringSpy` inspired by `@MockBean`, Also add `@StubBeans` (<<extensions.adoc#_annotation_driven,Docs>>)
+* Add `@SpringBean` and `@SpringSpy` inspired by `@MockBean`, Also add `@StubBeans` (<<module_spring.adoc#_annotation_driven,Docs>>)
 * Add `@UnwrapAopProxy` to make automatically unwrap SpringAopProxies
 * Add `@AutoAttach` extension  (<<extensions.adoc#_autoattach,Docs>>)
 * Add `@Retry` extension (<<extensions.adoc#_retry,Docs>>)
@@ -1058,7 +1058,7 @@ verifyAll {
   b == c
 }
 ----
-* Detached mocks via the `DetachedMockFactory` and `SpockMockFactoryBean` classes see the <<module_spring.adoc#_spring_module,Spring Module Docs>>.
+* Detached mocks via the `DetachedMockFactory` and `SpockMockFactoryBean` classes see the <<module_spring.adoc#spring-module,Spring Module Docs>>.
 * Cells in a data table can refer to the current value for a column to the left.
 * `Spy` can be used to create partial mocks for Java 8 interfaces with `default` methods just as it can for abstract classes.
 * Improved power assert output when an exception occurs evaluating an assertion.

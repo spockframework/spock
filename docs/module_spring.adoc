@@ -1,3 +1,4 @@
+[[spring-module]]
 = Spring Module
 include::include.adoc[]
 

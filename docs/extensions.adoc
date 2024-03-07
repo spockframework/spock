@@ -504,7 +504,7 @@ Use this, if there is no direct framework support available.
 To create detached mocks, see <<interaction_based_testing.adoc#DetachedMockFactory,Create Mocks Outside Specifications>>
 
 Spring and Guice dependency injection is automatically handled by the
-<<module_spring.adoc#_spring_module,Spring Module>> and <<modules.adoc#_guice_module,Guice Module>>, respectively.
+<<module_spring.adoc#spring-module,Spring Module>> and <<modules.adoc#_guice_module,Guice Module>>, respectively.
 
 === AutoCleanup
 

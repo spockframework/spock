@@ -1,4 +1,13 @@
+import groovy.xml.XmlSlurper
+import org.ccil.cowan.tagsoup.Parser
+
 import static groovy.io.FileType.FILES
+
+buildscript {
+  dependencies {
+    classpath('org.ccil.cowan.tagsoup:tagsoup:1.2.1')
+  }
+}
 
 plugins {
   id "base"
@@ -246,7 +255,7 @@ tasks.register("codeCoverageReport", JacocoReport) {
 }
 
 if (gradle.startParameter.taskNames == ["ghActionsBuild"]) {
-  gradle.startParameter.taskNames = ["build", "codeCoverageReport"]
+  gradle.startParameter.taskNames = ["build", "asciidoctor", "codeCoverageReport"]
 }
 
 if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParameter.taskNames == ["ghActionsDocs"]) {
@@ -407,6 +416,39 @@ tasks.named("asciidoctor") {
     if (errors) {
       throw new IllegalArgumentException(errors.join('\n'))
     }
+  }
+
+  doLast {
+    // verify there are no dead links in the generated docs
+    outputs
+      .files
+      .asFileTree
+      .matching { include('*.html') }
+      .collectMany { file ->
+        new XmlSlurper(new Parser())
+          .parse(file)
+          .'**'
+          .findAll { it.name() == 'a' }
+          *.@href
+          *.text()
+          .collect { URI.create(it) }
+          .findAll {
+            !it.scheme &&
+              !it.authority &&
+              !it.userInfo &&
+              !it.host &&
+              it.port == -1 &&
+              it.path
+          }
+          *.path
+          .findAll { !new File(file.parentFile, it).file }
+          .collect { "$file.name contains a dead link to $it" }
+      }
+      .tap {
+        if (it) {
+          throw new IllegalArgumentException(it.join('\n'))
+        }
+      }
   }
 }
 

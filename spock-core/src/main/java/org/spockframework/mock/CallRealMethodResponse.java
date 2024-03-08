@@ -17,6 +17,8 @@ package org.spockframework.mock;
 import org.spockframework.util.Beta;
 import org.spockframework.util.ThreadSafe;
 
+import java.util.function.Supplier;
+
 /**
  * A response strategy that delegates method calls to the real object underlying the mock (if any).
  */
@@ -28,7 +30,7 @@ public class CallRealMethodResponse implements IDefaultResponse {
   private CallRealMethodResponse() {}
 
   @Override
-  public Object respond(IMockInvocation invocation) {
-    return invocation.callRealMethod();
+  public Supplier<Object> respond(IMockInvocation invocation) {
+    return invocation::callRealMethod;
   }
 }

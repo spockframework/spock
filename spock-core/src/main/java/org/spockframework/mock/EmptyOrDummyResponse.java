@@ -22,6 +22,7 @@ import java.lang.reflect.*;
 import java.math.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 import java.util.stream.*;
 
 import groovy.lang.*;
@@ -40,68 +41,70 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
 
   @Override
   @SuppressWarnings("rawtypes")
-  public Object respond(IMockInvocation invocation) {
-    IMockInteraction interaction = DefaultJavaLangObjectInteractions.INSTANCE.match(invocation);
-    if (interaction != null) return interaction.accept(invocation).get();
+  public Supplier<Object> respond(IMockInvocation invocation) {
+    return () -> {
+      IMockInteraction interaction = DefaultJavaLangObjectInteractions.INSTANCE.match(invocation);
+      if (interaction != null) return interaction.accept(invocation).get();
 
-    Class<?> returnType = invocation.getMethod().getReturnType();
+      Class<?> returnType = invocation.getMethod().getReturnType();
 
-    if (returnType == void.class || returnType == Void.class) {
-      return null;
-    }
+      if (returnType == void.class || returnType == Void.class) {
+        return null;
+      }
 
-    if (returnType.isPrimitive()) {
-      return ReflectionUtil.getDefaultValue(returnType);
-    }
+      if (returnType.isPrimitive()) {
+        return ReflectionUtil.getDefaultValue(returnType);
+      }
 
-    if (returnType != Object.class && returnType.isAssignableFrom(invocation.getMockObject().getType())) {
-      return invocation.getMockObject().getInstance();
-    }
+      if (returnType != Object.class && returnType.isAssignableFrom(invocation.getMockObject().getType())) {
+        return invocation.getMockObject().getInstance();
+      }
 
-    if (returnType.isInterface()) {
-      if (returnType == Iterable.class) return new ArrayList();
-      if (returnType == Collection.class) return new ArrayList();
-      if (returnType == List.class) return new ArrayList();
-      if (returnType == Set.class) return new HashSet();
-      if (returnType == Map.class) return new HashMap();
-      if (returnType == Queue.class) return new LinkedList();
-      if (returnType == SortedSet.class) return new TreeSet();
-      if (returnType == SortedMap.class) return new TreeMap();
-      if (returnType == CharSequence.class) return "";
-      if (returnType == Stream.class) return Stream.empty();
-      if (returnType == IntStream.class) return IntStream.empty();
-      if (returnType == DoubleStream.class) return DoubleStream.empty();
-      if (returnType == LongStream.class) return LongStream.empty();
+      if (returnType.isInterface()) {
+        if (returnType == Iterable.class) return new ArrayList();
+        if (returnType == Collection.class) return new ArrayList();
+        if (returnType == List.class) return new ArrayList();
+        if (returnType == Set.class) return new HashSet();
+        if (returnType == Map.class) return new HashMap();
+        if (returnType == Queue.class) return new LinkedList();
+        if (returnType == SortedSet.class) return new TreeSet();
+        if (returnType == SortedMap.class) return new TreeMap();
+        if (returnType == CharSequence.class) return "";
+        if (returnType == Stream.class) return Stream.empty();
+        if (returnType == IntStream.class) return IntStream.empty();
+        if (returnType == DoubleStream.class) return DoubleStream.empty();
+        if (returnType == LongStream.class) return LongStream.empty();
+        return createDummy(invocation);
+      }
+
+      if (returnType.isArray()) {
+        return Array.newInstance(returnType.getComponentType(), 0);
+      }
+
+      if (returnType.isEnum()) {
+        Object[] enumConstants = returnType.getEnumConstants();
+        return enumConstants.length > 0 ? enumConstants[0] : null; // null is only permissible value
+      }
+
+      if (CharSequence.class.isAssignableFrom(returnType)) {
+        if (returnType == String.class) return "";
+        if (returnType == StringBuilder.class) return new StringBuilder();
+        if (returnType == StringBuffer.class) return new StringBuffer();
+        if (returnType == GString.class) return GString.EMPTY;
+        // continue on
+      }
+
+      if (returnType == Optional.class) return Optional.empty();
+      if (returnType == CompletableFuture.class) return CompletableFuture.completedFuture(null);
+
+      Object emptyWrapper = createEmptyWrapper(returnType);
+      if (emptyWrapper != null) return emptyWrapper;
+
+      Object emptyObject = createEmptyObject(returnType);
+      if (emptyObject != null) return emptyObject;
+
       return createDummy(invocation);
-    }
-
-    if (returnType.isArray()) {
-      return Array.newInstance(returnType.getComponentType(), 0);
-    }
-
-    if (returnType.isEnum()) {
-      Object[] enumConstants = returnType.getEnumConstants();
-      return enumConstants.length > 0 ? enumConstants[0] : null; // null is only permissible value
-    }
-
-    if (CharSequence.class.isAssignableFrom(returnType)) {
-      if (returnType == String.class) return "";
-      if (returnType == StringBuilder.class) return new StringBuilder();
-      if (returnType == StringBuffer.class) return new StringBuffer();
-      if (returnType == GString.class) return GString.EMPTY;
-      // continue on
-    }
-
-    if (returnType == Optional.class) return Optional.empty();
-    if (returnType == CompletableFuture.class) return CompletableFuture.completedFuture(null);
-
-    Object emptyWrapper = createEmptyWrapper(returnType);
-    if (emptyWrapper != null) return emptyWrapper;
-
-    Object emptyObject = createEmptyObject(returnType);
-    if (emptyObject != null) return emptyObject;
-
-    return createDummy(invocation);
+    };
   }
 
   // also handles some numeric types which aren't primitive wrapper types

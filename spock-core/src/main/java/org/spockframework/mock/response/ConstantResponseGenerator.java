@@ -20,6 +20,8 @@ import org.spockframework.mock.IMockInvocation;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.ThreadSafe;
 
+import java.util.function.Supplier;
+
 /**
  *
  * @author Peter Niederwieser
@@ -33,7 +35,7 @@ public class ConstantResponseGenerator extends SingleResponseGenerator {
   }
 
   @Override
-  public Object doRespond(IMockInvocation invocation) {
-    return GroovyRuntimeUtil.coerce(constant, invocation.getMethod().getReturnType());
+  public Supplier<Object> doRespond(IMockInvocation invocation) {
+    return () -> GroovyRuntimeUtil.coerce(constant, invocation.getMethod().getReturnType());
   }
 }

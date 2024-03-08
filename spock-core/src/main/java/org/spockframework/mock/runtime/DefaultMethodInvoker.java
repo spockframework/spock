@@ -27,6 +27,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.function.Supplier;
 
 @ThreadSafe
 public class DefaultMethodInvoker implements IResponseGenerator {
@@ -43,12 +44,14 @@ public class DefaultMethodInvoker implements IResponseGenerator {
   }
 
   @Override
-  public Object respond(IMockInvocation invocation) {
-    if (INVOKE_DEFAULT == null) {
-      return useInternalMethodHandle();
-    }
-    Object[] args = new Object[]{target, method, arguments};
-    return ReflectionUtil.invokeMethod(null, INVOKE_DEFAULT, args);
+  public Supplier<Object> respond(IMockInvocation invocation) {
+    return () -> {
+      if (INVOKE_DEFAULT == null) {
+        return useInternalMethodHandle();
+      }
+      Object[] args = new Object[]{target, method, arguments};
+      return ReflectionUtil.invokeMethod(null, INVOKE_DEFAULT, args);
+    };
   }
 
   private Object useInternalMethodHandle() {

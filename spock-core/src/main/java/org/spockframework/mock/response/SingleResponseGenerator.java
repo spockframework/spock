@@ -19,6 +19,8 @@ package org.spockframework.mock.response;
 import org.spockframework.mock.*;
 import org.spockframework.util.ThreadSafe;
 
+import java.util.function.Supplier;
+
 @ThreadSafe
 public abstract class SingleResponseGenerator implements IChainableResponseGenerator {
   private volatile boolean endOfCycle = false;
@@ -29,10 +31,10 @@ public abstract class SingleResponseGenerator implements IChainableResponseGener
   }
 
   @Override
-  public final Object respond(IMockInvocation invocation) {
+  public final Supplier<Object> respond(IMockInvocation invocation) {
     endOfCycle = true;
     return doRespond(invocation);
   }
 
-  public abstract Object doRespond(IMockInvocation invocation);
+  public abstract Supplier<Object> doRespond(IMockInvocation invocation);
 }

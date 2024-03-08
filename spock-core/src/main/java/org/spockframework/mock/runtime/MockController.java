@@ -57,7 +57,7 @@ public class MockController implements IMockController, IThreadAwareMockControll
       }
     }
     if (resultSupplier == null) {
-      return invocation.getMockObject().getDefaultResponse().respond(invocation);
+      return invocation.getMockObject().getDefaultResponse().respond(invocation).get();
     } else {
       try {
         return resultSupplier.get();

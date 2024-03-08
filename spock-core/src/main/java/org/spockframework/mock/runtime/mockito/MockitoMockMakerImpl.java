@@ -265,7 +265,7 @@ class MockitoMockMakerImpl {
     @Override
     public Object handle(Invocation invocation) {
       Object mock = invocation.getMock();
-      return mockInterceptor.intercept(mock, invocation.getMethod(), invocation.getArguments(), spockInvocation -> {
+      return mockInterceptor.intercept(mock, invocation.getMethod(), invocation.getArguments(), spockInvocation -> () -> {
         try {
           return invocation.callRealMethod();
         } catch (Throwable e) {

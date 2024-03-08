@@ -58,7 +58,7 @@ public class MockInvocation implements IMockInvocation {
 
   @Override
   public Object callRealMethod() {
-    return realMethodInvoker.respond(this);
+    return realMethodInvoker.respond(this).get();
   }
 
   @Override
@@ -68,7 +68,7 @@ public class MockInvocation implements IMockInvocation {
         public List<Object> getArguments() {
           return asList(arguments);
         }
-      });
+      }).get();
   }
 
   @Override

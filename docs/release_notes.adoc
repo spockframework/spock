@@ -14,7 +14,12 @@ include::include.adoc[]
   Starting with this release, the response calculations are no longer happening synchronized.
   If you depend on shared state in such calculations, you now have to make sure yourself, that this is done in a
   thread-safe manner. Most users will probably be unaffected by this change as it only becomes relevant in a
-  multi-threaded situation where multiple threads do interaction invocations that care about shared state.
+  multi-threaded situation where multiple threads do interaction invocations that care about shared state. spockPull:1910[]
+
+* `IResponseGenerator#respond` no longer returns `Object` but `Supplier<Object>`. To get the actual object you now
+  have to additionally call `get()` on the supplied response, for example when you are using `EmptyOrDummyResponse`
+  somewhere directly. On the other hand, if you are implementing a custom `IResponseGenerator`, you have go change
+  your implementation accordingly. spockPull:1910[]
 
 === Misc
 

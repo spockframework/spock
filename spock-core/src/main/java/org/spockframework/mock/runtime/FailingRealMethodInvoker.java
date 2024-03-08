@@ -17,6 +17,8 @@ package org.spockframework.mock.runtime;
 import org.spockframework.mock.*;
 import org.spockframework.util.ThreadSafe;
 
+import java.util.function.Supplier;
+
 @ThreadSafe
 public class FailingRealMethodInvoker implements IResponseGenerator {
   private final String message;
@@ -26,7 +28,9 @@ public class FailingRealMethodInvoker implements IResponseGenerator {
   }
 
   @Override
-  public Object respond(IMockInvocation invocation) {
-    throw new CannotInvokeRealMethodException(message);
+  public Supplier<Object> respond(IMockInvocation invocation) {
+    return () -> {
+      throw new CannotInvokeRealMethodException(message);
+    };
   }
 }

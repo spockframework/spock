@@ -11,6 +11,7 @@ import spock.mock.AutoAttach
 import spock.mock.DetachedMockFactory
 
 import java.util.concurrent.ThreadLocalRandom
+import java.util.function.Supplier
 
 import static org.spockframework.docs.interaction.DetachedMockFactoryDocSpec.EngineMockCreator.StartMode.ALWAYS_STARTED
 import static org.spockframework.docs.interaction.DetachedMockFactoryDocSpec.EngineMockCreator.StartMode.ALWAYS_STOPPED
@@ -189,12 +190,14 @@ class DetachedMockFactoryDocSpec extends Specification {
       StartMode startMode
 
       @Override
-      Object respond(IMockInvocation invocation) {
-        if (invocation.method.name != 'isStarted')
-          return ZeroOrNullResponse.INSTANCE.respond(invocation)
-        startMode == RANDOMLY_STARTED
-          ? ThreadLocalRandom.current().nextBoolean()
-          : startMode == ALWAYS_STARTED
+      Supplier<Object> respond(IMockInvocation invocation) {
+        return {
+          if (invocation.method.name != 'isStarted')
+            return ZeroOrNullResponse.INSTANCE.respond(invocation).get()
+          startMode == RANDOMLY_STARTED
+            ? ThreadLocalRandom.current().nextBoolean()
+            : startMode == ALWAYS_STARTED
+        }
       }
     }
 

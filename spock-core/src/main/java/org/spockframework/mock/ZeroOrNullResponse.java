@@ -16,6 +16,8 @@ package org.spockframework.mock;
 
 import org.spockframework.util.*;
 
+import java.util.function.Supplier;
+
 /**
  * A response strategy that returns zero, false, or null, depending on the method's return type.
  */
@@ -27,11 +29,13 @@ public class ZeroOrNullResponse implements IDefaultResponse {
   private ZeroOrNullResponse() {}
 
   @Override
-  public Object respond(IMockInvocation invocation) {
-    IMockInteraction interaction = DefaultJavaLangObjectInteractions.INSTANCE.match(invocation);
-    if (interaction != null) return interaction.accept(invocation).get();
+  public Supplier<Object> respond(IMockInvocation invocation) {
+    return () -> {
+      IMockInteraction interaction = DefaultJavaLangObjectInteractions.INSTANCE.match(invocation);
+      if (interaction != null) return interaction.accept(invocation).get();
 
-    Class<?> returnType = invocation.getMethod().getReturnType();
-    return ReflectionUtil.getDefaultValue(returnType);
+      Class<?> returnType = invocation.getMethod().getReturnType();
+      return ReflectionUtil.getDefaultValue(returnType);
+    };
   }
 }

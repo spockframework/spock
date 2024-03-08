@@ -21,6 +21,7 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.ThreadSafe;
 
 import java.util.Iterator;
+import java.util.function.Supplier;
 
 /**
  * Generates result values from an iterable object. If the iterator has no more
@@ -46,10 +47,11 @@ public class IterableResponseGenerator implements IChainableResponseGenerator {
   }
 
   @Override
-  public Object respond(IMockInvocation invocation) {
+  public Supplier<Object> respond(IMockInvocation invocation) {
     synchronized (LOCK) {
       if (iterator.hasNext()) nextValue = iterator.next();
-      return GroovyRuntimeUtil.coerce(nextValue, invocation.getMethod().getReturnType());
+      Object response = GroovyRuntimeUtil.coerce(nextValue, invocation.getMethod().getReturnType());
+      return () -> response;
     }
   }
 }

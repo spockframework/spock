@@ -21,6 +21,7 @@ import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.ThreadSafe;
 
 import java.util.LinkedList;
+import java.util.function.Supplier;
 
 @ThreadSafe
 public class ResponseGeneratorChain implements IResponseGenerator {
@@ -42,16 +43,14 @@ public class ResponseGeneratorChain implements IResponseGenerator {
   }
 
   @Override
-  public Object respond(IMockInvocation invocation) {
-    IChainableResponseGenerator responseGenerator;
+  public Supplier<Object> respond(IMockInvocation invocation) {
     synchronized (LOCK) {
       if (isEmpty()) throw new InternalSpockError("ResultGeneratorChain should never be empty");
 
       while (current.isAtEndOfCycle() && !remaining.isEmpty()) {
         current = remaining.removeFirst();
       }
-      responseGenerator = current;
+      return current.respond(invocation);
     }
-    return responseGenerator.respond(invocation);
   }
 }

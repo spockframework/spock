@@ -14,8 +14,8 @@ public class RepeatUntilFailureExtension implements IAnnotationDrivenExtension<R
     if (annotation.ignoreRest()) {
       feature.getSpec().getBottomSpec().getAllFeatures()
         .stream()
-        .filter(f -> f != feature)
-        .forEach(f -> f.skip("Focussed test run with @RepeatUntilFailure for a single feature."));
+        .filter(f -> (f != feature) && (f.getFeatureMethod().getAnnotation(RepeatUntilFailure.class) == null))
+        .forEach(f -> f.skip("Focussed test run with @RepeatUntilFailure."));
     }
 
     feature.setForceParameterized(true);

@@ -18,23 +18,25 @@ package org.spockframework.mock.response;
 
 import org.spockframework.mock.*;
 import org.spockframework.util.InternalSpockError;
+import org.spockframework.util.ThreadSafe;
 
 import java.util.LinkedList;
 
+@ThreadSafe
 public class ResponseGeneratorChain implements IResponseGenerator {
-  private final Object lock = new Object();
+  private final Object LOCK = new Object();
   private IChainableResponseGenerator current;
   private final LinkedList<IChainableResponseGenerator> remaining = new LinkedList<>();
 
   public void addFirst(IChainableResponseGenerator generator) {
-    synchronized (lock) {
+    synchronized (LOCK) {
       if (current != null) remaining.addFirst(current);
       current = generator;
     }
   }
 
   public boolean isEmpty() {
-    synchronized (lock) {
+    synchronized (LOCK) {
       return current == null;
     }
   }
@@ -42,7 +44,7 @@ public class ResponseGeneratorChain implements IResponseGenerator {
   @Override
   public Object respond(IMockInvocation invocation) {
     IChainableResponseGenerator responseGenerator;
-    synchronized (lock) {
+    synchronized (LOCK) {
       if (isEmpty()) throw new InternalSpockError("ResultGeneratorChain should never be empty");
 
       while (current.isAtEndOfCycle() && !remaining.isEmpty()) {

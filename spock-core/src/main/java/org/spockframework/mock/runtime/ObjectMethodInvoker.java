@@ -1,7 +1,9 @@
 package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
+import org.spockframework.util.ThreadSafe;
 
+@ThreadSafe
 public class ObjectMethodInvoker implements IResponseGenerator {
 
   public static final ObjectMethodInvoker INSTANCE = new ObjectMethodInvoker();

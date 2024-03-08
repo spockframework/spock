@@ -42,13 +42,11 @@ class MultiThreaded extends Specification {
   def "mock response generators do not deadlock when self-referencing"() {
     given:
     def called = false
-    Runnable foo
-    foo = Mock {
-      run() >> {
-        if (!called) {
-          called = true
-          Thread.start { foo.run() }.join()
-        }
+    Runnable foo = Mock()
+    foo.run() >> {
+      if (!called) {
+        called = true
+        Thread.start { foo.run() }.join()
       }
     }
 

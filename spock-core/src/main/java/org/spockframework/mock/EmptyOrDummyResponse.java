@@ -15,6 +15,7 @@
 package org.spockframework.mock;
 
 import org.spockframework.util.ReflectionUtil;
+import org.spockframework.util.ThreadSafe;
 import spock.lang.Specification;
 
 import java.lang.reflect.*;
@@ -31,6 +32,7 @@ import static java.util.Collections.emptyMap;
  * A response strategy that returns zero, an "empty" object, or a "dummy" object,
  * depending on the method's declared return type.
  */
+@ThreadSafe
 public class EmptyOrDummyResponse implements IDefaultResponse {
   public static final EmptyOrDummyResponse INSTANCE = new EmptyOrDummyResponse();
 

@@ -18,7 +18,9 @@ import org.spockframework.mock.*;
 import org.spockframework.util.ExceptionUtil;
 
 import net.sf.cglib.proxy.MethodProxy;
+import org.spockframework.util.ThreadSafe;
 
+@ThreadSafe
 public class CglibRealMethodInvoker implements IResponseGenerator {
   private final MethodProxy methodProxy;
 

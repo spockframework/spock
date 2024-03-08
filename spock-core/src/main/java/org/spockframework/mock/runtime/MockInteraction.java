@@ -17,17 +17,23 @@
 package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
+import org.spockframework.util.NotThreadSafe;
 import org.spockframework.util.TextUtil;
 
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * An anticipated interaction between the SUT and one or more mock objects.
  *
+ * <p>An instance of this class is confined to a {@link MockController} and all method calls
+ * should be done in {@code synchronized} blocks that synchronize on that Mock controller to
+ * ensure proper interaction matching and invocation counting. Due to that this class is not
+ * thread-safe.
+ *
  * @author Peter Niederwieser
  */
+@NotThreadSafe
 public class MockInteraction implements IMockInteraction {
   private final int line;
   private final int column;

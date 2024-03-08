@@ -17,7 +17,9 @@ package org.spockframework.mock.runtime;
 import org.spockframework.mock.*;
 
 import groovy.lang.MetaClass;
+import org.spockframework.util.ThreadSafe;
 
+@ThreadSafe
 public class GroovyRealMethodInvoker implements IResponseGenerator {
   private final MetaClass metaClass;
 

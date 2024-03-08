@@ -18,11 +18,13 @@ package org.spockframework.mock.response;
 
 import org.spockframework.mock.IMockInvocation;
 import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.util.ThreadSafe;
 
 /**
  *
  * @author Peter Niederwieser
  */
+@ThreadSafe
 public class ConstantResponseGenerator extends SingleResponseGenerator {
   private final Object constant;
 

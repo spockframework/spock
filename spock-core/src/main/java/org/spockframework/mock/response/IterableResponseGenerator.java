@@ -18,6 +18,7 @@ package org.spockframework.mock.response;
 
 import org.spockframework.mock.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.util.ThreadSafe;
 
 import java.util.Iterator;
 
@@ -27,8 +28,9 @@ import java.util.Iterator;
  *
  * @author Peter Niederwieser
  */
+@ThreadSafe
 public class IterableResponseGenerator implements IChainableResponseGenerator {
-  private final Object lock = new Object();
+  private final Object LOCK = new Object();
   private final Iterator<?> iterator;
   private Object nextValue;
 
@@ -38,14 +40,14 @@ public class IterableResponseGenerator implements IChainableResponseGenerator {
 
   @Override
   public boolean isAtEndOfCycle() {
-    synchronized (lock) {
+    synchronized (LOCK) {
       return !iterator.hasNext();
     }
   }
 
   @Override
   public Object respond(IMockInvocation invocation) {
-    synchronized (lock) {
+    synchronized (LOCK) {
       if (iterator.hasNext()) nextValue = iterator.next();
       return GroovyRuntimeUtil.coerce(nextValue, invocation.getMethod().getReturnType());
     }

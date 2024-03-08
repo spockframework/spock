@@ -20,6 +20,7 @@ import org.spockframework.mock.IMockInvocation;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 
 import groovy.lang.Closure;
+import org.spockframework.util.ThreadSafe;
 
 import static org.spockframework.util.ObjectUtil.uncheckedCast;
 
@@ -27,6 +28,7 @@ import static org.spockframework.util.ObjectUtil.uncheckedCast;
  *
  * @author Peter Niederwieser
  */
+@ThreadSafe
 public class CodeResponseGenerator extends SingleResponseGenerator {
   private final Closure code;
 

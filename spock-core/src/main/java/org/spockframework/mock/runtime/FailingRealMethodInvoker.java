@@ -15,7 +15,9 @@
 package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
+import org.spockframework.util.ThreadSafe;
 
+@ThreadSafe
 public class FailingRealMethodInvoker implements IResponseGenerator {
   private final String message;
 

@@ -17,7 +17,9 @@
 package org.spockframework.mock.response;
 
 import org.spockframework.mock.*;
+import org.spockframework.util.ThreadSafe;
 
+@ThreadSafe
 public abstract class SingleResponseGenerator implements IChainableResponseGenerator {
   private volatile boolean endOfCycle = false;
 

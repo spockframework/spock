@@ -17,7 +17,9 @@
 package org.spockframework.mock.response;
 
 import org.spockframework.mock.*;
+import org.spockframework.util.ThreadSafe;
 
+@ThreadSafe
 public class DefaultResponseGenerator implements IResponseGenerator {
   @Override
   public Object respond(IMockInvocation invocation) {

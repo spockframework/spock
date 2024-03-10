@@ -1,0 +1,8 @@
+# Disable formatting for snapshot data
+
+[*]
+indent_style = unset
+indent_size = unset
+end_of_line = unset
+insert_final_newline = false
+trim_trailing_whitespace = false

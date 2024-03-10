@@ -41,7 +41,7 @@ class RepeatUntilFailureExtensionSpec extends EmbeddedSpecification {
     result.testsFailedCount == 0
   }
 
-  def "skips other tests in the same class"() {
+  def "skips other tests in the same class that do not have the same annotation too"() {
     when:
     def result = runner.runSpecBody """
       def "other test 1"() {
@@ -49,6 +49,7 @@ class RepeatUntilFailureExtensionSpec extends EmbeddedSpecification {
         true
       }
 
+      @RepeatUntilFailure(maxAttempts = 1)
       def "other test 2"() {
         expect:
         true
@@ -67,10 +68,10 @@ class RepeatUntilFailureExtensionSpec extends EmbeddedSpecification {
     """
 
     then:
-    result.testsStartedCount == 1 + 1
-    result.testsSucceededCount == 1 + 1
+    result.testsStartedCount == 2 + 2
+    result.testsSucceededCount == 2 + 2
     result.testsFailedCount == 0
-    result.testsSkippedCount == 3
+    result.testsSkippedCount == 2
   }
 
 

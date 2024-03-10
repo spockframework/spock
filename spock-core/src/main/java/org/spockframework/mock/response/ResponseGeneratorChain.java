@@ -43,14 +43,14 @@ public class ResponseGeneratorChain implements IResponseGenerator {
   }
 
   @Override
-  public Supplier<Object> respond(IMockInvocation invocation) {
+  public Supplier<Object> getResponseSupplier(IMockInvocation invocation) {
     synchronized (LOCK) {
       if (isEmpty()) throw new InternalSpockError("ResultGeneratorChain should never be empty");
 
       while (current.isAtEndOfCycle() && !remaining.isEmpty()) {
         current = remaining.removeFirst();
       }
-      return current.respond(invocation);
+      return current.getResponseSupplier(invocation);
     }
   }
 }

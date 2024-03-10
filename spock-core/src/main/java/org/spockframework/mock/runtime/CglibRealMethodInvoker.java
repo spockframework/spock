@@ -31,7 +31,7 @@ public class CglibRealMethodInvoker implements IResponseGenerator {
   }
 
   @Override
-  public Supplier<Object> respond(IMockInvocation invocation) {
+  public Supplier<Object> getResponseSupplier(IMockInvocation invocation) {
     return () -> {
       try {
         return methodProxy.invokeSuper(invocation.getMockObject().getInstance(), invocation.getArguments().toArray());

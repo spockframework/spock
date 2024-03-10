@@ -30,7 +30,7 @@ public class GroovyRealMethodInvoker implements IResponseGenerator {
   }
 
   @Override
-  public Supplier<Object> respond(IMockInvocation invocation) {
+  public Supplier<Object> getResponseSupplier(IMockInvocation invocation) {
     return () -> {
       Object instance = invocation.getMockObject().getInstance();
       Object[] arguments = invocation.getArguments().toArray();

@@ -44,7 +44,7 @@ public class DefaultMethodInvoker implements IResponseGenerator {
   }
 
   @Override
-  public Supplier<Object> respond(IMockInvocation invocation) {
+  public Supplier<Object> getResponseSupplier(IMockInvocation invocation) {
     return () -> {
       if (INVOKE_DEFAULT == null) {
         return useInternalMethodHandle();

@@ -33,7 +33,7 @@ import java.util.function.Supplier;
 @ThreadSafe
 public class WildcardResponseGenerator extends SingleResponseGenerator {
   @Override
-  public Supplier<Object> doRespond(IMockInvocation invocation) {
-    return EmptyOrDummyResponse.INSTANCE.respond(invocation);
+  public Supplier<Object> doGetResponseSupplier(IMockInvocation invocation) {
+    return EmptyOrDummyResponse.INSTANCE.getResponseSupplier(invocation);
   }
 }

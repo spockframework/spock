@@ -41,7 +41,7 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
 
   @Override
   @SuppressWarnings("rawtypes")
-  public Supplier<Object> respond(IMockInvocation invocation) {
+  public Supplier<Object> getResponseSupplier(IMockInvocation invocation) {
     return () -> {
       IMockInteraction interaction = DefaultJavaLangObjectInteractions.INSTANCE.match(invocation);
       if (interaction != null) return interaction.accept(invocation).get();

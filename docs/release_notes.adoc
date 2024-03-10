@@ -16,10 +16,15 @@ include::include.adoc[]
   thread-safe manner. Most users will probably be unaffected by this change as it only becomes relevant in a
   multi-threaded situation where multiple threads do interaction invocations that care about shared state. spockPull:1910[]
 
-* `IResponseGenerator#respond` no longer returns `Object` but `Supplier<Object>`. To get the actual object you now
-  have to additionally call `get()` on the supplied response, for example when you are using `EmptyOrDummyResponse`
-  somewhere directly. On the other hand, if you are implementing a custom `IResponseGenerator`, you have go change
-  your implementation accordingly. spockPull:1910[]
+* `IResponseGenerator#respond` should no longer be called, but instead `getResponseSupplier`, which returns a
+  `Supplier<Object>` instead. This supplier can then be called outside of mock controller synchronization and thus
+  prevents deadlocks that could happen for example from response calculation closures otherwise.
+  If you are implementing a custom `IResponseGenerator`, you might consider implementing the new method instead of the
+  old `respond` one, which is mainly kept for backwards compatibility. spockPull:1910[]
+
+* Like the previous point it is the same for `SingleResponseGenerator#doRespond` and the new
+  `SingleResponseGenerator#doGetResponseSupplier` if you are sublcassing or calling `SingleResponseGenerator`
+  somewhere. spockPull:1910[]
 
 === Misc
 

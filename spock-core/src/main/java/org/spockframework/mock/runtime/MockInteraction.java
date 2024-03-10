@@ -81,7 +81,7 @@ public class MockInteraction implements IMockInteraction {
       };
     }
 
-    return responseGenerator == null ? () -> null : responseGenerator.respond(invocation);
+    return responseGenerator == null ? () -> null : responseGenerator.getResponseSupplier(invocation);
   }
 
   @Override

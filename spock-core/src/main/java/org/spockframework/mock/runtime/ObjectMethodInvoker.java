@@ -14,7 +14,7 @@ public class ObjectMethodInvoker implements IResponseGenerator {
   }
 
   @Override
-  public Supplier<Object> respond(IMockInvocation invocation) {
+  public Supplier<Object> getResponseSupplier(IMockInvocation invocation) {
     return () -> {
       IMockInteraction interaction = DefaultJavaLangObjectInteractions.INSTANCE.match(invocation);
       if (interaction != null) {

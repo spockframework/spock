@@ -190,10 +190,10 @@ class DetachedMockFactoryDocSpec extends Specification {
       StartMode startMode
 
       @Override
-      Supplier<Object> respond(IMockInvocation invocation) {
+      Supplier<Object> getResponseSupplier(IMockInvocation invocation) {
         return {
           if (invocation.method.name != 'isStarted')
-            return ZeroOrNullResponse.INSTANCE.respond(invocation).get()
+            return ZeroOrNullResponse.INSTANCE.getResponseSupplier(invocation).get()
           startMode == RANDOMLY_STARTED
             ? ThreadLocalRandom.current().nextBoolean()
             : startMode == ALWAYS_STARTED

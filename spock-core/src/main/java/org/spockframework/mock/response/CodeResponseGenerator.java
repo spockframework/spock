@@ -39,7 +39,7 @@ public class CodeResponseGenerator extends SingleResponseGenerator {
   }
 
   @Override
-  public Supplier<Object> doRespond(IMockInvocation invocation) {
+  public Supplier<Object> doGetResponseSupplier(IMockInvocation invocation) {
     return () -> {
       Object result = invokeClosure(invocation);
       Class<?> returnType = invocation.getMethod().getReturnType();

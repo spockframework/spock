@@ -16,7 +16,7 @@ public class ByteBuddyMethodInvoker implements IResponseGenerator {
   }
 
   @Override
-  public Supplier<Object> respond(IMockInvocation invocation) {
+  public Supplier<Object> getResponseSupplier(IMockInvocation invocation) {
     return () -> {
       if (superCall == null) {
         throw new IllegalStateException("Cannot invoke abstract method " + invocation.getMethod());

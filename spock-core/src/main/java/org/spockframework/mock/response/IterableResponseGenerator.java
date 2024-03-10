@@ -47,7 +47,7 @@ public class IterableResponseGenerator implements IChainableResponseGenerator {
   }
 
   @Override
-  public Supplier<Object> respond(IMockInvocation invocation) {
+  public Supplier<Object> getResponseSupplier(IMockInvocation invocation) {
     synchronized (LOCK) {
       if (iterator.hasNext()) nextValue = iterator.next();
       Object response = GroovyRuntimeUtil.coerce(nextValue, invocation.getMethod().getReturnType());

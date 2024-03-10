@@ -29,7 +29,7 @@ public class ZeroOrNullResponse implements IDefaultResponse {
   private ZeroOrNullResponse() {}
 
   @Override
-  public Supplier<Object> respond(IMockInvocation invocation) {
+  public Supplier<Object> getResponseSupplier(IMockInvocation invocation) {
     return () -> {
       IMockInteraction interaction = DefaultJavaLangObjectInteractions.INSTANCE.match(invocation);
       if (interaction != null) return interaction.accept(invocation).get();

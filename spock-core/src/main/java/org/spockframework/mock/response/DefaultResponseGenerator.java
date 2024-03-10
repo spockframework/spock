@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 @ThreadSafe
 public class DefaultResponseGenerator implements IResponseGenerator {
   @Override
-  public Supplier<Object> respond(IMockInvocation invocation) {
-    return invocation.getMockObject().getDefaultResponse().respond(invocation);
+  public Supplier<Object> getResponseSupplier(IMockInvocation invocation) {
+    return invocation.getMockObject().getDefaultResponse().getResponseSupplier(invocation);
   }
 }

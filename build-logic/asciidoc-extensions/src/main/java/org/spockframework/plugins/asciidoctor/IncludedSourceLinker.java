@@ -55,9 +55,8 @@ import static org.asciidoctor.log.Severity.WARN;
  * <a href="https://discuss.asciidoctor.org/Difference-between-literal-and-listing-tp1830p1835.html">Literal
  * blocks are meant for output while listing blocks are meant for input or with {@code source} style for sources.</a>
  * If a literal block shows included content it is linked nevertheless, but it will never show a "Play" icon and there
- * will be no warning if there is no include (Be aware that a literal block with {@code source} style is considered
- * a listing block by Asciidoctor). If a listing block shows content it is linked, and if it is a Groovy file and
- * the {@code gwc-base} document attribute is set, also a "Play" icon is shown to open the file in the Groovy
+ * will be no warning if there is no include. If a listing block shows content it is linked, and if it is a Groovy file
+ * and the {@code gwc-base} document attribute is set, also a "Play" icon is shown to open the file in the Groovy
  * Web Console.
  *
  * <p>Finally, the post processor verifies in the end result, that there are no left-over marker lines.
@@ -575,13 +574,17 @@ public class IncludedSourceLinker {
                 .filter(line -> line.trim().startsWith(includeSourceMarker) && line.endsWith(includeSourceMarker))
                 .toList();
 
+              // if a literal block gets source style, it is transformed to a listing block
+              // but this attribute still preserves the information that it originally was a literal block
+              boolean cloakedLiteral = block.hasAttribute("cloaked-context") && "literal".equals(block.getAttribute("cloaked-context").toString());
+
               // if no include source marker lines are found, and we are at a listing block,
               // complain that there is only inline code instead of including tested code;
               // if we are at a literal block, just do nothing and don't complain;
               // be aware that a literal block with `source` style in the sources ends up as listing block here
               // Once https://github.com/asciidoctor/asciidoctor/issues/4556 is implemented we could add a recognition here
               if (includeSourceMarkerLines.isEmpty()) {
-                if (listings && !lines.isEmpty()) {
+                if (listings && !cloakedLiteral && !lines.isEmpty()) {
                   log(new LogRecord(WARN, "listing with only inline code found; " +
                     "if this is not source from a file, consider using a literal block without source style instead; " +
                     "first line: " + lines.get(0)));
@@ -649,7 +652,7 @@ public class IncludedSourceLinker {
               // otherwise show the play icon
               // but if the source link contains `/master/` instead of an commit ID,
               // do not link the play icon, as the gwc cannot handle branch names
-              if (listings && parseBoolean(block.getAttribute("play", "true").toString())) {
+              if (listings && !cloakedLiteral && parseBoolean(block.getAttribute("play", "true").toString())) {
                 Object gwcBase = document.getAttribute("gwc-base");
                 if (gwcBase != null) {
                   String canonicalPath = sourceLink.substring(sourceLink.indexOf("github.com/") + "github.com/".length());

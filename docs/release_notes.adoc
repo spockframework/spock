@@ -16,15 +16,10 @@ include::include.adoc[]
   thread-safe manner. Most users will probably be unaffected by this change as it only becomes relevant in a
   multi-threaded situation where multiple threads do interaction invocations that care about shared state. spockPull:1910[]
 
-* `IResponseGenerator#respond` should no longer be called, but instead `getResponseSupplier`, which returns a
-  `Supplier<Object>` instead. This supplier can then be called outside of mock controller synchronization and thus
-  prevents deadlocks that could happen for example from response calculation closures otherwise.
-  If you are implementing a custom `IResponseGenerator`, you might consider implementing the new method instead of the
-  old `respond` one, which is mainly kept for backwards compatibility. spockPull:1910[]
-
-* Like the previous point it is the same for `SingleResponseGenerator#doRespond` and the new
-  `SingleResponseGenerator#doGetResponseSupplier` if you are sublcassing or calling `SingleResponseGenerator`
-  somewhere. spockPull:1910[]
+* `SingleResponseGenerator#isAtEndOfCycle` is now `final` and `SingleResponseGenerator#doRespond` is now `protected`.
+  When subclassing `SingleResponseGenerator` it does not make sense to override the first method, and it does not make
+  sense to call the second method from somewhere else. This should not affect most users, only if you were
+  subclassing `SingleResponseGenerator` and doing unusual things. spockPull:1910[]
 
 === Misc
 

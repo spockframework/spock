@@ -22,8 +22,6 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
 import groovy.lang.Closure;
 import org.spockframework.util.ThreadSafe;
 
-import java.util.function.Supplier;
-
 import static org.spockframework.util.ObjectUtil.uncheckedCast;
 
 /**
@@ -39,16 +37,14 @@ public class CodeResponseGenerator extends SingleResponseGenerator {
   }
 
   @Override
-  public Supplier<Object> doGetResponseSupplier(IMockInvocation invocation) {
-    return () -> {
-      Object result = invokeClosure(invocation);
-      Class<?> returnType = invocation.getMethod().getReturnType();
+  public Object doRespond(IMockInvocation invocation) {
+    Object result = invokeClosure(invocation);
+    Class<?> returnType = invocation.getMethod().getReturnType();
 
-      // don't attempt cast for void methods (closure could be an action that accidentally returns a value)
-      if (returnType == void.class || returnType == Void.class) return null;
+    // don't attempt cast for void methods (closure could be an action that accidentally returns a value)
+    if (returnType == void.class || returnType == Void.class) return null;
 
-      return GroovyRuntimeUtil.coerce(result, invocation.getMethod().getReturnType());
-    };
+    return GroovyRuntimeUtil.coerce(result, invocation.getMethod().getReturnType());
   }
 
   private Object invokeClosure(IMockInvocation invocation) {

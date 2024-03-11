@@ -20,8 +20,6 @@ import org.spockframework.util.ExceptionUtil;
 import net.sf.cglib.proxy.MethodProxy;
 import org.spockframework.util.ThreadSafe;
 
-import java.util.function.Supplier;
-
 @ThreadSafe
 public class CglibRealMethodInvoker implements IResponseGenerator {
   private final MethodProxy methodProxy;
@@ -31,14 +29,12 @@ public class CglibRealMethodInvoker implements IResponseGenerator {
   }
 
   @Override
-  public Supplier<Object> getResponseSupplier(IMockInvocation invocation) {
-    return () -> {
-      try {
-        return methodProxy.invokeSuper(invocation.getMockObject().getInstance(), invocation.getArguments().toArray());
-      } catch (Throwable t) {
-        // MethodProxy doesn't wrap exceptions in InvocationTargetException, so no need to unwrap
-        return ExceptionUtil.sneakyThrow(t);
-      }
-    };
+  public Object respond(IMockInvocation invocation) {
+    try {
+      return methodProxy.invokeSuper(invocation.getMockObject().getInstance(), invocation.getArguments().toArray());
+    } catch (Throwable t) {
+      // MethodProxy doesn't wrap exceptions in InvocationTargetException, so no need to unwrap
+      return ExceptionUtil.sneakyThrow(t);
+    }
   }
 }

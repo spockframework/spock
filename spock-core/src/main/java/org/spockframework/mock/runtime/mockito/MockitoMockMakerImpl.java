@@ -32,7 +32,6 @@ import org.mockito.plugins.MockitoPlugins;
 import org.spockframework.mock.*;
 import org.spockframework.mock.runtime.IMockMaker;
 import org.spockframework.mock.runtime.IProxyBasedMockInterceptor;
-import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.ExceptionUtil;
 import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.ThreadSafe;
@@ -264,14 +263,12 @@ class MockitoMockMakerImpl {
       Object mock = invocation.getMock();
       return mockInterceptor.intercept(mock, invocation.getMethod(), invocation.getArguments(), new IResponseGenerator() {
         @Override
-        public Supplier<Object> getResponseSupplier(IMockInvocation __) {
-          return () -> {
-            try {
-              return invocation.callRealMethod();
-            } catch (Throwable e) {
-              return ExceptionUtil.sneakyThrow(e);
-            }
-          };
+        public Object respond(IMockInvocation __) {
+          try {
+            return invocation.callRealMethod();
+          } catch (Throwable e) {
+            return ExceptionUtil.sneakyThrow(e);
+          }
         }
       });
     }

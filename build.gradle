@@ -387,11 +387,10 @@ tasks.named("asciidoctor") {
   attributes "source-highlighter": "coderay", "linkcss": true, "sectanchors": true, "revnumber": variantLessVersion
   // also treats the included specs as inputs
   inputs.dir file("spock-specs/src/test/groovy/org/spockframework/docs")
+  inputs.dir file("spock-specs/src/test/resources/snapshots/org/spockframework/docs")
   inputs.dir file("spock-spring/src/test/groovy/org/spockframework/spring/docs")
   inputs.dir file("spock-spring/src/test/resources/org/spockframework/spring/docs")
   inputs.dir file("spock-spring/boot2-test/src/test/groovy/org/spockframework/boot2")
-  inputs.dir file("spock-spring/spring3-test/src/test/groovy/org/spockframework/spring3")
-  inputs.dir file("spock-spring/spring5-test/src/test/groovy/org/spockframework/spring5")
 
   doFirst {
     def errors = []

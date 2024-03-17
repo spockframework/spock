@@ -17,10 +17,14 @@
 package org.spockframework.mock.response;
 
 import org.spockframework.mock.*;
+import org.spockframework.util.ThreadSafe;
 
+import java.util.function.Supplier;
+
+@ThreadSafe
 public class DefaultResponseGenerator implements IResponseGenerator {
   @Override
-  public Object respond(IMockInvocation invocation) {
-    return invocation.getMockObject().getDefaultResponse().respond(invocation);
+  public Supplier<Object> getResponseSupplier(IMockInvocation invocation) {
+    return invocation.getMockObject().getDefaultResponse().getResponseSupplier(invocation);
   }
 }

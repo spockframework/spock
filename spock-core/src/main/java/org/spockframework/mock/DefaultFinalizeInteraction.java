@@ -13,6 +13,8 @@
  */
 package org.spockframework.mock;
 
+import java.util.function.Supplier;
+
 public class DefaultFinalizeInteraction extends DefaultInteraction {
   public static final DefaultFinalizeInteraction INSTANCE = new DefaultFinalizeInteraction();
 
@@ -31,7 +33,7 @@ public class DefaultFinalizeInteraction extends DefaultInteraction {
   }
 
   @Override
-  public Object accept(IMockInvocation invocation) {
-    return null;
+  public Supplier<Object> accept(IMockInvocation invocation) {
+    return () -> null;
   }
 }

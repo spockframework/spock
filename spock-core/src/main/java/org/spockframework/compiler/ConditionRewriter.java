@@ -237,6 +237,10 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
         createDirectMethodCall(convertedRightExpression, resources.getAstNodeCache().Class_IsInstance, convertedLeftExpression) :
         new BinaryExpression(convertedLeftExpression, expr.getOperation(), convertedRightExpression);
 
+    if (isSpecialCollectionCondition(conversion)) {
+      conversion = transformSpecialCollectionCondition(conversion);
+    }
+
     conversion.setSourcePosition(expr);
     result = record(conversion);
   }

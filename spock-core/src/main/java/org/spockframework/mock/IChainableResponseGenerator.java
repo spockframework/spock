@@ -22,5 +22,21 @@ package org.spockframework.mock;
  * @author Peter Niederwieser
  */
 public interface IChainableResponseGenerator extends IResponseGenerator {
+  /**
+   * Whether this chainable response generator is at the end of its cycle. If this method returns {@code true},
+   * the next response generator in the chain is used if one is available. If this method returns {@code false} or
+   * there is no next response generator in the chain, the {@link #getResponseSupplier(IMockInvocation)} method will
+   * be called further on for all matched invocations.
+   *
+   * <p>The {@code getResponseSupplier} method and this method will be called under a common lock to make sure code
+   * in {@code getResponseSupplier} can update state like setting a boolean or advancing an iterator, that is then
+   * checked in the implementation of this method. Such state updates should therefore be done within
+   * {@code getResponseSupplier} directly and not within the returned {@code Supplier} or in
+   * {@link #respond(IMockInvocation)}, otherwise the iteration matching algorithm will break. All other logic
+   * should preferably be done within the {@code Supplier}, especially if the code could deadlock like closures
+   * waiting for a common condition.
+   *
+   * @return Whether this chainable response generator is at the end of its cycle
+   */
   boolean isAtEndOfCycle();
 }

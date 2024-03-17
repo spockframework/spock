@@ -58,17 +58,17 @@ public class MockInvocation implements IMockInvocation {
 
   @Override
   public Object callRealMethod() {
-    return realMethodInvoker.respond(this);
+    return realMethodInvoker.getResponseSupplier(this).get();
   }
 
   @Override
   public Object callRealMethodWithArgs(final Object... arguments) {
-      return realMethodInvoker.respond(new DelegatingMockInvocation(this) {
+      return realMethodInvoker.getResponseSupplier(new DelegatingMockInvocation(this) {
         @Override
         public List<Object> getArguments() {
           return asList(arguments);
         }
-      });
+      }).get();
   }
 
   @Override

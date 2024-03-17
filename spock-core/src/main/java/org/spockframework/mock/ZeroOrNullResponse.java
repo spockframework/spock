@@ -20,6 +20,7 @@ import org.spockframework.util.*;
  * A response strategy that returns zero, false, or null, depending on the method's return type.
  */
 @Beta
+@ThreadSafe
 public class ZeroOrNullResponse implements IDefaultResponse {
   public static final ZeroOrNullResponse INSTANCE = new ZeroOrNullResponse();
 
@@ -28,7 +29,7 @@ public class ZeroOrNullResponse implements IDefaultResponse {
   @Override
   public Object respond(IMockInvocation invocation) {
     IMockInteraction interaction = DefaultJavaLangObjectInteractions.INSTANCE.match(invocation);
-    if (interaction != null) return interaction.accept(invocation);
+    if (interaction != null) return interaction.accept(invocation).get();
 
     Class<?> returnType = invocation.getMethod().getReturnType();
     return ReflectionUtil.getDefaultValue(returnType);

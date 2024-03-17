@@ -1,6 +1,22 @@
 package org.spockframework.smoke.condition
 
 class CollectionConditionRendering extends ConditionRenderingSpec {
+  def "nested lenient matching"() {
+    expect:
+    isRendered """
+!(x =~ y)
+| | |  |
+| | |  [1]
+| | true
+| [1]
+false
+    """, {
+      def x = [1]
+      def y = [1]
+      assert !(x =~ y)
+    }
+  }
+
   def "rendering of lenient matching with variables"() {
     expect:
     isRendered """
@@ -82,6 +98,22 @@ Expected: iterable with items [<2>] in any order
     }
   }
 
+  def "rendering of nested strict matching"() {
+    expect:
+    isRendered """
+!(x ==~ y)
+| | |   |
+| | |   [1]
+| | true
+| [1]
+false
+    """, {
+      def x = [1]
+      def y = [1]
+      assert !(x ==~ y)
+    }
+  }
+
   def "indirect regex find works with different representations"() {
     expect:
     isRendered """
@@ -102,7 +134,7 @@ x =~ y
     isRendered """
 x =~ /\\d/
 | |
-| java.util.regex.Matcher[pattern=\\d region=0,3 lastmatch=]
+| false
 [a]
     """, {
       def x = "[a]"

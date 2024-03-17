@@ -18,8 +18,10 @@ package org.spockframework.mock.response;
 
 import org.spockframework.mock.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.util.ThreadSafe;
 
 import java.util.Iterator;
+import java.util.function.Supplier;
 
 /**
  * Generates result values from an iterable object. If the iterator has no more
@@ -27,7 +29,9 @@ import java.util.Iterator;
  *
  * @author Peter Niederwieser
  */
+@ThreadSafe
 public class IterableResponseGenerator implements IChainableResponseGenerator {
+  private final Object LOCK = new Object();
   private final Iterator<?> iterator;
   private Object nextValue;
 
@@ -37,12 +41,17 @@ public class IterableResponseGenerator implements IChainableResponseGenerator {
 
   @Override
   public boolean isAtEndOfCycle() {
-    return !iterator.hasNext();
+    synchronized (LOCK) {
+      return !iterator.hasNext();
+    }
   }
 
   @Override
-  public Object respond(IMockInvocation invocation) {
-    if (iterator.hasNext()) nextValue = iterator.next();
-    return GroovyRuntimeUtil.coerce(nextValue, invocation.getMethod().getReturnType());
+  public Supplier<Object> getResponseSupplier(IMockInvocation invocation) {
+    synchronized (LOCK) {
+      if (iterator.hasNext()) nextValue = iterator.next();
+      Object response = GroovyRuntimeUtil.coerce(nextValue, invocation.getMethod().getReturnType());
+      return () -> response;
+    }
   }
 }

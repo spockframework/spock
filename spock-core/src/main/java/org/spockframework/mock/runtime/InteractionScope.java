@@ -20,6 +20,7 @@ import org.spockframework.mock.*;
 import org.spockframework.util.ExceptionUtil;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * A scope for interactions defined outside a then-block
@@ -40,10 +41,12 @@ public class InteractionScope implements IInteractionScope {
       final int myRegistrationZone = currentRegistrationZone;
 
       @Override
-      public Object accept(IMockInvocation invocation) {
-        WrongInvocationOrderError wrongInvocationOrderError = null;
+      public Supplier<Object> accept(IMockInvocation invocation) {
+        WrongInvocationOrderError wrongInvocationOrderError;
         if (currentExecutionZone > myRegistrationZone) {
           wrongInvocationOrderError = new WrongInvocationOrderError(decorated, invocation, previousInvocationsInReverseOrder);
+        } else {
+          wrongInvocationOrderError = null;
         }
         currentExecutionZone = myRegistrationZone;
         if (previousInvocationsInReverseOrder.size() == MAX_PREVIOUS_INVOCATIONS) {
@@ -51,15 +54,18 @@ public class InteractionScope implements IInteractionScope {
         }
         previousInvocationsInReverseOrder.addFirst(invocation);
 
-        Object result = null;
-        Throwable invocationException = null;
-        try {
-          result = super.accept(invocation);
-        } catch (AssertionError | Exception e) {
-          invocationException = e;
-        }
-        ExceptionUtil.throwWithSuppressed(invocationException, wrongInvocationOrderError);
-        return result;
+        Supplier<Object> supplierFromDecorated = super.accept(invocation);
+        return () -> {
+          Object result = null;
+          Throwable invocationException = null;
+          try {
+            result = supplierFromDecorated.get();
+          } catch (AssertionError | Exception e) {
+            invocationException = e;
+          }
+          ExceptionUtil.throwWithSuppressed(invocationException, wrongInvocationOrderError);
+          return result;
+        };
       }
 
       @Override

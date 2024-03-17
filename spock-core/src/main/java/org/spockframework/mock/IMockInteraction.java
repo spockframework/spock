@@ -19,6 +19,7 @@ package org.spockframework.mock;
 import org.spockframework.util.Nullable;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * An anticipated interaction between the SUT and one or more mock objects.
@@ -34,8 +35,7 @@ public interface IMockInteraction {
 
   boolean matches(IMockInvocation invocation);
 
-  @Nullable
-  Object accept(IMockInvocation invocation);
+  Supplier<Object> accept(IMockInvocation invocation);
 
   List<IMockInvocation> getAcceptedInvocations();
 

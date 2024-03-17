@@ -17,16 +17,23 @@
 package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
+import org.spockframework.util.NotThreadSafe;
 import org.spockframework.util.TextUtil;
 
 import java.util.*;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Supplier;
 
 /**
  * An anticipated interaction between the SUT and one or more mock objects.
  *
+ * <p>An instance of this class is confined to a {@link MockController} and all method calls
+ * should be done in {@code synchronized} blocks that synchronize on that Mock controller to
+ * ensure proper interaction matching and invocation counting. Due to that this class is not
+ * thread-safe.
+ *
  * @author Peter Niederwieser
  */
+@NotThreadSafe
 public class MockInteraction implements IMockInteraction {
   private final int line;
   private final int column;
@@ -35,8 +42,8 @@ public class MockInteraction implements IMockInteraction {
   private final int maxCount;
   private final List<IInvocationConstraint> constraints;
   private final IResponseGenerator responseGenerator;
+
   private final List<IMockInvocation> acceptedInvocations = new ArrayList<>();
-  private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
   public MockInteraction(int line, int column, String text, int minCount,
       int maxCount, List<IInvocationConstraint> constraints,
@@ -65,18 +72,16 @@ public class MockInteraction implements IMockInteraction {
   }
 
   @Override
-  public Object accept(IMockInvocation invocation) {
-    lock.writeLock().lock();
-    try {
-      acceptedInvocations.add(invocation);
-      if (acceptedInvocations.size() > maxCount) {
-        throw new TooManyInvocationsError(this, acceptedInvocations);
-      }
-
-      return responseGenerator == null ? null : responseGenerator.respond(invocation);
-    } finally {
-      lock.writeLock().unlock();
+  public Supplier<Object> accept(IMockInvocation invocation) {
+    acceptedInvocations.add(invocation);
+    if (acceptedInvocations.size() > maxCount) {
+      List<IMockInvocation> acceptedInvocationsCopy = new ArrayList<>(acceptedInvocations);
+      return () -> {
+        throw new TooManyInvocationsError(this, acceptedInvocationsCopy);
+      };
     }
+
+    return responseGenerator == null ? () -> null : responseGenerator.getResponseSupplier(invocation);
   }
 
   @Override
@@ -127,22 +132,12 @@ public class MockInteraction implements IMockInteraction {
 
   @Override
   public boolean isSatisfied() {
-    lock.readLock().lock();
-    try {
-      return acceptedInvocations.size() >= minCount;
-    } finally {
-      lock.readLock().unlock();
-    }
+    return acceptedInvocations.size() >= minCount;
   }
 
   @Override
   public boolean isExhausted() {
-    lock.readLock().lock();
-    try {
-      return acceptedInvocations.size() >= maxCount;
-    } finally {
-      lock.readLock().unlock();
-    }
+    return acceptedInvocations.size() >= maxCount;
   }
 
   @Override
@@ -166,11 +161,6 @@ public class MockInteraction implements IMockInteraction {
   }
 
   public String toString() {
-    lock.readLock().lock();
-    try {
-      return String.format("%s   (%d %s)", text, acceptedInvocations.size(), acceptedInvocations.size() == 1 ? "invocation" : "invocations");
-    } finally {
-      lock.readLock().unlock();
-    }
+    return String.format("%s   (%d %s)", text, acceptedInvocations.size(), acceptedInvocations.size() == 1 ? "invocation" : "invocations");
   }
 }

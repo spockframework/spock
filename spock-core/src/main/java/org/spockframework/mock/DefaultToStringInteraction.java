@@ -14,6 +14,8 @@
 
 package org.spockframework.mock;
 
+import java.util.function.Supplier;
+
 class DefaultToStringInteraction extends DefaultInteraction {
   public static final DefaultToStringInteraction INSTANCE = new DefaultToStringInteraction();
 
@@ -31,19 +33,21 @@ class DefaultToStringInteraction extends DefaultInteraction {
   }
 
   @Override
-  public Object accept(IMockInvocation invocation) {
-    StringBuilder builder = new StringBuilder();
-    builder.append("Mock for type '");
-    builder.append(invocation.getMockObject().getType().getSimpleName());
-    builder.append("'");
-
-    String name = invocation.getMockObject().getName();
-    if (name != null) {
-      builder.append(" named '");
-      builder.append(name);
+  public Supplier<Object> accept(IMockInvocation invocation) {
+    return () -> {
+      StringBuilder builder = new StringBuilder();
+      builder.append("Mock for type '");
+      builder.append(invocation.getMockObject().getType().getSimpleName());
       builder.append("'");
-    }
 
-    return builder.toString();
+      String name = invocation.getMockObject().getName();
+      if (name != null) {
+        builder.append(" named '");
+        builder.append(name);
+        builder.append("'");
+      }
+
+      return builder.toString();
+    };
   }
 }

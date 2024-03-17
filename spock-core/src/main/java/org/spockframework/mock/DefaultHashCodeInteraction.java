@@ -13,6 +13,8 @@
  */
 package org.spockframework.mock;
 
+import java.util.function.Supplier;
+
 class DefaultHashCodeInteraction extends DefaultInteraction {
   public static final DefaultHashCodeInteraction INSTANCE = new DefaultHashCodeInteraction();
 
@@ -30,7 +32,7 @@ class DefaultHashCodeInteraction extends DefaultInteraction {
   }
 
   @Override
-  public Object accept(IMockInvocation invocation) {
-    return System.identityHashCode(invocation.getMockObject().getInstance());
+  public Supplier<Object> accept(IMockInvocation invocation) {
+    return () -> System.identityHashCode(invocation.getMockObject().getInstance());
   }
 }

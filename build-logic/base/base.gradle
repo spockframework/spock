@@ -11,3 +11,15 @@ gradlePlugin {
     }
   }
 }
+
+dependencies {
+  implementation('org.ccil.cowan.tagsoup:tagsoup:1.2.1')
+}
+
+testing {
+  suites {
+    test {
+      useSpock('2.3-groovy-3.0')
+    }
+  }
+}

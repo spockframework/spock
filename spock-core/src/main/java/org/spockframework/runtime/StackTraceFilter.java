@@ -18,7 +18,9 @@ package org.spockframework.runtime;
 import org.spockframework.util.InternalIdentifiers;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,6 +60,14 @@ public class StackTraceFilter implements IStackTraceFilter {
 
   @Override
   public void filter(Throwable throwable) {
+    filter(throwable, new HashSet<>());
+  }
+
+  private void filter(Throwable throwable, Set<Throwable> seen) {
+    if (!seen.add(throwable)) {
+      return;
+    }
+
     List<StackTraceElement> filteredTrace = new ArrayList<>();
 
     for (StackTraceElement elem : throwable.getStackTrace()) {
@@ -74,7 +84,7 @@ public class StackTraceFilter implements IStackTraceFilter {
 
     throwable.setStackTrace(filteredTrace.toArray(STACK_TRACE_ELEMENTS));
 
-    if (throwable.getCause() != null) filter(throwable.getCause());
+    if (throwable.getCause() != null) filter(throwable.getCause(), seen);
   }
 
   private boolean isInitializerOrFixtureMethod(StackTraceElement elem) {

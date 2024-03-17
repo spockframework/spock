@@ -1404,6 +1404,64 @@ public class MockingApi extends SpecInternals implements MockFactory {
   }
 
   /**
+   * Creates a Groovy spy wrapping a provided instance.
+   *
+   * Example:
+   *
+   * <pre>
+   *   def person = GroovySpy(new Person()) // type is Person.class, name is "person"
+   * </pre>
+   *
+   * You need to use the spy returned by this method instead of the original instance,
+   * otherwise interactions won't be picked up.
+   *
+   * @since 2.4
+   *
+   * @param obj the instance to spy
+   * @param <T> the class type of the spy
+   *
+   * @return a spy wrapping the provided instance
+   */
+  @Beta
+  public <T> T GroovySpy(T obj) {
+    invalidMockCreation();
+    return null;
+  }
+
+  /**
+   * Creates a Groovy spy with the specified interactions wrapping a provided instance.
+   *
+   * Example:
+   *
+   * <pre>
+   *   def person = GroovySpy(new Person()) {
+   *     name >> "Fred"
+   *   }
+   * </pre>
+   *
+   * You need to use the spy returned by this method instead of the original instance,
+   * otherwise interactions won't be picked up.
+   *
+   * @since 2.4
+   *
+   * @param obj the instance to spy
+   * @param interactions a description of the spy's interactions
+   * @param <T> the class type of the spy
+   *
+   * @return a spy with the specified interactions wrapping the provided instance
+   */
+  @Beta
+  public <T> T GroovySpy(
+    @DelegatesTo.Target
+    T obj,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST)
+    @ClosureParams(FirstParam.class)
+    Closure interactions) {
+    invalidMockCreation();
+    return null;
+  }
+
+  /**
    * Creates a Groovy spy with the specified options and type. If enclosed in an variable assignment, the variable name
    * will be used as the spy's name.
    *

@@ -18,11 +18,13 @@ package org.spockframework.runtime;
 import org.spockframework.util.InternalIdentifiers;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.util.Collections.newSetFromMap;
 
 /**
  * Filters an exception's stack trace. Removes internal Groovy and Spock methods, and
@@ -60,7 +62,7 @@ public class StackTraceFilter implements IStackTraceFilter {
 
   @Override
   public void filter(Throwable throwable) {
-    filter(throwable, new HashSet<>());
+    filter(throwable, newSetFromMap(new IdentityHashMap<>()));
   }
 
   private void filter(Throwable throwable, Set<Throwable> seen) {

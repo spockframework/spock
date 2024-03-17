@@ -20,6 +20,7 @@ import org.spockframework.mock.IResponseGenerator;
 import org.spockframework.util.ExceptionUtil;
 import org.spockframework.util.Nullable;
 import org.spockframework.util.ReflectionUtil;
+import org.spockframework.util.ThreadSafe;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -27,6 +28,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
+@ThreadSafe
 public class DefaultMethodInvoker implements IResponseGenerator {
   @Nullable // Available since Java 17
   private static final Method INVOKE_DEFAULT = ReflectionUtil.getDeclaredMethodByName(InvocationHandler.class, "invokeDefault");

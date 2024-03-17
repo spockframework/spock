@@ -17,6 +17,7 @@
 package org.spockframework.mock.response;
 
 import org.spockframework.mock.*;
+import org.spockframework.util.ThreadSafe;
 
 /**
  * Returns a value using {@code Stub} semantics (see  {@link EmptyOrDummyResponse}).
@@ -27,6 +28,7 @@ import org.spockframework.mock.*;
  * @author Peter Niederwieser
  * @author Leonard Brünings
  */
+@ThreadSafe
 public class WildcardResponseGenerator extends SingleResponseGenerator {
   @Override
   public Object doRespond(IMockInvocation invocation) {

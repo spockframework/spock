@@ -31,10 +31,10 @@ class IterableResponseGeneratorSpec extends Specification {
     inv.getMethod() >> new StaticMockMethod(method, Object)
 
     expect:
-    gen.respond(inv) == 1
-    gen.respond(inv) == 2
-    gen.respond(inv) == 3
-    gen.respond(inv) == 3
+    gen.getResponseSupplier(inv).get() == 1
+    gen.getResponseSupplier(inv).get() == 2
+    gen.getResponseSupplier(inv).get() == 3
+    gen.getResponseSupplier(inv).get() == 3
   }
 
   def "iterate over empty list"() {
@@ -43,8 +43,8 @@ class IterableResponseGeneratorSpec extends Specification {
     inv.getMethod() >> new StaticMockMethod(method, Object)
 
     expect:
-    gen.respond(inv) == null
-    gen.respond(inv) == null
+    gen.getResponseSupplier(inv).get() == null
+    gen.getResponseSupplier(inv).get() == null
   }
 
   def "iterate over string"() {
@@ -53,9 +53,9 @@ class IterableResponseGeneratorSpec extends Specification {
     inv.getMethod() >> new StaticMockMethod(method, Object)
 
     expect:
-    gen.respond(inv) == "a"
-    gen.respond(inv) == "b"
-    gen.respond(inv) == "c"
-    gen.respond(inv) == "c"
+    gen.getResponseSupplier(inv).get() == "a"
+    gen.getResponseSupplier(inv).get() == "b"
+    gen.getResponseSupplier(inv).get() == "c"
+    gen.getResponseSupplier(inv).get() == "c"
   }
 }

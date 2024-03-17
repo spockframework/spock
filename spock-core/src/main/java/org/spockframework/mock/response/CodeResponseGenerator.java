@@ -20,11 +20,15 @@ import org.spockframework.mock.IMockInvocation;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 
 import groovy.lang.Closure;
+import org.spockframework.util.ThreadSafe;
+
+import static org.spockframework.util.ObjectUtil.uncheckedCast;
 
 /**
  *
  * @author Peter Niederwieser
  */
+@ThreadSafe
 public class CodeResponseGenerator extends SingleResponseGenerator {
   private final Closure code;
 
@@ -49,6 +53,7 @@ public class CodeResponseGenerator extends SingleResponseGenerator {
       return GroovyRuntimeUtil.invokeClosure(code, invocation);
     }
 
+    Closure<?> code = uncheckedCast(this.code.clone());
     code.setDelegate(invocation);
     code.setResolveStrategy(Closure.DELEGATE_FIRST);
     return GroovyRuntimeUtil.invokeClosure(code, invocation.getArguments());

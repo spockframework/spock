@@ -13,6 +13,8 @@
  */
 package org.spockframework.mock;
 
+import java.util.function.Supplier;
+
 class DefaultEqualsInteraction extends DefaultInteraction {
   public static final DefaultEqualsInteraction INSTANCE = new DefaultEqualsInteraction();
 
@@ -33,7 +35,7 @@ class DefaultEqualsInteraction extends DefaultInteraction {
   }
 
   @Override
-  public Object accept(IMockInvocation invocation) {
-    return invocation.getMockObject().getInstance() == invocation.getArguments().get(0);
+  public Supplier<Object> accept(IMockInvocation invocation) {
+    return () -> invocation.getMockObject().getInstance() == invocation.getArguments().get(0);
   }
 }

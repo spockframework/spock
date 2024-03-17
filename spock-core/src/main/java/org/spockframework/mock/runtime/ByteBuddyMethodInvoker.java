@@ -2,7 +2,9 @@ package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
 import org.spockframework.util.ExceptionUtil;
+import org.spockframework.util.ThreadSafe;
 
+@ThreadSafe
 public class ByteBuddyMethodInvoker implements IResponseGenerator {
 
   private final ByteBuddyInvoker superCall;

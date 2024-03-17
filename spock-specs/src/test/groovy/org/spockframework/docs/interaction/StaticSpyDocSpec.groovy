@@ -54,7 +54,7 @@ class StaticSpyDocSpec extends Specification {
   def "SpyStatic mock all static methods"() {
     given:
     SpyStatic(StaticClass)
-    StaticClass._ >> { ZeroOrNullResponse.INSTANCE.respond(delegate) }
+    StaticClass._ >> { ZeroOrNullResponse.INSTANCE.getResponseSupplier(delegate).get() }
 
     expect:
     StaticClass.staticMethod() == null

@@ -7,19 +7,18 @@ include::include.adoc[]
 
 === Breaking Changes
 
-* Calculated responses for interactions (`>> { ... }`) previously were all executed synchronized on the respective mock
-  controller instance, so could safely mutate shared state to a certain degree, even if the invocations were happening
-  on different threads. This also caused that one response calculation could not wait on something happening
-  in another response calculation, as they were all executed sequentially due to the synchronization.
+* _Most users will probably be unaffected by this change as it only becomes relevant in a multithreaded situation where multiple threads do interaction invocations that care about shared state._ +
+  Calculated responses for interactions (`>> { ... }`) previously were all executed synchronized on the respective mock controller instance, so could safely mutate shared state to a certain degree, even if the invocations were happening
+  on different threads.
+  This also caused that one response calculation could not wait on something happening in another response calculation, as they were all executed sequentially due to the synchronization.
   Starting with this release, the response calculations are no longer happening synchronized.
-  If you depend on shared state in such calculations, you now have to make sure yourself, that this is done in a
-  thread-safe manner. Most users will probably be unaffected by this change as it only becomes relevant in a
-  multi-threaded situation where multiple threads do interaction invocations that care about shared state. spockPull:1910[]
+  If you depend on shared state in such calculations, you now have to make sure yourself, that this is done in a thread-safe manner.
+  spockPull:1910[]
 
-* `SingleResponseGenerator#isAtEndOfCycle` is now `final` and `SingleResponseGenerator#doRespond` is now `protected`.
-  When subclassing `SingleResponseGenerator` it does not make sense to override the first method, and it does not make
-  sense to call the second method from somewhere else. This should not affect most users, only if you were
-  subclassing `SingleResponseGenerator` and doing unusual things. spockPull:1910[]
+* _This should not affect most users, only if you were subclassing `SingleResponseGenerator` and doing unusual things._ +
+  `SingleResponseGenerator#isAtEndOfCycle` is now `final` and `SingleResponseGenerator#doRespond` is now `protected`.
+  When subclassing `SingleResponseGenerator` it does not make sense to override the first method, and it does not make sense to call the second method from somewhere else.
+  spockPull:1910[]
 
 === Misc
 

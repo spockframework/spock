@@ -30,7 +30,7 @@ jobs:
       - name: 'Build Docs'
         run: ./gradlew --no-parallel --stacktrace asciidoctor javadoc "-Dvariant=4.0" "-DjavaVersion=21"
       - name: 'Archive and upload docs'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: docs
           path: |

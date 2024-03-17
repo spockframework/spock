@@ -586,7 +586,7 @@ public class IncludedSourceLinker {
               if (includeSourceMarkerLines.isEmpty()) {
                 if (listings && !cloakedLiteral && !lines.isEmpty()) {
                   log(new LogRecord(WARN, "listing with only inline code found; " +
-                    "if this is not source from a file, consider using a literal block without source style instead; " +
+                    "if this is not source from a file, consider using a literal block instead; " +
                     "first line: " + lines.get(0)));
                 }
                 return;

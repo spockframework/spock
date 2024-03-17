@@ -393,4 +393,29 @@ apackage.ASpec|a feature|3
 apackage.ASpec|a feature|2
     """
   }
+
+  def "suppressed get filtered as well"() {
+    when:
+    runner.runFeatureBody """
+when:
+def e = new Exception()
+def suppressed = new Exception()
+e.addSuppressed(suppressed)
+throw e
+
+then:
+thrown(RuntimeException)
+    """
+
+    then:
+    WrongExceptionThrownError e = thrown()
+
+    stackTraceLooksLike e.cause, """
+apackage.ASpec|a feature|2
+    """
+
+    stackTraceLooksLike e.cause.suppressed.first(), """
+apackage.ASpec|a feature|3
+    """
+  }
 }

@@ -87,6 +87,10 @@ public class StackTraceFilter implements IStackTraceFilter {
     throwable.setStackTrace(filteredTrace.toArray(STACK_TRACE_ELEMENTS));
 
     if (throwable.getCause() != null) filter(throwable.getCause(), seen);
+
+    for (Throwable suppressed : throwable.getSuppressed()) {
+      filter(suppressed, seen);
+    }
   }
 
   private boolean isInitializerOrFixtureMethod(StackTraceElement elem) {

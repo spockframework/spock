@@ -1,7 +1,7 @@
 :author: Peter Niederwieser, Leonard Brünings, The Spock Framework Team
 :revnumber: X-replaced-by-gradle
 :sourcedir: ../spock-specs/src/test/groovy/org/spockframework/docs
-:snapshotdir: ../spock-specs/src/test/resources/org/spockframework/docs
+:snapshotdir: ../spock-specs/src/test/resources/snapshots/org/spockframework/docs
 :sourcedir-spring: ../spock-spring/src/test/groovy/org/spockframework/spring/docs
 :resourcedir-spring: ../spock-spring/src/test/resources/org/spockframework/spring/docs
 :sourcedir-spring-boot: ../spock-spring/boot2-test/src/test/groovy/org/spockframework/boot2

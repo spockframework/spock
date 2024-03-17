@@ -10,7 +10,7 @@ public void $spock_feature_0_0() {
     org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
     java.lang.Object x = 'a1b'
     try {
-        org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), 'x ==~ /a\\db/', 4, 9, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), x) ==~ $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), 'a\\db')))
+        org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), 'x ==~ /a\\db/', 4, 9, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), org.spockframework.runtime.SpockRuntime.matchCollectionsInAnyOrder($spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), x), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), 'a\\db'))))
     }
     catch (java.lang.Throwable $spock_condition_throwable) {
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'x ==~ /a\\db/', 4, 9, null, $spock_condition_throwable)}

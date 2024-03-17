@@ -133,14 +133,40 @@ public abstract class SpockRuntime {
 
   public static final String MATCH_COLLECTIONS_AS_SET = "matchCollectionsAsSet";
 
-  public static void matchCollectionsAsSet(Object a, Object b) {
+  public static boolean matchCollectionsAsSet(Object left, Object right) {
+    if (isIterableOrArray(left) && isIterableOrArray(right)) {
+      Set<?> actual = GroovyRuntimeUtil.coerce(left, LinkedHashSet.class);
+      Set<?> expected = GroovyRuntimeUtil.coerce(right, LinkedHashSet.class);
+      return GroovyRuntimeUtil.equals(actual, expected);
+    } else if ((left == null) || (right == null)) {
+      return (left == null) && (right == null);
+    } else {
+      Pattern pattern = Pattern.compile(String.valueOf(right));
+      java.util.regex.Matcher matcher = pattern.matcher(String.valueOf(left));
+      return matcher.find();
+    }
   }
 
   public static final String MATCH_COLLECTIONS_IN_ANY_ORDER = "matchCollectionsInAnyOrder";
 
-  public static void matchCollectionsInAnyOrder(Object a, Object b) {
-  }
+  public static boolean matchCollectionsInAnyOrder(Object left, Object right) {
+    if (isIterableOrArray(left) && isIterableOrArray(right)) {
+      Object localLeft = convertArrayToCollectionIfNecessary(left);
+      Object localRight = convertArrayToCollectionIfNecessary(right);
+      Matcher<?> matcher = StreamSupport.stream(((Iterable<?>)localRight).spliterator(), false)
+        .map(CoreMatchers::equalTo)
+        .collect(Collectors.collectingAndThen(toList(), IsIterableContainingInAnyOrder::containsInAnyOrder));
 
+      return HamcrestFacade.matches(matcher, localLeft);
+    } else if ((left == null) || (right == null)) {
+      return (left == null) && (right == null);
+    } else {
+      Pattern pattern = Pattern.compile(String.valueOf(right));
+      java.util.regex.Matcher matcher = pattern.matcher(String.valueOf(left));
+
+      return matcher.matches();
+    }
+  }
 
   public static <T> void verifyEach(
     Iterable<T> things,
@@ -289,7 +315,6 @@ public abstract class SpockRuntime {
       String description = null;
       int idxActual = values.indexOf(left);
       int idxExpected = values.indexOf(right);
-
 
       if (isIterableOrArray(left) && isIterableOrArray(right)) {
         if (SpockRuntime.MATCH_COLLECTIONS_AS_SET.equals(method)) {

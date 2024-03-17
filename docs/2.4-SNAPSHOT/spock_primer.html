@@ -1047,7 +1047,20 @@ verifyEach(list) { <span class="local-variable">it</span> == <span class="intege
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Unresolved directive in spock_primer.adoc - include::../spock-specs/src/test/resources/org/spockframework/docs/primer/VerifyEachDocSpec/verifyEach_method.txt[]</pre>
+<pre>Multiple Failures (2 failures)
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[0] 1:
+Condition not satisfied:
+
+it == 2
+|  |
+1  false
+
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[2] 3:
+Condition not satisfied:
+
+it == 2
+|  |
+3  false</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1066,7 +1079,20 @@ verifyEach(list, { <span class="string"><span class="delimiter">&quot;</span><sp
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Unresolved directive in spock_primer.adoc - include::../spock-specs/src/test/resources/org/spockframework/docs/primer/VerifyEachDocSpec/verifyEach_with_namer_method.txt[]</pre>
+<pre>Multiple Failures (2 failures)
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[0] int(1):
+Condition not satisfied:
+
+it == 2
+|  |
+1  false
+
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[2] int(3):
+Condition not satisfied:
+
+it == 2
+|  |
+3  false</pre>
 </div>
 </div>
 </div>
@@ -1249,7 +1275,7 @@ used (like specifying the behavior of exception conditions). In all other cases,
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-03-17 16:56:48 UTC
+Last updated 2024-03-17 17:04:44 UTC
 </div>
 </div>
 </body>

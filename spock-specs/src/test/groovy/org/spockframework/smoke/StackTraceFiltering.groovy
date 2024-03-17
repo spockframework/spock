@@ -364,4 +364,33 @@ org.spockframework.runtime.foo.Baz|bar|0
 org.spockframework.runtime.foo.Baz|bar|0
     """
   }
+
+  def "exception cause loops do not cause StackOverflowError"() {
+    when:
+    runner.runFeatureBody """
+when:
+def e = new Exception()
+def cause = new Exception(e)
+e.initCause(cause)
+throw e
+
+then:
+thrown(RuntimeException)
+    """
+
+    then:
+    WrongExceptionThrownError e = thrown()
+
+    stackTraceLooksLike e.cause, """
+apackage.ASpec|a feature|2
+    """
+
+    stackTraceLooksLike e.cause.cause, """
+apackage.ASpec|a feature|3
+    """
+
+    stackTraceLooksLike e.cause.cause.cause, """
+apackage.ASpec|a feature|2
+    """
+  }
 }

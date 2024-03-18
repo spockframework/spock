@@ -22,7 +22,7 @@ Java and https://groovy-lang.org/[Groovy] applications.To learn more
 about Spock, visit
 https://spockframework.org[https://spockframework.org].To run a sample
 spec in your browser use the
-https://gwc-experiment.appspot.com/[Groovy Web Console].
+https://groovyconsole.dev/[Groovy Web Console].
 
 === Latest Versions
 
@@ -170,7 +170,7 @@ repository].
 === Links
 
 * Spock Homepage -- https://spockframework.org[https://spockframework.org]
-* Spock Web Console -- https://gwc-experiment.appspot.com/[https://gwc-experiment.appspot.com/]
+* Groovy Web Console -- https://groovyconsole.dev/[https://groovyconsole.dev/]
 * GitHub Organization -- https://github.com/spockframework[https://github.com/spockframework]
 * Reference Documentation -- https://docs.spockframework.org[https://docs.spockframework.org]
 * User Forum -- https://github.com/spockframework/spock/discussions[https://github.com/spockframework/spock/discussions]

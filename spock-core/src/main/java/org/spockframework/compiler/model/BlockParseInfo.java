@@ -124,12 +124,12 @@ public enum BlockParseInfo {
 
   COMBINED {
     @Override
-    public EnumSet<BlockParseInfo> getSuccessors(Method method) {
-      return WHERE.getSuccessors(method);
-    }
-    @Override
     public Block addNewBlock(Method method) {
       return method.getLastBlock();
+    }
+    @Override
+    public EnumSet<BlockParseInfo> getSuccessors(Method method) {
+      return WHERE.getSuccessors(method);
     }
   },
 

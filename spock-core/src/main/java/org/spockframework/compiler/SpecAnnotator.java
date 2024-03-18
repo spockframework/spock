@@ -228,6 +228,10 @@ public class SpecAnnotator extends AbstractSpecVisitor {
     addBlockMetadata(block, BlockKind.THEN);
   }
 
+  public void visitFilterBlock(FilterBlock block) throws Exception {
+    addBlockMetadata(block, BlockKind.FILTER);
+  }
+
   @Override
   public void visitCleanupBlock(CleanupBlock block) throws Exception {
     addBlockMetadata(block, BlockKind.CLEANUP);

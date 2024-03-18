@@ -47,6 +47,10 @@ public class InternalIdentifiers {
     return featureName + "prods";
   }
 
+  public static String getFilterName(String featureName) {
+    return featureName + "filter";
+  }
+
   public static String getDataProviderName(String featureName, int providerIndex) {
     return featureName + "prov" + providerIndex;
   }

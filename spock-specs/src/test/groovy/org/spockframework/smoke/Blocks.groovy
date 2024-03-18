@@ -35,6 +35,8 @@ def m1() {
   and: "then2"
   where: "where"
   and: "where2"
+  filter: "filter"
+  and: "filter2"
 }
 
 def m2() {
@@ -56,8 +58,8 @@ def m3() {
 
     expect:
     def m1 = specInfo.features[0]
-    m1.blocks*.kind == [SETUP,WHEN,THEN,WHERE]
-    m1.blocks*.texts.flatten() == ["setup","setup2","when","when2","then","then2","where","where2"]
+    m1.blocks*.kind == [SETUP,WHEN,THEN,WHERE,FILTER]
+    m1.blocks*.texts.flatten() == ["setup","setup2","when","when2","then","then2","where","where2","filter","filter2"]
 
     and:
     def m2 = specInfo.features[1]

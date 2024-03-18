@@ -16,6 +16,7 @@
 
 package org.spockframework.compiler;
 
+import org.spockframework.compiler.model.FilterBlock;
 import org.spockframework.compiler.model.WhereBlock;
 import org.spockframework.runtime.model.DataProcessorMetadata;
 import org.spockframework.runtime.model.DataProviderMetadata;
@@ -46,6 +47,7 @@ import static org.spockframework.util.Identifiers.COMBINED;
  */
 public class WhereBlockRewriter {
   private final WhereBlock whereBlock;
+  private final FilterBlock filterBlock;
   private final IRewriteResources resources;
   private final boolean defineErrorRethrower;
   private final InstanceFieldAccessChecker instanceFieldAccessChecker;
@@ -64,16 +66,17 @@ public class WhereBlockRewriter {
   private final List<Expression> dataVariableMultiplications = new ArrayList<>();
   private int localVariableCount = 0;
 
-  private WhereBlockRewriter(WhereBlock whereBlock, IRewriteResources resources, boolean defineErrorRethrower) {
+  private WhereBlockRewriter(WhereBlock whereBlock, FilterBlock filterBlock, IRewriteResources resources, boolean defineErrorRethrower) {
     this.whereBlock = whereBlock;
+    this.filterBlock = filterBlock;
     this.resources = resources;
     this.defineErrorRethrower = defineErrorRethrower;
     instanceFieldAccessChecker = new InstanceFieldAccessChecker(resources);
     errorRethrowerUsageDetector = defineErrorRethrower ? new ErrorRethrowerUsageDetector() : null;
   }
 
-  public static void rewrite(WhereBlock block, IRewriteResources resources, boolean defineErrorRethrower) {
-    new WhereBlockRewriter(block, resources, defineErrorRethrower).rewrite();
+  public static void rewrite(WhereBlock block, FilterBlock filterBlock, IRewriteResources resources, boolean defineErrorRethrower) {
+    new WhereBlockRewriter(block, filterBlock, resources, defineErrorRethrower).rewrite();
   }
 
   private void rewrite() {
@@ -144,6 +147,7 @@ public class WhereBlockRewriter {
     handleFeatureParameters();
     createDataProcessorMethod();
     createDataVariableMultiplicationsMethod();
+    createFilterMethod();
   }
 
   private static boolean isMultiplicand(Statement stat) {
@@ -877,6 +881,40 @@ public class WhereBlockRewriter {
       blockStat);
 
     whereBlock.getParent().getParent().getAst().addMethod(dataVariableMultiplicationsMethod);
+  }
+
+  private void createFilterMethod() {
+    if (dataProcessorVars.isEmpty() || (filterBlock == null)) return;
+
+    DeepBlockRewriter deep = new DeepBlockRewriter(resources);
+    deep.visit(filterBlock);
+
+    List<Statement> filterStats = new ArrayList<>(filterBlock.getAst());
+    filterBlock.getAst().clear();
+
+    instanceFieldAccessChecker.check(filterStats);
+
+    if (deep.isConditionFound()) {
+      resources.defineValueRecorder(filterStats, "");
+    }
+    if (deep.isDeepNonGroupedConditionFound()) {
+      resources.defineErrorRethrower(filterStats);
+    }
+
+    BlockStatement blockStat = new BlockStatement(filterStats, null);
+
+    MethodNode filterMethod = new MethodNode(
+      InternalIdentifiers.getFilterName(filterBlock.getParent().getAst().getName()),
+      Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_SYNTHETIC,
+      ClassHelper.VOID_TYPE,
+      dataProcessorVars
+        .stream()
+        .map(variable -> new Parameter(ClassHelper.OBJECT_TYPE, variable.getName()))
+        .toArray(Parameter[]::new),
+      ClassNode.EMPTY_ARRAY,
+      blockStat);
+
+    filterBlock.getParent().getParent().getAst().addMethod(filterMethod);
   }
 
   private static InvalidSpecCompileException notAParameterization(ASTNode stat) {

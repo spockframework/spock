@@ -55,4 +55,32 @@ class DataTablesAstSpec extends EmbeddedSpecification {
     ';'  | ';'  | 'semicolons'
     '|'  | ';'  | 'mixed separators'
   }
+
+  def 'filter block becomes its own method'() {
+    given:
+    snapshotter.featureBody()
+
+    when:
+    def result = compiler.transpileFeatureBody '''
+      expect:
+      true
+
+      where:
+      a | _
+      1 | _
+      2 | _
+
+      combined:
+
+      b | _
+      3 | _
+
+      filter:
+      a == 1
+      b == 2
+    ''', EnumSet.of(Show.METHODS)
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
 }

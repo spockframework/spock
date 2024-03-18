@@ -28,9 +28,6 @@ import spock.lang.Snapshotter
  * @author Peter Niederwieser
  */
 class InvalidWhereBlocks extends EmbeddedSpecification {
-  @Snapshot
-  Snapshotter snapshotter
-
   def "data variable collides with local variable"() {
     when:
     compiler.compileFeatureBody """
@@ -382,7 +379,7 @@ a | 1 | b
 
     then:
     InvalidSpecCompileException e = thrown()
-    e.message.startsWith('Header of data table may only contain variable names')
+    e.message == 'Header of data table may only contain variable names @ line 5, column 5.'
   }
 
   def "header may only contain variable names with semicolon"() {
@@ -671,7 +668,7 @@ b | _
     see.message =~ 'fewer values than previous'
   }
 
-  def 'using combined label outside where block is not allowed'() {
+  def 'using combined label outside where block is not allowed'(@Snapshot Snapshotter snapshotter) {
     when:
     def result = compiler.transpileFeatureBody '''
       combined:
@@ -689,7 +686,7 @@ b | _
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
-  def 'using combined label between data table and derived data variable is not allowed'() {
+  def 'using combined label between data table and derived data variable is not allowed'(@Snapshot Snapshotter snapshotter) {
     when:
     def result = compiler.transpileFeatureBody '''
       expect:
@@ -706,7 +703,7 @@ b | _
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
-  def 'using combined label between derived data variable and data table is not allowed'() {
+  def 'using combined label between derived data variable and data table is not allowed'(@Snapshot Snapshotter snapshotter) {
     when:
     def result = compiler.transpileFeatureBody '''
       expect:
@@ -723,7 +720,7 @@ b | _
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
-  def 'using combined label between data pipe and derived data variable is not allowed'() {
+  def 'using combined label between data pipe and derived data variable is not allowed'(@Snapshot Snapshotter snapshotter) {
     when:
     def result = compiler.transpileFeatureBody '''
       expect:
@@ -739,7 +736,7 @@ b | _
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
-  def 'using combined label between data pipe and derived data variable is not allowed even with separator'() {
+  def 'using combined label between data pipe and derived data variable is not allowed even with separator'(@Snapshot Snapshotter snapshotter) {
     when:
     def result = compiler.transpileFeatureBody '''
       expect:
@@ -756,7 +753,7 @@ b | _
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
-  def 'using combined label between data pipe and derived data variable is not allowed even with separator in front'() {
+  def 'using combined label between data pipe and derived data variable is not allowed even with separator in front'(@Snapshot Snapshotter snapshotter) {
     when:
     def result = compiler.transpileFeatureBody '''
       expect:
@@ -773,7 +770,7 @@ b | _
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
-  def 'using combined label between derived data variable and data pipe is not allowed'() {
+  def 'using combined label between derived data variable and data pipe is not allowed'(@Snapshot Snapshotter snapshotter) {
     when:
     def result = compiler.transpileFeatureBody '''
       expect:
@@ -789,7 +786,7 @@ b | _
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
-  def 'using combined label between derived data variable and data pipe is not allowed even with separator'() {
+  def 'using combined label between derived data variable and data pipe is not allowed even with separator'(@Snapshot Snapshotter snapshotter) {
     when:
     def result = compiler.transpileFeatureBody '''
       expect:
@@ -806,7 +803,7 @@ b | _
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
-  def 'using combined label between derived data variable and data pipe is not allowed even with separator in front'() {
+  def 'using combined label between derived data variable and data pipe is not allowed even with separator in front'(@Snapshot Snapshotter snapshotter) {
     when:
     def result = compiler.transpileFeatureBody '''
       expect:
@@ -824,7 +821,7 @@ b | _
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
-  def 'using combined label within semicolon data table row is not allowed'() {
+  def 'using combined label within semicolon data table row is not allowed'(@Snapshot Snapshotter snapshotter) {
     when:
     def result = compiler.transpileFeatureBody '''
       expect:

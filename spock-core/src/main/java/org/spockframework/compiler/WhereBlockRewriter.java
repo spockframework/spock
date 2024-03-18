@@ -155,8 +155,11 @@ public class WhereBlockRewriter {
       return false;
     }
     Statement next = stats.next();
-    stats.previous();
-    return isMultiplicand(next);
+    try {
+      return isMultiplicand(next) || (isDataTableSeparator(next) && combineWithNext(stats));
+    } finally {
+      stats.previous();
+    }
   }
 
   private ConstructorCallExpression createDataVariableMultiplicationFactor(List<String> dataVariables) {

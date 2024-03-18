@@ -647,13 +647,13 @@ public class IncludedSourceLinker {
                 .append(sourceLink)
                 .append(",window=_blank]^");
               // if we are at a literal block, never show the play icon
-              // if we are at a listing block, but the `play` attribute was set to non-`true`, never show the play icon
+              // if we are at a listing block, but the `executable` attribute was set to non-`true`, never show the play icon
               // if the `gwc-base` document attribute is not set, never show the play icon
               // if the included file's name does not end with `.groovy`, never show the play icon
               // otherwise show the play icon
-              // but if the source link contains `/master/` instead of an commit ID,
+              // but if the source link contains `/master/` instead of a commit ID,
               // do not link the play icon, as the gwc cannot handle branch names
-              if (listings && !cloakedLiteral && parseBoolean(block.getAttribute("play", "true").toString())) {
+              if (listings && !cloakedLiteral && parseBoolean(block.getAttribute("executable", "true").toString())) {
                 Object gwcBase = document.getAttribute("gwc-base");
                 if (gwcBase != null) {
                   String canonicalPath = sourceLink.substring(sourceLink.indexOf("github.com/") + "github.com/".length());

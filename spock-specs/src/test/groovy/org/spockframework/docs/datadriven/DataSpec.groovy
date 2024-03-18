@@ -104,10 +104,10 @@ class DataSpec extends EmbeddedSpecification {
     given:
     def expected = '''
       |// tag::data-providers-combined-result[]
-      |- `feature [a: 1, b: 3, c: 5, d: 1, #0]`
-      |- `feature [a: 1, b: 4, c: 6, d: 1, #1]`
-      |- `feature [a: 2, b: 3, c: 5, d: 1, #2]`
-      |- `feature [a: 2, b: 4, c: 6, d: 1, #3]`
+      |- `feature [a: 1, b: 3, c: 5, d: 1, e: 4, #0]`
+      |- `feature [a: 1, b: 4, c: 6, d: 1, e: 5, #1]`
+      |- `feature [a: 2, b: 3, c: 5, d: 1, e: 5, #2]`
+      |- `feature [a: 2, b: 4, c: 6, d: 1, e: 6, #3]`
       |// end::data-providers-combined-result[]
     '''
       .stripMargin()
@@ -122,19 +122,26 @@ class DataSpec extends EmbeddedSpecification {
         expect:
         a >= 0
         b < c
+        e == a + b
 
         // tag::multiple-tables-combined[]
         where:
         a | _
         1 | _
         2 | _
+
         combined:
+
         b | c
         3 | 5
         4 | 6
+
         combined:
+
         d | _
         1 | _
+
+        e = a + b
         // end::multiple-tables-combined[]
       }
     '''
@@ -157,6 +164,7 @@ class DataSpec extends EmbeddedSpecification {
         expect:
         a >= 0
         b < c
+        e == a + b
 
         // tag::pipe-and-table-combined[]
         where:
@@ -167,6 +175,7 @@ class DataSpec extends EmbeddedSpecification {
         4 | 6
 
         d = 1
+        e = a + b
         // end::pipe-and-table-combined[]
       }
     '''

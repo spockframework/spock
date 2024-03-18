@@ -424,6 +424,33 @@ class DataTables extends EmbeddedSpecification {
     ]
   }
 
+  def 'data tables ending with table separator can be combined'() {
+    when:
+    def results = runner.runSpecBody '''
+      def 'a feature (#a #b #c #d #e)'() {
+        expect:
+        true
+
+        where:
+        a | b
+        1 | 'b'
+        2 | 'b'
+        _____________
+        combined:
+        c | d   | e
+        3 | 'd' | 'e'
+      }
+    '''
+
+    then:
+    results.testsStartedCount == 1 + 2
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b #c #d #e)',
+      'a feature (1 b 3 d e)',
+      'a feature (2 b 3 d e)'
+    ]
+  }
+
   def 'data tables and data pipes can be combined'() {
     when:
     def results = runner.runSpecBody '''

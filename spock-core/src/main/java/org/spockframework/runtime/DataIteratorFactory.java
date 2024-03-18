@@ -124,6 +124,11 @@ public class DataIteratorFactory {
     public Object[] next() {
       Object[] next = delegate.next();
 
+      // delegate.next() will return null if an error occurred
+      if (next == null) {
+        return null;
+      }
+
       try {
         return (Object[]) invokeRaw(context.getSharedInstance(), context.getCurrentFeature().getDataProcessorMethod(), next);
       } catch (Throwable t) {

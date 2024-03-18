@@ -256,4 +256,29 @@ private int unused() {
 }
 '''
   }
+
+  def "data provider throwing exception should not produce additional NullPointerException"() {
+    when:
+    runner.runFeatureBody '''
+expect:
+true
+
+where:
+a << new Iterator() {
+  @Override
+  boolean hasNext() {
+    return true
+  }
+
+  @Override
+  Object next() {
+    throw new RuntimeException('foo')
+  }
+}
+    '''
+
+    then:
+    RuntimeException e = thrown()
+    e.message == 'foo'
+  }
 }

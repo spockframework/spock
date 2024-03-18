@@ -3,11 +3,11 @@ include::include.adoc[]
 
 It's really easy to get started with Spock. This section shows you how.
 
-== Spock Web Console
+== Groovy Web Console
 
-https://meetspock.appspot.com/[Spock Web Console] is a website that allows you to instantly view, edit, run, and
+https://groovyconsole.dev/[Groovy Web Console] is a website that allows you to instantly view, edit, run, and
 even publish Spock specifications. It is the perfect place to toy around with Spock without making any commitments.
-So why not run https://meetspock.appspot.com/edit/9001[Hello, Spock!] right away?
+So why not run https://groovyconsole.dev/?g=groovy_4_0&codez=eNpdizEKg0AQRfs9xU81hgTsBUuDTSpPYMYRBhc3ZEc0BO-ejbGy-5_3Xp6jVgNVi_BkQniID7Nj38aI-_umr2jNUxiymIxdxO9or9yahhEfB3TSg2rxPlwTDTycKDtvBKlKuhXb_juEC2jXUJbHMpmrW90Xc9sttg[Hello, Spock!] right away?
 
 == Spock Example Project
 

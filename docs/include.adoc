@@ -6,6 +6,7 @@
 :docinfo: shared
 :icons: font
 // URL base stuff
+:gwc-base: https://groovyconsole.dev
 :github-base: https://github.com/spockframework/spock
 :github-blob-base: {github-base}/blob
 :commit-ish: master

@@ -601,7 +601,7 @@ public class IncludedSourceLinker {
               // construct an AsciiDoc table programmatically that wraps
               // the current block and in AsciiDoc would be looking like
               //
-              // [cols="a,0",frame=none,grid=none]
+              // [.includeSourceLinkerTable,cols="a,0",frame=none,grid=none]
               // |===
               // |
               // <the current block source>
@@ -612,6 +612,7 @@ public class IncludedSourceLinker {
 
               // construct the table
               Table table = createTable((StructuralNode) block.getParent());
+              table.addRole("includeSourceLinkerTable");
               table.setFrame("none");
               table.setGrid("none");
 

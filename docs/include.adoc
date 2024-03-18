@@ -3,6 +3,7 @@
 :revnumber: X-replaced-by-gradle
 // Settings
 :sectlinks: true
+:docinfo: shared
 :icons: font
 // URL base stuff
 :github-base: https://github.com/spockframework/spock

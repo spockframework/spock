@@ -284,22 +284,47 @@ public class DataIteratorFactory {
       }
       firstIteration = false;
 
-      // advances iterators and computes args
-      Object[] next = new Object[dataProviders.length];
-      for (int i = 0; i < dataProviders.length; ) {
-        try {
-          Object[] nextValues = dataProviderIterators[i].next();
-          if (nextValues == null) {
+      while (true) {
+        // advances iterators and computes args
+        Object[] next = new Object[dataProviders.length];
+        for (int i = 0; i < dataProviders.length; ) {
+          try {
+            // if the filter block excluded an iteration
+            // this might be called after the last iteration
+            // so just return null if no further data is available
+            // to just cause the iteration to be skipped
+            if (!dataProviderIterators[i].hasNext()) {
+              return null;
+            }
+            Object[] nextValues = dataProviderIterators[i].next();
+            if (nextValues == null) {
+              return null;
+            }
+            System.arraycopy(nextValues, 0, next, i, nextValues.length);
+            i += nextValues.length;
+          } catch (Throwable t) {
+            supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProviders().get(i).getDataProviderMethod(), t));
             return null;
           }
-          System.arraycopy(nextValues, 0, next, i, nextValues.length);
-          i += nextValues.length;
+        }
+
+        MethodInfo filterMethod = context.getCurrentFeature().getFilterMethod();
+
+        if (filterMethod == null) {
+          return next;
+        }
+
+        try {
+          // do not use invokeRaw here, as that would report Assertion Error to the supervisor
+          filterMethod.invoke(null, next);
+          return next;
+        } catch (AssertionError  ae) {
+          // filter block does not like these values, try next ones if available
         } catch (Throwable t) {
-          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProviders().get(i).getDataProviderMethod(), t));
+          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(filterMethod, t));
           return null;
         }
       }
-      return next;
     }
 
     @Override

@@ -70,7 +70,7 @@ class StoreSpec extends EmbeddedSpecification {
   }
 
   @Shared
-  def supportedMethodKinds = ((MethodKind.values() as List) - [MethodKind.DATA_PROCESSOR, MethodKind.DATA_PROVIDER, MethodKind.DATA_VARIABLE_MULTIPLICATIONS])
+  def supportedMethodKinds = ((MethodKind.values() as List) - [MethodKind.DATA_PROCESSOR, MethodKind.DATA_PROVIDER, MethodKind.DATA_VARIABLE_MULTIPLICATIONS, MethodKind.FILTER])
 
   @IgnoreIf(
     value = { env.CI && (os.macOs || os.windows) },

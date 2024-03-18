@@ -52,6 +52,8 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
   private MethodInfo dataProcessorMethod;
   @Nullable
   private MethodInfo dataVariableMultiplicationsMethod;
+  @Nullable
+  private MethodInfo filterMethod;
   private NameProvider<IterationInfo> iterationNameProvider;
   private IDataDriver dataDriver = IDataDriver.DEFAULT;
   private final List<DataProviderInfo> dataProviders = new ArrayList<>();
@@ -252,6 +254,15 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
     this.dataVariableMultiplicationsMethod = method;
   }
 
+  @Nullable
+  public MethodInfo getFilterMethod() {
+    return filterMethod;
+  }
+
+  public void setFilterMethod(@Nullable MethodInfo method) {
+    this.filterMethod = method;
+  }
+
   /**
    * Returns the features that imply this feature.
    * All features are within the same specification hierarchy as this feature.
@@ -400,6 +411,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
     for (DataProviderInfo provider : dataProviders)
       if (provider.getDataProviderMethod().hasBytecodeName(name)) return true;
     if (dataVariableMultiplicationsMethod != null && dataVariableMultiplicationsMethod.hasBytecodeName(name)) return true;
+    if (filterMethod != null && filterMethod.hasBytecodeName(name)) return true;
     return false;
   }
 

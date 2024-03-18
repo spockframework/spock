@@ -158,6 +158,13 @@ public class SpecInfoBuilder {
         if (dataVariableMultiplicationsMethod != null) {
           feature.setDataVariableMultiplicationsMethod(dataVariableMultiplicationsMethod);
         }
+
+        String filterMethodName = InternalIdentifiers.getFilterName(method.getName());
+        MethodInfo filterMethod = createMethod(filterMethodName, MethodKind.FILTER);
+
+        if (filterMethod != null) {
+          feature.setFilterMethod(filterMethod);
+        }
       }
     }
 

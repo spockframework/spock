@@ -182,6 +182,28 @@ def foo() {
     "{ -> { -> instanceField }() }()" |_
   }
 
+  def "filter block may not reference instance fields"() {
+    when:
+    compiler.compileSpecBody '''
+def instanceField
+
+def foo() {
+  expect:
+  x == 1
+
+  where:
+  x = 1
+
+  filter:
+  instanceField
+}
+    '''
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.contains("@Shared")
+  }
+
   def 'referencing a data variable in a data provider is not allowed'() {
     when:
     runner.runFeatureBody """
@@ -672,6 +694,24 @@ b | _
     when:
     def result = compiler.transpileFeatureBody '''
       combined:
+      true
+
+      expect:
+      true
+
+      where:
+      a | _
+      1 | _
+    '''
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
+  def 'using filter label before where block is not allowed'(@Snapshot Snapshotter snapshotter) {
+    when:
+    def result = compiler.transpileFeatureBody '''
+      filter:
       true
 
       expect:

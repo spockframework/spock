@@ -9,7 +9,13 @@
 <title>Utilities</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="./coderay-asciidoctor.css">
+<style>
+  .includeSourceLinkerTable tr td:first-child {
+    padding: 0;
+  }
+</style>
 </head>
 <body id="utilities" class="article">
 <div id="header">
@@ -36,75 +42,105 @@ or the corresponding methods in the other <code>java.time.*</code> classes.</p>
 </div>
 <div class="sect2">
 <h3 id="_example"><a class="anchor" href="#_example"></a><a class="link" href="#_example">Example</a></h3>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Class under Test</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="directive">public</span> <span class="type">class</span> <span class="class">AgeFilter</span> <span class="directive">implements</span> <span class="predefined-type">Predicate</span>&lt;LocalDate&gt; {
   <span class="directive">private</span> <span class="directive">final</span> Clock clock;
   <span class="directive">private</span> <span class="directive">final</span> <span class="type">int</span> age;
 
-  <span class="directive">public</span> AgeFilter(Clock clock, <span class="type">int</span> age) {                                       // <b class="conum">(1)</b>
+  <span class="directive">public</span> AgeFilter(Clock clock, <span class="type">int</span> age) {                                       <i class="conum" data-value="1"></i><b>(1)</b>
     <span class="local-variable">this</span>.clock = clock;
     <span class="local-variable">this</span>.age = age;
   }
 
   <span class="annotation">@Override</span>
   <span class="directive">public</span> <span class="type">boolean</span> test(LocalDate date) {
-    <span class="keyword">return</span> Period.between(date, LocalDate.now(clock)).getYears() &gt;= age;         // <b class="conum">(2)</b>
+    <span class="keyword">return</span> Period.between(date, LocalDate.now(clock)).getYears() &gt;= age;         <i class="conum" data-value="2"></i><b>(2)</b>
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/utilities/AgeFilter.java#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="colist arabic">
-<ol>
-<li>
-<p><code>Clock</code> is injected via constructor</p>
-</li>
-<li>
-<p><code>Clock</code> is used to get the current date</p>
-</li>
-</ol>
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>Clock</code> is injected via constructor</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>Clock</code> is used to get the current date</td>
+</tr>
+</table>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Test</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">AgeFilter reacts to time</span><span class="delimiter">&quot;</span></span>() {
   <span class="key">given</span>:
   ZonedDateTime defaultTime = ZonedDateTime.of(<span class="integer">2018</span>, <span class="integer">6</span>, <span class="integer">5</span>, <span class="integer">0</span>, <span class="integer">0</span>, <span class="integer">0</span>, <span class="integer">0</span>, ZoneId.of(<span class="string"><span class="delimiter">'</span><span class="content">UTC</span><span class="delimiter">'</span></span>))
-  MutableClock clock = <span class="keyword">new</span> MutableClock(defaultTime)                                       // <b class="conum">(1)</b>
-  AgeFilter ageFilter = <span class="keyword">new</span> AgeFilter(clock,<span class="integer">18</span>)                                            // <b class="conum">(2)</b>
+  MutableClock clock = <span class="keyword">new</span> MutableClock(defaultTime)                                       <i class="conum" data-value="1"></i><b>(1)</b>
+  AgeFilter ageFilter = <span class="keyword">new</span> AgeFilter(clock,<span class="integer">18</span>)                                            <i class="conum" data-value="2"></i><b>(2)</b>
 
   LocalDate birthday = defaultTime.minusYears(<span class="integer">18</span>).plusDays(<span class="integer">1</span>).toLocalDate()
 
   <span class="key">expect</span>:
-  !ageFilter.test(birthday)                                                                // <b class="conum">(3)</b>
+  !ageFilter.test(birthday)                                                                <i class="conum" data-value="3"></i><b>(3)</b>
 
   <span class="key">when</span>:
-  clock + <span class="predefined-type">Duration</span>.ofDays(<span class="integer">1</span>)                                                               // <b class="conum">(4)</b>
+  clock + <span class="predefined-type">Duration</span>.ofDays(<span class="integer">1</span>)                                                               <i class="conum" data-value="4"></i><b>(4)</b>
 
   <span class="key">then</span>:
-  ageFilter.test(birthday)                                                                 // <b class="conum">(5)</b>
+  ageFilter.test(birthday)                                                                 <i class="conum" data-value="5"></i><b>(5)</b>
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/utilities/MutableClockDocSpec.groovy#L12" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/utilities/MutableClockDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="colist arabic">
-<ol>
-<li>
-<p><code>MutableClock</code> created with a well known time</p>
-</li>
-<li>
-<p><code>Clock</code> is injected via constructor</p>
-</li>
-<li>
-<p><code>age</code> is less than <code>18</code> so the result is <code>false</code></p>
-</li>
-<li>
-<p>the clock is advanced by one day</p>
-</li>
-<li>
-<p><code>age</code> is equal to <code>18</code> so the result is <code>true</code></p>
-</li>
-</ol>
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>MutableClock</code> created with a well known time</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>Clock</code> is injected via constructor</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code>age</code> is less than <code>18</code> so the result is <code>false</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>the clock is advanced by one day</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><code>age</code> is equal to <code>18</code> so the result is <code>true</code></td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>There are many more ways to modify <code>MutableClock</code> just have a look at the JavaDocs, or the test code <code>spock.util.time.MutableClockSpec</code>.</p>
@@ -135,13 +171,32 @@ While this works, it is very noisy.</p>
 </div>
 <div class="sect2">
 <h3 id="_lenient_match"><a class="anchor" href="#_lenient_match"></a><a class="link" href="#_lenient_match">Lenient Match</a></h3>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> x = [<span class="integer">2</span>, <span class="integer">2</span>, <span class="integer">1</span>, <span class="integer">3</span>, <span class="integer">3</span>]
 <span class="keyword">assert</span> x =~ [<span class="integer">4</span>, <span class="integer">1</span>, <span class="integer">2</span>]</code></pre>
 </div>
-</div>
-<div class="listingblock">
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/utilities/CollectionConditions.groovy#L11" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/utilities/CollectionConditions.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code>x =~ [4, 1, 2]
 | |
@@ -151,17 +206,41 @@ While this works, it is very noisy.</p>
 | extra: [3]
 [2, 1, 3]</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/utilities/CollectionConditions.groovy#L16" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/utilities/CollectionConditions.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect2">
 <h3 id="_strict_match"><a class="anchor" href="#_strict_match"></a><a class="link" href="#_strict_match">Strict Match</a></h3>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> x = [<span class="integer">2</span>, <span class="integer">2</span>, <span class="integer">1</span>, <span class="integer">3</span>, <span class="integer">3</span>]
 <span class="keyword">assert</span> x ==~ [<span class="integer">4</span>, <span class="integer">1</span>, <span class="integer">2</span>]</code></pre>
 </div>
-</div>
-<div class="listingblock">
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/utilities/CollectionConditions.groovy#L31" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/utilities/CollectionConditions.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code>x ==~ [4, 1, 2]
 | |
@@ -169,14 +248,19 @@ While this works, it is very noisy.</p>
 [2, 2, 1, 3, 3]
 
 Expected: iterable with items [&lt;4&gt;, &lt;1&gt;, &lt;2&gt;] in any order
-     but: not matched: <b class="conum">(2)</b></code></pre>
+     but: not matched: <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/utilities/CollectionConditions.groovy#L36" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/utilities/CollectionConditions.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="admonitionblock note">
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 Both operands must either be <code>Iterable</code> or an array for this to work.
@@ -198,7 +282,14 @@ However, for more complex cases like creating a directory tree <code>FileSystemF
 </div>
 <div class="sect2">
 <h3 id="_examples"><a class="anchor" href="#_examples"></a><a class="link" href="#_examples">Examples</a></h3>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Creating a directory tree</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@TempDir</span>
@@ -228,12 +319,17 @@ FileSystemFixture fsFixture
   fsFixture.resolve(<span class="string"><span class="delimiter">'</span><span class="content">src/test/resources/SampleFile.txt</span><span class="delimiter">'</span></span>).text == <span class="string"><span class="delimiter">'</span><span class="content">HelloWorld\n</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/utilities/FileSystemFixtureSpec.groovy#L11" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/utilities/FileSystemFixtureSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="admonitionblock tip">
 <table>
 <tr>
 <td class="icon">
-<div class="title">Tip</div>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
 To get the nice Groovy methods for <code>Path</code>, you need to add a dependency on <code>groovy-nio</code>.
@@ -261,7 +357,14 @@ which was made by the <code>when:</code> block.</p>
 </div>
 <div class="sect2">
 <h3 id="_example_2"><a class="anchor" href="#_example_2"></a><a class="link" href="#_example_2">Example</a></h3>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Using <code>old()</code> to capture the old value of <code>x</code></div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Usage of the old() method</span><span class="delimiter">&quot;</span></span>() {
@@ -275,7 +378,12 @@ which was made by the <code>when:</code> block.</p>
   x == old(x) + <span class="integer">1</span>
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/utilities/OldMethodSpec.groovy#L8" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/utilities/OldMethodSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -283,7 +391,7 @@ which was made by the <code>when:</code> block.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-03-18 23:25:09 UTC
+Last updated 2024-03-19 10:10:51 UTC
 </div>
 </div>
 </body>

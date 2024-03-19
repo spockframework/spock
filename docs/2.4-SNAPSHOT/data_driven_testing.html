@@ -9,7 +9,13 @@
 <title>Data Driven Testing</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="./coderay-asciidoctor.css">
+<style>
+  .includeSourceLinkerTable tr td:first-child {
+    padding: 0;
+  }
+</style>
 </head>
 <body id="data-driven-testing" class="article">
 <div id="header">
@@ -34,7 +40,14 @@ Spock&#8217;s data driven testing support makes this a first class feature.</p>
 <div class="paragraph">
 <p>Suppose we want to specify the behavior of the <code>Math.max</code> method:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">MathSpec</span> <span class="directive">extends</span> Specification {
   <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() {
@@ -46,7 +59,12 @@ Spock&#8217;s data driven testing support makes this a first class feature.</p>
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v1/MathSpec.groovy#L6" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v1/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Although this approach is fine in simple cases like this one, it has some potential drawbacks:</p>
 </div>
@@ -74,7 +92,14 @@ Spock&#8217;s data driven testing support makes this a first class feature.</p>
 data-driven feature method. First, we introduce three method parameters (called <em>data variables</em>) that replace the
 hard-coded integer values:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">MathSpec</span> <span class="directive">extends</span> Specification {
   <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>(<span class="type">int</span> a, <span class="type">int</span> b, <span class="type">int</span> c) {
@@ -84,7 +109,12 @@ hard-coded integer values:</p>
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v2/MathSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v2/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>We have finished the test logic, but still need to supply the data values to be used. This is done in a <code>where:</code> block,
 which always comes at the end of the method. In the simplest (and most common) case, the <code>where:</code> block holds a <em>data table</em>.</p>
@@ -97,7 +127,14 @@ which always comes at the end of the method. In the simplest (and most common) c
 <div class="paragraph">
 <p>Data tables are a convenient way to exercise a feature method with a fixed set of data values:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">MathSpec</span> <span class="directive">extends</span> Specification {
   <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>(<span class="type">int</span> a, <span class="type">int</span> b, <span class="type">int</span> c) {
@@ -112,7 +149,12 @@ which always comes at the end of the method. In the simplest (and most common) c
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v2/MathSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v2/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>The first line of the table, called the <em>table header</em>, declares the data variables. The subsequent lines, called
 <em>table rows</em>, hold the corresponding values. For each row, the feature method will get executed once; we call this an
@@ -122,7 +164,14 @@ failures will be reported.</p>
 <div class="paragraph">
 <p>Data tables must have at least two columns. A single-column table can be written as:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">where</span>:
 a | _
@@ -130,14 +179,26 @@ a | _
 <span class="integer">7</span> | _
 <span class="integer">0</span> | _</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L39" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>A sequence of two or more underscores can be used to split one wide data table into multiple narrower ones.
 Without this separator and without any other data variable assignment in between there
 is no way to have multiple data tables in one <code>where</code> block, the second table would just
 be further iterations of the first table, including the seemingly header row:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">where</span>:
 a | _
@@ -151,11 +212,23 @@ b | c
 <span class="integer">3</span> | <span class="integer">4</span>
 <span class="integer">5</span> | <span class="integer">6</span></code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L53" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>This is semantically exactly the same, just as one wider combined data table:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">where</span>:
 a | b | c
@@ -163,7 +236,12 @@ a | b | c
 <span class="integer">7</span> | <span class="integer">3</span> | <span class="integer">4</span>
 <span class="integer">0</span> | <span class="integer">5</span> | <span class="integer">6</span></code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L73" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>The sequence of two or more underscores can be used anywhere in the <code>where</code> block.
 It will be ignored everywhere, except for in between two data tables, where it is
@@ -172,7 +250,14 @@ as styling element in different ways. It can be used as separator line like show
 the last example or it can for example be used visually as top border of tables
 additionally to its effect of separating them:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">where</span>:
 _____
@@ -186,7 +271,12 @@ b | c
 <span class="integer">3</span> | <span class="integer">4</span>
 <span class="integer">5</span> | <span class="integer">6</span></code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L87" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect1">
@@ -209,7 +299,7 @@ respectively.</p>
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 Only <code>@Shared</code> and static variables can be accessed from within a <code>where:</code> block.
@@ -244,7 +334,14 @@ The order also is not important, data variables are matched by name to the speci
 <div class="paragraph">
 <p>With this, the code becomes:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">MathSpec</span> <span class="directive">extends</span> Specification {
   <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() {
@@ -259,12 +356,24 @@ The order also is not important, data variables are matched by name to the speci
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v3/MathSpec.groovy#L6" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v3/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Alternatively to using single or double pipes you can also use any amount of semicolons to separate data columns
 from each other:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">MathSpec</span> <span class="directive">extends</span> Specification {
   <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() {
@@ -279,12 +388,24 @@ from each other:</p>
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v6/MathSpec.groovy#L6" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v6/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Pipes and semicolons as data column separator can not be mixed within one table.
 If the column separator changes, this starts a new stand-alone data table:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">MathSpec</span> <span class="directive">extends</span> Specification {
   <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() {
@@ -305,7 +426,12 @@ If the column separator changes, this starts a new stand-alone data table:</p>
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v7/MathSpec.groovy#L6" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v7/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect1">
@@ -348,13 +474,25 @@ like described in the following section.</p>
 feature. This can for example be used if you produce many test cases from calculations or if you use external data
 like the contents of a database as test data and do not want the test count to vary:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Rollup</span>
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() {
 ...</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v4/MathSpec.groovy#L8" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v4/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Note that up- and unrolling has no effect on how the method gets executed; it is only an alternation in reporting.
 Depending on the execution environment, the output will look something like:</p>
@@ -442,7 +580,14 @@ and the configuration option <code>unroll { unrollByDefault }</code> is set to i
 <p>Data tables aren&#8217;t the only way to supply values to data variables. In fact, a data table is just syntactic sugar for
 one or more <em>data pipes</em>:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">...
 where:
@@ -450,7 +595,12 @@ a &lt;&lt; [<span class="integer">1</span>, <span class="integer">7</span>, <spa
 b &lt;&lt; [<span class="integer">3</span>, <span class="integer">4</span>, <span class="integer">0</span>]
 c &lt;&lt; [<span class="integer">3</span>, <span class="integer">7</span>, <span class="integer">0</span>]</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L323" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>A data pipe, indicated by the left-shift (<code>&lt;&lt;</code>) operator, connects a data variable to a <em>data provider</em>. The data
 provider holds all values for the variable, one per iteration. Any object that Groovy knows how to iterate over can be
@@ -469,7 +619,14 @@ Data providers are queried for their next value only when needed (before the nex
 it can be connected to multiple data variables simultaneously. The syntax is somewhat similar to Groovy multi-assignment
 but uses brackets instead of parentheses on the left-hand side:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Shared</span> sql = Sql.newInstance(<span class="string"><span class="delimiter">&quot;</span><span class="content">jdbc:h2:mem:</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">org.h2.Driver</span><span class="delimiter">&quot;</span></span>)
 
@@ -481,17 +638,34 @@ but uses brackets instead of parentheses on the left-hand side:</p>
   [a, b, c] &lt;&lt; sql.rows(<span class="string"><span class="delimiter">&quot;</span><span class="content">select a, b, c from maxdata</span><span class="delimiter">&quot;</span></span>)
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L11" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Data values that aren&#8217;t of interest can be ignored with an underscore (<code>_</code>):</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">...
 where:
 [a, b, _, c] &lt;&lt; sql.rows(<span class="string"><span class="delimiter">&quot;</span><span class="content">select * from maxdata</span><span class="delimiter">&quot;</span></span>)</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L116" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>The multi-assignments can even be nested. The following example will generate these iterations:</p>
 </div>
@@ -555,7 +729,14 @@ where:
 </tr>
 </tbody>
 </table>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">...
 where:
@@ -567,7 +748,12 @@ where:
   ]
 ].combinations()</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L127" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="sect2">
 <h3 id="multi-data-pipe-named"><a class="anchor" href="#multi-data-pipe-named"></a><a class="link" href="#multi-data-pipe-named">Named deconstruction of data pipes</a></h3>
 <div class="paragraph">
@@ -575,7 +761,14 @@ where:
 This is useful when the data provider returns a map with named keys.
 Or, if you have long values that don&#8217;t fit well into a data-table, then using the maps makes it easier to read.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">...
 where:
@@ -592,11 +785,23 @@ where:
   ]
 ]</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L145" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>You can use named deconstruction with nested data pipes, but only on the innermost nesting level.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">...
 where:
@@ -605,7 +810,12 @@ where:
   [<span class="integer">2</span>, [<span class="key">c</span>: <span class="integer">6</span>, <span class="key">b</span>: <span class="integer">4</span>]]
 ]</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L168" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -615,7 +825,14 @@ where:
 <div class="paragraph">
 <p>A data variable can be directly assigned a value:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">...
 where:
@@ -623,12 +840,24 @@ a = <span class="integer">3</span>
 b = <span class="predefined-type">Math</span>.random() * <span class="integer">100</span>
 c = a &gt; b ? a : b</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L181" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Assignments are re-evaluated for every iteration. As already shown above, the right-hand side of an assignment may refer
 to other data variables:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">...
 where:
@@ -638,7 +867,12 @@ a = row.a
 b = row.b
 c = row.c</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L193" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect1">
@@ -654,7 +888,14 @@ Every data variable that is defined by a direct assignment can access all
 previously defined data variables, including the ones defined through data
 tables or data pipes:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">...
 where:
@@ -662,11 +903,23 @@ a = <span class="integer">3</span>
 b = <span class="predefined-type">Math</span>.random() * <span class="integer">100</span>
 c = a &gt; b ? a : b</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L181" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>The second possibility is to access previous columns within data tables:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">...
 where:
@@ -675,11 +928,23 @@ a | b
 <span class="integer">7</span> | a + <span class="integer">2</span>
 <span class="integer">0</span> | a + <span class="integer">3</span></code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L207" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>This also includes columns in previous data tables in the same <code>where</code> block:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">...
 where:
@@ -697,7 +962,12 @@ a * <span class="integer">2</span> | b * <span class="integer">2</span>
 a * <span class="integer">3</span> | b * <span class="integer">3</span>
 a * <span class="integer">4</span> | b * <span class="integer">4</span></code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L221" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect1">
@@ -707,7 +977,14 @@ a * <span class="integer">4</span> | b * <span class="integer">4</span></code></
 <p>Like with data pipes, you can also assign to multiple variables in one expression, if you have some object Groovy
 can iterate over. Unlike with data pipes, the syntax here is identical to standard Groovy multi-assignment syntax:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Shared</span> sql = Sql.newInstance(<span class="string"><span class="delimiter">&quot;</span><span class="content">jdbc:h2:mem:</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">org.h2.Driver</span><span class="delimiter">&quot;</span></span>)
 
@@ -720,18 +997,35 @@ can iterate over. Unlike with data pipes, the syntax here is identical to standa
   (a, b, c) = row
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L11" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Data values that aren&#8217;t of interest can be ignored with an underscore (<code>_</code>):</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">...
 where:
 row &lt;&lt; sql.rows(<span class="string"><span class="delimiter">&quot;</span><span class="content">select * from maxdata</span><span class="delimiter">&quot;</span></span>)
 (a, b, _, c) = row</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L254" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect1">
@@ -740,7 +1034,14 @@ row &lt;&lt; sql.rows(<span class="string"><span class="delimiter">&quot;</span>
 <div class="paragraph">
 <p>Data tables, data pipes, and variable assignments can be combined as needed:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">...
 where:
@@ -753,7 +1054,12 @@ c &lt;&lt; [<span class="integer">3</span>, <span class="integer">4</span>, <spa
 
 d = a &gt; c ? a : c</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L265" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect1">
@@ -766,7 +1072,14 @@ provided as <a href="https://groovy-lang.org/metaprogramming.html#_extension_mod
 the <a href="extensions.html#_use"><code>@Use</code></a> extension on the specification (as it has no effect to the <code>where:</code> block if
 applied to a feature).</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">type coercion for data variable values</span><span class="delimiter">&quot;</span></span>(<span class="predefined-type">Integer</span> i) {
   <span class="key">expect</span>:
@@ -777,8 +1090,20 @@ applied to a feature).</p>
   i = <span class="string"><span class="delimiter">&quot;</span><span class="content">10</span><span class="delimiter">&quot;</span></span>
 }</code></pre>
 </div>
-</div>
-<div class="listingblock">
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L278" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Use</span>(CoerceBazToBar)
 <span class="type">class</span> <span class="class">Foo</span> <span class="directive">extends</span> Specification {
@@ -798,7 +1123,12 @@ applied to a feature).</p>
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L294" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect1">
@@ -836,12 +1166,24 @@ that the second iteration (<code>#1</code>) where the data variables have the va
 <div class="paragraph">
 <p>With a bit of effort, we can do even better:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of #a and #b is #c</span><span class="delimiter">&quot;</span></span>() {
 ...</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v5/MathSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v5/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>This method name uses placeholders, denoted by a leading hash sign (<code>#</code>), to refer to data variables <code>a</code>, <code>b</code>, and <code>c</code>.
 In the output, the placeholders will be replaced with concrete values:</p>
@@ -880,12 +1222,24 @@ maximum of 0 and 0 is 0   PASSED</pre>
 <p>Given a class <code>Person</code> with properties <code>name</code> and <code>age</code>, and a data variable <code>person</code> of type <code>Person</code>, the
 following are valid method names:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#person is #person.age years old</span><span class="delimiter">&quot;</span></span>() { <span class="comment">// property access</span>
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#person.name.toUpperCase()</span><span class="delimiter">&quot;</span></span>() { <span class="comment">// zero-arg method call</span></code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L331" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Non-string values (like <code>#person</code> above) are converted to Strings according to Groovy semantics.</p>
 </div>
@@ -901,7 +1255,14 @@ following are valid method names:</p>
 <div class="paragraph">
 <p>If necessary, additional data variables can be introduced to hold more complex expressions:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#lastName</span><span class="delimiter">&quot;</span></span>() {
   ...
@@ -910,7 +1271,12 @@ following are valid method names:</p>
   lastName = person.name.split(<span class="string"><span class="delimiter">'</span><span class="content"> </span><span class="delimiter">'</span></span>)[<span class="integer">1</span>]
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L352" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Additionally, to the data variables the tokens <code>#featureName</code> and <code>#iterationIndex</code> are supported.
 The former does not make much sense inside an actual feature name, but there are two other places
@@ -1084,7 +1450,7 @@ For these cases it might be desirable to omit the feature name from the iteratio
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 The same can be achieved for individual features by using <code>@Unroll('#dataVariablesWithIndex')</code>.
@@ -1108,7 +1474,7 @@ The same can be achieved for individual features by using <code>@Unroll('#dataVa
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-03-18 23:25:09 UTC
+Last updated 2024-03-19 10:10:51 UTC
 </div>
 </div>
 </body>

@@ -9,7 +9,13 @@
 <title>Extensions</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="./coderay-asciidoctor.css">
+<style>
+  .includeSourceLinkerTable tr td:first-child {
+    padding: 0;
+  }
+</style>
 </head>
 <body id="extensions" class="article">
 <div id="header">
@@ -158,12 +164,24 @@ later feature methods may depend on earlier feature methods having executed.</p>
 <p>To ignore a feature method or specification under certain conditions, annotate it with <code>spock.lang.IgnoreIf</code>,
 followed by a predicate and an optional reason:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@IgnoreIf</span>({ <span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">os.name</span><span class="delimiter">&quot;</span></span>).toLowerCase().contains(<span class="string"><span class="delimiter">&quot;</span><span class="content">windows</span><span class="delimiter">&quot;</span></span>) })
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll run everywhere but on Windows</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L9" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="sect3">
 <h4 id="precondition_context"><a class="anchor" href="#precondition_context"></a><a class="link" href="#precondition_context">Precondition Context</a></h4>
 <div class="paragraph">
@@ -209,25 +227,56 @@ Similar to <code>instance</code> this will run the whole workflow and only skip 
 <div class="paragraph">
 <p>Using the <code>os</code> property, the previous example can be rewritten as:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@IgnoreIf</span>({ os.windows })
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I will run everywhere but on Windows</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L17" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>You can also give an optional <code>reason</code> why the given feature or specification is to be ignored:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@IgnoreIf</span>(value = { os.macOs }, reason = <span class="string"><span class="delimiter">&quot;</span><span class="content">No platform driver available</span><span class="delimiter">&quot;</span></span>)
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">For the given reason, I will not run on MacOS</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L58" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>By default, <code>@IgnoreIf</code> will only affect the annotated specification, by setting <code>inherited</code> to <code>true</code> you can configure it to apply to sub-specifications as well:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@IgnoreIf</span>(value = { jvm.java8Compatible }, inherited = <span class="predefined-constant">true</span>)
 <span class="directive">abstract</span> <span class="type">class</span> <span class="class">Foo</span> <span class="directive">extends</span> Specification {
@@ -239,18 +288,35 @@ Similar to <code>instance</code> this will run the whole workflow and only skip 
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L69" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>If multiple <code>@IgnoreIf</code> annotations are present, they are effectively combined with a logical "or".
 The annotated element is skipped if any of the conditions evaluates to <code>true</code>:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@IgnoreIf</span>({ os.windows })
 <span class="annotation">@IgnoreIf</span>({ jvm.java8 })
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll run everywhere but on Windows or anywhere on Java 8</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L25" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Care should be taken when ignoring feature methods in a spec class annotated with <code>spock.lang.Stepwise</code> since
 later feature methods may depend on earlier feature methods having executed.</p>
@@ -260,16 +326,35 @@ later feature methods may depend on earlier feature methods having executed.</p>
 <code>org.spockframework.runtime.extension.builtin.PreconditionContext</code>. This enables the IDE with type information
 which is not available otherwise:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@IgnoreIf</span>({ PreconditionContext <span class="local-variable">it</span> -&gt; <span class="local-variable">it</span>.os.windows })
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I will run everywhere but not on Windows</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L34" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Using <code>data.*</code> to filter out iterations is especially helpful when using <code>.combinations()</code> to generate iterations.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@IgnoreIf</span>({ os.windows })
 <span class="annotation">@IgnoreIf</span>({ data.a == <span class="integer">5</span> &amp;&amp; data.b &gt;= <span class="integer">6</span> })
@@ -279,7 +364,12 @@ which is not available otherwise:</p>
   [a, b] &lt;&lt; [(<span class="integer">1</span>..<span class="integer">10</span>), (<span class="integer">1</span>..<span class="integer">8</span>)].combinations()
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L43" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Also note that the condition is split into separate <code>@IgnoreIf</code> annotations so that they can be evaluated independently.
 It is good practice ordering them based on their specificity, so that the least specific one is evaluated first, that is from static to shared to instance.
@@ -293,12 +383,24 @@ If you need to combine the conditions in a single <code>@IgnoreIf</code> annotat
 <p>To execute a feature method under certain conditions, annotate it with <code>spock.lang.Requires</code>,
 followed by a predicate:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Requires</span>({ os.windows })
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll only run on Windows</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/RequiresDocSpec.groovy#L8" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/RequiresDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p><code>Requires</code> works exactly like <code>IgnoreIf</code>, except that the predicate is inverted. In general, it is preferable
 to state the conditions under which a method gets executed, rather than the conditions under which it gets ignored.</p>
@@ -307,13 +409,25 @@ to state the conditions under which a method gets executed, rather than the cond
 <p>If multiple <code>@Requires</code> annotations are present, they are effectively combined with a logical "and".
 The annotated element is skipped if any of the conditions evaluates to <code>false</code>:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Requires</span>({ os.windows })
 <span class="annotation">@Requires</span>({ jvm.java8 })
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll run only on Windows with Java 8</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/RequiresDocSpec.groovy#L16" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/RequiresDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect2">
 <h3 id="_pendingfeature"><a class="anchor" href="#_pendingfeature"></a><a class="link" href="#_pendingfeature">PendingFeature</a></h3>
@@ -382,7 +496,14 @@ and only if all iterations become successful will be marked as failing. But if t
 does reference valid data variables, the individual iterations where the condition holds are
 deemed pending and each will individually fail as soon as it would be successful without this annotation.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@PendingFeatureIf</span>({ os.windows })
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'm not yet implemented on windows, but I am on other operating systems</span><span class="delimiter">&quot;</span></span>() {
@@ -390,12 +511,24 @@ deemed pending and each will individually fail as soon as it would be successful
 <span class="annotation">@PendingFeatureIf</span>({ sys.targetEnvironment == <span class="string"><span class="delimiter">&quot;</span><span class="content">prod</span><span class="delimiter">&quot;</span></span> })
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">This feature isn't deployed out to production yet, and isn't expected to pass</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/PendingFeatureIfDocSpec.groovy#L10" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/PendingFeatureIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>It is also supported to have multiple <code>@PendingFeatureIf</code> annotations or a mixture of <code>@PendingFeatureIf</code> and
 <code>@PendingFeature</code>, for example to ignore certain exceptions only under certain conditions.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@PendingFeature</span>(exceptions = <span class="exception">UnsupportedOperationException</span>)
 <span class="annotation">@PendingFeatureIf</span>(
@@ -408,14 +541,26 @@ deemed pending and each will individually fail as soon as it would be successful
   reason = <span class="string"><span class="delimiter">'</span><span class="content">Does not yet work on Java 8</span><span class="delimiter">'</span></span>)
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I have various problems in certain situations</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/PendingFeatureIfDocSpec.groovy#L26" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/PendingFeatureIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect2">
 <h3 id="_stepwise"><a class="anchor" href="#_stepwise"></a><a class="link" href="#_stepwise">Stepwise</a></h3>
 <div class="paragraph">
 <p>To execute features in the order that they are declared, annotate a spec class with <code>spock.lang.Stepwise</code>:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Stepwise</span>
 <span class="type">class</span> <span class="class">RunInOrderSpec</span> <span class="directive">extends</span> Specification {
@@ -424,7 +569,12 @@ deemed pending and each will individually fail as soon as it would be successful
   <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I will be skipped</span><span class="delimiter">&quot;</span></span>() { <span class="key">expect</span>: <span class="predefined-constant">true</span> }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/StepwiseDocSpec.groovy#L13" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/StepwiseDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p><code>Stepwise</code> only affects the class carrying the annotation; not sub or super classes.  Features after the first
 failure are skipped.</p>
@@ -437,7 +587,7 @@ should be taken when ignoring feature methods in spec classes annotated with <co
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 This will also set the execution mode to <code>SAME_THREAD</code>, see <a href="parallel-execution.html#parallel-execution">Parallel Execution</a> for more information.
@@ -448,7 +598,14 @@ This will also set the execution mode to <code>SAME_THREAD</code>, see <a href="
 <div class="paragraph">
 <p>Since Spock 2.2, <code>Stepwise</code> can be applied to data-driven feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations if one iteration fails:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">SkipAfterFailingIterationSpec</span> <span class="directive">extends</span> Specification {
   <span class="annotation">@Stepwise</span>
@@ -461,7 +618,12 @@ This will also set the execution mode to <code>SAME_THREAD</code>, see <a href="
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/StepwiseDocSpec.groovy#L33" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/StepwiseDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>This will pass for the first two iterations, fail on the third and skip the remaining two. Without <code>Stepwise</code> on feature method level, the third iteration would fail and the remaining 4 iterations would pass.</p>
 </div>
@@ -469,7 +631,7 @@ This will also set the execution mode to <code>SAME_THREAD</code>, see <a href="
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 For backward compatibility with Spock versions prior to 2.2, applying the annotation on spec level will <em>not</em> automatically skip subsequent feature method iterations upon failure in a previous iteration. If you want that in addition to (or instead of) step-wise spec mode, you do have to annotate each individual feature method you wish to have that capability. This also conforms to the principle that if you want to skip tests under whatever conditions, you ought to document your intent explicitly.
@@ -519,7 +681,14 @@ with <code>Timeout</code>, excluding time spent in fixtures:</p>
 <p>When a timeout is reported to the user, the stack trace shown reflects the execution stack of the test framework when
 the timeout was exceeded. Additionally, thread dumps can be captured and logged on unsuccessful interrupt attempts if configured using the <a href="#spock-configuration-file">Spock Configuration File</a>.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Timeout Configuration</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">timeout {
@@ -533,7 +702,12 @@ the timeout was exceeded. Additionally, thread dumps can be captured and logged 
   interruptAttemptListeners.add({ println(<span class="string"><span class="delimiter">'</span><span class="content">Unsuccessful interrupt occurred!</span><span class="delimiter">'</span></span>) })
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/timeout/TimeoutConfigurationDoc.groovy#L15" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/timeout/TimeoutConfigurationDoc.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect2">
 <h3 id="_retry"><a class="anchor" href="#_retry"></a><a class="link" href="#_retry">Retry</a></h3>
@@ -639,7 +813,14 @@ Running <code>BarIntegrationSpec</code> will execute <code>inherited</code> and 
 <div class="paragraph">
 <p>To activate one or more Groovy categories within the scope of a feature method or spec, use <code>spock.util.mop.Use</code>:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">ListExtensions</span> {
   <span class="directive">static</span> avg(<span class="predefined-type">List</span> list) { list.sum() / list.size() }
@@ -653,7 +834,12 @@ Running <code>BarIntegrationSpec</code> will execute <code>inherited</code> and 
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/UseDocSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/UseDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>This can be useful for stubbing of dynamic methods, which are usually provided by the runtime environment (e.g. Grails).
 It has no effect when applied to a helper method. However, when applied to a spec class, it will also affect its helper
@@ -667,7 +853,7 @@ of the annotation or you can apply the annotation multiple times to the same tar
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 This will also set the execution mode to <code>SAME_THREAD</code> if applied on a <code>Specification</code>, see <a href="parallel-execution.html#parallel-execution">Parallel Execution</a> for more information.
@@ -681,7 +867,14 @@ This will also set the execution mode to <code>SAME_THREAD</code> if applied on 
 <div class="paragraph">
 <p>To confine meta class changes to the scope of a feature method or spec class, use <code>spock.util.mop.ConfineMetaClassChanges</code>:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Stepwise</span>
 <span class="type">class</span> <span class="class">ConfineMetaClassChangesDocSpec</span> <span class="directive">extends</span> Specification {
@@ -703,7 +896,12 @@ This will also set the execution mode to <code>SAME_THREAD</code> if applied on 
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ConfineMetaClassChangesDocSpec.groovy#L8" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ConfineMetaClassChangesDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>When applied to a spec class, the meta classes are restored to the state that they were in before <code>setupSpec</code> was executed,
 after <code>cleanupSpec</code> is executed.</p>
@@ -720,7 +918,7 @@ of the annotation or you can apply the annotation multiple times to the same tar
 <table>
 <tr>
 <td class="icon">
-<div class="title">Caution</div>
+<i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
 Temporarily changing the meta classes is only safe when specs are
@@ -734,7 +932,7 @@ per JVM, keep in mind that Spock cannot enforce this.
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 This will acquire a <code>READ_WRITE</code> lock for <code>Resources.META_CLASS_REGISTRY</code>, see <a href="parallel-execution.html#parallel-execution">Parallel Execution</a> for more information.
@@ -768,7 +966,7 @@ and restores them afterwards.</p>
 <table>
 <tr>
 <td class="icon">
-<div class="title">Caution</div>
+<i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
 Temporarily changing the values of system properties is only safe when specs are
@@ -782,7 +980,7 @@ per JVM, keep in mind that Spock cannot enforce this.
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 This will acquire a <code>READ_WRITE</code> lock for <code>Resources.SYSTEM_PROPERTIES</code>, see <a href="parallel-execution.html#parallel-execution">Parallel Execution</a> for more information.
@@ -848,7 +1046,14 @@ If the annotated field is <code>@Shared</code>, the temporary directory will be 
 The types follow the same rules as for field injection.
 Valid methods are <code>setup()</code>, <code>setupSpec()</code>, or any feature methods.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// all features will share the same temp directory path1</span>
 <span class="annotation">@TempDir</span>
@@ -887,7 +1092,12 @@ FileSystemFixture path4
   path5 <span class="keyword">instanceof</span> Path
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/TempDirDocSpec.groovy#L15" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/TempDirDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="sect3">
 <h4 id="_temp_dir_cleanup"><a class="anchor" href="#_temp_dir_cleanup"></a><a class="link" href="#_temp_dir_cleanup">Cleanup</a></h4>
 <div class="paragraph">
@@ -968,7 +1178,14 @@ So that bar
 <div class="paragraph">
 <p>To link to one or more references to external information related to a specification or feature, use <code>spock.lang.See</code>:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@See</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://spockframework.org/spec</span><span class="delimiter">&quot;</span></span>)
 <span class="type">class</span> <span class="class">SeeDocSpec</span> <span class="directive">extends</span> Specification {
@@ -984,14 +1201,26 @@ So that bar
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SeeDocSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SeeDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect2">
 <h3 id="_issue"><a class="anchor" href="#_issue"></a><a class="link" href="#_issue">Issue</a></h3>
 <div class="paragraph">
 <p>To indicate that a feature or spec relates to one or more issues in an external tracking system, use <code>spock.lang.Issue</code>:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Issue</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://my.issues.org/FOO-1</span><span class="delimiter">&quot;</span></span>)
 <span class="type">class</span> <span class="class">IssueDocSpec</span> <span class="directive">extends</span> Specification {
@@ -1012,7 +1241,12 @@ So that bar
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IssueDocSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IssueDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>If you have a common prefix URL for all issues in a project, you can use the <a href="#spock-configuration-file">Spock Configuration File</a> to set it up
 for all at once. If it is set, it is prepended to the value of the <code>@Issue</code> annotation when building the URL.</p>
@@ -1036,31 +1270,67 @@ issue.</p>
 <div class="paragraph">
 <p>To indicate one or more subjects of a spec, use <code>spock.lang.Subject</code>:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Subject</span>([Foo, Bar])
 <span class="type">class</span> <span class="class">SubjectDocSpec</span> <span class="directive">extends</span> Specification {</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SubjectDocSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SubjectDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>You can also use multiple <code>@Subject</code> annotations:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Subject</span>(Foo)
 <span class="annotation">@Subject</span>(Bar)
 <span class="type">class</span> <span class="class">SubjectDocSpec</span> <span class="directive">extends</span> Specification {</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SubjectDocSpec.groovy#L10" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SubjectDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Additionally, <code>Subject</code> can be applied to fields and local variables:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Subject</span>
 Foo myFoo</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SubjectDocSpec.groovy#L17" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SubjectDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p><code>Subject</code> currently has only informational purposes.</p>
 </div>
@@ -1117,7 +1387,14 @@ If applied on a spec, the tags are applied to all features in the spec.
 Tags are inherited from parent specs.
 If applied on a feature, the tags are applied to the feature.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Tag Extension</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Tag</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">docs</span><span class="delimiter">&quot;</span></span>)
@@ -1132,12 +1409,17 @@ If applied on a feature, the tags are applied to the feature.</p>
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/TagDocSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/TagDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="admonitionblock note">
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 JUnit Jupiter also has a <code>@Tag</code> annotation, but it will have no effect when used on a <code>Specification</code>.
@@ -1184,7 +1466,14 @@ The <code>Snapshotter</code> class provides the entrypoint for the tests.
 You can use <code>@Snapshot</code> in two ways: you can add it to a field in your code, or you can use it as a parameter in a method.
 The examples below will show you how to do both.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Snapshot Extension as field</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">  <span class="annotation">@Snapshot</span>
@@ -1195,8 +1484,20 @@ The examples below will show you how to do both.</p>
     snapshotter.assertThat(<span class="string"><span class="delimiter">&quot;</span><span class="content">from field</span><span class="delimiter">&quot;</span></span>).matchesSnapshot()
   }</code></pre>
 </div>
-</div>
-<div class="listingblock">
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy#L29" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Snapshot Extension as parameter</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">using parameter based snapshot</span><span class="delimiter">&quot;</span></span>(<span class="annotation">@Snapshot</span> Snapshotter snapshotter) {
@@ -1204,11 +1505,23 @@ The examples below will show you how to do both.</p>
     snapshotter.assertThat(<span class="string"><span class="delimiter">&quot;</span><span class="content">from parameter</span><span class="delimiter">&quot;</span></span>).matchesSnapshot()
   }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy#L40" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>You can store and assert over multiple snapshots by providing an optional snapshotId as identifier.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Multiple snapshots</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">multi snapshot</span><span class="delimiter">&quot;</span></span>() {
@@ -1217,13 +1530,25 @@ The examples below will show you how to do both.</p>
     snapshotter.assertThat(<span class="string"><span class="delimiter">&quot;</span><span class="content">other parameter</span><span class="delimiter">&quot;</span></span>).matchesSnapshot(<span class="string"><span class="delimiter">&quot;</span><span class="content">otherId</span><span class="delimiter">&quot;</span></span>)
   }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy#L47" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>By default, snapshots are stored and compared as plain text.
 However, you can plug your own matching logic.
 For example, you could compare two json structures with a third-party library.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Custom matching</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">custom matching</span><span class="delimiter">&quot;</span></span>() {
@@ -1234,7 +1559,12 @@ For example, you could compare two json structures with a third-party library.</
     }
   }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy#L55" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>You can also extend from the <code>Snapshotter</code> class to provide your own convenience methods.
 Check <code>org.spockframework.specs.extension.SpockSnapshotter</code> in the spock codebase for an example.</p>
@@ -1452,7 +1782,7 @@ constructor. In the Spock configuration file those values can then be edited by 
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 It is an error to have multiple configuration objects with the same name, so choose wisely if you pick one and
@@ -1484,7 +1814,7 @@ that instance into the extension class instances.</p>
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 Constructor injection has a higher priority than field injection and Spock won&#8217;t inject any fields if it finds a suitable constructor.
@@ -1553,14 +1883,33 @@ interceptor</code>. If you attach your interceptor to both of them and need a di
 Alternatively, you can of course build two different interceptors or add a parameter to your interceptor and create
 two instances, telling each at addition time whether it is attached to the method interceptor or the other one.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">I</span> <span class="directive">extends</span> AbstractMethodInterceptor {
   I(<span class="keyword">def</span> s) {}
 }</code></pre>
 </div>
-</div>
-<div class="listingblock">
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/InterceptorSpec.groovy#L39" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/InterceptorSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Add All Interceptors</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// DISCLAIMER: The following shows all possible injection points that you could use</span>
@@ -1613,7 +1962,12 @@ featureInfo.parent.allCleanupMethods.each { method -&gt;
   featureInfo.addScopedMethodInterceptor(method, <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">feature scoped cleanup method</span><span class="delimiter">'</span></span>))
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/InterceptorSpec.groovy#L53" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/InterceptorSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="sect3">
 <h4 id="parameter-injection"><a class="anchor" href="#parameter-injection"></a><a class="link" href="#parameter-injection">Injecting Method Parameters</a></h4>
 <div class="paragraph">
@@ -1622,7 +1976,14 @@ The extension annotation must use the <code>@Target({ElementType.PARAMETER})</co
 In the <code>visitParameterAnnotation</code> you can then register a custom interceptor, or use the convenience <code>ParameterResolver.Interceptor</code> to handle the parameter injection.
 Parameter injection is supported for fixture methods, such as <code>setup</code> and <code>cleanup</code>, as well as for feature methods.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Example <code>ParameterIndex</code> extension</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Retention</span>(<span class="predefined-type">RetentionPolicy</span>.RUNTIME)
@@ -1637,32 +1998,48 @@ Parameter injection is supported for fixture methods, such as <code>setup</code>
     <span class="keyword">if</span> (!(type <span class="keyword">in</span> [<span class="type">int</span>, <span class="predefined-type">Integer</span>])) {
       <span class="keyword">throw</span> <span class="keyword">new</span> SpockExecutionException(<span class="string"><span class="delimiter">&quot;</span><span class="content">Parameter must be a int/Integer but was </span><span class="inline"><span class="inline-delimiter">${</span>type<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>)
     }
-    parameter.parent.addInterceptor(       // <b class="conum">(1)</b>
-      <span class="keyword">new</span> ParameterResolver.Interceptor(   // <b class="conum">(2)</b>
-        parameter,                         // <b class="conum">(3)</b>
-        { parameter.index }                // <b class="conum">(4)</b>
+    parameter.parent.addInterceptor(       <i class="conum" data-value="1"></i><b>(1)</b>
+      <span class="keyword">new</span> ParameterResolver.Interceptor(   <i class="conum" data-value="2"></i><b>(2)</b>
+        parameter,                         <i class="conum" data-value="3"></i><b>(3)</b>
+        { parameter.index }                <i class="conum" data-value="4"></i><b>(4)</b>
       ))
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ParameterInjectionSpec.groovy#L45" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ParameterInjectionSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="colist arabic">
-<ol>
-<li>
-<p>Add the interceptor to the method, which is the <code>parent</code> of the <code>ParameterInfo</code>.</p>
-</li>
-<li>
-<p>The built-in <code>ParameterResolver.Interceptor</code> will handle the boilerplate part of parameter injection.</p>
-</li>
-<li>
-<p>Pass the <code>ParameterInfo</code> to the interceptor, so the interceptor knows which parameter it is handling.</p>
-</li>
-<li>
-<p>This is a <code>Function&lt;IMethodInvocation, Object&gt;</code>, which is called by the <code>ParameterResolver.Interceptor</code> to resolve the parameter value. Here we just return the value of the <code>ParameterInfo&#8217;s `index</code> property, but you could also do some more complex logic here.</p>
-</li>
-</ol>
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Add the interceptor to the method, which is the <code>parent</code> of the <code>ParameterInfo</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The built-in <code>ParameterResolver.Interceptor</code> will handle the boilerplate part of parameter injection.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Pass the <code>ParameterInfo</code> to the interceptor, so the interceptor knows which parameter it is handling.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>This is a <code>Function&lt;IMethodInvocation, Object&gt;</code>, which is called by the <code>ParameterResolver.Interceptor</code> to resolve the parameter value. Here we just return the value of the <code>ParameterInfo&#8217;s `index</code> property, but you could also do some more complex logic here.</td>
+</tr>
+</table>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Example usage of <code>ParameterIndex</code> extension</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">  <span class="keyword">def</span> <span class="function">setup</span>(<span class="annotation">@ParameterIndex</span> <span class="type">int</span> param1) {
@@ -1676,7 +2053,12 @@ Parameter injection is supported for fixture methods, such as <code>setup</code>
     param3 == <span class="integer">2</span>
   }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ParameterInjectionSpec.groovy#L22" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ParameterInjectionSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="sect4">
 <h5 id="_for_spock_versions_prior_to_2_4_or_for_advanced_use_cases"><a class="anchor" href="#_for_spock_versions_prior_to_2_4_or_for_advanced_use_cases"></a><a class="link" href="#_for_spock_versions_prior_to_2_4_or_for_advanced_use_cases">For Spock versions prior to 2.4 or for advanced use cases</a></h5>
 <div class="paragraph">
@@ -1696,7 +2078,7 @@ thrown.</p>
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 <div class="paragraph">
@@ -1742,7 +2124,7 @@ parameters.each { parameter, i -&gt;
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 <div class="paragraph">
@@ -1933,14 +2315,26 @@ if it can mock the requested type. Spock will use the first mock maker which is 
 in the <a href="#spock-configuration-file">Spock Configuration File</a>.
 The preferred mock maker will be used globally, if no mock maker is explicitly specified for a given mock.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Mock Maker settings in the Spock Configuration file</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">mockMaker {
   preferredMockMaker spock.mock.MockMakers.byteBuddy
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/MockMakerConfigurationDocSpec.groovy#L30" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/MockMakerConfigurationDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="sect3">
 <h4 id="mock-makers-mockito"><a class="anchor" href="#mock-makers-mockito"></a><a class="link" href="#mock-makers-mockito">Mockito Mock Maker</a></h4>
 <div class="paragraph">
@@ -1951,11 +2345,23 @@ The mocking of final classes is automatically enabled, if <code>org.mockito:mock
 <p>For mocking of final methods, you need to select the <code>mockito</code> mock maker during mock construction,
 like:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">Subscriber subscriber = Mock(<span class="key">mockMaker</span>: MockMakers.mockito)</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/MockMakerDocSpec.groovy#L41" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/MockMakerDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>If you want to make final methods mockable by default, you can select this mock maker as the preferred mock maker.
 It can&#8217;t mock native methods, see <a href="https://javadoc.io/doc/org.mockito/mockito-core/5.6.0/org/mockito/Mockito.html#Mocking_Final">the Mockito documentation</a> for details.</p>
@@ -1964,7 +2370,7 @@ It can&#8217;t mock native methods, see <a href="https://javadoc.io/doc/org.mock
 <table>
 <tr>
 <td class="icon">
-<div class="title">Caution</div>
+<i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
 If you try to mock a final method without a Mock Maker supporting it,
@@ -1976,13 +2382,25 @@ If you try to mock a final method without a Mock Maker supporting it,
 <div class="paragraph">
 <p>You can configure the created mock objects using the interface <code>org.mockito.MockSettings</code> during the construction to use features provided by Mockito:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">Subscriber subscriber = Mock(<span class="key">mockMaker</span>: MockMakers.mockito {
   serializable()
 })</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/MockMakerDocSpec.groovy#L55" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/MockMakerDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>The <code>mockito</code> mock maker uses <code>org.mockito.MockMakers.INLINE</code> under the hood,
 please see the Mockito manual "Mocking final types, enums and final methods" for all pros and cons,
@@ -2010,7 +2428,14 @@ The custom mock maker may subclass <code>IMockMakerSettings</code> to transport 
 creation. The custom mock maker then provides a static method to create an instance of that subclass and the parameters
 are then used during mock creation.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Custom Mock Maker Example</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="directive">final</span> <span class="type">class</span> <span class="class">FancyMockMaker</span> <span class="directive">implements</span> IMockMaker {
@@ -2104,8 +2529,19 @@ are then used during mock creation.</p>
   }
 }</code></pre>
 </div>
-</div>
-<div class="listingblock">
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/FancyMockMaker.java#L33" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Custom Mock Maker Usage Example</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">when</span>:
@@ -2117,7 +2553,12 @@ Mock(<span class="predefined-type">ArrayList</span>, <span class="key">mockMaker
 CannotCreateMockException ex = thrown()
 ex.message == <span class="string"><span class="delimiter">&quot;</span><span class="content">Cannot create mock for class java.util.ArrayList. fancy: Mock with serialization and fancy types is not supported.</span><span class="delimiter">&quot;</span></span></code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/FancyMockMakerDocSpec.groovy#L26" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/FancyMockMakerDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -2160,7 +2601,7 @@ Often, the state can be kept locally in the <code>intercept(IMethodInvocation)</
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 When the store is closed, it will call the <code>close()</code> method for all stored values that implement <code>java.lang.AutoCloseable</code>.
@@ -2172,19 +2613,26 @@ When the store is closed, it will call the <code>close()</code> method for all s
 </div>
 <div class="sect3">
 <h4 id="_example_of_a_global_extension_using_the_store"><a class="anchor" href="#_example_of_a_global_extension_using_the_store"></a><a class="link" href="#_example_of_a_global_extension_using_the_store">Example of a global extension using the Store</a></h4>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Global Extension implementation</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">ExceptionCounterGlobalExtension</span> <span class="directive">implements</span> IGlobalExtension {
-  <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> Namespace EXAMPLE_NS = Namespace.create(ExceptionCounterGlobalExtension)    // <b class="conum">(1)</b>
+  <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> Namespace EXAMPLE_NS = Namespace.create(ExceptionCounterGlobalExtension)    <i class="conum" data-value="1"></i><b>(1)</b>
   <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">String</span> ACCUMULATOR = <span class="string"><span class="delimiter">&quot;</span><span class="content">accumulator</span><span class="delimiter">&quot;</span></span>
   <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> IMethodInterceptor INTERCEPTOR =  {
     <span class="keyword">try</span> {
       <span class="local-variable">it</span>.proceed()
     } <span class="keyword">catch</span> (<span class="exception">Exception</span> e) {
-      <span class="local-variable">it</span>.getStore(EXAMPLE_NS)                                                                      // <b class="conum">(6)</b>
-        .get(ACCUMULATOR, <span class="predefined-type">ConcurrentHashMap</span>)                                                       // <b class="conum">(7)</b>
-        .computeIfAbsent(e.class.name, { __ -&gt; <span class="keyword">new</span> <span class="predefined-type">AtomicInteger</span>() })                              // <b class="conum">(8)</b>
+      <span class="local-variable">it</span>.getStore(EXAMPLE_NS)                                                                      <i class="conum" data-value="6"></i><b>(6)</b>
+        .get(ACCUMULATOR, <span class="predefined-type">ConcurrentHashMap</span>)                                                       <i class="conum" data-value="7"></i><b>(7)</b>
+        .computeIfAbsent(e.class.name, { __ -&gt; <span class="keyword">new</span> <span class="predefined-type">AtomicInteger</span>() })                              <i class="conum" data-value="8"></i><b>(8)</b>
         .incrementAndGet()
       <span class="keyword">throw</span> e
     }
@@ -2192,18 +2640,18 @@ When the store is closed, it will call the <code>close()</code> method for all s
 
   <span class="annotation">@Override</span>
   <span class="type">void</span> visitSpec(SpecInfo spec) {
-    spec.allFeatures.featureMethod*.addInterceptor(INTERCEPTOR)                                    // <b class="conum">(2)</b>
+    spec.allFeatures.featureMethod*.addInterceptor(INTERCEPTOR)                                    <i class="conum" data-value="2"></i><b>(2)</b>
   }
 
   <span class="annotation">@Override</span>
-  <span class="type">void</span> executionStart(ISpockExecution spockExecution) {                                            // <b class="conum">(3)</b>
-    spockExecution.getStore(EXAMPLE_NS)                                                            // <b class="conum">(4)</b>
-      .put(ACCUMULATOR, <span class="keyword">new</span> <span class="predefined-type">ConcurrentHashMap</span>())                                                   // <b class="conum">(5)</b>
+  <span class="type">void</span> executionStart(ISpockExecution spockExecution) {                                            <i class="conum" data-value="3"></i><b>(3)</b>
+    spockExecution.getStore(EXAMPLE_NS)                                                            <i class="conum" data-value="4"></i><b>(4)</b>
+      .put(ACCUMULATOR, <span class="keyword">new</span> <span class="predefined-type">ConcurrentHashMap</span>())                                                   <i class="conum" data-value="5"></i><b>(5)</b>
   }
 
   <span class="annotation">@Override</span>
-  <span class="type">void</span> executionStop(ISpockExecution spockExecution) {                                             // <b class="conum">(9)</b>
-    <span class="keyword">def</span> results = spockExecution.getStore(EXAMPLE_NS)                                              // <b class="conum">(10)</b>
+  <span class="type">void</span> executionStop(ISpockExecution spockExecution) {                                             <i class="conum" data-value="9"></i><b>(9)</b>
+    <span class="keyword">def</span> results = spockExecution.getStore(EXAMPLE_NS)                                              <i class="conum" data-value="10"></i><b>(10)</b>
       .get(ACCUMULATOR, <span class="predefined-type">ConcurrentHashMap</span>)
 
     <span class="keyword">if</span> (!results.isEmpty()) {
@@ -2218,40 +2666,61 @@ When the store is closed, it will call the <code>close()</code> method for all s
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ExtensionStoreSpec.groovy#L92" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ExtensionStoreSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="colist arabic">
-<ol>
-<li>
-<p>The <code>Namespace</code> for the extension is created, here we use the extension&#8217;s class as key</p>
-</li>
-<li>
-<p>The extension registers the <code>INTERCEPTOR</code> for each feature method</p>
-</li>
-<li>
-<p><code>executionStart</code> is called right before the specifications are executed, it also gives access to the root-level <code>IStore</code></p>
-</li>
-<li>
-<p>The extensions uses its <code>Namespace</code> to retrieve the <code>IStore</code></p>
-</li>
-<li>
-<p>It then puts a <code>ConcurrentHashMap</code> into the store to serve as collector for the data</p>
-</li>
-<li>
-<p>During the feature method execution the <code>INTERCEPTOR</code> retrieves the <code>IStore</code> via the shared <code>Namespace</code></p>
-</li>
-<li>
-<p>It then retrieves the <code>ConcurrentHashMap</code> via the key, retrieval request will propagate through the hierarchy until it finds the value at the root-level</p>
-</li>
-<li>
-<p>It then increments the counter for the occurred exception type, creating the counter if it was not yet present.</p>
-</li>
-<li>
-<p><code>executionStop</code> is called after all tests have been executed and also give access to the root-level <code>IStore</code>.
-The extension uses this to print a report of the collected exception statistics.</p>
-</li>
-</ol>
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>Namespace</code> for the extension is created, here we use the extension&#8217;s class as key</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The extension registers the <code>INTERCEPTOR</code> for each feature method</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code>executionStart</code> is called right before the specifications are executed, it also gives access to the root-level <code>IStore</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The extensions uses its <code>Namespace</code> to retrieve the <code>IStore</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>It then puts a <code>ConcurrentHashMap</code> into the store to serve as collector for the data</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>During the feature method execution the <code>INTERCEPTOR</code> retrieves the <code>IStore</code> via the shared <code>Namespace</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>It then retrieves the <code>ConcurrentHashMap</code> via the key, retrieval request will propagate through the hierarchy until it finds the value at the root-level</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>It then increments the counter for the occurred exception type, creating the counter if it was not yet present.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><code>executionStop</code> is called after all tests have been executed and also give access to the root-level <code>IStore</code>.
+The extension uses this to print a report of the collected exception statistics.</td>
+</tr>
+</table>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Example Specs</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">ASpec</span> <span class="directive">extends</span> Specification {
@@ -2286,11 +2755,23 @@ The extension uses this to print a report of the collected exception statistics.
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ExtensionStoreSpec.groovy#L45" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ExtensionStoreSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>The extension generates the following output for the example code above.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Output</div>
 <div class="content">
 <pre class="CodeRay highlight"><code>========================
@@ -2300,7 +2781,12 @@ The extension uses this to print a report of the collected exception statistics.
 2x java.lang.IllegalArgumentException
 ========================</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ExtensionStoreSpec.groovy#L81" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ExtensionStoreSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -2309,7 +2795,7 @@ The extension uses this to print a report of the collected exception statistics.
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-03-18 23:25:09 UTC
+Last updated 2024-03-19 10:10:51 UTC
 </div>
 </div>
 </body>

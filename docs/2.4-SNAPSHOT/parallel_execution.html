@@ -9,7 +9,13 @@
 <title>Parallel Execution</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="./coderay-asciidoctor.css">
+<style>
+  .includeSourceLinkerTable tr td:first-child {
+    padding: 0;
+  }
+</style>
 </head>
 <body id="parallel-execution" class="article">
 <div id="header">
@@ -26,7 +32,7 @@
 <table>
 <tr>
 <td class="icon">
-<div class="title">Warning</div>
+<i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
 This is an experimental feature for Spock, which is based on the experimental implementation of parallel execution in the JUnit Platform.
@@ -44,7 +50,14 @@ As of version 2.0, Spock supports parallel execution based on the JUnit Platform
 To enable parallel execution set the <code>runner.parallel.enabled</code> configuration to <code>true</code>.
 See <a href="extensions.html#spock-configuration-file">Spock Configuration File</a> for general information about this file.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">SpockConfig.groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">runner {
@@ -53,12 +66,17 @@ See <a href="extensions.html#spock-configuration-file">Spock Configuration File<
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/parallel/ParallelConfigDoc.groovy#L32" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/parallel/ParallelConfigDoc.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="admonitionblock note">
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 JUnit Jupiter also supports  <a href="https://junit.org/junit5/docs/5.7.0/user-guide/#writing-tests-parallel-execution">parallel execution</a>, both rely on the JUnit Platform implementation, but function independently of each other.
@@ -364,7 +382,14 @@ Check the Javadoc of <code>spock.config.ParallelConfiguration</code> for a detai
 <div class="paragraph">
 <p>If the calculated parallelism is less than <code>2</code>, then Spock will execute single threaded, basically the same as <code>runner.parallel.enabled=false</code>.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Example SpockConfig.groovy with <code>fixed</code> setting</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">runner {
@@ -374,14 +399,19 @@ Check the Javadoc of <code>spock.config.ParallelConfiguration</code> for a detai
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/parallel/ParallelConfigDoc.groovy#L50" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/parallel/ParallelConfigDoc.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-03-18 23:25:09 UTC
+Last updated 2024-03-19 10:10:51 UTC
 </div>
 </div>
 </body>

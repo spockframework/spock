@@ -9,7 +9,13 @@
 <title>Interaction Based Testing</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="./coderay-asciidoctor.css">
+<style>
+  .includeSourceLinkerTable tr td:first-child {
+    padding: 0;
+  }
+</style>
 </head>
 <body id="interaction-based-testing" class="article">
 <div id="header">
@@ -30,7 +36,14 @@ the object(s) under specification interact, by way of method calls, with their c
 <div class="paragraph">
 <p>For example, suppose we have a <code>Publisher</code> that sends messages to its `Subscriber`s:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">Publisher</span> {
   <span class="predefined-type">List</span>&lt;Subscriber&gt; subscribers = <span class="type">[]</span>
@@ -49,7 +62,12 @@ the object(s) under specification interact, by way of method calls, with their c
   Publisher publisher = <span class="keyword">new</span> Publisher()
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy#L72" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>How are we going to test <code>Publisher</code>? With state-based testing, we can verify that the publisher keeps track of its
 subscribers. The more interesting question, though, is whether a message sent by the publisher
@@ -94,21 +112,45 @@ We hope that by the end of this chapter, you will agree that we have achieved th
 <p>Mock objects are created with the <code>MockingApi.Mock()</code> method.<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>
 Let&#8217;s create two mock subscribers:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> subscriber = Mock(Subscriber)
 <span class="keyword">def</span> subscriber2 = Mock(Subscriber)</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy#L15" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Alternatively, the following Java-like syntax is supported, which may give better IDE support:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">Subscriber subscriber = Mock()
 Subscriber subscriber2 = Mock()</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy#L31" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Here, the mock&#8217;s type is inferred from the variable type on the left-hand side of the assignment.</p>
 </div>
@@ -116,7 +158,7 @@ Subscriber subscriber2 = Mock()</code></pre>
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 If the mock&#8217;s type is given on the left-hand side of the assignment, it&#8217;s permissible
@@ -163,7 +205,14 @@ This default behavior is overridable by stubbing the methods, which we will lear
 <div class="paragraph">
 <p>After creating the publisher and its subscribers, we need to make the latter known to the former:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">PublisherSpec</span> <span class="directive">extends</span> Specification {
   Publisher publisher = <span class="keyword">new</span> Publisher()
@@ -175,7 +224,12 @@ This default behavior is overridable by stubbing the methods, which we will lear
     publisher.subscribers &lt;&lt; subscriber2
   }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy#L86" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>We are now ready to describe the expected interactions between the two parties.</p>
 </div>
@@ -188,7 +242,14 @@ This default behavior is overridable by stubbing the methods, which we will lear
 <p>Mocking is the act of describing (mandatory) interactions between the object under specification and its collaborators.
 Here is an example:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">should send messages to all subscribers</span><span class="delimiter">&quot;</span></span>() {
   <span class="key">when</span>:
@@ -199,7 +260,12 @@ Here is an example:</p>
   <span class="integer">1</span> * subscriber2.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy#L98" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Read out aloud: "When the publisher sends a 'hello' message, then both subscribers should receive that message exactly once."</p>
 </div>
@@ -301,7 +367,14 @@ _ * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span
 <div class="paragraph">
 <p>The argument constraints of an interaction describe which method arguments are expected:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)        <span class="comment">// an argument that is equal to the String &quot;hello&quot;</span>
 <span class="integer">1</span> * subscriber.receive(!<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)       <span class="comment">// an argument that is unequal to the String &quot;hello&quot;</span>
@@ -318,7 +391,12 @@ _ * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span
 <span class="comment">// depending on whether they match or not</span>
 <span class="comment">// (here: message length is greater than 3 and contains the character a)</span></code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy#L154" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Argument constraints work as expected for methods with multiple arguments:</p>
 </div>
@@ -400,7 +478,14 @@ The closure is treated as an condition block, so it behaves like a <code>then</c
 It can emulate all but the spread wildcard constraint, however it is suggested to use the simpler constraints where possible.
 You can do multiple assertions, call methods for assertions, or use <code>with</code>/<code>verifyAll</code>.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="integer">1</span> * list.add({
   verifyAll(<span class="local-variable">it</span>, Person) {
@@ -410,7 +495,12 @@ You can do multiple assertions, call methods for assertions, or use <code>with</
   }
 })</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy#L303" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="_negating_constraint"><a class="anchor" href="#_negating_constraint"></a><a class="link" href="#_negating_constraint">Negating Constraint</a></h4>
@@ -440,7 +530,14 @@ a <code>String</code> before executing the code constraint to check if it contai
 <div class="paragraph">
 <p>Sometimes it can be useful to match "anything", in some sense of the word:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="integer">1</span> * subscriber._(*_)     <span class="comment">// any method on subscriber, with any argument list</span>
 <span class="integer">1</span> * subscriber._         <span class="comment">// shortcut for and preferred over the above</span>
@@ -448,12 +545,17 @@ a <code>String</code> before executing the code constraint to check if it contai
 <span class="integer">1</span> * _._                  <span class="comment">// any method call on any mock object</span>
 <span class="integer">1</span> * _                    <span class="comment">// shortcut for and preferred over the above</span></code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy#L250" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="admonitionblock note">
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 Although <code>(_.._) * _._(*_) &gt;&gt; _</code> is a valid interaction declaration,
@@ -488,7 +590,7 @@ use of <code>_ *</code> (any number of calls), which allows any interaction with
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 <code>_ *</code> is only meaningful in the context of strict mocking. In particular, it is never necessary
@@ -586,7 +688,14 @@ to repeat the target constraint:</p>
 <p>A <code>then:</code> block may contain both interactions and conditions. Although not strictly required, it is customary
 to declare interactions before conditions:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">when</span>:
 publisher.send(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
@@ -595,7 +704,12 @@ publisher.send(<span class="string"><span class="delimiter">&quot;</span><span c
 <span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
 publisher.messageCount == <span class="integer">1</span></code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy#L110" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Read out aloud: "When the publisher sends a 'hello' message, then the subscriber should receive the message exactly
 once, and the publisher&#8217;s message count should be one."</p>
@@ -633,7 +747,14 @@ In our example, this would have the added benefit that we could use the same var
 <div class="paragraph">
 <p>Another solution is to be explicit about the fact that variable declaration and interaction belong together:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">when</span>:
 publisher.send(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
@@ -644,7 +765,12 @@ interaction {
   <span class="integer">1</span> * subscriber.receive(message)
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy#L121" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Since an <code>MockingApi.interaction</code> block is always moved in its entirety, the code now works as intended.</p>
 </div>
@@ -654,7 +780,14 @@ interaction {
 <div class="paragraph">
 <p>Interactions declared in a <code>then:</code> block are scoped to the preceding <code>when:</code> block:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">when</span>:
 publisher.send(<span class="string"><span class="delimiter">&quot;</span><span class="content">message1</span><span class="delimiter">&quot;</span></span>)
@@ -668,7 +801,12 @@ publisher.send(<span class="string"><span class="delimiter">&quot;</span><span c
 <span class="key">then</span>:
 <span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">message2</span><span class="delimiter">&quot;</span></span>)</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy#L134" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>This makes sure that <code>subscriber</code> receives <code>"message1"</code> during execution of the first <code>when:</code> block,
 and <code>"message2"</code> during execution of the second <code>when:</code> block.</p>
@@ -782,7 +920,7 @@ In other words, invocation order is enforced <em>between</em> but not <em>within
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 Splitting up a <code>then:</code> block with <code>and:</code> does not impose any ordering, as <code>and:</code>
@@ -838,11 +976,23 @@ by specifying an <code>IMockMakerSettings</code> instance as the <code>mockMaker
 <div class="paragraph">
 <p>The class <code>spock.mock.MockMakers</code> provides constants and methods for the built-in mock makers.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> subscriber = Mock(<span class="key">mockMaker</span>: MockMakers.byteBuddy, Subscriber)</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/MockMakerDocSpec.groovy#L28" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/MockMakerDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>This will use the <code>byte-buddy</code> mock maker to create the <code>subscriber</code>.</p>
 </div>
@@ -1028,7 +1178,14 @@ This will use the same logic to compute a response as <code>Stub</code> (see <a 
 The default response will return the mock itself, if the return type of the method is assignable from the mock type (excluding object).
 This is useful when dealing with fluent APIs, like builders, which are otherwise really painful to mock.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">given</span>:
 ThingBuilder builder = Mock() {
@@ -1046,7 +1203,12 @@ Thing thing = builder
 <span class="integer">1</span> * builder.build() &gt;&gt; <span class="keyword">new</span> Thing(<span class="key">id</span>: <span class="string"><span class="delimiter">'</span><span class="content">id-1337</span><span class="delimiter">'</span></span>)
 thing.id == <span class="string"><span class="delimiter">'</span><span class="content">id-1337</span><span class="delimiter">'</span></span></code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/BuilderExampleSpec.groovy#L11" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/BuilderExampleSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>The <code>_ &gt;&gt; _</code> instructs the mock to return the default response for all interactions.
 However, interactions defined in the <code>then</code> block will have precedence over the interactions defined in the <code>given</code> block,
@@ -1095,7 +1257,7 @@ get a chance to match.</p>
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 Mocking and stubbing of the same method call has to happen in the same interaction.
@@ -1131,7 +1293,7 @@ Limiting a collaborator to a stub communicates its role to the readers of the sp
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 If a stub invocation matches a <em>mandatory</em> interaction (like <code>1 * foo.bar()</code>), an <code>InvalidSpecException</code> is thrown.
@@ -1164,7 +1326,7 @@ See class <code>org.spockframework.mock.EmptyOrDummyResponse</code> for the deta
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 If the response type of the method is a final class or if it requires a class-mocking library and cglib or ByteBuddy
@@ -1192,7 +1354,7 @@ If the response type of the method is a final class or if it requires a class-mo
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 Think twice before using this feature.
@@ -1220,12 +1382,24 @@ arguments as usual using <code>as</code> or Java-style cast. If the testee for e
 one constructor with a <code>String</code> parameter and one with a <code>Pattern</code> parameter
 and you want <code>null</code> as <code>constructorArg</code>:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">SubscriberImpl subscriber = Spy(<span class="key">constructorArgs</span>: [<span class="predefined-constant">null</span> <span class="keyword">as</span> <span class="predefined-type">String</span>])
 SubscriberImpl subscriber2 = Spy(<span class="key">constructorArgs</span>: [(<span class="predefined-type">Pattern</span>) <span class="predefined-constant">null</span>])</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy#L46" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/InteractionDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>You may also create a spy from an instantiated object. This may be useful in cases
 where you do not have full control over the instantiation of types you are interested
@@ -1286,7 +1460,7 @@ i.e. for interface mocks there must be a default method, for class mocks there m
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 Think twice before using this feature.
@@ -1324,7 +1498,7 @@ persister.receive(<span class="string"><span class="delimiter">&quot;</span><spa
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 Think twice before using this feature.
@@ -1358,7 +1532,14 @@ Supports both stubbing and mocking.</p>
 <div class="paragraph">
 <p>We are using the class <code>StaticClass</code> in the examples:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Example static class used in the test examples</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="directive">private</span> <span class="directive">static</span> <span class="type">class</span> <span class="class">StaticClass</span> {
@@ -1371,11 +1552,23 @@ Supports both stubbing and mocking.</p>
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/StaticSpyDocSpec.groovy#L108" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/StaticSpyDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>We want to mock the method <code>staticMethod()</code>, so we can create a static mock for the <code>StaticClass</code> type:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Mock static method of a class with SpyStatic()</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">given</span>:
@@ -1391,11 +1584,23 @@ StaticClass.staticMethod() == <span class="string"><span class="delimiter">&quot
 <span class="integer">1</span> * StaticClass.staticMethod() &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">MockValue</span><span class="delimiter">&quot;</span></span>
 result == <span class="string"><span class="delimiter">&quot;</span><span class="content">MockValue</span><span class="delimiter">&quot;</span></span></code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/StaticSpyDocSpec.groovy#L28" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/StaticSpyDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>You can also specify the answers after construction by defining the interactions as for a normal mock:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Mock static method of a class with interactions</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">given</span>:
@@ -1405,11 +1610,23 @@ StaticClass.staticMethod() &gt;&gt; <span class="string"><span class="delimiter"
 <span class="key">expect</span>:
 StaticClass.staticMethod() == <span class="string"><span class="delimiter">&quot;</span><span class="content">MockValue</span><span class="delimiter">&quot;</span></span></code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/StaticSpyDocSpec.groovy#L45" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/StaticSpyDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>It is also possible to stub all static methods of a class like a <code>Stub</code> would do:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Stub all static methods of a class with default interaction</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">given</span>:
@@ -1420,12 +1637,17 @@ StaticClass._ &gt;&gt; _
 StaticClass.staticMethod() == <span class="string"><span class="delimiter">&quot;</span><span class="delimiter">&quot;</span></span>
 StaticClass.otherStaticMethod() == <span class="string"><span class="delimiter">&quot;</span><span class="delimiter">&quot;</span></span></code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/StaticSpyDocSpec.groovy#L66" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/StaticSpyDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="admonitionblock note">
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 The static mocks require a mock maker supporting static methods, e.g. <a href="extensions.html#mock-makers-mockito">mockito</a>.
@@ -1445,7 +1667,14 @@ But this also means that a static mock will not be active, if your code under te
 <p>A static mock is activated on the thread, which created the mock, up until the feature execution ends.
 You can activate all static mocks on a different thread by hand:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">Use static mocks in a different Thread</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">given</span>:
@@ -1475,7 +1704,12 @@ wasCalled
 <span class="key">cleanup</span>:
 executor.shutdown()</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/StaticSpyDocSpec.groovy#L78" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/StaticSpyDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>The <code>spock.mock.MockingApi</code> provides methods to activate a static mock on other threads:</p>
 </div>
@@ -1504,7 +1738,7 @@ They are created with the <code>MockingApi.GroovyMock()</code>, <code>MockingApi
 <table>
 <tr>
 <td class="icon">
-<div class="title">Tip</div>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
 When Should Groovy Mocks be Favored over Regular Mocks?
@@ -1536,7 +1770,7 @@ dynamic methods as if they were physically declared methods:</p>
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 Think twice before using this feature.
@@ -1550,7 +1784,14 @@ It might be better to change the design of the code under specification.
 However, when a Groovy mock is created as <em>global</em>, it automagically replaces all real instances
 of the mocked type for the duration from mock creation up until the end of the feature method:<sup class="footnote">[<a id="_footnoteref_4" class="footnote" href="#_footnotedef_4" title="View footnote.">4</a>]</sup></p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">given</span>:
 <span class="keyword">def</span> publisher = <span class="keyword">new</span> Publisher()
@@ -1564,7 +1805,12 @@ publisher.send(<span class="string"><span class="delimiter">&quot;</span><span c
 <span class="key">then</span>:
 <span class="integer">2</span> * anySubscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">message</span><span class="delimiter">&quot;</span></span>)</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/GlobalMockDocSpec.groovy#L34" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/GlobalMockDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Here, we set up the publisher with two instances of a real subscriber implementation.
 Then we create a global mock of the <em>same</em> type. This reroutes all method calls on the
@@ -1575,7 +1821,7 @@ it is only used to describe the interaction.</p>
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 A global mock can only be created for a class type. It effectively replaces
@@ -1588,7 +1834,7 @@ all instances of that type for the duration from mock creation up until the end 
 <table>
 <tr>
 <td class="icon">
-<div class="title">Caution</div>
+<i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
 Using global mocks for standard types from the JDK, for example <code>ArrayList</code>, is a bad idea and can lead to unforeseen and widespread consequences.
@@ -1600,7 +1846,7 @@ Using global mocks for standard types from the JDK, for example <code>ArrayList<
 <table>
 <tr>
 <td class="icon">
-<div class="title">Caution</div>
+<i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
 The declaration order of global mocks is relevant.
@@ -1621,7 +1867,7 @@ in on objects and change their behavior just where needed.</p>
 <table>
 <tr>
 <td class="icon">
-<div class="title">Caution</div>
+<i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
 When using <code>GroovyMock(global:true)</code> it will also replace constructor calls, which will return <code>null</code> by default.
@@ -1630,7 +1876,14 @@ When using <code>GroovyMock(global:true)</code> it will also replace constructor
 </tr>
 </table>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">GroovyMock(global) will also replace constructors</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">given</span>:
@@ -1640,11 +1893,23 @@ GroovyMock(<span class="key">global</span>: <span class="predefined-constant">tr
 <span class="key">then</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">The GroovyMock(global: true) will also mock the constructor</span><span class="delimiter">&quot;</span></span>
 sub == <span class="predefined-constant">null</span></code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/GlobalMockDocSpec.groovy#L50" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/GlobalMockDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>If you want, that the real constructors are called:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="title">GroovyMock(global), but using the real constructors</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">given</span>:
@@ -1657,7 +1922,12 @@ GroovyMock(<span class="key">global</span>: <span class="predefined-constant">tr
 <span class="key">then</span>:
 sub <span class="keyword">instanceof</span> RealSubscriber</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/GlobalMockDocSpec.groovy#L61" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/GlobalMockDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>When <code>Specifications</code> or <code>Features</code> are executed concurrently you have to make sure that the <code>Features</code> which create
 global mocks on the same types are properly guarded against each other, because a global mock changes the global state
@@ -1691,7 +1961,7 @@ Since a global Groovy mock is still based on a proxy class, it will retain its g
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 Think twice before using this feature.
@@ -1730,7 +2000,7 @@ a subscriber named Barney instead.</p>
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 Think twice before using this feature.
@@ -1766,7 +2036,7 @@ the mock&#8217;s instance isn&#8217;t really needed. In such a case one can just
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 Global mocks will only work for Groovy code under test not for Java code.
@@ -1843,7 +2113,7 @@ Use <code>DetachedMockFactory</code> to create such mock objects.</p>
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 Detached mocks, as the name implies, must be attached to a specification to make them functional.
@@ -1857,7 +2127,14 @@ Detached mocks, as the name implies, must be attached to a specification to make
 <div class="paragraph">
 <p>Assuming that we have an application class <code>Car</code> and each car has an <code>Engine</code>:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">Engine</span> {
   <span class="directive">private</span> <span class="type">boolean</span> started
@@ -1877,11 +2154,23 @@ Detached mocks, as the name implies, must be attached to a specification to make
   <span class="type">void</span> park() { engine.stop() }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/DetachedMockFactoryDocSpec.groovy#L156" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/DetachedMockFactoryDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>In our specification, we declare a detached mock factory and a mock util, either inside a feature method or, if we need them for multiple features, as (preferably) shared or (suboptimally) static instances:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Shared</span>
 <span class="keyword">def</span> mockFactory = <span class="keyword">new</span> DetachedMockFactory()
@@ -1889,13 +2178,25 @@ Detached mocks, as the name implies, must be attached to a specification to make
 <span class="annotation">@Shared</span>
 <span class="keyword">def</span> mockUtil = <span class="keyword">new</span> MockUtil()</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/DetachedMockFactoryDocSpec.groovy#L22" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/DetachedMockFactoryDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="sect3">
 <h4 id="_manually_attach_detach"><a class="anchor" href="#_manually_attach_detach"></a><a class="link" href="#_manually_attach_detach">Manually attach / detach</a></h4>
 <div class="paragraph">
 <p>Now in our feature, we create a detached <code>Engine</code> mock, attach the mock to the specification manually, stub its <code>isStarted()</code> method, inject the mock into a <code>Car</code> subject under specification, use the subject and finally detach the mock again after use:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Manually attach detached mock</span><span class="delimiter">&quot;</span></span>() {
   <span class="key">given</span>:
@@ -1922,7 +2223,12 @@ Detached mocks, as the name implies, must be attached to a specification to make
   mockUtil.detachMock(manuallyAttachedEngine)
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/DetachedMockFactoryDocSpec.groovy#L30" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/DetachedMockFactoryDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="_use_autoattach"><a class="anchor" href="#_use_autoattach"></a><a class="link" href="#_use_autoattach">Use @AutoAttach</a></h4>
@@ -1930,7 +2236,14 @@ Detached mocks, as the name implies, must be attached to a specification to make
 <p>Same situation, different approach:
 We let Spock take care of automatically attaching the detached mock when starting the feature method and detaching it again after running the feature.</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@AutoAttach</span>
 <span class="keyword">def</span> autoAttachedEngine = mockFactory.Mock(Engine)
@@ -1955,7 +2268,12 @@ We let Spock take care of automatically attaching the detached mock when startin
   autoAttachedEngine.isStarted()
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/DetachedMockFactoryDocSpec.groovy#L57" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/DetachedMockFactoryDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="_pre_configure_detached_mock_with_default_response"><a class="anchor" href="#_pre_configure_detached_mock_with_default_response"></a><a class="link" href="#_pre_configure_detached_mock_with_default_response">Pre-configure detached mock with default response</a></h4>
@@ -1974,7 +2292,14 @@ Defining default behaviour is possible using a combination of Spock&#8217;s mock
 <div class="paragraph">
 <p>A custom detached mock creator could look like this (please figure out by yourself what it does and how it works):</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">EngineMockCreator</span> {
   <span class="type">enum</span> StartMode {
@@ -2003,11 +2328,23 @@ Defining default behaviour is possible using a combination of Spock&#8217;s mock
   }
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/DetachedMockFactoryDocSpec.groovy#L181" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/DetachedMockFactoryDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>The first parametrized feature uses the mock without attach:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Unroll</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Engine state #engineStateResponseType</span><span class="delimiter">&quot;</span></span>)
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Mock usage without manually attach detach with preconfigured engine state</span><span class="delimiter">&quot;</span></span>() {
@@ -2037,12 +2374,24 @@ Defining default behaviour is possible using a combination of Spock&#8217;s mock
   preconfiguredEngine = EngineMockCreator.getMock(engineStateResponseType)
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/DetachedMockFactoryDocSpec.groovy#L82" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/DetachedMockFactoryDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>The next parametrized feature method showcasing a set of usage scenarios when a detached mock
 is attached to a spec before usage:</p>
 </div>
-<div class="listingblock">
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Unroll</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Engine state #engineStateResponseType</span><span class="delimiter">&quot;</span></span>)
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Manually attach detached mock with preconfigured engine state</span><span class="delimiter">&quot;</span></span>() {
@@ -2084,7 +2433,12 @@ is attached to a spec before usage:</p>
   preconfiguredEngine = EngineMockCreator.getMock(engineStateResponseType)
 }</code></pre>
 </div>
-</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/DetachedMockFactoryDocSpec.groovy#L113" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/779665a409934bf365e787a8f6d6930939eefa1a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/DetachedMockFactoryDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -2139,7 +2493,7 @@ is attached to a spec before usage:</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-03-18 23:25:09 UTC
+Last updated 2024-03-19 10:10:51 UTC
 </div>
 </div>
 </body>

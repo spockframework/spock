@@ -9,7 +9,13 @@
 <title>Known Issues</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="./coderay-asciidoctor.css">
+<style>
+  .includeSourceLinkerTable tr td:first-child {
+    padding: 0;
+  }
+</style>
 </head>
 <body class="article">
 <div id="header">
@@ -40,7 +46,7 @@ For example, if you are spying on a class in the <code>java.util</code>, <code>-
 <table>
 <tr>
 <td class="icon">
-<div class="title">Warning</div>
+<i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
 Be aware that this will affect all code in the test JVM, so it can hide issues in the code under test.
@@ -111,10 +117,10 @@ If you look at the compiled code you can see how it was transformed</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">try</span> {
-    java.lang.Object value                                       // <b class="conum">(1)</b>
+    java.lang.Object value                                       <i class="conum" data-value="1"></i><b>(1)</b>
     java.lang.Throwable <span class="error">$</span>spock_feature_throwable
     <span class="keyword">try</span> {
-        value = <span class="string"><span class="delimiter">'</span><span class="content">hello</span><span class="delimiter">'</span></span>                                          // <b class="conum">(2)</b>
+        value = <span class="string"><span class="delimiter">'</span><span class="content">hello</span><span class="delimiter">'</span></span>                                          <i class="conum" data-value="2"></i><b>(2)</b>
         <span class="keyword">try</span> {
             org.spockframework.runtime.SpockRuntime.verifyCondition(<span class="error">$</span>spock_errorCollector, <span class="error">$</span>spock_valueRecorder.reset(), <span class="string"><span class="delimiter">'</span><span class="content">value.size() &gt; 3</span><span class="delimiter">'</span></span>, <span class="integer">8</span>, <span class="integer">9</span>, <span class="predefined-constant">null</span>, <span class="error">$</span>spock_valueRecorder.record(<span class="error">$</span>spock_valueRecorder.startRecordingValue(<span class="integer">5</span>), <span class="error">$</span>spock_valueRecorder.record(<span class="error">$</span>spock_valueRecorder.startRecordingValue(<span class="integer">3</span>), <span class="error">$</span>spock_valueRecorder.record(<span class="error">$</span>spock_valueRecorder.startRecordingValue(<span class="integer">0</span>), value).<span class="error">$</span>spock_valueRecorder.record(<span class="error">$</span>spock_valueRecorder.startRecordingValue(<span class="integer">1</span>), <span class="string"><span class="delimiter">'</span><span class="content">size</span><span class="delimiter">'</span></span>)()) &gt; <span class="error">$</span>spock_valueRecorder.record(<span class="error">$</span>spock_valueRecorder.startRecordingValue(<span class="integer">4</span>), <span class="integer">3</span>)))
         }
@@ -129,7 +135,7 @@ If you look at the compiled code you can see how it was transformed</p>
     }
     <span class="keyword">finally</span> {
         <span class="keyword">try</span> {
-            <span class="local-variable">this</span>.clean(value)                                   // <b class="conum">(3)</b>
+            <span class="local-variable">this</span>.clean(value)                                   <i class="conum" data-value="3"></i><b>(3)</b>
         }
         <span class="keyword">catch</span> (java.lang.Throwable <span class="error">$</span>spock_tmp_throwable) {
             <span class="keyword">if</span> ( <span class="error">$</span>spock_feature_throwable != <span class="predefined-constant">null</span>) {
@@ -149,17 +155,20 @@ If you look at the compiled code you can see how it was transformed</p>
 </div>
 </div>
 <div class="colist arabic">
-<ol>
-<li>
-<p>Here it moved the variable declaration outside of the <code>try-finally</code> block</p>
-</li>
-<li>
-<p>Here it tries to initialize the field</p>
-</li>
-<li>
-<p>Here it is passed to cleanup</p>
-</li>
-</ol>
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here it moved the variable declaration outside of the <code>try-finally</code> block</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Here it tries to initialize the field</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Here it is passed to cleanup</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>The catch-22 is that the variable must be declared outside of the <code>try-finally</code> block, to be available in the finally,
@@ -202,7 +211,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-03-18 23:25:09 UTC
+Last updated 2024-03-19 10:10:51 UTC
 </div>
 </div>
 </body>

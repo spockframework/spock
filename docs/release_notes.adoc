@@ -8,7 +8,7 @@ include::include.adoc[]
 === Highlights
 
 * Add support for combining two or more data providers using cartesian product spockIssue:1062[]
-* Add the possibility to add a `filter` block after a `where` block to filter out unwanted iterations
+* Add support for a `filter` block after a `where` block to filter out unwanted iterations
 
 == 2.4-M4 (2024-03-21)
 

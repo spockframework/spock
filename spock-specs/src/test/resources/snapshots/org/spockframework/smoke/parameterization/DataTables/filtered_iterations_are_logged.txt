@@ -1,0 +1,45 @@
+Filtered iteration [i: 2, a: 2, b: 2, c: 1]:
+Condition not satisfied:
+
+i == 1
+| |
+2 false
+
+	at apackage.ASpec.a feature(script.groovy:15)
+
+Filtered iteration [i: 3, a: 1, b: 1, c: 2]:
+Condition not satisfied:
+
+i == 1
+| |
+3 false
+
+	at apackage.ASpec.a feature(script.groovy:15)
+
+Filtered iteration [i: 4, a: 2, b: 2, c: 2]:
+Condition not satisfied:
+
+i == 1
+| |
+4 false
+
+	at apackage.ASpec.a feature(script.groovy:15)
+
+Filtered iteration [i: 5, a: 1, b: 1, c: 3]:
+Condition not satisfied:
+
+i == 1
+| |
+5 false
+
+	at apackage.ASpec.a feature(script.groovy:15)
+
+Filtered iteration [i: 6, a: 2, b: 2, c: 3]:
+Condition not satisfied:
+
+i == 1
+| |
+6 false
+
+	at apackage.ASpec.a feature(script.groovy:15)
+

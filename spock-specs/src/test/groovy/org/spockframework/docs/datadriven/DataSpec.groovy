@@ -3,6 +3,7 @@ package org.spockframework.docs.datadriven
 import groovy.sql.Sql
 import groovy.transform.ToString
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.GroovyRuntimeUtil
 import spock.lang.Shared
 
 import static org.junit.platform.engine.TestDescriptor.Type.TEST
@@ -103,14 +104,14 @@ class DataSpec extends EmbeddedSpecification {
   def "multiple data provider combined"() {
     given:
     def expected = '''
-      |// tag::data-providers-combined-result[]
-      |- `feature [a: 1, b: 3, c: 5, d: 1, e: 4, #0]`
-      |- `feature [a: 1, b: 4, c: 6, d: 1, e: 5, #1]`
-      |- `feature [a: 2, b: 3, c: 5, d: 1, e: 5, #2]`
-      |- `feature [a: 2, b: 4, c: 6, d: 1, e: 6, #3]`
-      |// end::data-providers-combined-result[]
+      tag::data-providers-combined-result[]
+      - `feature [a: 1, b: 3, c: 5, d: 1, e: 4, #0]`
+      - `feature [a: 1, b: 4, c: 6, d: 1, e: 5, #1]`
+      - `feature [a: 2, b: 3, c: 5, d: 1, e: 5, #2]`
+      - `feature [a: 2, b: 4, c: 6, d: 1, e: 6, #3]`
+      end::data-providers-combined-result[]
     '''
-      .stripMargin()
+      .stripIndent(*(GroovyRuntimeUtil.groovy3orNewer ? [true] : []))
       .readLines()
       .findAll {it.startsWith('-') }
       .join('\n')

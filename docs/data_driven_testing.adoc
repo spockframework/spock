@@ -317,7 +317,7 @@ Two or more consecutive data providers, be it a data table or a data pipe, can a
 using a cartesian product using the `combined:` label between them. The following will result
 in these executed tests:
 
-include::{sourcedir}/datadriven/DataSpec.groovy[tag=data-providers-combined-result]
+include::./{sourcedir}/datadriven/DataSpec.groovy[tag=data-providers-combined-result,indent=0]
 
 [source,groovy,indent=0]
 ----

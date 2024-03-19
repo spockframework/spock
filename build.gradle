@@ -248,7 +248,7 @@ tasks.register("codeCoverageReport", JacocoReport) {
 }
 
 if (gradle.startParameter.taskNames == ["ghActionsBuild"]) {
-  gradle.startParameter.taskNames = ["build", "asciidoctor", "codeCoverageReport"]
+  gradle.startParameter.taskNames = ["build", "codeCoverageReport"]
 }
 
 if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParameter.taskNames == ["ghActionsDocs"]) {

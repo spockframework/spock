@@ -1,8 +1,32 @@
+// Metadata
 :author: Peter Niederwieser, Leonard Brünings, The Spock Framework Team
 :revnumber: X-replaced-by-gradle
-:sourcedir: ../spock-specs/src/test/groovy/org/spockframework/docs
-:snapshotdir: ../spock-specs/src/test/resources/snapshots/org/spockframework/docs
-:sourcedir-spring: ../spock-spring/src/test/groovy/org/spockframework/spring/docs
-:resourcedir-spring: ../spock-spring/src/test/resources/org/spockframework/spring/docs
-:sourcedir-spring-boot: ../spock-spring/boot2-test/src/test/groovy/org/spockframework/boot2
+// Settings
 :sectlinks: true
+:docinfo: shared
+:icons: font
+// URL base stuff
+:gwc-base: https://groovyconsole.dev
+:github-base: https://github.com/spockframework/spock
+:github-blob-base: {github-base}/blob
+:commit-ish: master
+// source dir
+:base-sourcedir: spock-specs/src/test/groovy/org/spockframework/docs
+:sourcedir: ../{base-sourcedir}
+:github-sourcedir: {github-blob-base}/{commit-ish}/{base-sourcedir}
+// snapshot dir
+:base-snapshotdir: spock-specs/src/test/resources/snapshots/org/spockframework/docs
+:snapshotdir: ../{base-snapshotdir}
+:github-snapshotdir: {github-blob-base}/{commit-ish}/{base-snapshotdir}
+// Spring source dir
+:base-sourcedir-spring: spock-spring/src/test/groovy/org/spockframework/spring/docs
+:sourcedir-spring: ../{base-sourcedir-spring}
+:github-sourcedir-spring: {github-blob-base}/{commit-ish}/{base-sourcedir-spring}
+// Spring resource dir
+:base-resourcedir-spring: spock-spring/src/test/resources/org/spockframework/spring/docs
+:resourcedir-spring: ../{base-resourcedir-spring}
+:github-resourcedir-spring: {github-blob-base}/{commit-ish}/{base-resourcedir-spring}
+// Spring Boot source dir
+:base-sourcedir-spring-boot: spock-spring/boot2-test/src/test/groovy/org/spockframework/boot2
+:sourcedir-spring-boot: ../{base-sourcedir-spring-boot}
+:github-sourcedir-spring-boot: {github-blob-base}/{commit-ish}/{base-sourcedir-spring-boot}

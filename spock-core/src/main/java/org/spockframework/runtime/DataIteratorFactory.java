@@ -262,15 +262,12 @@ public class DataIteratorFactory {
       estimatedNumIterations = estimateNumIterations(dataProviders);
       dataProviderIterators = createDataProviderIterators();
 
-      logFilteredIterations = context
+      RunnerConfiguration runnerConfiguration = context
         .getRunContext()
-        .getConfiguration(RunnerConfiguration.class)
-        .logFilteredIterations;
+        .getConfiguration(RunnerConfiguration.class);
+      logFilteredIterations = runnerConfiguration.logFilteredIterations;
       if (logFilteredIterations) {
-        stackTraceFilter = context
-          .getRunContext()
-          .getConfiguration(RunnerConfiguration.class)
-          .logFilteredIterations ? new StackTraceFilter(context.getSpec()) : new DummyStackTraceFilter();
+        stackTraceFilter = runnerConfiguration.filterStackTrace ? new StackTraceFilter(context.getSpec()) : new DummyStackTraceFilter();
       }
     }
 
@@ -346,7 +343,7 @@ public class DataIteratorFactory {
             try (PrintWriter pw = new PrintWriter(sw)) {
               ae.printStackTrace(pw);
             }
-            System.out.println(sw);
+            System.err.println(sw);
           }
           // filter block does not like these values, try next ones if available
         } catch (Throwable t) {

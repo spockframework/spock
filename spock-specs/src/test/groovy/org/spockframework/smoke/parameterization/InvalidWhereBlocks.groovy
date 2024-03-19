@@ -16,6 +16,7 @@
 
 package org.spockframework.smoke.parameterization
 
+import org.codehaus.groovy.syntax.SyntaxException
 import org.opentest4j.MultipleFailuresError
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
@@ -202,6 +203,25 @@ def foo() {
     then:
     InvalidSpecCompileException e = thrown()
     e.message.contains("@Shared")
+  }
+
+  def "filter block may not reference local variables"() {
+    when:
+    compiler.compileFeatureBody '''
+def local = 1
+
+expect:
+x == 1
+
+where:
+x = 1
+
+filter:
+local
+    '''
+
+    then:
+    thrown(SyntaxException)
   }
 
   def 'referencing a data variable in a data provider is not allowed'() {

@@ -2,10 +2,13 @@ package org.spockframework.runtime;
 
 import org.spockframework.runtime.model.*;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.*;
 
 import org.jetbrains.annotations.NotNull;
 import org.spockframework.util.Nullable;
+import spock.config.RunnerConfiguration;
 
 import static java.util.Collections.emptyIterator;
 import static java.util.Collections.singletonList;
@@ -248,6 +251,8 @@ public class DataIteratorFactory {
     private final int estimatedNumIterations;
     private final List<String> dataVariableNames;
     private boolean firstIteration = true;
+    private boolean logFilteredIterations = true;
+    private IStackTraceFilter stackTraceFilter;
 
     public FeatureDataProviderIterator(IRunSupervisor supervisor, SpockExecutionContext context) {
       super(supervisor, context);
@@ -256,6 +261,17 @@ public class DataIteratorFactory {
       dataProviders = createDataProviders();
       estimatedNumIterations = estimateNumIterations(dataProviders);
       dataProviderIterators = createDataProviderIterators();
+
+      logFilteredIterations = context
+        .getRunContext()
+        .getConfiguration(RunnerConfiguration.class)
+        .logFilteredIterations;
+      if (logFilteredIterations) {
+        stackTraceFilter = context
+          .getRunContext()
+          .getConfiguration(RunnerConfiguration.class)
+          .logFilteredIterations ? new StackTraceFilter(context.getSpec()) : new DummyStackTraceFilter();
+      }
     }
 
     @Override
@@ -318,7 +334,20 @@ public class DataIteratorFactory {
           // do not use invokeRaw here, as that would report Assertion Error to the supervisor
           filterMethod.invoke(null, next);
           return next;
-        } catch (AssertionError  ae) {
+        } catch (AssertionError ae) {
+          if (logFilteredIterations) {
+            StringJoiner stringJoiner = new StringJoiner(", ", "Filtered iteration [", "]:\n");
+            for (int i = 0; i < dataVariableNames.size(); i++) {
+              stringJoiner.add(dataVariableNames.get(i) + ": " + next[i]);
+            }
+            StringWriter sw = new StringWriter();
+            sw.write(stringJoiner.toString());
+            stackTraceFilter.filter(ae);
+            try (PrintWriter pw = new PrintWriter(sw)) {
+              ae.printStackTrace(pw);
+            }
+            System.out.println(sw);
+          }
           // filter block does not like these values, try next ones if available
         } catch (Throwable t) {
           supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(filterMethod, t));

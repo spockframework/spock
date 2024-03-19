@@ -15,12 +15,21 @@
 package org.spockframework.smoke.parameterization
 
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.IStandardStreamsListener
 import org.spockframework.runtime.SpockExecutionException
+import org.spockframework.runtime.StandardStreamsCapturer
+import spock.lang.AutoCleanup
 import spock.lang.Issue
 import spock.lang.PendingFeature
+import spock.lang.ResourceLock
 import spock.lang.Rollup
 import spock.lang.Shared
+import spock.lang.Snapshot
+import spock.lang.Snapshotter
 import spock.lang.Unroll
+
+import static org.spockframework.runtime.model.parallel.Resources.SYSTEM_ERR
+import static org.spockframework.runtime.model.parallel.Resources.SYSTEM_OUT
 
 @Rollup
 class DataTables extends EmbeddedSpecification {
@@ -395,7 +404,7 @@ i != 6
     when:
     runner.runFeatureBody '''
 expect:
-false
+true
 
 where:
 i << (1..6)
@@ -413,6 +422,57 @@ false
     then:
     SpockExecutionException e = thrown()
     e.message == 'Data provider has no data'
+  }
+
+  @ResourceLock(SYSTEM_OUT)
+  @ResourceLock(SYSTEM_ERR)
+  def 'filtered iterations are logged'(@Snapshot Snapshotter snapshotter) {
+    given:
+    snapshotter.normalizedWith {
+      it.normalize().replaceAll(/(\tat apackage\.ASpec\.a feature\().*(\.groovy:15\))/, '$1script$2')
+    }
+
+    and:
+    StandardStreamsCapturer outputCapturer = new StandardStreamsCapturer()
+    def output = new StringBuilder()
+    outputCapturer.addStandardStreamsListener({
+      output.append(it.normalize())
+    } as IStandardStreamsListener)
+    outputCapturer.start()
+    outputCapturer.muteStandardStreams()
+
+    and:
+    runner.throwFailure = false
+    runner.configurationScript {
+      runner {
+        logFilteredIterations true
+      }
+    }
+
+    when:
+    def result = runner.runFeatureBody '''
+expect:
+i == 1
+a == b
+
+where:
+i << (1..6)
+
+a | b
+1 | a
+2 | a
+combined:
+c << (1..3)
+
+filter:
+i == 1
+    '''
+
+    then:
+    snapshotter.assertThat(output.toString()).matchesSnapshot()
+
+    cleanup:
+    outputCapturer.stop()
   }
 
   @PendingFeature(reason = 'previous column access across tables does not yet work as expected with cross-multiplication')

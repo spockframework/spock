@@ -1,6 +1,8 @@
-import static groovy.io.FileType.FILES
+import static org.spockframework.gradle.AsciiDocLinkVerifier.verifyAnchorlessCrossDocumentLinks
+import static org.spockframework.gradle.AsciiDocLinkVerifier.verifyLinksAndAnchors
 
 plugins {
+  id "org.spockframework.base" apply false
   id "base"
   id "org.asciidoctor.jvm.convert"
   id "jacoco"
@@ -372,6 +374,7 @@ dependencies {
 
 asciidoctorj {
   version = libs.versions.asciidoctorj
+  fatalWarnings(missingIncludes())
   modules {
     diagram.use()
   }
@@ -392,22 +395,8 @@ tasks.named("asciidoctor") {
   inputs.dir file("spock-spring/src/test/resources/org/spockframework/spring/docs")
   inputs.dir file("spock-spring/boot2-test/src/test/groovy/org/spockframework/boot2")
 
-  doFirst {
-    def errors = []
-    sourceDir.eachFileRecurse(FILES) { file ->
-      if (file.name =~ /(?<!^index)\.adoc$/) {
-        (file.text =~ /<<([^>#]+\.adoc)#,[^>]+>>/)
-          .collect { it[1] }
-          .unique()
-          .each {
-            errors << "$file.name contains a cross-document link to $it without anchor, this will break in one-page variant"
-          }
-      }
-    }
-    if (errors) {
-      throw new IllegalArgumentException(errors.join('\n'))
-    }
-  }
+  doFirst { verifyAnchorlessCrossDocumentLinks(sourceFileTree) }
+  doLast { verifyLinksAndAnchors(outputs.files.asFileTree) }
 }
 
 nexusPublishing {

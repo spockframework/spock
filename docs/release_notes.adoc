@@ -1,4 +1,4 @@
-[[_release_notes]]
+[[release-notes]]
 = Release Notes
 
 include::include.adoc[]
@@ -52,7 +52,7 @@ include::include.adoc[]
 * Creating `GroovyMock`/`GroovyStub`/`GroovySpy` for an already mocked type will now fail.
 * Creating a global `GroovyMock`/`GroovyStub`/`GroovySpy` when <<parallel_execution.adoc#parallel-execution, parallel execution>> is enabled,
   will now require that the spec is annotated with <<parallel_execution.adoc#isolated-execution, @Isolated>> or `@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)`. See <<interaction_based_testing.adoc#global-mocks-parallel-execution, Global mocks and parallel execution>> spockPull:1848[]
-* `@TempDir` `spock.tempDir.keep` has been replaced by `spock.tempdir.cleanup`. See <<extensions.adoc#_temp_dir_cleanup,TempDir Cleanup>> spockPull:1525[]
+* `@TempDir` `spock.tempDir.keep` has been replaced by `spock.tempdir.cleanup`. See <<extensions.adoc#temp-dir-cleanup,TempDir Cleanup>> spockPull:1525[]
 
 === Misc
 * Add support for parameter injection of `@TempDir`
@@ -204,16 +204,16 @@ Thanks to all the contributors to this release: Marc Philipp, Miles Thomason, BJ
 
 - Add `data.` support to conditional extensions spockIssue:1360[].
 This replaces the  current behavior of accessing data variables without any prefix.
-See <<extensions.adoc#precondition_context, Precondition Context>> for more details.
+See <<extensions.adoc#precondition-context, Precondition Context>> for more details.
 
 === Misc
 
 - Add exception translation to JUnit4 Rules spockPull:1342[]
 - Add option to omit feature name from iterations spockPull:1386[]
-and add additional <<data_driven_testing.adoc#unroll_tokens, Special Tokens>> to unroll patterns.
+and add additional <<data_driven_testing.adoc#unroll-tokens, Special Tokens>> to unroll patterns.
 - Add optional reason to `@Requires` and `@IgnoreIf` spockPull:1362[]
 - Add `shared.` support to conditional extensions spockPull:1359[].
-See <<extensions.adoc#precondition_context, Precondition Context>> for more details.
+See <<extensions.adoc#precondition-context, Precondition Context>> for more details.
 
 - Set the owner for condition closures on spec annotations spockPull:1357[]
 +
@@ -259,7 +259,7 @@ Thanks to all the contributors to this release: Marc Philipp, Miles Thomason, BJ
 \... and many more, read the full release notes for every detail.
 
 === Migrating from 1.x
-The <<migration_guide.adoc#_migration_guide_2_0,Migration Guide 1.x - 2.0>> covers the major breaking changes between 1.3 and 2.0
+The <<migration_guide.adoc#migration-guide-2-0,Migration Guide 1.x - 2.0>> covers the major breaking changes between 1.3 and 2.0
 
 === Breaking Changes (from 2.0-M5)
 
@@ -880,7 +880,7 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 
 * Add support for Java 11+ (spockIssue:895[], spockIssue:902[], spockIssue:903[])
 * Add Groovy 2.5.0 Variant for better Java 10+ Support
-* Add `@SpringBean` and `@SpringSpy` inspired by `@MockBean`, Also add `@StubBeans` (<<extensions.adoc#_annotation_driven,Docs>>)
+* Add `@SpringBean` and `@SpringSpy` inspired by `@MockBean`, Also add `@StubBeans` (<<module_spring.adoc#_annotation_driven,Docs>>)
 * Add `@UnwrapAopProxy` to make automatically unwrap SpringAopProxies
 * Add `@AutoAttach` extension  (<<extensions.adoc#_autoattach,Docs>>)
 * Add `@Retry` extension (<<extensions.adoc#_retry,Docs>>)
@@ -1058,7 +1058,7 @@ verifyAll {
   b == c
 }
 ----
-* Detached mocks via the `DetachedMockFactory` and `SpockMockFactoryBean` classes see the <<module_spring.adoc#_spring_module,Spring Module Docs>>.
+* Detached mocks via the `DetachedMockFactory` and `SpockMockFactoryBean` classes see the <<module_spring.adoc#spring-module,Spring Module Docs>>.
 * Cells in a data table can refer to the current value for a column to the left.
 * `Spy` can be used to create partial mocks for Java 8 interfaces with `default` methods just as it can for abstract classes.
 * Improved power assert output when an exception occurs evaluating an assertion.

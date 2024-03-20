@@ -1064,8 +1064,8 @@ for the mocked `Class` during execution.
 [[global-mocks-parallel-execution]]
 ==== Global mocks and parallel execution
 
-Creating a global `GroovyMock`/`GroovyStub`/`GroovySpy` when <<parallel-execution.adoc#parallel-execution,parallel execution>> is enabled,
-requires that the spec is annotated with <<parallel-execution.adoc#isolated-execution, @Isolated>> or `@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)`.
+Creating a global `GroovyMock`/`GroovyStub`/`GroovySpy` when <<parallel_execution.adoc#parallel-execution,parallel execution>> is enabled,
+requires that the spec is annotated with <<parallel_execution.adoc#isolated-execution, @Isolated>> or `@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)`.
 If it is only used for a feature, then it suffices that the feature is annotated with `@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)`.
 The rule of thumb to choose between `@ResourceLock` and `@Isolated`, is to look at how widespread the mocked type is used.
 If it is widely used, then `@Isolated` is the safe choice, otherwise `@ResourceLock` may be sufficient.

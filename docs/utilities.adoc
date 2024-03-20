@@ -78,7 +78,7 @@ Otherwise, it will be treated like the standard groovy https://groovy-lang.org/o
 == Interact with the file system using `FileSystemFixture`
 
 In integration tests you often have to prepare the file system for a test.
-For trivial cases like creating a single temp directory, you can use the <<extensions.adoc#_temp_dir,@TempDir>> extension directly.
+For trivial cases like creating a single temp directory, you can use the <<extensions.adoc#temp-dir,@TempDir>> extension directly.
 However, for more complex cases like creating a directory tree `FileSystemFixture` offers convenience and better readability.
 
 === Examples

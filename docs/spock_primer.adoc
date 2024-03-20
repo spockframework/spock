@@ -174,7 +174,7 @@ def elem = "push me"
 The `given` block is where you do any setup work for the feature that you are describing. It may not be preceded by
 other blocks, and may not be repeated. A `given` block doesn't have any special semantics. The `given:` label is
 optional and may be omitted, resulting in an _implicit_ `given` block. Originally, the alias `setup:` was the preferred block name,
-but using `given:` often leads to a more readable feature method description (see <<specifications_as_documentation,Specifications as Documentation>>).
+but using `given:` often leads to a more readable feature method description (see <<specifications-as-documentation,Specifications as Documentation>>).
 
 ==== When and Then Blocks
 
@@ -756,7 +756,7 @@ will be rendered as
 include::{snapshotdir}/primer/VerifyEachDocSpec/verifyEach_with_namer_method.txt[]
 ----
 
-[[specifications_as_documentation]]
+[[specifications-as-documentation]]
 == Specifications as Documentation
 
 Well-written specifications are a valuable source of information. Especially for higher-level specifications targeting

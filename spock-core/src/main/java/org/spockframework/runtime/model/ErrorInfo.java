@@ -22,12 +22,10 @@ public class ErrorInfo {
   private final IErrorContext errorContext;
 
   public ErrorInfo(MethodInfo method, Throwable error) {
-    this.method = method;
-    this.error = error;
-    this.errorContext = null;
+    this(method, error, null);
   }
 
-  public ErrorInfo(MethodInfo method, Throwable error, IErrorContext errorContext) {
+  public ErrorInfo(MethodInfo method, Throwable error, @Nullable IErrorContext errorContext) {
     this.method = method;
     this.error = error;
     this.errorContext = errorContext;

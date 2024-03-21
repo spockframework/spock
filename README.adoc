@@ -1,4 +1,4 @@
-:spock-release-version: 2.4-M3
+:spock-release-version: 2.4-M4
 :spock-release-date: 2024-03-21
 :spock-snapshot-version: 2.4
 

@@ -3,7 +3,7 @@
 
 include::include.adoc[]
 
-== 2.4-M4 (tbd)
+== 2.4-M4 (2024-03-21)
 
 * Fix nested regex finding in conditions spockPull:1931[]
 ** Fixes spockIssue:1930[] a regression introduced in M2 by spockPull:1921[]

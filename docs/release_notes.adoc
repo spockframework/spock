@@ -3,7 +3,7 @@
 
 include::include.adoc[]
 
-== 2.4 (tbd)
+== 2.4-M3 (tbd)
 
 === Breaking Changes
 
@@ -22,8 +22,19 @@ include::include.adoc[]
 
 === Misc
 
-* Properly fix possible deadlock, when blocking in mock response generators and fix fallout of spockPull:1885[]
+* Add option to create Groovy spies with existing instances spockPull:1825[]
+* Improve Spock's documentation by automatically linking source snippets in the docs to the code spockPull:1904[]
+* Improve `@Retry` extension parallel-safeness spockPull:1701[]
+* Improve `@RepeatUntilFailure` by allowing multiple annotations in the same specification spockPull:1912[]
+* Improve collection matchers by supporting them in nested in complex assertions spockPull:1921[]
+* Improve stacktrace filtering by also handling suppressed exceptions spockPull:1923[]
+* Fix possible deadlock when blocking in mock response generators spockPull:1910[]
+** Fix fallout of spockPull:1885[] introduced in M2
 ** This actually fixes the issues: spockIssue:583[], spockIssue:1882[], spockIssue:1899[]
+* Fix possible `StackOverflowError` when filtering exception cause loops spockPull:1922[]
+* Fix NullPointerException after exception in data provider spockPull:1925[]
+
+Thanks to all the contributors to this release: Andreas Turban, Björn Kautler, Marcin Zajączkowski
 
 == 2.4-M2 (2024-02-26)
 

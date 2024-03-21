@@ -3,7 +3,7 @@
 
 include::include.adoc[]
 
-== 2.4-M3 (tbd)
+== 2.4-M3 (2024-03-21)
 
 === Breaking Changes
 

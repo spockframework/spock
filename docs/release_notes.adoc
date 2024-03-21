@@ -3,7 +3,10 @@
 
 include::include.adoc[]
 
-== 2.4 (tbd)
+== 2.4-M4 (tbd)
+
+* Fix nested regex finding in conditions spockPull:1931[]
+** Fixes spockIssue:1930[] a regression introduced in M2 by spockPull:1921[]
 
 == 2.4-M3 (2024-03-21)
 
@@ -28,7 +31,7 @@ include::include.adoc[]
 * Improve Spock's documentation by automatically linking source snippets in the docs to the code spockPull:1904[]
 * Improve `@Retry` extension parallel-safeness spockPull:1701[]
 * Improve `@RepeatUntilFailure` by allowing multiple annotations in the same specification spockPull:1912[]
-* Improve collection matchers by supporting them in nested in complex assertions spockPull:1921[]
+* [.line-through]#Improve collection matchers by supporting them in nested in complex assertions spockPull:1921[]#
 * Improve stacktrace filtering by also handling suppressed exceptions spockPull:1923[]
 * Fix possible deadlock when blocking in mock response generators spockPull:1910[]
 ** Fix fallout of spockPull:1885[] introduced in M2

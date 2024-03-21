@@ -17,6 +17,21 @@ false
     }
   }
 
+  def "nested regex finding"() {
+    expect:
+    isRendered """
+(x =~ y).count == 0
+ | |  |  |     |
+ | |  .  3     false
+ | java.util.regex.Matcher[pattern=. region=0,3 lastmatch=]
+ foo
+    """, {
+      def x = 'foo'
+      def y = /./
+      assert (x =~ y).count == 0
+    }
+  }
+
   def "rendering of lenient matching with variables"() {
     expect:
     isRendered """
@@ -114,6 +129,21 @@ false
     }
   }
 
+  def "nested regex matching"() {
+    expect:
+    isRendered """
+!(x ==~ y)
+| | |   |
+| a |   .
+|   true
+false
+    """, {
+      def x = 'a'
+      def y = /./
+      assert !(x ==~ y)
+    }
+  }
+
   def "indirect regex find works with different representations"() {
     expect:
     isRendered """
@@ -134,7 +164,7 @@ x =~ y
     isRendered """
 x =~ /\\d/
 | |
-| false
+| java.util.regex.Matcher[pattern=\\d region=0,3 lastmatch=]
 [a]
     """, {
       def x = "[a]"

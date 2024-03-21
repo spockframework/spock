@@ -133,7 +133,7 @@ public abstract class SpockRuntime {
 
   public static final String MATCH_COLLECTIONS_AS_SET = "matchCollectionsAsSet";
 
-  public static boolean matchCollectionsAsSet(Object left, Object right) {
+  public static Object matchCollectionsAsSet(Object left, Object right) {
     if (isIterableOrArray(left) && isIterableOrArray(right)) {
       Set<?> actual = GroovyRuntimeUtil.coerce(left, LinkedHashSet.class);
       Set<?> expected = GroovyRuntimeUtil.coerce(right, LinkedHashSet.class);
@@ -142,8 +142,7 @@ public abstract class SpockRuntime {
       return (left == null) && (right == null);
     } else {
       Pattern pattern = Pattern.compile(String.valueOf(right));
-      java.util.regex.Matcher matcher = pattern.matcher(String.valueOf(left));
-      return matcher.find();
+      return pattern.matcher(String.valueOf(left));
     }
   }
 

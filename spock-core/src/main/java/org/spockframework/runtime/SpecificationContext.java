@@ -12,6 +12,8 @@ public class SpecificationContext implements ISpecificationContext {
   private volatile FeatureInfo currentFeature;
   private volatile IterationInfo currentIteration;
 
+  private volatile BlockInfo currentBlock;
+
   private volatile Specification sharedInstance;
 
   private volatile Throwable thrownException;
@@ -50,10 +52,19 @@ public class SpecificationContext implements ISpecificationContext {
 
   @Override
   public IterationInfo getCurrentIteration() {
-    if (currentIteration == null) {
+    if (isSharedContext()) {
       throw new IllegalStateException("Cannot request current iteration in @Shared context, or feature context");
     }
     return currentIteration;
+  }
+
+  void setCurrentBlock(BlockInfo blockInfo) {
+    this.currentBlock = blockInfo;
+  }
+
+  @Override
+  public BlockInfo getCurrentBlock() {
+    return currentBlock;
   }
 
   public void setCurrentIteration(IterationInfo currentIteration) {
@@ -79,5 +90,10 @@ public class SpecificationContext implements ISpecificationContext {
   @Override
   public IThreadAwareMockController getThreadAwareMockController() {
     return mockController;
+  }
+
+  @Override
+  public boolean isSharedContext() {
+    return currentFeature == null || currentIteration == null;
   }
 }

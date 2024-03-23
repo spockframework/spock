@@ -23,7 +23,10 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.opentest4j.MultipleFailuresError;
+import org.spockframework.runtime.extension.IBlockListener;
+import org.spockframework.runtime.model.BlockInfo;
 import org.spockframework.runtime.model.ExpressionInfo;
+import org.spockframework.runtime.model.IterationInfo;
 import org.spockframework.runtime.model.TextPosition;
 import org.spockframework.util.CollectionUtil;
 import org.spockframework.util.ExceptionUtil;
@@ -218,6 +221,27 @@ public abstract class SpockRuntime {
 
   public static Object[] despreadList(Object[] args, Object[] spreads, int[] positions) {
     return GroovyRuntimeUtil.despreadList(args, spreads, positions);
+  }
+
+  public static final String CALL_ENTER_BLOCK = "callEnterBlock";
+  public static void callEnterBlock(SpecificationContext context, BlockInfo blockInfo) {
+    IterationInfo currentIteration = context.getCurrentIteration();
+    context.setCurrentBlock(blockInfo);
+    List<IBlockListener> blockListeners = currentIteration.getFeature().getBlockListeners();
+    if (blockListeners.isEmpty()) return;
+    blockListeners.forEach(blockListener -> blockListener.blockEntered(currentIteration, blockInfo));
+  }
+  public static final String CALL_EXIT_BLOCK = "callExitBlock";
+  public static void callExitBlock(SpecificationContext context, BlockInfo blockInfo) {
+    IterationInfo currentIteration = context.getCurrentIteration();
+    List<IBlockListener> blockListeners = currentIteration.getFeature().getBlockListeners();
+    if (blockListeners.isEmpty()) return;
+    blockListeners.forEach(blockListener -> blockListener.blockExited(currentIteration, blockInfo));
+  }
+
+  public static final String CLEAR_CURRENT_BLOCK = "clearCurrentBlock";
+  public static void clearCurrentBlock(SpecificationContext context) {
+    context.setCurrentBlock(null);
   }
 
   private static List<Object> getValues(ValueRecorder recorder) {

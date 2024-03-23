@@ -34,6 +34,7 @@ import org.spockframework.util.ExceptionUtil;
 import org.spockframework.util.Nullable;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -229,22 +230,29 @@ public abstract class SpockRuntime {
   }
 
   public static final String CALL_ENTER_BLOCK = "callEnterBlock";
+
   public static void callEnterBlock(SpecificationContext context, BlockInfo blockInfo) {
     IterationInfo currentIteration = context.getCurrentIteration();
     context.setCurrentBlock(blockInfo);
+    notifyBlockListener(currentIteration, blockListener -> blockListener.blockEntered(currentIteration, blockInfo));
+  }
+
+  private static void notifyBlockListener(IterationInfo currentIteration, Consumer<IBlockListener> consumer) {
     List<IBlockListener> blockListeners = currentIteration.getFeature().getBlockListeners();
     if (blockListeners.isEmpty()) return;
-    blockListeners.forEach(blockListener -> blockListener.blockEntered(currentIteration, blockInfo));
+    blockListeners.forEach(consumer);
   }
+
   public static final String CALL_EXIT_BLOCK = "callExitBlock";
+
   public static void callExitBlock(SpecificationContext context, BlockInfo blockInfo) {
     IterationInfo currentIteration = context.getCurrentIteration();
-    List<IBlockListener> blockListeners = currentIteration.getFeature().getBlockListeners();
-    if (blockListeners.isEmpty()) return;
-    blockListeners.forEach(blockListener -> blockListener.blockExited(currentIteration, blockInfo));
+    notifyBlockListener(currentIteration, blockListener -> blockListener.blockExited(currentIteration, blockInfo));
+    context.setCurrentBlock(null);
   }
 
   public static final String CLEAR_CURRENT_BLOCK = "clearCurrentBlock";
+
   public static void clearCurrentBlock(SpecificationContext context) {
     context.setCurrentBlock(null);
   }

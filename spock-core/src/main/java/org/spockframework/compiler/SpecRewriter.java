@@ -453,9 +453,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       new ClassExpression(nodeCache.SpockRuntime),
       blockListenerMethod,
       new ArgumentListExpression(
-        createDirectMethodCall(VariableExpression.THIS_EXPRESSION,
-          nodeCache.SpecInternals_GetSpecificationContext,
-          ArgumentListExpression.EMPTY_ARGUMENTS),
+        getSpecificationContext(),
         new ConstructorCallExpression(nodeCache.BlockInfo,
           new ArgumentListExpression(
             new PropertyExpression(
@@ -547,8 +545,8 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   @Override
   public void visitCleanupBlock(CleanupBlock block) {
     for (Block b : method.getBlocks()) {
-      // call addBlockListeners() here, as this method will consume the blocks,
-      // so we need to transform here as they will be gone in visitMethodAgain where we normally add them
+      // call addBlockListeners() here, as this method will already copy the contents of the blocks,
+      // so we need to transform here as they won't be copied again in visitMethodAgain where we normally add them
       addBlockListeners(b);
       if (b == block) break;
       moveVariableDeclarations(b.getAst(), method.getStatements());

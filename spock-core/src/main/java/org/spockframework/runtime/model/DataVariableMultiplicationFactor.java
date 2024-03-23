@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,19 @@
 
 package org.spockframework.runtime.model;
 
-/**
- * The different kind of blocks that a <tt>BlockInfo</tt> instance can represent.
- *
- * @author Peter Niederwieser
- */
-public enum BlockKind {
-  SETUP,
-  EXPECT,
-  WHEN,
-  THEN,
-  CLEANUP,
-  WHERE,
-  FILTER
+import org.spockframework.util.Beta;
+
+import java.util.Objects;
+
+@Beta
+public class DataVariableMultiplicationFactor {
+  private final String[] dataVariables;
+
+  public DataVariableMultiplicationFactor(String[] dataVariables) {
+    this.dataVariables = Objects.requireNonNull(dataVariables);
+  }
+
+  public String[] getDataVariables() {
+    return dataVariables;
+  }
 }

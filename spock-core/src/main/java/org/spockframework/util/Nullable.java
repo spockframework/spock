@@ -20,6 +20,6 @@ import java.lang.annotation.*;
  * Indicates that the annotated field, parameter, or return value of the
  * annotated method is allowed to be null.
  */
-@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.SOURCE)
 public @interface Nullable {}

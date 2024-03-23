@@ -46,4 +46,6 @@ public class AbstractSpecVisitor implements ISpecVisitor {
   public void visitCleanupBlock(CleanupBlock block) throws Exception {}
   @Override
   public void visitWhereBlock(WhereBlock block) throws Exception {}
+  @Override
+  public void visitFilterBlock(FilterBlock block) throws Exception {}
 }

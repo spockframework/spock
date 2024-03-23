@@ -368,12 +368,22 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   // s.t. missing method parameters are added; these parameters
   // will then be used by DeepBlockRewriter
   private void handleWhereBlock(Method method) {
-    Block block = method.getLastBlock();
-    if (!(block instanceof WhereBlock)) return;
+    Block lastblock = method.getLastBlock();
+    FilterBlock filterBlock;
+    WhereBlock whereBlock;
+    if (lastblock instanceof FilterBlock) {
+      filterBlock = (FilterBlock) lastblock;
+      whereBlock = (WhereBlock) lastblock.getPrevious();
+    } else if (lastblock instanceof WhereBlock) {
+      filterBlock = null;
+      whereBlock = (WhereBlock) lastblock;
+    } else {
+      return;
+    }
 
     DeepBlockRewriter deep = new DeepBlockRewriter(this);
-    deep.visit(block);
-    WhereBlockRewriter.rewrite((WhereBlock) block, this, deep.isDeepNonGroupedConditionFound());
+    deep.visit(whereBlock);
+    WhereBlockRewriter.rewrite(whereBlock, filterBlock, this, deep.isDeepNonGroupedConditionFound());
   }
 
   @Override
@@ -501,7 +511,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     method.getStatements().add(tryFinally);
 
-    // a cleanup-block may only be followed by a where-block, whose
+    // a cleanup-block may only be followed by a where-block and filter-block, whose
     // statements are copied to newly generated methods rather than
     // the original method
     movedStatsBackToMethod = true;

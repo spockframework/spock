@@ -43,6 +43,10 @@ public class InternalIdentifiers {
     return featureName + "proc";
   }
 
+  public static String getDataVariableMultiplicationsName(String featureName) {
+    return featureName + "prods";
+  }
+
   public static String getDataProviderName(String featureName, int providerIndex) {
     return featureName + "prov" + providerIndex;
   }

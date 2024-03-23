@@ -118,7 +118,18 @@ public enum BlockParseInfo {
     }
     @Override
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
-      return EnumSet.of(AND, METHOD_END);
+      return EnumSet.of(AND, COMBINED, METHOD_END);
+    }
+  },
+
+  COMBINED {
+    @Override
+    public Block addNewBlock(Method method) {
+      return method.getLastBlock();
+    }
+    @Override
+    public EnumSet<BlockParseInfo> getSuccessors(Method method) {
+      return WHERE.getSuccessors(method);
     }
   },
 

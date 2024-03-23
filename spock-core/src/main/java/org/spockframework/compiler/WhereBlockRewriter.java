@@ -38,6 +38,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 import static org.spockframework.compiler.AstUtil.*;
 import static org.spockframework.util.ExceptionUtil.sneakyThrow;
+import static org.spockframework.util.Identifiers.COMBINED;
 
 /**
  *
@@ -58,6 +59,9 @@ public class WhereBlockRewriter {
   private final List<Statement> dataProcessorStats = new ArrayList<>();
   // parameterization variables of the data processor method
   private final List<VariableExpression> dataProcessorVars = new ArrayList<>();
+  private final List<VariableExpression> previousDataTableVariableAccesses = new ArrayList<>();
+  private final List<String> multiplicationFactorDataVariables = new ArrayList<>();
+  private final List<Expression> dataVariableMultiplications = new ArrayList<>();
   private int localVariableCount = 0;
 
   private WhereBlockRewriter(WhereBlock whereBlock, IRewriteResources resources, boolean defineErrorRethrower) {
@@ -74,16 +78,103 @@ public class WhereBlockRewriter {
 
   private void rewrite() {
     ListIterator<Statement> stats = whereBlock.getAst().listIterator();
-    while (stats.hasNext())
+    ConstructorCallExpression multiplier = null;
+    List<String> multiplicationDataVariables = new ArrayList<>();
+    while (stats.hasNext()) {
+      if (combineWithNext(stats) && !multiplicationFactorDataVariables.isEmpty()) {
+        // we are after a data provider that is multiplied with the next data provider
+        // remember the data variables for the multiplication
+        multiplicationDataVariables.addAll(multiplicationFactorDataVariables);
+        if (multiplier == null) {
+          // this is the first multiplication
+          // multiplier is a simple factor
+          multiplier = createDataVariableMultiplicationFactor(multiplicationFactorDataVariables);
+        } else {
+          // this is the second or further multiplication in row
+          // multiplier is a multiplication of the previous multiplier with the simple factor
+          multiplier = createDataVariableMultiplication(
+            multiplicationDataVariables,
+            multiplier,
+            createDataVariableMultiplicationFactor(multiplicationFactorDataVariables));
+        }
+      }
+
+      // forget state of the last data provider and remember the one of the next data provider
+      previousDataTableVariableAccesses.clear();
+      multiplicationFactorDataVariables.clear();
+
       try {
         rewriteWhereStat(stats);
+
+        boolean combineWithNext = combineWithNext(stats);
+
+        // forbid accessing data table variables of previous data tables within
+        // multiplications, as it does not behave in an expected way
+        if ((multiplier != null) || combineWithNext) {
+          List<VariableExpression> illegalAccesses = previousDataTableVariableAccesses
+            .stream()
+            .filter(expr -> !multiplicationFactorDataVariables.contains(expr.getName()))
+            .collect(toList());
+          if (!illegalAccesses.isEmpty()) {
+            illegalAccesses.forEach(illegalAccess ->
+              resources.getErrorReporter().error(illegalAccess, "Data tables that are part of combinations must not access data variables of other tables"));
+            continue;
+          }
+        }
+
+        if ((multiplier != null) && !combineWithNext) {
+          // this is the last factor of a multiplication chain
+          // finish the multiplication and record it
+          multiplicationDataVariables.addAll(multiplicationFactorDataVariables);
+          dataVariableMultiplications.add(createDataVariableMultiplication(
+            multiplicationDataVariables,
+            multiplier,
+            createDataVariableMultiplicationFactor(multiplicationFactorDataVariables)));
+
+          // reset state to wait for the next multiplication
+          multiplier = null;
+          multiplicationDataVariables.clear();
+        }
       } catch (InvalidSpecCompileException e) {
         resources.getErrorReporter().error(e);
       }
+    }
 
     whereBlock.getAst().clear();
     handleFeatureParameters();
     createDataProcessorMethod();
+    createDataVariableMultiplicationsMethod();
+  }
+
+  private static boolean isMultiplicand(Statement stat) {
+    return COMBINED.equals(stat.getStatementLabel());
+  }
+
+  private boolean combineWithNext(ListIterator<Statement> stats) {
+    if (!stats.hasNext()) {
+      return false;
+    }
+    Statement next = stats.next();
+    try {
+      return isMultiplicand(next) || (isDataTableSeparator(next) && combineWithNext(stats));
+    } finally {
+      stats.previous();
+    }
+  }
+
+  private ConstructorCallExpression createDataVariableMultiplicationFactor(List<String> dataVariables) {
+    return new ConstructorCallExpression(
+      resources.getAstNodeCache().DataVariableMultiplicationFactor,
+      new ArgumentListExpression(new ArrayExpression(ClassHelper.STRING_TYPE, dataVariables.stream().map(ConstantExpression::new).collect(toList()))));
+  }
+
+  private ConstructorCallExpression createDataVariableMultiplication(List<String> dataVariables,
+                                                                     Expression multiplier, Expression multiplicand) {
+    return new ConstructorCallExpression(
+      resources.getAstNodeCache().DataVariableMultiplication,
+      new ArgumentListExpression(
+        new ArrayExpression(ClassHelper.STRING_TYPE, dataVariables.stream().map(ConstantExpression::new).collect(toList())),
+        multiplier, multiplicand));
   }
 
   private void rewriteWhereStat(ListIterator<Statement> stats) throws InvalidSpecCompileException {
@@ -113,26 +204,38 @@ public class WhereBlockRewriter {
       .forEach(expression -> stats.previous());
 
     if (potentialHeaderRow.size() > 1) {
-      if (!potentialHeaderRow.stream().allMatch(VariableExpression.class::isInstance)) {
-        throw dataTableHeaderMayOnlyContainVariableNames(stat);
-      }
       stats.previous();
       rewriteExpressionTableLikeParameterization(stats);
       return;
     }
 
-    if (!isDataTableSeparator(stat)) {
-      // if statement is a data table separator (two or more underscores)
-      // just ignore it, it is mainly meant to separate two consecutive
-      // data tables, but is allowed anywhere in the where block, for
-      // example to use it as top border for a data table like:
-      // __________
-      // x | y || z
-      // 1 | 2 || 3
-      // 4 | 5 || 6
-      //
-      // otherwise => not a parameterization
-      throw notAParameterization(stat);
+    // if statement is a data table separator (two or more underscores)
+    // just ignore it, it is mainly meant to separate two consecutive
+    // data tables, but is allowed anywhere in the where block, for
+    // example to use it as top border for a data table like:
+    // __________
+    // x | y || z
+    // 1 | 2 || 3
+    // 4 | 5 || 6
+    if (isDataTableSeparator(stat)) {
+      // transplant statement labels like "combined"
+      // to the following statement if present
+      transplantStatementLabelsToNext(stats, stat);
+      return;
+    }
+
+    // otherwise => not a parameterization
+    throw notAParameterization(stat);
+  }
+
+  private static void transplantStatementLabelsToNext(ListIterator<Statement> stats, Statement source) {
+    if (stats.hasNext()) {
+      Statement next = stats.next();
+      List<String> statementLabels = source.getStatementLabels();
+      if (statementLabels != null) {
+        statementLabels.forEach(next::addStatementLabel);
+      }
+      stats.previous();
     }
   }
 
@@ -171,6 +274,7 @@ public class WhereBlockRewriter {
         // neither of the other two
         throw notAParameterization(stat);
       }
+      verifyDerivedDataVariableIsNotCombined(stats, stat);
     } else if (getOrExpression(binExpr) != null) {
       // header line of data table like:
       // x | y || z
@@ -183,6 +287,34 @@ public class WhereBlockRewriter {
     } else {
       // binary expression is neither of type left-shift, nor assign and not a data table
       throw notAParameterization(stat);
+    }
+  }
+
+  private void verifyDerivedDataVariableIsNotCombined(ListIterator<Statement> stats, Statement stat) throws InvalidSpecCompileException {
+    // if derived data variable is multiplicand => error
+    if (isMultiplicand(stat)) {
+      throw derivedDataVariablesCannotBeCombined(stat);
+    }
+
+    // if derived data variable is multiplier => error
+    int i = 0;
+    try {
+      while (stats.hasNext()) {
+        Statement next = stats.next();
+        i++;
+        if (isMultiplicand(next)) {
+          throw derivedDataVariablesCannotBeCombined(stat);
+        }
+        // if not data table separator, we are done
+        // otherwise check next statement for combined label
+        if (!isDataTableSeparator(next)) {
+          break;
+        }
+      }
+    } finally {
+      for (int j = 0; j < i; j++) {
+        stats.previous();
+      }
     }
   }
 
@@ -212,6 +344,9 @@ public class WhereBlockRewriter {
         // new data table row
         stats.previous();
         break;
+      }
+      if (nextStat.getStatementLabel() != null) {
+        sneakyThrow(columnsInDataTableMustNotBeLabeled(nextStat));
       }
       stat = nextStat;
     }
@@ -388,6 +523,7 @@ public class WhereBlockRewriter {
     rewriteTableLikeParameterization(stats, result -> {
       Statement stat = stats.next();
       BinaryExpression orExpr = getOrExpression(stat);
+      // if binary data table ends, i.e. next expression is not an `or` expression, stop processing
       if (orExpr == null) {
         stats.previous();
         return true;
@@ -400,6 +536,7 @@ public class WhereBlockRewriter {
   private void rewriteExpressionTableLikeParameterization(ListIterator<Statement> stats) throws InvalidSpecCompileException {
     rewriteTableLikeParameterization(stats, result -> {
       List<Expression> row = getExpressionChain(stats);
+      // if expression data table ends, i.e. next expression is not part of a chain, stop processing
       if (row.size() <= 1) {
         // rewind
         row.forEach(expression -> stats.previous());
@@ -413,16 +550,42 @@ public class WhereBlockRewriter {
   private void rewriteTableLikeParameterization(ListIterator<Statement> stats, Function<List<Expression>, Boolean> rowExtractor) throws InvalidSpecCompileException {
     LinkedList<List<Expression>> rows = new LinkedList<>();
 
+    // iterate rows until where block ends
     while (stats.hasNext()) {
+      if (rows.size() > 0) {
+        // or the next statement is combined-labeled after the table has started already, i.e. a new data table
+        // or data pipe starts that should be cross-multiplied so the current table is finished
+        boolean nextIsMultiplicand = isMultiplicand(stats.next());
+        stats.previous();
+        if (nextIsMultiplicand) {
+          break;
+        }
+      }
+
       List<Expression> row = new ArrayList<>();
+      // or until the next statement is not a valid table row
       if (rowExtractor.apply(row)) {
         break;
       }
+
+      // if there is already at least the header row
+      // and the row to be added does not have the same size as previous rows
+      // => compile error
       if (rows.size() > 0 && rows.getLast().size() != row.size())
         throw new InvalidSpecCompileException(row.get(0), String.format("Row in data table has wrong number of elements (%s instead of %s)", row.size(), rows.getLast().size()));
+
+      // add the new row
       rows.add(row);
     }
 
+    // if no more rows are present and the table header
+    // had no following data rows => compile error
+    if (rows.size() == 1) {
+      throw new InvalidSpecCompileException(rows.get(0).get(0), "Data table must have more than just the header row");
+    }
+
+    // transform the table into a
+    // series of simple data pipes
     for (List<Expression> column : transposeTable(rows))
       turnIntoSimpleParameterization(column);
   }
@@ -497,16 +660,18 @@ public class WhereBlockRewriter {
         Expression providerExpression = column.get(row + 1);
         providerExpression.visit(new DataProviderInternalsVerifier());
 
-        List<String> referencedPreviousVariables = getReferencedPreviousVariables(previousVariables, providerExpression);
+        List<VariableExpression> previousVariableAccesses = getReferencedPreviousVariables(previousVariables, providerExpression);
+        previousDataTableVariableAccesses.addAll(previousVariableAccesses);
 
         // no previous variables referenced => just use the expression
-        if (referencedPreviousVariables.isEmpty()) {
+        if (previousVariableAccesses.isEmpty()) {
           listExpr.addExpression(providerExpression);
           continue;
         }
 
         // otherwise generate the extractors and closure
         List<Statement> statements = new ArrayList<>();
+        List<String> referencedPreviousVariables = previousVariableAccesses.stream().map(VariableExpression::getName).collect(toList());
         generatePreviousColumnExtractorStatements(referencedPreviousVariables, row, statements);
         ReturnStatement providerStatement = new ReturnStatement(providerExpression);
         providerStatement.setSourcePosition(providerExpression);
@@ -548,13 +713,13 @@ public class WhereBlockRewriter {
     }
   }
 
-  private List<String> getReferencedPreviousVariables(List<String> previousVariables, Expression providerExpression) {
+  private List<VariableExpression> getReferencedPreviousVariables(List<String> previousVariables, Expression providerExpression) {
     return previousVariables
       .stream()
       .map(PreviousDataTableVariableUsageTracker::new)
       .peek(providerExpression::visit)
       .filter(PreviousDataTableVariableUsageTracker::hasFound)
-      .map(PreviousDataTableVariableUsageTracker::getVariable)
+      .flatMap(tracker -> tracker.getVariableExpressions().stream())
       .collect(toList());
   }
 
@@ -590,6 +755,9 @@ public class WhereBlockRewriter {
 
     VariableExpression typedVarExpr = (VariableExpression)varExpr;
     verifyDataProcessorVariable(typedVarExpr);
+
+    // remember potential data variables for current multiplication factor
+    multiplicationFactorDataVariables.add(typedVarExpr.getName());
 
     VariableExpression result = new VariableExpression(typedVarExpr.getName(), typedVarExpr.getType());
     dataProcessorVars.add(result);
@@ -688,9 +856,40 @@ public class WhereBlockRewriter {
     return ann;
   }
 
+  private void createDataVariableMultiplicationsMethod() {
+    if (dataVariableMultiplications.isEmpty()) return;
+
+    Statement[] returnStatement = {
+      new ReturnStatement(
+        new ArrayExpression(
+          resources.getAstNodeCache().DataVariableMultiplication,
+          dataVariableMultiplications))
+    };
+
+    BlockStatement blockStat = new BlockStatement(returnStatement, null);
+
+    MethodNode dataVariableMultiplicationsMethod = new MethodNode(
+      InternalIdentifiers.getDataVariableMultiplicationsName(whereBlock.getParent().getAst().getName()),
+      Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_SYNTHETIC,
+      resources.getAstNodeCache().DataVariableMultiplication.makeArray(),
+      Parameter.EMPTY_ARRAY,
+      ClassNode.EMPTY_ARRAY,
+      blockStat);
+
+    whereBlock.getParent().getParent().getAst().addMethod(dataVariableMultiplicationsMethod);
+  }
+
   private static InvalidSpecCompileException notAParameterization(ASTNode stat) {
     return new InvalidSpecCompileException(stat,
 "where-blocks may only contain parameterizations (e.g. 'salary << [1000, 5000, 9000]; salaryk = salary / 1000')");
+  }
+
+  private static InvalidSpecCompileException columnsInDataTableMustNotBeLabeled(ASTNode stat) {
+    return new InvalidSpecCompileException(stat, "Columns in data tables must not be labeled");
+  }
+
+  private static InvalidSpecCompileException derivedDataVariablesCannotBeCombined(ASTNode stat) {
+    return new InvalidSpecCompileException(stat, "Derived data variables cannot be combined");
   }
 
   private static InvalidSpecCompileException dataTableHeaderMayOnlyContainVariableNames(ASTNode stat) {
@@ -713,19 +912,19 @@ public class WhereBlockRewriter {
   }
 
   private static class PreviousDataTableVariableUsageTracker extends ClassCodeVisitorSupport {
-    private boolean found = false;
     private final String variable;
+    private final List<VariableExpression> variableExpressions = new ArrayList<>();
 
     public PreviousDataTableVariableUsageTracker(String variable) {
       this.variable = variable;
     }
 
     boolean hasFound() {
-      return found;
+      return !variableExpressions.isEmpty();
     }
 
-    String getVariable() {
-      return variable;
+    public List<VariableExpression> getVariableExpressions() {
+      return variableExpressions;
     }
 
     @Override
@@ -739,7 +938,7 @@ public class WhereBlockRewriter {
       if (((expression.getAccessedVariable() instanceof DynamicVariable)
           ||(expression.getAccessedVariable() instanceof Parameter))
           && expression.getName().equals(variable)) {
-        found = true;
+        variableExpressions.add(expression);
       }
     }
   }

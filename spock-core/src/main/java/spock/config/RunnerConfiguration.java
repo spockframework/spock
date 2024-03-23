@@ -29,6 +29,7 @@ package spock.config;
  *     baseClass IntegrationSpec
  *   }
  *   filterStackTrace true // this is the default
+ *   matchFirstInteraction true // this is the default
  * }
  * </pre>
  */
@@ -39,4 +40,5 @@ public class RunnerConfiguration {
   public ParallelConfiguration parallel = new ParallelConfiguration();
   public boolean filterStackTrace = true;
   public boolean optimizeRunOrder = false;
+  public boolean matchFirstInteraction = true;
 }

@@ -17,7 +17,9 @@
 package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
+import org.spockframework.runtime.RunContext;
 import org.spockframework.util.ExceptionUtil;
+import spock.config.RunnerConfiguration;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -34,6 +36,7 @@ public class InteractionScope implements IInteractionScope {
   private int currentRegistrationZone = 0;
   private int currentExecutionZone = 0;
   private final Deque<IMockInvocation> previousInvocationsInReverseOrder = new ArrayDeque<>(MAX_PREVIOUS_INVOCATIONS);
+  private static final RunnerConfiguration configuration = RunContext.get().getConfiguration(RunnerConfiguration.class);
 
   @Override
   public void addInteraction(final IMockInteraction interaction) {
@@ -89,14 +92,18 @@ public class InteractionScope implements IInteractionScope {
 
   @Override
   public IMockInteraction match(IMockInvocation invocation) {
-    IMockInteraction firstMatch = null;
+    IMockInteraction match = null;
     for (IMockInteraction interaction : interactions)
       if (interaction.matches(invocation)) {
-        if (!interaction.isExhausted()) return interaction;
-        if (firstMatch == null) firstMatch = interaction;
+        if (configuration.matchFirstInteraction) {
+          if (!interaction.isExhausted()) return interaction;
+          if (match == null) match = interaction;
+        } else {
+          if (!interaction.isExhausted() || match == null) match = interaction;
+        }
       }
 
-    return firstMatch;
+    return match;
   }
 
   @Override

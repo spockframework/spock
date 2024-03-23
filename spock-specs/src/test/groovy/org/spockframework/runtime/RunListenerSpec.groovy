@@ -184,6 +184,7 @@ class ASpec extends Specification {
     runner.addPackageImport(Specification.package)
     runner.addClassImport(RegisterRunListener)
     runner.throwFailure = false
+    ErrorInfo errorInfo
 
     when:
     runner.runWithImports """
@@ -226,15 +227,15 @@ class ASpec extends Specification {
 """
 
     then:
-    1 * runListener.error(_) >> { ErrorInfo errorInfo ->
-      if (block != null) {
-        with(errorInfo.errorContext.currentBlock) {
-          it.kind == block
-          it.texts == blockTexts
-        }
-      } else {
-        assert errorInfo.errorContext.currentBlock == null
+    1 * runListener.error(_) >> { ErrorInfo it -> errorInfo = it }
+
+    if (block != null) {
+      with(errorInfo.errorContext.currentBlock) {
+        it.kind == block
+        it.texts == blockTexts
       }
+    } else {
+      assert errorInfo.errorContext.currentBlock == null
     }
 
     cleanup:

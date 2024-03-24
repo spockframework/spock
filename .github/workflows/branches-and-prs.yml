@@ -21,14 +21,14 @@ jobs:
       matrix:
         os: ['ubuntu-latest']
         variant: ['2.5', '3.0', '4.0']
-        java: ['8', '11', '17', '21']
+        java: ['8', '11', '17', '22']
         exclude:
           - os: 'ubuntu-latest'
             variant: '2.5'
             java: '17'
           - os: 'ubuntu-latest'
             variant: '2.5'
-            java: '21'
+            java: '22'
         include:
           - os: 'windows-latest'
             variant: '2.5'

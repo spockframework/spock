@@ -2,7 +2,7 @@
 asciidoctorj = '2.5.12'
 groovy2 = '2.5.23'
 groovy3 = '3.0.21'
-groovy4 = '4.0.20'
+groovy4 = '4.0.21'
 jacoco = '0.8.12'
 junit = '5.10.2'
 asm = '9.7'

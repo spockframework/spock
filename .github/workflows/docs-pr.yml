@@ -28,7 +28,7 @@ jobs:
       - name: 'Install GraphViz'
         run: sudo apt update && sudo apt install --yes graphviz
       - name: 'Build Docs'
-        run: ./gradlew --no-parallel --stacktrace asciidoctor javadoc "-Dvariant=4.0" "-DjavaVersion=21"
+        run: ./gradlew --stacktrace asciidoctor javadoc "-Dvariant=4.0" "-DjavaVersion=21"
       - name: 'Archive and upload docs'
         uses: actions/upload-artifact@v4
         with:

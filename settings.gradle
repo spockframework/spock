@@ -38,7 +38,7 @@ def develocityServer = "https://ge.spockframework.org"
 def isCiServer = System.env["CI"] || System.env["GITHUB_ACTIONS"]
 
 def accessKeysAreMissing() {
-  return !(System.env['GRADLE_ENTERPRISE_ACCESS_KEY']?.trim())
+  return !(System.env['DEVELOCITY_ACCESS_KEY']?.trim())
 }
 
 develocity {

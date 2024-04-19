@@ -1,0 +1,11 @@
+Unable to produce AST for this phase due to earlier compilation error:
+startup failed:
+script.groovy: 5: Columns in data tables must not be labeled @ line 5, column 21.
+         a ; combined: b
+                       ^
+
+script.groovy: 6: Data table must have more than just the header row @ line 6, column 7.
+         1 ; 2
+         ^
+
+2 errors

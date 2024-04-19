@@ -5,6 +5,8 @@ import org.spockframework.util.Beta;
 
 import java.util.concurrent.CompletableFuture;
 
+import static org.spockframework.runtime.DataIteratorFactory.UNKNOWN_ITERATIONS;
+
 /**
  * Interface for running an iteration of a test.
  *
@@ -26,7 +28,7 @@ public interface IIterationRunner {
    */
   @Deprecated
   default CompletableFuture<ExecutionResult> runIteration(Object[] args) {
-    return runIteration(args, -1);
+    return runIteration(args, UNKNOWN_ITERATIONS);
   }
 
   /**

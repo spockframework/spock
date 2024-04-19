@@ -1,0 +1,7 @@
+Unable to produce AST for this phase due to earlier compilation error:
+startup failed:
+script.groovy: 5: Derived data variables cannot be combined @ line 5, column 7.
+         a = 1
+         ^
+
+1 error

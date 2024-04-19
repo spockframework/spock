@@ -3,7 +3,10 @@ package org.spockframework.docs.datadriven
 import groovy.sql.Sql
 import groovy.transform.ToString
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.GroovyRuntimeUtil
 import spock.lang.Shared
+
+import static org.junit.platform.engine.TestDescriptor.Type.TEST
 
 class DataSpec extends EmbeddedSpecification {
 
@@ -64,18 +67,18 @@ class DataSpec extends EmbeddedSpecification {
 // end::multiple-tables[]
   }
 
-  def "multiple tables combined"() {
+  def "multiple tables joined"() {
     expect:
     a >= 0
     b < c
 
-// tag::multiple-tables-combined[]
+// tag::multiple-tables-joined[]
     where:
     a | b | c
     1 | 1 | 2
     7 | 3 | 4
     0 | 5 | 6
-// end::multiple-tables-combined[]
+// end::multiple-tables-joined[]
   }
 
   def "multiple tables with top border"() {
@@ -96,6 +99,99 @@ class DataSpec extends EmbeddedSpecification {
     3 | 4
     5 | 6
 // end::multiple-tables-with-top-border[]
+  }
+
+  def "multiple data provider combined"() {
+    given:
+    def expected = '''
+      tag::data-providers-combined-result[]
+      - `feature [a: 1, b: 3, c: 5, d: 1, e: 4, #0]`
+      - `feature [a: 1, b: 4, c: 6, d: 1, e: 5, #1]`
+      - `feature [a: 2, b: 3, c: 5, d: 1, e: 5, #2]`
+      - `feature [a: 2, b: 4, c: 6, d: 1, e: 6, #3]`
+      end::data-providers-combined-result[]
+    '''
+      .stripIndent(*(GroovyRuntimeUtil.groovy3orNewer ? [true] : []))
+      .readLines()
+      .findAll {it.startsWith('-') }
+      .join('\n')
+      .trim()
+
+    when:
+    def result = runner.runSpecBody '''
+      def feature() {
+        expect:
+        a >= 0
+        b < c
+        e == a + b
+
+        // tag::multiple-tables-combined[]
+        where:
+        a | _
+        1 | _
+        2 | _
+
+        combined:
+
+        b | c
+        3 | 5
+        4 | 6
+
+        combined:
+
+        d | _
+        1 | _
+
+        e = a + b
+        // end::multiple-tables-combined[]
+      }
+    '''
+
+    then:
+    """- `${
+      result
+        .testEvents()
+        .succeeded()
+        .list()
+        *.testDescriptor
+        .findAll { it.type == TEST }
+        *.displayName
+        .join('`\n- `')
+    }`""" == expected
+
+    when:
+    result = runner.runSpecBody '''
+      def feature() {
+        expect:
+        a >= 0
+        b < c
+        e == a + b
+
+        // tag::pipe-and-table-combined[]
+        where:
+        a << [1, 2]
+        combined:
+        b | c
+        3 | 5
+        4 | 6
+
+        d = 1
+        e = a + b
+        // end::pipe-and-table-combined[]
+      }
+    '''
+
+    then:
+    """- `${
+      result
+        .testEvents()
+        .succeeded()
+        .list()
+        *.testDescriptor
+        .findAll { it.type == TEST }
+        *.displayName
+        .join('`\n- `')
+    }`""" == expected
   }
 
 // tag::sql-data-pipe[]
@@ -367,4 +463,3 @@ class CoerceBazToBar {
     String name
   }
 }
-

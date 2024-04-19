@@ -67,15 +67,6 @@ import static org.asciidoctor.log.Severity.WARN;
  */
 public class IncludedSourceLinker {
   /**
-   * This padding is used as the start of the marker lines, because at the time the tree processor
-   * runs, the indenting magic already happened, and if the marker line does not start with enough padding,
-   * the code might not be unindented enough, or we would need to implement own indent-handling logic for
-   * the including blocks.
-   */
-  private static final String INCLUDE_SOURCE_MARKER_PADDING =
-    "                                                                                                    ";
-
-  /**
    * A unique marker for the lines inserted by the include processor, then later
    * transformed and removed by the tree processor, and verified by the post processor.
    */
@@ -498,6 +489,19 @@ public class IncludedSourceLinker {
         private void pushMarkedInclude(Document document, PreprocessorReader reader, String target,
                                        StringBuilder includedText, int firstLine, Path includee,
                                        Map<String, Object> attributes) {
+          // this padding is used as the start of the marker line, because at the time the tree processor
+          // runs, the indenting magic already happened, and if the marker line does not start with the right padding,
+          // the code might not be unindented enough, or we would need to implement own indent-handling logic for
+          // the including blocks
+          int padding = includedText
+            .toString()
+            .lines()
+            .mapToLong(line -> line.chars().takeWhile(c -> c == ' ').count())
+            .filter(c -> c > 0)
+            .mapToInt(Math::toIntExact)
+            .min()
+            .orElse(0);
+
           // push to the top of the included text the include source marker looking like
           // "<padding for not disturbing indent handling><includeSourceMarker><link to file and line on GitHub><includeSourceMarker>\n"
           includedText.insert(0, '\n');
@@ -509,8 +513,7 @@ public class IncludedSourceLinker {
           includedText.insert(0, document.getAttribute("commit-ish", "master"));
           includedText.insert(0, '/');
           includedText.insert(0, document.getAttribute("github-blob-base"));
-          includedText.insert(0, includeSourceMarker);
-          includedText.insert(0, INCLUDE_SOURCE_MARKER_PADDING);
+          includedText.insert(0, includeSourceMarker.indent(padding).stripTrailing());
 
           reader.pushInclude(includedText.toString(), includee.getFileName().toString(),
             includee.getParent().toString(), firstLine, attributes);
@@ -568,11 +571,11 @@ public class IncludedSourceLinker {
               List<String> lines = block.getLines();
 
               // trim the remainders of the padding that could have been shortened by indent handling
-              // and search for lines that then start and end with the include source marker
-              List<String> includeSourceMarkerLines = lines
+              // and search for the first line that then starts and ends with the include source marker
+              Optional<String> includeSourceMarkerLine = lines
                 .stream()
                 .filter(line -> line.trim().startsWith(includeSourceMarker) && line.endsWith(includeSourceMarker))
-                .toList();
+                .findFirst();
 
               // if a literal block gets source style, it is transformed to a listing block
               // but this attribute still preserves the information that it originally was a literal block
@@ -583,7 +586,7 @@ public class IncludedSourceLinker {
               // if we are at a literal block, just do nothing and don't complain;
               // be aware that a literal block with `source` style in the sources ends up as listing block here
               // Once https://github.com/asciidoctor/asciidoctor/issues/4556 is implemented we could add a recognition here
-              if (includeSourceMarkerLines.isEmpty()) {
+              if (includeSourceMarkerLine.isEmpty()) {
                 if (listings && !cloakedLiteral && !lines.isEmpty()) {
                   log(new LogRecord(WARN, "listing with only inline code found; " +
                     "if this is not source from a file, consider using a literal block instead; " +
@@ -592,10 +595,8 @@ public class IncludedSourceLinker {
                 return;
               }
 
-              // get the first include source marker line and
-              // remove all such marker lines from the content
-              String includeSourceMarkerLine = includeSourceMarkerLines.get(0);
-              lines.removeAll(includeSourceMarkerLines);
+              // remove all include source marker lines from the content
+              lines.removeIf(line -> line.trim().startsWith(includeSourceMarker) && line.endsWith(includeSourceMarker));
               block.setLines(lines);
 
               // construct an AsciiDoc table programmatically that wraps
@@ -637,9 +638,9 @@ public class IncludedSourceLinker {
 
               // construct the cell for the links column
               // first extract the GitHub link from the first include source marker line
-              String sourceLink = includeSourceMarkerLine.substring(
-                includeSourceMarkerLine.indexOf(includeSourceMarker) + includeSourceMarkerLength,
-                includeSourceMarkerLine.length() - includeSourceMarkerLength);
+              String sourceLink = includeSourceMarkerLine.get().substring(
+                includeSourceMarkerLine.get().indexOf(includeSourceMarker) + includeSourceMarkerLength,
+                includeSourceMarkerLine.get().length() - includeSourceMarkerLength);
               StringBuilder linksBuilder = new StringBuilder();
               // add the GitHub icon that links to the source file and line on GitHub
               linksBuilder

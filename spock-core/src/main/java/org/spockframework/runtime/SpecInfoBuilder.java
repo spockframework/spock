@@ -150,6 +150,15 @@ public class SpecInfoBuilder {
         providerMethodName = InternalIdentifiers.getDataProviderName(method.getName(), providerCount++);
         providerMethod = createMethod(providerMethodName, MethodKind.DATA_PROVIDER);
       }
+
+      if (providerCount > 1) {
+        String variableMultiplicationsMethodName = InternalIdentifiers.getDataVariableMultiplicationsName(method.getName());
+        MethodInfo dataVariableMultiplicationsMethod = createMethod(variableMultiplicationsMethodName, MethodKind.DATA_VARIABLE_MULTIPLICATIONS);
+
+        if (dataVariableMultiplicationsMethod != null) {
+          feature.setDataVariableMultiplicationsMethod(dataVariableMultiplicationsMethod);
+        }
+      }
     }
 
     for (BlockMetadata blockMetadata : featureMetadata.blocks()) {

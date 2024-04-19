@@ -7,8 +7,8 @@ pluginManagement {
   }
 
   plugins {
-    id "com.gradle.enterprise" version "3.17.1"
-    id "com.gradle.common-custom-user-data-gradle-plugin" version "1.13"
+    id "com.gradle.develocity" version "3.17.2"
+    id "com.gradle.common-custom-user-data-gradle-plugin" version "2.0.1"
     id "org.asciidoctor.jvm.convert" version "4.0.2"
     id "net.nemerosa.versioning" version "3.1.0"
     id "io.github.gradle-nexus.publish-plugin" version "2.0.0"
@@ -19,7 +19,7 @@ pluginManagement {
 }
 
 plugins {
-  id "com.gradle.enterprise"
+  id "com.gradle.develocity"
   id "com.gradle.common-custom-user-data-gradle-plugin"
 }
 
@@ -34,30 +34,27 @@ if (!JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
 }
 
 
-def gradleEnterpriseServer = "https://ge.spockframework.org"
+def develocityServer = "https://ge.spockframework.org"
 def isCiServer = System.env["CI"] || System.env["GITHUB_ACTIONS"]
 
 def accessKeysAreMissing() {
   return !(System.env['GRADLE_ENTERPRISE_ACCESS_KEY']?.trim())
 }
 
-gradleEnterprise {
+develocity {
   buildScan {
-    captureTaskInputFiles = true
     uploadInBackground = !isCiServer
 
 
     if (gradle.startParameter.buildScan || (isCiServer && accessKeysAreMissing())) {
-      termsOfServiceUrl = "https://gradle.com/terms-of-service"
+      termsOfUseUrl = "https://gradle.com/terms-of-service"
     } else {
-      server = gradleEnterpriseServer
-      publishAlways()
-      (delegate as BuildScanExtensionWithHiddenFeatures).publishIfAuthenticated()
-    }
+      server = develocityServer
+      publishing.onlyIf {  it.authenticated }
+      }
 
     if (isCiServer) {
-      publishAlways()
-      termsOfServiceAgree = "yes"
+      termsOfUseAgree = "yes"
     }
 
     obfuscation {
@@ -77,11 +74,11 @@ buildCache {
   }
   if (gradle.startParameter.buildScan || (isCiServer && accessKeysAreMissing())) {
     remote(HttpBuildCache) {
-      url = uri("$gradleEnterpriseServer/cache/")
+      url = uri("$develocityServer/cache/")
       push = false
     }
   } else {
-    remote(gradleEnterprise.buildCache) {
+    remote(develocity.buildCache) {
       push = isCiServer
     }
   }

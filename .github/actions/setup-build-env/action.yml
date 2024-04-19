@@ -14,7 +14,7 @@ runs:
       with:
         additional-java-version: ${{ inputs.additional-java-version }}
     - name: Init Gradle Build Action
-      uses: gradle/gradle-build-action@v3
+      uses: gradle/actions/setup-gradle@v3
       with:
         cache-read-only: ${{ github.ref != 'refs/heads/master' }}
     - name: 'Gradle javaToolchains'

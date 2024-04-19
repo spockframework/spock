@@ -74,13 +74,15 @@ tasks.named("test", Test) {
   }
 
   if (isCiServer) {
-    retry {
-      maxRetries = 2
-      maxFailures = 20
+    develocity {
+      testRetry {
+        maxRetries = 2
+        maxFailures = 20
 
-      filter {
-        includeAnnotationClasses.add("spock.lang.Timeout")
-        includeAnnotationClasses.add("spock.lang.Isolated")
+        filter {
+          includeAnnotationClasses.add("spock.lang.Timeout")
+          includeAnnotationClasses.add("spock.lang.Isolated")
+        }
       }
     }
   }

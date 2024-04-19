@@ -60,8 +60,6 @@ jobs:
       - name: 'Build Spock'
         # secrets are not injected for pull requests
         env:
-          ORG_GRADLE_PROJECT_spockBuildCacheUsername: ${{ secrets.SPOCK_BUILD_CACHE_USERNAME }}
-          ORG_GRADLE_PROJECT_spockBuildCachePassword: ${{ secrets.SPOCK_BUILD_CACHE_PASSWORD }}
           DEVELOCITY_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
         run: ./gradlew --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}"
       - name: 'Upload to Codecov.io'

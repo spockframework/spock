@@ -48,7 +48,7 @@ workflow(
         )
         uses(
             name = "Validate Wrapper",
-            action = WrapperValidationActionV2()
+            action = WrapperValidationActionV2(_customVersion = "v3")
         )
     }
 }.writeToFile()

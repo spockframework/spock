@@ -91,7 +91,6 @@ workflow(
             name = "Build Spock",
             command = listOf(
                 "./gradlew",
-                "--no-parallel",
                 "--stacktrace",
                 "ghActionsBuild",
                 """"-Dvariant=${expr(Matrix.variant)}"""",

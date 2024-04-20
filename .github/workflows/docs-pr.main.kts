@@ -75,7 +75,6 @@ workflow(
             name = "Build Docs",
             command = listOf(
                 "./gradlew",
-                "--no-parallel",
                 "--stacktrace",
                 "asciidoctor",
                 "javadoc",

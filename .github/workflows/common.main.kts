@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-@file:DependsOn("io.github.typesafegithub:github-workflows-kt:1.12.0")
+@file:DependsOn("io.github.typesafegithub:github-workflows-kt:1.14.0")
 
 import io.github.typesafegithub.workflows.domain.Job
 import io.github.typesafegithub.workflows.domain.JobOutputs.EMPTY
@@ -29,14 +29,10 @@ import io.github.typesafegithub.workflows.dsl.expressions.Contexts.secrets
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import java.util.Properties
 
-val SPOCK_BUILD_CACHE_USERNAME by secrets
-val SPOCK_BUILD_CACHE_PASSWORD by secrets
 val GRADLE_ENTERPRISE_ACCESS_KEY by secrets
 
 val commonCredentials = linkedMapOf(
-    "ORG_GRADLE_PROJECT_spockBuildCacheUsername" to expr(SPOCK_BUILD_CACHE_USERNAME),
-    "ORG_GRADLE_PROJECT_spockBuildCachePassword" to expr(SPOCK_BUILD_CACHE_PASSWORD),
-    "GRADLE_ENTERPRISE_ACCESS_KEY" to expr(GRADLE_ENTERPRISE_ACCESS_KEY)
+    "DEVELOCITY_ACCESS_KEY" to expr(GRADLE_ENTERPRISE_ACCESS_KEY)
 )
 
 data class Strategy(

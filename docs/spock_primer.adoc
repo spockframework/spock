@@ -148,7 +148,7 @@ interacting feature methods), and may occur more than once.
 
 Spock has built-in support for implementing each of the conceptual phases of a feature method. To this end, feature
 methods are structured into so-called _blocks_. Blocks start with a label, and extend to the beginning of the next block,
-or the end of the method. There are six kinds of blocks: `given`, `when`, `then`, `expect`, `cleanup`, and `where` blocks.
+or the end of the method. There are seven kinds of blocks: `given`, `when`, `then`, `expect`, `cleanup`, `where`, and `filter` blocks.
 Any statements between the beginning of the method and the first explicit block belong to an implicit `given` block.
 
 A feature method must have at least one explicit (i.e. labelled) block - in fact, the presence of an explicit block is
@@ -483,7 +483,7 @@ TIP: If a specification is designed in such a way that all its feature methods r
 
 ==== Where Blocks
 
-A `where` block always comes last in a method, and may not be repeated. It is used to write data-driven feature methods.
+A `where` block may only be followed by a `filter` block, and may not be repeated. It is used to write data-driven feature methods.
 To give you an idea how this is done, have a look at the following example:
 
 [source,groovy]
@@ -505,6 +505,21 @@ and another one where `a` is 3, `b` is 9, and `c` is 9.
 Although it is declared last, the `where` block is evaluated before the feature method containing it runs.
 
 The `where` block is further explained in the <<data_driven_testing.adoc#data-driven-testing,Data Driven Testing>> chapter.
+
+==== Filter Blocks
+
+A `filter` block always comes last in a method, and may not be repeated. It is used to filter iterations in data-driven feature methods.
+To give you an idea how this is done, have a look at the following example:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=excluding-iterations]
+----
+
+The content of the `filter` block is treated like the content of an `expect` block. If any of the implicit or explicit
+assertions in it fail for a given iteration, this iteration is skipped.
+
+The `filter` block is further explained in the <<data_driven_testing.adoc#data-driven-testing,Data Driven Testing>> chapter.
 
 == Helper Methods
 

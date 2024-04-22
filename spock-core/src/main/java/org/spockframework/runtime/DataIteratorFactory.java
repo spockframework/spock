@@ -2,10 +2,13 @@ package org.spockframework.runtime;
 
 import org.spockframework.runtime.model.*;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.*;
 
 import org.jetbrains.annotations.NotNull;
 import org.spockframework.util.Nullable;
+import spock.config.RunnerConfiguration;
 
 import static java.util.Collections.emptyIterator;
 import static java.util.Collections.singletonList;
@@ -248,6 +251,8 @@ public class DataIteratorFactory {
     private final int estimatedNumIterations;
     private final List<String> dataVariableNames;
     private boolean firstIteration = true;
+    private boolean logFilteredIterations = true;
+    private IStackTraceFilter stackTraceFilter;
 
     public FeatureDataProviderIterator(IRunSupervisor supervisor, SpockExecutionContext context) {
       super(supervisor, context);
@@ -256,6 +261,14 @@ public class DataIteratorFactory {
       dataProviders = createDataProviders();
       estimatedNumIterations = estimateNumIterations(dataProviders);
       dataProviderIterators = createDataProviderIterators();
+
+      RunnerConfiguration runnerConfiguration = context
+        .getRunContext()
+        .getConfiguration(RunnerConfiguration.class);
+      logFilteredIterations = runnerConfiguration.logFilteredIterations;
+      if (logFilteredIterations) {
+        stackTraceFilter = runnerConfiguration.filterStackTrace ? new StackTraceFilter(context.getSpec()) : new DummyStackTraceFilter();
+      }
     }
 
     @Override
@@ -284,22 +297,60 @@ public class DataIteratorFactory {
       }
       firstIteration = false;
 
-      // advances iterators and computes args
-      Object[] next = new Object[dataProviders.length];
-      for (int i = 0; i < dataProviders.length; ) {
-        try {
-          Object[] nextValues = dataProviderIterators[i].next();
-          if (nextValues == null) {
+      while (true) {
+        // advances iterators and computes args
+        Object[] next = new Object[dataProviders.length];
+        for (int i = 0; i < dataProviders.length; ) {
+          try {
+            // if the filter block excluded an iteration
+            // this might be called after the last iteration
+            // so just return null if no further data is available
+            // to just cause the iteration to be skipped
+            if (!dataProviderIterators[i].hasNext()) {
+              return null;
+            }
+            Object[] nextValues = dataProviderIterators[i].next();
+            if (nextValues == null) {
+              return null;
+            }
+            System.arraycopy(nextValues, 0, next, i, nextValues.length);
+            i += nextValues.length;
+          } catch (Throwable t) {
+            supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProviders().get(i).getDataProviderMethod(), t));
             return null;
           }
-          System.arraycopy(nextValues, 0, next, i, nextValues.length);
-          i += nextValues.length;
+        }
+
+        MethodInfo filterMethod = context.getCurrentFeature().getFilterMethod();
+
+        if (filterMethod == null) {
+          return next;
+        }
+
+        try {
+          // do not use invokeRaw here, as that would report Assertion Error to the supervisor
+          filterMethod.invoke(null, next);
+          return next;
+        } catch (AssertionError ae) {
+          if (logFilteredIterations) {
+            StringJoiner stringJoiner = new StringJoiner(", ", "Filtered iteration [", "]:\n");
+            for (int i = 0; i < dataVariableNames.size(); i++) {
+              stringJoiner.add(dataVariableNames.get(i) + ": " + next[i]);
+            }
+            StringWriter sw = new StringWriter();
+            sw.write(stringJoiner.toString());
+            stackTraceFilter.filter(ae);
+            try (PrintWriter pw = new PrintWriter(sw)) {
+              ae.printStackTrace(pw);
+            }
+            System.err.println(sw);
+          }
+          // filter block does not like these values, try next ones if available
         } catch (Throwable t) {
-          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProviders().get(i).getDataProviderMethod(), t));
+          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(filterMethod, t));
           return null;
         }
       }
-      return next;
     }
 
     @Override

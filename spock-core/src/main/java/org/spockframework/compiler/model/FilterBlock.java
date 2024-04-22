@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,25 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.model;
+package org.spockframework.compiler.model;
 
 /**
- * The different kind of blocks that a <tt>BlockInfo</tt> instance can represent.
- *
- * @author Peter Niederwieser
+ * AST node representing a filter-block in a feature method.
  */
-public enum BlockKind {
-  SETUP,
-  EXPECT,
-  WHEN,
-  THEN,
-  CLEANUP,
-  WHERE,
-  FILTER
+public class FilterBlock extends Block {
+  public FilterBlock(Method parent) {
+    super(parent);
+    setName("filter");
+  }
+
+  @Override
+  public void accept(ISpecVisitor visitor) throws Exception {
+    visitor.visitAnyBlock(this);
+    visitor.visitFilterBlock(this);
+  }
+
+  @Override
+  public BlockParseInfo getParseInfo() {
+    return BlockParseInfo.FILTER;
+  }
 }

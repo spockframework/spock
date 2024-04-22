@@ -442,6 +442,23 @@ yield different numbers of iterations. If a data provider runs out of values soo
 Variable assignments don't affect the number of iterations. A `where:` block that only contains assignments yields
 exactly one iteration.
 
+== Filtering iterations
+
+If you want to filter out some iterations, you can use the `@IgnoreIf` annotation on the feature method.
+This has one significant drawback though, the iteration would be reported as skipped in test reports.
+Therefor you can have a `filter` block after the `where` block.
+The content of this block is treated like the content of the `exepct` block.
+If any of the implicit or explicit assertions in the `filter` block fails, the iteration is treated like it would not exist.
+This also means, that if all iterations are filtered out, the test will fail like when giving a data provider without content.
+
+In the following example the test is executed with the values `1`, `2`, `4`, and `5` for the variable `i`,
+the iteration where `i` would be `3` is filtered out by the `filter` block:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=excluding-iterations]
+----
+
 == Closing of Data Providers
 
 After all iterations have completed, the zero-argument `close` method is called on all data providers that have

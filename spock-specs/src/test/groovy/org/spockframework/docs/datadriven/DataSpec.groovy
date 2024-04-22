@@ -457,6 +457,19 @@ class CoerceBazToBar {
   }
 // end::unrolled-3b[]
 
+  // tag::excluding-iterations[]
+  def "excluding iterations"() {
+    expect:
+    i in ((1..5) - 3)
+
+    where:
+    i << (1..5)
+
+    filter:
+    i != 3
+  }
+  // end::excluding-iterations[]
+
   @ToString(includes = ['name'], includePackage = false)
   static class Person {
     int age

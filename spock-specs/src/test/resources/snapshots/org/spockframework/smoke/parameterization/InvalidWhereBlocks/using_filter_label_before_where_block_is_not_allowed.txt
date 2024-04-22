@@ -1,0 +1,7 @@
+Unable to produce AST for this phase due to earlier compilation error:
+startup failed:
+script.groovy: 2: 'filter' is not allowed here; instead, use one of: [setup, given, expect, when, cleanup, where, end-of-method] @ line 2, column 7.
+         true
+         ^
+
+1 error

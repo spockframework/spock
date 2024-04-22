@@ -95,7 +95,7 @@ jobs:
       matrix:
         os: ['ubuntu-latest']
         variant: ['4.0']      # docs need the highest variant
-        java: ['22']          # docs need the highest java version
+        java: ['21']          # docs need the highest java version
     steps:
       - uses: actions/checkout@v4
       - name: 'Set up JDKs'

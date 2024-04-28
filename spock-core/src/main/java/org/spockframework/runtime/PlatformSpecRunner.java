@@ -332,6 +332,7 @@ public class PlatformSpecRunner {
 
     Object[] dataValues = context.getCurrentIteration().getDataValues();
     invoke(context, context.getCurrentInstance(), featureIteration, dataValues);
+    getSpecificationContext(context).setCurrentBlock(null);
   }
 
   void runCleanup(SpockExecutionContext context) {

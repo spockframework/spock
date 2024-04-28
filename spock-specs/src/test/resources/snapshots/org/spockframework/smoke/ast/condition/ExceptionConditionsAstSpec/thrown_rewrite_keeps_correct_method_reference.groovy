@@ -8,26 +8,22 @@ public java.lang.Object foobar() {
 }
 
 public void $spock_feature_0_0() {
+    java.lang.Object foobar
+    org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.WHEN, []))
+    this.getSpecificationContext().setThrownException(null)
     try {
-        java.lang.Object foobar
-        org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.WHEN, []))
-        this.getSpecificationContext().setThrownException(null)
-        try {
-            foobar = this.foobar()
-        }
-        catch (java.lang.Throwable $spock_ex) {
-            this.getSpecificationContext().setThrownException($spock_ex)
-        }
-        finally {
-        }
-        org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.WHEN, []))
-        org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.THEN, []))
-        this.thrownImpl(null, null, java.lang.IllegalStateException)
-        org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.THEN, []))
-        this.getSpecificationContext().getMockController().leaveScope()
+        foobar = this.foobar()
+    }
+    catch (java.lang.Throwable $spock_ex) {
+        this.getSpecificationContext().setThrownException($spock_ex)
     }
     finally {
-        org.spockframework.runtime.SpockRuntime.clearCurrentBlock(this.getSpecificationContext())}
+    }
+    org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.WHEN, []))
+    org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.THEN, []))
+    this.thrownImpl(null, null, java.lang.IllegalStateException)
+    org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.THEN, []))
+    this.getSpecificationContext().getMockController().leaveScope()
 }
 /*--------- end::snapshot[] ---------*/
 }

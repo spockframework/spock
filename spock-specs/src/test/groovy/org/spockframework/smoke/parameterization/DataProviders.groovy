@@ -18,6 +18,7 @@ package org.spockframework.smoke.parameterization
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpockExecutionException
+import org.spockframework.specs.extension.SpockSnapshotter
 import spock.lang.*
 import spock.util.Show
 
@@ -103,7 +104,10 @@ where: x << []
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1287")
-  def "data provider with asserting closure produces error rethrower variable in data provider method"() {
+  def "data provider with asserting closure produces error rethrower variable in data provider method"(@Snapshot SpockSnapshotter snapshotter) {
+    given:
+    snapshotter.specBody()
+
     when:
     def result = compiler.transpileFeatureBody('''
       where:
@@ -112,30 +116,7 @@ where: x << []
     ''', EnumSet.of(Show.METHODS))
 
     then:
-    result.source == '''\
-public void $spock_feature_0_0(java.lang.Object dataPipe, java.lang.Object dataVariable) {
-    this.getSpecificationContext().getMockController().leaveScope()
-}
-
-public java.lang.Object $spock_feature_0_0prov0() {
-    org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
-    return [{ ->
-        org.spockframework.runtime.ValueRecorder $spock_valueRecorder1 = new org.spockframework.runtime.ValueRecorder()
-        try {
-            org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder1.reset(), 'true', 2, 29, null, $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(0), true))
-        }
-        catch (java.lang.Throwable $spock_condition_throwable) {
-            org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder1, 'true', 2, 29, null, $spock_condition_throwable)}
-        finally {
-        }
-    }]
-}
-
-public java.lang.Object $spock_feature_0_0proc(java.lang.Object $spock_p0) {
-    java.lang.Object dataPipe = (( $spock_p0 ) as java.lang.Object)
-    java.lang.Object dataVariable = ((null) as java.lang.Object)
-    return new java.lang.Object[]{ dataPipe , dataVariable }
-}'''
+    snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1287")
@@ -152,7 +133,10 @@ public java.lang.Object $spock_feature_0_0proc(java.lang.Object $spock_p0) {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1287")
-  def "data variable with asserting closure produces error rethrower variable in data processor method"() {
+  def "data variable with asserting closure produces error rethrower variable in data processor method"(@Snapshot SpockSnapshotter snapshotter) {
+    given:
+    snapshotter.specBody()
+
     when:
     def result = compiler.transpileFeatureBody('''
       where:
@@ -161,30 +145,7 @@ public java.lang.Object $spock_feature_0_0proc(java.lang.Object $spock_p0) {
     ''', EnumSet.of(Show.METHODS))
 
     then:
-    result.source == '''\
-public void $spock_feature_0_0(java.lang.Object dataPipe, java.lang.Object dataVariable) {
-    this.getSpecificationContext().getMockController().leaveScope()
-}
-
-public java.lang.Object $spock_feature_0_0prov0() {
-    return [null]
-}
-
-public java.lang.Object $spock_feature_0_0proc(java.lang.Object $spock_p0) {
-    org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
-    java.lang.Object dataPipe = (( $spock_p0 ) as java.lang.Object)
-    java.lang.Object dataVariable = (({ ->
-        org.spockframework.runtime.ValueRecorder $spock_valueRecorder1 = new org.spockframework.runtime.ValueRecorder()
-        try {
-            org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder1.reset(), 'true', 3, 31, null, $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(0), true))
-        }
-        catch (java.lang.Throwable $spock_condition_throwable) {
-            org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder1, 'true', 3, 31, null, $spock_condition_throwable)}
-        finally {
-        }
-    }) as java.lang.Object)
-    return new java.lang.Object[]{ dataPipe , dataVariable }
-}'''
+    snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1287")

@@ -58,10 +58,12 @@ public class SpecificationContext implements ISpecificationContext {
     return currentIteration;
   }
 
-  void setCurrentBlock(BlockInfo blockInfo) {
+  public static final String SET_CURRENT_BLOCK = "setCurrentBlock";
+  public void setCurrentBlock(BlockInfo blockInfo) {
     this.currentBlock = blockInfo;
   }
 
+  public static final String GET_CURRENT_BLOCK = "getCurrentBlock";
   @Override
   public BlockInfo getCurrentBlock() {
     return currentBlock;

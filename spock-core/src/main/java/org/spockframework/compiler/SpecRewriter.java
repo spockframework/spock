@@ -16,20 +16,25 @@
 
 package org.spockframework.compiler;
 
-import org.spockframework.compiler.model.*;
-import org.spockframework.runtime.SpockException;
-import org.spockframework.util.*;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.runtime.MetaClassHelper;
-import org.codehaus.groovy.syntax.*;
+import org.codehaus.groovy.syntax.Token;
+import org.codehaus.groovy.syntax.Types;
+import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Opcodes;
+import org.spockframework.compiler.model.*;
+import org.spockframework.runtime.SpockException;
+import org.spockframework.util.InternalIdentifiers;
+import org.spockframework.util.ObjectUtil;
+import org.spockframework.util.ReflectionUtil;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -428,19 +433,33 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     // As the cleanup block finalizes the specification, it would override any previous block in ErrorInfo,
     // so we only call enterBlock if there is no error yet.
     if (blockType == BlockParseInfo.CLEANUP) {
-      block.getAst().add(0, ifThrowableIsNull(enterBlockCall));
-      block.getAst().add(ifThrowableIsNull(exitBlockCall));
+      VariableExpression failedBlock = new VariableExpression(SpockNames.FAILED_BLOCK, nodeCache.BlockInfo);
+      block.getAst().addAll(0, asList(
+        ifThrowableIsNotNull(storeFailedBlock(failedBlock)),
+        new ExpressionStatement(enterBlockCall)
+      ));
+      block.getAst().add(new ExpressionStatement(exitBlockCall));
     } else {
       block.getAst().add(0, new ExpressionStatement(enterBlockCall));
       block.getAst().add( new ExpressionStatement(exitBlockCall));
     }
   }
 
-  private IfStatement ifThrowableIsNull(MethodCallExpression methodCall) {
+  private @NotNull Statement storeFailedBlock(VariableExpression failedBlock) {
+    MethodCallExpression getCurrentBlock = createDirectMethodCall(getSpecificationContext(), nodeCache.SpecificationContext_GetBlockCurrentBlock, ArgumentListExpression.EMPTY_ARGUMENTS);
+    return new ExpressionStatement(new BinaryExpression(failedBlock, Token.newSymbol(Types.ASSIGN, -1, -1), getCurrentBlock));
+  }
+
+  private @NotNull Statement restoreFailedBlock(VariableExpression failedBlock) {
+
+    return new ExpressionStatement(createDirectMethodCall(new CastExpression(nodeCache.SpecificationContext, getSpecificationContext()), nodeCache.SpecificationContext_SetBlockCurrentBlock, new ArgumentListExpression(failedBlock)));
+  }
+
+  private IfStatement ifThrowableIsNotNull(Statement statement) {
     return new IfStatement(
-      // if ($spock_feature_throwable == null)
-      new BooleanExpression(AstUtil.createVariableIsNullExpression(new VariableExpression(SpecRewriter.SPOCK_FEATURE_THROWABLE, nodeCache.Throwable))),
-      new ExpressionStatement(methodCall),
+      // if ($spock_feature_throwable != null)
+      new BooleanExpression(AstUtil.createVariableIsNotNullExpression(new VariableExpression(SpecRewriter.SPOCK_FEATURE_THROWABLE, nodeCache.Throwable))),
+      statement,
       EmptyStatement.INSTANCE
     );
   }
@@ -560,9 +579,10 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     }
 
     CatchStatement featureCatchStat = createThrowableAssignmentAndRethrowCatchStatement(featureThrowableVar);
-
-    List<Statement> cleanupStats = singletonList(
-        createCleanupTryCatch(block, featureThrowableVar));
+    VariableExpression failedBlock = new VariableExpression(SpockNames.FAILED_BLOCK, nodeCache.BlockInfo);
+    List<Statement> cleanupStats = asList(
+        new ExpressionStatement(new DeclarationExpression(failedBlock, Token.newSymbol(Types.ASSIGN, -1, -1), ConstantExpression.NULL)),
+        createCleanupTryCatch(block, featureThrowableVar, failedBlock));
 
     TryCatchStatement tryFinally =
         new TryCatchStatement(
@@ -588,13 +608,13 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     return new ExpressionStatement(throwableDecl);
   }
 
-  private TryCatchStatement createCleanupTryCatch(CleanupBlock block, VariableExpression featureThrowableVar) {
+  private TryCatchStatement createCleanupTryCatch(CleanupBlock block, VariableExpression featureThrowableVar, VariableExpression failedBlock) {
     List<Statement> cleanupStats = new ArrayList<>(block.getAst());
-
     TryCatchStatement tryCatchStat =
         new TryCatchStatement(
             new BlockStatement(cleanupStats, null),
-            EmptyStatement.INSTANCE);
+            ifThrowableIsNotNull(restoreFailedBlock(failedBlock))
+        );
 
     tryCatchStat.addCatch(createHandleSuppressedThrowableStatement(featureThrowableVar));
 
@@ -621,7 +641,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   private CatchStatement createHandleSuppressedThrowableStatement(VariableExpression featureThrowableVar) {
     Parameter catchParameter = new Parameter(nodeCache.Throwable, SPOCK_TMP_THROWABLE);
 
-    BinaryExpression featureThrowableNotNullExpr = AstUtil.createVariableNotNullExpression(featureThrowableVar);
+    BinaryExpression featureThrowableNotNullExpr = AstUtil.createVariableIsNotNullExpression(featureThrowableVar);
 
     List<Statement> addSuppressedStats =
       singletonList(new ExpressionStatement(

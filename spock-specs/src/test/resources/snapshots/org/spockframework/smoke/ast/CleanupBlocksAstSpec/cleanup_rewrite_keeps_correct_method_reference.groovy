@@ -31,14 +31,14 @@ public void $spock_feature_0_0() {
         throw $spock_tmp_throwable
     }
     finally {
+        org.spockframework.runtime.model.BlockInfo $spock_failedBlock = null
         try {
-            if ( $spock_feature_throwable == null) {
-                org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.CLEANUP, []))
+            if ( $spock_feature_throwable != null) {
+                $spock_failedBlock = this.getSpecificationContext().getCurrentBlock()
             }
+            org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.CLEANUP, []))
             foobar.size()
-            if ( $spock_feature_throwable == null) {
-                org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.CLEANUP, []))
-            }
+            org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.CLEANUP, []))
         }
         catch (java.lang.Throwable $spock_tmp_throwable) {
             if ( $spock_feature_throwable != null) {
@@ -48,6 +48,9 @@ public void $spock_feature_0_0() {
             }
         }
         finally {
+            if ( $spock_feature_throwable != null) {
+                ((org.spockframework.runtime.SpecificationContext) this.getSpecificationContext()).setCurrentBlock($spock_failedBlock)
+            }
         }
     }
     this.getSpecificationContext().getMockController().leaveScope()

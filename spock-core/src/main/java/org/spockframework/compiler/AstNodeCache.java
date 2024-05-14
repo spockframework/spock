@@ -71,12 +71,12 @@ public class AstNodeCache {
 
   public final MethodNode SpockRuntime_DespreadList =
       SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.DESPREAD_LIST).get(0);
+
   public final MethodNode SpockRuntime_CallEnterBlock =
       SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.CALL_ENTER_BLOCK).get(0);
+
   public final MethodNode SpockRuntime_CallExitBlock =
       SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.CALL_EXIT_BLOCK).get(0);
-  public final MethodNode SpockRuntime_ClearCurrentBlock =
-      SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.CLEAR_CURRENT_BLOCK).get(0);
 
   public final MethodNode ValueRecorder_Reset =
       ValueRecorder.getDeclaredMethods(org.spockframework.runtime.ValueRecorder.RESET).get(0);
@@ -113,6 +113,12 @@ public class AstNodeCache {
 
   public final MethodNode SpecificationContext_GetSharedInstance =
       SpecificationContext.getDeclaredMethods(org.spockframework.runtime.SpecificationContext.GET_SHARED_INSTANCE).get(0);
+
+  public final MethodNode SpecificationContext_GetBlockCurrentBlock =
+      SpecificationContext.getDeclaredMethods(org.spockframework.runtime.SpecificationContext.GET_CURRENT_BLOCK).get(0);
+
+  public final MethodNode SpecificationContext_SetBlockCurrentBlock =
+      SpecificationContext.getDeclaredMethods(org.spockframework.runtime.SpecificationContext.SET_CURRENT_BLOCK).get(0);
 
   public final MethodNode List_Get =
       ClassHelper.LIST_TYPE.getDeclaredMethods("get").get(0);

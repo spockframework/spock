@@ -21,7 +21,7 @@ runs:
       uses: actions/setup-java@v4
       with:
         # Temurin JDK 8 for macos on ARM is not available: https://github.com/adoptium/adoptium/issues/96
-        distribution: 'zulu'
+        distribution: ${{ runner.os == 'macOS' && 'zulu' || 'temurin' }}
         java-version: 8
     - name: Prepare JDK8 env var
       shell: bash

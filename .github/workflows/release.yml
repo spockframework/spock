@@ -14,35 +14,38 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ 'ubuntu-latest' ]
         variant: ['2.5', '3.0', '4.0']
-        java: [ '8', '11', '17', '21' ]
+        java: [ '8', '11', '17', '21', '22' ]
+        os: [ 'ubuntu-latest' ]
         exclude:
-          - os: 'ubuntu-latest'
-            variant: '2.5'
+          - variant: '2.5'
             java: '17'
-          - os: 'ubuntu-latest'
-            variant: '2.5'
+            os: 'ubuntu-latest'
+          - variant: '2.5'
             java: '21'
+            os: 'ubuntu-latest'
+          - variant: '2.5'
+            java: '22'
+            os: 'ubuntu-latest'
         include:
-          - os: 'windows-latest'
-            variant: '2.5'
+          - variant: '2.5'
             java: '8'
-          - os: 'windows-latest'
-            variant: '3.0'
+            os: 'windows-latest'
+          - variant: '3.0'
             java: '8'
-          - os: 'windows-latest'
-            variant: '4.0'
+            os: 'windows-latest'
+          - variant: '4.0'
             java: '8'
-          - os: 'macos-latest'
-            variant: '2.5'
+            os: 'windows-latest'
+          - variant: '2.5'
             java: '8'
-          - os: 'macos-latest'
-            variant: '3.0'
+            os: 'macos-latest'
+          - variant: '3.0'
             java: '8'
-          - os: 'macos-latest'
-            variant: '4.0'
+            os: 'macos-latest'
+          - variant: '4.0'
             java: '8'
+            os: 'macos-latest'
     steps:
       - uses: actions/checkout@v4
         with:

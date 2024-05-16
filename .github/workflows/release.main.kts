@@ -94,11 +94,11 @@ workflow(
         runsOn = RunnerType.Custom(expr(Matrix.operatingSystem)),
         needs = listOf(buildAndVerify),
         strategyMatrix = mapOf(
-            "os" to listOf("ubuntu-latest"),
             // publish needs to be done for all versions
             "variant" to Matrix.axes.variants,
             // publish needs the min supported java version
-            "java" to Matrix.axes.javaVersions.take(1)
+            "java" to Matrix.axes.javaVersions.take(1),
+            "os" to listOf("ubuntu-latest")
         )
     ) {
         uses(
@@ -135,12 +135,12 @@ workflow(
         name = "Publish Release Docs",
         runsOn = RunnerType.Custom(expr(Matrix.operatingSystem)),
         needs = listOf(releaseSpock),
-        strategyMatrix = mapOf(
-            "os" to listOf("ubuntu-latest"),
+        strategyMatrix = linkedMapOf(
             // docs need the highest variant
             "variant" to Matrix.axes.variants.takeLast(1),
             // docs need the highest java version
-            "java" to Matrix.axes.javaVersions.takeLast(1)
+            "java" to Matrix.axes.javaVersions.takeLast(1),
+            "os" to listOf("ubuntu-latest")
         )
     ) {
         uses(

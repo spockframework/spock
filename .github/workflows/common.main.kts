@@ -61,11 +61,11 @@ data class Matrix(
             .flatMap { element -> (javaVersions ?: listOf(null)).map { element.copy(javaVersion = it) } }
     }
 
-    fun toCustomArguments() = mapOf(
+    fun toCustomArguments() = linkedMapOf(
         *listOfNotNull(
-            operatingSystems?.let { "os" to operatingSystems },
             variants?.let { "variant" to variants },
             javaVersions?.let { "java" to javaVersions },
+            operatingSystems?.let { "os" to operatingSystems },
             exclude?.let {
                 "exclude" to originalElements
                     .filter(exclude)
@@ -85,11 +85,11 @@ data class Matrix(
         val variant: String? = null,
         val javaVersion: String? = null
     ) {
-        fun toCustomArguments() = mapOf(
+        fun toCustomArguments() = linkedMapOf(
             *listOfNotNull(
-                operatingSystem?.let { "os" to operatingSystem },
                 variant?.let { "variant" to variant },
-                javaVersion?.let { "java" to javaVersion }
+                javaVersion?.let { "java" to javaVersion },
+                operatingSystem?.let { "os" to operatingSystem }
             ).toTypedArray()
         )
     }
@@ -129,7 +129,7 @@ val Matrix.Companion.full
     get() = Matrix(
         operatingSystems = listOf("ubuntu-latest"),
         variants = axes.variants,
-        javaVersions = axes.javaVersions,
+        javaVersions = axes.javaVersions + "22",
         exclude = { (variant == "2.5") && (javaVersion!!.toInt() >= 17) },
         includes = listOf("windows-latest", "macos-latest")
             .map {

@@ -1,5 +1,5 @@
 [versions]
-asciidoctorj = '2.5.12'
+asciidoctorj = '2.5.13'
 groovy2 = '2.5.23'
 groovy3 = '3.0.21'
 groovy4 = '4.0.21'

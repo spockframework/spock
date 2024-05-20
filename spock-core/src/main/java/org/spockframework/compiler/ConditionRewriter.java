@@ -28,8 +28,11 @@ import org.spockframework.runtime.ValueRecorder;
 import org.spockframework.util.AbstractExpressionConverter;
 import org.spockframework.util.Assert;
 import org.spockframework.util.Identifiers;
+import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.TextUtil;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -59,6 +62,9 @@ import static org.spockframework.compiler.AstUtil.primitiveConstExpression;
 public class ConditionRewriter extends AbstractExpressionConverter<Expression> implements GroovyCodeVisitorCompat {
   private static final Pattern COMMENTS_PATTERN = Pattern.compile("/\\*.*?\\*/|//.*$");
   private static final String THROWABLE = "$spock_condition_throwable";
+  private static final Constructor<RangeExpression> RANGE_EXPRESSION_CONSTRUCTOR_GROOVY_4 = ReflectionUtil.getDeclaredConstructorBySignature(RangeExpression.class, Expression.class, Expression.class, Boolean.TYPE, Boolean.TYPE);
+  private static final Method RANGE_EXPRESSION_IS_EXCLUSIVE_LEFT = ReflectionUtil.getDeclaredMethodBySignature(RangeExpression.class, "isExclusiveLeft");
+  private static final Method RANGE_EXPRESSION_IS_EXCLUSIVE_RIGHT = ReflectionUtil.getDeclaredMethodBySignature(RangeExpression.class, "isExclusiveRight");
 
   private final IRewriteResources resources;
 
@@ -340,11 +346,20 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
 
   @Override
   public void visitRangeExpression(RangeExpression expr) {
-    RangeExpression conversion =
-        new RangeExpression(
-            convert(expr.getFrom()),
-            convert(expr.getTo()),
-            expr.isInclusive());
+    RangeExpression conversion;
+    if (RANGE_EXPRESSION_CONSTRUCTOR_GROOVY_4 != null) {
+      conversion = ReflectionUtil.newInstance(RANGE_EXPRESSION_CONSTRUCTOR_GROOVY_4,
+        convert(expr.getFrom()),
+        convert(expr.getTo()),
+        ReflectionUtil.invokeMethod(expr, RANGE_EXPRESSION_IS_EXCLUSIVE_LEFT),
+        ReflectionUtil.invokeMethod(expr, RANGE_EXPRESSION_IS_EXCLUSIVE_RIGHT)
+      );
+    } else {
+      conversion = new RangeExpression(
+          convert(expr.getFrom()),
+          convert(expr.getTo()),
+          expr.isInclusive());
+    }
 
     conversion.setSourcePosition(expr);
     result = record(conversion);

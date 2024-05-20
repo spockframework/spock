@@ -153,6 +153,24 @@ public abstract class ReflectionUtil {
     }
   }
 
+  @Nullable
+  public static <T> Constructor<T> getConstructorBySignature(Class<T> clazz, Class<?>... parameterTypes) {
+    try {
+      return clazz.getConstructor(parameterTypes);
+    } catch (NoSuchMethodException e) {
+      return null;
+    }
+  }
+
+  @Nullable
+  public static <T> Constructor<T> getDeclaredConstructorBySignature(Class<T> clazz, Class<?>... parameterTypes) {
+    try {
+      return clazz.getDeclaredConstructor(parameterTypes);
+    } catch (NoSuchMethodException e) {
+      return null;
+    }
+  }
+
   /**
    * Returns the class file for the given class (which has been verified to exist in the returned location),
    * or null if the class file could not be found (e.g. because it is contained in a Jar).

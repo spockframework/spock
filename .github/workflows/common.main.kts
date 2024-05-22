@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-@file:DependsOn("io.github.typesafegithub:github-workflows-kt:1.14.0")
+@file:DependsOn("io.github.typesafegithub:github-workflows-kt:2.0.0")
 
 import io.github.typesafegithub.workflows.domain.Job
 import io.github.typesafegithub.workflows.domain.JobOutputs.EMPTY
@@ -31,7 +31,7 @@ import java.util.Properties
 
 val GRADLE_ENTERPRISE_ACCESS_KEY by secrets
 
-val commonCredentials = linkedMapOf(
+val commonCredentials = mapOf(
     "DEVELOCITY_ACCESS_KEY" to expr(GRADLE_ENTERPRISE_ACCESS_KEY)
 )
 
@@ -61,7 +61,7 @@ data class Matrix(
             .flatMap { element -> (javaVersions ?: listOf(null)).map { element.copy(javaVersion = it) } }
     }
 
-    fun toCustomArguments() = linkedMapOf(
+    fun toCustomArguments() = mapOf(
         *listOfNotNull(
             variants?.let { "variant" to variants },
             javaVersions?.let { "java" to javaVersions },
@@ -85,7 +85,7 @@ data class Matrix(
         val variant: String? = null,
         val javaVersion: String? = null
     ) {
-        fun toCustomArguments() = linkedMapOf(
+        fun toCustomArguments() = mapOf(
             *listOfNotNull(
                 variant?.let { "variant" to variant },
                 javaVersion?.let { "java" to javaVersion },

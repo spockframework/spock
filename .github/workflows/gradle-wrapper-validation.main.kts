@@ -25,7 +25,6 @@ import io.github.typesafegithub.workflows.domain.triggers.MergeGroup
 import io.github.typesafegithub.workflows.domain.triggers.PullRequest
 import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.dsl.workflow
-import io.github.typesafegithub.workflows.yaml.writeToFile
 
 workflow(
     name = "Validate Gradle Wrapper",
@@ -34,7 +33,7 @@ workflow(
         PullRequest(),
         MergeGroup()
     ),
-    sourceFile = __FILE__.toPath(),
+    sourceFile = __FILE__,
     targetFileName = "${__FILE__.name.substringBeforeLast(".main.kts")}.yml"
 ) {
     job(
@@ -51,4 +50,4 @@ workflow(
             action = WrapperValidationActionV2(_customVersion = "v3")
         )
     }
-}.writeToFile()
+}

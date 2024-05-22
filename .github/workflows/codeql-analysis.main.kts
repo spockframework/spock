@@ -31,7 +31,6 @@ import io.github.typesafegithub.workflows.domain.triggers.Schedule
 import io.github.typesafegithub.workflows.dsl.expressions.Contexts.github
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
-import io.github.typesafegithub.workflows.yaml.writeToFile
 
 workflow(
     name = "Code scanning - action",
@@ -51,7 +50,7 @@ workflow(
             )
         )
     ),
-    sourceFile = __FILE__.toPath(),
+    sourceFile = __FILE__,
     targetFileName = "${__FILE__.name.substringBeforeLast(".main.kts")}.yml",
     // https://stackoverflow.com/a/72408109/16358266
     concurrency = Concurrency(
@@ -127,4 +126,4 @@ workflow(
             action = CodeqlActionAnalyzeV2(_customVersion = "v3")
         )
     }
-}.writeToFile()
+}

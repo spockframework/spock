@@ -29,7 +29,6 @@ import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.dsl.expressions.Contexts.github
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
-import io.github.typesafegithub.workflows.yaml.writeToFile
 
 workflow(
     name = "Verify Branches and PRs",
@@ -43,7 +42,7 @@ workflow(
         PullRequest(),
         MergeGroup()
     ),
-    sourceFile = __FILE__.toPath(),
+    sourceFile = __FILE__,
     targetFileName = "${__FILE__.name.substringBeforeLast(".main.kts")}.yml",
     // https://stackoverflow.com/a/72408109/16358266
     concurrency = Concurrency(
@@ -104,4 +103,4 @@ workflow(
             action = CodecovActionV4()
         )
     }
-}.writeToFile()
+}

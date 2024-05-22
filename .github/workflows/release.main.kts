@@ -27,7 +27,6 @@ import io.github.typesafegithub.workflows.dsl.expressions.Contexts.github
 import io.github.typesafegithub.workflows.dsl.expressions.Contexts.secrets
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
-import io.github.typesafegithub.workflows.yaml.writeToFile
 
 workflow(
     name = "Build and Release Spock",
@@ -37,7 +36,7 @@ workflow(
             tags = listOf("spock-*")
         )
     ),
-    sourceFile = __FILE__.toPath(),
+    sourceFile = __FILE__,
     targetFileName = "${__FILE__.name.substringBeforeLast(".main.kts")}.yml"
 ) {
     val GITHUB_TOKEN by secrets
@@ -122,7 +121,7 @@ workflow(
                 """"-DjavaVersion=${expr(Matrix.javaVersion)}"""",
                 "-Dscan.tag.main-publish"
             ).joinToString(" "),
-            env = linkedMapOf(
+            env = mutableMapOf(
                 "GITHUB_TOKEN" to expr(GITHUB_TOKEN),
                 "SONATYPE_OSS_USER" to expr(SONATYPE_OSS_USER),
                 "SONATYPE_OSS_PASSWORD" to expr(SONATYPE_OSS_PASSWORD),
@@ -135,7 +134,7 @@ workflow(
         name = "Publish Release Docs",
         runsOn = RunnerType.Custom(expr(Matrix.operatingSystem)),
         needs = listOf(releaseSpock),
-        strategyMatrix = linkedMapOf(
+        strategyMatrix = mapOf(
             // docs need the highest variant
             "variant" to Matrix.axes.variants.takeLast(1),
             // docs need the highest java version
@@ -172,9 +171,9 @@ workflow(
                 """"-DjavaVersion=${expr(Matrix.javaVersion)}"""",
                 "-Dscan.tag.main-docs"
             ).joinToString(" "),
-            env = linkedMapOf(
+            env = mutableMapOf(
                 "GITHUB_TOKEN" to expr(GITHUB_TOKEN)
             ).apply { putAll(commonCredentials) }
         )
     }
-}.writeToFile()
+}

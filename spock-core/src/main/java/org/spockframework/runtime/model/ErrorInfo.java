@@ -14,18 +14,12 @@
 
 package org.spockframework.runtime.model;
 
-import org.spockframework.util.Nullable;
-
 public class ErrorInfo {
   private final MethodInfo method;
   private final Throwable error;
   private final IErrorContext errorContext;
 
-  public ErrorInfo(MethodInfo method, Throwable error) {
-    this(method, error, null);
-  }
-
-  public ErrorInfo(MethodInfo method, Throwable error, @Nullable IErrorContext errorContext) {
+  public ErrorInfo(MethodInfo method, Throwable error, IErrorContext errorContext) {
     this.method = method;
     this.error = error;
     this.errorContext = errorContext;
@@ -39,7 +33,6 @@ public class ErrorInfo {
     return error;
   }
 
-  @Nullable
   public IErrorContext getErrorContext() {
     return errorContext;
   }

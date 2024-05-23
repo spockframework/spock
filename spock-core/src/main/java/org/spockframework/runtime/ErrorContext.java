@@ -1,6 +1,5 @@
 package org.spockframework.runtime;
 
-import org.spockframework.lang.ISpecificationContext;
 import org.spockframework.runtime.model.*;
 
 class ErrorContext implements IErrorContext {

@@ -50,7 +50,7 @@ public class DataIteratorFactory {
     }
 
     protected IErrorContext getErrorContext() {
-      return ErrorContext.from(context.getCurrentInstance().getSpecificationContext());
+      return ErrorContext.from((SpecificationContext) context.getCurrentInstance().getSpecificationContext());
     }
 
     protected int estimateNumIterations(@Nullable Object dataProvider) {

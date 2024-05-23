@@ -27,10 +27,11 @@ import org.spockframework.util.Nullable;
 public interface ISpecificationContext {
   @Nullable
   SpecInfo getCurrentSpec();
-  @Nullable
+
   FeatureInfo getCurrentFeature();
-  @Nullable
+
   IterationInfo getCurrentIteration();
+
   @Nullable
   BlockInfo getCurrentBlock();
 
@@ -40,6 +41,4 @@ public interface ISpecificationContext {
   IMockController getMockController();
 
   IThreadAwareMockController getThreadAwareMockController();
-
-  boolean isSharedContext();
 }

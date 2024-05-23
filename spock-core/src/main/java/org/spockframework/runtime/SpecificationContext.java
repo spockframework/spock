@@ -5,6 +5,7 @@ import org.spockframework.mock.IMockController;
 import org.spockframework.mock.IThreadAwareMockController;
 import org.spockframework.mock.runtime.MockController;
 import org.spockframework.runtime.model.*;
+import org.spockframework.util.Nullable;
 import spock.lang.Specification;
 
 public class SpecificationContext implements ISpecificationContext {
@@ -46,16 +47,30 @@ public class SpecificationContext implements ISpecificationContext {
     return currentFeature;
   }
 
+  @Nullable
+  FeatureInfo getCurrentFeatureOrNull() {
+    return currentFeature;
+  }
+
   public void setCurrentFeature(FeatureInfo currentFeature) {
     this.currentFeature = currentFeature;
   }
 
   @Override
   public IterationInfo getCurrentIteration() {
-    if (isSharedContext()) {
+    if (currentIteration == null) {
       throw new IllegalStateException("Cannot request current iteration in @Shared context, or feature context");
     }
     return currentIteration;
+  }
+
+  @Nullable
+  IterationInfo getCurrentIterationOrNull() {
+    return currentIteration;
+  }
+
+  public void setCurrentIteration(IterationInfo currentIteration) {
+    this.currentIteration = currentIteration;
   }
 
   public static final String SET_CURRENT_BLOCK = "setCurrentBlock";
@@ -67,10 +82,6 @@ public class SpecificationContext implements ISpecificationContext {
   @Override
   public BlockInfo getCurrentBlock() {
     return currentBlock;
-  }
-
-  public void setCurrentIteration(IterationInfo currentIteration) {
-    this.currentIteration = currentIteration;
   }
 
   @Override
@@ -94,8 +105,4 @@ public class SpecificationContext implements ISpecificationContext {
     return mockController;
   }
 
-  @Override
-  public boolean isSharedContext() {
-    return currentFeature == null || currentIteration == null;
-  }
 }

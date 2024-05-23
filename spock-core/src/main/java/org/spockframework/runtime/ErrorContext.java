@@ -16,14 +16,11 @@ class ErrorContext implements IErrorContext {
     this.block = block;
   }
 
-  static ErrorContext from(ISpecificationContext context) {
-    if (context.isSharedContext()) {
-      return new ErrorContext(context.getCurrentSpec(), null, null, null);
-    }
+  static ErrorContext from(SpecificationContext context) {
     return new ErrorContext(
       context.getCurrentSpec(),
-      context.getCurrentFeature(),
-      context.getCurrentIteration(),
+      context.getCurrentFeatureOrNull(),
+      context.getCurrentIterationOrNull(),
       context.getCurrentBlock()
     );
   }

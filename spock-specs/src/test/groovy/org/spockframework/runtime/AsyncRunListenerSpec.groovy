@@ -13,7 +13,7 @@ class AsyncRunListenerSpec extends Specification {
     def specInfo = new SpecInfoBuilder(getClass()).build()
     def featureInfo = specInfo.features[0]
     def iterationInfo = new IterationInfo(featureInfo, 0, [] as Object[], 1)
-    def errorInfo = new ErrorInfo(featureInfo.featureMethod, new Exception())
+    def errorInfo = new ErrorInfo(featureInfo.featureMethod, new Exception(), new ErrorContext(specInfo, featureInfo, iterationInfo, null))
 
     when:
     asyncListener.start()

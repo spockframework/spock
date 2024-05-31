@@ -36,4 +36,13 @@ public class ErrorInfo {
   public IErrorContext getErrorContext() {
     return errorContext;
   }
+
+  @Override
+  public String toString() {
+    return "ErrorInfo{" +
+      "method=" + method +
+      ", errorContext=" + errorContext +
+      ", error=" + error +
+      '}';
+  }
 }

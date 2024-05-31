@@ -16,6 +16,8 @@
 
 package org.spockframework.runtime.model;
 
+import org.spockframework.util.Nullable;
+
 import java.util.List;
 
 /**
@@ -35,6 +37,7 @@ public class BlockInfo {
     this.texts = texts;
   }
 
+  @Nullable
   public BlockKind getKind() {
     return kind;
   }
@@ -43,6 +46,7 @@ public class BlockInfo {
     this.kind = kind;
   }
 
+  @Nullable
   public List<String> getTexts() {
     return texts;
   }

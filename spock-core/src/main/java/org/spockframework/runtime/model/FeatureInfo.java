@@ -168,7 +168,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
   }
 
   /**
-   * Adds a initializer interceptor for this feature.
+   * Adds an initializer interceptor for this feature.
    * <p>
    * The feature-scoped interceptors will execute before the spec interceptors.
    *
@@ -224,10 +224,18 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
     iterationInterceptors.add(interceptor);
   }
 
+  /**
+   * @since 2.4
+   */
+  @Beta
   public List<IBlockListener> getBlockListeners() {
     return blockListeners;
   }
 
+  /**
+   * @since 2.4
+   */
+  @Beta
   public void addBlockListener(IBlockListener blockListener) {
     blockListeners.add(blockListener);
   }

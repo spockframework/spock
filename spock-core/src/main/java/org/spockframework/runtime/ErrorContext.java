@@ -1,6 +1,7 @@
 package org.spockframework.runtime;
 
 import org.spockframework.runtime.model.*;
+import org.spockframework.util.Nullable;
 
 class ErrorContext implements IErrorContext {
   private final SpecInfo spec;
@@ -8,7 +9,7 @@ class ErrorContext implements IErrorContext {
   private final IterationInfo iteration;
   private final BlockInfo block;
 
-  private ErrorContext(SpecInfo spec, FeatureInfo feature, IterationInfo iteration, BlockInfo block) {
+  private ErrorContext(@Nullable SpecInfo spec, @Nullable FeatureInfo feature, @Nullable IterationInfo iteration, @Nullable BlockInfo block) {
     this.spec = spec;
     this.feature = feature;
     this.iteration = iteration;
@@ -42,5 +43,14 @@ class ErrorContext implements IErrorContext {
   @Override
   public BlockInfo getCurrentBlock() {
     return block;
+  }
+
+  @Override
+  public String toString() {
+    return "ErrorContext{Spec: " + (spec == null ? "null" : spec.getDisplayName()) +
+      ", Feature: " + (feature == null ? "null" : feature.getDisplayName()) +
+      ", Iteration: " + (iteration == null ? "null" : iteration.getDisplayName()) +
+      ", Block: " + (block == null ? "null" : (block.getKind() + " " + block.getTexts()))
+      + "}";
   }
 }

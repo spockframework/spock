@@ -399,16 +399,20 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   public void visitMethodAgain(Method method) {
     this.block = null;
 
-    if (!movedStatsBackToMethod)
+    if (!movedStatsBackToMethod) {
       for (Block b : method.getBlocks()) {
-        // this will only have the blocks if there was no 'cleanup' block in the method
+        // This will only run if there was no 'cleanup' block in the method.
+        // Otherwise, the blocks have already been copied to try block by visitCleanupBlock.
+        // We need to run as late as possible, so we'll have to do the handling here and in visitCleanupBlock.
         addBlockListeners(b);
         method.getStatements().addAll(b.getAst());
       }
+    }
 
     // for global required interactions
-    if (method instanceof FeatureMethod)
+    if (method instanceof FeatureMethod) {
       method.getStatements().add(createMockControllerCall(nodeCache.MockController_LeaveScope));
+    }
 
     if (methodHasCondition) {
       defineValueRecorder(method.getStatements(), "");
@@ -423,6 +427,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     BlockParseInfo blockType = block.getParseInfo();
     if (blockType == BlockParseInfo.WHERE
       || blockType == BlockParseInfo.METHOD_END
+      || blockType == BlockParseInfo.COMBINED
       || blockType == BlockParseInfo.ANONYMOUS) return;
 
     // SpockRuntime.enterBlock(getSpecificationContext(), new BlockInfo(blockKind, [blockTexts]))
@@ -430,9 +435,10 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     // SpockRuntime.exitedBlock(getSpecificationContext(), new BlockInfo(blockKind, [blockTexts]))
     MethodCallExpression exitBlockCall = createBlockListenerCall(block, blockType, nodeCache.SpockRuntime_CallExitBlock);
 
-    // As the cleanup block finalizes the specification, it would override any previous block in ErrorInfo,
-    // so we only call enterBlock if there is no error yet.
     if (blockType == BlockParseInfo.CLEANUP) {
+      // In case of a cleanup block we need store a reference of the previously `currentBlock` in case that an exception occurred
+      // and restore it at the end of the cleanup block, so that the correct `BlockInfo` is available for the `IErrorContext`.
+      // The restoration happens in the `finally` statement created by `createCleanupTryCatch`.
       VariableExpression failedBlock = new VariableExpression(SpockNames.FAILED_BLOCK, nodeCache.BlockInfo);
       block.getAst().addAll(0, asList(
         ifThrowableIsNotNull(storeFailedBlock(failedBlock)),
@@ -451,7 +457,6 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   private @NotNull Statement restoreFailedBlock(VariableExpression failedBlock) {
-
     return new ExpressionStatement(createDirectMethodCall(new CastExpression(nodeCache.SpecificationContext, getSpecificationContext()), nodeCache.SpecificationContext_SetBlockCurrentBlock, new ArgumentListExpression(failedBlock)));
   }
 

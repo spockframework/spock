@@ -15,23 +15,19 @@
 
 package org.spockframework.compiler;
 
-import org.codehaus.groovy.ast.MethodNode;
-import org.jetbrains.annotations.NotNull;
-import org.spockframework.compiler.model.*;
-
-import java.util.stream.Collectors;
-
 import org.codehaus.groovy.ast.Parameter;
 import org.codehaus.groovy.ast.expr.*;
-import org.codehaus.groovy.ast.stmt.*;
+import org.codehaus.groovy.ast.stmt.AssertStatement;
+import org.codehaus.groovy.ast.stmt.ExpressionStatement;
+import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.groovy.syntax.Types;
+import org.spockframework.compiler.model.*;
 import org.spockframework.util.Identifiers;
 import org.spockframework.util.Nullable;
 
 import java.util.List;
 
 import static org.codehaus.groovy.ast.expr.MethodCallExpression.NO_ARGUMENTS;
-import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
 
 /**
  * Walks the statement and expression tree to:

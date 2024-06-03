@@ -24,24 +24,19 @@ import spock.lang.Specification;
 import java.lang.reflect.Type;
 
 public class MockObject implements IMockObject {
-  private final String name;
-  private final Type type;
-  private final Object instance;
-  private final boolean verified;
-  private final boolean global;
-  private final IDefaultResponse defaultResponse;
   private final SpecificationAttachable mockInterceptor;
 
   private Specification specification;
+  private MockSettings mockSettings = new MockSettings(null, null, null, null, false, false);
 
   public MockObject(@Nullable String name, Type type, Object instance, boolean verified, boolean global,
       IDefaultResponse defaultResponse, Specification specification, SpecificationAttachable mockInterceptor) {
-    this.name = name;
-    this.type = type;
-    this.instance = instance;
-    this.verified = verified;
-    this.global = global;
-    this.defaultResponse = defaultResponse;
+    this.mockSettings.setName(name);
+    this.mockSettings.setType(type);
+    this.mockSettings.setInstance(instance);
+    this.mockSettings.setVerified(verified);
+    this.mockSettings.setGlobal(global);
+    this.mockSettings.setDefaultResponse(defaultResponse);
     this.specification = specification;
     this.mockInterceptor = mockInterceptor;
   }
@@ -49,32 +44,32 @@ public class MockObject implements IMockObject {
   @Override
   @Nullable
   public String getName() {
-    return name;
+    return mockSettings.getName();
   }
 
   @Override
   public Class<?> getType() {
-    return GenericTypeReflectorUtil.erase(type);
+    return GenericTypeReflectorUtil.erase(mockSettings.getType());
   }
 
   @Override
   public Type getExactType() {
-    return type;
+    return mockSettings.getType();
   }
 
   @Override
   public Object getInstance() {
-    return instance;
+    return mockSettings.getInstance();
   }
 
   @Override
   public boolean isVerified() {
-    return verified;
+    return mockSettings.getVerified();
   }
 
   @Override
   public IDefaultResponse getDefaultResponse() {
-    return defaultResponse;
+    return mockSettings.getDefaultResponse();
   }
 
   @Override
@@ -84,9 +79,9 @@ public class MockObject implements IMockObject {
 
   @Override
   public boolean matches(Object target, IMockInteraction interaction) {
-    if (target instanceof Wildcard) return verified || !interaction.isRequired();
+    if (target instanceof Wildcard) return mockSettings.getVerified() || !interaction.isRequired();
 
-    boolean match = global ? matchGlobal(target) : instance == target;
+    boolean match = mockSettings.getGlobal() ? matchGlobal(target) : mockSettings.getInstance() == target;
     if (match) {
       checkRequiredInteractionAllowed(interaction);
     }
@@ -94,16 +89,16 @@ public class MockObject implements IMockObject {
   }
 
   private boolean matchGlobal(Object target) {
-    return (instance.getClass() == target.getClass()) && (!isMockOfClass() || (instance == target));
+    return (mockSettings.getInstance().getClass() == target.getClass()) && (!isMockOfClass() || (mockSettings.getInstance() == target));
   }
 
   private boolean isMockOfClass() {
-    return instance instanceof Class<?>;
+    return mockSettings.getInstance() instanceof Class<?>;
   }
 
   private void checkRequiredInteractionAllowed(IMockInteraction interaction) {
-    if (!verified && interaction.isRequired()) {
-      String mockName = name != null ? name : "unnamed";
+    if (!mockSettings.getVerified() && interaction.isRequired()) {
+      String mockName = mockSettings.getName() != null ? mockSettings.getName() : "unnamed";
       throw new InvalidSpecException("Stub '%s' matches the following required interaction:" +
           "\n\n%s\n\nRemove the cardinality (e.g. '1 *'), or turn the stub into a mock.\n").withArgs(mockName, interaction);
     }

@@ -234,7 +234,6 @@ class ASpec extends Specification {
         it.kind == block
         it.texts == blockTexts
       }
-      assert errorInfo.errorContext.toString() == ''
     } else {
       assert errorInfo.errorContext.currentBlock == null
     }

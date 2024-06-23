@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
+import org.spockframework.util.Assert;
 
 import static java.util.stream.Collectors.*;
 import static org.spockframework.compiler.AstUtil.*;
@@ -205,6 +206,9 @@ public class SpecAnnotator extends AbstractSpecVisitor {
     for (String text : block.getDescriptions())
       textExprs.addExpression(new ConstantExpression(text));
     blockAnn.setMember(BlockMetadata.TEXTS, textExprs);
+    int index = blockAnnElems.getExpressions().size();
+    Assert.that(index == block.getBlockMetaDataIndex(),
+      () -> kind+" block mismatch of index: " + index + ", block.getBlockMetaDataIndex(): " + block.getBlockMetaDataIndex());
     blockAnnElems.addExpression(new AnnotationConstantExpression(blockAnn));
   }
 

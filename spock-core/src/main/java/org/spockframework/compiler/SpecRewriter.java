@@ -470,21 +470,13 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   private MethodCallExpression createBlockListenerCall(Block block, BlockParseInfo blockType, MethodNode blockListenerMethod) {
+    if (block.getBlockMetaDataIndex() < 0) throw new SpockException("Block metadata index not set: " + block);
     return createDirectMethodCall(
       new ClassExpression(nodeCache.SpockRuntime),
       blockListenerMethod,
       new ArgumentListExpression(
         getSpecificationContext(),
-        new ConstructorCallExpression(nodeCache.BlockInfo,
-          new ArgumentListExpression(
-            new PropertyExpression(
-              new ClassExpression(nodeCache.BlockKind),
-              blockType.name()
-            ),
-            new ListExpression(
-              block.getDescriptions().stream().map(ConstantExpression::new).collect(Collectors.toList())
-            )
-          ))
+        new ConstantExpression(block.getBlockMetaDataIndex(), true)
       ));
   }
 

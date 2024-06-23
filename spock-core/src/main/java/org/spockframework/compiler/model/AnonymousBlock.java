@@ -37,4 +37,9 @@ public class AnonymousBlock extends Block {
   public BlockParseInfo getParseInfo() {
     return BlockParseInfo.ANONYMOUS;
   }
+
+  @Override
+  public boolean hasBlockMetadata() {
+    return false;
+  }
 }

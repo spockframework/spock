@@ -226,8 +226,9 @@ public abstract class SpockRuntime {
 
   public static final String CALL_ENTER_BLOCK = "callEnterBlock";
 
-  public static void callEnterBlock(SpecificationContext context, BlockInfo blockInfo) {
+  public static void callEnterBlock(SpecificationContext context, int blockInfoIndex) {
     IterationInfo currentIteration = context.getCurrentIteration();
+    BlockInfo blockInfo = context.getCurrentFeature().getBlocks().get(blockInfoIndex);
     context.setCurrentBlock(blockInfo);
     notifyBlockListener(currentIteration, blockListener -> blockListener.blockEntered(currentIteration, blockInfo));
   }
@@ -240,8 +241,9 @@ public abstract class SpockRuntime {
 
   public static final String CALL_EXIT_BLOCK = "callExitBlock";
 
-  public static void callExitBlock(SpecificationContext context, BlockInfo blockInfo) {
+  public static void callExitBlock(SpecificationContext context, int blockInfoIndex) {
     IterationInfo currentIteration = context.getCurrentIteration();
+    BlockInfo blockInfo = context.getCurrentFeature().getBlocks().get(blockInfoIndex);
     notifyBlockListener(currentIteration, blockListener -> blockListener.blockExited(currentIteration, blockInfo));
     context.setCurrentBlock(null);
   }

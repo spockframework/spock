@@ -7,7 +7,7 @@ class ASpec extends Specification {
 public void $spock_feature_0_0(java.lang.Object a, java.lang.Object b) {
     org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
-    org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.EXPECT, []))
+    org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), 0)
     try {
         org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), 'true', 2, 7, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), true))
     }
@@ -15,9 +15,9 @@ public void $spock_feature_0_0(java.lang.Object a, java.lang.Object b) {
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'true', 2, 7, null, $spock_condition_throwable)}
     finally {
     }
-    org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.EXPECT, []))
-    org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.FILTER, []))
-    org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), new org.spockframework.runtime.model.BlockInfo(org.spockframework.runtime.model.BlockKind.FILTER, []))
+    org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), 0)
+    org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), 2)
+    org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), 2)
     this.getSpecificationContext().getMockController().leaveScope()
 }
 

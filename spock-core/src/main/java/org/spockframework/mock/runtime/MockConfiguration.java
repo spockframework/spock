@@ -26,18 +26,13 @@ import static java.util.Collections.singletonList;
 
 @Beta
 public class MockConfiguration implements IMockConfiguration {
-  private final String name;
-  private final Type type;
-  private final Object instance;
   private final MockNature nature;
   private final MockImplementation implementation;
   private final List<Object> constructorArgs;
   private final List<Class<?>> additionalInterfaces;
-  private final IDefaultResponse defaultResponse;
-  private final boolean global;
-  private final boolean verified;
   private final boolean useObjenesis;
   private final IMockMakerSettings mockMakerSettings;
+  private MockSettings mockSettings = new MockSettings(null, null, null, null, false, false);
 
   public MockConfiguration(@Nullable String name, Type type, MockNature nature,
       MockImplementation implementation, Map<String, Object> options) {
@@ -47,16 +42,16 @@ public class MockConfiguration implements IMockConfiguration {
   @SuppressWarnings("unchecked")
   public MockConfiguration(@Nullable String name, Type type, @Nullable Object instance, MockNature nature,
       MockImplementation implementation, Map<String, Object> options) {
-    this.name = getOption(options, "name", String.class, name);
-    this.type = getOption(options, "type", Type.class, type);
-    this.instance = getOption(options, "instance", Object.class, instance);
+    this.mockSettings.setName(getOption(options, "name", String.class, name));
+    this.mockSettings.setType(getOption(options, "type", Type.class, type));
+    this.mockSettings.setInstance(getOption(options, "instance", Object.class, instance));
     this.nature = getOption(options, "nature", MockNature.class, nature);
     this.implementation = getOption(options, "implementation", MockImplementation.class, implementation);
     this.constructorArgs = getOptionAsList(options, "constructorArgs");
     this.additionalInterfaces = getOption(options, "additionalInterfaces", List.class, emptyList());
-    this.defaultResponse = getOption(options, "defaultResponse", IDefaultResponse.class, this.nature.getDefaultResponse());
-    this.global = getOption(options, "global", Boolean.class, false);
-    this.verified = getOption(options, "verified", Boolean.class, this.nature.isVerified());
+    this.mockSettings.setDefaultResponse(getOption(options, "defaultResponse", IDefaultResponse.class, this.nature.getDefaultResponse()));
+    this.mockSettings.setGlobal(getOption(options, "global", Boolean.class, false));
+    this.mockSettings.setVerified(getOption(options, "verified", Boolean.class, this.nature.isVerified()));
     this.useObjenesis = getOption(options, "useObjenesis", Boolean.class, this.nature.isUseObjenesis());
     this.mockMakerSettings = getOption(options, "mockMaker", IMockMakerSettings.class, null);
   }
@@ -64,22 +59,22 @@ public class MockConfiguration implements IMockConfiguration {
   @Override
   @Nullable
   public String getName() {
-    return name;
+    return mockSettings.getName();
   }
 
   @Override
   public Class<?> getType() {
-    return GenericTypeReflectorUtil.erase(type);
+    return GenericTypeReflectorUtil.erase(mockSettings.getType());
   }
 
   @Override
   public Object getInstance() {
-    return instance;
+    return mockSettings.getInstance();
   }
 
   @Override
   public Type getExactType() {
-    return type;
+    return mockSettings.getType();
   }
 
   @Override
@@ -105,17 +100,17 @@ public class MockConfiguration implements IMockConfiguration {
 
   @Override
   public IDefaultResponse getDefaultResponse() {
-    return defaultResponse;
+    return mockSettings.getDefaultResponse();
   }
 
   @Override
   public boolean isGlobal() {
-    return global;
+    return mockSettings.getGlobal();
   }
 
   @Override
   public boolean isVerified() {
-    return verified;
+    return mockSettings.getVerified();
   }
 
   @Override

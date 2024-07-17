@@ -256,7 +256,7 @@ public abstract class ReflectionUtil {
   }
 
   @SuppressWarnings("ConstantConditions")
-  private static Class<?> getWrapperType(Class<?> type) {
+  public static Class<?> getWrapperType(Class<?> type) {
     return type.isPrimitive() ? getDefaultValue(type).getClass()
                               : type;
   }

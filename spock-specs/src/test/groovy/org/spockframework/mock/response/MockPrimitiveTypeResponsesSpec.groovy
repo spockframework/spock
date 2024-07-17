@@ -33,6 +33,18 @@ class MockPrimitiveTypeResponsesSpec extends Specification {
     response == SUCCESS
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/1974")
+  def "Mock Response TypeArgumentConstraint with different primitive types Issue #1974"() {
+    given:
+    ObjClass client = Mock()
+
+    when: "invoke with other instance"
+    def response = client.test(123d, false)
+    then: "validate with int TypeArgumentConstraint (as int)"
+    0 * client.test(_ as int, _ as int)
+    response == null
+  }
+
   static class ObjClass {
     @SuppressWarnings('GrMethodMayBeStatic')
     String test(int a, int b) {

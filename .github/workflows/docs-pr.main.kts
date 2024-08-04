@@ -17,9 +17,13 @@
  */
 
 @file:Import("common.main.kts")
+@file:Repository("https://bindings.krzeminski.it/")
+@file:DependsOn("actions:checkout:v4")
+@file:DependsOn("actions:upload-artifact:v4")
 
-import io.github.typesafegithub.workflows.actions.actions.CheckoutV4
-import io.github.typesafegithub.workflows.actions.actions.UploadArtifactV4
+import io.github.typesafegithub.workflows.actions.actions.Checkout
+import io.github.typesafegithub.workflows.actions.actions.Checkout.FetchDepth
+import io.github.typesafegithub.workflows.actions.actions.UploadArtifact
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
 import io.github.typesafegithub.workflows.domain.triggers.MergeGroup
@@ -56,8 +60,8 @@ workflow(
     ) {
         uses(
             name = "Checkout Repository",
-            action = CheckoutV4(
-                fetchDepth = CheckoutV4.FetchDepth.Value(1)
+            action = Checkout(
+                fetchDepth = FetchDepth.Value(1)
             )
         )
         uses(
@@ -83,7 +87,7 @@ workflow(
         )
         uses(
             name = "Archive and upload docs",
-            action = UploadArtifactV4(
+            action = UploadArtifact(
                 name = "docs",
                 path = listOf(
                     "build/docs/**",

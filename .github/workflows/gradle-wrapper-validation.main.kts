@@ -17,9 +17,12 @@
  */
 
 @file:Import("common.main.kts")
+@file:Repository("https://bindings.krzeminski.it/")
+@file:DependsOn("actions:checkout:v4")
+@file:DependsOn("gradle:wrapper-validation-action:v3")
 
-import io.github.typesafegithub.workflows.actions.actions.CheckoutV4
-import io.github.typesafegithub.workflows.actions.gradle.WrapperValidationActionV2
+import io.github.typesafegithub.workflows.actions.actions.Checkout
+import io.github.typesafegithub.workflows.actions.gradle.WrapperValidationAction
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
 import io.github.typesafegithub.workflows.domain.triggers.MergeGroup
 import io.github.typesafegithub.workflows.domain.triggers.PullRequest
@@ -43,11 +46,11 @@ workflow(
     ) {
         uses(
             name = "Checkout Repository",
-            action = CheckoutV4()
+            action = Checkout()
         )
         uses(
             name = "Validate Wrapper",
-            action = WrapperValidationActionV2(_customVersion = "v3")
+            action = WrapperValidationAction()
         )
     }
 }

@@ -16,7 +16,8 @@
  * limitations under the License.
  */
 
-@file:DependsOn("io.github.typesafegithub:github-workflows-kt:2.0.0")
+@file:Repository("https://repo.maven.apache.org/maven2/")
+@file:DependsOn("io.github.typesafegithub:github-workflows-kt:2.3.0")
 
 import io.github.typesafegithub.workflows.domain.Job
 import io.github.typesafegithub.workflows.domain.JobOutputs.EMPTY

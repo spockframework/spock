@@ -17,9 +17,13 @@
  */
 
 @file:Import("common.main.kts")
+@file:Repository("https://bindings.krzeminski.it/")
+@file:DependsOn("actions:checkout:v4")
+@file:DependsOn("codecov:codecov-action:v4")
 
-import io.github.typesafegithub.workflows.actions.actions.CheckoutV4
-import io.github.typesafegithub.workflows.actions.codecov.CodecovActionV4
+import io.github.typesafegithub.workflows.actions.actions.Checkout
+import io.github.typesafegithub.workflows.actions.actions.Checkout.FetchDepth
+import io.github.typesafegithub.workflows.actions.codecov.CodecovAction
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
@@ -57,7 +61,7 @@ workflow(
     ) {
         uses(
             name = "Checkout Repository",
-            action = CheckoutV4()
+            action = Checkout()
         )
         run(
             name = "Regenerate all workflow YAMLs and check for modifications",
@@ -75,9 +79,9 @@ workflow(
     ) {
         uses(
             name = "Checkout Repository",
-            action = CheckoutV4(
+            action = Checkout(
                 // Codecov needs fetch-depth > 1
-                fetchDepth = CheckoutV4.FetchDepth.Value(2)
+                fetchDepth = FetchDepth.Value(2)
             )
         )
         uses(
@@ -100,7 +104,7 @@ workflow(
         )
         uses(
             name = "Upload to Codecov.io",
-            action = CodecovActionV4()
+            action = CodecovAction()
         )
     }
 }

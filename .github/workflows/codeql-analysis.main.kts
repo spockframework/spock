@@ -17,10 +17,14 @@
  */
 
 @file:Import("common.main.kts")
+@file:Repository("https://bindings.krzeminski.it/")
+@file:DependsOn("actions:checkout:v4")
+@file:DependsOn("github:codeql-action__analyze:v3")
+@file:DependsOn("github:codeql-action__init:v3")
 
-import io.github.typesafegithub.workflows.actions.actions.CheckoutV4
-import io.github.typesafegithub.workflows.actions.github.CodeqlActionAnalyzeV2
-import io.github.typesafegithub.workflows.actions.github.CodeqlActionInitV2
+import io.github.typesafegithub.workflows.actions.actions.Checkout
+import io.github.typesafegithub.workflows.actions.github.CodeqlActionAnalyze
+import io.github.typesafegithub.workflows.actions.github.CodeqlActionInit
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
 import io.github.typesafegithub.workflows.domain.triggers.Cron
@@ -71,7 +75,7 @@ workflow(
     ) {
         uses(
             name = "Checkout Repository",
-            action = CheckoutV4()
+            action = Checkout()
         )
         // Manually added: Install and setup JDK
         uses(
@@ -81,8 +85,7 @@ workflow(
         // Initializes the CodeQL tools for scanning
         uses(
             name = "Initialize CodeQL",
-            action = CodeqlActionInitV2(
-                _customVersion = "v3"
+            action = CodeqlActionInit(
                 // Override language selection by uncommenting this and choosing your languages
                 // languages = listOf("go", "javascript", "csharp", "python", "cpp", "java"),
             )
@@ -91,7 +94,7 @@ workflow(
         // If this step fails, then you should remove it and run the build manually (see below).
         // uses(
         //     name = "Autobuild",
-        //     action = CodeqlActionAutobuildV2()
+        //     action = CodeqlActionAutobuild()
         // )
         //
         // ℹ️ Command-line programs to run using the OS shell.
@@ -123,7 +126,7 @@ workflow(
         )
         uses(
             name = "Perform CodeQL Analysis",
-            action = CodeqlActionAnalyzeV2(_customVersion = "v3")
+            action = CodeqlActionAnalyze()
         )
     }
 }

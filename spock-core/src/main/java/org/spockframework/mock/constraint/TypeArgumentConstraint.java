@@ -19,6 +19,7 @@ package org.spockframework.mock.constraint;
 import org.spockframework.mock.IArgumentConstraint;
 import org.spockframework.runtime.Condition;
 import org.spockframework.util.CollectionUtil;
+import org.spockframework.util.ReflectionUtil;
 
 /**
  *
@@ -35,15 +36,23 @@ public class TypeArgumentConstraint implements IArgumentConstraint {
 
   @Override
   public boolean isSatisfiedBy(Object argument) {
-    return type.isInstance(argument) && constraint.isSatisfiedBy(argument);
+    return isInstance(argument) && constraint.isSatisfiedBy(argument);
+  }
+
+  private boolean isInstance(Object argument) {
+    if (type.isInstance(argument))
+      return true;
+    if (type.isPrimitive())
+      return ReflectionUtil.getWrapperType(type).isInstance(argument);
+    return false;
   }
 
   @Override
   public String describeMismatch(Object argument) {
-    if (type.isInstance(argument)) {
+    if (isInstance(argument)) {
       return constraint.describeMismatch(argument);
     }
-    Condition condition = new Condition(CollectionUtil.listOf(  argument, type, false),
+    Condition condition = new Condition(CollectionUtil.listOf(argument, type, false),
       String.format("argument instanceof %s", type.getName()), null, null,
       null, null);
     return condition.getRendering();

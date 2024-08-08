@@ -83,7 +83,7 @@ We use `@file:Import` to reduce code duplication by having common code in a comm
 Unfortunately, this triggers a Kotlin bug where the compilation cache becomes confused
 if the imported file is changed without the importing file being changed too.
 +
-If only the imported file is changed, it could happen that a old version is used,
+If only the imported file is changed, it could happen that an old version is used,
 or it could also happen that classes added by a `@file:DependsOn` in the imported file
 are not available to the importing file. So if there was a change in the imported file,
 you either need to also change the importing file, or to properly execute the script,

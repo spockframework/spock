@@ -56,7 +56,7 @@ workflow(
 ) {
     job(
         id = "check_all_workflow_yaml_consistency",
-        name = "Check all Workflow YAML consistency",
+        name = "Check all Workflow YAML Consistency",
         runsOn = UbuntuLatest
     ) {
         uses(
@@ -64,8 +64,15 @@ workflow(
             action = Checkout()
         )
         run(
-            name = "Regenerate all workflow YAMLs and check for modifications",
-            command = """find .github/workflows -mindepth 1 -maxdepth 1 -name "*.main.kts" | xargs -ri sh -c '{} && git diff --exit-code'"""
+            name = "Regenerate all Workflow YAMLs",
+            command = """find .github/workflows -mindepth 1 -maxdepth 1 -name '*.main.kts' -exec {} \;"""
+        )
+        run(
+            name = "Check for Modifications",
+            command = """
+                git add --intent-to-add .
+                git diff --exit-code
+            """.trimIndent()
         )
     }
 

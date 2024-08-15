@@ -53,10 +53,15 @@ tasks.named("test", Test) {
   reports.junitXml.required = true
   reports.html.required = true
 
-  testLogging.exceptionFormat = "full"
-  testLogging.showExceptions = true
-  testLogging.events 'standard_out'
-  testLogging.events 'standard_error'
+
+  testLogging {
+    events("STARTED","PASSED", "FAILED", "SKIPPED", "STANDARD_OUT", "STANDARD_ERROR")
+    displayGranularity = 1
+    exceptionFormat = "full"
+    showExceptions = true
+  }
+
+
   maxParallelForks = 1
   systemProperty "spock.snapshots.rootPath", "src/test/resources/snapshots"
   if (project.hasProperty("updateSnapshots")) {

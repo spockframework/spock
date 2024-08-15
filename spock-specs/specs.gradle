@@ -53,6 +53,11 @@ tasks.named("test", Test) {
   reports.junitXml.required = true
   reports.html.required = true
 
+  // always execute tests
+  outputs.upToDateWhen { false }
+  outputs.cacheIf { false }
+
+
 
   testLogging {
     events("STARTED","PASSED", "FAILED", "SKIPPED", "STANDARD_OUT", "STANDARD_ERROR")

@@ -1,3 +1,4 @@
+org.spockframework.runtime.extension.builtin.GlobalTimeoutExtension
 org.spockframework.runtime.extension.builtin.IncludeExcludeExtension
 org.spockframework.runtime.extension.builtin.OptimizeRunOrderExtension
 org.spockframework.runtime.extension.builtin.UnrollExtension

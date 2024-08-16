@@ -12,7 +12,9 @@ include::include.adoc[]
 
 === Misc
 
-* Types constraints or arguments in interactions can now handle primitive types like `_ as int` spockIssue:1974[]
+* Add `globalTimeout` to  `@Timeout` extension, to apply a timeout to all features in a specification, configurable via the spock configuration file spockPull:1985[]
+* Improve `@Timeout` extension will now use virtual threads if available spockPull:1985[]
+* Improve mock argument matching, types constraints or arguments in interactions can now handle primitive types like `_ as int` spockIssue:1974[]
 
 == 2.4-M4 (2024-03-21)
 

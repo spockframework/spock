@@ -20,7 +20,6 @@ import org.spockframework.runtime.SpockTimeoutError;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.extension.IMethodInvocation;
 import org.spockframework.util.*;
-import spock.lang.Timeout;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -40,14 +39,15 @@ import static org.spockframework.util.ExceptionUtil.rethrowIfUnrecoverable;
  *
  * @author Peter Niederwieser
  */
-
+@ThreadSafe
 public class TimeoutInterceptor implements IMethodInterceptor {
 
-  private final Timeout timeout;
+  private final Duration timeout;
   private final TimeoutConfiguration configuration;
   private final JavaProcessThreadDumpCollector threadDumpCollector;
 
-  public TimeoutInterceptor(Timeout timeout, TimeoutConfiguration configuration) {
+  public TimeoutInterceptor(Duration timeout, TimeoutConfiguration configuration) {
+    Checks.checkArgument(timeout.toNanos() > 0, () -> "timeout must be positive but was " + timeout);
     this.timeout = timeout;
     this.configuration = configuration;
     this.threadDumpCollector = JavaProcessThreadDumpCollector.create(configuration.threadDumpUtilityType);
@@ -59,13 +59,11 @@ public class TimeoutInterceptor implements IMethodInterceptor {
     final SynchronousQueue<StackTraceElement[]> sync = new SynchronousQueue<>();
     final CountDownLatch startLatch = new CountDownLatch(2);
     final String methodName = invocation.getMethod().getName();
-    final double timeoutSeconds = TimeUtil.toSeconds(timeout.value(), timeout.unit());
+    final double timeoutSeconds = TimeUtil.toSeconds(timeout);
 
-    new Thread(String.format("[spock.lang.Timeout] Watcher for method '%s'", methodName)) {
-      @Override
-      public void run() {
+    ThreadSupport.virtualThreadIfSupported(String.format("[spock.lang.Timeout] Watcher for method '%s'", methodName), () -> {
         StackTraceElement[] stackTrace = new StackTraceElement[0];
-        long waitMillis = timeout.unit().toMillis(timeout.value());
+        long waitMillis = timeout.toMillis();
         boolean synced = false;
         long timeoutAt = 0;
         int unsuccessfulInterruptAttempts = 0;
@@ -92,9 +90,8 @@ public class TimeoutInterceptor implements IMethodInterceptor {
             }
             mainThread.interrupt();
           }
-        }
       }
-    }.start();
+    }).start();
 
     syncWithThread(startLatch, "watcher", methodName);
 
@@ -137,7 +134,7 @@ public class TimeoutInterceptor implements IMethodInterceptor {
     System.err.printf(
       "[spock.lang.Timeout] Method '%s' has not stopped after timing out %1.2f seconds ago - interrupting. Next try in %1.2f seconds.\n%n",
       methodName,
-      Duration.ofNanos(now - timeoutAt).toMillis() / 1000d,
+      TimeUtil.toSeconds(Duration.ofNanos(now - timeoutAt)),
       waitMillis / 1000d
     );
 

@@ -14,6 +14,7 @@
 
 package org.spockframework.util;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 public abstract class TimeUtil {
@@ -22,5 +23,9 @@ public abstract class TimeUtil {
       return TimeUnit.SECONDS.convert(value, unit);
     }
     return value / (double) unit.convert(1, TimeUnit.SECONDS);
+  }
+
+  public static double toSeconds(Duration duration) {
+    return duration.toMillis() / 1000d;
   }
 }

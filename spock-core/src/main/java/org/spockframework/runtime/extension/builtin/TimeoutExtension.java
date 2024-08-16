@@ -22,6 +22,8 @@ import org.spockframework.runtime.model.MethodInfo;
 import org.spockframework.runtime.model.SpecInfo;
 import spock.lang.Timeout;
 
+import java.time.Duration;
+
 /**
  * @author Peter Niederwieser
  */
@@ -44,11 +46,11 @@ public class TimeoutExtension implements IAnnotationDrivenExtension<Timeout> {
 
   @Override
   public void visitFeatureAnnotation(Timeout timeout, FeatureInfo feature) {
-    feature.getFeatureMethod().addInterceptor(new TimeoutInterceptor(timeout, configuration));
+    feature.getFeatureMethod().addInterceptor(new TimeoutInterceptor(Duration.ofNanos(timeout.unit().toNanos(timeout.value())), configuration));
   }
 
   @Override
   public void visitFixtureAnnotation(Timeout timeout, MethodInfo fixtureMethod) {
-    fixtureMethod.addInterceptor(new TimeoutInterceptor(timeout, configuration));
+    fixtureMethod.addInterceptor(new TimeoutInterceptor(Duration.ofNanos(timeout.unit().toNanos(timeout.value())), configuration));
   }
 }

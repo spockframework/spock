@@ -311,7 +311,7 @@ def "I fail if I run for more than five seconds"() { ... }
 def "I better be quick" { ... }
 ----
 
-Applying `Timeout` to a spec class has the same effect as applying it to each feature and fixture method that is not already annotated with `Timeout`:
+Applying `@Timeout` to a spec class has the same effect as applying it to each feature and fixture method that is not already annotated with `@Timeout`:
 
 [source,groovy]
 ----

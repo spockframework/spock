@@ -23,6 +23,7 @@ import org.spockframework.runtime.extension.IGlobalExtension;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.MethodInfo;
 import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.util.Assert;
 import org.spockframework.util.Beta;
 import org.spockframework.util.Nullable;
 
@@ -40,7 +41,7 @@ public class GlobalTimeoutExtension implements IGlobalExtension {
   public GlobalTimeoutExtension(TimeoutConfiguration timeoutConfiguration) {
     // TimeoutConfiguration is mutable and will be configured after the extension is created,
     // so we need to store a reference to it and delay until the extension is started to create the interceptor.
-    this.timeoutConfiguration = timeoutConfiguration;
+    this.timeoutConfiguration = Assert.notNull(timeoutConfiguration, "timeoutConfiguration is null");
   }
 
   @Override

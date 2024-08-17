@@ -16,6 +16,8 @@
 
 package org.spockframework.smoke.extension
 
+import java.util.concurrent.CountDownLatch
+
 import org.spockframework.runtime.SpockTimeoutError
 import org.spockframework.runtime.extension.builtin.ThreadDumpUtilityType
 import spock.lang.*
@@ -295,6 +297,10 @@ class TimeoutExtension extends BaseTimeoutExtensionSpecification {
   }
 
   @Timeout(1)
+  @IgnoreIf(
+      value = { jvm.java21Compatible },
+      reason = "The TimeoutExtension uses virtual threads if available, which can't be enumerated"
+  )
   def "watcher thread has descriptive name"() {
     def group = Thread.currentThread().threadGroup
     def threads = new Thread[group.activeCount()]

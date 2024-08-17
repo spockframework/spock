@@ -7,7 +7,7 @@ import java.time.Duration
 
 import org.spockframework.runtime.SpockTimeoutError
 
-class GlobalTimeoutExtensionTest extends BaseTimeoutExtensionSpecification {
+class GlobalTimeoutExtension extends BaseTimeoutExtensionSpecification {
   def "applies timeout to features"() {
     given:
     enableGlobalTimeout()
@@ -103,6 +103,7 @@ class GlobalTimeoutExtensionTest extends BaseTimeoutExtensionSpecification {
         @Timeout(value = 10, unit = SECONDS)
         def "a test"() {
             given: 
+            
             Thread.sleep 100
             expect: true
         }

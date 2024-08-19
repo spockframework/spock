@@ -10,10 +10,6 @@ include::include.adoc[]
 * Add support for combining two or more data providers using cartesian product spockIssue:1062[]
 * Add support for a `filter` block after a `where` block to filter out unwanted iterations
 
-=== Misc
-
-* Types constraints or arguments in interactions can now handle primitive types like `_ as int` spockIssue:1974[]
-
 == 2.4-M4 (2024-03-21)
 
 * Fix nested regex finding in conditions spockPull:1931[]

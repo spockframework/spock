@@ -39,7 +39,13 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Types constraints or arguments in interactions can now handle primitive types like <code>_ as int</code> <a href="https://github.com/spockframework/spock/issues/1974">#1974</a></p>
+<p>Add <code>globalTimeout</code> to  <code>@Timeout</code> extension, to apply a timeout to all features in a specification, configurable via the spock configuration file <a href="https://github.com/spockframework/spock/pull/1986">#1986</a></p>
+</li>
+<li>
+<p>Improve <code>@Timeout</code> extension will now use virtual threads if available <a href="https://github.com/spockframework/spock/pull/1986">#1986</a></p>
+</li>
+<li>
+<p>Improve mock argument matching, types constraints or arguments in interactions can now handle primitive types like <code>_ as int</code> <a href="https://github.com/spockframework/spock/issues/1974">#1974</a></p>
 </li>
 </ul>
 </div>
@@ -3014,7 +3020,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-08-14 15:12:13 UTC
+Last updated 2024-08-19 14:36:55 UTC
 </div>
 </div>
 </body>

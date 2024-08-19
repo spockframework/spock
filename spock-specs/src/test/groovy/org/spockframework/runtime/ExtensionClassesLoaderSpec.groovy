@@ -17,6 +17,7 @@ package org.spockframework.runtime
 
 import org.spockframework.mock.runtime.MockMakerConfiguration
 import org.spockframework.report.log.ReportLogConfiguration
+import org.spockframework.runtime.extension.builtin.GlobalTimeoutExtension
 import org.spockframework.runtime.extension.builtin.IncludeExcludeExtension
 import org.spockframework.runtime.extension.builtin.OptimizeRunOrderExtension
 import org.spockframework.runtime.extension.builtin.SnapshotConfig
@@ -33,7 +34,7 @@ class ExtensionClassesLoaderSpec extends Specification {
     def result = new ExtensionClassesLoader().loadExtensionClassesFromDefaultLocation()
 
     then:
-    result == [IncludeExcludeExtension, OptimizeRunOrderExtension, UnrollExtension]
+    result == [GlobalTimeoutExtension, IncludeExcludeExtension, OptimizeRunOrderExtension, UnrollExtension]
   }
 
   def "loads global ConfigObjects"() {

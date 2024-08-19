@@ -13,6 +13,10 @@ class TimeoutConfigurationDoc extends BaseTimeoutExtensionSpecification {
     runner.configurationScript {
       // tag::example[]
       timeout {
+        // java.time.Duration, default null: If set applies global timeout for all features, unless overridden
+        globalTimeout java.time.Duration.ofMinutes(1);
+        // boolean, default false: Determines whether the global timeout will be applied to fixtures
+        applyGlobalTimeoutToFixtures false
         // boolean, default false
         printThreadDumpsOnInterruptAttempts true
         // integer, default 3

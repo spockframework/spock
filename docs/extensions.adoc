@@ -311,8 +311,7 @@ def "I fail if I run for more than five seconds"() { ... }
 def "I better be quick" { ... }
 ----
 
-Applying `Timeout` to a spec class has the same effect as applying it to each feature that is not already annotated
-with `Timeout`, excluding time spent in fixtures:
+Applying `@Timeout` to a spec class has the same effect as applying it to each feature and fixture method that is not already annotated with `@Timeout`:
 
 [source,groovy]
 ----
@@ -323,6 +322,11 @@ class TimedSpec extends Specification {
 
   @Timeout(value = 250, unit = MILLISECONDS)
   def "I fail much faster"() { ... }
+
+  def setup() { /* I have 10 seconds */}
+
+  @Timeout(value = 25, unit = SECONDS)
+  def cleanup() { /* I have 25 seconds */ }
 }
 ----
 
@@ -336,6 +340,11 @@ the timeout was exceeded. Additionally, thread dumps can be captured and logged 
 ----
 include::{sourcedir}/timeout/TimeoutConfigurationDoc.groovy[tag=example]
 ----
+
+Since Spock 2.4, you can also configure a global timeout via the configuration file.
+This will apply to all features that are not already annotated with `@Timeout`.
+Setting the global to non-null will have the same effect as applying `@Timeout` it to all features.
+With the flag `applyGlobalTimeoutToFixtures` you can control if the global timeout should also be applied to fixture methods.
 
 === Retry
 

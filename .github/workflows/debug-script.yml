@@ -1,0 +1,38 @@
+name: 'Debug Script'
+
+on:
+  push:
+    branches-ignore:
+      - master
+      - gh-pages
+  pull_request:
+  merge_group:
+
+# https://stackoverflow.com/a/72408109/16358266
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-verify:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: ['3.0', '4.0']
+        java: ['21', '22']
+        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Codecov needs fetch-depth > 1
+          fetch-depth: 2
+      - name: 'Set up JDKs'
+        uses: ./.github/actions/setup-build-env
+        with:
+          additional-java-version: ${{ matrix.java }}
+      - name: 'Build Spock'
+        # secrets are not injected for pull requests
+        env:
+          DEVELOCITY_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
+        run: ./repeatUntilFailure.sh ./gradlew --stacktrace :spock-specs:test --rerun "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}"

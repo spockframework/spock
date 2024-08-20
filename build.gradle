@@ -192,9 +192,6 @@ subprojects {
         outputLocation = file("${outputLocation.get()}/$taskName-$variant")
       }
     }
-    //Required for building on Travis' container-based infrastructure to not be killed with
-    //'exit code 137' - https://github.com/travis-ci/travis-ci/issues/5582
-    jvmArgs '-Xmx512m'
     // As a generous general timeout, instead of the 6h of GHA.
     timeout = Duration.ofMinutes(15)
   }

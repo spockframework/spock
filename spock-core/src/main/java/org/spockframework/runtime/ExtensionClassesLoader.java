@@ -15,6 +15,7 @@
 package org.spockframework.runtime;
 
 import org.spockframework.runtime.extension.*;
+import org.spockframework.util.ReflectionUtil;
 import spock.config.ConfigurationObject;
 
 import java.io.*;
@@ -53,9 +54,9 @@ public class ExtensionClassesLoader {
     return extClasses;
   }
 
-  private List<URL> locateDescriptors(String descriptorPath) {
+  private Collection<URL> locateDescriptors(String descriptorPath) {
     try {
-      return Collections.list(RunContext.class.getClassLoader().getResources(descriptorPath));
+      return ReflectionUtil.getResourcesFromClassLoaders(descriptorPath);
     } catch (Exception e) {
       throw new ExtensionException("Failed to locate extension descriptors", e);
     }
@@ -80,7 +81,7 @@ public class ExtensionClassesLoader {
   @SuppressWarnings("unchecked")
   private <T> Class<? extends T> loadExtensionClass(String className, Class<T> baseClass) {
     try {
-      Class<?> loadedClass = RunContext.class.getClassLoader().loadClass(className);
+      Class<?> loadedClass = ReflectionUtil.loadClass(className);
       if (!baseClass.isAssignableFrom(loadedClass)) {
         throw new ExtensionException("Failed to load extension class '%s' as it is not assignable to '%s'")
           .withArgs(className, baseClass.getName());

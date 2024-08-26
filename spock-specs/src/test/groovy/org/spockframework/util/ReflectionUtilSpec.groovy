@@ -20,6 +20,7 @@ import spock.lang.*
 
 import java.lang.annotation.Annotation
 import java.lang.reflect.Method
+import java.util.jar.JarFile
 
 class ReflectionUtilSpec extends Specification {
   def "get package name"() {
@@ -35,6 +36,67 @@ class ReflectionUtilSpec extends Specification {
   def "load unexisting class"() {
     expect:
     ReflectionUtil.loadClassIfAvailable("not.AvailableClass") == null
+  }
+
+  def "load class from ContextClassloader"() {
+    given:
+    def oldLoader = Thread.currentThread().getContextClassLoader()
+
+    def className = "test.TestIf"
+    def cl = new ByteBuddyTestClassLoader()
+    cl.defineInterface(className)
+
+    expect:
+    ReflectionUtil.loadClassIfAvailable(className) == null
+
+    when:
+    Thread.currentThread().setContextClassLoader(cl)
+    then:
+    ReflectionUtil.loadClassIfAvailable(className).classLoader == cl
+
+    cleanup:
+    Thread.currentThread().setContextClassLoader(oldLoader)
+  }
+
+  def "getResourcesFromClassLoaders"() {
+    when:
+    def res = ReflectionUtil.getResourcesFromClassLoaders(JarFile.MANIFEST_NAME)
+    then:
+    res.size() >= 1
+  }
+
+  def "getResourcesFromClassLoaders - ContextClassLoader"() {
+    given:
+    def oldLoader = Thread.currentThread().getContextClassLoader()
+
+    def resPath = "TestResourceFileName"
+    def resCl = new ClassLoader() {
+      @Override
+      Enumeration<URL> getResources(String name) throws IOException {
+        if (name == resPath) {
+          def url = new URL("file:/" + resPath)
+          return new Vector([
+            //Check that we filter out duplicates
+            url,
+            url
+          ]).elements()
+        }
+        return super.getResources(name)
+      }
+    }
+
+    expect:
+    ReflectionUtil.getResourcesFromClassLoaders(resPath).isEmpty()
+
+    when:
+    Thread.currentThread().setContextClassLoader(resCl)
+    def res = ReflectionUtil.getResourcesFromClassLoaders(resPath)
+    then:
+    res.size() == 1
+    res[0].toString().contains(resPath)
+
+    cleanup:
+    Thread.currentThread().setContextClassLoader(oldLoader)
   }
 
   def "check if class exists"() {

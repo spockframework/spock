@@ -1354,3 +1354,20 @@ The extension generates the following output for the example code above.
 ----
 include::{sourcedir}/extension/ExtensionStoreSpec.groovy[tag=example-result]
 ----
+
+
+[[default-value-provider]]
+=== Default Value Provider Extensions
+
+Stubs use the `EmptyOrDummyResponse` to return a default value for a method call.
+If the `EmptyOrDummyResponse` doesn't have specific instructions for a type it will return a new `Stub` for that type.
+This works for most cases, but can lead to unexpected behavior if the type does have a behavioral contract that is not fulfilled by the `Stub`.
+Another problematic case is when the type is `final` or `sealed` as those are not mockable by default.
+
+To address these issues, Spock 2.4 introduces the `org.spockframework.runtime.extension.IDefaultValueProviderExtension` that is loaded via Java's `ServiceLoader` mechanism.
+This extension allows you to provide a default value if the `EmptyOrDummyResponse` doesn't have specific instructions for a type.
+
+It is primarily for framework developers who want to provide a default value for their framework types.
+Or users of a framework that doesn't provide default values for their special types.
+
+If you want to change the default response behavior for `Stub` have a look at <<interaction_based_testing.adoc#ALaCarteMocks,A la Carte Mocks>> and how to use your own `org.spockframework.mock.IDefaultResponse`.

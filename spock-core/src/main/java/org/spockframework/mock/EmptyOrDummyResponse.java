@@ -14,6 +14,7 @@
 
 package org.spockframework.mock;
 
+import org.spockframework.runtime.extension.IDefaultValueProviderExtension;
 import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.ThreadSafe;
 import spock.lang.Specification;
@@ -35,8 +36,16 @@ import static java.util.Collections.emptyMap;
 @ThreadSafe
 public class EmptyOrDummyResponse implements IDefaultResponse {
   public static final EmptyOrDummyResponse INSTANCE = new EmptyOrDummyResponse();
+  private final List<IDefaultValueProviderExtension> defaultValueProviders;
 
-  private EmptyOrDummyResponse() {}
+  private EmptyOrDummyResponse() {
+    ServiceLoader<IDefaultValueProviderExtension> serviceLoader = ServiceLoader.load(IDefaultValueProviderExtension.class);
+    List<IDefaultValueProviderExtension> providers = new ArrayList<>();
+    for (IDefaultValueProviderExtension provider : serviceLoader) {
+      providers.add(provider);
+    }
+    defaultValueProviders = Collections.unmodifiableList(providers);
+  }
 
   @Override
   @SuppressWarnings("rawtypes")
@@ -72,6 +81,8 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
       if (returnType == IntStream.class) return IntStream.empty();
       if (returnType == DoubleStream.class) return DoubleStream.empty();
       if (returnType == LongStream.class) return LongStream.empty();
+      Object providedValue = askDefaultValueProviders(invocation);
+      if (providedValue != null) return providedValue;
       return createDummy(invocation);
     }
 
@@ -97,6 +108,9 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
 
     Object emptyWrapper = createEmptyWrapper(returnType);
     if (emptyWrapper != null) return emptyWrapper;
+
+    Object providedValue = askDefaultValueProviders(invocation);
+    if (providedValue != null) return providedValue;
 
     Object emptyObject = createEmptyObject(returnType);
     if (emptyObject != null) return emptyObject;
@@ -126,6 +140,19 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
     } catch (Exception e) {
       return null;
     }
+  }
+
+  private Object askDefaultValueProviders(IMockInvocation invocation) {
+    if (defaultValueProviders.isEmpty()) {
+      return null;
+    }
+    Class<?> returnType = invocation.getMethod().getReturnType();
+    Type exactReturnType = invocation.getMethod().getExactReturnType();
+    return defaultValueProviders.stream()
+        .map(provider -> provider.provideDefaultValue(returnType, exactReturnType))
+        .filter(Objects::nonNull)
+        .findFirst()
+        .orElse(null);
   }
 
   private Object createDummy(IMockInvocation invocation) {

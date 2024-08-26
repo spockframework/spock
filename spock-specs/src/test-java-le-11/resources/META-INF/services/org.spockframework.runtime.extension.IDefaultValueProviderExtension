@@ -1,0 +1,2 @@
+org.spockframework.mock.FinalClassDefaultValueProvider
+org.spockframework.smoke.mock.MaybeDefaultValueProvider

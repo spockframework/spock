@@ -195,7 +195,7 @@ class MutableClockSpec extends Specification {
     thrown(NullPointerException)
   }
 
-  def "MutableClock can be adjusted with TemporalAdjuster"(TemporalAdjuster adjuster, ZonedDateTime expected) {
+  def "MutableClock can be adjusted with TemporalAdjuster #adjusterName"(TemporalAdjuster adjuster, ZonedDateTime expected) {
     expect:
     mutableClock.instant() == defaultInstant
 
@@ -206,14 +206,14 @@ class MutableClockSpec extends Specification {
     mutableClock.instant() == expected.toInstant()
 
     where:
-    adjuster                            | expected
-    TemporalAdjusters.firstDayOfMonth() | ZonedDateTime.of(2000, 6, 1, 12, 30, 30, 100, UTC)
-    TemporalAdjusters.firstDayOfYear()  | ZonedDateTime.of(2000, 1, 1, 12, 30, 30, 100, UTC)
-    TemporalAdjusters.lastDayOfMonth()  | ZonedDateTime.of(2000, 6, 30, 12, 30, 30, 100, UTC)
-    TemporalAdjusters.lastDayOfYear()   | ZonedDateTime.of(2000, 12, 31, 12, 30, 30, 100, UTC)
+    adjuster                            | adjusterName      | expected
+    TemporalAdjusters.firstDayOfMonth() | "firstDayOfMonth" | ZonedDateTime.of(2000, 6, 1, 12, 30, 30, 100, UTC)
+    TemporalAdjusters.firstDayOfYear()  | "firstDayOfYear"  | ZonedDateTime.of(2000, 1, 1, 12, 30, 30, 100, UTC)
+    TemporalAdjusters.lastDayOfMonth()  | "lastDayOfMonth"  | ZonedDateTime.of(2000, 6, 30, 12, 30, 30, 100, UTC)
+    TemporalAdjusters.lastDayOfYear()   | "lastDayOfYear"   | ZonedDateTime.of(2000, 12, 31, 12, 30, 30, 100, UTC)
   }
 
-  def "MutableClock can be modified with a function"(Closure modification, Instant expected) {
+  def "MutableClock can be modified with a function #description"(Closure modification, Instant expected) {
     expect:
     mutableClock.instant() == defaultInstant
 
@@ -224,8 +224,8 @@ class MutableClockSpec extends Specification {
     mutableClock.instant() == expected
 
     where:
-    _ | modification                                                                                                  | expected
-    _ | { Instant i, ZoneId z -> i.plusSeconds(1) }                                                                   | defaultInstant.plusSeconds(1)
-    _ | { Instant i, ZoneId z -> ZonedDateTime.ofInstant(i, z).with(TemporalAdjusters.firstDayOfYear()).toInstant() } | ZonedDateTime.of(2000, 1, 1, 12, 30, 30, 100, UTC).toInstant()
+    description      | modification                                                                                                  | expected
+    'plusSeconds'    | { Instant i, ZoneId z -> i.plusSeconds(1) }                                                                   | defaultInstant.plusSeconds(1)
+    'firstDayOfYear' | { Instant i, ZoneId z -> ZonedDateTime.ofInstant(i, z).with(TemporalAdjusters.firstDayOfYear()).toInstant() } | ZonedDateTime.of(2000, 1, 1, 12, 30, 30, 100, UTC).toInstant()
   }
 }

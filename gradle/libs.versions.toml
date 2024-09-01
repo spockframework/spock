@@ -16,7 +16,7 @@ asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
 asmUtil = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
 bytebuddy = "net.bytebuddy:byte-buddy:1.15.1"
 cglib = "cglib:cglib-nodep:3.3.0"
-geantyref = "io.leangen.geantyref:geantyref:1.3.16"
+geantyref = "io.leangen.geantyref:geantyref:2.0.0"
 h2database = "com.h2database:h2:2.2.224"
 hamcrest = "org.hamcrest:hamcrest:2.2"
 jaxb = "javax.xml.bind:jaxb-api:2.3.1"

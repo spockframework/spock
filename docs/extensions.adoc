@@ -1367,6 +1367,12 @@ Another problematic case is when the type is `final` or `sealed` as those are no
 To address these issues, Spock 2.4 introduces the `org.spockframework.runtime.extension.IDefaultValueProviderExtension` that is loaded via Java's `ServiceLoader` mechanism.
 This extension allows you to provide a default value if the `EmptyOrDummyResponse` doesn't have specific instructions for a type.
 
+.Example Implementation
+[source,groovy,indent=0]
+----
+include::{sourcedir-java}/smoke/mock/MaybeDefaultValueProvider.java[tag=sample-implementation]
+----
+
 It is primarily for framework developers who want to provide a default value for their framework types.
 Or users of a framework that doesn't provide default values for their special types.
 

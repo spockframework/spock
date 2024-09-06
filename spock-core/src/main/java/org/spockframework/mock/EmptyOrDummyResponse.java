@@ -44,6 +44,7 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
     for (IDefaultValueProviderExtension provider : serviceLoader) {
       providers.add(provider);
     }
+    providers.sort(Comparator.comparing(p -> p.getClass().getName()));
     defaultValueProviders = Collections.unmodifiableList(providers);
   }
 

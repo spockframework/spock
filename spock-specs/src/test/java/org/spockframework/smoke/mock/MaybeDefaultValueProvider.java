@@ -19,6 +19,7 @@ import java.lang.reflect.Type;
 import org.spockframework.runtime.extension.IDefaultValueProviderExtension;
 import org.spockframework.util.Nullable;
 
+// tag::sample-implementation[]
 public class MaybeDefaultValueProvider implements IDefaultValueProviderExtension {
   @Override
   public @Nullable Object provideDefaultValue(Class<?> type, Type exactType) {
@@ -28,3 +29,4 @@ public class MaybeDefaultValueProvider implements IDefaultValueProviderExtension
     return null;
   }
 }
+// end::sample-implementation[]

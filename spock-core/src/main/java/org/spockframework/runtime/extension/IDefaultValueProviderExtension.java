@@ -41,6 +41,8 @@ import org.spockframework.util.ThreadSafe;
 public interface IDefaultValueProviderExtension {
   /**
    * Provides a default value for the given type.
+   * <p>
+   * This method will be called for every `EmptyOrDummyResponse` non-default type, the returned values are not cached.
    *
    * @param type the type for which a default value should be provided, see {@link IMockMethod#getReturnType()}
    * @param exactType the exact type for which a default value should be provided, see {@link IMockMethod#getExactReturnType()}

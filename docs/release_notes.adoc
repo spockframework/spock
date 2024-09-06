@@ -13,6 +13,7 @@ include::include.adoc[]
 === Misc
 
 * Add `globalTimeout` to  `@Timeout` extension, to apply a timeout to all features in a specification, configurable via the spock configuration file spockPull:1986[]
+* Add new <<extensions.adoc#default-value-provider,`IDefaultValueProviderExtension`>> extension point to add support for special classes in the Stub's default `EmptyOrDummyResponse` spockPull:1994[]
 * Improve `@Timeout` extension will now use virtual threads if available spockPull:1986[]
 * Improve mock argument matching, types constraints or arguments in interactions can now handle primitive types like `_ as int` spockIssue:1974[]
 

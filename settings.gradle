@@ -26,6 +26,13 @@ plugins {
 dependencyResolutionManagement {
   repositories {
     mavenCentral()
+    maven {
+      url 'https://oss.sonatype.org/content/repositories/snapshots/'
+      content {
+        includeGroup "org.junit"
+        includeGroup "org.junit.platform"
+      }
+    }
   }
 }
 

@@ -10,6 +10,10 @@
 :github-base: https://github.com/spockframework/spock
 :github-blob-base: {github-base}/blob
 :commit-ish: master
+// source java dir
+:base-sourcedir-java: spock-specs/src/test/java/org/spockframework
+:sourcedir-java: ../{base-sourcedir-java}
+:github-sourcedir-java: {github-blob-base}/{commit-ish}/{base-sourcedir-java}
 // source dir
 :base-sourcedir: spock-specs/src/test/groovy/org/spockframework/docs
 :sourcedir: ../{base-sourcedir}

@@ -129,6 +129,9 @@ subprojects {
       groovy {
         srcDir "src/${ss.name}-groovy-le-$gv/groovy"
       }
+      resources {
+        srcDir "src/${ss.name}-groovy-le-$gv/resources"
+      }
     }
     for (jv in javaVersions.findAll { javaVersion <= it }) {
       java {
@@ -136,6 +139,9 @@ subprojects {
       }
       groovy {
         srcDir "src/${ss.name}-java-le-$jv/groovy"
+      }
+      resources {
+        srcDir "src/${ss.name}-java-le-$jv/resources"
       }
     }
     for (gv in variants.findAll { variant >= it }) {
@@ -145,6 +151,9 @@ subprojects {
       groovy {
         srcDir "src/${ss.name}-groovy-ge-$gv/groovy"
       }
+      resources {
+        srcDir "src/${ss.name}-groovy-ge-$gv/resources"
+      }
     }
     for (jv in javaVersions.findAll { javaVersion >= it }) {
       java {
@@ -152,6 +161,9 @@ subprojects {
       }
       groovy {
         srcDir "src/${ss.name}-java-ge-$jv/groovy"
+      }
+      resources {
+        srcDir "src/${ss.name}-java-ge-$jv/resources"
       }
     }
   }

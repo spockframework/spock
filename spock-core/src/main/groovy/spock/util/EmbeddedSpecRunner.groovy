@@ -41,7 +41,7 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
  */
 @NotThreadSafe
 class EmbeddedSpecRunner {
-  private final EmbeddedSpecCompiler compiler = new EmbeddedSpecCompiler(unwrapCompileException: false)
+  private final EmbeddedSpecCompiler compiler
 
   boolean throwFailure = true
 
@@ -49,6 +49,38 @@ class EmbeddedSpecRunner {
   List<Class> extensionClasses = []
   List<Class> configClasses = []
   boolean inheritParentExtensions = true
+
+  /**
+   * Creates a new {@link EmbeddedSpecRunner} with a default {@link EmbeddedSpecCompiler}.
+   */
+  EmbeddedSpecRunner() {
+    this(new EmbeddedSpecCompiler())
+    this.compiler.unwrapCompileException = false
+  }
+
+  /**
+   * Creates a new {@link EmbeddedSpecRunner} with a custom classloader to load imports of the spec.
+   * Note: The classloader need to be able to load Spock classes.
+   *
+   * @param classLoader the ClassLoader to use to load the spec imports
+   * @since 2.4
+   */
+  @Beta
+  EmbeddedSpecRunner(ClassLoader classLoader) {
+    this(new EmbeddedSpecCompiler(classLoader))
+    this.compiler.unwrapCompileException = false
+  }
+
+  /**
+   * Creates a new {@link EmbeddedSpecRunner} with a custom {@link EmbeddedSpecCompiler}.
+   *
+   * @param compiler the compiler to use
+   * @since 2.4
+   */
+  @Beta
+  EmbeddedSpecRunner(EmbeddedSpecCompiler compiler) {
+    this.compiler = Objects.requireNonNull(compiler)
+  }
 
   void configurationScript(Closure configurationScript) {
     this.configurationScript = configurationScript

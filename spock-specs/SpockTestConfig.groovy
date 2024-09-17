@@ -4,6 +4,7 @@ runner {
   parallel {
     enabled true
   }
+  filterStackTrace false
 }
 
 timeout {

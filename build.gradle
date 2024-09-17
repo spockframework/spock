@@ -197,6 +197,8 @@ subprojects {
     jvmArgs '-Xmx512m', '-XX:ActiveProcessorCount=4', '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005'
     // As a generous general timeout, instead of the 6h of GHA.
     timeout = Duration.ofMinutes(15)
+    // disable JUnit's stacktrace filtering
+    systemProperty("junit.platform.stacktrace.pruning.enabled", "false")
   }
 
   tasks.register("allDependencyInsight", DependencyInsightReportTask) {}

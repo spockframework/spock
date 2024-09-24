@@ -38,11 +38,36 @@ class EmbeddedSpecCompiler {
   final CompilerConfiguration compilerConfigurationWithImports = new CompilerConfiguration().tap {
     it.addCompilationCustomizers(importCustomizer)
   }
-  final GroovyClassLoader loaderWithImports = new GroovyClassLoader(getClass().classLoader, compilerConfigurationWithImports)
-  final GroovyClassLoader loader = new GroovyClassLoader(getClass().classLoader)
+  final GroovyClassLoader loaderWithImports
+  final GroovyClassLoader loader
 
   boolean unwrapCompileException = true
 
+  /**
+   * Creates a new {@link EmbeddedSpecCompiler} with default settings using the Spock {@link ClassLoader} for resolving imports.
+   */
+  EmbeddedSpecCompiler() {
+    //We can't use the new constructor EmbeddedSpecCompiler(ClassLoader) here, because we can't call this before super
+    //and someone could have subclassed the EmbeddedSpecCompiler with a different classloader,
+    //which would break the existing code, if we use "EmbeddedSpecCompiler.class.classLoader"
+    def classLoader = this.class.classLoader
+    this.loaderWithImports = new GroovyClassLoader(classLoader, compilerConfigurationWithImports)
+    this.loader = new GroovyClassLoader(classLoader)
+  }
+
+  /**
+   * Creates a new {@link EmbeddedSpecCompiler} with a custom classloader to load imports of the spec.
+   * Note: The classloader need to be able to load Spock classes.
+   *
+   * @param classLoader the ClassLoader to use to load the spec imports
+   * @since 2.4
+   */
+  @Beta
+  EmbeddedSpecCompiler(ClassLoader classLoader) {
+    Objects.requireNonNull(classLoader)
+    this.loaderWithImports = new GroovyClassLoader(classLoader, compilerConfigurationWithImports)
+    this.loader = new GroovyClassLoader(classLoader)
+  }
 
   void addPackageImport(String pkg) {
     importCustomizer.addStarImports(pkg)

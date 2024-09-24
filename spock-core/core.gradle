@@ -28,7 +28,7 @@ dependencies {
   if (variant == 2.5) {
     api projects.spockGroovy2Compat
   }
-  
+
   implementation libs.geantyref
 
   compileOnly libs.jetbrains.annotations
@@ -69,7 +69,10 @@ tasks.named("jar", Jar) {
         'net.bytebuddy.*;resolution:=optional',
         'net.sf.cglib.*;resolution:=optional',
         'org.objectweb.asm.*;resolution:=optional',
-        'org.mockito.*;resolution:=optional',
+        /* We need to override the OSGi version for Mockito here, otherwise the version range would be [4.11,5)
+         * which would exclude Mockito 5 in the OSGi case.
+         */
+        'org.mockito.*;resolution:=optional;version="[4.11,6)"',
         '*'
       ].join(','),
       '-noclassforname': 'true',

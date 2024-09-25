@@ -16,6 +16,8 @@ include::include.adoc[]
 * Add new <<extensions.adoc#default-value-provider,`IDefaultValueProviderExtension`>> extension point to add support for special classes in the Stub's default `EmptyOrDummyResponse` spockPull:1994[]
 * Improve `@Timeout` extension will now use virtual threads if available spockPull:1986[]
 * Improve mock argument matching, types constraints or arguments in interactions can now handle primitive types like `_ as int` spockIssue:1974[]
+* Support ContextClassLoader when loading optional classes via `ReflectionUtil` spockPull:1995[]
+** This enables loading of optional classes in e.g. OSGi environments
 * `EmbeddedSpecRunner` and `EmbeddedSpecCompiler` now support the construction with a custom `ClassLoader` spockPull:1988[]
 ** This allows the use of these classes in an OSGi environment, where the class imports in the embedded spec are not visible to the Spock OSGi bundle ClassLoader
 

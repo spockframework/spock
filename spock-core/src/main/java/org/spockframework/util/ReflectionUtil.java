@@ -18,8 +18,10 @@ package org.spockframework.util;
 import static java.util.Arrays.asList;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
+import java.net.URL;
 import java.security.CodeSource;
 import java.util.*;
 
@@ -38,17 +40,76 @@ public abstract class ReflectionUtil {
   public static Class<?> loadFirstAvailableClass(String... classNames) {
     for (String className : classNames) {
       Class<?> clazz = loadClassIfAvailable(className);
-      if (clazz != null) {return clazz;}
+      if (clazz != null) {
+        return clazz;
+      }
     }
     return null;
   }
 
   public static Class<?> loadClassIfAvailable(String className) {
     try {
-      return ReflectionUtil.class.getClassLoader().loadClass(className);
+      return loadClass(className);
     } catch (ClassNotFoundException e) {
       return null;
     }
+  }
+
+  /**
+   * Loads the className in the following order:
+   * <ul>
+   * <li>Spock {@link ClassLoader}</li>
+   * <li>{@code Thread.currentThread().getContextClassLoader()}</li>
+   * </ul>
+   *
+   * @param className the class to load
+   * @return the loaded class
+   * @throws ClassNotFoundException if the class could not be found
+   */
+  public static Class<?> loadClass(String className) throws ClassNotFoundException {
+    ClassLoader spockClassLoader = ReflectionUtil.class.getClassLoader();
+    try {
+      return spockClassLoader.loadClass(className);
+    } catch (ClassNotFoundException outerEx) {
+      ClassLoader contextClassLoader;
+      try {
+        //Try ContextClassLoader to better support for runtimes like OSGi
+        contextClassLoader = Thread.currentThread().getContextClassLoader();
+      } catch (SecurityException ex) {
+        throw outerEx;
+      }
+      if (contextClassLoader != null && contextClassLoader != spockClassLoader) {
+        return contextClassLoader.loadClass(className);
+      }
+      throw outerEx;
+    }
+  }
+
+  /**
+   * Returns the resources from the following classloaders:
+   * <ul>
+   * <li>Spock {@link ClassLoader}</li>
+   * <li>{@code Thread.currentThread().getContextClassLoader()}</li>
+   * </ul>
+   *
+   * @param resourcePath the path of the resource
+   * @return the list of resources
+   * @throws IOException if the resources can't be loaded
+   */
+  public static Collection<URL> getResourcesFromClassLoaders(String resourcePath) throws IOException {
+    ClassLoader spockClassLoader = ReflectionUtil.class.getClassLoader();
+    // We need to use a sorted Set here, to filter out duplicates, if the ContextClassLoader can also reach the Spock classloader
+    TreeSet<URL> set = new TreeSet<>(Comparator.comparing(URL::toString));
+    set.addAll(Collections.list(spockClassLoader.getResources(resourcePath)));
+    try {
+      //Also resolve resources via ContextClassLoader to better support for runtimes like OSGi
+      ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+      if (contextClassLoader != null && spockClassLoader != contextClassLoader) {
+        set.addAll(Collections.list(contextClassLoader.getResources(resourcePath)));
+      }
+    } catch (SecurityException ignored) {
+    }
+    return set;
   }
 
   public static boolean isClassAvailable(String className) {
@@ -56,12 +117,11 @@ public abstract class ReflectionUtil {
   }
 
   public static boolean isMethodAvailable(String className, String methodName) {
-    try {
-      Class clazz = ReflectionUtil.class.getClassLoader().loadClass(className);
-      return getMethodByName(clazz, methodName) != null;
-    } catch (ClassNotFoundException e) {
+    Class<?> clazz = loadClassIfAvailable(className);
+    if (clazz == null) {
       return false;
     }
+    return getMethodByName(clazz, methodName) != null;
   }
 
   public static boolean isAnnotationPresent(AnnotatedElement element, String className) {
@@ -71,6 +131,7 @@ public abstract class ReflectionUtil {
 
     return false;
   }
+
   public static boolean isArray(Object obj) {
     return (obj != null && obj.getClass().isArray());
   }

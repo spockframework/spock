@@ -51,6 +51,16 @@
 <p>Improve mock argument matching, types constraints or arguments in interactions can now handle primitive types like <code>_ as int</code> <a href="https://github.com/spockframework/spock/issues/1974">#1974</a></p>
 </li>
 <li>
+<p>Support ContextClassLoader when loading optional classes via <code>ReflectionUtil</code> <a href="https://github.com/spockframework/spock/pull/1995">#1995</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>This enables loading of optional classes in e.g. OSGi environments</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
 <p><code>EmbeddedSpecRunner</code> and <code>EmbeddedSpecCompiler</code> now support the construction with a custom <code>ClassLoader</code> <a href="https://github.com/spockframework/spock/pull/1988">#1988</a></p>
 <div class="ulist">
 <ul>
@@ -3033,7 +3043,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-09-25 14:06:42 UTC
+Last updated 2024-09-25 15:23:31 UTC
 </div>
 </div>
 </body>

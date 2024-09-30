@@ -7,7 +7,7 @@ jacoco = '0.8.12'
 junit = '5.11.1'
 asm = '9.7'
 mockito4 = '4.11.0'
-mockito5 = '5.14.0'
+mockito5 = '5.14.1'
 
 [libraries]
 jetbrains-annotations = "org.jetbrains:annotations:25.0.0"

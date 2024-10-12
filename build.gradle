@@ -223,7 +223,7 @@ tasks.register("collectTestXml") {
 
 
   doFirst {
-    def target = file("$buildDir/collected-test-results")
+    def target = layout.buildDirectory.dir("collected-test-results").get().asFile
     target.mkdirs()
     reportingProjects.each { rp ->
       rp.tasks.withType(Test).each { testTask ->
@@ -255,7 +255,7 @@ tasks.register("codeCoverageReport", JacocoReport) {
   reports {
     html.required = true
     xml.required = true
-    xml.outputLocation = file("${buildDir}/reports/jacoco/report.xml") // report must be here for codecov to pick it up
+    xml.outputLocation = layout.buildDirectory.file("reports/jacoco/report.xml") // report must be here for codecov to pick it up
     csv.required = false
   }
 }

@@ -84,13 +84,14 @@ class ByteBuddyMockFactory {
   }
 
   /**
-   * {@return true, if the mock is considered local}
+   * Returns {@code true}, if the mock is considered local
    * <p>
    * A mock is considered local, if all additional interfaces of the mock (including {@link ISpockMockObject}) are
    * loadable by the target class' classloader.
    *
    * @param targetClass The to-be-mocked class
    * @param additionalInterfaces Additional interfaces of the to-be-mocked type
+   * @return true, if this is a local mock. Otherwise false
    */
   @VisibleForTesting
   static boolean isLocalMock(Class<?> targetClass, Collection<Class<?>> additionalInterfaces) {

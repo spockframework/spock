@@ -89,7 +89,7 @@ tasks.named("test", Test) {
 }
 
 tasks.register("groovyConsole", JavaExec) {
-  main = variant == 2.5 ? "groovy.ui.Console" : "groovy.console.ui.Console"
+  mainClass = variant == 2.5 ? "groovy.ui.Console" : "groovy.console.ui.Console"
   classpath(sourceSets.named("test").map {it.runtimeClasspath }, configurations.named("groovyConsole"))
 }
 

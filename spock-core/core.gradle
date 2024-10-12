@@ -95,10 +95,10 @@ tasks.named("processResources") {
 
 tasks.register("coreConsole", JavaExec) {
   description = 'Start a groovy Console with Spock Core Classpath, useful for AST-Inspection'
-  main = variant == 2.5 ? "groovy.ui.Console" : "groovy.console.ui.Console"
+  mainClass = variant == 2.5 ? "groovy.ui.Console" : "groovy.console.ui.Console"
   classpath(sourceSets.named("main").map {it.runtimeClasspath }, configurations.named("coreConsoleRuntime"))
   workingDir = file('build/console')
-  ignoreExitValue = true
+  ignoreExitValue true
   args file('CoreConsole.groovy').absolutePath
   doFirst {
     workingDir.mkdirs()
@@ -109,7 +109,7 @@ tasks.register("coreConsole", JavaExec) {
 // task writes out the properties necessary for it to verify the OSGi
 // metadata.
 def osgiProperties = tasks.register('osgiProperties', WriteProperties) {
-  outputFile = layout.getBuildDirectory().file("verifyOSGiProperties.bndrun")
+  destinationFile = layout.getBuildDirectory().file("verifyOSGiProperties.bndrun")
   property('-standalone', true)
   property('-runee', "JavaSE-${javaVersion < 9 ? '1.' + javaVersion : javaVersion}")
   property('-runrequires', "osgi.identity;filter:='(osgi.identity=${project.name})'")

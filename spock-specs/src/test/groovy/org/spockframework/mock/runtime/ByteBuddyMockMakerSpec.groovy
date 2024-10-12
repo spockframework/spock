@@ -16,10 +16,13 @@
 
 package org.spockframework.mock.runtime
 
+import net.bytebuddy.dynamic.loading.MultipleParentClassLoader
 import org.spockframework.mock.CannotCreateMockException
 import spock.lang.Specification
+import spock.lang.Unroll
 import spock.mock.DetachedMockFactory
 import spock.mock.MockMakers
+import spock.util.EmbeddedSpecRunner
 
 import java.lang.reflect.Proxy
 import java.util.concurrent.Callable
@@ -132,7 +135,7 @@ class ByteBuddyMockMakerSpec extends Specification {
 
     when:
     Mock(interfaceClass, mockMaker: MockMakers.byteBuddy)
-    
+
     then:
     CannotCreateMockException ex = thrown()
     ex.message.startsWith("Cannot create mock for interface Interface. byte-buddy: The class Interface is not visible by the classloader")
@@ -149,6 +152,36 @@ class ByteBuddyMockMakerSpec extends Specification {
     then:
     CannotCreateMockException ex = thrown()
     ex.message.startsWith("Cannot create mock for interface java.lang.Runnable. byte-buddy: The class AdditionalInterface is not visible by the classloader")
+  }
+
+  def "ByteBuddy Mocks with interfaces that are not visible to the mocked type's classloader"() {
+    def testCl1 = new ByteBuddyTestClassLoader()
+    def testCl2 = new ByteBuddyTestClassLoader()
+    testCl1.defineInterface("foo.Bar")
+    testCl2.defineClass("iam.Mocked")
+    def cl = new MultipleParentClassLoader([getClass().classLoader, testCl1, testCl2])
+    def runner = new EmbeddedSpecRunner(cl)
+    when: "A type is mocked with an additional interface from a classloader outside the mocked type's parent chain"
+    runner.addClassImport(MockMakers)
+    runner.runFeatureBody("""
+def mock = Mock(iam.Mocked, mockMaker: MockMakers.byteBuddy, additionalInterfaces: [foo.Bar])
+expect:
+true
+""")
+    then:
+    noExceptionThrown()
+  }
+
+  @Unroll("For target class #targetClass with additional interfaces #additionalInterfaces, isLocal() == #expected")
+  def "Local mocks are detected correctly"(Class<?> targetClass, Collection<Class<?>> additionalInterfaces, boolean expected) {
+    expect:
+    ByteBuddyMockFactory.isLocalMock(targetClass, additionalInterfaces) == expected
+
+    where:
+    targetClass | additionalInterfaces                                    | expected
+    DataClass   | []                                                      | true
+    DataClass   | [Serializable]                                          | true
+    DataClass   | [new ByteBuddyTestClassLoader().defineInterface("foo")] | false
   }
 }
 

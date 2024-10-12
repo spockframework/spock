@@ -28,6 +28,7 @@ import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.Transformer;
 import net.bytebuddy.dynamic.loading.ClassInjector;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
+import net.bytebuddy.dynamic.loading.MultipleParentClassLoader;
 import net.bytebuddy.dynamic.scaffold.TypeValidation;
 import net.bytebuddy.implementation.FieldAccessor;
 import net.bytebuddy.implementation.MethodDelegation;
@@ -37,10 +38,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 import org.spockframework.mock.ISpockMockObject;
 import org.spockframework.mock.codegen.Target;
-import org.spockframework.util.Nullable;
 
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -83,6 +83,26 @@ class ByteBuddyMockFactory {
     }
   }
 
+  /**
+   * {@return true, if the mock is considered local}
+   * <p>
+   * A mock is considered local, if all additional interfaces of the mock (including {@link ISpockMockObject}) are
+   * loadable by the target class' classloader.
+   *
+   * @param targetClass The to-be-mocked class
+   * @param additionalInterfaces Additional interfaces of the to-be-mocked type
+   */
+  @VisibleForTesting
+  static boolean isLocalMock(Class<?> targetClass, Collection<Class<?>> additionalInterfaces) {
+    // Inspired by https://github.com/mockito/mockito/blob/99426415c0ceb30e55216c3934854528c83f410e/mockito-core/src/main/java/org/mockito/internal/creation/bytebuddy/SubclassBytecodeGenerator.java#L165-L166
+    ClassLoader cl = new MultipleParentClassLoader.Builder()
+      .appendMostSpecific(targetClass)
+      .appendMostSpecific(additionalInterfaces)
+      .appendMostSpecific(ISpockMockObject.class)
+      .build();
+    return cl == targetClass.getClassLoader();
+  }
+
   Object createMock(IMockMaker.IMockCreationSettings settings) {
     final Class<?> type = settings.getMockType();
     TypeCache.SimpleKey key = new TypeCache.SimpleKey(type, settings.getAdditionalInterface());
@@ -99,7 +119,8 @@ class ByteBuddyMockFactory {
         }
         int randomNumber = Math.abs(ThreadLocalRandom.current().nextInt());
         String name = String.format("%s$%s$%d", typeName, "SpockMock", randomNumber);
-        ClassLoadingStrategy<ClassLoader> strategy = determineBestClassLoadingStrategy(targetClass);
+        ClassLoadingStrategy<ClassLoader> strategy = determineBestClassLoadingStrategy(targetClass, settings);
+        //noinspection resource
         return new ByteBuddy()
           .with(TypeValidation.DISABLED) // https://github.com/spockframework/spock/issues/776
           .ignore(none())
@@ -190,8 +211,8 @@ class ByteBuddyMockFactory {
   }
 
   @NotNull
-  private static ClassLoadingStrategy<ClassLoader> determineBestClassLoadingStrategy(Class<?> targetClass) throws Exception {
-    if (ClassInjector.UsingLookup.isAvailable()) {
+  private static ClassLoadingStrategy<ClassLoader> determineBestClassLoadingStrategy(Class<?> targetClass, IMockMaker.IMockCreationSettings settings) throws Exception {
+    if (ClassInjector.UsingLookup.isAvailable() && isLocalMock(targetClass, settings.getAdditionalInterface())) {
       Class<?> methodHandlesClass = Class.forName("java.lang.invoke.MethodHandles");
       Class<?> lookupClass = Class.forName("java.lang.invoke.MethodHandles$Lookup");
       Method lookupMethod = methodHandlesClass.getMethod("lookup");

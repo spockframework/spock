@@ -5,6 +5,7 @@ pluginManagement {
   }
 }
 
+rootProject.name = "build-logic"
 rootProject.buildFileName = 'build-logic.gradle'
 
 dependencyResolutionManagement {

@@ -50,7 +50,7 @@ public final class ByteBuddyTestClassLoader extends ClassLoader {
   }
 
   /**
-   * Defines an empty interface with the passed {@code node}.
+   * Defines an empty interface with the passed {@code name}.
    *
    * @param name the name of the interface
    * @return the loaded {@code Class}
@@ -59,6 +59,22 @@ public final class ByteBuddyTestClassLoader extends ClassLoader {
     //noinspection resource
     return cache.computeIfAbsent(name, nameKey -> new ByteBuddy()
       .makeInterface()
+      .name(nameKey)
+      .make()
+      .load(this, loadingStrategy)
+      .getLoaded());
+  }
+
+  /**
+   * Defines an empty class with the passed {@code name}
+   *
+   * @param name the name of the class
+   * @return the loaded {@link  Class}
+   */
+  public synchronized Class<?> defineClass(String name) {
+    //noinspection resource
+    return cache.computeIfAbsent(name, nameKey -> new ByteBuddy()
+      .subclass(Object.class)
       .name(nameKey)
       .make()
       .load(this, loadingStrategy)

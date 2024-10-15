@@ -10,7 +10,7 @@ mockito4 = '4.11.0'
 mockito5 = '5.14.2'
 
 [libraries]
-jetbrains-annotations = "org.jetbrains:annotations:26.0.0"
+jetbrains-annotations = "org.jetbrains:annotations:26.0.1"
 asciidoctorj = { module = "org.asciidoctor:asciidoctorj", version.ref = "asciidoctorj" }
 asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
 asmUtil = { module = "org.ow2.asm:asm-util", version.ref = "asm" }

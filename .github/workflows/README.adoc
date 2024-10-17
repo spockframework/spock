@@ -1,0 +1,98 @@
+== The YAML workflow files vs. the `*.main.kts` files
+
+The YAML workflow files are generated from the `*.main.kts` files.
+
+These use the https://github.com/typesafegithub/github-workflows-kt[github-workflows-kt]
+Kotlin DSL library to conveniently and type-safely write GitHub Action workflow files.
+
+As there is no official built-in support in GitHub Actions yet until
+https://github.com/orgs/community/discussions/15904 is considered, the YAML files
+need to be generated manually.
+
+There is a safeguard check in all the generated files that this is not forgotten.
+Running a workflow where the according `*.main.kts` produces a different output will
+fail the execution. Additionally, the workflow that runs for pull requests checks
+the consistency of all the YAML files as not all are run for pull requests.
+
+
+
+== Ways to generate the YAML workflow files
+
+There are multiple ways to generate the YAML files and all of them are fine,
+but be aware of the last one of the caveats below if you are not using the Gradle method:
+
+* If you are in a `sh` derivate like e.g. `bash` and Kotlin is installed and
+  available in the `PATH`, you can just call the `*.main.kts` script like any
+  other shell script:
++
+[source,bash]
+----
+$ ./release.main.kts
+----
+
+* If Kotlin is installed somewhere you can call it with the `*.main.kts` script
+  as argument:
++
+[source,bash]
+----
+$ path/to/kotlin release.main.kts
+----
+
+* From the IDE you can create a run configuration that executes the `*.main.kts` script.
+
+* There is a Gradle task `preprocessWorkflows` that generates all YAML files from the
+  according `*.main.kts` files. Additionally, there is also one task per workflow to
+  only generate that one:
++
+[source,bash]
+----
+$ ./gradlew preprocessReleaseWorkflow
+$ ./gradlew preprocessWorkflows
+----
+
+
+
+== Caveats
+
+There are currently three known caveats with the approach we follow.
+
+* https://youtrack.jetbrains.com/issue/KTIJ-16532
++
+If you navigate to a file in the dependencies, only a decompiled file is opened,
+even though the source JAR would be available. Also the quick documentation is missing.
++
+This can easily by mitigated by attaching the library to the normal project
+dependencies while having the need to navigate the source files or while editing them,
+which makes them properly viewable and documentation displayable in the editor.
+
+* https://youtrack.jetbrains.com/issue/KTIJ-14580
++
+We use `@file:Import` to reduce code duplication by having common code in a common file.
+Unfortunately, this triggers a Kotlin IntelliJ plugin bug where the imported file cannot
+be loaded properly and so the things supplied by it like dependencies or common functions
+are not available. This makes most of the workflow `*.main.kts` files red as hell in the
+IDE currently.
++
+To reduce risk for eye-cancer while reading the `*.main.kts` scripts or to be able to
+sanely edit them, temporarily add the `@file:DependsOn` from the imported file to the
+importing file and wait a second, then remove the line again once you are done.
+
+* https://youtrack.jetbrains.com/issue/KT-42101
++
+We use `@file:Import` to reduce code duplication by having common code in a common file.
+Unfortunately, this triggers a Kotlin bug where the compilation cache becomes confused
+if the imported file is changed without the importing file being changed too.
++
+If only the imported file is changed, it could happen that an old version is used,
+or it could also happen that classes added by a `@file:DependsOn` in the imported file
+are not available to the importing file. So if there was a change in the imported file,
+you either need to also change the importing file, or to properly execute the script,
+you need to delete the stale entry from the compilation cache which can be found at for example
+`~/.cache/main.kts.compiled.cache/` on Linux and `%LOCALAPPDATA%\main.kts.compiled.cache\`
+on Windows. Alternatively, you can also delete the whole cache directory.
++
+Another option is to disable the compilation cache for the execution by setting the
+environment variable `KOTLIN_MAIN_KTS_COMPILED_SCRIPTS_CACHE_DIR` or the system property
+`kotlin.main.kts.compiled.scripts.cache.dir` to an empty value, depending on the run
+method you chose. The Gradle tasks already do that, so when using the Gradle tasks you
+do not have this problem and it just works.

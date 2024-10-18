@@ -33,6 +33,11 @@ public class ErrorInfo {
     return error;
   }
 
+  /**
+   * {@return the error context}
+   *
+   * @since 2.4
+   */
   public IErrorContext getErrorContext() {
     return errorContext;
   }

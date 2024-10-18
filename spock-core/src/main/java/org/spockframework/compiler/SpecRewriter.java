@@ -34,7 +34,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -430,9 +429,9 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       || blockType == BlockParseInfo.COMBINED
       || blockType == BlockParseInfo.ANONYMOUS) return;
 
-    // SpockRuntime.enterBlock(getSpecificationContext(), new BlockInfo(blockKind, [blockTexts]))
+    // SpockRuntime.enterBlock(getSpecificationContext(), new BlockInfo(blockKind, blockMetaDataIndex))
     MethodCallExpression enterBlockCall = createBlockListenerCall(block, blockType, nodeCache.SpockRuntime_CallEnterBlock);
-    // SpockRuntime.exitedBlock(getSpecificationContext(), new BlockInfo(blockKind, [blockTexts]))
+    // SpockRuntime.exitedBlock(getSpecificationContext(), new BlockInfo(blockKind, blockMetaDataIndex))
     MethodCallExpression exitBlockCall = createBlockListenerCall(block, blockType, nodeCache.SpockRuntime_CallExitBlock);
 
     if (blockType == BlockParseInfo.CLEANUP) {
@@ -447,7 +446,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       block.getAst().add(new ExpressionStatement(exitBlockCall));
     } else {
       block.getAst().add(0, new ExpressionStatement(enterBlockCall));
-      block.getAst().add( new ExpressionStatement(exitBlockCall));
+      block.getAst().add(new ExpressionStatement(exitBlockCall));
     }
   }
 
@@ -559,7 +558,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   public void visitCleanupBlock(CleanupBlock block) {
     for (Block b : method.getBlocks()) {
       // call addBlockListeners() here, as this method will already copy the contents of the blocks,
-      // so we need to transform here as they won't be copied again in visitMethodAgain where we normally add them
+      // so we need to transform the block listeners here as they won't be copied in visitMethodAgain where we normally add them
       addBlockListeners(b);
       if (b == block) break;
       moveVariableDeclarations(b.getAst(), method.getStatements());

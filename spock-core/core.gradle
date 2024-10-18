@@ -96,7 +96,7 @@ tasks.named("processResources") {
 tasks.register("coreConsole", JavaExec) {
   description = 'Start a groovy Console with Spock Core Classpath, useful for AST-Inspection'
   mainClass = variant == 2.5 ? "groovy.ui.Console" : "groovy.console.ui.Console"
-  classpath(sourceSets.named("main").map {it.runtimeClasspath }, configurations.named("coreConsoleRuntime"))
+  classpath(sourceSets.named("main").map { it.runtimeClasspath }, configurations.named("coreConsoleRuntime"))
   workingDir = file('build/console')
   ignoreExitValue true
   args file('CoreConsole.groovy').absolutePath
@@ -119,7 +119,7 @@ def osgiProperties = tasks.register('osgiProperties', WriteProperties) {
 // that its metadata is valid. If the metadata is invalid this task will
 // fail.
 def verifyOSGi = tasks.register('verifyOSGi', Resolve) {
-  getBndrun().fileProvider(osgiProperties.map { it.outputFile })
+  getBndrun().set(osgiProperties.flatMap { it.destinationFile })
   getOutputBndrun().set(layout.getBuildDirectory().file("resolvedOSGiProperties.bndrun"))
   reportOptional = false
   // By default bnd will use jars found in:

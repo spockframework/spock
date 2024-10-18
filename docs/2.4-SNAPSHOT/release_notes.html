@@ -29,7 +29,7 @@
 <p>Add support for combining two or more data providers using cartesian product <a href="https://github.com/spockframework/spock/issues/1062">#1062</a></p>
 </li>
 <li>
-<p>Add support for a <code>filter</code> block after a <code>where</code> block to filter out unwanted iterations</p>
+<p>Add support for a <code>filter</code> block after a <code>where</code> block to filter out unwanted iterations <a href="https://github.com/spockframework/spock/pull/1927">#1927</a></p>
 </li>
 </ul>
 </div>
@@ -43,6 +43,9 @@
 </li>
 <li>
 <p>Add new <a href="extensions.html#default-value-provider"><code>IDefaultValueProviderExtension</code></a> extension point to add support for special classes in the Stub&#8217;s default <code>EmptyOrDummyResponse</code> <a href="https://github.com/spockframework/spock/pull/1994">#1994</a></p>
+</li>
+<li>
+<p>Add support for Groovy-4-style range expressions <a href="https://github.com/spockframework/spock/issues/1956">#1956</a></p>
 </li>
 <li>
 <p>Improve <code>@Timeout</code> extension will now use virtual threads if available <a href="https://github.com/spockframework/spock/pull/1986">#1986</a></p>
@@ -72,6 +75,9 @@
 </li>
 <li>
 <p>Fix mocking issue with the ByteBuddy MockMaker when using multiple classloaders in Java 21 <a href="https://github.com/spockframework/spock/issues/2017">#2017</a></p>
+</li>
+<li>
+<p>Fix mocking of final classes via <code>@SpringBean</code> and <code>@SpringSpy</code> <a href="https://github.com/spockframework/spock/issues/1960">#1960</a></p>
 </li>
 </ul>
 </div>
@@ -3046,7 +3052,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-10-18 14:13:53 UTC
+Last updated 2024-10-18 14:15:49 UTC
 </div>
 </div>
 </body>

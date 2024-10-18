@@ -25,6 +25,7 @@ include::include.adoc[]
 * Fix mocking of final classes via `@SpringBean` and `@SpringSpy` spockIssue:1960[]
 * Size of data providers is no longer calculated multiple times but only once
 * Fix exception when using `@RepeatUntilFailure` with a data provider with unknown iteration amount. spockPull:2031[]
+* Clarified documentation about data providers and `size()` calls spockIssue:2022[]
 
 == 2.4-M4 (2024-03-21)
 

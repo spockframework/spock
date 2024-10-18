@@ -27,8 +27,8 @@ class StandardStreamsCapturerSpec extends Specification {
 
   def setup() {
     capturer.addStandardStreamsListener(listener)
-    capturer.muteStandardStreams()
     capturer.start()
+    capturer.muteStandardStreams()
   }
 
   def cleanup() {
@@ -61,7 +61,6 @@ class StandardStreamsCapturerSpec extends Specification {
     capturer.addStandardStreamsListener(listener2)
 
     when:
-    capturer.start()
     println("some message")
 
     then:

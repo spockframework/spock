@@ -28,6 +28,8 @@ import org.gradle.jvm.toolchain.JavaToolchainService
 @CompileStatic
 class SpockBasePlugin implements Plugin<Project> {
 
+  private static final JavaLanguageVersion COMPILER_VERSION = JavaLanguageVersion.of(8)
+
   void apply(Project project) {
     compileTasks(project)
     testTasks(project)
@@ -39,7 +41,7 @@ class SpockBasePlugin implements Plugin<Project> {
       tasks.withType(JavaCompile).configureEach { comp ->
         if (comp.name == 'compileJava') {
           comp.javaCompiler.set(javaToolchains.compilerFor {
-            it.languageVersion.set(JavaLanguageVersion.of(8))
+            it.languageVersion.set(COMPILER_VERSION)
           })
         }
         comp.options.encoding = 'UTF-8'

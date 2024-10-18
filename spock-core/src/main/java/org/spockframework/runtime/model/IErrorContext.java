@@ -1,5 +1,6 @@
 package org.spockframework.runtime.model;
 
+import org.spockframework.util.Beta;
 import org.spockframework.util.Nullable;
 
 /**
@@ -9,6 +10,7 @@ import org.spockframework.util.Nullable;
  *
  * @since 2.4
  */
+@Beta
 public interface IErrorContext {
   @Nullable
   SpecInfo getCurrentSpec();

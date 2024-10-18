@@ -8,12 +8,13 @@ include::include.adoc[]
 === Highlights
 
 * Add support for combining two or more data providers using cartesian product spockIssue:1062[]
-* Add support for a `filter` block after a `where` block to filter out unwanted iterations
+* Add support for a `filter` block after a `where` block to filter out unwanted iterations spockPull:1927[]
 
 === Misc
 
 * Add `globalTimeout` to  `@Timeout` extension, to apply a timeout to all features in a specification, configurable via the spock configuration file spockPull:1986[]
 * Add new <<extensions.adoc#default-value-provider,`IDefaultValueProviderExtension`>> extension point to add support for special classes in the Stub's default `EmptyOrDummyResponse` spockPull:1994[]
+* Add support for Groovy-4-style range expressions spockIssue:1956[]
 * Improve `@Timeout` extension will now use virtual threads if available spockPull:1986[]
 * Improve mock argument matching, types constraints or arguments in interactions can now handle primitive types like `_ as int` spockIssue:1974[]
 * Support ContextClassLoader when loading optional classes via `ReflectionUtil` spockPull:1995[]
@@ -21,6 +22,7 @@ include::include.adoc[]
 * `EmbeddedSpecRunner` and `EmbeddedSpecCompiler` now support the construction with a custom `ClassLoader` spockPull:1988[]
 ** This allows the use of these classes in an OSGi environment, where the class imports in the embedded spec are not visible to the Spock OSGi bundle ClassLoader
 * Fix mocking issue with the ByteBuddy MockMaker when using multiple classloaders in Java 21 spockIssue:2017[]
+* Fix mocking of final classes via `@SpringBean` and `@SpringSpy` spockIssue:1960[]
 
 == 2.4-M4 (2024-03-21)
 

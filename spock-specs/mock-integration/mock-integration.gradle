@@ -57,6 +57,8 @@ def configureTaskFilters = { String key, Test t ->
 codeGenerationLibraries.each { key, config ->
   tasks.register("test${key.capitalize()}WithoutObjenesis", Test) {
     systemProperty("org.spockframework.mock.testType", "${key.toLowerCase()} - objenesis")
+    testClassesDirs = testing.suites.test.sources.output.classesDirs
+    classpath = testing.suites.test.sources.runtimeClasspath
     classpath += config
 
     configureTaskFilters(key, it)
@@ -64,6 +66,8 @@ codeGenerationLibraries.each { key, config ->
 
   tasks.register("test${key.capitalize()}WithObjenesis", Test) {
     systemProperty("org.spockframework.mock.testType", "${key.toLowerCase()} + objenesis")
+    testClassesDirs = testing.suites.test.sources.output.classesDirs
+    classpath = testing.suites.test.sources.runtimeClasspath
     classpath += config
     classpath += configurations.objenesis
 

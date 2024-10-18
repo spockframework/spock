@@ -34,10 +34,10 @@ tasks.named("test", Test) {
 
 tasks.register("consoleLauncherTest", JavaExec) {
   dependsOn(testClasses)
-  def reportsDir = file("$buildDir/test-results")
+  def reportsDir = layout.buildDirectory.dir("test-results")
   outputs.dir(reportsDir)
   classpath(sourceSets.named("test").map { it.runtimeClasspath })
-  main = "org.junit.platform.console.ConsoleLauncher"
+  mainClass = "org.junit.platform.console.ConsoleLauncher"
 //  jvmArgs "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
 //  args("--select-class", "spock.testkit.testsources.ExampleTestCase")
   args("--select-class", "spock.testkit.testsources.UnrollTestCase")

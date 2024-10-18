@@ -20,6 +20,7 @@ include::include.adoc[]
 ** This enables loading of optional classes in e.g. OSGi environments
 * `EmbeddedSpecRunner` and `EmbeddedSpecCompiler` now support the construction with a custom `ClassLoader` spockPull:1988[]
 ** This allows the use of these classes in an OSGi environment, where the class imports in the embedded spec are not visible to the Spock OSGi bundle ClassLoader
+* Fix mocking issue with the ByteBuddy MockMaker when using multiple classloaders in Java 21 spockIssue:2017[]
 
 == 2.4-M4 (2024-03-21)
 

@@ -27,6 +27,7 @@ class StandardStreamsCapturerSpec extends Specification {
 
   def setup() {
     capturer.addStandardStreamsListener(listener)
+    capturer.muteStandardStreams()
     capturer.start()
   }
 

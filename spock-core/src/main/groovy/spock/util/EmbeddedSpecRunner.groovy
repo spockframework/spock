@@ -319,6 +319,15 @@ class EmbeddedSpecRunner {
         .map {new XFailure(it)}
         .collect(Collectors.toList())
     }
+
+    @Override
+    String toString() {
+      return """EmbeddedSpecExecutionResult:
+  testsAbortedCount:   $testsAbortedCount
+  testsFailedCount:    $testsFailedCount
+  testsSkippedCount:   $testsSkippedCount
+  testsSucceededCount: $testsSucceededCount"""
+    }
   }
 
   @TupleConstructor

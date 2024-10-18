@@ -16,8 +16,9 @@
 
 package org.spockframework.spring.mock.imported
 
+import org.spockframework.mock.MockUtil
 import org.spockframework.spring.SpringBean
-import org.spockframework.spring.mock.SpockSpringProxy
+
 import org.spockframework.spring.mock.imported.example.*
 import spock.lang.Specification
 
@@ -54,12 +55,16 @@ class SpringBeanOnTestFieldForExistingBeanWithQualifierIntegrationSpec extends S
     1 * service.greeting()
   }
 
-  def 'only qualified bean ss replaced'() {
+  def 'only qualified bean is replaced'() {
+    given:
+    def util = new MockUtil()
+
     expect:
-    applicationContext.getBean("service") instanceof SpockSpringProxy
+    util.isMock(applicationContext.getBean("service"))
 
     and:
     ExampleService anotherService = applicationContext.getBean("anotherService", ExampleService)
+    !util.isMock(anotherService)
     anotherService.greeting() == "Another"
   }
 

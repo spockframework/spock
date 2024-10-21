@@ -60,6 +60,12 @@ public class DataIteratorFactory {
         return UNKNOWN_ITERATIONS;
       }
 
+      if (dataProvider instanceof Iterable && !(dataProvider instanceof Collection)) {
+        //Issue #2022: Do not call size() method on an Iterable, if it is not a Collection
+        //             because the size() call may construct the expensive iterator multiple times.
+        return UNKNOWN_ITERATIONS;
+      }
+
       Object rawSize = GroovyRuntimeUtil.invokeMethodQuietly(dataProvider, "size");
       if (!(rawSize instanceof Number)) {
         return UNKNOWN_ITERATIONS;

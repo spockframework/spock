@@ -74,6 +74,30 @@ class RepeatUntilFailureExtensionSpec extends EmbeddedSpecification {
     result.testsSkippedCount == 2
   }
 
+  def "repeats with unknown iteration count"() {
+    given:
+    runner.throwFailure = false
+
+    when:
+    def result = runner.runSpecBody """
+      @Shared
+      int count = 0
+
+      @RepeatUntilFailure
+      def "test"() {
+        expect:
+        ++count < 3
+
+        where:
+        x << [1].iterator()
+      }
+    """
+
+    then:
+    result.testsStartedCount == 1 + 3
+    result.testsSucceededCount == 1 + 2
+    result.testsFailedCount == 1
+  }
 
   def "ignores aborted tests"() {
     when:

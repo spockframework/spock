@@ -1,5 +1,6 @@
 package org.spockframework.runtime.extension.builtin;
 
+import org.spockframework.runtime.DataIteratorFactory;
 import org.spockframework.runtime.IDataIterator;
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.*;
@@ -7,6 +8,8 @@ import spock.lang.RepeatUntilFailure;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+
+import static org.spockframework.runtime.DataIteratorFactory.UNKNOWN_ITERATIONS;
 
 public class RepeatUntilFailureExtension implements IAnnotationDrivenExtension<RepeatUntilFailure> {
   @Override
@@ -32,8 +35,8 @@ public class RepeatUntilFailureExtension implements IAnnotationDrivenExtension<R
     @Override
     public void runIterations(IDataIterator dataIterator, IIterationRunner iterationRunner, List<ParameterInfo> parameters) {
       int estimatedNumIterations = dataIterator.getEstimatedNumIterations();
-      int maxIterations = estimatedNumIterations * maxAttempts;
-      List<Object[]> arguments = new ArrayList<>(estimatedNumIterations);
+      int maxIterations = estimatedNumIterations == UNKNOWN_ITERATIONS ? UNKNOWN_ITERATIONS : (estimatedNumIterations * maxAttempts);
+      List<Object[]> arguments = estimatedNumIterations == UNKNOWN_ITERATIONS ? new ArrayList<>() : new ArrayList<>(estimatedNumIterations);
       dataIterator.forEachRemaining(arguments::add);
       for (int attempt = 0; attempt < maxAttempts; attempt++) {
         for (Object[] args : arguments) {

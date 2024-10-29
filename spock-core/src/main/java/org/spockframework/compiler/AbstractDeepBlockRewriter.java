@@ -149,6 +149,12 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
       currSpecialMethodCall = NoSpecialMethodCall.INSTANCE; // unrelated closure terminates currSpecialMethodCall scope
     }
     try {
+      Statement code = expr.getCode();
+      if (!(code instanceof BlockStatement)) {
+        BlockStatement block = new BlockStatement();
+        block.addStatement(code);
+        expr.setCode(block);
+      }
       doVisitClosureExpression(expr);
     } finally {
       currClosure = oldClosure;

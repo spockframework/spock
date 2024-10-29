@@ -37,6 +37,7 @@ class EstimatedNumberOfIterations extends Specification {
     FeatureInfo featureInfo = Stub {
       getDataProcessorMethod() >> methodInfoFor('dataProcessor1')
       getDataProviders() >> []
+      getDataVariableMultiplicationsMethod() >> null
     }
 
     expect: "estimation is 1"
@@ -54,6 +55,7 @@ class EstimatedNumberOfIterations extends Specification {
     FeatureInfo featureInfo = Stub {
       getDataProcessorMethod() >> methodInfoFor('dataProcessor2')
       getDataProviders() >> [new DataProviderInfo(dataVariables: ['a'], previousDataTableVariables: [], dataProviderMethod: methodInfoFor('dataProvider2'))]
+      getDataVariableMultiplicationsMethod() >> null
     }
 
     expect: "estimation is 'unknown', represented as -1"
@@ -76,6 +78,7 @@ class EstimatedNumberOfIterations extends Specification {
     FeatureInfo featureInfo = Stub {
       getDataProcessorMethod() >> methodInfoFor('dataProcessor3')
       getDataProviders() >> [new DataProviderInfo(dataVariables: ['a'], previousDataTableVariables: [], dataProviderMethod: methodInfoFor('dataProvider3'))]
+      getDataVariableMultiplicationsMethod() >> null
     }
     expect: "estimation is size"
     factory.createFeatureDataIterator(context.withCurrentFeature(featureInfo)).estimatedNumIterations == 3
@@ -101,6 +104,7 @@ class EstimatedNumberOfIterations extends Specification {
         new DataProviderInfo(dataVariables: ['b'], previousDataTableVariables: [], dataProviderMethod: methodInfoFor('dataProvider4_2')),
         new DataProviderInfo(dataVariables: ['c'], previousDataTableVariables: [], dataProviderMethod: methodInfoFor('dataProvider4_3'))
       ]
+      getDataVariableMultiplicationsMethod() >> null
     }
     expect: "estimation is minimum"
     factory.createFeatureDataIterator(context.withCurrentFeature(featureInfo)).estimatedNumIterations == 1
@@ -138,6 +142,7 @@ class EstimatedNumberOfIterations extends Specification {
         new DataProviderInfo(dataVariables: ['b'], previousDataTableVariables: [], dataProviderMethod: methodInfoFor('dataProvider5_2')),
         new DataProviderInfo(dataVariables: ['c'], previousDataTableVariables: [], dataProviderMethod: methodInfoFor('dataProvider5_3'))
       ]
+      getDataVariableMultiplicationsMethod() >> null
     }
     expect: "estimation is minimum of others"
     factory.createFeatureDataIterator(context.withCurrentFeature(featureInfo)).estimatedNumIterations == 2

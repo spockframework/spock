@@ -293,6 +293,26 @@ where: a << b
     b << (1..3).iterator()
   }
 
+  @Shared
+  def sizeCalls = 0
+
+  def "call size only once"() {
+    expect:
+    specificationContext.currentIteration.estimatedNumIterations == 3
+    sizeCalls == 1
+
+    where:
+    b << new Object() {
+      def iterator() {
+        (1..3).iterator()
+      }
+      def size() {
+        sizeCalls++
+        3
+      }
+    }
+  }
+
   def 'data pipes can be combined'() {
     when:
     def results = runner.runSpecBody '''

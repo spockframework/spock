@@ -23,11 +23,15 @@ import org.spockframework.util.GroovyReleaseInfo
 import org.spockframework.util.VersionNumber
 import spock.lang.Requires
 import spock.lang.Snapshot
+import spock.lang.Snapshotter
 import spock.util.Show
 
 class AstSpec extends EmbeddedSpecification {
   @Snapshot(extension = 'groovy')
   SpockSnapshotter snapshotter
+
+  @Snapshot
+  Snapshotter textSnapshotter
 
   def "astToSourceFeatureBody renders only methods and its annotation by default"() {
     given:
@@ -97,7 +101,7 @@ class AstSpec extends EmbeddedSpecification {
     ''', Show.all(), CompilePhase.INSTRUCTION_SELECTION)
 
     then:
-    snapshotter.assertThat(result.source.normalize()).matchesSnapshot()
+    textSnapshotter.assertThat(result.source.normalize()).matchesSnapshot()
   }
 
   @Requires({ GroovyRuntimeUtil.groovy3orNewer })
@@ -359,7 +363,7 @@ class TestSpec extends Specification {
         CompilePhase.OUTPUT)
 
     then:
-    snapshotter.assertThat(result.source).matchesSnapshot()
+    textSnapshotter.assertThat(result.source).matchesSnapshot()
   }
 
   @Requires({ GroovyRuntimeUtil.groovy3orOlder })
@@ -381,6 +385,6 @@ class TestSpec extends Specification {
         CompilePhase.OUTPUT)
 
     then:
-    snapshotter.assertThat(result.source).matchesSnapshot()
+    textSnapshotter.assertThat(result.source).matchesSnapshot()
   }
 }

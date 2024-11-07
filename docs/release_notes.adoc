@@ -26,6 +26,7 @@ include::include.adoc[]
 * Size of data providers is no longer calculated multiple times but only once
 * Fix exception when using `@RepeatUntilFailure` with a data provider with unknown iteration amount. spockPull:2031[]
 * Clarified documentation about data providers and `size()` calls spockIssue:2022[]
+* Add best-effort error reporting for interactions on final methods when using the `byte-buddy` mock maker spockIssue:2039[]
 
 == 2.4-M4 (2024-03-21)
 

@@ -37,6 +37,10 @@ import static java.util.Arrays.asList;
  * @author Peter Niederwieser
  */
 public abstract class GroovyRuntimeUtil {
+  private static final String SET = "set";
+  private static final String GET = "get";
+  private static final String IS = "is";
+
   public static Object[] EMPTY_ARGUMENTS = new Object[0];
 
   public static boolean isTruthy(Object obj) {
@@ -101,6 +105,18 @@ public abstract class GroovyRuntimeUtil {
     return prefix + MetaClassHelper.capitalize(propertyName);
   }
 
+  public static String propertyToGetterMethodName(String propertyName) {
+    return propertyToMethodName(GET, propertyName);
+  }
+
+  public static String propertyToSetterMethodName(String propertyName) {
+    return propertyToMethodName(SET, propertyName);
+  }
+
+  public static String propertyToBooleanGetterMethodName(String propertyName) {
+    return propertyToMethodName(IS, propertyName);
+  }
+
   /**
    * Checks if the given method is a getter method according
    * to Groovy rules. If yes, the corresponding property name
@@ -115,10 +131,10 @@ public abstract class GroovyRuntimeUtil {
     if (!parameterTypes.isEmpty()) return null;
     if (returnType == void.class) return null; // Void.class is allowed
 
-    if (methodName.startsWith("get"))
+    if (methodName.startsWith(GET))
       return getPropertyName(methodName, 3);
 
-    if (methodName.startsWith("is")
+    if (methodName.startsWith(IS)
         && returnType == boolean.class) // Boolean.class is not allowed
       return getPropertyName(methodName, 2);
 

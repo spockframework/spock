@@ -23,25 +23,18 @@ import spock.lang.Specification;
 
 import java.lang.reflect.Type;
 
-public class MockObject implements IMockObject {
-  private final String name;
-  private final Type type;
-  private final Object instance;
-  private final boolean verified;
-  private final boolean global;
-  private final IDefaultResponse defaultResponse;
-  private final SpecificationAttachable mockInterceptor;
+import static java.util.Objects.*;
 
+public class MockObject implements IMockObject {
+  private final IMockConfiguration configuration;
+  private final Object instance;
+  private final SpecificationAttachable mockInterceptor;
+  @Nullable
   private Specification specification;
 
-  public MockObject(@Nullable String name, Type type, Object instance, boolean verified, boolean global,
-      IDefaultResponse defaultResponse, Specification specification, SpecificationAttachable mockInterceptor) {
-    this.name = name;
-    this.type = type;
+  public MockObject(IMockConfiguration configuration, Object instance, Specification specification, SpecificationAttachable mockInterceptor) {
+    this.configuration = requireNonNull(configuration);
     this.instance = instance;
-    this.verified = verified;
-    this.global = global;
-    this.defaultResponse = defaultResponse;
     this.specification = specification;
     this.mockInterceptor = mockInterceptor;
   }
@@ -49,17 +42,22 @@ public class MockObject implements IMockObject {
   @Override
   @Nullable
   public String getName() {
-    return name;
+    return configuration.getName();
+  }
+
+  @Override
+  public String getMockName() {
+    return getName() != null ? getName() : "unnamed";
   }
 
   @Override
   public Class<?> getType() {
-    return GenericTypeReflectorUtil.erase(type);
+    return GenericTypeReflectorUtil.erase(getExactType());
   }
 
   @Override
   public Type getExactType() {
-    return type;
+    return configuration.getExactType();
   }
 
   @Override
@@ -69,12 +67,16 @@ public class MockObject implements IMockObject {
 
   @Override
   public boolean isVerified() {
-    return verified;
+    return configuration.isVerified();
+  }
+
+  private boolean isGlobal() {
+    return configuration.isGlobal();
   }
 
   @Override
   public IDefaultResponse getDefaultResponse() {
-    return defaultResponse;
+    return configuration.getDefaultResponse();
   }
 
   @Override
@@ -84,9 +86,9 @@ public class MockObject implements IMockObject {
 
   @Override
   public boolean matches(Object target, IMockInteraction interaction) {
-    if (target instanceof Wildcard) return verified || !interaction.isRequired();
+    if (target instanceof Wildcard) return isVerified() || !interaction.isRequired();
 
-    boolean match = global ? matchGlobal(target) : instance == target;
+    boolean match = isGlobal() ? matchGlobal(target) : instance == target;
     if (match) {
       checkRequiredInteractionAllowed(interaction);
     }
@@ -102,10 +104,9 @@ public class MockObject implements IMockObject {
   }
 
   private void checkRequiredInteractionAllowed(IMockInteraction interaction) {
-    if (!verified && interaction.isRequired()) {
-      String mockName = name != null ? name : "unnamed";
+    if (!isVerified() && interaction.isRequired()) {
       throw new InvalidSpecException("Stub '%s' matches the following required interaction:" +
-          "\n\n%s\n\nRemove the cardinality (e.g. '1 *'), or turn the stub into a mock.\n").withArgs(mockName, interaction);
+        "\n\n%s\n\nRemove the cardinality (e.g. '1 *'), or turn the stub into a mock.\n").withArgs(getMockName(), interaction);
     }
   }
 
@@ -119,5 +120,10 @@ public class MockObject implements IMockObject {
   public void detach() {
     this.specification = null;
     this.mockInterceptor.detach();
+  }
+
+  @Override
+  public IMockConfiguration getConfiguration() {
+    return configuration;
   }
 }

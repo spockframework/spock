@@ -29,6 +29,10 @@ public class EqualPropertyNameConstraint extends PropertyNameConstraint {
     this.propertyName = propertyName;
   }
 
+  public String getPropertyName() {
+    return propertyName;
+  }
+
   @Override
   public boolean isSatisfiedBy(IMockInvocation invocation) {
     return propertyName.equals(getPropertyName(invocation));

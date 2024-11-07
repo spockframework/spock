@@ -35,7 +35,7 @@ public class MockUtil {
    * @return whether the given object is a (Spock) mock object
    */
   public boolean isMock(Object object) {
-    return getMockMakerRegistry().asMockOrNull(object) != null;
+    return asMockOrNull(object) != null;
   }
 
   /**
@@ -67,6 +67,17 @@ public class MockUtil {
       throw new IllegalArgumentException("Not a mock object: " + object.toString());
     }
     return mockOrNull;
+  }
+
+  /**
+   * Returns information about a mock object or {@code null}, if the object is not a mock.
+   *
+   * @param object a mock object
+   * @return information about the mock object or {@code null}, if the object is not a mock.
+   */
+  @Nullable
+  public IMockObject asMockOrNull(Object object) {
+    return getMockMakerRegistry().asMockOrNull(object);
   }
 
   /**

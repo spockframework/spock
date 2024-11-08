@@ -1,8 +1,8 @@
 [versions]
 asciidoctorj = '2.5.13'
 groovy2 = '2.5.23'
-groovy3 = '3.0.22'
-groovy4 = '4.0.23'
+groovy3 = '3.0.23'
+groovy4 = '4.0.24'
 jacoco = '0.8.12'
 junit = '5.11.3'
 asm = '9.7.1'

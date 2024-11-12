@@ -19,6 +19,7 @@ import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import groovy.transform.stc.ClosureParams;
 import groovy.transform.stc.FirstParam;
+import groovy.transform.stc.FromString;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
@@ -170,7 +171,7 @@ public abstract class SpockRuntime {
   public static <T> void verifyEach(
     Iterable<T> things,
     Function<? super T, ?> namer,
-    @ClosureParams(value = FirstParam.FirstGenericType.class)
+    @ClosureParams(value = FromString.class, options = {"T", "T, int"})
     @DelegatesTo(type = "T", strategy = Closure.DELEGATE_FIRST)
     Closure<?> closure
   ) {
@@ -182,7 +183,11 @@ public abstract class SpockRuntime {
       try {
         closure.setDelegate(thing); // for conditions
         closure.setResolveStrategy(Closure.DELEGATE_FIRST);
-        GroovyRuntimeUtil.invokeClosure(closure, thing);
+        if (closure.getMaximumNumberOfParameters() == 1) {
+          GroovyRuntimeUtil.invokeClosure(closure, thing);
+        } else {
+          GroovyRuntimeUtil.invokeClosure(closure, thing, index);
+        }
       } catch (Throwable throwable) {
         failures.add(new InternalItemFailure<>(thing, index, throwable));
       }

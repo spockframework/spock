@@ -96,4 +96,16 @@ list.every { it == 2 }
     MultipleFailuresError e = thrown()
     snap.assertThat(e.message).matchesSnapshot()
   }
+
+  def "verifyEach with index method"(@Snapshot Snapshotter snap) {
+    when:
+    // tag::verify-each-index[]
+    def list = [1, 2, 3]
+    def expected = [1, 3, 4]
+    verifyEach(list) { it, i -> it == expected[i] }
+    // end::verify-each-index[]
+    then:
+    MultipleFailuresError e = thrown()
+    snap.assertThat(e.message).matchesSnapshot()
+  }
 }

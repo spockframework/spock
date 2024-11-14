@@ -63,7 +63,7 @@ jobs:
         run: |
           ./gradlew --stop
       - name: 'Upload to Codecov.io'
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
 
   release-spock:
     runs-on: ${{ matrix.os }}

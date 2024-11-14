@@ -66,4 +66,4 @@ jobs:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
         run: ./gradlew --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}"
       - name: 'Upload to Codecov.io'
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5

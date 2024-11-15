@@ -185,12 +185,20 @@ class JavaSpies extends Specification {
     person.phoneNumber == "6789"
   }
 
-  def "can spy final methods with mockito"() {
+  def "can spy final methods as property with mockito"() {
     FinalMethodPerson person = Spy(mockMaker: MockMakers.mockito)
     person.phoneNumber >> 6789
 
     expect:
     person.phoneNumber == "6789"
+  }
+
+  def "can spy final methods with mockito"() {
+    FinalMethodPerson person = Spy(mockMaker: MockMakers.mockito)
+    person.getPhoneNumber() >> 6789
+
+    expect:
+    person.getPhoneNumber() == "6789"
   }
 
   def "can spy final methods with mockito with closure"() {
@@ -202,9 +210,31 @@ class JavaSpies extends Specification {
     person.phoneNumber == "6789"
   }
 
-  def "cannot spy final methods with byteBuddy"() {
+  @Issue("https://github.com/spockframework/spock/issues/2039")
+  def "cannot spy on final methods with byteBuddy"() {
     FinalMethodPerson person = Spy(mockMaker: MockMakers.byteBuddy)
+
+    when:
+    person.getPhoneNumber() >> 6789
+
+    then:
+    InvalidSpecException ex = thrown()
+    ex.message == "The final method 'getPhoneNumber' of 'person' can't be mocked by the 'byte-buddy' mock maker. Please use another mock maker supporting final methods."
+
+    expect:
+    person.getPhoneNumber() == "12345"
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/2039")
+  def "cannot spy on final methods as property with byteBuddy"() {
+    FinalMethodPerson person = Spy(mockMaker: MockMakers.byteBuddy)
+
+    when:
     person.phoneNumber >> 6789
+
+    then:
+    InvalidSpecException ex = thrown()
+    ex.message == "The final method 'getPhoneNumber' of 'person' can't be mocked by the 'byte-buddy' mock maker. Please use another mock maker supporting final methods."
 
     expect:
     person.phoneNumber == "12345"
@@ -214,10 +244,11 @@ class JavaSpies extends Specification {
     FinalMethodPerson person = Spy()
 
     when:
-    person.phoneNumber
+    person.phoneNumber >> 6789
 
     then:
-    0 * person.phoneNumber
+    InvalidSpecException ex = thrown()
+    ex.message == "The final method 'getPhoneNumber' of 'person' can't be mocked by the 'byte-buddy' mock maker. Please use another mock maker supporting final methods."
   }
 
   def "cannot spy globally"() {

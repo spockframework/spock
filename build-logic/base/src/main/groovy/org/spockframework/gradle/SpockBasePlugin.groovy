@@ -19,11 +19,43 @@ package org.spockframework.gradle
 import groovy.transform.CompileStatic
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.tasks.compile.GroovyCompile
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.jvm.toolchain.JavaToolchainService
+import org.jetbrains.annotations.VisibleForTesting
 
 @CompileStatic
 class SpockBasePlugin implements Plugin<Project> {
+
+  @VisibleForTesting
+  public static final JavaLanguageVersion COMPILER_VERSION = JavaLanguageVersion.of(8)
+
   void apply(Project project) {
+    compileTasks(project)
+    testTasks(project)
+  }
+
+  private static void compileTasks(Project project) {
+    project.with {
+      def javaToolchains = extensions.getByType(JavaToolchainService)
+      tasks.withType(JavaCompile).configureEach { comp ->
+        if (comp.name == JavaPlugin.COMPILE_JAVA_TASK_NAME) {
+          comp.javaCompiler.set(javaToolchains.compilerFor {
+            it.languageVersion.set(COMPILER_VERSION)
+          })
+        }
+        comp.options.encoding = 'UTF-8'
+      }
+      tasks.withType(GroovyCompile).configureEach {
+        it.options.encoding = 'UTF-8'
+      }
+    }
+  }
+
+  private static void testTasks(Project project) {
     project.tasks.withType(Test).configureEach { task ->
       def taskName = task.name.capitalize()
       File configFile = project.file("Spock${taskName}Config.groovy")

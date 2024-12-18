@@ -16,8 +16,6 @@ public void $spock_feature_0_0(java.lang.Object a, java.lang.Object b) {
     finally {
     }
     org.spockframework.runtime.SpockRuntime.callBlockExited(this.getSpecificationContext(), 0)
-    org.spockframework.runtime.SpockRuntime.callBlockEntered(this.getSpecificationContext(), 2)
-    org.spockframework.runtime.SpockRuntime.callBlockExited(this.getSpecificationContext(), 2)
     this.getSpecificationContext().getMockController().leaveScope()
 }
 

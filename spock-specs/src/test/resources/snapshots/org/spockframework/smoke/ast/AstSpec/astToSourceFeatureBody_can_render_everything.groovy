@@ -1,5 +1,7 @@
 package apackage
 
+import spock.lang.*
+
 @org.spockframework.runtime.model.SpecMetadata(filename = 'script.groovy', line = 1)
 public class apackage.ASpec extends spock.lang.Specification {
 

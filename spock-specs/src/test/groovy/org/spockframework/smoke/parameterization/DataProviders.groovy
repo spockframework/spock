@@ -104,7 +104,7 @@ where: x << []
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1287")
-  def "data provider with asserting closure produces error rethrower variable in data provider method"(@Snapshot SpockSnapshotter snapshotter) {
+  def "data provider with asserting closure produces error rethrower variable in data provider method"(@Snapshot(extension = 'groovy') SpockSnapshotter snapshotter) {
     given:
     snapshotter.specBody()
 
@@ -133,7 +133,7 @@ where: x << []
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1287")
-  def "data variable with asserting closure produces error rethrower variable in data processor method"(@Snapshot SpockSnapshotter snapshotter) {
+  def "data variable with asserting closure produces error rethrower variable in data processor method"(@Snapshot(extension = 'groovy') SpockSnapshotter snapshotter) {
     given:
     snapshotter.specBody()
 

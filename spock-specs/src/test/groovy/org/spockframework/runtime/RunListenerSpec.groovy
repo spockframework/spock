@@ -157,7 +157,7 @@ class ASpec extends Specification {
     1 * runListener.beforeIteration(_)
     then:
     1 * runListener.error(_) >> { ErrorInfo errorInfo ->
-      with(errorInfo.errorContext.currentBlock) {
+      with(errorInfo.errorContext.block) {
         it.kind == BlockKind.EXPECT
         it.texts == ["failing expect"]
       }
@@ -230,12 +230,12 @@ class ASpec extends Specification {
     1 * runListener.error(_) >> { ErrorInfo it -> errorInfo = it }
 
     if (block != null) {
-      with(errorInfo.errorContext.currentBlock) {
+      with(errorInfo.errorContext.block) {
         it.kind == block
         it.texts == blockTexts
       }
     } else {
-      assert errorInfo.errorContext.currentBlock == null
+      assert errorInfo.errorContext.block == null
     }
 
     cleanup:

@@ -520,7 +520,11 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.groovy-lang.org/docs/groovy-4.0.24/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</span></div>
 <div class="block">Performs assertions on each item, collecting up failures instead of stopping at first.
  <p>
- Exception messages will contain a toString() of the item to identify it.</div>
+ Exception messages will contain a toString() of the item to identify it.
+ <p>
+ The closure can either use one or two parameters.
+ The first parameter will always be the item.
+ The second optional parameter will be the iteration index of the item.</div>
 <dl class="notes">
 <dt>Type Parameters:</dt>
 <dd><code>U</code> - type of items in things</dd>
@@ -542,7 +546,11 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.groovy-lang.org/docs/groovy-4.0.24/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</span></div>
 <div class="block">Performs assertions on each item, collecting up failures instead of stopping at first.
  <p>
- Exception messages will contain the result of calling the namer for an item to identify it.</div>
+ Exception messages will contain the result of calling the namer for an item to identify it.
+ <p>
+ The closure can either use one or two parameters.
+ The first parameter will always be the item.
+ The second optional parameter will be the iteration index of the item.</div>
 <dl class="notes">
 <dt>Type Parameters:</dt>
 <dd><code>U</code> - type of items in things</dd>

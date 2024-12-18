@@ -29,6 +29,12 @@ public class BlockInfo {
   private BlockKind kind;
   private List<String> texts;
 
+  /**
+   * Only for backwards compatibility.
+   * <p>
+   * @deprecated Use {@link #BlockInfo(BlockKind, List)} instead.
+   */
+  @Deprecated
   public BlockInfo() {
   }
 

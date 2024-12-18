@@ -52,7 +52,7 @@ public class SpecificationContext implements ISpecificationContext {
     return currentFeature;
   }
 
-  public void setCurrentFeature(FeatureInfo currentFeature) {
+  public void setCurrentFeature(@Nullable FeatureInfo currentFeature) {
     this.currentFeature = currentFeature;
   }
 
@@ -69,16 +69,18 @@ public class SpecificationContext implements ISpecificationContext {
     return currentIteration;
   }
 
-  public void setCurrentIteration(IterationInfo currentIteration) {
+  public void setCurrentIteration(@Nullable IterationInfo currentIteration) {
     this.currentIteration = currentIteration;
   }
 
   public static final String SET_CURRENT_BLOCK = "setCurrentBlock";
-  public void setCurrentBlock(BlockInfo blockInfo) {
+  public void setCurrentBlock(@Nullable BlockInfo blockInfo) {
     this.currentBlock = blockInfo;
   }
 
   public static final String GET_CURRENT_BLOCK = "getCurrentBlock";
+
+  @Nullable
   @Override
   public BlockInfo getCurrentBlock() {
     return currentBlock;

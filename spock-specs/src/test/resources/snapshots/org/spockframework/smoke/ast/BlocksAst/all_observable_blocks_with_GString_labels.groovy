@@ -9,10 +9,10 @@ public void $spock_feature_0_0() {
     org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
     java.lang.Integer idx = 0
-    org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), 0)
+    org.spockframework.runtime.SpockRuntime.callBlockEntered(this.getSpecificationContext(), 0)
     "given ${( idx )++}"
-    org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), 0)
-    org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), 1)
+    org.spockframework.runtime.SpockRuntime.callBlockExited(this.getSpecificationContext(), 0)
+    org.spockframework.runtime.SpockRuntime.callBlockEntered(this.getSpecificationContext(), 1)
     try {
         org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), '\"expect \${idx++}\"', 3, 13, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), "${$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), ( idx )++)}expect "))
     }
@@ -20,11 +20,11 @@ public void $spock_feature_0_0() {
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, '\"expect \${idx++}\"', 3, 13, null, $spock_condition_throwable)}
     finally {
     }
-    org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), 1)
-    org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), 2)
+    org.spockframework.runtime.SpockRuntime.callBlockExited(this.getSpecificationContext(), 1)
+    org.spockframework.runtime.SpockRuntime.callBlockEntered(this.getSpecificationContext(), 2)
     "when ${( idx )++}"
-    org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), 2)
-    org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), 3)
+    org.spockframework.runtime.SpockRuntime.callBlockExited(this.getSpecificationContext(), 2)
+    org.spockframework.runtime.SpockRuntime.callBlockEntered(this.getSpecificationContext(), 3)
     try {
         org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), '\"then \${idx++}\"', 5, 11, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), "${$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), ( idx )++)}then "))
     }
@@ -32,7 +32,7 @@ public void $spock_feature_0_0() {
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, '\"then \${idx++}\"', 5, 11, null, $spock_condition_throwable)}
     finally {
     }
-    org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), 3)
+    org.spockframework.runtime.SpockRuntime.callBlockExited(this.getSpecificationContext(), 3)
     this.getSpecificationContext().getMockController().leaveScope()
 }
 /*--------- end::snapshot[] ---------*/

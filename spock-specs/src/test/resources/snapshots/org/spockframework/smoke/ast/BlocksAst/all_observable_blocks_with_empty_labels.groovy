@@ -8,14 +8,14 @@ class ASpec extends Specification {
 public void $spock_feature_0_0() {
     java.lang.Throwable $spock_feature_throwable
     try {
-        org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), 0)
-        org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), 0)
-        org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), 1)
-        org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), 1)
-        org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), 2)
-        org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), 2)
-        org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), 3)
-        org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), 3)
+        org.spockframework.runtime.SpockRuntime.callBlockEntered(this.getSpecificationContext(), 0)
+        org.spockframework.runtime.SpockRuntime.callBlockExited(this.getSpecificationContext(), 0)
+        org.spockframework.runtime.SpockRuntime.callBlockEntered(this.getSpecificationContext(), 1)
+        org.spockframework.runtime.SpockRuntime.callBlockExited(this.getSpecificationContext(), 1)
+        org.spockframework.runtime.SpockRuntime.callBlockEntered(this.getSpecificationContext(), 2)
+        org.spockframework.runtime.SpockRuntime.callBlockExited(this.getSpecificationContext(), 2)
+        org.spockframework.runtime.SpockRuntime.callBlockEntered(this.getSpecificationContext(), 3)
+        org.spockframework.runtime.SpockRuntime.callBlockExited(this.getSpecificationContext(), 3)
     }
     catch (java.lang.Throwable $spock_tmp_throwable) {
         $spock_feature_throwable = $spock_tmp_throwable
@@ -27,8 +27,8 @@ public void $spock_feature_0_0() {
             if ( $spock_feature_throwable != null) {
                 $spock_failedBlock = this.getSpecificationContext().getCurrentBlock()
             }
-            org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), 4)
-            org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), 4)
+            org.spockframework.runtime.SpockRuntime.callBlockEntered(this.getSpecificationContext(), 4)
+            org.spockframework.runtime.SpockRuntime.callBlockExited(this.getSpecificationContext(), 4)
         }
         catch (java.lang.Throwable $spock_tmp_throwable) {
             if ( $spock_feature_throwable != null) {

@@ -31,9 +31,7 @@ import org.spockframework.util.ObjectUtil;
 import org.spockframework.util.ReflectionUtil;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -49,6 +47,14 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   // https://issues.apache.org/jira/browse/GROOVY-10403
   // needed for groovy-4 compatibility and only available since groovy-4
   private static final java.lang.reflect.Method GET_PLAIN_NODE_REFERENCE = ReflectionUtil.getMethodBySignature(ClassNode.class, "getPlainNodeReference", boolean.class);
+  private static final Set<BlockParseInfo> BLOCK_LISTENER_SUPPORTED_BLOCKS = Collections.unmodifiableSet(EnumSet.of(
+      BlockParseInfo.SETUP,
+      BlockParseInfo.GIVEN,
+      BlockParseInfo.EXPECT,
+      BlockParseInfo.WHEN,
+      BlockParseInfo.THEN,
+      BlockParseInfo.CLEANUP
+  ));
 
   private final AstNodeCache nodeCache;
   private final SourceLookup lookup;
@@ -421,15 +427,12 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   private void addBlockListeners(Block block) {
     BlockParseInfo blockType = block.getParseInfo();
-    if (blockType == BlockParseInfo.WHERE
-      || blockType == BlockParseInfo.METHOD_END
-      || blockType == BlockParseInfo.COMBINED
-      || blockType == BlockParseInfo.ANONYMOUS) return;
+    if (!BLOCK_LISTENER_SUPPORTED_BLOCKS.contains(blockType)) return;
 
-    // SpockRuntime.enterBlock(getSpecificationContext(), new BlockInfo(blockKind, blockMetaDataIndex))
-    MethodCallExpression enterBlockCall = createBlockListenerCall(block, blockType, nodeCache.SpockRuntime_CallEnterBlock);
-    // SpockRuntime.exitedBlock(getSpecificationContext(), new BlockInfo(blockKind, blockMetaDataIndex))
-    MethodCallExpression exitBlockCall = createBlockListenerCall(block, blockType, nodeCache.SpockRuntime_CallExitBlock);
+    // SpockRuntime.callBlockEntered(getSpecificationContext(), blockMetadataIndex)
+    MethodCallExpression blockEnteredCall = createBlockListenerCall(block, blockType, nodeCache.SpockRuntime_CallBlockEntered);
+    // SpockRuntime.callBlockExited(getSpecificationContext(), blockMetadataIndex)
+    MethodCallExpression blockExitedCall = createBlockListenerCall(block, blockType, nodeCache.SpockRuntime_CallBlockExited);
 
     if (blockType == BlockParseInfo.CLEANUP) {
       // In case of a cleanup block we need store a reference of the previously `currentBlock` in case that an exception occurred
@@ -438,21 +441,21 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       VariableExpression failedBlock = new VariableExpression(SpockNames.FAILED_BLOCK, nodeCache.BlockInfo);
       block.getAst().addAll(0, asList(
         ifThrowableIsNotNull(storeFailedBlock(failedBlock)),
-        new ExpressionStatement(enterBlockCall)
+        new ExpressionStatement(blockEnteredCall)
       ));
     } else {
-      block.getAst().add(0, new ExpressionStatement(enterBlockCall));
+      block.getAst().add(0, new ExpressionStatement(blockEnteredCall));
     }
-    block.getAst().add(new ExpressionStatement(exitBlockCall));
+    block.getAst().add(new ExpressionStatement(blockExitedCall));
   }
 
   private @NotNull Statement storeFailedBlock(VariableExpression failedBlock) {
-    MethodCallExpression getCurrentBlock = createDirectMethodCall(getSpecificationContext(), nodeCache.SpecificationContext_GetBlockCurrentBlock, ArgumentListExpression.EMPTY_ARGUMENTS);
+    MethodCallExpression getCurrentBlock = createDirectMethodCall(getSpecificationContext(), nodeCache.SpecificationContext_GetCurrentBlock, ArgumentListExpression.EMPTY_ARGUMENTS);
     return new ExpressionStatement(new BinaryExpression(failedBlock, Token.newSymbol(Types.ASSIGN, -1, -1), getCurrentBlock));
   }
 
   private @NotNull Statement restoreFailedBlock(VariableExpression failedBlock) {
-    return new ExpressionStatement(createDirectMethodCall(new CastExpression(nodeCache.SpecificationContext, getSpecificationContext()), nodeCache.SpecificationContext_SetBlockCurrentBlock, new ArgumentListExpression(failedBlock)));
+    return new ExpressionStatement(createDirectMethodCall(new CastExpression(nodeCache.SpecificationContext, getSpecificationContext()), nodeCache.SpecificationContext_SetCurrentBlock, new ArgumentListExpression(failedBlock)));
   }
 
   private IfStatement ifThrowableIsNotNull(Statement statement) {

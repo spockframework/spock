@@ -394,15 +394,9 @@ public abstract class AstUtil {
 
   public static BinaryExpression createVariableIsNotNullExpression(VariableExpression var) {
     return new BinaryExpression(
-      new VariableExpression(var),
+      var,
       Token.newSymbol(Types.COMPARE_NOT_EQUAL, -1, -1),
       new ConstantExpression(null));
   }
 
-  public static BinaryExpression createVariableIsNullExpression(VariableExpression var) {
-    return new BinaryExpression(
-      new VariableExpression(var),
-      Token.newSymbol(Types.COMPARE_EQUAL, -1, -1),
-      new ConstantExpression(null));
-  }
 }

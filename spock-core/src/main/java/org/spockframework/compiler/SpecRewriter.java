@@ -49,11 +49,12 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   private static final java.lang.reflect.Method GET_PLAIN_NODE_REFERENCE = ReflectionUtil.getMethodBySignature(ClassNode.class, "getPlainNodeReference", boolean.class);
   private static final Set<BlockParseInfo> BLOCK_LISTENER_SUPPORTED_BLOCKS = Collections.unmodifiableSet(EnumSet.of(
       BlockParseInfo.SETUP,
-      BlockParseInfo.GIVEN,
+      BlockParseInfo.GIVEN, // is aliased to SETUP
       BlockParseInfo.EXPECT,
       BlockParseInfo.WHEN,
       BlockParseInfo.THEN,
-      BlockParseInfo.CLEANUP
+      BlockParseInfo.CLEANUP,
+      BlockParseInfo.AND // is aliased to the previous block
   ));
 
   private final AstNodeCache nodeCache;
@@ -434,17 +435,13 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     // SpockRuntime.callBlockExited(getSpecificationContext(), blockMetadataIndex)
     MethodCallExpression blockExitedCall = createBlockListenerCall(block, blockType, nodeCache.SpockRuntime_CallBlockExited);
 
+    block.getAst().add(0, new ExpressionStatement(blockEnteredCall));
     if (blockType == BlockParseInfo.CLEANUP) {
       // In case of a cleanup block we need store a reference of the previously `currentBlock` in case that an exception occurred
       // and restore it at the end of the cleanup block, so that the correct `BlockInfo` is available for the `IErrorContext`.
       // The restoration happens in the `finally` statement created by `createCleanupTryCatch`.
       VariableExpression failedBlock = new VariableExpression(SpockNames.FAILED_BLOCK, nodeCache.BlockInfo);
-      block.getAst().addAll(0, asList(
-        ifThrowableIsNotNull(storeFailedBlock(failedBlock)),
-        new ExpressionStatement(blockEnteredCall)
-      ));
-    } else {
-      block.getAst().add(0, new ExpressionStatement(blockEnteredCall));
+      block.getAst().add(0, ifThrowableIsNotNull(storeFailedBlock(failedBlock)));
     }
     block.getAst().add(new ExpressionStatement(blockExitedCall));
   }

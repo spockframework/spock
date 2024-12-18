@@ -229,9 +229,9 @@ public abstract class SpockRuntime {
     return GroovyRuntimeUtil.despreadList(args, spreads, positions);
   }
 
-  public static final String CALL_ENTER_BLOCK = "callEnterBlock";
+  public static final String CALL_BLOCK_ENTERED = "callBlockEntered";
 
-  public static void callEnterBlock(SpecificationContext context, int blockInfoIndex) {
+  public static void callBlockEntered(SpecificationContext context, int blockInfoIndex) {
     IterationInfo currentIteration = context.getCurrentIteration();
     BlockInfo blockInfo = context.getCurrentFeature().getBlocks().get(blockInfoIndex);
     context.setCurrentBlock(blockInfo);
@@ -244,9 +244,9 @@ public abstract class SpockRuntime {
     blockListeners.forEach(consumer);
   }
 
-  public static final String CALL_EXIT_BLOCK = "callExitBlock";
+  public static final String CALL_BLOCK_EXITED = "callBlockExited";
 
-  public static void callExitBlock(SpecificationContext context, int blockInfoIndex) {
+  public static void callBlockExited(SpecificationContext context, int blockInfoIndex) {
     IterationInfo currentIteration = context.getCurrentIteration();
     BlockInfo blockInfo = context.getCurrentFeature().getBlocks().get(blockInfoIndex);
     notifyBlockListener(currentIteration, blockListener -> blockListener.blockExited(currentIteration, blockInfo));

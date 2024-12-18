@@ -8,10 +8,10 @@ class ASpec extends Specification {
 public void $spock_feature_0_0() {
     org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
-    org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), 0)
+    org.spockframework.runtime.SpockRuntime.callBlockEntered(this.getSpecificationContext(), 0)
     java.lang.Object x = 'a1b'
-    org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), 0)
-    org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), 1)
+    org.spockframework.runtime.SpockRuntime.callBlockExited(this.getSpecificationContext(), 0)
+    org.spockframework.runtime.SpockRuntime.callBlockEntered(this.getSpecificationContext(), 1)
     try {
         org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), 'x ==~ /a\\db/', 4, 9, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), org.spockframework.runtime.SpockRuntime.matchCollectionsInAnyOrder($spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), x), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), 'a\\db'))))
     }
@@ -19,7 +19,7 @@ public void $spock_feature_0_0() {
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'x ==~ /a\\db/', 4, 9, null, $spock_condition_throwable)}
     finally {
     }
-    org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), 1)
+    org.spockframework.runtime.SpockRuntime.callBlockExited(this.getSpecificationContext(), 1)
     this.getSpecificationContext().getMockController().leaveScope()
 }
 /*--------- end::snapshot[] ---------*/

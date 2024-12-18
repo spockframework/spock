@@ -200,7 +200,7 @@ public class SpecParser implements GroovyClassVisitor {
     checkIsValidSuccessor(method, BlockParseInfo.METHOD_END,
         method.getAst().getLastLineNumber(), method.getAst().getLastColumnNumber());
 
-    // set the block metaData index for each block this must be equal to the index of the block in the @BlockMetadata annotation
+    // set the block metadata index for each block this must be equal to the index of the block in the @BlockMetadata annotation
     int i = -1;
     for (Block block : method.getBlocks()) {
       if(!block.hasBlockMetadata()) continue;

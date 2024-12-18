@@ -12,9 +12,9 @@ private java.lang.Object $spock_initializeFields() {
 
 @org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 3, blocks = [@org.spockframework.runtime.model.BlockMetadata(kind = org.spockframework.runtime.model.BlockKind.SETUP, texts = [])], parameterNames = [])
 public void $spock_feature_0_0() {
-    org.spockframework.runtime.SpockRuntime.callEnterBlock(this.getSpecificationContext(), 0)
+    org.spockframework.runtime.SpockRuntime.callBlockEntered(this.getSpecificationContext(), 0)
     java.lang.Object nothing = null
-    org.spockframework.runtime.SpockRuntime.callExitBlock(this.getSpecificationContext(), 0)
+    org.spockframework.runtime.SpockRuntime.callBlockExited(this.getSpecificationContext(), 0)
     this.getSpecificationContext().getMockController().leaveScope()
 }
 /*--------- end::snapshot[] ---------*/

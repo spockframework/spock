@@ -35,6 +35,7 @@ class StoreSpec extends EmbeddedSpecification {
 
   def setup() {
     runner.addClassImport(LogStoreUsage)
+    runner.addClassImport(LoggingStoreInterceptor)
     runner.addClassImport(FailingStoreUsage)
     runner.addClassMemberImport(MethodKind)
   }
@@ -53,14 +54,40 @@ class StoreSpec extends EmbeddedSpecification {
     runner.runWithImports('''
     @LogStoreUsage
     class ASpec extends Specification {
+      def setupSpec() {
+        logStoreAt("setupSpec")
+      }
+      
+      def setup() {
+        logStoreAt("setup")
+      }
+    
       def "a feature"() {
+        given:
+        logStoreAt("feature 'a feature'")
+        
         expect: true
       }
 
       def "data driven feature"() {
+        given:
+        logStoreAt("feature 'data driven feature'")
         expect: true
         where:
         i << [1, 2]
+      }
+      
+      def cleanup() {
+        logStoreAt("cleanup")
+      }
+      
+      def cleanupSpec() {
+        logStoreAt("cleanupSpec")
+      }
+      
+      def logStoreAt(String location) {
+        def store = specificationContext.getStore(LoggingStoreInterceptor.NAMESPACE)
+        store.get("list", List) << "Store contents at [$location] is: ${store.get("message", String)}"
       }
     }
 ''')
@@ -143,6 +170,7 @@ class LoggingStoreInterceptor implements IMethodInterceptor {
 
   final List<String> actionList
   int counter
+  String nesting = ""
 
   LoggingStoreInterceptor(List<String> actionList) {
     this.actionList = actionList
@@ -151,18 +179,21 @@ class LoggingStoreInterceptor implements IMethodInterceptor {
   @Override
   void intercept(IMethodInvocation invocation) throws Throwable {
     def store = invocation.getStore(NAMESPACE)
+    store.put("list", actionList)
     String message = "Stored at $invocation.method.kind - $invocation.method.name [${counter++}]"
     def prev = store.get("message", String)
     def replaced = store.put("message", message)
 
     store.put(invocation.method.kind, new LoggingValue(actionList, message))
 
-    actionList << "before $invocation.method.kind - $invocation.method.name".toString()
-    actionList << "\tprev:     ${prev}".toString()
-    actionList << "\treplaced: ${replaced}".toString()
-    actionList << "\tput:      ${message}".toString()
+    actionList << "${nesting}before $invocation.method.kind - $invocation.method.name".toString()
+    actionList << "${nesting}\tprev:     ${prev}".toString()
+    actionList << "${nesting}\treplaced: ${replaced}".toString()
+    actionList << "${nesting}\tput:      ${message}".toString()
+    nesting += "  "
     invocation.proceed()
-    actionList << "after $invocation.method.kind - $invocation.method.name".toString()
+    nesting = nesting.substring(0, nesting.length() - 2)
+    actionList << "${nesting}after $invocation.method.kind - $invocation.method.name".toString()
   }
 }
 

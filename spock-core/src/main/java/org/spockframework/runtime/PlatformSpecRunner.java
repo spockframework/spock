@@ -87,6 +87,7 @@ public class PlatformSpecRunner {
 
     context = context.withChildStoreProvider().withCurrentInstance(instance);
     getSpecificationContext(context).setCurrentSpec(context.getSpec());
+    getSpecificationContext(context).pushStoreProvider(context.getStoreProvider());
     if (shared) {
       context = context.withSharedInstance(instance);
     }
@@ -188,6 +189,7 @@ public class PlatformSpecRunner {
       throw new InternalSpockError("Invalid state, feature is executed although it should have been skipped");
     }
     getSpecificationContext(context).setCurrentFeature(currentFeature);
+    getSpecificationContext(context).pushStoreProvider(context.getStoreProvider());
 
     supervisor.beforeFeature(currentFeature);
     invoke(context, this, createMethodInfoForDoRunFeature(context, feature));
@@ -195,6 +197,7 @@ public class PlatformSpecRunner {
 
     runCloseContextStoreProvider(context, MethodKind.CLEANUP);
     getSpecificationContext(context).setCurrentFeature(null);
+    getSpecificationContext(context).popStoreProvider();
   }
 
   private MethodInfo createMethodInfoForDoRunFeature(SpockExecutionContext context, Runnable feature) {
@@ -216,6 +219,7 @@ public class PlatformSpecRunner {
 
     context = context.withCurrentIteration(iterationInfo);
     getSpecificationContext(context).setCurrentIteration(iterationInfo);
+    getSpecificationContext(context).pushStoreProvider(context.getStoreProvider());
 
     supervisor.beforeIteration(iterationInfo);
     invoke(context, this, createMethodInfoForDoRunIteration(context, runnable));
@@ -223,6 +227,7 @@ public class PlatformSpecRunner {
     runCloseContextStoreProvider(context, MethodKind.CLEANUP);
 
     getSpecificationContext(context).setCurrentIteration(null); // TODO check if we really need to null here
+    getSpecificationContext(context).popStoreProvider();
   }
 
   IterationInfo createIterationInfo(SpockExecutionContext context, int iterationIndex, Object[] args, int estimatedNumIterations) {

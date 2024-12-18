@@ -4,9 +4,14 @@ import org.spockframework.lang.ISpecificationContext;
 import org.spockframework.mock.IMockController;
 import org.spockframework.mock.IThreadAwareMockController;
 import org.spockframework.mock.runtime.MockController;
+import org.spockframework.runtime.extension.IStore;
+import org.spockframework.runtime.extension.IStoreProvider;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.Nullable;
 import spock.lang.Specification;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 public class SpecificationContext implements ISpecificationContext {
   private volatile SpecInfo currentSpec;
@@ -18,6 +23,7 @@ public class SpecificationContext implements ISpecificationContext {
   private volatile Specification sharedInstance;
 
   private volatile Throwable thrownException;
+  private final Deque<IStoreProvider> storeProvider = new ArrayDeque<>(3); // spec, feature, iteration
 
   private final MockController mockController = new MockController();
 
@@ -107,4 +113,16 @@ public class SpecificationContext implements ISpecificationContext {
     return mockController;
   }
 
+  @Override
+  public IStore getStore(IStore.Namespace namespace) {
+    return storeProvider.getLast().getStore(namespace);
+  }
+
+  public void pushStoreProvider(IStoreProvider storeProvider) {
+    this.storeProvider.push(storeProvider);
+  }
+
+  public void popStoreProvider() {
+    this.storeProvider.pop();
+  }
 }

@@ -54,6 +54,12 @@ public class DataIteratorFactory {
         return UNKNOWN_ITERATIONS;
       }
 
+      // an IDataIterator probably already has the estimated size
+      // or knows better how to calculate it
+      if (dataProvider instanceof IDataIterator) {
+        return ((IDataIterator) dataProvider).getEstimatedNumIterations();
+      }
+
       // unbelievably, DefaultGroovyMethods provides a size() method for Iterators,
       // although it is of course destructive (i.e. it exhausts the Iterator)
       if (dataProvider instanceof Iterator) {
@@ -259,8 +265,8 @@ public class DataIteratorFactory {
       // order is important as they rely on each other
       dataVariableNames = dataVariableNames();
       dataProviders = createDataProviders();
-      estimatedNumIterations = estimateNumIterations(dataProviders);
       dataProviderIterators = createDataProviderIterators();
+      estimatedNumIterations = estimateNumIterations(dataProviderIterators);
 
       RunnerConfiguration runnerConfiguration = context
         .getRunContext()

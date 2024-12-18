@@ -17,12 +17,16 @@ include::include.adoc[]
 * Add support for Groovy-4-style range expressions spockIssue:1956[]
 * Improve `@Timeout` extension will now use virtual threads if available spockPull:1986[]
 * Improve mock argument matching, types constraints or arguments in interactions can now handle primitive types like `_ as int` spockIssue:1974[]
+* Improve `verifyEach` to accept an optional second index parameter for the assertion block closure spockPull:2043[]
 * Support ContextClassLoader when loading optional classes via `ReflectionUtil` spockPull:1995[]
 ** This enables loading of optional classes in e.g. OSGi environments
 * `EmbeddedSpecRunner` and `EmbeddedSpecCompiler` now support the construction with a custom `ClassLoader` spockPull:1988[]
 ** This allows the use of these classes in an OSGi environment, where the class imports in the embedded spec are not visible to the Spock OSGi bundle ClassLoader
 * Fix mocking issue with the ByteBuddy MockMaker when using multiple classloaders in Java 21 spockIssue:2017[]
 * Fix mocking of final classes via `@SpringBean` and `@SpringSpy` spockIssue:1960[]
+* Size of data providers is no longer calculated multiple times but only once
+* Fix exception when using `@RepeatUntilFailure` with a data provider with unknown iteration amount. spockPull:2031[]
+* Clarified documentation about data providers and `size()` calls spockIssue:2022[]
 
 == 2.4-M4 (2024-03-21)
 

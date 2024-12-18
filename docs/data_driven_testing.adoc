@@ -252,6 +252,11 @@ used as a data provider. This includes objects of type `Collection`, `String`, `
 they can fetch data from external sources like text files, databases and spreadsheets, or generate data randomly.
 Data providers are queried for their next value only when needed (before the next iteration).
 
+NOTE: Spock uses the `size()` method to calculate the amount of iterations,
+      except for data providers that implement `Iterator`,
+      so make sure `size()` is working efficient, or supply an `Iterator` if that is not possible.
+
+
 == Multi-Variable Data Pipes
 
 If a data provider returns multiple values per iteration (as an object that Groovy knows how to iterate over),
@@ -447,7 +452,7 @@ exactly one iteration.
 If you want to filter out some iterations, you can use the `@IgnoreIf` annotation on the feature method.
 This has one significant drawback though, the iteration would be reported as skipped in test reports.
 Therefor you can have a `filter` block after the `where` block.
-The content of this block is treated like the content of the `exepct` block.
+The content of this block is treated like the content of the `expect` block.
 If any of the implicit or explicit assertions in the `filter` block fails, the iteration is treated like it would not exist.
 This also means, that if all iterations are filtered out, the test will fail like when giving a data provider without content.
 

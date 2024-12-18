@@ -771,6 +771,21 @@ will be rendered as
 include::{snapshotdir}/primer/VerifyEachDocSpec/verifyEach_with_namer_method.txt[]
 ----
 
+You can also use the optional index parameter to get the index of the current item.
+This is useful when you want to do assertions based on the index.
+For example, if you want to compare with a list of expected values.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/primer/VerifyEachDocSpec.groovy[tag=verify-each-index]
+----
+
+will be rendered as
+
+----
+include::{snapshotdir}/primer/VerifyEachDocSpec/verifyEach_with_index_method.txt[]
+----
+
 [[specifications-as-documentation]]
 == Specifications as Documentation
 

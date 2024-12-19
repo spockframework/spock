@@ -18,6 +18,7 @@ package org.spockframework.runtime.extension.builtin;
 
 import org.opentest4j.TestAbortedException;
 import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.extension.IStatelessAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 import spock.lang.IgnoreIf;
 
@@ -30,7 +31,7 @@ import static java.util.Collections.singletonList;
 /**
  * @author Peter Niederwieser
  */
-public class IgnoreIfExtension extends ConditionalExtension<IgnoreIf> {
+public class IgnoreIfExtension extends ConditionalExtension<IgnoreIf> implements IStatelessAnnotationDrivenExtension<IgnoreIf> {
 
   private static final String DEFAULT_MESSAGE = "Ignored via @" + IgnoreIf.class.getSimpleName();
 

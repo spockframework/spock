@@ -23,7 +23,7 @@ import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.util.Assert;
 
-public class UnwrapAopProxyExtension implements IAnnotationDrivenExtension<UnwrapAopProxy> {
+public class UnwrapAopProxyExtension implements IStatelessAnnotationDrivenExtension<UnwrapAopProxy> {
 
   @Override
   public void visitFieldAnnotation(UnwrapAopProxy annotation, final FieldInfo field) {

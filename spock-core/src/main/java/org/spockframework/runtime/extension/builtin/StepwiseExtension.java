@@ -16,14 +16,14 @@ package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.AbstractRunListener;
 import org.spockframework.runtime.InvalidSpecException;
-import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.IStatelessAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 import org.spockframework.runtime.model.parallel.ExecutionMode;
 import spock.lang.Stepwise;
 
 import java.util.List;
 
-public class StepwiseExtension implements IAnnotationDrivenExtension<Stepwise> {
+public class StepwiseExtension implements IStatelessAnnotationDrivenExtension<Stepwise> {
   @Override
   public void visitSpecAnnotation(Stepwise annotation, final SpecInfo spec) {
     sortFeaturesInDeclarationOrder(spec);

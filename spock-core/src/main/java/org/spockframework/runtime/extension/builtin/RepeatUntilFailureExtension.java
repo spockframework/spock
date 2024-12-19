@@ -1,6 +1,5 @@
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.DataIteratorFactory;
 import org.spockframework.runtime.IDataIterator;
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.*;
@@ -11,7 +10,7 @@ import java.util.concurrent.ExecutionException;
 
 import static org.spockframework.runtime.DataIteratorFactory.UNKNOWN_ITERATIONS;
 
-public class RepeatUntilFailureExtension implements IAnnotationDrivenExtension<RepeatUntilFailure> {
+public class RepeatUntilFailureExtension implements IStatelessAnnotationDrivenExtension<RepeatUntilFailure> {
   @Override
   public void visitFeatureAnnotation(RepeatUntilFailure annotation, FeatureInfo feature) {
     if (annotation.ignoreRest()) {

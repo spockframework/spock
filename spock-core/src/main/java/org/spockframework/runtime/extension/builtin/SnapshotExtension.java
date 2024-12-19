@@ -15,9 +15,9 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.extension.IStatelessAnnotationDrivenExtension;
 import org.spockframework.runtime.extension.ParameterResolver;
 import org.spockframework.runtime.model.FieldInfo;
 import org.spockframework.runtime.model.MethodInfo;
@@ -31,7 +31,7 @@ import spock.lang.Snapshotter;
 
 import java.nio.charset.Charset;
 
-public class SnapshotExtension implements IAnnotationDrivenExtension<Snapshot> {
+public class SnapshotExtension implements IStatelessAnnotationDrivenExtension<Snapshot> {
   private final SnapshotConfig config;
 
   public SnapshotExtension(SnapshotConfig config) {

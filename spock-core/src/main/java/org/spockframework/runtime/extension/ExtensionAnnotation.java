@@ -19,7 +19,10 @@ package org.spockframework.runtime.extension;
 import java.lang.annotation.*;
 
 /**
+ * Marks an annotation as a Spock extension annotation.
+ *
  * @author Peter Niederwieser
+ * @see IAnnotationDrivenExtension
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)

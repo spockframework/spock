@@ -16,12 +16,12 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.IStatelessAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 import org.spockframework.runtime.model.parallel.*;
 import spock.util.environment.RestoreSystemProperties;
 
-public class RestoreSystemPropertiesExtension implements IAnnotationDrivenExtension<RestoreSystemProperties> {
+public class RestoreSystemPropertiesExtension implements IStatelessAnnotationDrivenExtension<RestoreSystemProperties> {
 
   private static final ExclusiveResource EXCLUSIVE_RESOURCE = new ExclusiveResource(Resources.SYSTEM_PROPERTIES,
     ResourceAccessMode.READ_WRITE);

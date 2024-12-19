@@ -14,14 +14,14 @@
 
 package org.spockframework.unitils;
 
-import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.IStatelessAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.NotThreadSafe;
 
 import spock.unitils.UnitilsSupport;
 
 @NotThreadSafe
-public class UnitilsExtension implements IAnnotationDrivenExtension<UnitilsSupport> {
+public class UnitilsExtension implements IStatelessAnnotationDrivenExtension<UnitilsSupport> {
   @Override
   public void visitSpecAnnotation(UnitilsSupport unitilsSupport, SpecInfo spec) {
     UnitilsInterceptor interceptor = new UnitilsInterceptor();

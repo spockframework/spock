@@ -14,12 +14,12 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.IStatelessAnnotationDrivenExtension;
 import org.spockframework.runtime.model.SpecInfo;
 
 import spock.lang.Narrative;
 
-public class NarrativeExtension implements IAnnotationDrivenExtension<Narrative> {
+public class NarrativeExtension implements IStatelessAnnotationDrivenExtension<Narrative> {
   @Override
   public void visitSpecAnnotation(Narrative narrative, SpecInfo spec) {
     spec.setNarrative(narrative.value().trim());

@@ -16,7 +16,7 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.IStatelessAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 import org.spockframework.runtime.model.parallel.*;
 import spock.util.mop.ConfineMetaClassChanges;
@@ -29,7 +29,7 @@ import static java.util.stream.Collectors.toSet;
  * @author Luke Daley
  * @author Peter Niederwieser
  */
-public class ConfineMetaClassChangesExtension implements IAnnotationDrivenExtension<ConfineMetaClassChanges> {
+public class ConfineMetaClassChangesExtension implements IStatelessAnnotationDrivenExtension<ConfineMetaClassChanges> {
 
   private static final ExclusiveResource EXCLUSIVE_RESOURCE = new ExclusiveResource(Resources.META_CLASS_REGISTRY,
     ResourceAccessMode.READ_WRITE);

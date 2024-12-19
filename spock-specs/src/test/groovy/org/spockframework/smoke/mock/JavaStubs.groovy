@@ -185,14 +185,18 @@ class JavaStubs extends Specification {
     person.getPhoneNumber() == "12345"
   }
 
+  /**
+   * We expect that a stub of a final method with and non-final overload will not issue an error message
+   * and it will not stub the final method with byte-buddy.
+   */
   @Issue("https://github.com/spockframework/spock/issues/2039")
   def "cannot stub final methods with byteBuddy without error message when one overload is non final"() {
-    given:
+    given: "Try to stub a final method, where there is a non-final overload"
     FinalMethodPerson person = Stub(mockMaker: MockMakers.byteBuddy)
 
     person.finalAndNonFinalOverload() >> "B"
 
-    expect:
+    expect: "It calls the real final method without any error message"
     person.finalAndNonFinalOverload() == "final"
   }
 

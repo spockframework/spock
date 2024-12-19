@@ -14,7 +14,7 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.IStatelessAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FieldInfo;
 import org.spockframework.runtime.model.SpecInfo;
 
@@ -23,7 +23,7 @@ import spock.lang.AutoCleanup;
 /**
  * @author Peter Niederwieser
  */
-public class AutoCleanupExtension implements IStatelessAnnotationDrivenExtension<AutoCleanup> {
+public class AutoCleanupExtension implements IAnnotationDrivenExtension<AutoCleanup> {
   private final AutoCleanupInterceptor sharedFieldInterceptor = new AutoCleanupInterceptor();
   private final AutoCleanupInterceptor instanceFieldInterceptor = new AutoCleanupInterceptor();
 

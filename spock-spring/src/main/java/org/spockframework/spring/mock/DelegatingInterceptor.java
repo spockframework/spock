@@ -17,6 +17,7 @@
 package org.spockframework.spring.mock;
 
 import org.spockframework.mock.*;
+import org.spockframework.mock.runtime.BaseMockInterceptor;
 import org.spockframework.mock.runtime.IProxyBasedMockInterceptor;
 import org.spockframework.runtime.model.FieldInfo;
 import org.spockframework.util.*;
@@ -35,7 +36,7 @@ public class DelegatingInterceptor implements IProxyBasedMockInterceptor {
   @Override
   public Object intercept(Object target, Method method, Object[] arguments, IResponseGenerator realMethodInvoker) {
     if (method.getDeclaringClass() == ISpockMockObject.class) {
-      return new MockObjectAdapter(this);
+      return BaseMockInterceptor.handleSpockMockInterface(method, new MockObjectAdapter(this));
     }
 
     if (delegate == null) {
@@ -92,6 +93,11 @@ public class DelegatingInterceptor implements IProxyBasedMockInterceptor {
     }
 
     @Override
+    public String getMockName() {
+      return null;
+    }
+
+    @Override
     public Class<?> getType() {
       return null;
     }
@@ -124,6 +130,11 @@ public class DelegatingInterceptor implements IProxyBasedMockInterceptor {
     @Override
     public boolean matches(Object target, IMockInteraction interaction) {
       return false;
+    }
+
+    @Override
+    public IMockConfiguration getConfiguration() {
+      throw new UnsupportedOperationException();
     }
   }
 }

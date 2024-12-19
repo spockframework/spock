@@ -133,12 +133,21 @@ class JavaStubs extends Specification {
     person.phoneNumber == "6789"
   }
 
-  def "can stub final methods with mockito"() {
+  def "can stub final methods as property with mockito"() {
     FinalMethodPerson person = Stub(mockMaker: MockMakers.mockito)
     person.phoneNumber >> 6789
 
     expect:
     person.phoneNumber == "6789"
+  }
+
+  def "can stub final methods with mockito"() {
+    given:
+    FinalMethodPerson person = Mock(mockMaker: MockMakers.mockito)
+    person.getPhoneNumber() >> 6789
+
+    expect:
+    person.getPhoneNumber() == "6789"
   }
 
   def "can stub final methods with mockito with closure"() {
@@ -160,20 +169,88 @@ class JavaStubs extends Specification {
     person.phoneNumber == "6789"
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/2039")
   def "cannot stub final methods with byteBuddy"() {
+    given:
     FinalMethodPerson person = Stub(mockMaker: MockMakers.byteBuddy)
+
+    when:
+    person.getPhoneNumber() >> 6789
+
+    then:
+    InvalidSpecException ex = thrown()
+    ex.message == "The final method 'getPhoneNumber' of 'person' can't be mocked by the 'byte-buddy' mock maker. Please use another mock maker supporting final methods."
+
+    expect:
+    person.getPhoneNumber() == "12345"
+  }
+
+  /**
+   * We expect that a stub of a final method with and non-final overload will not issue an error message
+   * and it will not stub the final method with byte-buddy.
+   */
+  @Issue("https://github.com/spockframework/spock/issues/2039")
+  def "cannot stub final methods with byteBuddy without error message when one overload is non final"() {
+    given: "Try to stub a final method, where there is a non-final overload"
+    FinalMethodPerson person = Stub(mockMaker: MockMakers.byteBuddy)
+
+    person.finalAndNonFinalOverload() >> "B"
+
+    expect: "It calls the real final method without any error message"
+    person.finalAndNonFinalOverload() == "final"
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/2039")
+  def "non final method overload shall be stubable"() {
+    given:
+    FinalMethodPerson person = Stub(mockMaker: MockMakers.byteBuddy)
+
+    person.finalAndNonFinalOverload("A") >> "B"
+
+    expect:
+    person.finalAndNonFinalOverload("A") == "B"
+  }
+
+  def "cannot stub final method as property with byteBuddy"() {
+    given:
+    FinalMethodPerson person = Stub(mockMaker: MockMakers.byteBuddy)
+
+    when:
     person.phoneNumber >> 6789
+
+    then:
+    InvalidSpecException ex = thrown()
+    ex.message == "The final method 'getPhoneNumber' of 'person' can't be mocked by the 'byte-buddy' mock maker. Please use another mock maker supporting final methods."
 
     expect:
     person.phoneNumber == "12345"
   }
 
-  def "cannot stub final methods without specifying mockMaker"() {
-    FinalMethodPerson person = Stub()
-    person.phoneNumber >> 6789
+  def "cannot stub final is getter as property with byteBuddy"() {
+    given:
+    FinalMethodPerson person = Stub(mockMaker: MockMakers.byteBuddy)
+
+    when:
+    person.finalPerson >> false
+
+    then:
+    InvalidSpecException ex = thrown()
+    ex.message == "The final method 'isFinalPerson' of 'person' can't be mocked by the 'byte-buddy' mock maker. Please use another mock maker supporting final methods."
 
     expect:
-    person.phoneNumber == "12345"
+    person.finalPerson
+  }
+
+  def "cannot stub final methods without specifying mockMaker"() {
+    given:
+    FinalMethodPerson person = Stub()
+
+    when:
+    person.getPhoneNumber() >> 6789
+
+    then:
+    InvalidSpecException ex = thrown()
+    ex.message == "The final method 'getPhoneNumber' of 'person' can't be mocked by the 'byte-buddy' mock maker. Please use another mock maker supporting final methods."
   }
 
   def "cannot stub globally"() {
@@ -208,11 +285,24 @@ class JavaStubs extends Specification {
     List<String> children
   }
 
+  @SuppressWarnings('GrMethodMayBeStatic')
   static final class FinalPerson extends Person {
     String getPhoneNumber() { "12345" }
   }
 
+  @SuppressWarnings('GrMethodMayBeStatic')
   static class FinalMethodPerson extends Person {
+
     final String getPhoneNumber() { "12345" }
+
+    final boolean isFinalPerson() { return true }
+
+    final String finalAndNonFinalOverload() {
+      return "final"
+    }
+
+    String finalAndNonFinalOverload(String arg) {
+      return arg
+    }
   }
 }

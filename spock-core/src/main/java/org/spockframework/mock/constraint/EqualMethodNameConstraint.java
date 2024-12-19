@@ -31,6 +31,10 @@ public class EqualMethodNameConstraint implements IInvocationConstraint {
     this.methodName = methodName;
   }
 
+  public String getMethodName() {
+    return methodName;
+  }
+
   @Override
   public boolean isSatisfiedBy(IMockInvocation invocation) {
     return invocation.getMethod().getName().equals(methodName);

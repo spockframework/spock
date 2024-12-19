@@ -62,7 +62,7 @@ public abstract class BaseMockInterceptor implements IProxyBasedMockInterceptor 
   }
 
   public static Object handleSpockMockInterface(Method method, IMockObject mockObject) {
-    if (method.getName().equals(SpockNames.SPOCK_MOCK_INTERATION_VALIDATOR)) {
+    if (SpockNames.SPOCK_MOCK_INTERATION_VALIDATOR.equals(method.getName())) {
       return null; //This should be handled in the corresponding MockMakers.
     }
     return mockObject;

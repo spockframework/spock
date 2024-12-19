@@ -78,7 +78,7 @@ class JavaMocks extends Specification {
     InvalidSpecException ex = thrown()
     ex.message == "The final method 'getPhoneNumber' of 'person' can't be mocked by the 'byte-buddy' mock maker. Please use another mock maker supporting final methods."
 
-    expect:
+    and:
     person.getPhoneNumber() == "12345"
   }
 

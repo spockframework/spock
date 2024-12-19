@@ -900,6 +900,9 @@ and also attached one annotation directly.
 Repeatable annotations are not supported for parameter annotations,
 as they are primarily intended to provide a value and only a singular value is allowed.
 
+NOTE: Since Spock 2.4 the new subtype `IStatelessAnnotationDrivenExtension` is available, which should be used if the extension does not need to store Specification specific state.
+Otherwise, it behaves the same as `IAnnotationDrivenExtension`.
+
 `IAnnotationDrivenExtension` has the following nine methods, where in each you can prepare a specification with your
 extension magic, like attaching interceptors to various interception points as described in the chapter
 <<Interceptors>>:

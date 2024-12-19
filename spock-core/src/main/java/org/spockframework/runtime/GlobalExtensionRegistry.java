@@ -34,6 +34,8 @@ public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurati
   private final List<Class<? extends IGlobalExtension>> globalExtensionClasses;
   private final Map<Class<?>, Object> configurationsByType = new HashMap<>();
   private final Map<String, Object> configurationsByName = new HashMap<>();
+  private final Map<Class<? extends IStatelessAnnotationDrivenExtension<?>>, IStatelessAnnotationDrivenExtension<?>> statelessExtensions = new HashMap<>();
+
 
   private final List<IGlobalExtension> globalExtensions = new ArrayList<>();
 
@@ -74,6 +76,11 @@ public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurati
   @Override
   public List<IGlobalExtension> getGlobalExtensions() {
     return globalExtensions;
+  }
+
+  @Override
+  public <T extends IStatelessAnnotationDrivenExtension<?>> T getStatelessAnnotationDrivenExtension(Class<T> extensionClass) {
+    return extensionClass.cast(statelessExtensions.computeIfAbsent(extensionClass, this::instantiateAndConfigureExtension));
   }
 
   private void verifyGlobalExtension(Class<?> clazz) {

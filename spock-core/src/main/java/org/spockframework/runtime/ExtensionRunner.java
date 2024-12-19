@@ -15,10 +15,7 @@
 
 package org.spockframework.runtime;
 
-import org.spockframework.runtime.extension.ExtensionAnnotation;
-import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
-import org.spockframework.runtime.extension.IGlobalExtension;
-import org.spockframework.runtime.extension.RepeatedExtensionAnnotations;
+import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.Nullable;
 import org.spockframework.util.Pair;
@@ -163,7 +160,11 @@ public class ExtensionRunner {
   }
 
 
+  @SuppressWarnings("unchecked")
   private IAnnotationDrivenExtension getOrCreateExtension(Class<? extends IAnnotationDrivenExtension> clazz) {
+    if (IStatelessAnnotationDrivenExtension.class.isAssignableFrom(clazz)) {
+      return extensionRegistry.getStatelessAnnotationDrivenExtension((Class<? extends IStatelessAnnotationDrivenExtension<?>>)clazz);
+    }
     return localExtensions.computeIfAbsent(clazz, configurationRegistry::instantiateExtension);
   }
 }

@@ -14,12 +14,12 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.IStatelessAnnotationDrivenExtension;
 import org.spockframework.runtime.model.SpecInfo;
 
 import spock.lang.Title;
 
-public class TitleExtension implements IAnnotationDrivenExtension<Title> {
+public class TitleExtension implements IStatelessAnnotationDrivenExtension<Title> {
   @Override
   public void visitSpecAnnotation(Title title, SpecInfo spec) {
     spec.setDisplayName(title.value().trim());

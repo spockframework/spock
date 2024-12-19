@@ -14,12 +14,12 @@
 package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.report.log.ReportLogConfiguration;
-import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.IStatelessAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 
 import spock.lang.Issue;
 
-public class IssueExtension implements IAnnotationDrivenExtension<Issue> {
+public class IssueExtension implements IStatelessAnnotationDrivenExtension<Issue> {
   private final ReportLogConfiguration configuration;
 
   public IssueExtension(ReportLogConfiguration configuration) {

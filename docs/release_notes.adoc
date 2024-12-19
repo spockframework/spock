@@ -16,6 +16,7 @@ include::include.adoc[]
 * Add new <<extensions.adoc#default-value-provider,`IDefaultValueProviderExtension`>> extension point to add support for special classes in the Stub's default `EmptyOrDummyResponse` spockPull:1994[]
 * Add support for Groovy-4-style range expressions spockIssue:1956[]
 * Add `IStatelessAnnotationDrivenExtension` to allow a single extension instance to be reused across all specifications spockPull:2055[]
+* Add new well-known versions to `Jvm` helper to support versions up to 29 spockPull:2057[]
 ** Built-in extensions have been updated to use this new interface where applicable.
 * Improve `@Timeout` extension will now use virtual threads if available spockPull:1986[]
 * Improve mock argument matching, types constraints or arguments in interactions can now handle primitive types like `_ as int` spockIssue:1974[]

@@ -1,0 +1,20 @@
+Multiple Failures (2 failures)
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[1] 2:
+Condition not satisfied:
+
+it == expected[i]
+|  |  |       ||
+2  |  |       |1
+   |  |       3
+   |  [1, 3, 4]
+   false
+
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[2] 3:
+Condition not satisfied:
+
+it == expected[i]
+|  |  |       ||
+3  |  |       |2
+   |  |       4
+   |  [1, 3, 4]
+   false

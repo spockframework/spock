@@ -17,9 +17,7 @@ package spock.lang;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
-import groovy.transform.stc.ClosureParams;
-import groovy.transform.stc.FirstParam;
-import groovy.transform.stc.SecondParam;
+import groovy.transform.stc.*;
 import org.junit.platform.commons.annotation.Testable;
 import org.spockframework.lang.Wildcard;
 import org.spockframework.runtime.*;
@@ -309,6 +307,10 @@ public abstract class Specification extends MockingApi {
    * Performs assertions on each item, collecting up failures instead of stopping at first.
    * <p>
    * Exception messages will contain a toString() of the item to identify it.
+   * <p>
+   * The closure can either use one or two parameters.
+   * The first parameter will always be the item.
+   * The second optional parameter will be the iteration index of the item.
    *
    * @param things the iterable to inspect
    * @param closure a code block containing top-level conditions
@@ -318,7 +320,7 @@ public abstract class Specification extends MockingApi {
   @Beta
   public <U> void verifyEach(
     Iterable<U> things,
-    @ClosureParams(value = FirstParam.FirstGenericType.class)
+    @ClosureParams(value = FromString.class, options = {"U", "U, int"})
     @DelegatesTo(type = "U", strategy = Closure.DELEGATE_FIRST)
     Closure<?> closure
   ) {
@@ -329,6 +331,10 @@ public abstract class Specification extends MockingApi {
    * Performs assertions on each item, collecting up failures instead of stopping at first.
    * <p>
    * Exception messages will contain the result of calling the namer for an item to identify it.
+   * <p>
+   * The closure can either use one or two parameters.
+   * The first parameter will always be the item.
+   * The second optional parameter will be the iteration index of the item.
    *
    * @param things the iterable to inspect
    * @param namer the namer function to use when rendering the exception
@@ -340,7 +346,7 @@ public abstract class Specification extends MockingApi {
   public <U> void verifyEach(
     Iterable<U> things,
     Function<? super U, ?> namer,
-    @ClosureParams(value = FirstParam.FirstGenericType.class)
+    @ClosureParams(value = FromString.class, options = {"U", "U, int"})
     @DelegatesTo(type = "U", strategy = Closure.DELEGATE_FIRST)
     Closure<?> closure
   ) {

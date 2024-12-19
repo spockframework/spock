@@ -97,6 +97,16 @@ class VerifyEachBlocks extends EmbeddedSpecification {
     snap.assertThat(e.message).matchesSnapshot()
   }
 
+  def "verifyEach can have an optional index parameter"() {
+    given:
+    def range = (1..10)
+
+    expect:
+    verifyEach(range) { it, index ->
+      it  == index + 1
+    }
+  }
+
   void checks(int x) {
     doCheck(x, this.&nestedException)
     doCheck(x, this.&nestedAssertion)
@@ -108,7 +118,10 @@ class VerifyEachBlocks extends EmbeddedSpecification {
 
   void nestedException(int x) {
     if (x == 5) {
-      throw new RuntimeException("x == 5")
+      throw new RuntimeException("x == 5").tap {
+        // remove stack trace to make snapshot stable
+        it.stackTrace = []
+      }
     }
   }
 

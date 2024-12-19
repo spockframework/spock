@@ -15,9 +15,11 @@
 package org.spockframework.runtime;
 
 import org.spockframework.runtime.extension.IGlobalExtension;
+import org.spockframework.runtime.extension.IStatelessAnnotationDrivenExtension;
 
 import java.util.List;
 
 public interface IExtensionRegistry {
   List<IGlobalExtension> getGlobalExtensions();
+  <T extends IStatelessAnnotationDrivenExtension<?>> T getStatelessAnnotationDrivenExtension(Class<T> extensionClass);
 }

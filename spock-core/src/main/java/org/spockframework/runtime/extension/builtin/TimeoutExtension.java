@@ -14,7 +14,7 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.IStatelessAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.MethodInfo;
 import org.spockframework.runtime.model.SpecInfo;
@@ -25,7 +25,7 @@ import java.time.Duration;
 /**
  * @author Peter Niederwieser
  */
-public class TimeoutExtension implements IAnnotationDrivenExtension<Timeout> {
+public class TimeoutExtension implements IStatelessAnnotationDrivenExtension<Timeout> {
 
   private final TimeoutConfiguration configuration;
 

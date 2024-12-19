@@ -16,6 +16,8 @@
 
 package org.spockframework.runtime.model;
 
+import org.spockframework.util.Nullable;
+
 import java.util.List;
 
 /**
@@ -27,6 +29,21 @@ public class BlockInfo {
   private BlockKind kind;
   private List<String> texts;
 
+  /**
+   * Only for backwards compatibility.
+   * <p>
+   * @deprecated Use {@link #BlockInfo(BlockKind, List)} instead.
+   */
+  @Deprecated
+  public BlockInfo() {
+  }
+
+  public BlockInfo(BlockKind kind, List<String> texts) {
+    this.kind = kind;
+    this.texts = texts;
+  }
+
+  @Nullable
   public BlockKind getKind() {
     return kind;
   }
@@ -35,6 +52,7 @@ public class BlockInfo {
     this.kind = kind;
   }
 
+  @Nullable
   public List<String> getTexts() {
     return texts;
   }

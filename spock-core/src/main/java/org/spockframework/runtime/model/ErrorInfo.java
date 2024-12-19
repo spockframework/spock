@@ -17,10 +17,12 @@ package org.spockframework.runtime.model;
 public class ErrorInfo {
   private final MethodInfo method;
   private final Throwable error;
+  private final IErrorContext errorContext;
 
-  public ErrorInfo(MethodInfo method, Throwable error) {
+  public ErrorInfo(MethodInfo method, Throwable error, IErrorContext errorContext) {
     this.method = method;
     this.error = error;
+    this.errorContext = errorContext;
   }
 
   public MethodInfo getMethod() {
@@ -29,5 +31,23 @@ public class ErrorInfo {
 
   public Throwable getException() {
     return error;
+  }
+
+  /**
+   * {@return the error context}
+   *
+   * @since 2.4
+   */
+  public IErrorContext getErrorContext() {
+    return errorContext;
+  }
+
+  @Override
+  public String toString() {
+    return "ErrorInfo{" +
+      "method=" + method +
+      ", errorContext=" + errorContext +
+      ", error=" + error +
+      '}';
   }
 }

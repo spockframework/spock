@@ -48,6 +48,16 @@
 <p>Add support for Groovy-4-style range expressions <a href="https://github.com/spockframework/spock/issues/1956">#1956</a></p>
 </li>
 <li>
+<p>Add <code>IStatelessAnnotationDrivenExtension</code> to allow a single extension instance to be reused across all specifications <a href="https://github.com/spockframework/spock/pull/2055">#2055</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Built-in extensions have been updated to use this new interface where applicable.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
 <p>Improve <code>@Timeout</code> extension will now use virtual threads if available <a href="https://github.com/spockframework/spock/pull/1986">#1986</a></p>
 </li>
 <li>
@@ -3064,7 +3074,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-12-19 16:09:50 UTC
+Last updated 2024-12-19 17:44:11 UTC
 </div>
 </div>
 </body>

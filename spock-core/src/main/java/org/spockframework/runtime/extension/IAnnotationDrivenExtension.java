@@ -24,7 +24,16 @@ import org.spockframework.runtime.model.*;
 import org.spockframework.util.Beta;
 
 /**
+ * Describes an extension that is driven by annotations.
+ * <p>
+ * A new instance of the extension is created for each Specification where the annotation is used.
+ * <p>
+ * If the extension is stateless and does not require a new instance for each usage, use {@link IStatelessAnnotationDrivenExtension}.
+ *
  * @author Peter Niederwieser
+ * @see IStatelessAnnotationDrivenExtension
+ * @see ExtensionAnnotation
+ * @see spock.config.ConfigurationObject
  */
 public interface IAnnotationDrivenExtension<T extends Annotation> {
   /**

@@ -16,7 +16,7 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.IStatelessAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.SpecInfo;
 
@@ -25,7 +25,7 @@ import spock.lang.IgnoreRest;
 /**
  * @author Peter Niederwieser
  */
-public class IgnoreRestExtension implements IAnnotationDrivenExtension<IgnoreRest> {
+public class IgnoreRestExtension implements IStatelessAnnotationDrivenExtension<IgnoreRest> {
   @Override
   public void visitFeatureAnnotation(IgnoreRest ignoreRest, FeatureInfo feature) {} // do nothing
 

@@ -1,9 +1,5 @@
 import org.spockframework.gradle.JacocoJavaagentProvider
 
-plugins {
-  id 'org.spockframework.base'
-}
-
 ext.displayName = "Spock Framework - Specs for Core Module"
 
 description = "Spock specifications for the Core Module. Yes, we eat our own dog food."

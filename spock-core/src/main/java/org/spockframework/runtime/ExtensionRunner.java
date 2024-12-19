@@ -164,7 +164,7 @@ public class ExtensionRunner {
   private IAnnotationDrivenExtension getOrCreateExtension(Class<? extends IAnnotationDrivenExtension> clazz) {
     if (IStatelessAnnotationDrivenExtension.class.isAssignableFrom(clazz)) {
       // we need to add the extension to the local extensions map to ensure that `visitSpec` is called for it at the end
-      return localExtensions.computeIfAbsent(clazz, __ -> extensionRegistry.getStatelessAnnotationDrivenExtension((Class<? extends IStatelessAnnotationDrivenExtension<?>>) clazz));
+      return localExtensions.computeIfAbsent(clazz, c -> extensionRegistry.getStatelessAnnotationDrivenExtension((Class<? extends IStatelessAnnotationDrivenExtension<?>>) c));
     }
     return localExtensions.computeIfAbsent(clazz, configurationRegistry::instantiateExtension);
   }

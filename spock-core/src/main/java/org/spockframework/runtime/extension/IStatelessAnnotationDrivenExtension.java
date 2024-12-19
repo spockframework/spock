@@ -24,7 +24,8 @@ import org.spockframework.util.Beta;
  * Use this interface if the extension does not need to store any use specific state.
  * Injecting a configuration object is still allowed.
  * You can use the {@link IStore} to store state that should be shared.
- *
+ * <p>
+ * Implementations of this interface must be thread-safe.
  * @since 2.4
  * @see ExtensionAnnotation
  * @see spock.config.ConfigurationObject

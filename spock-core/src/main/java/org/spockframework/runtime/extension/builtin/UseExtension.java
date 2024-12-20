@@ -16,7 +16,7 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.IStatelessAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.IInterceptable;
 import org.spockframework.runtime.model.MethodInfo;
@@ -29,7 +29,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toSet;
 
-public class UseExtension implements IAnnotationDrivenExtension<Use> {
+public class UseExtension implements IStatelessAnnotationDrivenExtension<Use> {
   @Override
   public void visitSpecAnnotations(List<Use> annotations, SpecInfo spec) {
     addInterceptor(annotations, spec.getBottomSpec());

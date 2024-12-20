@@ -2,10 +2,11 @@ package org.spockframework.runtime.extension.builtin;
 
 import groovy.lang.Closure;
 import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.extension.IStatelessAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
 import spock.lang.PendingFeatureIf;
 
-public class PendingFeatureIfExtension extends ConditionalExtension<PendingFeatureIf> {
+public class PendingFeatureIfExtension extends ConditionalExtension<PendingFeatureIf> implements IStatelessAnnotationDrivenExtension<PendingFeatureIf> {
 
   private static final String PENDING_FEATURE_IF = "@PendingFeatureIf";
 

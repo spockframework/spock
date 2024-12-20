@@ -18,6 +18,7 @@ package org.spockframework.runtime.extension.builtin;
 
 import org.opentest4j.TestAbortedException;
 import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.extension.IStatelessAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 import spock.lang.Requires;
 
@@ -30,7 +31,7 @@ import static java.util.Collections.singletonList;
 /**
  * @author Peter Niederwieser
  */
-public class RequiresExtension extends ConditionalExtension<Requires> {
+public class RequiresExtension extends ConditionalExtension<Requires> implements IStatelessAnnotationDrivenExtension<Requires> {
 
   private static final String DEFAULT_MESSAGE = "Ignored via @" + Requires.class.getSimpleName();
 

@@ -1,13 +1,13 @@
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.IStatelessAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
 import spock.lang.PendingFeature;
 
 /**
  * @author Leonard Brünings
  */
-public class PendingFeatureExtension implements IAnnotationDrivenExtension<PendingFeature> {
+public class PendingFeatureExtension implements IStatelessAnnotationDrivenExtension<PendingFeature> {
 
   private static final String PENDING_FEATURE = "@PendingFeature";
 

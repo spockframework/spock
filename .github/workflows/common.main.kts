@@ -17,7 +17,7 @@
  */
 
 @file:Repository("https://repo.maven.apache.org/maven2/")
-@file:DependsOn("io.github.typesafegithub:github-workflows-kt:2.3.0")
+@file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.0.1")
 
 import io.github.typesafegithub.workflows.domain.Job
 import io.github.typesafegithub.workflows.domain.JobOutputs.EMPTY
@@ -130,7 +130,7 @@ val Matrix.Companion.full
     get() = Matrix(
         operatingSystems = listOf("ubuntu-latest"),
         variants = axes.variants,
-        javaVersions = axes.javaVersions + "22",
+        javaVersions = axes.javaVersions + "23",
         exclude = { (variant == "2.5") && (javaVersion!!.toInt() >= 17) },
         includes = listOf("windows-latest", "macos-latest")
             .map {

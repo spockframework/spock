@@ -19,7 +19,7 @@
 @file:Import("common.main.kts")
 @file:Repository("https://bindings.krzeminski.it/")
 @file:DependsOn("actions:checkout:v4")
-@file:DependsOn("codecov:codecov-action:v4")
+@file:DependsOn("codecov:codecov-action:v5")
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.actions.actions.Checkout.FetchDepth

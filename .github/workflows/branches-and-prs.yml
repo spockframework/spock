@@ -61,7 +61,7 @@ jobs:
         - '11'
         - '17'
         - '21'
-        - '22'
+        - '23'
         os:
         - 'ubuntu-latest'
         exclude:
@@ -72,7 +72,7 @@ jobs:
           java: '21'
           os: 'ubuntu-latest'
         - variant: '2.5'
-          java: '22'
+          java: '23'
           os: 'ubuntu-latest'
         include:
         - variant: '2.5'
@@ -111,4 +111,4 @@ jobs:
       run: './gradlew --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}"'
     - id: 'step-3'
       name: 'Upload to Codecov.io'
-      uses: 'codecov/codecov-action@v4'
+      uses: 'codecov/codecov-action@v5'

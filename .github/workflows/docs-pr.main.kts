@@ -46,7 +46,6 @@ workflow(
         MergeGroup()
     ),
     sourceFile = __FILE__,
-    targetFileName = "${__FILE__.name.substringBeforeLast(".main.kts")}.yml",
     // https://stackoverflow.com/a/72408109/16358266
     concurrency = Concurrency(
         group = "${expr { github.workflow }}-${expr("${github.eventPullRequest.pull_request.number} || ${github.ref}")}",

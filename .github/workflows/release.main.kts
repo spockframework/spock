@@ -39,8 +39,7 @@ workflow(
             tags = listOf("spock-*")
         )
     ),
-    sourceFile = __FILE__,
-    targetFileName = "${__FILE__.name.substringBeforeLast(".main.kts")}.yml"
+    sourceFile = __FILE__
 ) {
     val GITHUB_TOKEN by secrets
     val SONATYPE_OSS_USER by secrets

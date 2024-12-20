@@ -68,7 +68,7 @@ class PreprocessWorkflowsPlugin implements Plugin<Project> {
           .files(getImportedFiles(project.file(workflowScript)))
           .withPropertyName("importedFiles")
         it.outputs
-          .file(new File(workflowScript.parent, "${workflowName}.yml"))
+          .file(new File(workflowScript.parent, "${workflowName}.yaml"))
           .withPropertyName('workflowFile')
 
         it.javaLauncher.set project.extensions.getByType(JavaToolchainService).launcherFor {

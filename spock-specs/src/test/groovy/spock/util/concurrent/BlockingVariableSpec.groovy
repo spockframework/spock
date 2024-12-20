@@ -19,9 +19,10 @@ import spock.lang.*
 import java.util.concurrent.TimeUnit
 import org.spockframework.runtime.SpockTimeoutError
 
+@Isolated("The test can get flaky on weak machines if run in parallel.")
 class BlockingVariableSpec extends Specification {
   def "variable is read after it is written"() {
-    def list = new BlockingVariable<List<String>>()
+    def list = new BlockingVariable<List<Integer>>()
 
     when:
     Thread.start {
@@ -35,7 +36,7 @@ class BlockingVariableSpec extends Specification {
   }
 
   def "variable is read before it is written"() {
-    def list = new BlockingVariable<List<String>>()
+    def list = new BlockingVariable<List<Integer>>()
 
     when:
     Thread.start {
@@ -49,7 +50,7 @@ class BlockingVariableSpec extends Specification {
   }
 
   def "read times out if no write occurs"() {
-    def list = new BlockingVariable<String>()
+    def list = new BlockingVariable<Integer>()
 
     when:
     list.get()

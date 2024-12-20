@@ -1,12 +1,13 @@
 package org.spockframework.smoke.extension
 
-
+import spock.lang.Isolated
 import spock.timeout.BaseTimeoutExtensionSpecification
 
 import java.time.Duration
 
 import org.spockframework.runtime.SpockTimeoutError
 
+@Isolated("The timings are quite tight and it can get flaky on weak machines if run in parallel.")
 class GlobalTimeoutExtension extends BaseTimeoutExtensionSpecification {
   def "applies timeout to features"() {
     given:
@@ -151,7 +152,7 @@ class GlobalTimeoutExtension extends BaseTimeoutExtensionSpecification {
 
   def "can exclude fixture methods from global timeout"() {
     given:
-    enableGlobalTimeout(false, Duration.ofMillis(5))
+    enableGlobalTimeout(false, Duration.ofMillis(20))
 
     when:
     runner.runSpecBody("""

@@ -211,6 +211,66 @@ public class Jvm {
   }
 
   /**
+   * Tells whether the Java version is 24.
+   *
+   * @since 2.4
+   * @return whether the Java version is 24
+   */
+  public boolean isJava24() {
+    return "24".equals(javaSpecVersion);
+  }
+
+  /**
+   * Tells whether the Java version is 25.
+   *
+   * @since 2.4
+   * @return whether the Java version is 25
+   */
+  public boolean isJava25() {
+    return "25".equals(javaSpecVersion);
+  }
+
+  /**
+   * Tells whether the Java version is 26.
+   *
+   * @since 2.4
+   * @return whether the Java version is 26
+   */
+  public boolean isJava26() {
+    return "26".equals(javaSpecVersion);
+  }
+
+  /**
+   * Tells whether the Java version is 27.
+   *
+   * @since 2.4
+   * @return whether the Java version is 27
+   */
+  public boolean isJava27() {
+    return "27".equals(javaSpecVersion);
+  }
+
+  /**
+   * Tells whether the Java version is 28.
+   *
+   * @since 2.4
+   * @return whether the Java version is 28
+   */
+  public boolean isJava28() {
+    return "28".equals(javaSpecVersion);
+  }
+
+  /**
+   * Tells whether the Java version is 29.
+   *
+   * @since 2.4
+   * @return whether the Java version is 29
+   */
+  public boolean isJava29() {
+    return "29".equals(javaSpecVersion);
+  }
+
+  /**
    * Tells whether the Java version is equal to the given major Java version.
    *
    * @since 2.0
@@ -381,6 +441,66 @@ public class Jvm {
    */
   public boolean isJava23Compatible() {
     return javaSpecVersionNumber.getMajor() >= 23;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with Java 24.
+   *
+   * @since 2.4
+   * @return whether the Java version is compatible with Java 24
+   */
+  public boolean isJava24Compatible() {
+    return javaSpecVersionNumber.getMajor() >= 24;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with Java 25.
+   *
+   * @since 2.4
+   * @return whether the Java version is compatible with Java 25
+   */
+  public boolean isJava25Compatible() {
+    return javaSpecVersionNumber.getMajor() >= 25;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with Java 26.
+   *
+   * @since 2.4
+   * @return whether the Java version is compatible with Java 26
+   */
+  public boolean isJava26Compatible() {
+    return javaSpecVersionNumber.getMajor() >= 26;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with Java 27.
+   *
+   * @since 2.4
+   * @return whether the Java version is compatible with Java 27
+   */
+  public boolean isJava27Compatible() {
+    return javaSpecVersionNumber.getMajor() >= 27;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with Java 28.
+   *
+   * @since 2.4
+   * @return whether the Java version is compatible with Java 28
+   */
+  public boolean isJava28Compatible() {
+    return javaSpecVersionNumber.getMajor() >= 28;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with Java 29.
+   *
+   * @since 2.4
+   * @return whether the Java version is compatible with Java 29
+   */
+  public boolean isJava29Compatible() {
+    return javaSpecVersionNumber.getMajor() >= 29;
   }
 
   /**

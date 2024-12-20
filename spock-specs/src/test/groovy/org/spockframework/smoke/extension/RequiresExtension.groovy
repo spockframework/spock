@@ -447,7 +447,8 @@ class Test extends Bar {
 
     @Requires({
       jvm.java8 || jvm.java9 || jvm.java10 || jvm.java11 || jvm.java12 || jvm.java13 || jvm.java14 || jvm.java15 || jvm.java16 || jvm.java17 ||
-        jvm.isJavaVersion(18) || jvm.java21 || jvm.java22
+      jvm.isJavaVersion(18) ||
+      jvm.java21 || jvm.java22 || jvm.java23 || jvm.java24 || jvm.java25 || jvm.java26 || jvm.java27 || jvm.java28 || jvm.java29
     })
     def "provides JVM information"() {
       expect: true

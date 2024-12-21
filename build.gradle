@@ -102,23 +102,12 @@ subprojects {
   apply plugin: "java-library"
   apply plugin: "groovy"
   apply plugin: "jacoco"
+  apply plugin: "org.spockframework.base"
 
   java {
     toolchain {
       languageVersion = JavaLanguageVersion.of(javaVersion)
     }
-  }
-
-  tasks.withType(JavaCompile).configureEach {
-    if (it.name == 'compileJava') {
-      javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(8)
-      }
-    }
-    options.encoding = 'UTF-8'
-  }
-  tasks.withType(GroovyCompile).configureEach {
-    options.encoding = 'UTF-8'
   }
 
   sourceSets.all { ss ->

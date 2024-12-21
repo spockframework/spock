@@ -22,6 +22,7 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.TypeCache;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.method.MethodDescription;
+import net.bytebuddy.description.modifier.MethodManifestation;
 import net.bytebuddy.description.modifier.SynchronizationState;
 import net.bytebuddy.description.modifier.SyntheticState;
 import net.bytebuddy.description.modifier.Visibility;
@@ -31,19 +32,23 @@ import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.dynamic.loading.MultipleParentClassLoader;
 import net.bytebuddy.dynamic.scaffold.TypeValidation;
 import net.bytebuddy.implementation.FieldAccessor;
+import net.bytebuddy.implementation.FixedValue;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.implementation.bind.annotation.Morph;
 import org.codehaus.groovy.runtime.callsite.AbstractCallSite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
+import org.spockframework.compiler.SpockNames;
 import org.spockframework.mock.ISpockMockObject;
 import org.spockframework.mock.codegen.Target;
+import org.spockframework.util.ReflectionUtil;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static java.util.Objects.requireNonNull;
 import static net.bytebuddy.matcher.ElementMatchers.none;
 
 class ByteBuddyMockFactory {
@@ -60,6 +65,7 @@ class ByteBuddyMockFactory {
   private static final Class<?> CODEGEN_TARGET_CLASS = Target.class;
   private static final String CODEGEN_PACKAGE = CODEGEN_TARGET_CLASS.getPackage().getName();
   private static final AnnotationDescription INTERNAL_ANNOTATION = AnnotationDescription.Builder.ofType(Internal.class).build();
+  private static final Method MOCK_INTERACTION_VALIDATOR_METHOD = requireNonNull(ReflectionUtil.getMethodByName(ISpockMockObject.class, SpockNames.SPOCK_MOCK_INTERATION_VALIDATOR));
 
   /**
    * This array contains {@link TypeCachingLock} instances, which are used as java monitor locks for
@@ -136,6 +142,10 @@ class ByteBuddyMockFactory {
           .method(m -> !isGroovyMOPMethod(type, m))
           .intercept(mockInterceptor())
           .transform(mockTransformer())
+          .method(m -> m.represents(MOCK_INTERACTION_VALIDATOR_METHOD))
+          // Implement the $spock_mockInteractionValidation() method which returns the static field below, so we have a validation instance for every mock class
+          .intercept(FixedValue.reference(new ByteBuddyMockInteractionValidator(), SpockNames.SPOCK_MOCK_INTERATION_VALIDATOR))
+          .transform(validateMockInteractionTransformer())
           .implement(ByteBuddyInterceptorAdapter.InterceptorAccess.class)
           .intercept(FieldAccessor.ofField("$spock_interceptor"))
           .defineField("$spock_interceptor", IProxyBasedMockInterceptor.class, Visibility.PRIVATE, SyntheticState.SYNTHETIC)
@@ -147,6 +157,10 @@ class ByteBuddyMockFactory {
     Object proxy = MockInstantiator.instantiate(type, enhancedType, settings.getConstructorArgs(), settings.isUseObjenesis());
     ((ByteBuddyInterceptorAdapter.InterceptorAccess) proxy).$spock_set(settings.getMockInterceptor());
     return proxy;
+  }
+
+  private static Transformer<MethodDescription> validateMockInteractionTransformer() {
+    return Transformer.ForMethod.withModifiers(SynchronizationState.PLAIN, Visibility.PUBLIC, MethodManifestation.FINAL);
   }
 
   private static Transformer<MethodDescription> mockTransformer() {

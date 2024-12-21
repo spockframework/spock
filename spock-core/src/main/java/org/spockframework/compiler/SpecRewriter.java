@@ -17,6 +17,7 @@
 package org.spockframework.compiler;
 
 import org.spockframework.compiler.model.*;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.SpockException;
 import org.spockframework.util.*;
 
@@ -26,7 +27,6 @@ import java.util.*;
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
-import org.codehaus.groovy.runtime.MetaClassHelper;
 import org.codehaus.groovy.syntax.*;
 import org.objectweb.asm.Opcodes;
 
@@ -109,7 +109,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   private void createSharedFieldGetter(Field field) {
-    String getterName = "get" + MetaClassHelper.capitalize(field.getName());
+    String getterName = GroovyRuntimeUtil.propertyToGetterMethodName(field.getName());
     MethodNode getter = spec.getAst().getMethod(getterName, Parameter.EMPTY_ARRAY);
     if (getter != null) {
       errorReporter.error(field.getAst(),
@@ -135,7 +135,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   private void createFinalFieldGetter(Field field) {
-    String getterName = "get" + MetaClassHelper.capitalize(field.getName());
+    String getterName = GroovyRuntimeUtil.propertyToGetterMethodName(field.getName());
     MethodNode getter = spec.getAst().getMethod(getterName, Parameter.EMPTY_ARRAY);
     if (getter != null) {
       errorReporter.error(field.getAst(),
@@ -158,7 +158,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   private void createSharedFieldSetter(Field field) {
-    String setterName = "set" + MetaClassHelper.capitalize(field.getName());
+    String setterName = GroovyRuntimeUtil.propertyToSetterMethodName(field.getName());
     Parameter[] params = new Parameter[] { new Parameter(field.getAst().getType(), "$spock_value") };
     MethodNode setter = spec.getAst().getMethod(setterName, params);
     if (setter != null) {

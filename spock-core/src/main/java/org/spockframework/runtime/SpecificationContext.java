@@ -5,12 +5,15 @@ import org.spockframework.mock.IMockController;
 import org.spockframework.mock.IThreadAwareMockController;
 import org.spockframework.mock.runtime.MockController;
 import org.spockframework.runtime.model.*;
+import org.spockframework.util.Nullable;
 import spock.lang.Specification;
 
 public class SpecificationContext implements ISpecificationContext {
   private volatile SpecInfo currentSpec;
   private volatile FeatureInfo currentFeature;
   private volatile IterationInfo currentIteration;
+
+  private volatile BlockInfo currentBlock;
 
   private volatile Specification sharedInstance;
 
@@ -44,7 +47,12 @@ public class SpecificationContext implements ISpecificationContext {
     return currentFeature;
   }
 
-  public void setCurrentFeature(FeatureInfo currentFeature) {
+  @Nullable
+  FeatureInfo getCurrentFeatureOrNull() {
+    return currentFeature;
+  }
+
+  public void setCurrentFeature(@Nullable FeatureInfo currentFeature) {
     this.currentFeature = currentFeature;
   }
 
@@ -56,8 +64,26 @@ public class SpecificationContext implements ISpecificationContext {
     return currentIteration;
   }
 
-  public void setCurrentIteration(IterationInfo currentIteration) {
+  @Nullable
+  IterationInfo getCurrentIterationOrNull() {
+    return currentIteration;
+  }
+
+  public void setCurrentIteration(@Nullable IterationInfo currentIteration) {
     this.currentIteration = currentIteration;
+  }
+
+  public static final String SET_CURRENT_BLOCK = "setCurrentBlock";
+  public void setCurrentBlock(@Nullable BlockInfo blockInfo) {
+    this.currentBlock = blockInfo;
+  }
+
+  public static final String GET_CURRENT_BLOCK = "getCurrentBlock";
+
+  @Nullable
+  @Override
+  public BlockInfo getCurrentBlock() {
+    return currentBlock;
   }
 
   @Override
@@ -80,4 +106,5 @@ public class SpecificationContext implements ISpecificationContext {
   public IThreadAwareMockController getThreadAwareMockController() {
     return mockController;
   }
+
 }

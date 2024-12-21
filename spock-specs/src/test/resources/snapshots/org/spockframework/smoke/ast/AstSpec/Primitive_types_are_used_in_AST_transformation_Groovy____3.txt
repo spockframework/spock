@@ -40,6 +40,15 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
    L10
     ALOAD 3
     POP
+    ALOAD 0
+    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    LDC Lorg/spockframework/runtime/SpecificationContext;.class
+    INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
+    CHECKCAST org/spockframework/runtime/SpecificationContext
+    ICONST_0
+    INVOKESTATIC org/spockframework/runtime/SpockRuntime.callBlockEntered (Lorg/spockframework/runtime/SpecificationContext;I)V
+    ACONST_NULL
+    POP
    L0
     LINENUMBER 4 L0
     ALOAD 2
@@ -92,6 +101,24 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     LDC Lorg/spockframework/runtime/SpecificationContext;.class
     INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
     CHECKCAST org/spockframework/runtime/SpecificationContext
+    ICONST_0
+    INVOKESTATIC org/spockframework/runtime/SpockRuntime.callBlockExited (Lorg/spockframework/runtime/SpecificationContext;I)V
+    ACONST_NULL
+    POP
+    ALOAD 0
+    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    LDC Lorg/spockframework/runtime/SpecificationContext;.class
+    INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
+    CHECKCAST org/spockframework/runtime/SpecificationContext
+    ICONST_1
+    INVOKESTATIC org/spockframework/runtime/SpockRuntime.callBlockEntered (Lorg/spockframework/runtime/SpecificationContext;I)V
+    ACONST_NULL
+    POP
+    ALOAD 0
+    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    LDC Lorg/spockframework/runtime/SpecificationContext;.class
+    INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
+    CHECKCAST org/spockframework/runtime/SpecificationContext
     ACONST_NULL
     LDC Ljava/lang/Throwable;.class
     INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
@@ -129,8 +156,27 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     ALOAD 7
     ATHROW
    L16
-    LINENUMBER 8 L16
    FRAME SAME
+    ALOAD 0
+    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    LDC Lorg/spockframework/runtime/SpecificationContext;.class
+    INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
+    CHECKCAST org/spockframework/runtime/SpecificationContext
+    ICONST_1
+    INVOKESTATIC org/spockframework/runtime/SpockRuntime.callBlockExited (Lorg/spockframework/runtime/SpecificationContext;I)V
+    ACONST_NULL
+    POP
+    ALOAD 0
+    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    LDC Lorg/spockframework/runtime/SpecificationContext;.class
+    INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
+    CHECKCAST org/spockframework/runtime/SpecificationContext
+    ICONST_2
+    INVOKESTATIC org/spockframework/runtime/SpockRuntime.callBlockEntered (Lorg/spockframework/runtime/SpecificationContext;I)V
+    ACONST_NULL
+    POP
+   L17
+    LINENUMBER 8 L17
     ALOAD 1
     LDC 2
     AALOAD
@@ -145,6 +191,15 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     LDC Lorg/spockframework/runtime/SpecificationContext;.class
     INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
     CHECKCAST org/spockframework/runtime/SpecificationContext
+    ICONST_2
+    INVOKESTATIC org/spockframework/runtime/SpockRuntime.callBlockExited (Lorg/spockframework/runtime/SpecificationContext;I)V
+    ACONST_NULL
+    POP
+    ALOAD 0
+    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    LDC Lorg/spockframework/runtime/SpecificationContext;.class
+    INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
+    CHECKCAST org/spockframework/runtime/SpecificationContext
     INVOKEVIRTUAL org/spockframework/runtime/SpecificationContext.getMockController ()Lorg/spockframework/mock/IMockController;
     LDC Lorg/spockframework/mock/runtime/MockController;.class
     INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
@@ -152,11 +207,11 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     INVOKEVIRTUAL org/spockframework/mock/runtime/MockController.leaveScope ()V
     ACONST_NULL
     POP
-   L17
+   L18
     RETURN
-    LOCALVARIABLE this Lapackage/TestSpec; L8 L17 0
-    LOCALVARIABLE $spock_errorCollector Lorg/spockframework/runtime/ErrorCollector; L9 L17 2
-    LOCALVARIABLE $spock_valueRecorder Lorg/spockframework/runtime/ValueRecorder; L10 L17 3
+    LOCALVARIABLE this Lapackage/TestSpec; L8 L18 0
+    LOCALVARIABLE $spock_errorCollector Lorg/spockframework/runtime/ErrorCollector; L9 L18 2
+    LOCALVARIABLE $spock_valueRecorder Lorg/spockframework/runtime/ValueRecorder; L10 L18 3
     LOCALVARIABLE $spock_condition_throwable Ljava/lang/Throwable; L12 L3 4
     LOCALVARIABLE $spock_ex Ljava/lang/Throwable; L15 L7 6
     MAXSTACK = 9

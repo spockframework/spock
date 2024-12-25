@@ -150,6 +150,10 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
     }
     try {
       Statement code = expr.getCode();
+      // the code of a closure is not necessarily a block statement but could for example
+      // also be a single assert statement in cases like `case 3 -> assert 1 == 1`
+      // to uniformly treat the closure code as block statement and later be able to
+      // add statements to it, wrap non-block statements in a block statement here
       if (!(code instanceof BlockStatement)) {
         BlockStatement block = new BlockStatement();
         block.addStatement(code);

@@ -9,6 +9,7 @@ include::include.adoc[]
 
 * Add support for combining two or more data providers using cartesian product spockIssue:1062[]
 * Add support for a `filter` block after a `where` block to filter out unwanted iterations spockPull:1927[]
+* Add <<extensions.adoc#block-listener,`IBlockListener`>> extension point to listen to block execution events within feature methods spockPull:1575[]
 
 === Misc
 

@@ -47,15 +47,6 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   // https://issues.apache.org/jira/browse/GROOVY-10403
   // needed for groovy-4 compatibility and only available since groovy-4
   private static final java.lang.reflect.Method GET_PLAIN_NODE_REFERENCE = ReflectionUtil.getMethodBySignature(ClassNode.class, "getPlainNodeReference", boolean.class);
-  private static final Set<BlockParseInfo> BLOCK_LISTENER_SUPPORTED_BLOCKS = Collections.unmodifiableSet(EnumSet.of(
-      BlockParseInfo.SETUP,
-      BlockParseInfo.GIVEN, // is aliased to SETUP
-      BlockParseInfo.EXPECT,
-      BlockParseInfo.WHEN,
-      BlockParseInfo.THEN,
-      BlockParseInfo.CLEANUP,
-      BlockParseInfo.AND // is aliased to the previous block
-  ));
 
   private final AstNodeCache nodeCache;
   private final SourceLookup lookup;
@@ -428,7 +419,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   private void addBlockListeners(Block block) {
     BlockParseInfo blockType = block.getParseInfo();
-    if (!BLOCK_LISTENER_SUPPORTED_BLOCKS.contains(blockType)) return;
+    if (!blockType.isSupportingBlockListeners()) return;
 
     // SpockRuntime.callBlockEntered(getSpecificationContext(), blockMetadataIndex)
     MethodCallExpression blockEnteredCall = createBlockListenerCall(block, blockType, nodeCache.SpockRuntime_CallBlockEntered);

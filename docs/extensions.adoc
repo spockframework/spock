@@ -1393,6 +1393,7 @@ Please consult the JavaDoc of the respective listener interfaces for more inform
 
 The `org.spockframework.runtime.IRunListener` can be registered via `SpecInfo.addListener(IRunListener)` and will receive notifications about the progress of the test run of a single specification.
 
+[#block-listener]
 ==== `IBlockListener`
 
 The `org.spockframework.runtime.extension.IBlockListener` can be registered on a feature via, `FeatureInfo.addBlockListener(IBlockListener)` and will receive notifications about the progress of the feature.

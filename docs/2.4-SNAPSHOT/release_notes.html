@@ -99,10 +99,13 @@
 <p>Size of data providers is no longer calculated multiple times but only once</p>
 </li>
 <li>
-<p>Fix exception when using <code>@RepeatUntilFailure</code> with a data provider with unknown iteration amount. <a href="https://github.com/spockframework/spock/pull/2031">#2031</a></p>
+<p>Fix exception when using <code>@RepeatUntilFailure</code> with a data provider with unknown iteration amount <a href="https://github.com/spockframework/spock/pull/2031">#2031</a></p>
 </li>
 <li>
 <p>Clarified documentation about data providers and <code>size()</code> calls <a href="https://github.com/spockframework/spock/issues/2022">#2022</a></p>
+</li>
+<li>
+<p>Fix compile error with single explicit assert in switch expression branch <a href="https://github.com/spockframework/spock/issues/1845">#1845</a></p>
 </li>
 </ul>
 </div>
@@ -3077,7 +3080,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-12-26 15:52:30 UTC
+Last updated 2024-12-26 16:20:58 UTC
 </div>
 </div>
 </body>

@@ -1380,3 +1380,26 @@ It is primarily for framework developers who want to provide a default value for
 Or users of a framework that doesn't provide default values for their special types.
 
 If you want to change the default response behavior for `Stub` have a look at <<interaction_based_testing.adoc#ALaCarteMocks,A la Carte Mocks>> and how to use your own `org.spockframework.mock.IDefaultResponse`.
+
+=== Listeners
+
+Extensions can register listeners to receive notifications about the progress of the test run.
+These listeners are intended to be used for reporting, logging, or other monitoring purposes.
+They are not intended to modify the test run in any way.
+You can register the same listener instance on multiple specifications or features.
+Please consult the JavaDoc of the respective listener interfaces for more information.
+
+==== `IRunListener`
+
+The `org.spockframework.runtime.IRunListener` can be registered via `SpecInfo.addListener(IRunListener)` and will receive notifications about the progress of the test run of a single specification.
+
+[#block-listener]
+==== `IBlockListener`
+
+The `org.spockframework.runtime.extension.IBlockListener` can be registered on a feature via, `FeatureInfo.addBlockListener(IBlockListener)` and will receive notifications about the progress of the feature.
+
+It will be called once when entering a block (`blockEntered`) and once when exiting a block (`blockExited`).
+
+When an exception is thrown in a block, the `blockExited` will not be called for that block.
+The failed block will be part of the `ErrorContext` in `ErrorInfo` that is passed to `IRunListener.error(ErrorInfo)`.
+If a `cleanup` block is present the cleanup block listener methods will still be called.

@@ -17,6 +17,7 @@
 package org.spockframework.compiler;
 
 import org.codehaus.groovy.syntax.Token;
+import org.codehaus.groovy.syntax.Types;
 import org.spockframework.lang.Wildcard;
 import org.spockframework.util.*;
 import spock.lang.Specification;
@@ -390,4 +391,12 @@ public abstract class AstUtil {
   public static ConstantExpression primitiveConstExpression(boolean value) {
     return new ConstantExpression(value, true);
   }
+
+  public static BinaryExpression createVariableIsNotNullExpression(VariableExpression var) {
+    return new BinaryExpression(
+      var,
+      Token.newSymbol(Types.COMPARE_NOT_EQUAL, -1, -1),
+      new ConstantExpression(null));
+  }
+
 }

@@ -9,6 +9,7 @@ public java.lang.Object foobar() {
 
 public void $spock_feature_0_0() {
     java.lang.Object foobar
+    org.spockframework.runtime.SpockRuntime.callBlockEntered(this.getSpecificationContext(), 0)
     this.getSpecificationContext().setThrownException(null)
     try {
         foobar = this.foobar()
@@ -18,7 +19,10 @@ public void $spock_feature_0_0() {
     }
     finally {
     }
+    org.spockframework.runtime.SpockRuntime.callBlockExited(this.getSpecificationContext(), 0)
+    org.spockframework.runtime.SpockRuntime.callBlockEntered(this.getSpecificationContext(), 1)
     this.thrownImpl(null, null, java.lang.IllegalStateException)
+    org.spockframework.runtime.SpockRuntime.callBlockExited(this.getSpecificationContext(), 1)
     this.getSpecificationContext().getMockController().leaveScope()
 }
 /*--------- end::snapshot[] ---------*/

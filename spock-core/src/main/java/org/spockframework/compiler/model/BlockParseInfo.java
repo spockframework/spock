@@ -18,6 +18,8 @@ package org.spockframework.compiler.model;
 
 import java.util.*;
 
+import org.spockframework.util.InternalSpockError;
+
 /**
  *
  * @author Peter Niederwieser
@@ -32,6 +34,10 @@ public enum BlockParseInfo {
     public Block addNewBlock(Method method) {
       return method.getLastBlock();
     }
+    @Override
+    public boolean isSupportingBlockListeners() {
+      throw new InternalSpockError("AND block should have been replaced by a more specific block");
+    }
   },
 
   ANONYMOUS {
@@ -42,6 +48,10 @@ public enum BlockParseInfo {
     @Override
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       return EnumSet.of(SETUP, GIVEN, EXPECT, WHEN, CLEANUP, WHERE, METHOD_END);
+    }
+    @Override
+    public boolean isSupportingBlockListeners() {
+      return false;
     }
   },
 
@@ -54,6 +64,10 @@ public enum BlockParseInfo {
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       return EnumSet.of(AND, EXPECT, WHEN, CLEANUP, WHERE, METHOD_END);
     }
+    @Override
+    public boolean isSupportingBlockListeners() {
+      return true;
+    }
   },
 
   GIVEN {
@@ -64,6 +78,10 @@ public enum BlockParseInfo {
     @Override
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       return SETUP.getSuccessors(method);
+    }
+    @Override
+    public boolean isSupportingBlockListeners() {
+      throw new InternalSpockError("GIVEN block should have been replaced by a SETUP block");
     }
   },
 
@@ -76,6 +94,10 @@ public enum BlockParseInfo {
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       return EnumSet.of(AND, WHEN, CLEANUP, WHERE, METHOD_END);
     }
+    @Override
+    public boolean isSupportingBlockListeners() {
+      return true;
+    }
   },
 
   WHEN {
@@ -86,6 +108,10 @@ public enum BlockParseInfo {
     @Override
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       return EnumSet.of(AND, THEN);
+    }
+    @Override
+    public boolean isSupportingBlockListeners() {
+      return true;
     }
   },
 
@@ -98,6 +124,10 @@ public enum BlockParseInfo {
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       return EnumSet.of(AND, EXPECT, WHEN, THEN, CLEANUP, WHERE, METHOD_END);
     }
+    @Override
+    public boolean isSupportingBlockListeners() {
+      return true;
+    }
   },
 
   CLEANUP {
@@ -108,6 +138,10 @@ public enum BlockParseInfo {
     @Override
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       return EnumSet.of(AND, WHERE, METHOD_END);
+    }
+    @Override
+    public boolean isSupportingBlockListeners() {
+      return true;
     }
   },
 
@@ -120,6 +154,10 @@ public enum BlockParseInfo {
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       return EnumSet.of(AND, COMBINED, FILTER, METHOD_END);
     }
+    @Override
+    public boolean isSupportingBlockListeners() {
+      return false;
+    }
   },
 
   COMBINED {
@@ -130,6 +168,10 @@ public enum BlockParseInfo {
     @Override
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       return WHERE.getSuccessors(method);
+    }
+    @Override
+    public boolean isSupportingBlockListeners() {
+      return false;
     }
   },
 
@@ -142,6 +184,10 @@ public enum BlockParseInfo {
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       return EnumSet.of(AND, METHOD_END);
     }
+    @Override
+    public boolean isSupportingBlockListeners() {
+      return false;
+    }
   },
 
   METHOD_END {
@@ -153,6 +199,10 @@ public enum BlockParseInfo {
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       throw new UnsupportedOperationException("getSuccessors");
     }
+    @Override
+    public boolean isSupportingBlockListeners() {
+      return false;
+    }
     public String toString() {
       return "end-of-method";
     }
@@ -162,7 +212,20 @@ public enum BlockParseInfo {
     return super.toString().toLowerCase(Locale.ROOT);
   }
 
+  /**
+   * Adds a new block of this type to the given method.
+   * <p>
+   * Allows for a block to substitute another block type.
+   */
   public abstract Block addNewBlock(Method method);
 
+  /**
+   * Returns the block types that can follow this block type in the given method.
+   */
   public abstract EnumSet<BlockParseInfo> getSuccessors(Method method);
+
+  /**
+   * Indicates whether this block type supports block listeners.
+   */
+  public abstract boolean isSupportingBlockListeners();
 }

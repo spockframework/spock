@@ -169,10 +169,7 @@ public class SpecInfoBuilder {
     }
 
     for (BlockMetadata blockMetadata : featureMetadata.blocks()) {
-      BlockInfo block = new BlockInfo();
-      block.setKind(blockMetadata.kind());
-      block.setTexts(asList(blockMetadata.texts()));
-      feature.addBlock(block);
+      feature.addBlock(new BlockInfo(blockMetadata.kind(), asList(blockMetadata.texts())));
     }
 
     return feature;

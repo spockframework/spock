@@ -13,4 +13,14 @@ class ConditionG4Spec extends Specification {
     (0..<5) == [0, 1, 2, 3, 4]
     (0<..<5) == [1, 2, 3, 4]
   }
+
+  @Issue("https://github.com/spockframework/spock/issues/1845")
+  def "explicit assert in switch expression"() {
+    expect:
+    def b = 3
+    !!switch (b) {
+      case 3 -> assert 1 == 1
+      default -> assert 1 == 1
+    }
+  }
 }

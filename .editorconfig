@@ -14,3 +14,10 @@ indent_size = 2
 # The file contains important whitespace at the end of the line in a multi-line string.
 # and editorconfig doesn't seem to respect multi-line strings.
 trim_trailing_whitespace = false
+
+[*.{kt,kts}]
+indent_size = 4
+ij_kotlin_allow_trailing_comma = false
+ij_kotlin_allow_trailing_comma_on_call_site = false
+ktlint_code_style = intellij_idea
+ktlint_standard_function-signature = disabled

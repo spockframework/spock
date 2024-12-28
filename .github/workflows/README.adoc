@@ -56,41 +56,45 @@ $ ./gradlew preprocessWorkflows
 
 There are currently three known caveats with the approach we follow.
 
-* https://youtrack.jetbrains.com/issue/KTIJ-16532
-+
+=== https://youtrack.jetbrains.com/issue/KTIJ-16532
+
 If you navigate to a file in the dependencies, only a decompiled file is opened,
 even though the source JAR would be available. Also the quick documentation is missing.
-+
+
 This can easily by mitigated by attaching the library to the normal project
 dependencies while having the need to navigate the source files or while editing them,
 which makes them properly viewable and documentation displayable in the editor.
 
-* https://youtrack.jetbrains.com/issue/KTIJ-14580
-+
+=== https://youtrack.jetbrains.com/issue/KTIJ-14580
+
 We use `@file:Import` to reduce code duplication by having common code in a common file.
 Unfortunately, this triggers a Kotlin IntelliJ plugin bug where the imported file cannot
 be loaded properly and so the things supplied by it like dependencies or common functions
 are not available. This makes most of the workflow `*.main.kts` files red as hell in the
 IDE currently.
-+
+
 To reduce risk for eye-cancer while reading the `*.main.kts` scripts or to be able to
 sanely edit them, temporarily add the `@file:DependsOn` from the imported file to the
 importing file and wait a second, then remove the line again once you are done.
 
-* https://youtrack.jetbrains.com/issue/KT-42101
-+
+=== https://youtrack.jetbrains.com/issue/KT-42101
+
 We use `@file:Import` to reduce code duplication by having common code in a common file.
 Unfortunately, this triggers a Kotlin bug where the compilation cache becomes confused
 if the imported file is changed without the importing file being changed too.
-+
+
 If only the imported file is changed, it could happen that an old version is used,
 or it could also happen that classes added by a `@file:DependsOn` in the imported file
 are not available to the importing file. So if there was a change in the imported file,
 you either need to also change the importing file, or to properly execute the script,
-you need to delete the stale entry from the compilation cache which can be found at for example
-`~/.cache/main.kts.compiled.cache/` on Linux and `%LOCALAPPDATA%\main.kts.compiled.cache\`
-on Windows. Alternatively, you can also delete the whole cache directory.
-+
+you need to delete the stale entry from the compilation cache which can be found here:
+
+- On Windows the default location is at `%LOCALAPPDATA%\main.kts.compiled.cache\`.
+- On Linux the default location is at `$XDG_CACHE_HOME/main.kts.compiled.cache/` or `~/.cache/main.kts.compiled.cache/`.
+- On macOS the default location is at `~/Library/Caches/main.kts.compiled.cache/`.
+
+Alternatively, you can also delete the whole cache directory.
+
 Another option is to disable the compilation cache for the execution by setting the
 environment variable `KOTLIN_MAIN_KTS_COMPILED_SCRIPTS_CACHE_DIR` or the system property
 `kotlin.main.kts.compiled.scripts.cache.dir` to an empty value, depending on the run

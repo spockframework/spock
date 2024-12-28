@@ -15,7 +15,11 @@
 package org.spockframework.runtime
 
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
-import spock.lang.*
+import spock.lang.Specification
+
+import static org.spockframework.runtime.GroovyRuntimeUtil.propertyToBooleanGetterMethodName
+import static org.spockframework.runtime.GroovyRuntimeUtil.propertyToGetterMethodName
+import static org.spockframework.runtime.GroovyRuntimeUtil.propertyToSetterMethodName
 
 class GroovyRuntimeUtilSpec extends Specification {
   def "getterMethodToPropertyName"() {
@@ -39,8 +43,24 @@ class GroovyRuntimeUtilSpec extends Specification {
     "get"             | Integer    | null
     "is"              | boolean    | null
     "foo"             | String     | null
+    "isfoo"           | String     | null
 
     "setFoo"          | void       | null
+  }
+
+  def "propertyToGetterMethodName"() {
+    expect:
+    propertyToGetterMethodName("prop") == "getProp"
+  }
+
+  def "propertyToSetterMethodName"() {
+    expect:
+    propertyToSetterMethodName("prop") == "setProp"
+  }
+
+  def "propertyToBooleanGetterMethodName"() {
+    expect:
+    propertyToBooleanGetterMethodName("prop") == "isProp"
   }
 
   def "coerce"() {

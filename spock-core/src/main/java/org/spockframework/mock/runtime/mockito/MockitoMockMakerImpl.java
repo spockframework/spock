@@ -29,6 +29,7 @@ import org.mockito.invocation.MockHandler;
 import org.mockito.mock.MockCreationSettings;
 import org.mockito.plugins.MockMaker;
 import org.mockito.plugins.MockitoPlugins;
+import org.spockframework.compiler.SpockNames;
 import org.spockframework.mock.*;
 import org.spockframework.mock.runtime.IMockMaker;
 import org.spockframework.mock.runtime.IProxyBasedMockInterceptor;
@@ -53,7 +54,7 @@ class MockitoMockMakerImpl {
 
   MockitoMockMakerImpl() {
     inlineMockMaker = resolveInlineMockMaker();
-    spockMockMethod = ReflectionUtil.getMethodByName(ISpockMockObject.class, "$spock_get");
+    spockMockMethod = ReflectionUtil.getMethodByName(ISpockMockObject.class, SpockNames.SPOCK_GET);
   }
 
   /**

@@ -50,4 +50,13 @@ public @interface FailsWith {
    * @return the reason for the failure
    */
   String reason() default "unknown";
+
+  /**
+   * The expected message of the exception.
+   * <p>
+   * If the value is empty, the message is not checked.
+   *
+   * @since 2.4
+   */
+  String expectedMessage() default "";
 }

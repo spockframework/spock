@@ -71,6 +71,10 @@ public class MockInteraction implements IMockInteraction {
     return true;
   }
 
+  List<IInvocationConstraint> getConstraints() {
+    return constraints;
+  }
+
   @Override
   public Supplier<Object> accept(IMockInvocation invocation) {
     acceptedInvocations.add(invocation);

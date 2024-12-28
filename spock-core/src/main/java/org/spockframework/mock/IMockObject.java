@@ -15,6 +15,7 @@
 package org.spockframework.mock;
 
 import org.spockframework.mock.runtime.SpecificationAttachable;
+import org.spockframework.util.Beta;
 import org.spockframework.util.Nullable;
 import spock.lang.Specification;
 
@@ -28,6 +29,13 @@ public interface IMockObject extends SpecificationAttachable {
    */
   @Nullable
   String getName();
+
+  /**
+   * Returns the {@link #getName()} of this mock object, or {@code "unnamed"} if it has no name.
+   *
+   * @return the name of this mock object, or {@code "unnamed"} if it has no name
+   */
+  String getMockName();
 
   /**
    * Returns the declared type of this mock object.
@@ -81,4 +89,12 @@ public interface IMockObject extends SpecificationAttachable {
    * @return whether this mock object matches the target of the specified interaction
    */
   boolean matches(Object target, IMockInteraction interaction);
+
+  /**
+   * Returns the used mock configuration which created this mock.
+   *
+   * @return the mock configuration
+   */
+  @Beta
+  IMockConfiguration getConfiguration();
 }

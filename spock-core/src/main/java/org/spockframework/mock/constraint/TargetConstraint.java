@@ -17,6 +17,7 @@
 package org.spockframework.mock.constraint;
 
 import org.spockframework.mock.*;
+import org.spockframework.mock.runtime.IMockInteractionValidator;
 import org.spockframework.runtime.Condition;
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.util.CollectionUtil;
@@ -50,12 +51,27 @@ public class TargetConstraint implements IInvocationConstraint, IInteractionAwar
   @Override
   public void setInteraction(IMockInteraction interaction) {
     this.interaction = interaction;
-    if (interaction.isRequired() && MOCK_UTIL.isMock(target)) {
-      IMockObject mockObject = MOCK_UTIL.asMock(target);
+    IMockObject mockObject = MOCK_UTIL.asMockOrNull(target);
+    if (mockObject != null) {
+      checkRequiredInteraction(mockObject, interaction);
+      validateMockInteraction(mockObject, interaction);
+    }
+  }
+
+  private void checkRequiredInteraction(IMockObject mockObject, IMockInteraction interaction) {
+    if (interaction.isRequired()) {
       if (!mockObject.isVerified()) {
-        String mockName = mockObject.getName() != null ? mockObject.getName() : "unnamed";
         throw new InvalidSpecException("Stub '%s' matches the following required interaction:" +
-          "\n\n%s\n\nRemove the cardinality (e.g. '1 *'), or turn the stub into a mock.\n").withArgs(mockName, interaction);
+          "\n\n%s\n\nRemove the cardinality (e.g. '1 *'), or turn the stub into a mock.\n").withArgs(mockObject.getMockName(), interaction);
+      }
+    }
+  }
+
+  private void validateMockInteraction(IMockObject mockObject, IMockInteraction interaction) {
+    if (target instanceof ISpockMockObject) {
+      IMockInteractionValidator validation = ((ISpockMockObject) target).$spock_mockInteractionValidator();
+      if (validation != null) {
+        validation.validateMockInteraction(mockObject, interaction);
       }
     }
   }

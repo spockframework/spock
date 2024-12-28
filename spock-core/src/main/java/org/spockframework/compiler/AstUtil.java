@@ -41,7 +41,6 @@ import static java.util.Collections.singletonList;
  */
 public abstract class AstUtil {
   private static final Pattern DATA_TABLE_SEPARATOR = Pattern.compile("_{2,}+");
-  private static final String GET_METHOD_NAME = "get";
   private static final String GET_AT_METHOD_NAME = new IntegerArrayGetAtMetaMethod().getName();
 
   /**

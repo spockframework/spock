@@ -18,7 +18,11 @@ package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.*;
 import org.spockframework.runtime.extension.*;
+import org.spockframework.runtime.model.TextPosition;
+
 import spock.lang.FailsWith;
+
+import java.util.Arrays;
 
 /**
  *
@@ -44,7 +48,20 @@ public class FailsWithInterceptor implements IMethodInterceptor {
   }
 
   private boolean checkException(Throwable t) {
+    if(matchesException(t)) {
+      if (!failsWith.expectedMessage().isEmpty() && !failsWith.expectedMessage().equals(t.getMessage())) {
+        throw new ConditionNotSatisfiedError(new Condition(
+            Arrays.asList(t, t.getMessage(), failsWith.expectedMessage()),
+            "e.value == expectedMessage",
+            TextPosition.create(-1, -1), null, null, null));
+      }
+      return true;
+    }
+    return false;
+  }
+
+  private boolean matchesException(Throwable t) {
     return failsWith.value().isInstance(t)
-      || (t instanceof ConditionFailedWithExceptionError && failsWith.value().isInstance(t.getCause()));
+        || (t instanceof ConditionFailedWithExceptionError && failsWith.value().isInstance(t.getCause()));
   }
 }

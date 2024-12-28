@@ -36,11 +36,10 @@ public class GroovyMockInterceptor extends BaseMockInterceptor {
 
   @Override
   public Object intercept(Object target, Method method, Object[] arguments, IResponseGenerator realMethodInvoker) {
-    IMockObject mockObject = new MockObject(mockConfiguration.getName(), mockConfiguration.getExactType(), target,
-      mockConfiguration.isVerified(), mockConfiguration.isGlobal(), mockConfiguration.getDefaultResponse(), specification, this);
+    IMockObject mockObject = new MockObject(mockConfiguration, target, specification, this);
 
     if (method.getDeclaringClass() == ISpockMockObject.class) {
-      return mockObject;
+      return handleSpockMockInterface(method, mockObject);
     }
 
     // we do not need the cast information from the wrappers here, the method selection
@@ -61,7 +60,7 @@ public class GroovyMockInterceptor extends BaseMockInterceptor {
       }
     }
     if (isMethod(method, "setProperty", String.class, Object.class)) {
-      String methodName = GroovyRuntimeUtil.propertyToMethodName("set", (String) args[0]);
+      String methodName = GroovyRuntimeUtil.propertyToSetterMethodName((String) args[0]);
       return GroovyRuntimeUtil.invokeMethod(target, methodName, args[1]);
     }
     if (isMethod(method, "methodMissing", String.class, Object.class)) {

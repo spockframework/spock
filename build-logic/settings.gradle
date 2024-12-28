@@ -20,6 +20,7 @@ dependencyResolutionManagement {
 }
 
 include("base")
+include("preprocess-workflows")
 include("asciidoc-extensions")
 
 nameBuildScriptsAfterProjectNames(rootProject.children)

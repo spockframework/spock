@@ -1,0 +1,17 @@
+plugins {
+  id 'groovy-gradle-plugin'
+  id 'idea'
+}
+
+dependencies {
+  implementation('org.jetbrains.kotlin:kotlin-compiler-embeddable:1.8.20')
+}
+
+gradlePlugin {
+  plugins {
+    preprocessWorkflowsPlugin {
+      id = 'org.spockframework.preprocess-workflows'
+      implementationClass = 'org.spockframework.gradle.PreprocessWorkflowsPlugin'
+    }
+  }
+}

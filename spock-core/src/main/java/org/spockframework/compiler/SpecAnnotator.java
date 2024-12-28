@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
+import org.spockframework.util.Assert;
 
 import static java.util.stream.Collectors.*;
 import static org.spockframework.compiler.AstUtil.*;
@@ -190,8 +191,9 @@ public class SpecAnnotator extends AbstractSpecVisitor {
     ann.setMember(FeatureMetadata.BLOCKS, blockAnnElems = new ListExpression());
 
     ListExpression paramNames = new ListExpression();
-    for (Parameter param : feature.getAst().getParameters())
+    for (Parameter param : feature.getAst().getParameters()) {
       paramNames.addExpression(new ConstantExpression(param.getName()));
+    }
     ann.setMember(FeatureMetadata.PARAMETER_NAMES, paramNames);
 
     feature.getAst().addAnnotation(ann);
@@ -202,9 +204,13 @@ public class SpecAnnotator extends AbstractSpecVisitor {
     blockAnn.setMember(BlockMetadata.KIND, new PropertyExpression(
         new ClassExpression(nodeCache.BlockKind), kind.name()));
     ListExpression textExprs = new ListExpression();
-    for (String text : block.getDescriptions())
+    for (String text : block.getDescriptions()) {
       textExprs.addExpression(new ConstantExpression(text));
+    }
     blockAnn.setMember(BlockMetadata.TEXTS, textExprs);
+    int index = blockAnnElems.getExpressions().size();
+    Assert.that(index == block.getBlockMetaDataIndex(),
+        () -> kind + " block mismatch of index: " + index + ", block.getBlockMetaDataIndex(): " + block.getBlockMetaDataIndex());
     blockAnnElems.addExpression(new AnnotationConstantExpression(blockAnn));
   }
 

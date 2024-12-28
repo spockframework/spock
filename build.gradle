@@ -5,13 +5,14 @@ import static org.spockframework.gradle.AsciiDocLinkVerifier.verifyLinksAndAncho
 
 plugins {
   id "org.spockframework.base" apply false
-  id "base"
+  id "java-base"
   id "org.asciidoctor.jvm.convert"
   id "jacoco"
   id "net.nemerosa.versioning"
   id "io.github.gradle-nexus.publish-plugin"
   id "com.github.ben-manes.versions"
   id "io.spring.nohttp"
+  id "org.spockframework.preprocess-workflows"
 }
 
 description = "Spock Framework"
@@ -20,9 +21,9 @@ ext {
   baseVersion = "2.4"
   snapshotVersion = true
   milestone = 0
-  javaVersions = [8, 11, 17, 21] // ensure that latest version is actually build on GH actions and added to gradle.properties, otherwise no docs get published
+  javaVersions = javaVersionsList.trim().split(/\s*+,\s*+/).collect { it as int }
   javaVersion = (System.getProperty("javaVersion") ?: 8) as int
-  variants = [2.5, 3.0, 4.0]
+  variants = variantsList.trim().split(/\s*+,\s*+/).collect { it as BigDecimal }
   variant = System.getProperty("variant") as BigDecimal ?: variants.first()
   develocity.buildScan.tag "groovy-$variant"
   if (variant == 2.5) {

@@ -45,7 +45,7 @@ class MasterRunSupervisor implements IRunSupervisor {
 
     exception = transform(exception);
 
-    ErrorInfo transformedError = new ErrorInfo(error.getMethod(), exception);
+    ErrorInfo transformedError = new ErrorInfo(error.getMethod(), exception, error.getErrorContext());
     if (exception instanceof TestAbortedException || exception instanceof TestSkippedException) {
       // Spock has no concept of "aborted tests", so we don't notify Spock listeners
     } else {
@@ -58,7 +58,7 @@ class MasterRunSupervisor implements IRunSupervisor {
   private void handleMultipleFailures(ErrorInfoCollector errorInfoCollector,  ErrorInfo error) {
     MultipleFailuresError multiFailure = (MultipleFailuresError) error.getException();
     for (Throwable failure : multiFailure.getFailures())
-      error(errorInfoCollector, new ErrorInfo(error.getMethod(), failure));
+      error(errorInfoCollector, new ErrorInfo(error.getMethod(), failure, error.getErrorContext()));
   }
 
 

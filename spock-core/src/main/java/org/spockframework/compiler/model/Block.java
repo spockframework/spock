@@ -31,6 +31,7 @@ public abstract class Block extends Node<Method, List<Statement>> {
   private final List<String> descriptions = new ArrayList<>(3);
   private Block prev;
   private Block next;
+  private int blockMetaDataIndex = -1;
 
   public Block(Method parent) {
     super(parent, new ArrayList<>());
@@ -80,5 +81,25 @@ public abstract class Block extends Node<Method, List<Statement>> {
     return isFirst() || getClass() != prev.getClass();
   }
 
+  public void setBlockMetaDataIndex(int blockMetaDataIndex) {
+    this.blockMetaDataIndex = blockMetaDataIndex;
+  }
+
+  public int getBlockMetaDataIndex() {
+    return blockMetaDataIndex;
+  }
+
+  /**
+   * Returns whether this block will be written to the {@link org.spockframework.runtime.model.BlockMetadata}.
+   */
+  public boolean hasBlockMetadata() {
+    return true;
+  }
+
   public abstract BlockParseInfo getParseInfo();
+
+  @Override
+  public String toString() {
+    return "Block kind: " + getClass().getSimpleName() + ", descriptions: " + descriptions;
+  }
 }

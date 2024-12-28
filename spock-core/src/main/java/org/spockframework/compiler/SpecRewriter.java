@@ -16,19 +16,22 @@
 
 package org.spockframework.compiler;
 
-import org.spockframework.compiler.model.*;
-import org.spockframework.runtime.GroovyRuntimeUtil;
-import org.spockframework.runtime.SpockException;
-import org.spockframework.util.*;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
-import org.codehaus.groovy.syntax.*;
+import org.codehaus.groovy.syntax.Token;
+import org.codehaus.groovy.syntax.Types;
+import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Opcodes;
+import org.spockframework.compiler.model.*;
+import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.runtime.SpockException;
+import org.spockframework.util.InternalIdentifiers;
+import org.spockframework.util.ObjectUtil;
+import org.spockframework.util.ReflectionUtil;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -159,7 +162,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   private void createSharedFieldSetter(Field field) {
     String setterName = GroovyRuntimeUtil.propertyToSetterMethodName(field.getName());
-    Parameter[] params = new Parameter[] { new Parameter(field.getAst().getType(), "$spock_value") };
+    Parameter[] params = new Parameter[]{new Parameter(field.getAst().getType(), SpockNames.SPOCK_VALUE)};
     MethodNode setter = spec.getAst().getMethod(setterName, params);
     if (setter != null) {
       errorReporter.error(field.getAst(),
@@ -180,7 +183,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
                     // use internal name
                     new ConstantExpression(field.getAst().getName())),
                 Token.newSymbol(Types.ASSIGN, -1, -1),
-                new VariableExpression("$spock_value"))));
+              new VariableExpression(SpockNames.SPOCK_VALUE))));
 
     setter.setSourcePosition(field.getAst());
     spec.getAst().addMethod(setter);
@@ -390,13 +393,20 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   public void visitMethodAgain(Method method) {
     this.block = null;
 
-    if (!movedStatsBackToMethod)
-      for (Block b : method.getBlocks())
+    if (!movedStatsBackToMethod) {
+      for (Block b : method.getBlocks()) {
+        // This will only run if there was no 'cleanup' block in the method.
+        // Otherwise, the blocks have already been copied to try block by visitCleanupBlock.
+        // We need to run as late as possible, so we'll have to do the handling here and in visitCleanupBlock.
+        addBlockListeners(b);
         method.getStatements().addAll(b.getAst());
+      }
+    }
 
     // for global required interactions
-    if (method instanceof FeatureMethod)
+    if (method instanceof FeatureMethod) {
       method.getStatements().add(createMockControllerCall(nodeCache.MockController_LeaveScope));
+    }
 
     if (methodHasCondition) {
       defineValueRecorder(method.getStatements(), "");
@@ -404,6 +414,56 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     if (methodHasDeepNonGroupedCondition) {
       defineErrorRethrower(method.getStatements());
     }
+  }
+
+
+  private void addBlockListeners(Block block) {
+    BlockParseInfo blockType = block.getParseInfo();
+    if (!blockType.isSupportingBlockListeners()) return;
+
+    // SpockRuntime.callBlockEntered(getSpecificationContext(), blockMetadataIndex)
+    MethodCallExpression blockEnteredCall = createBlockListenerCall(block, blockType, nodeCache.SpockRuntime_CallBlockEntered);
+    // SpockRuntime.callBlockExited(getSpecificationContext(), blockMetadataIndex)
+    MethodCallExpression blockExitedCall = createBlockListenerCall(block, blockType, nodeCache.SpockRuntime_CallBlockExited);
+
+    block.getAst().add(0, new ExpressionStatement(blockEnteredCall));
+    if (blockType == BlockParseInfo.CLEANUP) {
+      // In case of a cleanup block we need store a reference of the previously `currentBlock` in case that an exception occurred
+      // and restore it at the end of the cleanup block, so that the correct `BlockInfo` is available for the `IErrorContext`.
+      // The restoration happens in the `finally` statement created by `createCleanupTryCatch`.
+      VariableExpression failedBlock = new VariableExpression(SpockNames.FAILED_BLOCK, nodeCache.BlockInfo);
+      block.getAst().add(0, ifThrowableIsNotNull(storeFailedBlock(failedBlock)));
+    }
+    block.getAst().add(new ExpressionStatement(blockExitedCall));
+  }
+
+  private @NotNull Statement storeFailedBlock(VariableExpression failedBlock) {
+    MethodCallExpression getCurrentBlock = createDirectMethodCall(getSpecificationContext(), nodeCache.SpecificationContext_GetCurrentBlock, ArgumentListExpression.EMPTY_ARGUMENTS);
+    return new ExpressionStatement(new BinaryExpression(failedBlock, Token.newSymbol(Types.ASSIGN, -1, -1), getCurrentBlock));
+  }
+
+  private @NotNull Statement restoreFailedBlock(VariableExpression failedBlock) {
+    return new ExpressionStatement(createDirectMethodCall(new CastExpression(nodeCache.SpecificationContext, getSpecificationContext()), nodeCache.SpecificationContext_SetCurrentBlock, new ArgumentListExpression(failedBlock)));
+  }
+
+  private IfStatement ifThrowableIsNotNull(Statement statement) {
+    return new IfStatement(
+      // if ($spock_feature_throwable != null)
+      new BooleanExpression(AstUtil.createVariableIsNotNullExpression(new VariableExpression(SpockNames.SPOCK_FEATURE_THROWABLE, nodeCache.Throwable))),
+      statement,
+      EmptyStatement.INSTANCE
+    );
+  }
+
+  private MethodCallExpression createBlockListenerCall(Block block, BlockParseInfo blockType, MethodNode blockListenerMethod) {
+    if (block.getBlockMetaDataIndex() < 0) throw new SpockException("Block metadata index not set: " + block);
+    return createDirectMethodCall(
+      new ClassExpression(nodeCache.SpockRuntime),
+      blockListenerMethod,
+      new ArgumentListExpression(
+        getSpecificationContext(),
+        new ConstantExpression(block.getBlockMetaDataIndex(), true)
+      ));
   }
 
   @Override
@@ -484,12 +544,15 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   @Override
   public void visitCleanupBlock(CleanupBlock block) {
     for (Block b : method.getBlocks()) {
+      // call addBlockListeners() here, as this method will already copy the contents of the blocks,
+      // so we need to transform the block listeners here as they won't be copied in visitMethodAgain where we normally add them
+      addBlockListeners(b);
       if (b == block) break;
       moveVariableDeclarations(b.getAst(), method.getStatements());
     }
 
     VariableExpression featureThrowableVar =
-        new VariableExpression("$spock_feature_throwable", nodeCache.Throwable);
+      new VariableExpression(SpockNames.SPOCK_FEATURE_THROWABLE, nodeCache.Throwable);
     method.getStatements().add(createVariableDeclarationStatement(featureThrowableVar));
 
     List<Statement> featureStats = new ArrayList<>();
@@ -499,9 +562,10 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     }
 
     CatchStatement featureCatchStat = createThrowableAssignmentAndRethrowCatchStatement(featureThrowableVar);
-
-    List<Statement> cleanupStats = singletonList(
-        createCleanupTryCatch(block, featureThrowableVar));
+    VariableExpression failedBlock = new VariableExpression(SpockNames.FAILED_BLOCK, nodeCache.BlockInfo);
+    List<Statement> cleanupStats = asList(
+      new ExpressionStatement(new DeclarationExpression(failedBlock, Token.newSymbol(Types.ASSIGN, -1, -1), ConstantExpression.NULL)),
+      createCleanupTryCatch(block, featureThrowableVar, failedBlock));
 
     TryCatchStatement tryFinally =
         new TryCatchStatement(
@@ -517,13 +581,6 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     movedStatsBackToMethod = true;
   }
 
-  private BinaryExpression createVariableNotNullExpression(VariableExpression var) {
-    return new BinaryExpression(
-        new VariableExpression(var),
-        Token.newSymbol(Types.COMPARE_NOT_EQUAL, -1, -1),
-        new ConstantExpression(null));
-  }
-
   private Statement createVariableDeclarationStatement(VariableExpression var) {
     DeclarationExpression throwableDecl =
         new DeclarationExpression(
@@ -534,13 +591,13 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     return new ExpressionStatement(throwableDecl);
   }
 
-  private TryCatchStatement createCleanupTryCatch(CleanupBlock block, VariableExpression featureThrowableVar) {
+  private TryCatchStatement createCleanupTryCatch(CleanupBlock block, VariableExpression featureThrowableVar, VariableExpression failedBlock) {
     List<Statement> cleanupStats = new ArrayList<>(block.getAst());
-
     TryCatchStatement tryCatchStat =
         new TryCatchStatement(
             new BlockStatement(cleanupStats, null),
-            EmptyStatement.INSTANCE);
+          ifThrowableIsNotNull(restoreFailedBlock(failedBlock))
+        );
 
     tryCatchStat.addCatch(createHandleSuppressedThrowableStatement(featureThrowableVar));
 
@@ -548,7 +605,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   private CatchStatement createThrowableAssignmentAndRethrowCatchStatement(VariableExpression assignmentVar) {
-    Parameter catchParameter = new Parameter(nodeCache.Throwable, "$spock_tmp_throwable");
+    Parameter catchParameter = new Parameter(nodeCache.Throwable, SpockNames.SPOCK_TMP_THROWABLE);
 
     BinaryExpression assignThrowableExpr =
         new BinaryExpression(
@@ -565,9 +622,9 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   private CatchStatement createHandleSuppressedThrowableStatement(VariableExpression featureThrowableVar) {
-    Parameter catchParameter = new Parameter(nodeCache.Throwable, "$spock_tmp_throwable");
+    Parameter catchParameter = new Parameter(nodeCache.Throwable, SpockNames.SPOCK_TMP_THROWABLE);
 
-    BinaryExpression featureThrowableNotNullExpr = createVariableNotNullExpression(featureThrowableVar);
+    BinaryExpression featureThrowableNotNullExpr = AstUtil.createVariableIsNotNullExpression(featureThrowableVar);
 
     List<Statement> addSuppressedStats =
       singletonList(new ExpressionStatement(

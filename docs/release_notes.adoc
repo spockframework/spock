@@ -9,6 +9,7 @@ include::include.adoc[]
 
 * Add support for combining two or more data providers using cartesian product spockIssue:1062[]
 * Add support for a `filter` block after a `where` block to filter out unwanted iterations spockPull:1927[]
+* Add <<extensions.adoc#block-listener,`IBlockListener`>> extension point to listen to block execution events within feature methods spockPull:1575[]
 
 === Misc
 
@@ -28,8 +29,9 @@ include::include.adoc[]
 * Fix mocking issue with the ByteBuddy MockMaker when using multiple classloaders in Java 21 spockIssue:2017[]
 * Fix mocking of final classes via `@SpringBean` and `@SpringSpy` spockIssue:1960[]
 * Size of data providers is no longer calculated multiple times but only once
-* Fix exception when using `@RepeatUntilFailure` with a data provider with unknown iteration amount. spockPull:2031[]
+* Fix exception when using `@RepeatUntilFailure` with a data provider with unknown iteration amount spockPull:2031[]
 * Clarified documentation about data providers and `size()` calls spockIssue:2022[]
+* Fix compile error with single explicit assert in switch expression branch spockIssue:1845[]
 * Add best-effort error reporting for interactions on final methods when using the `byte-buddy` mock maker spockIssue:2039[]
 
 == 2.4-M4 (2024-03-21)

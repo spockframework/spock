@@ -22,6 +22,7 @@ import org.spockframework.runtime.model.*;
  * They do so by invoking <tt>SpecInfo.addListener()<tt>. See
  * {@link StepwiseExtension} for an example of how to use a listener.
  *
+ * @see org.spockframework.runtime.extension.IBlockListener
  * @author Peter Niederwieser
  */
 public interface IRunListener {

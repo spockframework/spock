@@ -24,6 +24,9 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.opentest4j.MultipleFailuresError;
+import spock.lang.Specification;
+
+import org.spockframework.lang.ISpecificationContext;
 import org.spockframework.runtime.extension.IBlockListener;
 import org.spockframework.runtime.model.BlockInfo;
 import org.spockframework.runtime.model.ExpressionInfo;
@@ -231,11 +234,12 @@ public abstract class SpockRuntime {
 
   public static final String CALL_BLOCK_ENTERED = "callBlockEntered";
 
-  public static void callBlockEntered(SpecificationContext context, int blockInfoIndex) {
+  public static void callBlockEntered(Specification specification, int blockInfoIndex) {
+    SpecificationContext context = (SpecificationContext) specification.getSpecificationContext();
     IterationInfo currentIteration = context.getCurrentIteration();
     BlockInfo blockInfo = context.getCurrentFeature().getBlocks().get(blockInfoIndex);
     context.setCurrentBlock(blockInfo);
-    notifyBlockListener(currentIteration, blockListener -> blockListener.blockEntered(currentIteration, blockInfo));
+    notifyBlockListener(currentIteration, blockListener -> blockListener.blockEntered(specification, blockInfo));
   }
 
   private static void notifyBlockListener(IterationInfo currentIteration, Consumer<IBlockListener> consumer) {
@@ -246,10 +250,11 @@ public abstract class SpockRuntime {
 
   public static final String CALL_BLOCK_EXITED = "callBlockExited";
 
-  public static void callBlockExited(SpecificationContext context, int blockInfoIndex) {
+  public static void callBlockExited(Specification specification, int blockInfoIndex) {
+    SpecificationContext context = (SpecificationContext) specification.getSpecificationContext();
     IterationInfo currentIteration = context.getCurrentIteration();
     BlockInfo blockInfo = context.getCurrentFeature().getBlocks().get(blockInfoIndex);
-    notifyBlockListener(currentIteration, blockListener -> blockListener.blockExited(currentIteration, blockInfo));
+    notifyBlockListener(currentIteration, blockListener -> blockListener.blockExited(specification, blockInfo));
     context.setCurrentBlock(null);
   }
 

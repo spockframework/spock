@@ -47,7 +47,6 @@ workflow(
         MergeGroup()
     ),
     sourceFile = __FILE__,
-    targetFileName = "${__FILE__.name.substringBeforeLast(".main.kts")}.yml",
     // https://stackoverflow.com/a/72408109/16358266
     concurrency = Concurrency(
         group = "${expr { github.workflow }}-${expr("${github.eventPullRequest.pull_request.number} || ${github.ref}")}",
@@ -76,12 +75,18 @@ workflow(
         )
     }
 
+    val matrix = Matrix.full
+    with(__FILE__.parentFile.resolve("../../codecov.yml")) {
+        readText()
+            .replace("after_n_builds:.*+$".toRegex(), "after_n_builds: ${matrix.size}")
+            .let(::writeText)
+    }
     job(
         id = "build-and-verify",
         name = "Build and Verify",
         runsOn = RunnerType.Custom(expr(Matrix.operatingSystem)),
         strategy = Strategy(
-            matrix = Matrix.full
+            matrix = matrix
         )
     ) {
         uses(
@@ -111,7 +116,9 @@ workflow(
         )
         uses(
             name = "Upload to Codecov.io",
-            action = CodecovAction()
+            action = CodecovAction(
+                failCiIfError = true
+            )
         )
     }
 }

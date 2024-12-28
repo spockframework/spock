@@ -324,8 +324,8 @@ public abstract class SpecInternals {
       MockImplementation implementation, Map<String, Object> options, Class<?> specifiedType, Closure<?> closure) {
     Type effectiveType = specifiedType != null ? specifiedType : options.containsKey("type") ? (Type) options.get("type") : inferredType;
     if (effectiveType == null) {
-      throw new InvalidSpecException("Mock object type cannot be inferred automatically. " +
-          "Please specify a type explicitly (e.g. 'Mock(Person)').");
+      throw new InvalidSpecException(nature + " object type cannot be inferred automatically. " +
+          "Please specify a type explicitly (e.g. '" + nature + "(Person)').");
     }
     return createMock(inferredName, instance, effectiveType, nature, implementation, options, closure);
   }

@@ -27,28 +27,30 @@ public enum MockNature {
    * A mock object whose method calls are verified, which instantiates class-based mock objects with Objenesis,
    * and whose strategy for responding to unexpected method calls is {@link ZeroOrNullResponse}.
    */
-  MOCK(true, true, ZeroOrNullResponse.INSTANCE),
+  MOCK(true, true, ZeroOrNullResponse.INSTANCE, "Mock"),
 
   /**
    * A mock object whose method calls are not verified, which instantiates class-based mock objects with Objenesis,
    * and whose strategy for responding to unexpected method calls is {@link EmptyOrDummyResponse}.
    */
-  STUB(false, true, EmptyOrDummyResponse.INSTANCE),
+  STUB(false, true, EmptyOrDummyResponse.INSTANCE, "Stub"),
 
   /**
    * A mock object whose method calls are verified, which instantiates class-based mock objects by calling a
    * real constructor, and whose strategy for responding to unexpected method calls is {@link CallRealMethodResponse}.
    */
-  SPY(true, false, CallRealMethodResponse.INSTANCE);
+  SPY(true, false, CallRealMethodResponse.INSTANCE, "Spy");
 
   private final boolean verified;
   private final boolean useObjenesis;
   private final IDefaultResponse defaultResponse;
+  private final String methodName;
 
-  MockNature(boolean verified, boolean useObjenesis, IDefaultResponse defaultResponse) {
+  MockNature(boolean verified, boolean useObjenesis, IDefaultResponse defaultResponse, String methodName) {
     this.verified = verified;
     this.useObjenesis = useObjenesis;
     this.defaultResponse = defaultResponse;
+    this.methodName = methodName;
   }
 
   /**
@@ -78,5 +80,10 @@ public enum MockNature {
    */
   public IDefaultResponse getDefaultResponse() {
     return defaultResponse;
+  }
+
+  @Override
+  public String toString() {
+    return methodName;
   }
 }

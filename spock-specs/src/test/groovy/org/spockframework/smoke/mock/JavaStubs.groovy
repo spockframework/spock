@@ -32,6 +32,7 @@ class JavaStubs extends Specification {
   }
 
   def "can be stubbed (using property syntax)"() {
+    given:
     person.name >> "fred"
 
     expect:
@@ -39,6 +40,7 @@ class JavaStubs extends Specification {
   }
 
   def "can be stubbed (using method syntax)"() {
+    given:
     person.getName() >> "fred"
 
     expect:
@@ -77,6 +79,7 @@ class JavaStubs extends Specification {
   }
 
   def "like to be stubbed at creation time"() {
+    given:
     person = Stub(IPerson) {
       getName() >> "fred"
     }
@@ -87,6 +90,7 @@ class JavaStubs extends Specification {
 
   @FailsWith(InvalidSpecException)
   def "cannot be mocked"() {
+    given:
     1 * person.name >> "fred"
 
     expect:
@@ -134,6 +138,7 @@ class JavaStubs extends Specification {
   }
 
   def "can stub final methods as property with mockito"() {
+    given:
     FinalMethodPerson person = Stub(mockMaker: MockMakers.mockito)
     person.phoneNumber >> 6789
 
@@ -268,7 +273,7 @@ class JavaStubs extends Specification {
 
     then:
     InvalidSpecException ex = thrown()
-    ex.message == "Mock object type cannot be inferred automatically. Please specify a type explicitly (e.g. 'Mock(Person)')."
+    ex.message == "Stub object type cannot be inferred automatically. Please specify a type explicitly (e.g. 'Stub(Person)')."
   }
 
   interface IPerson {

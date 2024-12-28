@@ -31,6 +31,7 @@ class JavaSpies extends Specification {
   }
 
   def "construct spied-on object using provided constructor args"() {
+    given:
     Constructable spy = Spy(constructorArgs: ctorArgs)
 
     expect:
@@ -51,6 +52,7 @@ class JavaSpies extends Specification {
   }
 
   def "call real methods by default"() {
+    given:
     Person person = Spy(constructorArgs: ["fred", 42])
 
     expect:
@@ -59,6 +61,7 @@ class JavaSpies extends Specification {
   }
 
   def "call real equals method by default"() {
+    given:
     Person fred1 = Spy(constructorArgs: ["fred", 42])
     Person fred2 = Spy(constructorArgs: ["fred", 21])
     Person barney = Spy(constructorArgs: ["barney", 33])
@@ -69,6 +72,7 @@ class JavaSpies extends Specification {
   }
 
   def "call real hashCode method by default"() {
+    given:
     Person person = Spy(constructorArgs: ["fred", 42])
 
     expect:
@@ -76,6 +80,7 @@ class JavaSpies extends Specification {
   }
 
   def "call real toString method by default"() {
+    given:
     Person person = Spy(constructorArgs: ["fred", 42])
 
     expect:
@@ -83,6 +88,7 @@ class JavaSpies extends Specification {
   }
 
   def "can verify interactions with real methods"() {
+    given:
     Person person = Spy(constructorArgs: ["fred", 42])
 
     when:
@@ -96,6 +102,7 @@ class JavaSpies extends Specification {
   }
 
   def "can be used as partial mocks"() {
+    given:
     def person = Spy(Person, constructorArgs: ["fred", 42]) {
       getWorkHours() >>> [3, 2, 1]
     }
@@ -107,6 +114,7 @@ class JavaSpies extends Specification {
   }
 
   def "can spy on concrete instances"() {
+    given:
     def person = Spy(new Person())
 
     when:
@@ -119,6 +127,7 @@ class JavaSpies extends Specification {
 
   @Issue("https://github.com/spockframework/spock/issues/1035")
   def "using >>_ does not call original method and produces stubbed value"() {
+    given:
     def person = Spy(new Person())
 
     when:
@@ -138,6 +147,7 @@ class JavaSpies extends Specification {
 
   @Issue("https://github.com/spockframework/spock/issues/771")
   def "spying on concrete instances can use partial mocking"() {
+    given:
     def person = Spy(new Person())
 
     when:
@@ -186,6 +196,7 @@ class JavaSpies extends Specification {
   }
 
   def "can spy final methods as property with mockito"() {
+    given:
     FinalMethodPerson person = Spy(mockMaker: MockMakers.mockito)
     person.phoneNumber >> 6789
 
@@ -194,6 +205,7 @@ class JavaSpies extends Specification {
   }
 
   def "can spy final methods with mockito"() {
+    given:
     FinalMethodPerson person = Spy(mockMaker: MockMakers.mockito)
     person.getPhoneNumber() >> 6789
 
@@ -202,6 +214,7 @@ class JavaSpies extends Specification {
   }
 
   def "can spy final methods with mockito with closure"() {
+    given:
     FinalMethodPerson person = Spy(mockMaker: MockMakers.mockito) {
       phoneNumber >> 6789
     }
@@ -212,6 +225,7 @@ class JavaSpies extends Specification {
 
   @Issue("https://github.com/spockframework/spock/issues/2039")
   def "cannot spy on final methods with byteBuddy"() {
+    given:
     FinalMethodPerson person = Spy(mockMaker: MockMakers.byteBuddy)
 
     when:
@@ -227,6 +241,7 @@ class JavaSpies extends Specification {
 
   @Issue("https://github.com/spockframework/spock/issues/2039")
   def "cannot spy on final methods as property with byteBuddy"() {
+    given:
     FinalMethodPerson person = Spy(mockMaker: MockMakers.byteBuddy)
 
     when:
@@ -241,6 +256,7 @@ class JavaSpies extends Specification {
   }
 
   def "cannot spy on final methods without specifying mockMaker"() {
+    given:
     FinalMethodPerson person = Spy()
 
     when:
@@ -299,15 +315,17 @@ class JavaSpies extends Specification {
 
   def "no static type specified"() {
     when:
-    Stub()
+    Spy()
+
     then:
     InvalidSpecException ex = thrown()
-    ex.message == "Mock object type cannot be inferred automatically. Please specify a type explicitly (e.g. 'Mock(Person)')."
+    ex.message == "Spy object type cannot be inferred automatically. Please specify a type explicitly (e.g. 'Spy(Person)')."
   }
 
   def "specified instance is null"() {
     when:
     Spy((Object) null)
+
     then:
     SpockException ex = thrown()
     ex.message == "Spy instance may not be null"

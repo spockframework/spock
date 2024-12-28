@@ -19,6 +19,7 @@ include::include.adoc[]
 * Add `IStatelessAnnotationDrivenExtension` to allow a single extension instance to be reused across all specifications spockPull:2055[]
 * Add new well-known versions to `Jvm` helper to support versions up to 29 spockPull:2057[]
 ** Built-in extensions have been updated to use this new interface where applicable.
+* Add best-effort error reporting for interactions on final methods when using the `byte-buddy` mock maker spockIssue:2039[]
 * Improve `@Timeout` extension will now use virtual threads if available spockPull:1986[]
 * Improve mock argument matching, types constraints or arguments in interactions can now handle primitive types like `_ as int` spockIssue:1974[]
 * Improve `verifyEach` to accept an optional second index parameter for the assertion block closure spockPull:2043[]
@@ -32,7 +33,6 @@ include::include.adoc[]
 * Fix exception when using `@RepeatUntilFailure` with a data provider with unknown iteration amount spockPull:2031[]
 * Clarified documentation about data providers and `size()` calls spockIssue:2022[]
 * Fix compile error with single explicit assert in switch expression branch spockIssue:1845[]
-* Add best-effort error reporting for interactions on final methods when using the `byte-buddy` mock maker spockIssue:2039[]
 
 == 2.4-M4 (2024-03-21)
 

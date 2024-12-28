@@ -22,11 +22,13 @@ import org.spockframework.runtime.InvalidSpecException
 import spock.lang.FailsWith
 import spock.lang.Specification
 
+import org.spockframework.runtime.SpockComparisonFailure
+
 /**
  *
  * @author Peter Niederwieser
  */
-class FailsWithOnMethod extends Specification {
+class FailsWithOnMethod extends EmbeddedSpecification {
   @FailsWith(IndexOutOfBoundsException)
   def ex1() {
     given:
@@ -45,6 +47,41 @@ class FailsWithOnMethod extends Specification {
     expect: true
   }
 
+  @FailsWith(
+      value = RuntimeException,
+      expectedMessage = "My message"
+  )
+  def withMessage() {
+    given:
+    throw new RuntimeException("My message")
+  }
+
+  def "@FailsWith can assert exception message"() {
+    when:
+    runner.runSpecBody """
+  @FailsWith(
+      value = RuntimeException,
+      expectedMessage = "My message"
+  )
+  def foo() {
+    given:
+    throw new RuntimeException("Not my message")
+  }
+    """
+
+    then:
+    SpockComparisonFailure e = thrown()
+    def expected = """Condition not satisfied:
+
+e.value == expectedMessage
+| |        |
+| |        My message
+| Not my message
+java.lang.RuntimeException: Not my message"""
+
+    e.message.startsWith(expected)
+
+  }
 
   @FailsWith(ConditionFailedWithExceptionError)
   def "can handle ConditionFailedWithExceptionError"() {
@@ -117,4 +154,3 @@ class MySpec extends Specification {
     e.message == "@FailsWith needs to refer to an exception type, but does refer to 'java.util.List'"
   }
 }
-

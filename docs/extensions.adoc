@@ -1399,6 +1399,9 @@ The `org.spockframework.runtime.IRunListener` can be registered via `SpecInfo.ad
 The `org.spockframework.runtime.extension.IBlockListener` can be registered on a feature via, `FeatureInfo.addBlockListener(IBlockListener)` and will receive notifications about the progress of the feature.
 
 It will be called once when entering a block (`blockEntered`) and once when exiting a block (`blockExited`).
+Both methods receive the `BlockInfo` of the block that is entered or exited.
+They also receive the current `Specification` instance which gives access to the `ISpecificationContext` to get the current `IterationInfo` or retrieve an `IStore`.
+While this gives extensive access to the current state of the test run, it should be used responsibly as it can lead to surprising results if abused.
 
 When an exception is thrown in a block, the `blockExited` will not be called for that block.
 The failed block will be part of the `ErrorContext` in `ErrorInfo` that is passed to `IRunListener.error(ErrorInfo)`.

@@ -27,10 +27,10 @@ class BlockListenerSpec extends Specification {
 
   def setup() {
     specificationContext.currentIteration.feature.addBlockListener([
-      blockEntered: { IterationInfo i, BlockInfo b ->
+      blockEntered: { Specification i, BlockInfo b ->
         blocks << b
       },
-      blockExited: { IterationInfo i, BlockInfo b ->
+      blockExited: { Specification i, BlockInfo b ->
         exitBlocks << b
       }] as IBlockListener)
   }

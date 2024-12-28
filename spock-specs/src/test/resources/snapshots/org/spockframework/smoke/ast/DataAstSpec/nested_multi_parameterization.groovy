@@ -8,7 +8,7 @@ class ASpec extends Specification {
 public void $spock_feature_0_0(java.lang.Object a, java.lang.Object b) {
     org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
-    org.spockframework.runtime.SpockRuntime.callBlockEntered(this.getSpecificationContext(), 0)
+    org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 0)
     try {
         org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), 'a == b', 1, 83, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), a) == $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), b)))
     }
@@ -16,7 +16,7 @@ public void $spock_feature_0_0(java.lang.Object a, java.lang.Object b) {
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'a == b', 1, 83, null, $spock_condition_throwable)}
     finally {
     }
-    org.spockframework.runtime.SpockRuntime.callBlockExited(this.getSpecificationContext(), 0)
+    org.spockframework.runtime.SpockRuntime.callBlockExited(this, 0)
     this.getSpecificationContext().getMockController().leaveScope()
 }
 

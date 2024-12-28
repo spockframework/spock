@@ -7,120 +7,171 @@ before SPEC_EXECUTION - null
 	prev:     Stored at SHARED_INITIALIZER - null [0]
 	replaced: Stored at SHARED_INITIALIZER - null [0]
 	put:      Stored at SPEC_EXECUTION - null [1]
-before SETUP_SPEC - null
-	prev:     Stored at SPEC_EXECUTION - null [1]
-	replaced: Stored at SPEC_EXECUTION - null [1]
-	put:      Stored at SETUP_SPEC - null [2]
-after SETUP_SPEC - null
-before FEATURE_EXECUTION - null
-	prev:     Stored at SETUP_SPEC - null [2]
-	replaced: null
-	put:      Stored at FEATURE_EXECUTION - null [3]
-before INITIALIZER - null
-	prev:     Stored at FEATURE_EXECUTION - null [3]
-	replaced: null
-	put:      Stored at INITIALIZER - null [4]
-after INITIALIZER - null
-before ITERATION_EXECUTION - null
-	prev:     Stored at INITIALIZER - null [4]
-	replaced: Stored at INITIALIZER - null [4]
-	put:      Stored at ITERATION_EXECUTION - null [5]
-before SETUP - null
-	prev:     Stored at ITERATION_EXECUTION - null [5]
-	replaced: Stored at ITERATION_EXECUTION - null [5]
-	put:      Stored at SETUP - null [6]
-after SETUP - null
-before FEATURE - a feature
-	prev:     Stored at SETUP - null [6]
-	replaced: Stored at SETUP - null [6]
-	put:      Stored at FEATURE - a feature [7]
-after FEATURE - a feature
-before CLEANUP - null
-	prev:     Stored at FEATURE - a feature [7]
-	replaced: Stored at FEATURE - a feature [7]
-	put:      Stored at CLEANUP - null [8]
-after CLEANUP - null
-after ITERATION_EXECUTION - null
-# closing Stored at CLEANUP - null [8]
-# closing Stored at FEATURE - a feature [7]
-# closing Stored at SETUP - null [6]
-# closing Stored at ITERATION_EXECUTION - null [5]
-# closing Stored at INITIALIZER - null [4]
-after FEATURE_EXECUTION - null
-# closing Stored at FEATURE_EXECUTION - null [3]
-before FEATURE_EXECUTION - null
-	prev:     Stored at SETUP_SPEC - null [2]
-	replaced: null
-	put:      Stored at FEATURE_EXECUTION - null [9]
-before INITIALIZER - null
-	prev:     Stored at FEATURE_EXECUTION - null [9]
-	replaced: null
-	put:      Stored at INITIALIZER - null [10]
-after INITIALIZER - null
-before ITERATION_EXECUTION - null
-	prev:     Stored at INITIALIZER - null [10]
-	replaced: Stored at INITIALIZER - null [10]
-	put:      Stored at ITERATION_EXECUTION - null [11]
-before SETUP - null
-	prev:     Stored at ITERATION_EXECUTION - null [11]
-	replaced: Stored at ITERATION_EXECUTION - null [11]
-	put:      Stored at SETUP - null [12]
-after SETUP - null
-before FEATURE - data driven feature
-	prev:     Stored at SETUP - null [12]
-	replaced: Stored at SETUP - null [12]
-	put:      Stored at FEATURE - data driven feature [13]
-after FEATURE - data driven feature
-before CLEANUP - null
-	prev:     Stored at FEATURE - data driven feature [13]
-	replaced: Stored at FEATURE - data driven feature [13]
-	put:      Stored at CLEANUP - null [14]
-after CLEANUP - null
-after ITERATION_EXECUTION - null
-# closing Stored at CLEANUP - null [14]
-# closing Stored at FEATURE - data driven feature [13]
-# closing Stored at SETUP - null [12]
-# closing Stored at ITERATION_EXECUTION - null [11]
-# closing Stored at INITIALIZER - null [10]
-before INITIALIZER - null
-	prev:     Stored at FEATURE_EXECUTION - null [9]
-	replaced: null
-	put:      Stored at INITIALIZER - null [15]
-after INITIALIZER - null
-before ITERATION_EXECUTION - null
-	prev:     Stored at INITIALIZER - null [15]
-	replaced: Stored at INITIALIZER - null [15]
-	put:      Stored at ITERATION_EXECUTION - null [16]
-before SETUP - null
-	prev:     Stored at ITERATION_EXECUTION - null [16]
-	replaced: Stored at ITERATION_EXECUTION - null [16]
-	put:      Stored at SETUP - null [17]
-after SETUP - null
-before FEATURE - data driven feature
-	prev:     Stored at SETUP - null [17]
-	replaced: Stored at SETUP - null [17]
-	put:      Stored at FEATURE - data driven feature [18]
-after FEATURE - data driven feature
-before CLEANUP - null
-	prev:     Stored at FEATURE - data driven feature [18]
-	replaced: Stored at FEATURE - data driven feature [18]
-	put:      Stored at CLEANUP - null [19]
-after CLEANUP - null
-after ITERATION_EXECUTION - null
-# closing Stored at CLEANUP - null [19]
-# closing Stored at FEATURE - data driven feature [18]
-# closing Stored at SETUP - null [17]
-# closing Stored at ITERATION_EXECUTION - null [16]
-# closing Stored at INITIALIZER - null [15]
-after FEATURE_EXECUTION - null
-# closing Stored at FEATURE_EXECUTION - null [9]
-before CLEANUP_SPEC - null
-	prev:     Stored at SETUP_SPEC - null [2]
-	replaced: Stored at SETUP_SPEC - null [2]
-	put:      Stored at CLEANUP_SPEC - null [20]
-after CLEANUP_SPEC - null
+  before SETUP_SPEC - null
+  	prev:     Stored at SPEC_EXECUTION - null [1]
+  	replaced: Stored at SPEC_EXECUTION - null [1]
+  	put:      Stored at SETUP_SPEC - null [2]
+    before SETUP_SPEC - setupSpec
+    	prev:     Stored at SETUP_SPEC - null [2]
+    	replaced: Stored at SETUP_SPEC - null [2]
+    	put:      Stored at SETUP_SPEC - setupSpec [3]
+Store contents at [setupSpec] is: Stored at SETUP_SPEC - setupSpec [3]
+    after SETUP_SPEC - setupSpec
+  after SETUP_SPEC - null
+  before FEATURE_EXECUTION - null
+  	prev:     Stored at SETUP_SPEC - setupSpec [3]
+  	replaced: null
+  	put:      Stored at FEATURE_EXECUTION - null [4]
+    before INITIALIZER - null
+    	prev:     Stored at FEATURE_EXECUTION - null [4]
+    	replaced: null
+    	put:      Stored at INITIALIZER - null [5]
+    after INITIALIZER - null
+    before ITERATION_EXECUTION - null
+    	prev:     Stored at INITIALIZER - null [5]
+    	replaced: Stored at INITIALIZER - null [5]
+    	put:      Stored at ITERATION_EXECUTION - null [6]
+      before SETUP - null
+      	prev:     Stored at ITERATION_EXECUTION - null [6]
+      	replaced: Stored at ITERATION_EXECUTION - null [6]
+      	put:      Stored at SETUP - null [7]
+        before SETUP - setup
+        	prev:     Stored at SETUP - null [7]
+        	replaced: Stored at SETUP - null [7]
+        	put:      Stored at SETUP - setup [8]
+Store contents at [setup] is: Stored at SETUP - setup [8]
+        after SETUP - setup
+      after SETUP - null
+      before FEATURE - a feature
+      	prev:     Stored at SETUP - setup [8]
+      	replaced: Stored at SETUP - setup [8]
+      	put:      Stored at FEATURE - a feature [9]
+Store contents at [feature 'a feature'] is: Stored at FEATURE - a feature [9]
+      after FEATURE - a feature
+      before CLEANUP - null
+      	prev:     Stored at FEATURE - a feature [9]
+      	replaced: Stored at FEATURE - a feature [9]
+      	put:      Stored at CLEANUP - null [10]
+        before CLEANUP - cleanup
+        	prev:     Stored at CLEANUP - null [10]
+        	replaced: Stored at CLEANUP - null [10]
+        	put:      Stored at CLEANUP - cleanup [11]
+Store contents at [cleanup] is: Stored at CLEANUP - cleanup [11]
+        after CLEANUP - cleanup
+      after CLEANUP - null
+    after ITERATION_EXECUTION - null
+# closing Stored at CLEANUP - cleanup [11]
+# closing Stored at FEATURE - a feature [9]
+# closing Stored at SETUP - setup [8]
+# closing Stored at ITERATION_EXECUTION - null [6]
+# closing Stored at INITIALIZER - null [5]
+  after FEATURE_EXECUTION - null
+# closing Stored at FEATURE_EXECUTION - null [4]
+  before FEATURE_EXECUTION - null
+  	prev:     Stored at SETUP_SPEC - setupSpec [3]
+  	replaced: null
+  	put:      Stored at FEATURE_EXECUTION - null [12]
+    before INITIALIZER - null
+    	prev:     Stored at FEATURE_EXECUTION - null [12]
+    	replaced: null
+    	put:      Stored at INITIALIZER - null [13]
+    after INITIALIZER - null
+    before ITERATION_EXECUTION - null
+    	prev:     Stored at INITIALIZER - null [13]
+    	replaced: Stored at INITIALIZER - null [13]
+    	put:      Stored at ITERATION_EXECUTION - null [14]
+      before SETUP - null
+      	prev:     Stored at ITERATION_EXECUTION - null [14]
+      	replaced: Stored at ITERATION_EXECUTION - null [14]
+      	put:      Stored at SETUP - null [15]
+        before SETUP - setup
+        	prev:     Stored at SETUP - null [15]
+        	replaced: Stored at SETUP - null [15]
+        	put:      Stored at SETUP - setup [16]
+Store contents at [setup] is: Stored at SETUP - setup [16]
+        after SETUP - setup
+      after SETUP - null
+      before FEATURE - data driven feature
+      	prev:     Stored at SETUP - setup [16]
+      	replaced: Stored at SETUP - setup [16]
+      	put:      Stored at FEATURE - data driven feature [17]
+Store contents at [feature 'data driven feature'] is: Stored at FEATURE - data driven feature [17]
+      after FEATURE - data driven feature
+      before CLEANUP - null
+      	prev:     Stored at FEATURE - data driven feature [17]
+      	replaced: Stored at FEATURE - data driven feature [17]
+      	put:      Stored at CLEANUP - null [18]
+        before CLEANUP - cleanup
+        	prev:     Stored at CLEANUP - null [18]
+        	replaced: Stored at CLEANUP - null [18]
+        	put:      Stored at CLEANUP - cleanup [19]
+Store contents at [cleanup] is: Stored at CLEANUP - cleanup [19]
+        after CLEANUP - cleanup
+      after CLEANUP - null
+    after ITERATION_EXECUTION - null
+# closing Stored at CLEANUP - cleanup [19]
+# closing Stored at FEATURE - data driven feature [17]
+# closing Stored at SETUP - setup [16]
+# closing Stored at ITERATION_EXECUTION - null [14]
+# closing Stored at INITIALIZER - null [13]
+    before INITIALIZER - null
+    	prev:     Stored at FEATURE_EXECUTION - null [12]
+    	replaced: null
+    	put:      Stored at INITIALIZER - null [20]
+    after INITIALIZER - null
+    before ITERATION_EXECUTION - null
+    	prev:     Stored at INITIALIZER - null [20]
+    	replaced: Stored at INITIALIZER - null [20]
+    	put:      Stored at ITERATION_EXECUTION - null [21]
+      before SETUP - null
+      	prev:     Stored at ITERATION_EXECUTION - null [21]
+      	replaced: Stored at ITERATION_EXECUTION - null [21]
+      	put:      Stored at SETUP - null [22]
+        before SETUP - setup
+        	prev:     Stored at SETUP - null [22]
+        	replaced: Stored at SETUP - null [22]
+        	put:      Stored at SETUP - setup [23]
+Store contents at [setup] is: Stored at SETUP - setup [23]
+        after SETUP - setup
+      after SETUP - null
+      before FEATURE - data driven feature
+      	prev:     Stored at SETUP - setup [23]
+      	replaced: Stored at SETUP - setup [23]
+      	put:      Stored at FEATURE - data driven feature [24]
+Store contents at [feature 'data driven feature'] is: Stored at FEATURE - data driven feature [24]
+      after FEATURE - data driven feature
+      before CLEANUP - null
+      	prev:     Stored at FEATURE - data driven feature [24]
+      	replaced: Stored at FEATURE - data driven feature [24]
+      	put:      Stored at CLEANUP - null [25]
+        before CLEANUP - cleanup
+        	prev:     Stored at CLEANUP - null [25]
+        	replaced: Stored at CLEANUP - null [25]
+        	put:      Stored at CLEANUP - cleanup [26]
+Store contents at [cleanup] is: Stored at CLEANUP - cleanup [26]
+        after CLEANUP - cleanup
+      after CLEANUP - null
+    after ITERATION_EXECUTION - null
+# closing Stored at CLEANUP - cleanup [26]
+# closing Stored at FEATURE - data driven feature [24]
+# closing Stored at SETUP - setup [23]
+# closing Stored at ITERATION_EXECUTION - null [21]
+# closing Stored at INITIALIZER - null [20]
+  after FEATURE_EXECUTION - null
+# closing Stored at FEATURE_EXECUTION - null [12]
+  before CLEANUP_SPEC - null
+  	prev:     Stored at SETUP_SPEC - setupSpec [3]
+  	replaced: Stored at SETUP_SPEC - setupSpec [3]
+  	put:      Stored at CLEANUP_SPEC - null [27]
+    before CLEANUP_SPEC - cleanupSpec
+    	prev:     Stored at CLEANUP_SPEC - null [27]
+    	replaced: Stored at CLEANUP_SPEC - null [27]
+    	put:      Stored at CLEANUP_SPEC - cleanupSpec [28]
+Store contents at [cleanupSpec] is: Stored at CLEANUP_SPEC - cleanupSpec [28]
+    after CLEANUP_SPEC - cleanupSpec
+  after CLEANUP_SPEC - null
 after SPEC_EXECUTION - null
-# closing Stored at CLEANUP_SPEC - null [20]
-# closing Stored at SETUP_SPEC - null [2]
+# closing Stored at CLEANUP_SPEC - cleanupSpec [28]
+# closing Stored at SETUP_SPEC - setupSpec [3]
 # closing Stored at SPEC_EXECUTION - null [1]
 # closing Stored at SHARED_INITIALIZER - null [0]

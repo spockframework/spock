@@ -15,6 +15,7 @@
 package org.spockframework.lang;
 
 import org.spockframework.mock.IThreadAwareMockController;
+import org.spockframework.runtime.extension.IStoreProvider;
 import org.spockframework.runtime.model.BlockInfo;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.SpecInfo;
@@ -24,7 +25,7 @@ import org.spockframework.runtime.model.IterationInfo;
 import org.spockframework.util.Nullable;
 
 @Beta
-public interface ISpecificationContext {
+public interface ISpecificationContext extends IStoreProvider {
   @Nullable
   SpecInfo getCurrentSpec();
 

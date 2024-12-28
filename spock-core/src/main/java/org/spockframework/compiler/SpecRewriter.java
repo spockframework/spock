@@ -422,9 +422,9 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     if (!blockType.isSupportingBlockListeners()) return;
 
     // SpockRuntime.callBlockEntered(getSpecificationContext(), blockMetadataIndex)
-    MethodCallExpression blockEnteredCall = createBlockListenerCall(block, blockType, nodeCache.SpockRuntime_CallBlockEntered);
+    MethodCallExpression blockEnteredCall = createBlockListenerCall(block, nodeCache.SpockRuntime_CallBlockEntered);
     // SpockRuntime.callBlockExited(getSpecificationContext(), blockMetadataIndex)
-    MethodCallExpression blockExitedCall = createBlockListenerCall(block, blockType, nodeCache.SpockRuntime_CallBlockExited);
+    MethodCallExpression blockExitedCall = createBlockListenerCall(block, nodeCache.SpockRuntime_CallBlockExited);
 
     block.getAst().add(0, new ExpressionStatement(blockEnteredCall));
     if (blockType == BlockParseInfo.CLEANUP) {
@@ -455,13 +455,13 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     );
   }
 
-  private MethodCallExpression createBlockListenerCall(Block block, BlockParseInfo blockType, MethodNode blockListenerMethod) {
+  private MethodCallExpression createBlockListenerCall(Block block, MethodNode blockListenerMethod) {
     if (block.getBlockMetaDataIndex() < 0) throw new SpockException("Block metadata index not set: " + block);
     return createDirectMethodCall(
       new ClassExpression(nodeCache.SpockRuntime),
       blockListenerMethod,
       new ArgumentListExpression(
-        getSpecificationContext(),
+        VariableExpression.THIS_EXPRESSION,
         new ConstantExpression(block.getBlockMetaDataIndex(), true)
       ));
   }

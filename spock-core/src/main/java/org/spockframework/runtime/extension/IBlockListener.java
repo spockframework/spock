@@ -14,6 +14,8 @@
 
 package org.spockframework.runtime.extension;
 
+import spock.lang.Specification;
+
 import org.spockframework.runtime.model.BlockInfo;
 import org.spockframework.runtime.model.ErrorInfo;
 import org.spockframework.runtime.model.IterationInfo;
@@ -44,7 +46,7 @@ public interface IBlockListener {
   /**
    * Called when a block is entered.
    */
-  default void blockEntered(IterationInfo iterationInfo, BlockInfo blockInfo) {}
+  default <S extends Specification> void blockEntered(S specificationInstance, BlockInfo blockInfo) {}
 
   /**
    * Called when a block is exited.
@@ -53,5 +55,5 @@ public interface IBlockListener {
    * The block that was active will be available in the {@link org.spockframework.runtime.model.IErrorContext}
    * and can be observed via {@link org.spockframework.runtime.IRunListener#error(ErrorInfo)}.
    */
-  default void blockExited(IterationInfo iterationInfo, BlockInfo blockInfo) {}
+  default <S extends Specification> void blockExited(S specificationInstance, BlockInfo blockInfo) {}
 }

@@ -183,7 +183,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
                     // use internal name
                     new ConstantExpression(field.getAst().getName())),
                 Token.newSymbol(Types.ASSIGN, -1, -1),
-              new VariableExpression(SpockNames.SPOCK_VALUE))));
+                new VariableExpression(SpockNames.SPOCK_VALUE))));
 
     setter.setSourcePosition(field.getAst());
     spec.getAst().addMethod(setter);
@@ -552,7 +552,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     }
 
     VariableExpression featureThrowableVar =
-      new VariableExpression(SpockNames.SPOCK_FEATURE_THROWABLE, nodeCache.Throwable);
+        new VariableExpression(SpockNames.SPOCK_FEATURE_THROWABLE, nodeCache.Throwable);
     method.getStatements().add(createVariableDeclarationStatement(featureThrowableVar));
 
     List<Statement> featureStats = new ArrayList<>();
@@ -564,8 +564,8 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     CatchStatement featureCatchStat = createThrowableAssignmentAndRethrowCatchStatement(featureThrowableVar);
     VariableExpression failedBlock = new VariableExpression(SpockNames.FAILED_BLOCK, nodeCache.BlockInfo);
     List<Statement> cleanupStats = asList(
-      new ExpressionStatement(new DeclarationExpression(failedBlock, Token.newSymbol(Types.ASSIGN, -1, -1), ConstantExpression.NULL)),
-      createCleanupTryCatch(block, featureThrowableVar, failedBlock));
+        new ExpressionStatement(new DeclarationExpression(failedBlock, Token.newSymbol(Types.ASSIGN, -1, -1), ConstantExpression.NULL)),
+        createCleanupTryCatch(block, featureThrowableVar, failedBlock));
 
     TryCatchStatement tryFinally =
         new TryCatchStatement(
@@ -596,7 +596,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     TryCatchStatement tryCatchStat =
         new TryCatchStatement(
             new BlockStatement(cleanupStats, null),
-          ifThrowableIsNotNull(restoreFailedBlock(failedBlock))
+            ifThrowableIsNotNull(restoreFailedBlock(failedBlock))
         );
 
     tryCatchStat.addCatch(createHandleSuppressedThrowableStatement(featureThrowableVar));

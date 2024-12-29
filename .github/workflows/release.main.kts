@@ -47,7 +47,7 @@ workflow(
     val SIGNING_GPG_PASSWORD by secrets
 
     val matrix = Matrix.full
-    with(__FILE__.parentFile.resolve("../../codecov.yml")) {
+    with(__FILE__.parentFile.resolve("../codecov.yml")) {
         readText()
             .replace("after_n_builds:.*+$".toRegex(), "after_n_builds: ${matrix.size}")
             .let(::writeText)
@@ -82,7 +82,7 @@ workflow(
                 "ghActionsBuild",
                 """"-Dvariant=${expr(Matrix.variant)}"""",
                 """"-DjavaVersion=${expr(Matrix.javaVersion)}"""",
-                "-Dscan.tag.main-build"
+                """"-Dscan.tag.main-build""""
             ).joinToString(" "),
             env = commonCredentials
         )
@@ -129,7 +129,7 @@ workflow(
                 "ghActionsPublish",
                 """"-Dvariant=${expr(Matrix.variant)}"""",
                 """"-DjavaVersion=${expr(Matrix.javaVersion)}"""",
-                "-Dscan.tag.main-publish"
+                """"-Dscan.tag.main-publish""""
             ).joinToString(" "),
             env = mutableMapOf(
                 "GITHUB_TOKEN" to expr(GITHUB_TOKEN),
@@ -179,7 +179,7 @@ workflow(
                 "ghActionsDocs",
                 """"-Dvariant=${expr(Matrix.variant)}"""",
                 """"-DjavaVersion=${expr(Matrix.javaVersion)}"""",
-                "-Dscan.tag.main-docs"
+                """"-Dscan.tag.main-docs""""
             ).joinToString(" "),
             env = mutableMapOf(
                 "GITHUB_TOKEN" to expr(GITHUB_TOKEN)

@@ -88,7 +88,7 @@ jobs:
       name: 'Build Spock'
       env:
         DEVELOCITY_ACCESS_KEY: '${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}'
-      run: './gradlew --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" -Dscan.tag.main-build'
+      run: './gradlew --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" "-Dscan.tag.main-build"'
     - id: 'step-3'
       name: 'Stop Daemon'
       run: './gradlew --stop'
@@ -130,7 +130,7 @@ jobs:
         SONATYPE_OSS_PASSWORD: '${{ secrets.SONATYPE_OSS_PASSWORD }}'
         SIGNING_PASSWORD: '${{ secrets.SIGNING_GPG_PASSWORD }}'
         DEVELOCITY_ACCESS_KEY: '${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}'
-      run: './gradlew --no-parallel --stacktrace ghActionsPublish "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" -Dscan.tag.main-publish'
+      run: './gradlew --no-parallel --stacktrace ghActionsPublish "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" "-Dscan.tag.main-publish"'
   publish-release-docs:
     name: 'Publish Release Docs'
     runs-on: '${{ matrix.os }}'
@@ -165,4 +165,4 @@ jobs:
       env:
         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         DEVELOCITY_ACCESS_KEY: '${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}'
-      run: './gradlew --no-parallel --stacktrace ghActionsDocs "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" -Dscan.tag.main-docs'
+      run: './gradlew --no-parallel --stacktrace ghActionsDocs "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" "-Dscan.tag.main-docs"'

@@ -42,7 +42,7 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Add <code>globalTimeout</code> to  <code>@Timeout</code> extension, to apply a timeout to all features in a specification, configurable via the spock configuration file <a href="https://github.com/spockframework/spock/pull/1986">#1986</a></p>
+<p>Add <code>globalTimeout</code> to the  <code>@Timeout</code> extension to apply a timeout to all features in a specification, configurable via the Spock configuration file <a href="https://github.com/spockframework/spock/pull/1986">#1986</a></p>
 </li>
 <li>
 <p>Add new <a href="extensions.html#default-value-provider"><code>IDefaultValueProviderExtension</code></a> extension point to add support for special classes in the Stub&#8217;s default <code>EmptyOrDummyResponse</code> <a href="https://github.com/spockframework/spock/pull/1994">#1994</a></p>
@@ -54,11 +54,11 @@
 <p>Add <code>IStatelessAnnotationDrivenExtension</code> to allow a single extension instance to be reused across all specifications <a href="https://github.com/spockframework/spock/pull/2055">#2055</a></p>
 </li>
 <li>
-<p>Add new well-known versions to <code>Jvm</code> helper to support versions up to 29 <a href="https://github.com/spockframework/spock/pull/2057">#2057</a></p>
+<p>Add new well-known versions to <code>Jvm</code> helper to support versions up to <code>29</code> <a href="https://github.com/spockframework/spock/pull/2057">#2057</a></p>
 <div class="ulist">
 <ul>
 <li>
-<p>Built-in extensions have been updated to use this new interface where applicable.</p>
+<p>Built-in extensions have been updated to use this new interface where applicable</p>
 </li>
 </ul>
 </div>
@@ -73,26 +73,32 @@
 <p>Add support for accessing the <code>IStore</code> via <code>ISpecificationContext</code> <a href="https://github.com/spockframework/spock/pull/2064">#2064</a></p>
 </li>
 <li>
-<p>Improve <code>@Timeout</code> extension will now use virtual threads if available <a href="https://github.com/spockframework/spock/pull/1986">#1986</a></p>
-</li>
-<li>
-<p>Improve mock argument matching, types constraints or arguments in interactions can now handle primitive types like <code>_ as int</code> <a href="https://github.com/spockframework/spock/issues/1974">#1974</a></p>
-</li>
-<li>
-<p>Improve <code>verifyEach</code> to accept an optional second index parameter for the assertion block closure <a href="https://github.com/spockframework/spock/pull/2043">#2043</a></p>
-</li>
-<li>
-<p>Support ContextClassLoader when loading optional classes via <code>ReflectionUtil</code> <a href="https://github.com/spockframework/spock/pull/1995">#1995</a></p>
+<p>Add support for ContextClassLoader when loading optional classes via <code>ReflectionUtil</code> <a href="https://github.com/spockframework/spock/pull/1995">#1995</a></p>
 <div class="ulist">
 <ul>
 <li>
-<p>This enables loading of optional classes in e.g. OSGi environments</p>
+<p>This enables the loading of optional classes in, e.g., OSGi environments</p>
 </li>
 </ul>
 </div>
 </li>
 <li>
-<p><code>EmbeddedSpecRunner</code> and <code>EmbeddedSpecCompiler</code> now support the construction with a custom <code>ClassLoader</code> <a href="https://github.com/spockframework/spock/pull/1988">#1988</a></p>
+<p>Improve <code>@Timeout</code> extension will now use virtual threads if available <a href="https://github.com/spockframework/spock/pull/1986">#1986</a></p>
+</li>
+<li>
+<p>Improve mock argument matching; types constraints or arguments in interactions can now handle primitive types like <code>_ as int</code> <a href="https://github.com/spockframework/spock/issues/1974">#1974</a></p>
+</li>
+<li>
+<p>Improve <code>verifyEach</code> to accept an optional second index parameter for the assertion block closure <a href="https://github.com/spockframework/spock/pull/2043">#2043</a></p>
+</li>
+<li>
+<p>Improve size of data providers is no longer calculated multiple times but only once <a href="https://github.com/spockframework/spock/pull/2032">#2032</a></p>
+</li>
+<li>
+<p>Improve documentation about data providers and <code>size()</code> calls <a href="https://github.com/spockframework/spock/issues/2022">#2022</a></p>
+</li>
+<li>
+<p>Improve <code>EmbeddedSpecRunner</code> and <code>EmbeddedSpecCompiler</code> now support the construction with a custom <code>ClassLoader</code> <a href="https://github.com/spockframework/spock/pull/1988">#1988</a></p>
 <div class="ulist">
 <ul>
 <li>
@@ -102,19 +108,13 @@
 </div>
 </li>
 <li>
-<p>Fix mocking issue with the ByteBuddy MockMaker when using multiple classloaders in Java 21 <a href="https://github.com/spockframework/spock/issues/2017">#2017</a></p>
+<p>Fix a mocking issue with the ByteBuddy MockMaker when using multiple classloaders in Java 21 <a href="https://github.com/spockframework/spock/issues/2017">#2017</a></p>
 </li>
 <li>
-<p>Fix mocking of final classes via <code>@SpringBean</code> and <code>@SpringSpy</code> <a href="https://github.com/spockframework/spock/issues/1960">#1960</a></p>
-</li>
-<li>
-<p>Size of data providers is no longer calculated multiple times but only once</p>
+<p>Fix the mocking of final classes via <code>@SpringBean</code> and <code>@SpringSpy</code> <a href="https://github.com/spockframework/spock/issues/1960">#1960</a></p>
 </li>
 <li>
 <p>Fix exception when using <code>@RepeatUntilFailure</code> with a data provider with unknown iteration amount <a href="https://github.com/spockframework/spock/pull/2031">#2031</a></p>
-</li>
-<li>
-<p>Clarified documentation about data providers and <code>size()</code> calls <a href="https://github.com/spockframework/spock/issues/2022">#2022</a></p>
 </li>
 <li>
 <p>Fix compile error with single explicit assert in switch expression branch <a href="https://github.com/spockframework/spock/issues/1845">#1845</a></p>
@@ -3092,7 +3092,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2024-12-29 16:45:47 UTC
+Last updated 2024-12-29 17:02:14 UTC
 </div>
 </div>
 </body>

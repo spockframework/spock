@@ -41,11 +41,11 @@ import static org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles.JVM_C
 class PreprocessWorkflowsPlugin implements Plugin<Project> {
   void apply(Project project) {
     def kotlinCompilerClasspath = project.configurations.detachedConfiguration(
-      project.dependencies.create('org.jetbrains.kotlin:kotlin-compiler:1.8.20'),
-      project.dependencies.create('org.jetbrains.kotlin:kotlin-scripting-compiler:1.8.20')
+      project.dependencies.create('org.jetbrains.kotlin:kotlin-compiler:2.1.0'),
+      project.dependencies.create('org.jetbrains.kotlin:kotlin-scripting-compiler:2.1.0')
     )
     def kotlinScriptClasspath = project.configurations.detachedConfiguration(
-      project.dependencies.create('org.jetbrains.kotlin:kotlin-main-kts:1.8.20') { ModuleDependency it ->
+      project.dependencies.create('org.jetbrains.kotlin:kotlin-main-kts:2.1.0') { ModuleDependency it ->
         it.transitive = false
       }
     )
@@ -109,7 +109,7 @@ class PreprocessWorkflowsPlugin implements Plugin<Project> {
       .findFile(
         new CoreLocalVirtualFile(
           new CoreLocalFileSystem(),
-          workflowScript
+          workflowScript.toPath()
         )
       )
       .with { it as KtFile }

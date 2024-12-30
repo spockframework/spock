@@ -19,7 +19,7 @@ package org.spockframework.gradle
 import groovy.transform.CompileStatic
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ModuleDependency
+import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.tasks.JavaExec
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainService
@@ -40,15 +40,16 @@ import static org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles.JVM_C
 @CompileStatic
 class PreprocessWorkflowsPlugin implements Plugin<Project> {
   void apply(Project project) {
+    def libs = project.extensions.getByType(VersionCatalogsExtension).find('libs').orElseThrow(AssertionError::new)
     def kotlinCompilerClasspath = project.configurations.detachedConfiguration(
-      project.dependencies.create('org.jetbrains.kotlin:kotlin-compiler:2.1.0'),
-      project.dependencies.create('org.jetbrains.kotlin:kotlin-scripting-compiler:2.1.0')
+      libs.findLibrary('workflows-kotlin-compiler').orElseThrow(AssertionError::new).get(),
+      libs.findLibrary('workflows-kotlin-scripting-compiler').orElseThrow(AssertionError::new).get()
     )
     def kotlinScriptClasspath = project.configurations.detachedConfiguration(
-      project.dependencies.create('org.jetbrains.kotlin:kotlin-main-kts:2.1.0') { ModuleDependency it ->
-        it.transitive = false
-      }
-    )
+      libs.findLibrary('workflows-kotlin-main-kts').orElseThrow(AssertionError::new).get()
+    ).tap {
+      it.transitive = false
+    }
 
     def preprocessWorkflows = project.tasks.register('preprocessWorkflows') {
       it.group = 'github actions'
@@ -82,6 +83,12 @@ class PreprocessWorkflowsPlugin implements Plugin<Project> {
 
         // work-around for https://youtrack.jetbrains.com/issue/KT-42101
         it.systemProperty('kotlin.main.kts.compiled.scripts.cache.dir', '')
+      }
+      project.pluginManager.withPlugin('io.spring.nohttp') {
+        // iff both tasks are run, workflow files should be generated before checkstyle check
+        project.tasks.named('checkstyleNohttp') {
+          it.mustRunAfter(preprocessWorkflow)
+        }
       }
       preprocessWorkflows.configure {
         it.dependsOn(preprocessWorkflow)

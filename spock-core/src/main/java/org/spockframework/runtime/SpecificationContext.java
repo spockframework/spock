@@ -15,7 +15,6 @@ import java.util.Deque;
 
 public class SpecificationContext implements ISpecificationContext {
   private volatile SpecInfo currentSpec;
-  private volatile FeatureInfo currentFeature;
   private volatile IterationInfo currentIteration;
 
   private volatile BlockInfo currentBlock;
@@ -47,19 +46,18 @@ public class SpecificationContext implements ISpecificationContext {
 
   @Override
   public FeatureInfo getCurrentFeature() {
-    if (currentFeature == null) {
-      throw new IllegalStateException("Cannot request current feature in @Shared context");
+    // before an iteration is available we are in the shared context, even in the feature interceptor,
+    // so the current feature cannot be set as features can run in parallel
+    // so getting the current feature from the specification context would not properly work
+    if (currentIteration == null) {
+      throw new IllegalStateException("Cannot request current feature in @Shared context, or feature context");
     }
-    return currentFeature;
+    return currentIteration.getFeature();
   }
 
   @Nullable
   FeatureInfo getCurrentFeatureOrNull() {
-    return currentFeature;
-  }
-
-  public void setCurrentFeature(@Nullable FeatureInfo currentFeature) {
-    this.currentFeature = currentFeature;
+    return currentIteration == null ? null : currentIteration.getFeature();
   }
 
   @Override

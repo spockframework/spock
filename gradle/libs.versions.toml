@@ -7,7 +7,7 @@ jacoco = '0.8.12'
 junit = '5.11.4'
 asm = '9.7.1'
 mockito4 = '4.11.0'
-mockito5 = '5.15s.2'
+mockito5 = '5.15.2'
 workflows-kotlin = "2.0.20"
 
 [libraries]
@@ -35,9 +35,9 @@ junit-jupiter.module = "org.junit.jupiter:junit-jupiter"
 junit-platform-testkit.module = "org.junit.platform:junit-platform-testkit"
 junit-platform-console.module = "org.junit.platform:junit-platform-console"
 workflows-kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "workflows-kotlin" }
-workflows-kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "workflows-kotlin" }
-workflows-kotlin-main-kts = { module = "org.jetbrains.kotlin:kotlin-main-kts", version.ref = "workflows-kotlin" }
-workflows-kotlin-scripting-compiler = { module = "org.jetbrains.kotlin:kotlin-scripting-compiler", version.ref = "workflows-kotlin" }
+workflows-kotlin-compilerEmbeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "workflows-kotlin" }
+workflows-kotlin-mainKts = { module = "org.jetbrains.kotlin:kotlin-main-kts", version.ref = "workflows-kotlin" }
+workflows-kotlin-scriptingCompiler = { module = "org.jetbrains.kotlin:kotlin-scripting-compiler", version.ref = "workflows-kotlin" }
 
 # just here so that renovate can figure out the dependencies
 groovy-v2 = { module = "org.codehaus.groovy:groovy", version.ref="groovy2" }

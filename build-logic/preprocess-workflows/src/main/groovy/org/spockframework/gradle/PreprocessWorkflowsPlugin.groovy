@@ -43,10 +43,10 @@ class PreprocessWorkflowsPlugin implements Plugin<Project> {
     def libs = project.extensions.getByType(VersionCatalogsExtension).find('libs').orElseThrow(AssertionError::new)
     def kotlinCompilerClasspath = project.configurations.detachedConfiguration(
       libs.findLibrary('workflows-kotlin-compiler').orElseThrow(AssertionError::new).get(),
-      libs.findLibrary('workflows-kotlin-scripting-compiler').orElseThrow(AssertionError::new).get()
+      libs.findLibrary('workflows-kotlin-scriptingCompiler').orElseThrow(AssertionError::new).get()
     )
     def kotlinScriptClasspath = project.configurations.detachedConfiguration(
-      libs.findLibrary('workflows-kotlin-main-kts').orElseThrow(AssertionError::new).get()
+      libs.findLibrary('workflows-kotlin-mainKts').orElseThrow(AssertionError::new).get()
     ).tap {
       it.transitive = false
     }

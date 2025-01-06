@@ -157,104 +157,126 @@ class SubSpec extends SuperSpec {
       specInfo.specsBottomToTop*.addSharedInitializerInterceptor {
         assertSpecContext(it)
         proceed(it, 'shared initializer', "$it.spec.name")
+        assertSpecContext(it)
       }
       specInfo.allSharedInitializerMethods*.addInterceptor {
         assertSpecMethodContext(it)
         proceed(it, 'shared initializer method', "$it.spec.name.$it.method.name()")
+        assertSpecMethodContext(it)
       }
       specInfo.addInterceptor {
         assertSpecContext(it)
         proceed(it, 'specification', "$it.spec.name")
+        assertSpecContext(it)
       }
       specInfo.specsBottomToTop*.addSetupSpecInterceptor {
         assertSpecContext(it)
         proceed(it, 'setup spec', "$it.spec.name")
+        assertSpecContext(it)
       }
       specInfo.allSetupSpecMethods*.addInterceptor {
         assertSpecMethodContext(it)
         proceed(it, 'setup spec method', "$it.spec.name.$it.method.name()")
+        assertSpecMethodContext(it)
       }
       allFeatures*.addInterceptor {
         assertFeatureContext(it)
         proceed(it, 'feature', "$it.spec.name.$it.feature.name")
+        assertFeatureContext(it)
       }
       specInfo.specsBottomToTop.each { spec ->
         spec.addInitializerInterceptor {
           assertIterationContext(it)
           proceed(it, 'initializer', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex] / $spec.name")
+          assertIterationContext(it)
         }
       }
       specInfo.allInitializerMethods*.addInterceptor {
         assertIterationMethodContext(it)
         proceed(it, 'initializer method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
+        assertIterationMethodContext(it)
       }
       allFeatures.each { feature ->
         specInfo.allInitializerMethods.each { mi ->
           feature.addScopedMethodInterceptor(mi)  {
             assertIterationMethodContext(it)
             proceed(it, 'feature scoped initializer method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name() / from $feature.name")
+            assertIterationMethodContext(it)
           }
         }
         specInfo.allSetupMethods.each { mi ->
           feature.addScopedMethodInterceptor(mi) {
             assertIterationMethodContext(it)
             proceed(it, 'feature scoped setup method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name() / from $feature.name")
+            assertIterationMethodContext(it)
           }
         }
         specInfo.allCleanupMethods.each { mi ->
           feature.addScopedMethodInterceptor(mi) {
             assertIterationMethodContext(it)
             proceed(it, 'feature scoped cleanup method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name() / from $feature.name")
+            assertIterationMethodContext(it)
           }
         }
       }
       allFeatures*.addInitializerInterceptor {
         assertIterationContext(it)
         proceed(it, 'feature scoped initializer', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
+        assertIterationContext(it)
       }
       allFeatures*.addIterationInterceptor {
         assertIterationContext(it)
         proceed(it, 'iteration', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
+        assertIterationContext(it)
       }
       specInfo.specsBottomToTop.each { spec ->
         spec.addSetupInterceptor {
           assertIterationContext(it)
           proceed(it, 'setup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex] / $spec.name")
+          assertIterationContext(it)
         }
       }
       allFeatures*.addSetupInterceptor {
         assertIterationContext(it)
         proceed(it, 'feature scoped setup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
+        assertIterationContext(it)
       }
       specInfo.allSetupMethods*.addInterceptor {
         assertIterationMethodContext(it)
         proceed(it, 'setup method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
+        assertIterationMethodContext(it)
       }
       allFeatures*.featureMethod*.addInterceptor {
         assertIterationMethodContext(it)
         proceed(it, 'feature method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
+        assertIterationMethodContext(it)
       }
       specInfo.specsBottomToTop.each { spec ->
         spec.addCleanupInterceptor {
           assertIterationContext(it)
           proceed(it, 'cleanup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex] / $spec.name")
+          assertIterationContext(it)
         }
       }
       allFeatures*.addCleanupInterceptor {
         assertIterationContext(it)
         proceed(it, 'feature scoped cleanup', "$it.spec.name.$it.feature.name[#$it.iteration.iterationIndex]")
+        assertIterationContext(it)
       }
       specInfo.allCleanupMethods*.addInterceptor {
         assertIterationMethodContext(it)
         proceed(it, 'cleanup method', "$it.feature.parent.name.$it.feature.name[#$it.iteration.iterationIndex] / $it.spec.name.$it.method.name()")
+        assertIterationMethodContext(it)
       }
       specInfo.specsBottomToTop*.addCleanupSpecInterceptor {
         assertSpecContext(it)
         proceed(it, 'cleanup spec', "$it.spec.name")
+        assertSpecContext(it)
       }
       specInfo.allCleanupSpecMethods*.addInterceptor {
         assertSpecMethodContext(it)
         proceed(it, 'cleanup spec method', "$it.spec.name.$it.method.name()")
+        assertSpecMethodContext(it)
       }
       specInfo.allFixtureMethods*.addInterceptor {
         it.with {
@@ -266,6 +288,14 @@ class SubSpec extends SuperSpec {
           }
         }
         proceed(it, 'fixture method', "${it.feature?.with { feature -> "$feature.parent.name.$feature.name[#$it.iteration.iterationIndex] / " } ?: ''}$it.spec.name.$it.method.name()")
+        it.with {
+          def specFixture = method.name.endsWith('Spec')
+          if (specFixture) {
+            assertSpecMethodContext(it)
+          } else {
+            assertIterationMethodContext(it)
+          }
+        }
       }
     }
 
@@ -282,7 +312,7 @@ class SubSpec extends SuperSpec {
             currentFeature
             assert false: 'currentFeature should not be set'
           } catch (IllegalStateException ise) {
-            assert ise.message == 'Cannot request current feature in @Shared context'
+            assert ise.message == 'Cannot request current feature in @Shared context, or feature context'
           }
           try {
             currentIteration
@@ -319,7 +349,6 @@ class SubSpec extends SuperSpec {
         assert method
         instance.specificationContext.with {
           assert currentSpec
-          assert currentFeature
         }
       }
     }
@@ -333,6 +362,12 @@ class SubSpec extends SuperSpec {
         assert !method.reflection
         assert !method.name
         instance.specificationContext.with {
+          try {
+            currentFeature
+            assert false: 'currentFeature should not be set'
+          } catch (IllegalStateException ise) {
+            assert ise.message == 'Cannot request current feature in @Shared context, or feature context'
+          }
           try {
             currentIteration
             assert false: 'currentIteration should not be set'
@@ -349,6 +384,7 @@ class SubSpec extends SuperSpec {
         assert iteration
         assert instance != sharedInstance
         instance.specificationContext.with {
+          assert currentFeature
           assert currentIteration
         }
       }

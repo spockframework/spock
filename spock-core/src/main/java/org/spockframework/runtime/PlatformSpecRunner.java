@@ -188,7 +188,11 @@ public class PlatformSpecRunner {
     if (currentFeature.isSkipped()) {
       throw new InternalSpockError("Invalid state, feature is executed although it should have been skipped");
     }
-    getSpecificationContext(context).setCurrentFeature(currentFeature);
+
+    // at this point the specification context is the one of the shared instance,
+    // so the current feature cannot be set as features can run in parallel
+    // so getting the current feature from the specification context would not properly work
+
     getSpecificationContext(context).pushStoreProvider(context.getStoreProvider());
 
     supervisor.beforeFeature(currentFeature);
@@ -196,7 +200,6 @@ public class PlatformSpecRunner {
     supervisor.afterFeature(currentFeature);
 
     runCloseContextStoreProvider(context, MethodKind.CLEANUP);
-    getSpecificationContext(context).setCurrentFeature(null);
     getSpecificationContext(context).popStoreProvider();
   }
 
@@ -260,7 +263,6 @@ public class PlatformSpecRunner {
   }
 
   void runInitializer(SpockExecutionContext context) {
-    getSpecificationContext(context).setCurrentFeature(context.getCurrentFeature());
     getSpecificationContext(context).setCurrentIteration(context.getCurrentIteration());
     runInitializer(context, context.getSpec());
   }

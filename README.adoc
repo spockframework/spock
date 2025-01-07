@@ -180,7 +180,7 @@ repository].
 * Spock Example Project -- https://github.com/spockframework/spock-example[https://github.com/spockframework/spock-example]
 * X (Twitter) -- https://twitter.com/SpockFramework[https://twitter.com/SpockFramework]
 * Mastodon -- https://fosstodon.org/@spockframework[https://fosstodon.org/@spockframework]
-* Bluesky -- https://bsky.app/profile/spockframework.bsky.social[https://bsky.app/profile/spockframework.bsky.social]
+* Bluesky -- https://bsky.app/profile/spockframework.org[https://bsky.app/profile/spockframework.org]
 
 🖖 Live Long And Prosper!
 

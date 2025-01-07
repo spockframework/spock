@@ -87,7 +87,9 @@ public class PlatformSpecRunner {
 
     context = context.withChildStoreProvider().withCurrentInstance(instance);
     getSpecificationContext(context).setCurrentSpec(context.getSpec());
-    getSpecificationContext(context).pushStoreProvider(context.getStoreProvider());
+
+    // this is either for the shared spec instance or the current iteration
+    getSpecificationContext(context).setStoreProvider(context.getStoreProvider());
     if (shared) {
       context = context.withSharedInstance(instance);
     }
@@ -193,14 +195,11 @@ public class PlatformSpecRunner {
     // so the current feature cannot be set as features can run in parallel
     // so getting the current feature from the specification context would not properly work
 
-    getSpecificationContext(context).pushStoreProvider(context.getStoreProvider());
-
     supervisor.beforeFeature(currentFeature);
     invoke(context, this, createMethodInfoForDoRunFeature(context, feature));
     supervisor.afterFeature(currentFeature);
 
     runCloseContextStoreProvider(context, MethodKind.CLEANUP);
-    getSpecificationContext(context).popStoreProvider();
   }
 
   private MethodInfo createMethodInfoForDoRunFeature(SpockExecutionContext context, Runnable feature) {
@@ -222,15 +221,11 @@ public class PlatformSpecRunner {
 
     context = context.withCurrentIteration(iterationInfo);
     getSpecificationContext(context).setCurrentIteration(iterationInfo);
-    getSpecificationContext(context).pushStoreProvider(context.getStoreProvider());
 
     supervisor.beforeIteration(iterationInfo);
     invoke(context, this, createMethodInfoForDoRunIteration(context, runnable));
     supervisor.afterIteration(iterationInfo);
     runCloseContextStoreProvider(context, MethodKind.CLEANUP);
-
-    getSpecificationContext(context).setCurrentIteration(null); // TODO check if we really need to null here
-    getSpecificationContext(context).popStoreProvider();
   }
 
   IterationInfo createIterationInfo(SpockExecutionContext context, int iterationIndex, Object[] args, int estimatedNumIterations) {

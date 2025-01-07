@@ -22,7 +22,7 @@ public class SpecificationContext implements ISpecificationContext {
   private volatile Specification sharedInstance;
 
   private volatile Throwable thrownException;
-  private final Deque<IStoreProvider> storeProvider = new ArrayDeque<>(3); // spec, feature, iteration
+  private volatile IStoreProvider storeProvider; // shared spec or iteration
 
   private final MockController mockController = new MockController();
 
@@ -113,14 +113,10 @@ public class SpecificationContext implements ISpecificationContext {
 
   @Override
   public IStore getStore(IStore.Namespace namespace) {
-    return storeProvider.getLast().getStore(namespace);
+    return storeProvider.getStore(namespace);
   }
 
-  public void pushStoreProvider(IStoreProvider storeProvider) {
-    this.storeProvider.push(storeProvider);
-  }
-
-  public void popStoreProvider() {
-    this.storeProvider.pop();
+  public void setStoreProvider(IStoreProvider storeProvider) {
+    this.storeProvider = storeProvider;
   }
 }

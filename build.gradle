@@ -99,6 +99,7 @@ allprojects {
 
 apply from: script("ide")
 
+boolean isCiServer = System.env["CI"] || System.env["GITHUB_ACTIONS"]
 subprojects {
   apply plugin: "java-library"
   apply plugin: "groovy"
@@ -195,7 +196,10 @@ subprojects {
       }
     }
     // As a generous general timeout, instead of the 6h of GHA.
-    timeout = Duration.ofMinutes(15)
+    // But only on CI or longer needing debug sessions get killed by the timeout.
+    if (isCiServer) {
+      timeout = Duration.ofMinutes(15)
+    }
   }
 
   tasks.register("allDependencyInsight", DependencyInsightReportTask) {}

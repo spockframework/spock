@@ -728,6 +728,11 @@ public class DataIteratorFactory {
     private final int estimatedNumIterations;
 
     /**
+     * The amount how many data providers are processed by this data provider multiplier.
+     */
+    private final int processedDataProviders;
+
+    /**
      * Creates a new data provider multiplier that handles two sets of plain data providers as factors.
      * If the sizes of the providers in at least one of the sets can be estimated,
      * the factors of the multiplication are possibly swapped around to store as few values as possible
@@ -755,6 +760,8 @@ public class DataIteratorFactory {
         (estimatedMultiplierIterations == UNKNOWN_ITERATIONS) || (estimatedMultiplicandIterations == UNKNOWN_ITERATIONS)
           ? UNKNOWN_ITERATIONS
           : estimatedMultiplierIterations * estimatedMultiplicandIterations;
+
+      processedDataProviders = multiplierProviders.length + multiplicandProviders.length;
 
       if ((estimatedMultiplierIterations != UNKNOWN_ITERATIONS)
         && ((estimatedMultiplicandIterations == UNKNOWN_ITERATIONS) || (estimatedMultiplicandIterations > estimatedMultiplierIterations))) {
@@ -802,6 +809,8 @@ public class DataIteratorFactory {
         (estimatedMultiplierIterations == UNKNOWN_ITERATIONS) || (estimatedMultiplicandIterations == UNKNOWN_ITERATIONS)
           ? UNKNOWN_ITERATIONS
           : estimatedMultiplierIterations * estimatedMultiplicandIterations;
+
+      processedDataProviders = multiplierProvider.getProcessedDataProviders() + multiplicandProviders.length;
 
       if ((estimatedMultiplierIterations != UNKNOWN_ITERATIONS)
         && ((estimatedMultiplicandIterations == UNKNOWN_ITERATIONS) || (estimatedMultiplicandIterations > estimatedMultiplierIterations))) {
@@ -940,18 +949,7 @@ public class DataIteratorFactory {
      * @return how many data providers are processed by this data provider multiplier
      */
     public int getProcessedDataProviders() {
-      int result = 0;
-      if (multiplierProvider != null) {
-        result += multiplierProvider.getProcessedDataProviders();
-      } else if (multiplierProviders != null) {
-        result += multiplierProviders.length;
-      }
-      if (multiplicandProvider != null) {
-        result += multiplicandProvider.getProcessedDataProviders();
-      } else if (multiplicandProviders != null) {
-        result += multiplicandProviders.length;
-      }
-      return result;
+      return processedDataProviders;
     }
 
     private Iterator<?>[] createIterators(Object[] dataProviders, List<DataProviderInfo> dataProviderInfos) {

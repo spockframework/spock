@@ -297,6 +297,38 @@ where: a << b
     ]
   }
 
+  @Issue('https://github.com/spockframework/spock/issues/2074')
+  def 'multi-assignments can be combined'() {
+    when:
+    def results = runner.runSpecBody '''
+      def 'a feature (#a #b #c #d #e #f)'() {
+        expect:
+        a + b == c
+
+        where:
+        [a, b] << [[1, 2], [1, 2]]
+        combined:
+        [c, d] << [[3, 1], [3, 2]]
+        combined:
+        [e, f] << [[1, 2], [3, 4]]
+      }
+    '''
+
+    then:
+    results.testsStartedCount == 1 + (2 * 2 * 2)
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b #c #d #e #f)',
+      'a feature (1 2 3 1 1 2)',
+      'a feature (1 2 3 1 3 4)',
+      'a feature (1 2 3 2 1 2)',
+      'a feature (1 2 3 2 3 4)',
+      'a feature (1 2 3 1 1 2)',
+      'a feature (1 2 3 1 3 4)',
+      'a feature (1 2 3 2 1 2)',
+      'a feature (1 2 3 2 3 4)'
+    ]
+  }
+
   static class MyIterator implements Iterator {
     def elems = [1, 2, 3]
 

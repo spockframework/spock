@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.util.*;
 
 import org.jetbrains.annotations.NotNull;
+import org.spockframework.util.Assert;
 import org.spockframework.util.Nullable;
 import spock.config.RunnerConfiguration;
 
@@ -431,23 +432,31 @@ public class DataIteratorFactory {
         nextDataVariableMultiplication = null;
       }
 
+      List<DataProviderInfo> dataProviderInfos = context.getCurrentFeature().getDataProviders();
       List<IDataIterator> dataIterators = new ArrayList<>(dataProviders.length);
-      for (int i = 0; i < dataProviders.length; i++) {
-        String nextDataVariableName = dataVariableNames.get(i);
+      for (int dataProviderIndex = 0, dataVariableNameIndex = 0; dataProviderIndex < dataProviders.length; dataProviderIndex++, dataVariableNameIndex++) {
+        String nextDataVariableName = dataVariableNames.get(dataVariableNameIndex);
         if ((nextDataVariableMultiplication != null)
           && (nextDataVariableMultiplication.getDataVariables()[0].equals(nextDataVariableName))) {
 
           // a cross multiplication starts
-          dataIterators.add(createDataProviderMultiplier(nextDataVariableMultiplication, i));
-          // skip processed variables
-          i += nextDataVariableMultiplication.getDataVariables().length - 1;
+          dataIterators.add(createDataProviderMultiplier(nextDataVariableMultiplication, dataProviderIndex));
+          // skip processed providers and variables
+          int remainingVariables = nextDataVariableMultiplication.getDataVariables().length;
+          dataVariableNameIndex += remainingVariables - 1;
+          while (remainingVariables > 0) {
+            remainingVariables -= dataProviderInfos.get(dataProviderIndex).getDataVariables().size();
+            dataProviderIndex++;
+          }
+          dataProviderIndex--;
+          Assert.that(remainingVariables == 0);
           // wait for next cross multiplication
           nextDataVariableMultiplication = dataVariableMultiplications.hasNext() ? dataVariableMultiplications.next() : null;
         } else {
           // not a cross multiplication, just use a data provider iterator
           dataIterators.add(new DataProviderIterator(
             supervisor, context, nextDataVariableName,
-            context.getCurrentFeature().getDataProviders().get(i), dataProviders[i]));
+            dataProviderInfos.get(dataProviderIndex), dataProviders[dataProviderIndex]));
         }
       }
       return dataIterators.toArray(new IDataIterator[0]);
@@ -457,15 +466,12 @@ public class DataIteratorFactory {
      * Creates a multiplier that is backed by data providers and on-the-fly multiplies them as they are processed.
      *
      * @param dataVariableMultiplication the multiplication for which to create the multiplier
-     * @param i the index of the first data variable for the given multiplication
+     * @param dataProviderOffset the index of the first data provider for the given multiplication
      * @return the data provider multiplier
      */
-    private DataProviderMultiplier createDataProviderMultiplier(DataVariableMultiplication dataVariableMultiplication, int i) {
+    private DataProviderMultiplier createDataProviderMultiplier(DataVariableMultiplication dataVariableMultiplication, int dataProviderOffset) {
       DataVariableMultiplicationFactor multiplier = dataVariableMultiplication.getMultiplier();
       DataVariableMultiplicationFactor multiplicand = dataVariableMultiplication.getMultiplicand();
-
-      int multiplierDataVariablesLength = multiplier.getDataVariables().length;
-      int multiplicandDataVariablesLength = multiplicand.getDataVariables().length;
 
       if (multiplier instanceof DataVariableMultiplication) {
         // recursively dive into the multiplication depth-first
@@ -478,22 +484,15 @@ public class DataIteratorFactory {
         // here we first build the data provider multiplier for the multiplier
         // then we collect the data provider infos and data providers for the multiplicand
         // and then create the data provider multiplier for them
-        DataProviderMultiplier multiplierProvider = createDataProviderMultiplier((DataVariableMultiplication) multiplier, i);
+        DataProviderMultiplier multiplierProvider = createDataProviderMultiplier((DataVariableMultiplication) multiplier, dataProviderOffset);
         List<DataProviderInfo> multiplicandProviderInfos = new ArrayList<>();
-        Object[] multiplicandProviders = new Object[multiplicandDataVariablesLength];
-
-        List<DataProviderInfo> dataProviderInfos = context.getCurrentFeature().getDataProviders();
-        int j = multiplierDataVariablesLength;
-        int j2 = multiplierDataVariablesLength + multiplicandDataVariablesLength;
-        int k = 0;
-        for (; j < j2; j++, k++) {
-          multiplicandProviderInfos.add(dataProviderInfos.get(i + j));
-          multiplicandProviders[k] = dataProviders[i + j];
-        }
+        List<Object> multiplicandProviders = new ArrayList<>();
+        collectDataProviders(dataProviderOffset + multiplierProvider.getProcessedDataProviders(), multiplicand, multiplicandProviderInfos, multiplicandProviders);
 
         return new DataProviderMultiplier(supervisor, context,
           Arrays.asList(dataVariableMultiplication.getDataVariables()),
-          multiplicandProviderInfos, multiplierProvider, multiplicandProviders);
+          multiplicandProviderInfos, multiplierProvider,
+          multiplicandProviders.toArray(new Object[0]));
       } else {
         // this path handles the innermost multiplication (a * b)
         //
@@ -501,26 +500,32 @@ public class DataIteratorFactory {
         // and then creates a data provider multiplier for them
         List<DataProviderInfo> multiplierProviderInfos = new ArrayList<>();
         List<DataProviderInfo> multiplicandProviderInfos = new ArrayList<>();
-        Object[] multiplierProviders = new Object[multiplierDataVariablesLength];
-        Object[] multiplicandProviders = new Object[multiplicandDataVariablesLength];
-
-        List<DataProviderInfo> dataProviderInfos = context.getCurrentFeature().getDataProviders();
-        int j = 0;
-        int j2 = multiplierDataVariablesLength;
-        for (; j < j2; j++) {
-          multiplierProviderInfos.add(dataProviderInfos.get(i + j));
-          multiplierProviders[j] = dataProviders[i + j];
-        }
-        int k = 0;
-        for (j2 += multiplicandDataVariablesLength; j < j2; j++, k++) {
-          multiplicandProviderInfos.add(dataProviderInfos.get(i + j));
-          multiplicandProviders[k] = dataProviders[i + j];
-        }
+        List<Object> multiplierProviders = new ArrayList<>();
+        List<Object> multiplicandProviders = new ArrayList<>();
+        collectDataProviders(dataProviderOffset, multiplier, multiplierProviderInfos, multiplierProviders);
+        collectDataProviders(dataProviderOffset + multiplierProviderInfos.size(), multiplicand, multiplicandProviderInfos, multiplicandProviders);
 
         return new DataProviderMultiplier(supervisor, context,
           Arrays.asList(dataVariableMultiplication.getDataVariables()),
-          multiplierProviderInfos, multiplicandProviderInfos, multiplierProviders, multiplicandProviders);
+          multiplierProviderInfos, multiplicandProviderInfos,
+          multiplierProviders.toArray(new Object[0]),
+          multiplicandProviders.toArray(new Object[0]));
       }
+    }
+
+    private void collectDataProviders(int dataProviderOffset, DataVariableMultiplicationFactor factor,
+                                      List<DataProviderInfo> factorProviderInfos, List<Object> factorProviders) {
+      List<DataProviderInfo> dataProviderInfos = context.getCurrentFeature().getDataProviders();
+      int factorDataVariables = factor.getDataVariables().length;
+      int remainingDataVariables = factorDataVariables;
+      while (remainingDataVariables > 0) {
+        int dataProviderIndex = dataProviderOffset + factorDataVariables - remainingDataVariables;
+        DataProviderInfo dataProviderInfo = dataProviderInfos.get(dataProviderIndex);
+        factorProviderInfos.add(dataProviderInfo);
+        factorProviders.add(dataProviders[dataProviderIndex]);
+        remainingDataVariables -= dataProviderInfo.getDataVariables().size();
+      }
+      Assert.that(remainingDataVariables == 0);
     }
 
     @NotNull
@@ -667,7 +672,7 @@ public class DataIteratorFactory {
     /**
      * The data providers that are used as multiplicand
      * in this multiplication, if it represents in an
-     * {@code ((a * b) * c)} multiplication the {@code (ab * b)}
+     * {@code ((a * b) * c)} multiplication the {@code (ab * c)}
      * or the {@code (a * b)} part or otherwise {@code null}.
      * Outside the constructor it is only used for the final cleanup,
      */
@@ -927,6 +932,26 @@ public class DataIteratorFactory {
     @Override
     public List<String> getDataVariableNames() {
       return dataVariableNames;
+    }
+
+    /**
+     * Returns how many data providers are processed by this data provider multiplier.
+     *
+     * @return how many data providers are processed by this data provider multiplier
+     */
+    public int getProcessedDataProviders() {
+      int result = 0;
+      if (multiplierProvider != null) {
+        result += multiplierProvider.getProcessedDataProviders();
+      } else if (multiplierProviders != null) {
+        result += multiplierProviders.length;
+      }
+      if (multiplicandProvider != null) {
+        result += multiplicandProvider.getProcessedDataProviders();
+      } else if (multiplicandProviders != null) {
+        result += multiplicandProviders.length;
+      }
+      return result;
     }
 
     private Iterator<?>[] createIterators(Object[] dataProviders, List<DataProviderInfo> dataProviderInfos) {

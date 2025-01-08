@@ -5,6 +5,13 @@ include::include.adoc[]
 
 == 2.4 (tbd)
 
+== 2.4-M6 (tbd)
+
+=== Misc
+
+* Fix ExtensionException in OSGi environment for global extension spockIssue:2076[]
+** This issue was introduced with spockPull:1995[]
+
 == 2.4-M5 (2025-01-07)
 
 === Highlights

@@ -56,7 +56,7 @@ public class ExtensionClassesLoader {
 
   private Collection<URL> locateDescriptors(String descriptorPath) {
     try {
-      return ReflectionUtil.getResourcesFromClassLoaders(descriptorPath);
+      return ReflectionUtil.getResourcesFromClassLoader(descriptorPath);
     } catch (Exception e) {
       throw new ExtensionException("Failed to locate extension descriptors", e);
     }

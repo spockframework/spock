@@ -842,6 +842,11 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       DeclarationExpression declExpr = AstUtil.getExpression(stat, DeclarationExpression.class);
       if (declExpr == null) continue;
 
+      // workaround for https://github.com/spockframework/spock/issues/2080
+      if (stat.getStatementLabels() != null) {
+        stat.getStatementLabels().clear();
+      }
+
       ((ExpressionStatement) stat).setExpression(
           new BinaryExpression(
               copyLhsVariableExpressions(declExpr),

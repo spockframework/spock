@@ -86,30 +86,24 @@ public abstract class ReflectionUtil {
   }
 
   /**
-   * Returns the resources from the following classloaders:
-   * <ul>
-   * <li>Spock {@link ClassLoader}</li>
-   * <li>{@code Thread.currentThread().getContextClassLoader()}</li>
-   * </ul>
+   * Returns the resources from the {@code Thread.currentThread().getContextClassLoader()}.
    *
    * @param resourcePath the path of the resource
    * @return the list of resources
    * @throws IOException if the resources can't be loaded
    */
-  public static Collection<URL> getResourcesFromClassLoaders(String resourcePath) throws IOException {
-    ClassLoader spockClassLoader = ReflectionUtil.class.getClassLoader();
-    // We need to use a sorted Set here, to filter out duplicates, if the ContextClassLoader can also reach the Spock classloader
-    TreeSet<URL> set = new TreeSet<>(Comparator.comparing(URL::toString));
-    set.addAll(Collections.list(spockClassLoader.getResources(resourcePath)));
+  public static Collection<URL> getResourcesFromClassLoader(String resourcePath) throws IOException {
     try {
-      //Also resolve resources via ContextClassLoader to better support for runtimes like OSGi
+      //Resolve resources via ContextClassLoader to better support for runtimes like OSGi
+      //Issue #2076: But du not use ContextClassLoader and the Spock ClassLoader and merge the results, because this fails for bundle resources
       ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-      if (contextClassLoader != null && spockClassLoader != contextClassLoader) {
-        set.addAll(Collections.list(contextClassLoader.getResources(resourcePath)));
+      if (contextClassLoader != null) {
+        return Collections.list(contextClassLoader.getResources(resourcePath));
       }
     } catch (SecurityException ignored) {
     }
-    return set;
+    ClassLoader spockClassLoader = ReflectionUtil.class.getClassLoader();
+    return Collections.list(spockClassLoader.getResources(resourcePath));
   }
 
   public static boolean isClassAvailable(String className) {

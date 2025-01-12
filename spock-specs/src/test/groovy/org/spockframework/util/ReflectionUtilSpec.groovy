@@ -58,13 +58,14 @@ class ReflectionUtilSpec extends Specification {
     Thread.currentThread().setContextClassLoader(oldLoader)
   }
 
-  def "getResourcesFromClassLoaders"() {
+  def getResourcesFromClassLoader() {
     when:
-    def res = ReflectionUtil.getResourcesFromClassLoaders(JarFile.MANIFEST_NAME)
+    def res = ReflectionUtil.getResourcesFromClassLoader(JarFile.MANIFEST_NAME)
     then:
     res.size() >= 1
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/2076")
   def "getResourcesFromClassLoaders - ContextClassLoader"() {
     given:
     def oldLoader = Thread.currentThread().getContextClassLoader()
@@ -74,26 +75,36 @@ class ReflectionUtilSpec extends Specification {
       @Override
       Enumeration<URL> getResources(String name) throws IOException {
         if (name == resPath) {
-          def url = new URL("file:/" + resPath)
-          return new Vector([
-            //Check that we filter out duplicates
-            url,
-            url
-          ]).elements()
+          return new Vector([new URL("file:/" + resPath)]).elements()
         }
         return super.getResources(name)
       }
     }
 
     expect:
-    ReflectionUtil.getResourcesFromClassLoaders(resPath).isEmpty()
+    ReflectionUtil.getResourcesFromClassLoader(resPath).isEmpty()
 
     when:
     Thread.currentThread().setContextClassLoader(resCl)
-    def res = ReflectionUtil.getResourcesFromClassLoaders(resPath)
+    def res = ReflectionUtil.getResourcesFromClassLoader(resPath)
     then:
     res.size() == 1
     res[0].toString().contains(resPath)
+
+    cleanup:
+    Thread.currentThread().setContextClassLoader(oldLoader)
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/2076")
+  def "getResourcesFromClassLoaders - ContextClassLoader == null"() {
+    given:
+    def oldLoader = Thread.currentThread().getContextClassLoader()
+
+    when:
+    Thread.currentThread().setContextClassLoader(null)
+    def res = ReflectionUtil.getResourcesFromClassLoader(JarFile.MANIFEST_NAME)
+    then:
+    res.size() >= 1
 
     cleanup:
     Thread.currentThread().setContextClassLoader(oldLoader)

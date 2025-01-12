@@ -3,8 +3,6 @@
 
 include::include.adoc[]
 
-== 2.4 (tbd)
-
 == 2.4-M6 (tbd)
 
 === Misc

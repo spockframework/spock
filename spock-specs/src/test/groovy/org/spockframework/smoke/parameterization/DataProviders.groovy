@@ -303,14 +303,14 @@ where: a << b
     def results = runner.runSpecBody '''
       def 'a feature (#a #b #c #d #e #f)'() {
         expect:
-        a + b == c
+        true
 
         where:
-        [a, b] << [[1, 2], [1, 2]]
+        [a, b] << [['a1', 'b1'], ['a2', 'b2']]
         combined:
-        [c, d] << [[3, 1], [3, 2]]
+        [c, d] << [['c1', 'd1'], ['c2', 'd2']]
         combined:
-        [e, f] << [[1, 2], [3, 4]]
+        [e, f] << [['e1', 'f1'], ['e2', 'f2']]
       }
     '''
 
@@ -318,14 +318,14 @@ where: a << b
     results.testsStartedCount == 1 + (2 * 2 * 2)
     results.testEvents().started().list().testDescriptor.displayName == [
       'a feature (#a #b #c #d #e #f)',
-      'a feature (1 2 3 1 1 2)',
-      'a feature (1 2 3 1 3 4)',
-      'a feature (1 2 3 2 1 2)',
-      'a feature (1 2 3 2 3 4)',
-      'a feature (1 2 3 1 1 2)',
-      'a feature (1 2 3 1 3 4)',
-      'a feature (1 2 3 2 1 2)',
-      'a feature (1 2 3 2 3 4)'
+      'a feature (a1 b1 c1 d1 e1 f1)',
+      'a feature (a1 b1 c1 d1 e2 f2)',
+      'a feature (a1 b1 c2 d2 e1 f1)',
+      'a feature (a1 b1 c2 d2 e2 f2)',
+      'a feature (a2 b2 c1 d1 e1 f1)',
+      'a feature (a2 b2 c1 d1 e2 f2)',
+      'a feature (a2 b2 c2 d2 e1 f1)',
+      'a feature (a2 b2 c2 d2 e2 f2)'
     ]
   }
 

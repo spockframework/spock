@@ -10,7 +10,9 @@ publishing {
     maven(MavenPublication) {
       afterEvaluate {
         pom.packaging = project.ext.packaging
-        if (project.ext.packaging != "pom") {
+        if (project.ext.packaging == "pom") {
+          from(components.javaPlatform)
+        } else {
           from(components.java)
           artifact(sourcesJar)
           artifact(javadocJar)

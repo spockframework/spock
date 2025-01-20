@@ -905,7 +905,7 @@ public class WhereBlockRewriter {
 
     MethodNode filterMethod = new MethodNode(
       InternalIdentifiers.getFilterName(filterBlock.getParent().getAst().getName()),
-      Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_SYNTHETIC,
+      Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
       ClassHelper.VOID_TYPE,
       dataProcessorVars
         .stream()

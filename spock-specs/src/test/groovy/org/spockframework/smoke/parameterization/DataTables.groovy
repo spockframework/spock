@@ -401,7 +401,7 @@ i != 6
   }
 
   @Issue("https://github.com/spockframework/spock/issues/2087")
-  def "filter block supports data variables"() {
+  def "filter block supports derived data variables"() {
     when:
     def result = runner.runFeatureBody '''
 expect:
@@ -434,10 +434,10 @@ def b = 42
 def "a feature"() {
   expect:
   i != 2
-  
+
   where:
   i << (1..2)
-  
+
   filter:
   i != 2
   b == 42
@@ -460,10 +460,10 @@ static b = 42
 def "a feature"() {
   expect:
   i != 2
-  
+
   where:
   i << (1..2)
-  
+
   filter:
   i != 2
   b == 42

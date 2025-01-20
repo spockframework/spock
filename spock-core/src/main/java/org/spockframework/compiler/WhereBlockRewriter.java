@@ -675,7 +675,7 @@ public class WhereBlockRewriter {
 
         // otherwise generate the extractors and closure
         List<Statement> statements = new ArrayList<>();
-        List<String> referencedPreviousVariables = previousVariableAccesses.stream().map(VariableExpression::getName).collect(toList());
+        Set<String> referencedPreviousVariables = previousVariableAccesses.stream().map(VariableExpression::getName).collect(toSet());
         generatePreviousColumnExtractorStatements(referencedPreviousVariables, row, statements);
         ReturnStatement providerStatement = new ReturnStatement(providerExpression);
         providerStatement.setSourcePosition(providerExpression);
@@ -702,7 +702,7 @@ public class WhereBlockRewriter {
     rewriteSimpleParameterization(binExpr, varExpr, true);
   }
 
-  private void generatePreviousColumnExtractorStatements(List<String> referencedPreviousVariables, int row,
+  private void generatePreviousColumnExtractorStatements(Set<String> referencedPreviousVariables, int row,
                                                          List<Statement> statements) {
     for (String referencedPreviousVariable : referencedPreviousVariables) {
       statements.add(new ExpressionStatement(

@@ -29,10 +29,9 @@ public class DataIteratorFactory {
     if (context.getCurrentFeature().getDataProcessorMethod() == null) {
       return new SingleEmptyIterationDataIterator();
     }
-    IDataIterator result = new FeatureDataProviderIterator(supervisor, context);
-    result = new DataProcessorIterator(supervisor, context, result);
-    result = new IterationFilterIterator(supervisor, context, result);
-    return result;
+    return new IterationFilterIterator(supervisor, context,
+      new DataProcessorIterator(supervisor, context,
+        new FeatureDataProviderIterator(supervisor, context)));
   }
 
   private abstract static class BaseDataIterator implements IDataIterator {

@@ -29,7 +29,9 @@ public class DataIteratorFactory {
     if (context.getCurrentFeature().getDataProcessorMethod() == null) {
       return new SingleEmptyIterationDataIterator();
     }
-    return new DataProcessorIterator(supervisor, context, new FeatureDataProviderIterator(supervisor, context));
+    return new IterationFilterIterator(supervisor, context,
+      new DataProcessorIterator(supervisor, context,
+        new FeatureDataProviderIterator(supervisor, context)));
   }
 
   private abstract static class BaseDataIterator implements IDataIterator {
@@ -201,6 +203,88 @@ public class DataIteratorFactory {
     }
   }
 
+  private static class IterationFilterIterator extends BaseDataIterator {
+    private final IDataIterator delegate;
+    private final List<String> dataVariableNames;
+    private final boolean logFilteredIterations;
+    private IStackTraceFilter stackTraceFilter;
+
+    private IterationFilterIterator(IRunSupervisor supervisor, SpockExecutionContext context, IDataIterator delegate) {
+      super(supervisor, context);
+      this.delegate = delegate;
+      dataVariableNames = delegate.getDataVariableNames();
+
+      RunnerConfiguration runnerConfiguration = context
+        .getRunContext()
+        .getConfiguration(RunnerConfiguration.class);
+      logFilteredIterations = runnerConfiguration.logFilteredIterations;
+      if (logFilteredIterations) {
+        stackTraceFilter = runnerConfiguration.filterStackTrace ? new StackTraceFilter(context.getSpec()) : new DummyStackTraceFilter();
+      }
+    }
+
+    @Override
+    public int getEstimatedNumIterations() {
+      return delegate.getEstimatedNumIterations();
+    }
+
+    @Override
+    public List<String> getDataVariableNames() {
+      return dataVariableNames;
+    }
+
+    @Override
+    public void close() throws Exception {
+      delegate.close();
+    }
+
+    @Override
+    public boolean hasNext() {
+      return delegate.hasNext();
+    }
+
+    @Override
+    public Object[] next() {
+      while (true) {
+        Object[] next = delegate.next();
+
+        // delegate.next() will return null if an error occurred
+        if (next == null) {
+          return null;
+        }
+
+        MethodInfo filterMethod = context.getCurrentFeature().getFilterMethod();
+        if (filterMethod == null) {
+          return next;
+        }
+
+        try {
+          // do not use invokeRaw here, as that would report Assertion Error to the supervisor
+          filterMethod.invoke(context.getSharedInstance(), next);
+          return next;
+        } catch (AssertionError ae) {
+          if (logFilteredIterations) {
+            StringJoiner stringJoiner = new StringJoiner(", ", "Filtered iteration [", "]:\n");
+            for (int i = 0; i < dataVariableNames.size(); i++) {
+              stringJoiner.add(dataVariableNames.get(i) + ": " + next[i]);
+            }
+            StringWriter sw = new StringWriter();
+            sw.write(stringJoiner.toString());
+            stackTraceFilter.filter(ae);
+            try (PrintWriter pw = new PrintWriter(sw)) {
+              ae.printStackTrace(pw);
+            }
+            System.err.println(sw);
+          }
+          // filter block does not like these values, try next ones if available
+        } catch (Throwable t) {
+          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(filterMethod, t, getErrorContext()));
+          return null;
+        }
+      }
+    }
+  }
+
   private static class DataProcessorIterator extends BaseDataIterator {
     private final IDataIterator delegate;
     private final List<String> dataVariableNames;
@@ -262,8 +346,6 @@ public class DataIteratorFactory {
     private final int estimatedNumIterations;
     private final List<String> dataVariableNames;
     private boolean firstIteration = true;
-    private boolean logFilteredIterations = true;
-    private IStackTraceFilter stackTraceFilter;
 
     public FeatureDataProviderIterator(IRunSupervisor supervisor, SpockExecutionContext context) {
       super(supervisor, context);
@@ -272,14 +354,6 @@ public class DataIteratorFactory {
       dataProviders = createDataProviders();
       dataProviderIterators = createDataProviderIterators();
       estimatedNumIterations = estimateNumIterations(dataProviderIterators);
-
-      RunnerConfiguration runnerConfiguration = context
-        .getRunContext()
-        .getConfiguration(RunnerConfiguration.class);
-      logFilteredIterations = runnerConfiguration.logFilteredIterations;
-      if (logFilteredIterations) {
-        stackTraceFilter = runnerConfiguration.filterStackTrace ? new StackTraceFilter(context.getSpec()) : new DummyStackTraceFilter();
-      }
     }
 
     @Override
@@ -308,60 +382,29 @@ public class DataIteratorFactory {
       }
       firstIteration = false;
 
-      while (true) {
-        // advances iterators and computes args
-        Object[] next = new Object[dataProviders.length];
-        for (int i = 0; i < dataProviders.length; ) {
-          try {
-            // if the filter block excluded an iteration
-            // this might be called after the last iteration
-            // so just return null if no further data is available
-            // to just cause the iteration to be skipped
-            if (!dataProviderIterators[i].hasNext()) {
-              return null;
-            }
-            Object[] nextValues = dataProviderIterators[i].next();
-            if (nextValues == null) {
-              return null;
-            }
-            System.arraycopy(nextValues, 0, next, i, nextValues.length);
-            i += nextValues.length;
-          } catch (Throwable t) {
-            supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProviders().get(i).getDataProviderMethod(), t, getErrorContext()));
+      // advances iterators and computes args
+      Object[] next = new Object[dataProviders.length];
+      for (int i = 0; i < dataProviders.length; ) {
+        try {
+          // if the filter block excluded an iteration
+          // this might be called after the last iteration
+          // so just return null if no further data is available
+          // to just cause the iteration to be skipped
+          if (!dataProviderIterators[i].hasNext()) {
             return null;
           }
-        }
-
-        MethodInfo filterMethod = context.getCurrentFeature().getFilterMethod();
-
-        if (filterMethod == null) {
-          return next;
-        }
-
-        try {
-          // do not use invokeRaw here, as that would report Assertion Error to the supervisor
-          filterMethod.invoke(null, next);
-          return next;
-        } catch (AssertionError ae) {
-          if (logFilteredIterations) {
-            StringJoiner stringJoiner = new StringJoiner(", ", "Filtered iteration [", "]:\n");
-            for (int i = 0; i < dataVariableNames.size(); i++) {
-              stringJoiner.add(dataVariableNames.get(i) + ": " + next[i]);
-            }
-            StringWriter sw = new StringWriter();
-            sw.write(stringJoiner.toString());
-            stackTraceFilter.filter(ae);
-            try (PrintWriter pw = new PrintWriter(sw)) {
-              ae.printStackTrace(pw);
-            }
-            System.err.println(sw);
+          Object[] nextValues = dataProviderIterators[i].next();
+          if (nextValues == null) {
+            return null;
           }
-          // filter block does not like these values, try next ones if available
+          System.arraycopy(nextValues, 0, next, i, nextValues.length);
+          i += nextValues.length;
         } catch (Throwable t) {
-          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(filterMethod, t, getErrorContext()));
+          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProviders().get(i).getDataProviderMethod(), t, getErrorContext()));
           return null;
         }
       }
+      return next;
     }
 
     @Override

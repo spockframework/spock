@@ -400,6 +400,84 @@ i != 6
     result.testsSucceededCount == 6
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/2087")
+  def "filter block supports derived data variables"() {
+    when:
+    def result = runner.runFeatureBody '''
+expect:
+i != 2
+
+where:
+i << (1..2)
+b = 42
+
+filter:
+i != 2
+b == 42
+    '''
+
+    then:
+    result.testsAbortedCount == 0
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsStartedCount == 2
+    result.testsSucceededCount == 2
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/2087")
+  def "filter block supports shared fields"() {
+    when:
+    def result = runner.runSpecBody '''
+@Shared
+def b = 42
+
+def "a feature"() {
+  expect:
+  i != 2
+
+  where:
+  i << (1..2)
+
+  filter:
+  i != 2
+  b == 42
+}
+    '''
+
+    then:
+    result.testsAbortedCount == 0
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsStartedCount == 2
+    result.testsSucceededCount == 2
+  }
+
+  def "filter block supports static fields"() {
+    when:
+    def result = runner.runSpecBody '''
+static b = 42
+
+def "a feature"() {
+  expect:
+  i != 2
+
+  where:
+  i << (1..2)
+
+  filter:
+  i != 2
+  b == 42
+}
+    '''
+
+    then:
+    result.testsAbortedCount == 0
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsStartedCount == 2
+    result.testsSucceededCount == 2
+  }
+
   def "filter block can not exclude all iterations"() {
     when:
     runner.runFeatureBody '''

@@ -37,7 +37,7 @@ public static org.spockframework.runtime.model.DataVariableMultiplication[] $spo
     return new org.spockframework.runtime.model.DataVariableMultiplication[]{new org.spockframework.runtime.model.DataVariableMultiplication(new java.lang.String[]{'a', 'b'}, new org.spockframework.runtime.model.DataVariableMultiplicationFactor(new java.lang.String[]{'a'}), new org.spockframework.runtime.model.DataVariableMultiplicationFactor(new java.lang.String[]{'b'}))}
 }
 
-public static void $spock_feature_0_0filter(java.lang.Object a, java.lang.Object b) {
+public void $spock_feature_0_0filter(java.lang.Object a, java.lang.Object b) {
     org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
     try {

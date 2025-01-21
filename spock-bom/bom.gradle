@@ -1,21 +1,18 @@
-apply from: script("publishMaven")
+plugins {
+  id('java-platform')
+}
+apply from: script('publishMaven')
 
-def modifyBom = { xml ->
-  def projectNode = xml.asNode()
+(rootProject.subprojects - project).each {
+  evaluationDependsOn(it.path)
+}
 
-  projectNode.appendNode('properties').appendNode('spock.version', project.fullVersion)
-
-  def dependencyManagement = projectNode.appendNode('dependencyManagement').appendNode('dependencies')
-
-  def mvnProjects = project.parent.subprojects.findAll { it.plugins.hasPlugin('maven-publish') } // find all published projects
-  mvnProjects -= project // don't self reference
-
-  String groupId = project.group
-  mvnProjects.name.each {
-    dependencyManagement.appendNode('dependency').with { dep ->
-      dep.appendNode('groupId', groupId)
-      dep.appendNode('artifactId', it)
-      dep.appendNode('version', '${spock.version}')
+dependencies {
+  constraints {
+    def mvnProjects = rootProject.subprojects.findAll { it.plugins.hasPlugin('maven-publish') } // find all published projects
+    mvnProjects -= project // don't self reference
+    mvnProjects.each {
+      api("${it.group}:${it.name}:${it.version}")
     }
   }
 }
@@ -23,9 +20,3 @@ def modifyBom = { xml ->
 ext.displayName = 'Spock Framework - Bill of Materials'
 description = 'This bill of materials provides managed spock dependencies.'
 ext.packaging = 'pom'
-
-publishing.publications.maven {
-  pom {
-    withXml modifyBom
-  }
-}

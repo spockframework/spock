@@ -17,6 +17,11 @@
  */
 
 @file:Import("common.main.kts")
+
+@file:Repository("https://repo.maven.apache.org/maven2/")
+// work-around for https://youtrack.jetbrains.com/issue/KT-69145
+@file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.2.0")
+
 @file:Repository("https://bindings.krzeminski.it/")
 @file:DependsOn("actions:checkout:v4")
 @file:DependsOn("github:codeql-action__analyze:v3")

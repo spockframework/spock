@@ -250,7 +250,7 @@ class DataTables extends EmbeddedSpecification {
   def "cell references are evaluated correctly in the method's name"() {
     when:
     def result = runner.runSpecBody '''
-      def 'a = #a, b = #b'() {
+      def "a = #a, b = #b"() {
         expect:
         true
 
@@ -265,7 +265,7 @@ class DataTables extends EmbeddedSpecification {
     result.testEvents().finished().list().testDescriptor.displayName == ["a = 0, b = 1", "a = 2, b = 2", "a = #a, b = #b"]
   }
 
-  def 'data tables can be referenced from following variables'() {
+  def "data tables can be referenced from following variables"() {
     expect:
     c == 3
 
@@ -289,10 +289,10 @@ class DataTables extends EmbeddedSpecification {
 
   @Issue('https://github.com/spockframework/spock/issues/1062')
   @Unroll
-  def 'data tables with #separators can be combined'() {
+  def "data tables with #separators can be combined"() {
     when:
     def results = runner.runSpecBody """
-      def 'a feature (#a #b #c)'() {
+      def "a feature (#a #b #c)"() {
         expect:
         true
 
@@ -330,7 +330,7 @@ class DataTables extends EmbeddedSpecification {
     '|'  | ';'  | 'mixed separators'
   }
 
-  def 'combined data table columns can use previous data table column values within one table'() {
+  def "combined data table columns can use previous data table column values within one table"() {
     expect:
     a == b
 
@@ -344,7 +344,7 @@ class DataTables extends EmbeddedSpecification {
     c << (1..3)
   }
 
-  def 'filter block can exclude first iteration'() {
+  def "filter block can exclude first iteration"() {
     when:
     def result = runner.runFeatureBody '''
 expect:
@@ -372,7 +372,7 @@ i != 1
     result.testsSucceededCount == 6
   }
 
-  def 'filter block can exclude last iteration'() {
+  def "filter block can exclude last iteration"() {
     when:
     def result = runner.runFeatureBody '''
 expect:
@@ -400,7 +400,85 @@ i != 6
     result.testsSucceededCount == 6
   }
 
-  def 'filter block can not exclude all iterations'() {
+  @Issue("https://github.com/spockframework/spock/issues/2087")
+  def "filter block supports derived data variables"() {
+    when:
+    def result = runner.runFeatureBody '''
+expect:
+i != 2
+
+where:
+i << (1..2)
+b = 42
+
+filter:
+i != 2
+b == 42
+    '''
+
+    then:
+    result.testsAbortedCount == 0
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsStartedCount == 2
+    result.testsSucceededCount == 2
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/2087")
+  def "filter block supports shared fields"() {
+    when:
+    def result = runner.runSpecBody '''
+@Shared
+def b = 42
+
+def "a feature"() {
+  expect:
+  i != 2
+
+  where:
+  i << (1..2)
+
+  filter:
+  i != 2
+  b == 42
+}
+    '''
+
+    then:
+    result.testsAbortedCount == 0
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsStartedCount == 2
+    result.testsSucceededCount == 2
+  }
+
+  def "filter block supports static fields"() {
+    when:
+    def result = runner.runSpecBody '''
+static b = 42
+
+def "a feature"() {
+  expect:
+  i != 2
+
+  where:
+  i << (1..2)
+
+  filter:
+  i != 2
+  b == 42
+}
+    '''
+
+    then:
+    result.testsAbortedCount == 0
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsStartedCount == 2
+    result.testsSucceededCount == 2
+  }
+
+  def "filter block can not exclude all iterations"() {
     when:
     runner.runFeatureBody '''
 expect:
@@ -426,7 +504,7 @@ false
 
   @ResourceLock(SYSTEM_OUT)
   @ResourceLock(SYSTEM_ERR)
-  def 'filtered iterations are logged'(@Snapshot Snapshotter snapshotter) {
+  def "filtered iterations are logged"(@Snapshot Snapshotter snapshotter) {
     given:
     snapshotter.normalizedWith {
       it.normalize().replaceAll(/(\tat apackage\.ASpec\.a feature\().*(\.groovy:15\))/, '$1script$2')
@@ -476,7 +554,7 @@ i == 1
   }
 
   @PendingFeature(reason = 'previous column access across tables does not yet work as expected with cross-multiplication')
-  def 'combined data table columns can use previous data table column values across tables'() {
+  def "combined data table columns can use previous data table column values across tables"() {
     when:
     def results = runner.runFeatureBody '''
       expect:
@@ -512,10 +590,10 @@ i == 1
     results.testsSucceededCount == 1 + 6
   }
 
-  def 'data tables with different widths can be combined'() {
+  def "data tables with different widths can be combined"() {
     when:
     def results = runner.runSpecBody '''
-      def 'a feature (#a #b #c #d #e)'() {
+      def "a feature (#a #b #c #d #e)"() {
         expect:
         true
 
@@ -538,10 +616,10 @@ i == 1
     ]
   }
 
-  def 'data tables starting with table separator can be combined'() {
+  def "data tables starting with table separator can be combined"() {
     when:
     def results = runner.runSpecBody '''
-      def 'a feature (#a #b #c #d #e)'() {
+      def "a feature (#a #b #c #d #e)"() {
         expect:
         true
 
@@ -565,10 +643,10 @@ i == 1
     ]
   }
 
-  def 'data tables ending with table separator can be combined'() {
+  def "data tables ending with table separator can be combined"() {
     when:
     def results = runner.runSpecBody '''
-      def 'a feature (#a #b #c #d #e)'() {
+      def "a feature (#a #b #c #d #e)"() {
         expect:
         true
 
@@ -592,10 +670,10 @@ i == 1
     ]
   }
 
-  def 'data tables and data pipes can be combined'() {
+  def "data tables and data pipes can be combined"() {
     when:
     def results = runner.runSpecBody '''
-      def 'a feature (#a #b #c)'() {
+      def "a feature (#a #b #c)"() {
         expect:
         true
 
@@ -617,10 +695,10 @@ i == 1
     ]
   }
 
-  def 'data pipes and data tables can be combined'() {
+  def "data pipes and data tables can be combined"() {
     when:
     def results = runner.runSpecBody '''
-      def 'a feature (#a #b #c)'() {
+      def "a feature (#a #b #c)"() {
         expect:
         true
 

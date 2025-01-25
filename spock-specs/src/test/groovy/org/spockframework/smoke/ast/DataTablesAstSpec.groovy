@@ -16,6 +16,7 @@ package org.spockframework.smoke.ast
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.specs.extension.SpockSnapshotter
+import spock.lang.Issue
 import spock.lang.Snapshot
 import spock.util.Show
 
@@ -78,6 +79,26 @@ class DataTablesAstSpec extends EmbeddedSpecification {
       filter:
       a == 1
       b == 2
+    ''', EnumSet.of(Show.METHODS)
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
+  @Issue('https://github.com/spockframework/spock/issues/2083')
+  def 'using a variable in a cell multiple times compiles'() {
+    given:
+    snapshotter.featureBody()
+
+    when:
+    def result = compiler.transpileFeatureBody '''
+        expect:
+        a + b == result
+
+        where:
+        a | b | result
+        1 | 2 | a + b
+        3 | 4 | a + a // causes the compile error
     ''', EnumSet.of(Show.METHODS)
 
     then:

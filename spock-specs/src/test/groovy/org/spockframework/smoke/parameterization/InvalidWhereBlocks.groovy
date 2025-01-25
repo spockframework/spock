@@ -205,25 +205,6 @@ def foo() {
     e.message.contains("@Shared")
   }
 
-  def "filter block may not reference local variables"() {
-    when:
-    compiler.compileFeatureBody '''
-def local = 1
-
-expect:
-x == 1
-
-where:
-x = 1
-
-filter:
-local
-    '''
-
-    then:
-    thrown(SyntaxException)
-  }
-
   def 'referencing a data variable in a data provider is not allowed'() {
     when:
     runner.runFeatureBody """

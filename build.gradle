@@ -98,6 +98,7 @@ allprojects {
 apply from: script("ide")
 
 subprojects {
+  if (it.name == "spock-bom") return
   apply plugin: "org.spockframework.base"
 
   java {
@@ -154,6 +155,7 @@ subprojects {
   }
 
   dependencies {
+    api platform(projects.spockBom)
     implementation(project.name == "spock-gradle" ? [] : groovylibs.groovy)
   }
 
@@ -190,7 +192,7 @@ tasks.register("collectTestXml") {
 tasks.register("codeCoverageReport", JacocoReport) {
   group = 'Coverage reports'
   description = "Creates an aggregate coverage for the whole project."
-  def reportingProjects = subprojects
+  def reportingProjects = subprojects - project(projects.spockBom.path)
   dependsOn(reportingProjects.tasks.collectMany { it.withType(Test) })
 
   additionalSourceDirs.from(reportingProjects.sourceSets.main.allSource.srcDirs)
@@ -300,8 +302,8 @@ tasks.register("tagRelease", Exec) {
 tasks.register("javadoc", Javadoc) {
   title "Spock Framework API Documentation ($variantLessVersion)"
   destinationDir file("build/javadoc/$variantLessVersion")
-  source subprojects.collect { project -> project.tasks.named("javadoc").map { it.source } }
-  classpath = files(subprojects.collect { project -> project.tasks.named("javadoc").map { it.classpath } })
+  source((subprojects - project(projects.spockBom.path)).collect { project -> project.tasks.named("javadoc").map { it.source } })
+  classpath = files((subprojects - project(projects.spockBom.path)).collect { project -> project.tasks.named("javadoc").map { it.classpath } })
 }
 
 configureJavadoc(tasks.named("javadoc"), true)
@@ -310,9 +312,9 @@ tasks.register("groovydoc", Groovydoc) {
   docTitle "Spock Framework API Documentation ($variantLessVersion)"
   windowTitle "Spock Framework API Documentation ($variantLessVersion)"
   destinationDir file("build/groovydoc/$variantLessVersion")
-  source subprojects.collect { project -> project.tasks.named("groovydoc").map { it.source } }
-  classpath = files(subprojects.collect { project -> project.tasks.named("groovydoc").map { it.classpath } })
-  groovyClasspath = files(projects.spockCore.dependencyProject.tasks.named("groovydoc").map { it.groovyClasspath })
+  source((subprojects - project(projects.spockBom.path)).collect { project -> project.tasks.named("groovydoc").map { it.source } })
+  classpath = files((subprojects - project(projects.spockBom.path)).collect { project -> project.tasks.named("groovydoc").map { it.classpath } })
+  groovyClasspath = files(project(projects.spockCore.path).tasks.named("groovydoc").map { it.groovyClasspath })
 
   access = GroovydocAccess.PROTECTED
   processScripts = false

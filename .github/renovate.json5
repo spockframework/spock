@@ -24,6 +24,16 @@
       matchPackagePrefixes: ["org.mockito:"],
       matchCurrentValue: "/^4\\./",
       allowedVersions: "(,5.0)"
+    },
+    {
+      matchPackagePrefixes: ["org.spockframework:spock-"],
+      matchCurrentVersion: "/-groovy-3\\.0$/",
+      allowedVersions: "/-groovy-3\\.0$/"
+    },
+    {
+      matchPackagePrefixes: ["org.spockframework:spock-"],
+      matchCurrentVersion: "/-groovy-4\\.0$/",
+      allowedVersions: "/-groovy-4\\.0$/"
     }
   ]
 }

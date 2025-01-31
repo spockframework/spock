@@ -1,39 +1,46 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
   extends: [
-    "config:recommended"
+    'config:recommended',
   ],
-  // Don't manage versions in spock modules
-  // we want to keep low versions for baseline compatibility
-  ignorePaths: ["spock-*/**"],
+  ignorePaths: [
+    'spock-*/**',
+  ],
   packageRules: [
-    // Disable major version upgrades for Groovy versions
-    // as we want to keep one for each major version.
-    // The same applies for mockito as we test with both 4 and 5
     {
-      matchPackagePrefixes: ["org.codehaus.groovy:"],
-      matchCurrentValue: "/^2\\./",
-      allowedVersions: "(,3.0)"
+      matchCurrentValue: '/^2\\./',
+      allowedVersions: '(,3.0)',
+      matchPackageNames: [
+        'org.codehaus.groovy:{/,}**',
+      ],
     },
     {
-      matchPackagePrefixes: ["org.apache.groovy:"],
-      matchCurrentValue: "/^4\\./",
-      allowedVersions: "(,5.0)"
+      matchCurrentValue: '/^4\\./',
+      allowedVersions: '(,5.0)',
+      matchPackageNames: [
+        'org.apache.groovy:{/,}**',
+      ],
     },
     {
-      matchPackagePrefixes: ["org.mockito:"],
-      matchCurrentValue: "/^4\\./",
-      allowedVersions: "(,5.0)"
+      matchCurrentValue: '/^4\\./',
+      allowedVersions: '(,5.0)',
+      matchPackageNames: [
+        'org.mockito:{/,}**',
+      ],
     },
     {
-      matchPackagePrefixes: ["org.spockframework:spock-"],
-      matchCurrentVersion: "/-groovy-3\\.0$/",
-      allowedVersions: "/-groovy-3\\.0$/"
+      matchCurrentVersion: '/-groovy-3\\.0$/',
+      allowedVersions: '/-groovy-3\\.0$/',
+      matchPackageNames: [
+        'org.spockframework:spock-{/,}**',
+      ],
     },
     {
-      matchPackagePrefixes: ["org.spockframework:spock-"],
-      matchCurrentVersion: "/-groovy-4\\.0$/",
-      allowedVersions: "/-groovy-4\\.0$/"
-    }
-  ]
+      matchCurrentVersion: '/-groovy-4\\.0$/',
+      allowedVersions: '/-groovy-4\\.0$/',
+      matchPackageNames: [
+        'org.spockframework:spock-{/,}**',
+      ],
+    },
+  ],
 }

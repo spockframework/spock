@@ -11,7 +11,7 @@ mockito5 = '5.15.2'
 workflows-kotlin = "2.1.0"
 
 [libraries]
-jetbrains-annotations = "org.jetbrains:annotations:26.0.1"
+jetbrains-annotations = "org.jetbrains:annotations:26.0.2"
 asciidoctorj = { module = "org.asciidoctor:asciidoctorj", version.ref = "asciidoctorj" }
 asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
 asmUtil = { module = "org.ow2.asm:asm-util", version.ref = "asm" }

@@ -11,27 +11,27 @@
     // as we want to keep one for each major version.
     // The same applies for mockito as we test with both 4 and 5
     {
-      matchPackagePrefixes: ["org.codehaus.groovy:"],
+      matchPackageNames: ["/^org.codehaus.groovy:/"],
       matchCurrentValue: "/^2\\./",
       allowedVersions: "(,3.0)"
     },
     {
-      matchPackagePrefixes: ["org.apache.groovy:"],
+      matchPackageNames: ["/^org.apache.groovy:/"],
       matchCurrentValue: "/^4\\./",
       allowedVersions: "(,5.0)"
     },
     {
-      matchPackagePrefixes: ["org.mockito:"],
+      matchPackageNames: ["/^org.mockito:/"],
       matchCurrentValue: "/^4\\./",
       allowedVersions: "(,5.0)"
     },
     {
-      matchPackagePrefixes: ["org.spockframework:spock-"],
+      matchPackageNames: ["/^org.spockframework:spock-/"],
       matchCurrentVersion: "/-groovy-3\\.0$/",
       allowedVersions: "/-groovy-3\\.0$/"
     },
     {
-      matchPackagePrefixes: ["org.spockframework:spock-"],
+      matchPackageNames: ["/^org.spockframework:spock-/"],
       matchCurrentVersion: "/-groovy-4\\.0$/",
       allowedVersions: "/-groovy-4\\.0$/"
     }

@@ -1,6 +1,5 @@
 package org.spockframework.smoke.condition
 
-
 import static org.spockframework.smoke.condition.ValueRendering.DefaultToString
 
 class ArrayComparisonRendering extends ConditionRenderingSpec {
@@ -43,6 +42,51 @@ x == null
 [${a.dump()}, ${b.dump()}]
     """, {
       assert x == null
+    }
+  }
+
+  def "primitive two-dimensional array value"() {
+    expect:
+    isRendered """
+x == y
+| |  |
+| |  [[1, 2], [1, 5]]
+| false
+[[1, 2], [2, 5]]
+    """, {
+      def x = [[1, 2], [2, 5]] as int[][]
+      def y = [[1, 2], [1, 5]] as int[][]
+      assert x == y
+    }
+  }
+
+  def "object two-dimensional array value"() {
+    expect:
+    isRendered """
+x == y
+| |  |
+| |  [[one, two], [one, five]]
+| false
+[[one, two], [two, five]]
+    """, {
+      def x = [["one", "two"], ["two", "five"]] as String[][]
+      def y = [["one", "two"], ["one", "five"]] as String[][]
+      assert x == y
+    }
+  }
+
+  def "multidimensional array value with higher cardinality"() {
+    expect:
+    isRendered """
+x == y
+| |  |
+| |  [[[1, 2], [1, 5]], [[1, 2], [1, 5]]]
+| false
+[[[1, 2], [2, 5]], [[1, 2], [2, 5]]]
+    """, {
+      def x = [[[1, 2], [2, 5]], [[1, 2], [2, 5]]] as int[][][]
+      def y = [[[1, 2], [1, 5]], [[1, 2], [1, 5]]] as int[][][]
+      assert x == y
     }
   }
 

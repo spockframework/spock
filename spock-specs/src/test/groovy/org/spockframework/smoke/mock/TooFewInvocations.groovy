@@ -16,15 +16,14 @@
 
 package org.spockframework.smoke.mock
 
+import org.hamcrest.CoreMatchers
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.mock.TooFewInvocationsError
 
 import java.util.regex.Pattern
 
-import org.hamcrest.CoreMatchers
-
 class TooFewInvocations extends EmbeddedSpecification {
-  static Pattern EMPTY_LINE = Pattern.compile(/^ ++$/,Pattern.MULTILINE)
+  static Pattern EMPTY_LINE = Pattern.compile(/^ ++$/, Pattern.MULTILINE)
 
   def "shows unmatched invocations, ordered by similarity"() {
     when:
@@ -559,6 +558,7 @@ One or more arguments(s) didn't match:
     """.trim())
     exceptionMessage == expected
   }
+
   def "can describe code argument with verifyAll"() {
     when:
     runner.addClassImport(PersonWithFirstname)
@@ -1157,6 +1157,40 @@ then:
     exceptionMessage =~ /(?m)^\Q1 * list.add(<org.spockframework.smoke.mock.TooFewInvocations\E.Person@\w+ name=Foo age=18>\)$/
   }
 
+  def "correctly renders multidimensional arrays"() {
+    when:
+    runner.runFeatureBody("""
+def list = Mock(List)
+def arr = [[1, 2], [2, 5]] as int[][]
+
+when:
+list.add(arr)
+
+then:
+1 * list.add('bar')
+    """)
+
+    then:
+    TooFewInvocationsError e = thrown()
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
+Too few invocations for:
+
+1 * list.add('bar')   (0 invocations)
+
+Unmatched invocations (ordered by similarity):
+
+1 * list.add([[1, 2], [2, 5]])
+One or more arguments(s) didn't match:
+0: argument == expected
+   |        |  |
+   |        |  bar
+   |        false
+   [[1, 2], [2, 5]]
+    """.trim())
+    exceptionMessage == expected
+  }
+
   String normalize(String str) {
     EMPTY_LINE.matcher(str.normalize().trim()).replaceAll('')
   }
@@ -1165,7 +1199,7 @@ then:
     String name
     int age
 
-    String wife(String firstName, String surname, int age, String address){
+    String wife(String firstName, String surname, int age, String address) {
       return ''
     }
 
@@ -1173,7 +1207,7 @@ then:
       return ''
     }
 
-    String named(Map args, String a, String b){
+    String named(Map args, String a, String b) {
       return ''
     }
   }

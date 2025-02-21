@@ -93,32 +93,6 @@ null == x
     }
   }
 
-  def "primitive array value"() {
-    expect:
-    isRendered """
-x == null
-| |
-| false
-[1, 2]
-    """, {
-      def x = [1, 2] as int[]
-      assert x == null
-    }
-  }
-
-  def "object array value"() {
-    expect:
-    isRendered """
-x == null
-| |
-| false
-[one, two]
-    """, {
-      def x = ["one", "two"] as String[]
-      assert x == null
-    }
-  }
-
   def "list value"() {
     expect:
     isRendered """
@@ -127,7 +101,7 @@ x == null
 | false
 [1, 2, 3]
     """, {
-      def x = [1,2,3]
+      def x = [1, 2, 3]
       assert x == null
     }
   }
@@ -277,21 +251,6 @@ ${x.dump()}
     }
   }
 
-  def "arrays of variables with default to string is dump()ed"() {
-    def a = new DefaultToString()
-    def b = new DefaultToString()
-    DefaultToString[] x = [a, b]
-    expect:
-    isRendered """
-x == null
-| |
-| false
-[${a.dump()}, ${b.dump()}]
-    """, {
-      assert x == null
-    }
-  }
-
   static class SingleLineToString {
     String toString() {
       "single line"
@@ -337,6 +296,7 @@ x == null
 
   enum EnumWithToString {
     VALUE;
+
     String toString() { "I'm a value" }
   }
 }

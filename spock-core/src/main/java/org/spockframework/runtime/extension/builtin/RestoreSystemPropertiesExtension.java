@@ -30,13 +30,13 @@ public class RestoreSystemPropertiesExtension implements IStatelessAnnotationDri
   public void visitSpecAnnotation(RestoreSystemProperties annotation, SpecInfo spec) {
     spec.addExclusiveResource(EXCLUSIVE_RESOURCE);
     for (FeatureInfo feature : spec.getFeatures()) {
-      feature.addInterceptor(RestoreSystemPropertiesInterceptor.INSTANCE);
+      feature.addIterationInterceptor(RestoreSystemPropertiesInterceptor.INSTANCE);
     }
   }
 
   @Override
   public void visitFeatureAnnotation(RestoreSystemProperties annotation, FeatureInfo feature) {
-    feature.addInterceptor(RestoreSystemPropertiesInterceptor.INSTANCE);
+    feature.addIterationInterceptor(RestoreSystemPropertiesInterceptor.INSTANCE);
     feature.addExclusiveResource(EXCLUSIVE_RESOURCE);
   }
 }

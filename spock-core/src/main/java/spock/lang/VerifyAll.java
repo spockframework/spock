@@ -26,10 +26,9 @@ import java.lang.annotation.Target;
  * and void method invocations will not be considered conditions.
  * The method can be defined outside the {@link Specification} class.
  * The method must have a {@code void} return type.
- * Conditions on all levels will be transformed into assertions.
- * The test will fail on the first failing assertion.
+ * In contrast to {@link Verify}, all conditions will be evaluated before failing the test.
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Verify {
+public @interface VerifyAll {
 }

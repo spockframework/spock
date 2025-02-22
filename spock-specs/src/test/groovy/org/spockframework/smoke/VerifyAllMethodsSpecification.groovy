@@ -14,26 +14,27 @@
 
 package org.spockframework.smoke
 
+import org.opentest4j.MultipleFailuresError
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
 
-class VerifyMethodsSpecification extends EmbeddedSpecification {
+class VerifyAllMethodsSpecification extends EmbeddedSpecification {
 
   def setup() {
     runner.throwFailure = false
   }
 
-  def "@Verify method succeeds"() {
+  def "@VerifyAll method succeeds"() {
     when:
     def result = runner.runSpecBody '''
-@Verify
-private static void isPositive(int x) {
+@VerifyAll
+private static void isPositiveAndEven(int x) {
     x > 0
 }
 
 def "feature"() {
     expect:
-    isPositive(2)
+    isPositiveAndEven(2)
 }
 '''
 
@@ -41,57 +42,39 @@ def "feature"() {
     result.failures.empty
   }
 
-  def "@Verify method fails"() {
+  def "@VerifyAll method fails"() {
     when:
     def result = runner.runSpecBody '''
-@Verify
-private static void isPositive(int x) {
+@VerifyAll
+private static void isPositiveAndEven(int x) {
     x > 0
+    x % 2 == 0
 }
 
 def "feature"() {
     expect:
-    isPositive(-2)
+    isPositiveAndEven(-3)
 }
 '''
 
     then:
     result.failures.size() == 1
-    with(result.failures[0].exception, ConditionNotSatisfiedError) {
-      condition.text == "x > 0"
+    with(result.failures[0].exception.cause, MultipleFailuresError) {
+      failures.size() == 2
+      with(failures[0], ConditionNotSatisfiedError) {
+        condition.text == 'x > 0'
+      }
+      with(failures[1], ConditionNotSatisfiedError) {
+        condition.text == 'x % 2 == 0'
+      }
     }
   }
 
-  def "uses @Verify methods from non-spec helper classes"() {
+  def "uses @VerifyAll methods from non-spec helper classes"() {
     when:
     def result = runner.runWithImports '''
 class Assertions {
-  @Verify
-  static void isPositive(int x) {
-      x > 0
-  }
-}
-
-class SpecWithHelpers extends Specification {
-  def "feature"() {
-      expect:
-      Assertions.isPositive(-2)
-  }
-}
-'''
-
-    then:
-    result.failures.size() == 1
-    with(result.failures[0].exception, ConditionNotSatisfiedError) {
-      condition.text == "x > 0"
-    }
-  }
-
-  def "first failing assertion fails the feature"() {
-    when:
-    def result = runner.runWithImports '''
-class Assertions {
-  @Verify
+  @VerifyAll
   static void isPositiveAndEven(int x) {
       x > 0
       x % 2 == 0
@@ -101,15 +84,21 @@ class Assertions {
 class SpecWithHelpers extends Specification {
   def "feature"() {
       expect:
-      Assertions.isPositiveAndEven(-2)
+      Assertions.isPositiveAndEven(-3)
   }
 }
 '''
 
     then:
     result.failures.size() == 1
-    with(result.failures[0].exception, ConditionNotSatisfiedError) {
-      condition.text == "x > 0"
+    with(result.failures[0].exception.cause, MultipleFailuresError) {
+      failures.size() == 2
+      with(failures[0], ConditionNotSatisfiedError) {
+        condition.text == 'x > 0'
+      }
+      with(failures[1], ConditionNotSatisfiedError) {
+        condition.text == 'x % 2 == 0'
+      }
     }
   }
 }

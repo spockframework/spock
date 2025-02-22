@@ -6,8 +6,10 @@ import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.control.SourceUnit;
 import org.spockframework.compiler.condition.DefaultConditionErrorRecorders;
 import org.spockframework.compiler.condition.IConditionErrorRecorders;
+import org.spockframework.compiler.condition.VerifyAllMethodRewriter;
 import org.spockframework.compiler.condition.VerifyMethodRewriter;
 import spock.lang.Verify;
+import spock.lang.VerifyAll;
 
 import static org.spockframework.compiler.AstUtil.hasAnnotation;
 
@@ -59,8 +61,13 @@ class HelperMethodsVisitor extends ClassCodeVisitorSupport implements IRewriteRe
 
   @Override
   public void visitMethod(MethodNode node) {
-    if (hasAnnotation(node, Verify.class) && node.isVoidMethod()) {
-      VerifyMethodRewriter.rewrite(node, this);
+    if (node.isVoidMethod()) {
+      if (hasAnnotation(node, Verify.class)) {
+        new VerifyMethodRewriter(node, this).rewrite();
+      }
+      if (hasAnnotation(node, VerifyAll.class)) {
+        new VerifyAllMethodRewriter(node, this).rewrite();
+      }
     }
     super.visitMethod(node);
   }

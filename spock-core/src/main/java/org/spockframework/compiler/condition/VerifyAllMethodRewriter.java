@@ -20,15 +20,15 @@ import org.spockframework.compiler.IRewriteResources;
 
 import java.util.List;
 
-public class VerifyMethodRewriter extends BaseVerifyMethodRewriter {
+public class VerifyAllMethodRewriter extends BaseVerifyMethodRewriter {
 
-  public VerifyMethodRewriter(MethodNode methodNode, IRewriteResources resources) {
+  public VerifyAllMethodRewriter(MethodNode methodNode, IRewriteResources resources) {
     super(methodNode, resources);
   }
 
   @Override
   void defineErrorCollector(List<Statement> statements) {
-    resources.getErrorRecorders().defineErrorRethrower(statements);
+    resources.getErrorRecorders().defineErrorCollector(statements);
   }
 
 }

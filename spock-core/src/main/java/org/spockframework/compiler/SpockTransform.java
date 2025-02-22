@@ -59,10 +59,24 @@ public class SpockTransform implements ASTTransformation {
       try {
         List<ClassNode> classes = sourceUnit.getAST().getClasses();
 
-        for (ClassNode clazz : classes)
-          if (isSpec(clazz)) processSpec(sourceUnit, clazz, errorReporter, sourceLookup);
+        for (ClassNode clazz : classes) {
+          if (isSpec(clazz)) {
+            processSpec(sourceUnit, clazz, errorReporter, sourceLookup);
+          }
+          processClassWithHelperMethods(sourceUnit, clazz, errorReporter, sourceLookup);
+        }
       } finally {
         sourceLookup.close();
+      }
+    }
+
+    private void processClassWithHelperMethods(SourceUnit sourceUnit, ClassNode clazz, ErrorReporter errorReporter, SourceLookup sourceLookup) {
+      try {
+        new HelperMethodsVisitor(sourceUnit, nodeCache, errorReporter, sourceLookup).visitClass(clazz);
+      } catch (Exception e) {
+        errorReporter.error(
+          "Unexpected error during compilation of '%s'. Maybe you have used invalid Spock syntax? Anyway, please file a bug report at https://issues.spockframework.org.",
+          e, clazz.getName());
       }
     }
 

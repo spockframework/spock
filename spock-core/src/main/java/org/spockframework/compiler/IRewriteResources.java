@@ -16,34 +16,21 @@
 
 package org.spockframework.compiler;
 
+import org.codehaus.groovy.ast.ASTNode;
+import org.spockframework.compiler.condition.IConditionErrorRecorders;
+
 import java.util.List;
 
-import org.codehaus.groovy.ast.ASTNode;
-import org.codehaus.groovy.ast.expr.Expression;
-import org.codehaus.groovy.ast.expr.MethodCallExpression;
-import org.codehaus.groovy.ast.expr.VariableExpression;
-import org.codehaus.groovy.ast.stmt.Statement;
-
-import org.spockframework.compiler.model.Block;
-import org.spockframework.compiler.model.Method;
-import org.spockframework.compiler.model.Spec;
-
 /**
- *
  * @author Peter Niederwieser
  */
 public interface IRewriteResources {
-  Spec getCurrentSpec();
-  Method getCurrentMethod();
-  Block getCurrentBlock();
-
-  void defineValueRecorder(List<Statement> stats, String variableNameSuffix);
-  void defineErrorRethrower(List<Statement> stats);
-  void defineErrorCollector(List<Statement> stats, String variableNameSuffix);
-  VariableExpression captureOldValue(Expression oldValue);
-  MethodCallExpression getMockInvocationMatcher();
-
   AstNodeCache getAstNodeCache();
+
   String getSourceText(ASTNode node);
+
   ErrorReporter getErrorReporter();
+
+  IConditionErrorRecorders getErrorRecorders();
+
 }

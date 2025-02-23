@@ -576,30 +576,19 @@ false                         ...
 
 Not very helpful. Fortunately, we can do better:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-void matchesPreferredConfiguration(pc) {
-  assert pc.vendor == "Sunny"
-  assert pc.clockRate >= 2333
-  assert pc.ram >= 4096
-  assert pc.os == "Linux"
-}
+include::{sourcedir}/primer/VerifyMethodsDocSpec.groovy[tag=verify-helper-method]
 ----
 
-When factoring out conditions into a helper method, two points need to be considered: First, implicit conditions must
-be turned into explicit conditions with the `assert` keyword. Second, the helper method must have return type `void`.
+When factoring out conditions into a helper method, you need to ensure the method has return type `void`.
 Otherwise, Spock might interpret the return value as a failing condition, which is not what we want.
 
 As expected, the improved helper method tells us exactly what's wrong:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-Condition not satisfied:
-
-assert pc.clockRate >= 2333
-       |  |         |
-       |  1666      false
-       ...
+include::{sourcedir}/primer/VerifyMethodsDocSpec.groovy[tag=verify-helper-method-result]
 ----
 
 A final advice: Although code reuse is generally a good thing, don't take it too far. Be aware that the use of fixture

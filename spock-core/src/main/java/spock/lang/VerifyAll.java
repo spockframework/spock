@@ -24,8 +24,9 @@ import java.lang.annotation.Target;
  * may contain conditions, allowing to leave off the assert keyword.
  * As in expect-blocks and then-blocks, variable declarations
  * and void method invocations will not be considered conditions.
- * The method can be defined outside the {@link Specification} class.
+ * The method can be defined inside the {@link Specification} class or in a separate class.
  * The method must have a {@code void} return type.
+ * Conditions on all levels will be transformed into assertions.
  * In contrast to {@link Verify}, all conditions will be evaluated before failing the test.
  */
 @Target(ElementType.METHOD)

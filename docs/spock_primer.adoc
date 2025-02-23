@@ -640,7 +640,7 @@ with(service) {
 Sometimes an IDE has trouble to determine the type of the target, in that case you can help out by manually specifying the
 target type via `with(target, type, closure)`.
 
-== Using `verifyAll` to assert multiple expectations together
+== Using `verifyAll` or `@VerifyAll` helper methods to assert multiple expectations together
 
 Normal expectations fail the test on the first failed assertions. Sometimes it is helpful to collect these failures before
 failing the test to have more information, this behavior is also known as soft assertions.
@@ -665,7 +665,6 @@ def "offered PC matches preferred configuration"() {
 
 or it can be used without a target.
 
-
 [source,groovy]
 ----
   expect:
@@ -676,6 +675,13 @@ or it can be used without a target.
 ----
 
 Like `with` you can also optionally define a type hint for the IDE.
+
+Alternatively, `verifyAll` conditions can be extracted into a helper method annotated with `@VerifyAll`
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/primer/VerifyMethodsDocSpec.groovy[tag=verify-all-helper-method]
+----
 
 == Using `verifyEach` to assert on each element of an `Iterable`
 

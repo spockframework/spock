@@ -86,7 +86,7 @@ public class Snapshotter {
 
   /**
    * Declares a {@link Wrapper} for wrapping and unwrapping of the reference value.
-   * <P>
+   * <p>
    * It is suggested that users create subclasses of {@link Snapshotter} with common wrapped types,
    * instead of using this method directly.
    */
@@ -98,7 +98,7 @@ public class Snapshotter {
 
   /**
    * Declares a {@link Function} for normalizing the reference value.
-   * <P>
+   * <p>
    * The default normalization is line ending normalization.
    */
   public Snapshotter normalizedWith(Function<String, String> normalizer) {
@@ -111,6 +111,7 @@ public class Snapshotter {
    * Specifies the {@code actual} value.
    * <p>
    * Note: The value is normalized by the normalizer function, defaults to line ending normalization.
+   *
    * @param value the actual value for assertions
    */
   public Snapshot assertThat(String value) {
@@ -160,7 +161,7 @@ public class Snapshotter {
      * This is useful when comparing json or similar, which have less strict equality rules.
      *
      * @param snapshotMatcher a custom matcher for the snapshot, which is called with the snapshot value and the actual value.
-     * The matcher must throw an {@link AssertionError} if the values don't match.
+     *                        The matcher must throw an {@link AssertionError} if the values don't match.
      */
     public void matchesSnapshot(BiConsumer<String, String> snapshotMatcher) {
       matchesSnapshot("", snapshotMatcher);
@@ -171,9 +172,9 @@ public class Snapshotter {
      * <p>
      * This is useful when comparing json or similar, which have less strict equality rules.
      *
-     * @param snapshotId the id of the snapshot to use. In case of multiple snapshots per test, this allows to distinguish them.
+     * @param snapshotId      the id of the snapshot to use. In case of multiple snapshots per test, this allows to distinguish them.
      * @param snapshotMatcher a custom matcher for the snapshot, which is called with the snapshot value and the actual value.
-     * The matcher must throw an {@link AssertionError} if the values don't match.
+     *                        The matcher must throw an {@link AssertionError} if the values don't match.
      */
     public void matchesSnapshot(String snapshotId, BiConsumer<String, String> snapshotMatcher) {
       Checks.notNull(snapshotId, () -> "snapshotId is null");
@@ -241,7 +242,7 @@ public class Snapshotter {
       Checks.notNull(value, () -> "value is null");
       // check if unwrapping is possible
       if (!value.startsWith(prefix) || !value.endsWith(suffix)) {
-        System.err.printf("Cannot unwrap because prefix matches=%s, prefix matches=%s%n", value.startsWith(prefix),value.endsWith(suffix));
+        System.err.printf("Cannot unwrap because prefix matches=%s, prefix matches=%s%n", value.startsWith(prefix), value.endsWith(suffix));
         return value;
       }
       return value.substring(prefix.length(), value.length() - suffix.length());
@@ -276,7 +277,7 @@ public class Snapshotter {
       this.extension = Assert.notNull(extension);
       this.charset = Assert.notNull(charset);
 
-      Class<?> specClass = iterationInfo.getFeature().getSpec().getReflection();
+      Class<?> specClass = iterationInfo.getFeature().getParent().getBottomSpec().getReflection();
       specPath = rootPath
         .resolve(specClass.getPackage().getName().replace('.', '/'))
         .resolve(specClass.getSimpleName().replace('$', '/')); // use subdirectories for inner classes

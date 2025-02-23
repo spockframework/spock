@@ -30,47 +30,47 @@ import static org.spockframework.compiler.condition.ImplicitConditionsUtils.isIm
 
 abstract class BaseVerifyMethodRewriter extends StatementReplacingVisitorSupport {
 
-    final IRewriteResources resources;
-    private final MethodNode methodNode;
-    private boolean conditionFound = false;
+  final IRewriteResources resources;
+  private final MethodNode methodNode;
+  private boolean conditionFound = false;
 
-    BaseVerifyMethodRewriter(MethodNode methodNode, IRewriteResources resources) {
-        this.resources = resources;
-        this.methodNode = methodNode;
+  BaseVerifyMethodRewriter(MethodNode methodNode, IRewriteResources resources) {
+    this.resources = resources;
+    this.methodNode = methodNode;
+  }
+
+  abstract void defineErrorCollector(List<Statement> statements);
+
+  public void rewrite() {
+    methodNode.getCode().visit(this);
+    defineRecorders();
+  }
+
+  @Override
+  public void visitAssertStatement(AssertStatement stat) {
+    super.visitAssertStatement(stat);
+    conditionFound();
+    replaceVisitedStatementWith(ConditionRewriter.rewriteExplicitCondition(stat, resources));
+  }
+
+  @Override
+  public void visitExpressionStatement(ExpressionStatement statement) {
+    super.visitExpressionStatement(statement);
+    if (isImplicitCondition(statement)) {
+      checkIsValidImplicitCondition(statement, resources.getErrorReporter());
+      conditionFound();
+      replaceVisitedStatementWith(ConditionRewriter.rewriteImplicitCondition(statement, resources));
     }
+  }
 
-    abstract void defineErrorCollector(List<Statement> statements);
+  private void conditionFound() {
+    conditionFound = true;
+  }
 
-    public void rewrite() {
-        methodNode.getCode().visit(this);
-        defineRecorders();
+  private void defineRecorders() {
+    if (conditionFound) {
+      defineErrorCollector(AstUtil.getStatements(methodNode));
+      resources.getErrorRecorders().defineValueRecorder(AstUtil.getStatements(methodNode));
     }
-
-    @Override
-    public void visitAssertStatement(AssertStatement stat) {
-        super.visitAssertStatement(stat);
-        conditionFound();
-        replaceVisitedStatementWith(ConditionRewriter.rewriteExplicitCondition(stat, resources));
-    }
-
-    @Override
-    public void visitExpressionStatement(ExpressionStatement statement) {
-        super.visitExpressionStatement(statement);
-        if (isImplicitCondition(statement)) {
-            checkIsValidImplicitCondition(statement, resources.getErrorReporter());
-            conditionFound();
-            replaceVisitedStatementWith(ConditionRewriter.rewriteImplicitCondition(statement, resources));
-        }
-    }
-
-    private void conditionFound() {
-        conditionFound = true;
-    }
-
-    private void defineRecorders() {
-        if (conditionFound) {
-            defineErrorCollector(AstUtil.getStatements(methodNode));
-            resources.getErrorRecorders().defineValueRecorder(AstUtil.getStatements(methodNode));
-        }
-    }
+  }
 }

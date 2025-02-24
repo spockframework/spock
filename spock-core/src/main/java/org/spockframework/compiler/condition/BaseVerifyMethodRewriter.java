@@ -24,6 +24,7 @@ import org.spockframework.compiler.IRewriteResources;
 import org.spockframework.compiler.StatementReplacingVisitorSupport;
 
 import java.util.List;
+import java.util.ListIterator;
 
 import static org.spockframework.compiler.condition.ImplicitConditionsUtils.checkIsValidImplicitCondition;
 import static org.spockframework.compiler.condition.ImplicitConditionsUtils.isImplicitCondition;
@@ -32,6 +33,7 @@ abstract class BaseVerifyMethodRewriter extends StatementReplacingVisitorSupport
 
   final IRewriteResources resources;
   private final MethodNode methodNode;
+  private Statement currentTopLevelStatement;
   private boolean conditionFound = false;
 
   BaseVerifyMethodRewriter(MethodNode methodNode, IRewriteResources resources) {
@@ -42,24 +44,31 @@ abstract class BaseVerifyMethodRewriter extends StatementReplacingVisitorSupport
   abstract void defineErrorCollector(List<Statement> statements);
 
   public void rewrite() {
-    methodNode.getCode().visit(this);
+    ListIterator<Statement> statements = AstUtil.getStatements(methodNode).listIterator();
+    while (statements.hasNext()) {
+      Statement next = statements.next();
+      currentTopLevelStatement = next;
+      statements.set(replace(next));
+    }
     defineRecorders();
   }
 
   @Override
   public void visitAssertStatement(AssertStatement stat) {
     super.visitAssertStatement(stat);
-    conditionFound();
-    replaceVisitedStatementWith(ConditionRewriter.rewriteExplicitCondition(stat, resources));
+    if (stat == currentTopLevelStatement) {
+      conditionFound();
+      replaceVisitedStatementWith(ConditionRewriter.rewriteExplicitCondition(stat, resources));
+    }
   }
 
   @Override
-  public void visitExpressionStatement(ExpressionStatement statement) {
-    super.visitExpressionStatement(statement);
-    if (isImplicitCondition(statement)) {
-      checkIsValidImplicitCondition(statement, resources.getErrorReporter());
+  public void visitExpressionStatement(ExpressionStatement stat) {
+    super.visitExpressionStatement(stat);
+    if (stat == currentTopLevelStatement && isImplicitCondition(stat)) {
+      checkIsValidImplicitCondition(stat, resources.getErrorReporter());
       conditionFound();
-      replaceVisitedStatementWith(ConditionRewriter.rewriteImplicitCondition(statement, resources));
+      replaceVisitedStatementWith(ConditionRewriter.rewriteImplicitCondition(stat, resources));
     }
   }
 

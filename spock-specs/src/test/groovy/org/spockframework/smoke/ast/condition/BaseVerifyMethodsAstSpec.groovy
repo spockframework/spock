@@ -141,7 +141,7 @@ class Assertions {
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
-  def "transforms nested conditions"() {
+  def "transforms only top-level conditions"() {
     when:
     def result = compiler.transpile("""
 class Assertions {

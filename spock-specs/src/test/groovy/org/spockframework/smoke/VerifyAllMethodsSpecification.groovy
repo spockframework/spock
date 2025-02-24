@@ -17,6 +17,7 @@ package org.spockframework.smoke
 import org.opentest4j.MultipleFailuresError
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
+import org.spockframework.runtime.SpockComparisonFailure
 
 class VerifyAllMethodsSpecification extends EmbeddedSpecification {
 
@@ -59,13 +60,14 @@ def "feature"() {
 
     then:
     result.failures.size() == 1
-    with(result.failures[0].exception.cause, MultipleFailuresError) {
+    with(result.failures[0].exception, MultipleFailuresError) {
       failures.size() == 2
       with(failures[0], ConditionNotSatisfiedError) {
         condition.text == 'x > 0'
       }
-      with(failures[1], ConditionNotSatisfiedError) {
-        condition.text == 'x % 2 == 0'
+      with(failures[1], SpockComparisonFailure) {
+        expected.stringRepresentation.trim() == "0"
+        actual.stringRepresentation.trim() == "-1"
       }
     }
   }
@@ -91,13 +93,14 @@ class SpecWithHelpers extends Specification {
 
     then:
     result.failures.size() == 1
-    with(result.failures[0].exception.cause, MultipleFailuresError) {
+    with(result.failures[0].exception, MultipleFailuresError) {
       failures.size() == 2
       with(failures[0], ConditionNotSatisfiedError) {
         condition.text == 'x > 0'
       }
-      with(failures[1], ConditionNotSatisfiedError) {
-        condition.text == 'x % 2 == 0'
+      with(failures[1], SpockComparisonFailure) {
+        expected.stringRepresentation.trim() == "0"
+        actual.stringRepresentation.trim() == "-1"
       }
     }
   }

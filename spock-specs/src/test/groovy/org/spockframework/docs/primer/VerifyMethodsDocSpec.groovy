@@ -91,7 +91,7 @@ def "offered PC matches preferred configuration"() {
 
     then:
     result.failures.size() == 1
-    with(result.failures[0].exception.cause, MultipleFailuresError) {
+    with(result.failures[0].exception, MultipleFailuresError) {
       failures.size() == 2
       with(failures[0], ConditionNotSatisfiedError) {
         condition.text == 'pc.clockRate >= 2333'

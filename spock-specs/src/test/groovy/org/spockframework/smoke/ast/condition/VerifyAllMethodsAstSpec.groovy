@@ -6,9 +6,9 @@ import java.lang.annotation.Annotation
 
 class VerifyAllMethodsAstSpec extends BaseVerifyMethodsAstSpec {
 
-    @Override
-    Class<? extends Annotation> getAnnotation() {
-        VerifyAll
-    }
+  @Override
+  Class<? extends Annotation> getAnnotation() {
+    VerifyAll
+  }
 
 }

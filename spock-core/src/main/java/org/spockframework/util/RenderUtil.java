@@ -3,6 +3,7 @@ package org.spockframework.util;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 
 import java.util.*;
+import java.util.function.Function;
 
 import groovy.lang.Range;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
@@ -52,7 +53,10 @@ public abstract class RenderUtil {
       Wrapper wrapper = (Wrapper) value;
       return String.format("%s as %s", toStringOrDump(wrapper.unwrap()), wrapper.getType().getSimpleName());
     }
-    return dump(value);
+    if (value.getClass().isArray()) {
+      return dumpArrayString((Object[]) value, RenderUtil::toStringOrDump);
+    }
+    return DefaultGroovyMethods.dump(value);
   }
 
   public static String inspectOrDump(@Nullable Object value) {
@@ -63,28 +67,22 @@ public abstract class RenderUtil {
       Wrapper wrapper = (Wrapper) value;
       return String.format("%s as %s", inspectOrDump(wrapper.unwrap()), wrapper.getType().getSimpleName());
     }
-    return dump(value);
-  }
-
-  private static String dump(@Nullable Object value) {
     if (value.getClass().isArray()) {
-      return dumpArrayString((Object[])value);
-    } else {
-      return DefaultGroovyMethods.dump(value);
+      return dumpArrayString((Object[]) value, RenderUtil::inspectOrDump);
     }
+    return DefaultGroovyMethods.dump(value);
   }
-
 
   /*
    * Adapted from org.codehaus.groovy.runtime.InvokerHelper.toArrayString(java.lang.Object[]) to use dump()
    */
-  private static String dumpArrayString(Object[] arguments) {
+  private static String dumpArrayString(Object[] arguments, Function<Object, String> argDumper) {
     StringBuilder argBuf = new StringBuilder("[");
     for (int i = 0; i < arguments.length; i++) {
       if (i > 0) {
         argBuf.append(", ");
       }
-      argBuf.append(DefaultGroovyMethods.dump(arguments[i]));
+      argBuf.append(argDumper.apply(arguments[i]));
     }
     argBuf.append("]");
     return argBuf.toString();

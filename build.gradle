@@ -85,8 +85,6 @@ allprojects {
   group = "org.spockframework"
   version = fullVersion
 
-  apply from: script("common")
-
   // ignore mutable data that is irrelevant for compilation output
   normalization {
     runtimeClasspath {
@@ -99,13 +97,8 @@ allprojects {
 
 apply from: script("ide")
 
-boolean isCiServer = System.env["CI"] || System.env["GITHUB_ACTIONS"]
 subprojects {
   if (it.name == "spock-bom") return
-
-  apply plugin: "java-library"
-  apply plugin: "groovy"
-  apply plugin: "jacoco"
   apply plugin: "org.spockframework.base"
 
   java {
@@ -168,48 +161,6 @@ subprojects {
 
   configureJavadoc(tasks.named("javadoc"))
   configureGroovydoc(tasks.named("groovydoc"))
-
-  tasks.register("sourcesJar", Jar) {
-    archiveClassifier = "sources"
-    from sourceSets.main.allSource
-  }
-
-  tasks.register("javadocJar", Jar) {
-    archiveClassifier = "javadoc"
-    from javadoc
-  }
-
-  tasks.withType(Jar).configureEach {
-    /*
-     * Ensure the jar can be built in a reproducible manner, This shall prevent build cache misses, when different variants are tested.
-     */
-    preserveFileTimestamps = false
-    reproducibleFileOrder = true
-  }
-
-  tasks.withType(Test).configureEach {
-    useJUnitPlatform()
-    def taskName = name
-    reports {
-      junitXml {
-        outputLocation = file("${outputLocation.get()}/$taskName-$variant")
-      }
-      html {
-        outputLocation = file("${outputLocation.get()}/$taskName-$variant")
-      }
-    }
-    // As a generous general timeout, instead of the 6h of GHA.
-    // But only on CI or longer needing debug sessions get killed by the timeout.
-    if (isCiServer) {
-      timeout = Duration.ofMinutes(15)
-    }
-  }
-
-  tasks.register("allDependencyInsight", DependencyInsightReportTask) {}
-
-  jacoco {
-    toolVersion = libs.versions.jacoco.get()
-  }
 }
 
 tasks.register("collectTestXml") {

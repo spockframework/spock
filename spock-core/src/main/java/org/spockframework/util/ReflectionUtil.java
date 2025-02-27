@@ -388,6 +388,29 @@ public abstract class ReflectionUtil {
     return object;
   }
 
+  private static Field findField(Class<?> clazz, String fieldName) {
+    if (clazz == null) {
+      return null;
+    }
+    try {
+      return clazz.getDeclaredField(fieldName);
+    } catch (NoSuchFieldException e) {
+      return findField(clazz.getSuperclass(), fieldName);
+    }
+  }
+
+  public static void setFieldValue(Object instance, String fieldName, Object value) {
+    try {
+      Field field = findField(instance.getClass(), fieldName);
+      if (field == null) {
+        throw new NoSuchFieldException(fieldName);
+      }
+      makeAccessible(field).set(instance, value);
+    } catch (Throwable t) {
+      ExceptionUtil.sneakyThrow(ExceptionUtil.getUnderlyingCause(t));
+    }
+  }
+
   /**
    * Checks if the {@code classToCheck} is visible by the passed {@code classLoader}
    *

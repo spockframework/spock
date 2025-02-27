@@ -123,11 +123,11 @@ class SpockBasePlugin implements Plugin<Project> {
 
   private static void jacoco(Project project) {
     // For tests, we have to handle the case where version catalogs are not present
-    project.rootProject.extensions.findByType(VersionCatalogsExtension)?.find("libs")
-      ?.flatMap { it.findVersion("jacoco") }
-      ?.ifPresent { version ->
-        project.extensions.getByType(JacocoPluginExtension).toolVersion = version.toString()
-      }
+
+    def jacocoVersion = project.rootProject.extensions.findByType(VersionCatalogsExtension).find("libs")
+        .flatMap { it.findVersion("jacoco") }
+        .orElseThrow { new IllegalStateException("Jacoco version not found") }
+    project.extensions.getByType(JacocoPluginExtension).toolVersion = jacocoVersion.requiredVersion
   }
 
   private static void dependencyInsight(Project project) {

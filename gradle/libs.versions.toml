@@ -4,7 +4,7 @@ groovy2 = '2.5.23'
 groovy3 = '3.0.23'
 groovy4 = '4.0.25'
 jacoco = '0.8.12'
-junit = '5.11.4'
+junit = '5.12.0'
 asm = '9.7.1'
 mockito4 = '4.11.0'
 mockito5 = '5.15.2'
@@ -27,13 +27,14 @@ mockito4 = { module = "org.mockito:mockito-core", version.ref = "mockito4" }
 mockito4inline = { module = "org.mockito:mockito-inline", version.ref = "mockito4" }
 mockito5 = { module = "org.mockito:mockito-core", version.ref = "mockito5" }
 objenesis = "org.objenesis:objenesis:3.4"
-# This needs a classifier, but is has to be specified on the usage end https://melix.github.io/blog/2021/03/version-catalogs-faq.html#_why_can_t_i_use_excludes_or_classifiers
+# This needs a classifier, but it has to be specified on the usage end https://melix.github.io/blog/2021/03/version-catalogs-faq.html#_why_can_t_i_use_excludes_or_classifiers
 jacoco-agent = { module = "org.jacoco:org.jacoco.agent", version.ref = "jacoco" }
 junit-bom =  { module = "org.junit:junit-bom",  version.ref = "junit" }
 # to omit the version we have to use this syntax, the version is managed by the junit-bom
 junit-jupiter.module = "org.junit.jupiter:junit-jupiter"
-junit-platform-testkit.module = "org.junit.platform:junit-platform-testkit"
 junit-platform-console.module = "org.junit.platform:junit-platform-console"
+junit-platform-launcher.module = "org.junit.platform:junit-platform-launcher"
+junit-platform-testkit.module = "org.junit.platform:junit-platform-testkit"
 workflows-kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "workflows-kotlin" }
 workflows-kotlin-compilerEmbeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "workflows-kotlin" }
 workflows-kotlin-mainKts = { module = "org.jetbrains.kotlin:kotlin-main-kts", version.ref = "workflows-kotlin" }

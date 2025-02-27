@@ -157,6 +157,8 @@ subprojects {
   dependencies {
     api platform(projects.spockBom)
     implementation(project.name == "spock-gradle" ? [] : groovylibs.groovy)
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.platform.launcher)
   }
 
   configureJavadoc(tasks.named("javadoc"))

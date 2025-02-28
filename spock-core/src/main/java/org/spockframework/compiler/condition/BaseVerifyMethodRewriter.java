@@ -29,7 +29,7 @@ import java.util.ListIterator;
 import static org.spockframework.compiler.condition.ImplicitConditionsUtils.checkIsValidImplicitCondition;
 import static org.spockframework.compiler.condition.ImplicitConditionsUtils.isImplicitCondition;
 
-abstract class BaseVerifyMethodRewriter extends StatementReplacingVisitorSupport {
+abstract class BaseVerifyMethodRewriter extends StatementReplacingVisitorSupport implements IVerifyMethodRewriter {
 
   final IRewriteResources resources;
   private final MethodNode methodNode;
@@ -43,6 +43,7 @@ abstract class BaseVerifyMethodRewriter extends StatementReplacingVisitorSupport
 
   abstract void defineErrorCollector(List<Statement> statements);
 
+  @Override
   public void rewrite() {
     ListIterator<Statement> statements = AstUtil.getStatements(methodNode).listIterator();
     while (statements.hasNext()) {

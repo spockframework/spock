@@ -14,6 +14,8 @@
 
 package spock.lang;
 
+import org.codehaus.groovy.transform.GroovyASTTransformationClass;
+import org.spockframework.compiler.condition.VerifyMethodTransform;
 import org.spockframework.util.Beta;
 
 import java.lang.annotation.ElementType;
@@ -35,6 +37,7 @@ import java.lang.annotation.Target;
  */
 @Beta
 @Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.SOURCE)
+@GroovyASTTransformationClass(classes = VerifyMethodTransform.class)
 public @interface Verify {
 }

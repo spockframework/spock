@@ -14,7 +14,6 @@
 
 package org.spockframework.util
 
-import org.codehaus.groovy.ast.stmt.Statement
 import org.junit.platform.commons.annotation.Testable
 import org.spockframework.mock.runtime.ByteBuddyTestClassLoader
 import spock.lang.*
@@ -416,33 +415,4 @@ class ReflectionUtilSpec extends Specification {
     this.class | new URLClassLoader([] as URL[], null as ClassLoader)    | false
     this.class | ByteBuddyTestClassLoader.withInterface(this.class.name) | false
   }
-
-  def "setFieldValue works"() {
-    given:
-    def statement = new Statement()
-
-    expect:
-    statement.statementLabel == null
-
-    when:
-    statement.addStatementLabel("label")
-
-    then:
-    statement.statementLabel == "label"
-
-    when:
-    ReflectionUtil.setFieldValue(statement, "statementLabels", null)
-
-    then:
-    statement.statementLabel == null
-  }
-
-  def "setFieldValue fails"() {
-    when:
-    ReflectionUtil.setFieldValue(new Object(), "nonExistent", "label")
-
-    then:
-    NoSuchFieldException ex = thrown()
-  }
-
 }

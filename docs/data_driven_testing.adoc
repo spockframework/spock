@@ -342,6 +342,37 @@ NOTE: If a data table takes part in a cross-multiplication, accessing columns of
       data tables would not behave in an intuitive way and thus is currently forbidden. Accessing
       previous columns within one data table even works while taking part in a cross-multiplication.
 
+[NOTE]
+--
+Only the data provider right before the `combined:` label is
+combined with the data provider right after the `combined:` label.
+
+So if you execute
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=single-data-providers-combined1]
+----
+it will result in these executed tests:
+
+include::./{sourcedir}/datadriven/DataSpec.groovy[tag=single-data-providers-combined-result1,indent=0]
+
+If you want to combine `a` and `b` with `c` to get this result:
+
+include::./{sourcedir}/datadriven/DataSpec.groovy[tag=single-data-providers-combined-result2,indent=0]
+
+you have to for example use
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=single-data-providers-combined2]
+----
+or
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=single-data-providers-combined3]
+----
+--
+
+
 == Data Variable Assignment
 
 A data variable can be directly assigned a value:

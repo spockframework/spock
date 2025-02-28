@@ -194,6 +194,123 @@ class DataSpec extends EmbeddedSpecification {
     }`""" == expected
   }
 
+  def "only single data providers are combined"() {
+    given:
+    def expected = '''
+      tag::single-data-providers-combined-result1[]
+      - `feature [a: 1, b: 5, c: 7, #0]`
+      - `feature [a: 2, b: 5, c: 8, #1]`
+      - `feature [a: 3, b: 6, c: 7, #2]`
+      - `feature [a: 4, b: 6, c: 8, #3]`
+      end::single-data-providers-combined-result1[]
+    '''
+      .stripIndent(*(GroovyRuntimeUtil.groovy3orNewer ? [true] : []))
+      .readLines()
+      .findAll {it.startsWith('-') }
+      .join('\n')
+      .trim()
+
+    when:
+    def result = runner.runSpecBody '''
+      def feature() {
+        expect:
+        true
+
+        // tag::single-data-providers-combined1[]
+        where:
+        a << [1, 2, 3, 4]
+        b << [5, 6]
+        combined:
+        c << [7, 8]
+        // end::single-data-providers-combined1[]
+      }
+    '''
+
+    then:
+    """- `${
+      result
+        .testEvents()
+        .succeeded()
+        .list()
+        *.testDescriptor
+        .findAll { it.type == TEST }
+        *.displayName
+        .join('`\n- `')
+    }`""" == expected
+
+    when:
+    expected = '''
+      tag::single-data-providers-combined-result2[]
+      - `feature [a: 1, b: 3, c: 5, #0]`
+      - `feature [a: 1, b: 3, c: 6, #1]`
+      - `feature [a: 2, b: 4, c: 5, #2]`
+      - `feature [a: 2, b: 4, c: 6, #3]`
+      end::single-data-providers-combined-result2[]
+    '''
+      .stripIndent(*(GroovyRuntimeUtil.groovy3orNewer ? [true] : []))
+      .readLines()
+      .findAll {it.startsWith('-') }
+      .join('\n')
+      .trim()
+    result = runner.runSpecBody '''
+      def feature() {
+        expect:
+        true
+
+        // tag::single-data-providers-combined2[]
+        where:
+        [a, b] << [
+          [1, 2],
+          [3, 4]
+        ].transpose()
+        combined:
+        c << [5, 6]
+        // end::single-data-providers-combined2[]
+      }
+    '''
+
+    then:
+    """- `${
+      result
+        .testEvents()
+        .succeeded()
+        .list()
+        *.testDescriptor
+        .findAll { it.type == TEST }
+        *.displayName
+        .join('`\n- `')
+    }`""" == expected
+
+    when:
+    result = runner.runSpecBody '''
+      def feature() {
+        expect:
+        true
+
+        // tag::single-data-providers-combined3[]
+        where:
+        a | b
+        1 | 3
+        2 | 4
+        combined:
+        c << [5, 6]
+        // end::single-data-providers-combined3[]
+      }
+    '''
+
+    then:
+    """- `${
+      result
+        .testEvents()
+        .succeeded()
+        .list()
+        *.testDescriptor
+        .findAll { it.type == TEST }
+        *.displayName
+        .join('`\n- `')
+    }`""" == expected
+  }
+
 // tag::sql-data-pipe[]
   def "maximum of two numbers"() {
     expect:

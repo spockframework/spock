@@ -39,24 +39,30 @@ abstract class BaseVerifyMethodTransform implements ASTTransformation {
           continue;
         }
 
-        MethodNode method = (MethodNode) node;
-        if (method.isVoidMethod()) {
-          IVerifyMethodRewriter rewriter = createRewriter(
-              method,
-              new DefaultConditionRewriterResources(nodeCache, sourceLookup, errorReporter, new DefaultConditionErrorRecorders(nodeCache))
-          );
-
-          try {
-            rewriter.rewrite();
-          } catch (Exception e) {
-            errorReporter.error(
-                "Unexpected error during compilation of verification helper method '%s'. Maybe you have used invalid Spock syntax? Anyway, please file a bug report at https://issues.spockframework.org.",
-                e, method.getName());
-          }
-        }
+        processVerificationHelperMethod((MethodNode) node, errorReporter, sourceLookup);
       }
     } finally {
       sourceLookup.close();
+    }
+  }
+
+  private void processVerificationHelperMethod(MethodNode method, ErrorReporter errorReporter, SourceLookup sourceLookup) {
+    if (!method.isVoidMethod()) {
+      errorReporter.error("Verification helper method '%s' must have a void return type.", method.getName());
+      return;
+    }
+
+    IVerifyMethodRewriter rewriter = createRewriter(
+        method,
+        new DefaultConditionRewriterResources(nodeCache, sourceLookup, errorReporter, new DefaultConditionErrorRecorders(nodeCache))
+    );
+
+    try {
+      rewriter.rewrite();
+    } catch (Exception e) {
+      errorReporter.error(
+          "Unexpected error during compilation of verification helper method '%s'. Maybe you have used invalid Spock syntax? Anyway, please file a bug report at https://issues.spockframework.org.",
+          e, method.getName());
     }
   }
 }

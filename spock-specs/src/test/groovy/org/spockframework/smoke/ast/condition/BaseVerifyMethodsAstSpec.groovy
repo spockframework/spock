@@ -14,7 +14,9 @@
 
 package org.spockframework.smoke.ast.condition
 
+import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.compiler.InvalidSpecCompileException
 import org.spockframework.specs.extension.SpockSnapshotter
 import spock.lang.Snapshot
 
@@ -161,7 +163,7 @@ class Assertions {
 
   def "checks for invalid conditions"() {
     when:
-    def result =  compiler.transpile("""
+    compiler.compile("""
 class Assertions {
     @${annotation.name}
     static void assignmentNotCondition(int a) {
@@ -171,7 +173,8 @@ class Assertions {
 """)
 
     then:
-    result.source.contains("Expected a condition, but found an assignment. Did you intend to write '==' ? @ line 5, column 9")
+    InvalidSpecCompileException e = thrown()
+    e.message.contains("Expected a condition, but found an assignment. Did you intend to write '==' ? @ line 4, column 9")
   }
 
   def "ignores conditions in overwritten methods"() {
@@ -196,9 +199,9 @@ class SpecificAssertions extends BaseAssertions {
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
-  def "ignores when transforming methods with non-void return value"() {
+  def "fails when verification method has a non-void return value"() {
     when:
-    def result = compiler.transpile("""
+    compiler.compile("""
 class Assertions {
     @${annotation.name}
     static boolean isPositiveWithReturn(int a) {
@@ -209,7 +212,8 @@ class Assertions {
 """)
 
     then:
-    snapshotter.assertThat(result.source).matchesSnapshot()
+    MultipleCompilationErrorsException e = thrown()
+    e.message.contains("Verification helper method 'isPositiveWithReturn' must have a void return type.")
   }
 
 }

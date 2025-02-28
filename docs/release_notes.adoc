@@ -9,6 +9,8 @@ include::include.adoc[]
 
 * Fix ExtensionException in OSGi environment for global extension spockIssue:2076[]
 ** This issue was introduced with spockPull:1995[]
+* Fix `@RestoreSystemProperties` not restoring state between iterations of a data-driven feature spockIssue:2104[]
+* Fix `VerifyError: Stack map does not match the one at exception handler` introduced in 2.4-M5 spockIssue:2080[]
 
 == 2.4-M5 (2025-01-07)
 

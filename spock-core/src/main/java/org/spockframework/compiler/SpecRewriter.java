@@ -797,6 +797,15 @@ public class SpecRewriter extends AbstractSpecVisitor implements ISpecRewriteRes
       DeclarationExpression declExpr = AstUtil.getExpression(stat, DeclarationExpression.class);
       if (declExpr == null) continue;
 
+      // workaround for https://github.com/spockframework/spock/issues/2080
+      if (stat.getStatementLabels() != null) {
+        stat.getStatementLabels().clear();
+        //Groovy 2.x used Statement.getStatementLabel() which will throw an exception if the collection is empty and not null
+        if (GroovyRuntimeUtil.isGroovy2()) {
+          ReflectionUtil.setFieldValue(stat, "statementLabels", null);
+        }
+      }
+
       ((ExpressionStatement) stat).setExpression(
           new BinaryExpression(
               copyLhsVariableExpressions(declExpr),

@@ -1,3 +1,0 @@
-ext {
-  isRootProject = project == project.rootProject
-}

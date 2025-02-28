@@ -18,6 +18,7 @@ import org.opentest4j.MultipleFailuresError
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.SpockComparisonFailure
+import spock.lang.VerifyAll
 
 class VerifyAllMethodsSpecification extends EmbeddedSpecification {
 
@@ -25,22 +26,15 @@ class VerifyAllMethodsSpecification extends EmbeddedSpecification {
     runner.throwFailure = false
   }
 
-  def "@VerifyAll method succeeds"() {
-    when:
-    def result = runner.runSpecBody '''
-@VerifyAll
-private static void isPositiveAndEven(int x) {
+  @VerifyAll
+  private static void isPositiveAndEven(int x) {
     x > 0
-}
+    x % 2 == 0
+  }
 
-def "feature"() {
+  def "@VerifyAll method succeeds"() {
     expect:
     isPositiveAndEven(2)
-}
-'''
-
-    then:
-    result.failures.empty
   }
 
   def "@VerifyAll method fails"() {
@@ -72,7 +66,7 @@ def "feature"() {
     }
   }
 
-  def "uses @VerifyAll methods from non-spec helper classes"() {
+  def "@VerifyAll works on methods from non-spec helper classes"() {
     when:
     def result = runner.runWithImports '''
 class Assertions {

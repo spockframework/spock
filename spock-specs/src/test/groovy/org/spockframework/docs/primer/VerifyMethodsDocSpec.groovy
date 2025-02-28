@@ -29,7 +29,7 @@ class VerifyMethodsDocSpec extends EmbeddedSpecification {
     when:
     def result = runner.runSpecBody("""
 @groovy.transform.Canonical
-static class Pc {
+static class PC {
     final String vendor
     final int clockRate
     final int ram
@@ -38,7 +38,7 @@ static class Pc {
 
 // tag::verify-helper-method[]
 @Verify
-void matchesPreferredConfiguration(pc) {
+void matchesPreferredConfiguration(PC pc) {
   pc.vendor == "Sunny"
   pc.clockRate >= 2333
   pc.ram >= 4096
@@ -48,7 +48,7 @@ void matchesPreferredConfiguration(pc) {
 
 def "offered PC matches preferred configuration"() {
     expect:
-    matchesPreferredConfiguration(new Pc("Sunny", 1666, 4096, "Linux"))
+    matchesPreferredConfiguration(new PC("Sunny", 1666, 4096, "Linux"))
 }
 """)
 
@@ -66,7 +66,7 @@ pc.clockRate >= 2333
     when:
     def result = runner.runSpecBody("""
 @groovy.transform.Canonical
-static class Pc {
+static class PC {
     final String vendor
     final int clockRate
     final int ram
@@ -75,7 +75,7 @@ static class Pc {
 
 // tag::verify-all-helper-method[]
 @VerifyAll
-void matchesPreferredConfiguration(pc) {
+void matchesPreferredConfiguration(PC pc) {
   pc.vendor == "Sunny"
   pc.clockRate >= 2333
   pc.ram >= 406
@@ -85,7 +85,7 @@ void matchesPreferredConfiguration(pc) {
 
 def "offered PC matches preferred configuration"() {
     expect:
-    matchesPreferredConfiguration(new Pc("Sunny", 1666, 256, "Linux"))
+    matchesPreferredConfiguration(new PC("Sunny", 1666, 256, "Linux"))
 }
 """)
 

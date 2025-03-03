@@ -80,11 +80,19 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
     errorCollectorName = SpockNames.ERROR_COLLECTOR + errorCollectorSuffix;
   }
 
+  public static Statement rewriteExplicitCondition(AssertStatement stat, IRewriteResources resources) {
+    return rewriteExplicitCondition(stat, resources, "", "");
+  }
+
   public static Statement rewriteExplicitCondition(AssertStatement stat, IRewriteResources resources,
                                                    String valueRecorderSuffix, String errorCollectorSuffix) {
     ConditionRewriter rewriter = new ConditionRewriter(resources, valueRecorderSuffix, errorCollectorSuffix);
     Expression message = AstUtil.getAssertionMessage(stat);
     return rewriter.rewriteCondition(stat, stat.getBooleanExpression().getExpression(), message, true);
+  }
+
+  public static Statement rewriteImplicitCondition(ExpressionStatement stat, IRewriteResources resources) {
+    return rewriteImplicitCondition(stat, resources, "", "");
   }
 
   public static Statement rewriteImplicitCondition(ExpressionStatement stat, IRewriteResources resources,

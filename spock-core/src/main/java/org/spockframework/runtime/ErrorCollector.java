@@ -1,7 +1,5 @@
 package org.spockframework.runtime;
 
-import org.opentest4j.MultipleFailuresError;
-
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -23,7 +21,7 @@ public class ErrorCollector {
         throw throwables.get(0);
 
       default:
-        throw new MultipleFailuresError("", throwables);
+        throw new SpockMultipleFailuresError("", throwables);
     }
   }
 }

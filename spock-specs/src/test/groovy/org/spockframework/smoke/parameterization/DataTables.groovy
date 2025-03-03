@@ -316,10 +316,10 @@ class DataTables extends EmbeddedSpecification {
     results.testEvents().started().list().testDescriptor.displayName == [
       'a feature (#a #b #c)',
       'a feature (1 3 4)',
-      'a feature (2 3 4)',
       'a feature (1 3 5)',
-      'a feature (2 3 5)',
       'a feature (1 3 6)',
+      'a feature (2 3 4)',
+      'a feature (2 3 5)',
       'a feature (2 3 6)'
     ]
 

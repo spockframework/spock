@@ -703,16 +703,6 @@ public class DataIteratorFactory {
     private final Object[] multiplierProviders;
 
     /**
-     * The data provider multiplier that is used as multiplicand
-     * in this multiplication, if it represents in an
-     * {@code (a * (b * c))} multiplication the {@code (a * bc)} part
-     * or otherwise {@code null}.
-     * Outside the constructor it is only used as condition
-     * and for the final cleanup,
-     */
-    private final DataProviderMultiplier multiplicandProvider;
-
-    /**
      * The data providers that are used as multiplicand
      * in this multiplication, if it represents in an
      * {@code ((a * b) * c)} multiplication the {@code (ab * c)}
@@ -738,12 +728,6 @@ public class DataIteratorFactory {
      * have the smaller or at least the defined number in the multiplicand position.
      */
     private final Iterator<?>[] multiplicandIterators;
-
-    /**
-     * A flag that remembers whether the factors were swapped for optimization, so that the result values can be
-     * swapped back for expected, consistent, and reproducible results.
-     */
-    private boolean factorsSwapped = false;
 
     /**
      * The current set of multiplier values that is combined with each set of multiplicand values,
@@ -794,8 +778,15 @@ public class DataIteratorFactory {
                                   Object[] multiplierProviders, Object[] multiplicandProviders) {
       super(supervisor, context);
       this.dataVariableNames = Objects.requireNonNull(dataVariableNames);
+      this.multiplierProviderInfos = multiplierProviderInfos;
+      this.multiplicandProviderInfos = multiplicandProviderInfos;
       multiplierProvider = null;
-      multiplicandProvider = null;
+      this.multiplierProviders = multiplierProviders;
+      this.multiplicandProviders = multiplicandProviders;
+
+      collectedMultiplicandValues = createMultiplicandStorage();
+      multiplierIterators = createIterators(this.multiplierProviders, this.multiplierProviderInfos);
+      multiplicandIterators = createIterators(this.multiplicandProviders, this.multiplicandProviderInfos);
 
       int estimatedMultiplierIterations = estimateNumIterations(Objects.requireNonNull(multiplierProviders));
       int estimatedMultiplicandIterations = estimateNumIterations(Objects.requireNonNull(multiplicandProviders));
@@ -805,26 +796,6 @@ public class DataIteratorFactory {
           : estimatedMultiplierIterations * estimatedMultiplicandIterations;
 
       processedDataProviders = multiplierProviders.length + multiplicandProviders.length;
-
-      if ((estimatedMultiplierIterations != UNKNOWN_ITERATIONS)
-        && ((estimatedMultiplicandIterations == UNKNOWN_ITERATIONS) || (estimatedMultiplicandIterations > estimatedMultiplierIterations))) {
-        // multiplier is not unknown and multiplicand is unknown or larger,
-        // swap factors so that potentially fewer values need to be remembered in memory
-        factorsSwapped = true;
-        this.multiplierProviderInfos = multiplicandProviderInfos;
-        this.multiplicandProviderInfos = multiplierProviderInfos;
-        this.multiplierProviders = multiplicandProviders;
-        this.multiplicandProviders = multiplierProviders;
-      } else {
-        this.multiplierProviderInfos = multiplierProviderInfos;
-        this.multiplicandProviderInfos = multiplicandProviderInfos;
-        this.multiplierProviders = multiplierProviders;
-        this.multiplicandProviders = multiplicandProviders;
-      }
-
-      collectedMultiplicandValues = createMultiplicandStorage();
-      multiplierIterators = createIterators(this.multiplierProviders, this.multiplierProviderInfos);
-      multiplicandIterators = createIterators(this.multiplicandProviders, this.multiplicandProviderInfos);
     }
 
     /**
@@ -845,6 +816,15 @@ public class DataIteratorFactory {
                                   DataProviderMultiplier multiplierProvider, Object[] multiplicandProviders) {
       super(supervisor, context);
       this.dataVariableNames = Objects.requireNonNull(dataVariableNames);
+      multiplierProviderInfos = null;
+      this.multiplicandProviderInfos = multiplicandProviderInfos;
+      this.multiplierProvider = multiplierProvider;
+      multiplierProviders = null;
+      this.multiplicandProviders = multiplicandProviders;
+
+      collectedMultiplicandValues = createMultiplicandStorage();
+      multiplierIterators = new Iterator[]{multiplierProvider};
+      multiplicandIterators = createIterators(this.multiplicandProviders, this.multiplicandProviderInfos);
 
       int estimatedMultiplierIterations = Objects.requireNonNull(multiplierProvider).getEstimatedNumIterations();
       int estimatedMultiplicandIterations = estimateNumIterations(Objects.requireNonNull(multiplicandProviders));
@@ -854,32 +834,6 @@ public class DataIteratorFactory {
           : estimatedMultiplierIterations * estimatedMultiplicandIterations;
 
       processedDataProviders = multiplierProvider.getProcessedDataProviders() + multiplicandProviders.length;
-
-      if ((estimatedMultiplierIterations != UNKNOWN_ITERATIONS)
-        && ((estimatedMultiplicandIterations == UNKNOWN_ITERATIONS) || (estimatedMultiplicandIterations > estimatedMultiplierIterations))) {
-        // multiplier is not unknown and multiplicand is unknown or larger,
-        // swap factors so that potentially fewer values need to be remembered in memory
-        factorsSwapped = true;
-        multiplierProviderInfos = multiplicandProviderInfos;
-        this.multiplicandProviderInfos = null;
-        this.multiplierProvider = null;
-        multiplierProviders = multiplicandProviders;
-        multiplicandProvider = multiplierProvider;
-        this.multiplicandProviders = null;
-        collectedMultiplicandValues = singletonList(new ArrayList<>());
-        multiplierIterators = createIterators(multiplierProviders, multiplierProviderInfos);
-        multiplicandIterators = new Iterator[]{multiplierProvider};
-      } else {
-        multiplierProviderInfos = null;
-        this.multiplicandProviderInfos = multiplicandProviderInfos;
-        this.multiplierProvider = multiplierProvider;
-        multiplierProviders = null;
-        multiplicandProvider = null;
-        this.multiplicandProviders = multiplicandProviders;
-        collectedMultiplicandValues = createMultiplicandStorage();
-        multiplierIterators = new Iterator[]{multiplierProvider};
-        multiplicandIterators = createIterators(this.multiplicandProviders, this.multiplicandProviderInfos);
-      }
     }
 
     private List<List<Object>> createMultiplicandStorage() {
@@ -892,7 +846,7 @@ public class DataIteratorFactory {
 
     @Override
     public void close() throws Exception {
-      closeQuietly(multiplierProvider, multiplicandProvider);
+      closeQuietly(multiplierProvider);
       closeQuietly(multiplierProviders);
       closeQuietly(multiplicandProviders);
     }
@@ -958,21 +912,11 @@ public class DataIteratorFactory {
           collectedMultiplicandValues.get(i).add(nextMultiplicandValues[i]);
         }
       }
-      if (multiplicandProvider != null) {
-        nextMultiplicandValues = ((Object[]) nextMultiplicandValues[0]);
-      }
 
       // prepare result
-      Object[] nextMultiplierValues;
-      if (factorsSwapped) {
-        nextMultiplierValues = nextMultiplicandValues;
-        nextMultiplicandValues = currentMultiplierValues;
-      } else {
-        nextMultiplierValues = currentMultiplierValues;
-      }
-      Object[] next = new Object[nextMultiplierValues.length + nextMultiplicandValues.length];
-      System.arraycopy(nextMultiplierValues, 0, next, 0, nextMultiplierValues.length);
-      System.arraycopy(nextMultiplicandValues, 0, next, nextMultiplierValues.length, nextMultiplicandValues.length);
+      Object[] next = new Object[currentMultiplierValues.length + nextMultiplicandValues.length];
+      System.arraycopy(currentMultiplierValues, 0, next, 0, currentMultiplierValues.length);
+      System.arraycopy(nextMultiplicandValues, 0, next, currentMultiplierValues.length, nextMultiplicandValues.length);
       return next;
     }
 

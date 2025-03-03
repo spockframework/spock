@@ -200,8 +200,10 @@ class DataSpec extends EmbeddedSpecification {
       tag::single-data-providers-combined-result1[]
       - `feature [a: 1, b: 5, c: 7, #0]`
       - `feature [a: 2, b: 5, c: 8, #1]`
-      - `feature [a: 3, b: 6, c: 7, #2]`
-      - `feature [a: 4, b: 6, c: 8, #3]`
+      - `feature [a: 3, b: 5, c: 9, #2]`
+      - `feature [a: 4, b: 6, c: 7, #3]`
+      - `feature [a: 5, b: 6, c: 8, #4]`
+      - `feature [a: 6, b: 6, c: 9, #5]`
       end::single-data-providers-combined-result1[]
     '''
       .stripIndent(*(GroovyRuntimeUtil.groovy3orNewer ? [true] : []))
@@ -218,10 +220,10 @@ class DataSpec extends EmbeddedSpecification {
 
         // tag::single-data-providers-combined1[]
         where:
-        a << [1, 2, 3, 4]
+        a << [1, 2, 3, 4, 5, 6]
         b << [5, 6]
         combined:
-        c << [7, 8]
+        c << [7, 8, 9]
         // end::single-data-providers-combined1[]
       }
     '''

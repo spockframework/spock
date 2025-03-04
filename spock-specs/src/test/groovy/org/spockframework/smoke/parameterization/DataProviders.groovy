@@ -297,6 +297,29 @@ where: a << b
     ]
   }
 
+  def 'combined label can have a comment'() {
+    when:
+    def results = runner.runSpecBody '''
+      def 'a feature (#a #b)'() {
+        expect:
+        true
+
+        where:
+        a << [3]
+        combined: 'combined'
+        b << [1, 2]
+      }
+    '''
+
+    then:
+    results.testsStartedCount == 1 + 2
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b)',
+      'a feature (3 1)',
+      'a feature (3 2)'
+    ]
+  }
+
   @Issue('https://github.com/spockframework/spock/issues/2074')
   def 'multi-assignments can be combined'() {
     when:

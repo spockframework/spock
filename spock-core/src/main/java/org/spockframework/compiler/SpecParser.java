@@ -200,7 +200,22 @@ public class SpecParser implements GroovyClassVisitor {
       } else {
         currBlock = addBlock(method, stat);
       }
-      // if the statement is a label with description, transplant the label to the actual statement
+      // Usually, you have a label on a statement like
+      //
+      // combined:
+      //   x << [1]
+      //
+      // and the label stays on that statement and could be used in later stages of the AST processing.
+      // Especially for "combined" this is essential for proper operation.
+      //
+      // But if the label has a description like
+      //
+      // combined: 'combined with x'
+      //   x << [1]
+      //
+      // then the description is added as "text" to the current block and the whole statement is swallowed.
+      // If the label is needed for further processing like for "combined", this is then missing,
+      // so transplant the label to the following statement which it actually affects.
       statementLabelToTransplant = (getDescription(stat) == null) ? null : stat.getStatementLabel();
     }
 

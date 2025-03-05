@@ -876,4 +876,22 @@ b | _
     then:
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
+
+  def 'sub data provider in multi-variable data pipes must have same length'() {
+    when:
+    runner.runFeatureBody '''
+      expect:
+      true
+
+      where:
+      a << [1, 2]
+      b << [3, 4]
+      combined:
+      [c, d] << [[5, 6], [7]]
+    '''
+
+    then:
+    SpockExecutionException e = thrown()
+    e.message == "Data provider for variable 'b' has more values than previous data provider(s)"
+  }
 }

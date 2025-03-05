@@ -194,7 +194,7 @@ class DataSpec extends EmbeddedSpecification {
     }`""" == expected
   }
 
-  def "only single data providers are combined"() {
+  def "only single data providers are combined - part 1"() {
     given:
     def expected = '''
       tag::single-data-providers-combined-result1[]
@@ -239,9 +239,11 @@ class DataSpec extends EmbeddedSpecification {
         *.displayName
         .join('`\n- `')
     }`""" == expected
+  }
 
-    when:
-    expected = '''
+  def "only single data providers are combined - part 2"() {
+    given:
+    def expected = '''
       tag::single-data-providers-combined-result2[]
       - `feature [a: 1, b: 3, c: 5, #0]`
       - `feature [a: 1, b: 3, c: 6, #1]`
@@ -254,7 +256,9 @@ class DataSpec extends EmbeddedSpecification {
       .findAll {it.startsWith('-') }
       .join('\n')
       .trim()
-    result = runner.runSpecBody '''
+
+    when:
+    def result = runner.runSpecBody '''
       def feature() {
         expect:
         true

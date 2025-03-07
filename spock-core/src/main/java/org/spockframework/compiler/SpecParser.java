@@ -190,11 +190,33 @@ public class SpecParser implements GroovyClassVisitor {
     List<Statement> stats = AstUtil.getStatements(method.getAst());
     Block currBlock = method.addBlock(new AnonymousBlock(method));
 
+    String statementLabelToTransplant = null;
     for (Statement stat : stats) {
-      if (stat.getStatementLabel() == null)
+      if (stat.getStatementLabel() == null) {
+        if (statementLabelToTransplant != null) {
+          stat.setStatementLabel(statementLabelToTransplant);
+        }
         currBlock.getAst().add(stat);
-      else
+      } else {
         currBlock = addBlock(method, stat);
+      }
+      // Usually, you have a label on a statement like
+      //
+      // combined:
+      //   x << [1]
+      //
+      // and the label stays on that statement and could be used in later stages of the AST processing.
+      // Especially for "combined" this is essential for proper operation.
+      //
+      // But if the label has a description like
+      //
+      // combined: 'combined with x'
+      //   x << [1]
+      //
+      // then the description is added as "text" to the current block and the whole statement is swallowed.
+      // If the label is needed for further processing like for "combined", this is then missing,
+      // so transplant the label to the following statement which it actually affects.
+      statementLabelToTransplant = (getDescription(stat) == null) ? null : stat.getStatementLabel();
     }
 
     checkIsValidSuccessor(method, BlockParseInfo.METHOD_END,
@@ -215,7 +237,7 @@ public class SpecParser implements GroovyClassVisitor {
     String label = stat.getStatementLabel();
 
     for (BlockParseInfo blockInfo: BlockParseInfo.values()) {
-	  	if (!label.equals(blockInfo.toString())) continue;
+      if (!label.equals(blockInfo.toString())) continue;
 
       checkIsValidSuccessor(method, blockInfo, stat.getLineNumber(), stat.getColumnNumber());
       Block block = blockInfo.addNewBlock(method);
@@ -226,9 +248,9 @@ public class SpecParser implements GroovyClassVisitor {
         block.getDescriptions().add(description);
 
       return block;
-		}
+    }
 
-		throw new InvalidSpecCompileException(stat, "Unrecognized block label: " + label);
+    throw new InvalidSpecCompileException(stat, "Unrecognized block label: " + label);
   }
 
   private String getDescription(Statement stat) {

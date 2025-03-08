@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-  implementation(libs.workflows.kotlin.compilerEmbeddable)
+  compileOnly(libs.workflows.kotlin.compilerEmbeddable)
 }
 
 gradlePlugin {

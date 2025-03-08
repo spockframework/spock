@@ -297,6 +297,29 @@ where: a << b
     ]
   }
 
+  def 'combined label can have a comment'() {
+    when:
+    def results = runner.runSpecBody '''
+      def 'a feature (#a #b)'() {
+        expect:
+        true
+
+        where:
+        a << [3]
+        combined: 'combined'
+        b << [1, 2]
+      }
+    '''
+
+    then:
+    results.testsStartedCount == 1 + 2
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b)',
+      'a feature (3 1)',
+      'a feature (3 2)'
+    ]
+  }
+
   @Issue('https://github.com/spockframework/spock/issues/2074')
   def 'multi-assignments can be combined'() {
     when:
@@ -326,6 +349,194 @@ where: a << b
       'a feature (a2 b2 c1 d1 e2 f2)',
       'a feature (a2 b2 c2 d2 e1 f1)',
       'a feature (a2 b2 c2 d2 e2 f2)'
+    ]
+  }
+
+  def 'multi-assignments with unequal sub-lengths can be combined'() {
+    when:
+    def results = runner.runSpecBody '''
+      def 'a feature (#a #b #c #d #e #f)'() {
+        expect:
+        true
+
+        where:
+        [a, b] << [['a1', 'b1'], ['a2']]
+        combined:
+        [c, d] << [['c1', 'd1'], ['c2', 'd2']]
+        combined:
+        [e, f] << [['e1', 'f1'], ['e2', 'f2']]
+      }
+    '''
+
+    then:
+    results.testsStartedCount == 1 + (2 * 2 * 2)
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b #c #d #e #f)',
+      'a feature (a1 b1 c1 d1 e1 f1)',
+      'a feature (a1 b1 c1 d1 e2 f2)',
+      'a feature (a1 b1 c2 d2 e1 f1)',
+      'a feature (a1 b1 c2 d2 e2 f2)',
+      'a feature (a2 null c1 d1 e1 f1)',
+      'a feature (a2 null c1 d1 e2 f2)',
+      'a feature (a2 null c2 d2 e1 f1)',
+      'a feature (a2 null c2 d2 e2 f2)'
+    ]
+  }
+
+  def 'multi-assignments with unequal lengths can be combined'() {
+    when:
+    def results = runner.runSpecBody '''
+      def 'a feature (#a #b #c #d #e #f)'() {
+        expect:
+        true
+
+        where:
+        [a, b] << [['a1', 'b1']]
+        combined:
+        [c, d] << [['c1', 'd1'], ['c2', 'd2']]
+        combined:
+        [e, f] << [['e1', 'f1'], ['e2', 'f2']]
+      }
+    '''
+
+    then:
+    results.testsStartedCount == 1 + (1 * 2 * 2)
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b #c #d #e #f)',
+      'a feature (a1 b1 c1 d1 e1 f1)',
+      'a feature (a1 b1 c1 d1 e2 f2)',
+      'a feature (a1 b1 c2 d2 e1 f1)',
+      'a feature (a1 b1 c2 d2 e2 f2)'
+    ]
+  }
+
+  def 'derived data variables before or after combination do not take part and work'() {
+    when:
+    def results = runner.runSpecBody '''
+      def 'a feature (#a #b #c #d)'() {
+        expect:
+        true
+
+        where:
+        c = 4
+        a << [3]
+        combined:
+        b << [1, 2]
+        d = 5
+      }
+    '''
+
+    then:
+    results.testsStartedCount == 1 + 2
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b #c #d)',
+      'a feature (3 1 4 5)',
+      'a feature (3 2 4 5)'
+    ]
+  }
+
+  def 'data pipes before or after combination do not take part and work'() {
+    when:
+    def results = runner.runSpecBody '''
+      def 'a feature (#a #b #c #d)'() {
+        expect:
+        true
+
+        where:
+        c << [4, 5]
+        a << [3]
+        combined:
+        b << [1, 2]
+        d << [6, 7]
+      }
+    '''
+
+    then:
+    results.testsStartedCount == 1 + 2
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b #c #d)',
+      'a feature (3 1 4 6)',
+      'a feature (3 2 5 7)'
+    ]
+  }
+
+  def 'multi-assignment data pipes before or after combination do not take part and work'() {
+    when:
+    def results = runner.runSpecBody '''
+      def 'a feature (#a #b #c #d #e #f)'() {
+        expect:
+        true
+
+        where:
+        [c, d] << [[4, 5], [6, 7]]
+        a << [3]
+        combined:
+        b << [1, 2]
+        [e, f] << [[8, 9], [10, 11]]
+      }
+    '''
+
+    then:
+    results.testsStartedCount == 1 + 2
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b #c #d #e #f)',
+      'a feature (3 1 4 5 8 9)',
+      'a feature (3 2 6 7 10 11)'
+    ]
+  }
+
+  def 'data tables before or after combination do not take part and work'() {
+    when:
+    def results = runner.runSpecBody '''
+      def 'a feature (#a #b #c #d #e #f)'() {
+        expect:
+        true
+
+        where:
+        c | d
+        4 | 5
+        6 | 7
+        a << [3]
+        combined:
+        b << [1, 2]
+        e | f
+        8 | 9
+        10 | 11
+      }
+    '''
+
+    then:
+    results.testsStartedCount == 1 + 2
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b #c #d #e #f)',
+      'a feature (3 1 4 5 8 9)',
+      'a feature (3 2 6 7 10 11)'
+    ]
+  }
+
+  def 'combination before or after combination do not take part and work'() {
+    when:
+    def results = runner.runSpecBody '''
+      def 'a feature (#a #b #c #d)'() {
+        expect:
+        true
+
+        where:
+        a << [3]
+        combined:
+        b << [1, 2]
+        c << [6]
+        combined:
+        d << [4, 5]
+      }
+    '''
+
+    then:
+    results.testsStartedCount == 1 + 2
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b #c #d)',
+      'a feature (3 1 6 4)',
+      'a feature (3 2 6 5)'
     ]
   }
 

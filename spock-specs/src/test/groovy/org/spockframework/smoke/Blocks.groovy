@@ -51,6 +51,8 @@ def m3() {
   and: "and"
   where: ""
   and: z << 1
+  combined: "foo"
+  zz << 2
 }
     """)
 
@@ -69,7 +71,7 @@ def m3() {
     and:
     def m3 = specInfo.features[2]
     m3.blocks*.kind == [SETUP,EXPECT,WHERE]
-    m3.blocks*.texts.flatten() == ["given","and",""]
+    m3.blocks*.texts.flatten() == ["given","and","","foo"]
   }
 
   def "unknown label"() {

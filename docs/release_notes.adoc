@@ -5,10 +5,22 @@ include::include.adoc[]
 
 == 2.4-M6 (tbd)
 
+=== Highlights
+
+* Add support for defining condition blocks with implicit assertions in helper methods annotated with `@Verify` or `@VerifyAll` spockPull:2112[]
+
+=== Breaking Changes
+
+* _This affects users of the `@Snapshot` extension, only if you were using the snapshotter in parent specification classes._ +
+`@Snapshot` used to look up snapshots in directories named after the class containing feature methods. Now, the snapshots will be loaded from directories named after the bottom class in the specification hierarchy. The motivation of the change is to allow users to define features in base specification classes, but overwrite expected snapshots per child specification.
+spockPull:2112[]
+
 === Misc
 
 * Fix ExtensionException in OSGi environment for global extension spockIssue:2076[]
 ** This issue was introduced with spockPull:1995[]
+* Fix `@RestoreSystemProperties` not restoring state between iterations of a data-driven feature spockIssue:2104[]
+* Fix `VerifyError: Stack map does not match the one at exception handler` introduced in 2.4-M5 spockIssue:2080[]
 
 == 2.4-M5 (2025-01-07)
 

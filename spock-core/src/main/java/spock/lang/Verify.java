@@ -14,6 +14,10 @@
 
 package spock.lang;
 
+import org.codehaus.groovy.transform.GroovyASTTransformationClass;
+import org.spockframework.compiler.condition.VerifyMethodTransform;
+import org.spockframework.util.Beta;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -21,14 +25,19 @@ import java.lang.annotation.Target;
 
 /**
  * Indicates that the code blocks of the annotated methods
- * may contain conditions, allowing to leave off the assert keyword.
+ * may contain conditions, allowing to omit the {@code assert} keyword.
  * As in expect-blocks and then-blocks, variable declarations
  * and void method invocations will not be considered conditions.
  * The method can be defined in the {@link Specification} class or in a separate class.
  * The method must have a {@code void} return type.
  * The test will fail on the first failing assertion.
+ *
+ * @author Pavlo Shevchenko
+ * @since 2.4
  */
+@Beta
 @Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.SOURCE)
+@GroovyASTTransformationClass(classes = VerifyMethodTransform.class)
 public @interface Verify {
 }

@@ -77,8 +77,8 @@ public abstract class SpockRuntime {
         errorCollector.collectOrThrow(spockException); // this is our exception - it already has good message
         return;
       }
-      if (throwable instanceof MultipleFailuresError) {
-        final MultipleFailuresError multipleFailuresError = (MultipleFailuresError) throwable;
+      if (throwable instanceof SpockMultipleFailuresError) {
+        final SpockMultipleFailuresError multipleFailuresError = (SpockMultipleFailuresError) throwable;
         errorCollector.collectOrThrow(multipleFailuresError); // this is our exception - it already has good message
         return;
       }

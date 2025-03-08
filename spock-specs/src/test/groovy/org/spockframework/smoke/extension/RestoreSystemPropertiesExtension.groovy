@@ -36,6 +36,22 @@ class RestoreSystemPropertiesExtension extends Specification {
     System.setProperty("RestoreSystemPropertiesExtension.prop2", "new value")
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/2104")
+  @RestoreSystemProperties
+  def "restores properties for each iteration of a data-driven feature method"() {
+    expect:
+    System.getProperty("RestoreSystemPropertiesExtension.iteration") == null
+
+    when:
+    System.setProperty("RestoreSystemPropertiesExtension.iteration", "$i")
+
+    then:
+    System.getProperty("RestoreSystemPropertiesExtension.iteration") == "$i"
+
+    where:
+    i << (1..3)
+  }
+
   def cleanupSpec() {
     assert System.getProperty("RestoreSystemPropertiesExtension.prop1") == "original value"
     assert System.getProperty("RestoreSystemPropertiesExtension.prop2") == "new value"

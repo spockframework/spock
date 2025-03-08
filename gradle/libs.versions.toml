@@ -1,13 +1,13 @@
 [versions]
 asciidoctorj = '2.5.13'
 groovy2 = '2.5.23'
-groovy3 = '3.0.23'
-groovy4 = '4.0.25'
+groovy3 = '3.0.24'
+groovy4 = '4.0.26'
 jacoco = '0.8.12'
-junit = '5.11.4'
+junit = '5.12.0'
 asm = '9.7.1'
 mockito4 = '4.11.0'
-mockito5 = '5.15.2'
+mockito5 = '5.16.0'
 workflows-kotlin = "2.1.10"
 
 [libraries]
@@ -15,7 +15,7 @@ jetbrains-annotations = "org.jetbrains:annotations:26.0.2"
 asciidoctorj = { module = "org.asciidoctor:asciidoctorj", version.ref = "asciidoctorj" }
 asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
 asmUtil = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
-bytebuddy = "net.bytebuddy:byte-buddy:1.17.0"
+bytebuddy = "net.bytebuddy:byte-buddy:1.17.2"
 cglib = "cglib:cglib-nodep:3.3.0"
 geantyref = "io.leangen.geantyref:geantyref:1.3.16"
 h2database = "com.h2database:h2:2.2.224"
@@ -27,13 +27,14 @@ mockito4 = { module = "org.mockito:mockito-core", version.ref = "mockito4" }
 mockito4inline = { module = "org.mockito:mockito-inline", version.ref = "mockito4" }
 mockito5 = { module = "org.mockito:mockito-core", version.ref = "mockito5" }
 objenesis = "org.objenesis:objenesis:3.4"
-# This needs a classifier, but is has to be specified on the usage end https://melix.github.io/blog/2021/03/version-catalogs-faq.html#_why_can_t_i_use_excludes_or_classifiers
+# This needs a classifier, but it has to be specified on the usage end https://melix.github.io/blog/2021/03/version-catalogs-faq.html#_why_can_t_i_use_excludes_or_classifiers
 jacoco-agent = { module = "org.jacoco:org.jacoco.agent", version.ref = "jacoco" }
 junit-bom =  { module = "org.junit:junit-bom",  version.ref = "junit" }
 # to omit the version we have to use this syntax, the version is managed by the junit-bom
 junit-jupiter.module = "org.junit.jupiter:junit-jupiter"
-junit-platform-testkit.module = "org.junit.platform:junit-platform-testkit"
 junit-platform-console.module = "org.junit.platform:junit-platform-console"
+junit-platform-launcher.module = "org.junit.platform:junit-platform-launcher"
+junit-platform-testkit.module = "org.junit.platform:junit-platform-testkit"
 workflows-kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "workflows-kotlin" }
 workflows-kotlin-compilerEmbeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "workflows-kotlin" }
 workflows-kotlin-mainKts = { module = "org.jetbrains.kotlin:kotlin-main-kts", version.ref = "workflows-kotlin" }

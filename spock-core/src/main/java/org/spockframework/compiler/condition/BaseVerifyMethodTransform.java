@@ -31,9 +31,8 @@ abstract class BaseVerifyMethodTransform implements ASTTransformation {
   @Override
   public void visit(ASTNode[] astNodes, SourceUnit sourceUnit) {
     ErrorReporter errorReporter = new ErrorReporter(sourceUnit);
-    SourceLookup sourceLookup = new SourceLookup(sourceUnit);
 
-    try {
+    try (SourceLookup sourceLookup = new SourceLookup(sourceUnit)) {
       for (ASTNode node : astNodes) {
         if (!(node instanceof MethodNode)) {
           continue;
@@ -41,8 +40,6 @@ abstract class BaseVerifyMethodTransform implements ASTTransformation {
 
         processVerificationHelperMethod((MethodNode) node, errorReporter, sourceLookup);
       }
-    } finally {
-      sourceLookup.close();
     }
   }
 

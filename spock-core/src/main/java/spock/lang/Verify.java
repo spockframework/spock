@@ -28,9 +28,9 @@ import java.lang.annotation.Target;
  * may contain conditions, allowing to omit the {@code assert} keyword.
  * As in expect-blocks and then-blocks, variable declarations
  * and void method invocations will not be considered conditions.
- * The method can be defined in the {@link Specification} class or in a separate class.
+ * The method can be defined in the {@link Specification} class or in a separate Groovy class.
  * The method must have a {@code void} return type.
- * The test will fail on the first failing assertion.
+ * A test calling the method will fail on the first failing assertion.
  *
  * @author Pavlo Shevchenko
  * @since 2.4

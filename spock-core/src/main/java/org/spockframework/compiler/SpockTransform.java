@@ -54,15 +54,12 @@ public class SpockTransform implements ASTTransformation {
 
     void visit(ASTNode[] nodes, SourceUnit sourceUnit) {
       ErrorReporter errorReporter = new ErrorReporter(sourceUnit);
-      SourceLookup sourceLookup = new SourceLookup(sourceUnit);
 
-      try {
+      try (SourceLookup sourceLookup = new SourceLookup(sourceUnit)) {
         List<ClassNode> classes = sourceUnit.getAST().getClasses();
 
         for (ClassNode clazz : classes)
           if (isSpec(clazz)) processSpec(sourceUnit, clazz, errorReporter, sourceLookup);
-      } finally {
-        sourceLookup.close();
       }
     }
 

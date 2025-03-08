@@ -77,6 +77,11 @@ public abstract class SpockRuntime {
         errorCollector.collectOrThrow(spockException); // this is our exception - it already has good message
         return;
       }
+      if (throwable instanceof SpockMultipleFailuresError) {
+        final SpockMultipleFailuresError multipleFailuresError = (SpockMultipleFailuresError) throwable;
+        errorCollector.collectOrThrow(multipleFailuresError); // this is our exception - it already has good message
+        return;
+      }
     final ConditionFailedWithExceptionError conditionNotSatisfiedError = new ConditionFailedWithExceptionError(
         new Condition(
             getValues(recorder),

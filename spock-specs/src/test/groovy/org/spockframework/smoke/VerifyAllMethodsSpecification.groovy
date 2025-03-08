@@ -14,10 +14,10 @@
 
 package org.spockframework.smoke
 
-import org.opentest4j.MultipleFailuresError
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.SpockComparisonFailure
+import org.spockframework.runtime.SpockMultipleFailuresError
 import spock.lang.VerifyAll
 
 class VerifyAllMethodsSpecification extends EmbeddedSpecification {
@@ -54,7 +54,7 @@ def "feature"() {
 
     then:
     result.failures.size() == 1
-    with(result.failures[0].exception, MultipleFailuresError) {
+    with(result.failures[0].exception, SpockMultipleFailuresError) {
       failures.size() == 2
       with(failures[0], ConditionNotSatisfiedError) {
         condition.text == 'x > 0'
@@ -87,7 +87,7 @@ class SpecWithHelpers extends Specification {
 
     then:
     result.failures.size() == 1
-    with(result.failures[0].exception, MultipleFailuresError) {
+    with(result.failures[0].exception, SpockMultipleFailuresError) {
       failures.size() == 2
       with(failures[0], ConditionNotSatisfiedError) {
         condition.text == 'x > 0'

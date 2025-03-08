@@ -33,13 +33,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
+import static org.spockframework.util.Assert.notNull;
 
 public class DefaultConditionErrorRecorders implements IConditionErrorRecorders {
 
   private final AstNodeCache nodeCache;
 
   public DefaultConditionErrorRecorders(AstNodeCache nodeCache) {
-    this.nodeCache = nodeCache;
+    this.nodeCache = notNull(nodeCache);
   }
 
   @Override

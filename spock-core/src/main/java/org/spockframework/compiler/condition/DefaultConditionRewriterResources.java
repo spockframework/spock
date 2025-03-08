@@ -19,6 +19,8 @@ import org.spockframework.compiler.ErrorReporter;
 import org.spockframework.compiler.IRewriteResources;
 import org.spockframework.compiler.SourceLookup;
 
+import static org.spockframework.util.Assert.notNull;
+
 class DefaultConditionRewriterResources implements IRewriteResources {
 
   private final AstNodeCache nodeCache;
@@ -32,10 +34,10 @@ class DefaultConditionRewriterResources implements IRewriteResources {
     ErrorReporter errorReporter,
     IConditionErrorRecorders errorRecorders
   ) {
-    this.nodeCache = nodeCache;
-    this.lookup = lookup;
-    this.errorReporter = errorReporter;
-    this.errorRecorders = errorRecorders;
+    this.nodeCache = notNull(nodeCache);
+    this.lookup = notNull(lookup);
+    this.errorReporter = notNull(errorReporter);
+    this.errorRecorders = notNull(errorRecorders);
   }
 
 

@@ -33,7 +33,6 @@ abstract class BaseVerifyMethodRewriter extends StatementReplacingVisitorSupport
 
   final IRewriteResources resources;
   private final MethodNode methodNode;
-  private Statement currentTopLevelStatement;
   private boolean conditionFound = false;
 
   BaseVerifyMethodRewriter(MethodNode methodNode, IRewriteResources resources) {
@@ -48,7 +47,6 @@ abstract class BaseVerifyMethodRewriter extends StatementReplacingVisitorSupport
     ListIterator<Statement> statements = AstUtil.getStatements(methodNode).listIterator();
     while (statements.hasNext()) {
       Statement next = statements.next();
-      currentTopLevelStatement = next;
       statements.set(replace(next));
     }
     defineRecorders();
@@ -57,16 +55,14 @@ abstract class BaseVerifyMethodRewriter extends StatementReplacingVisitorSupport
   @Override
   public void visitAssertStatement(AssertStatement stat) {
     super.visitAssertStatement(stat);
-    if (stat == currentTopLevelStatement) {
-      conditionFound();
-      replaceVisitedStatementWith(ConditionRewriter.rewriteExplicitCondition(stat, resources));
-    }
+    conditionFound();
+    replaceVisitedStatementWith(ConditionRewriter.rewriteExplicitCondition(stat, resources));
   }
 
   @Override
   public void visitExpressionStatement(ExpressionStatement stat) {
     super.visitExpressionStatement(stat);
-    if (stat == currentTopLevelStatement && isImplicitCondition(stat)) {
+    if (isImplicitCondition(stat)) {
       checkIsValidImplicitCondition(stat, resources.getErrorReporter());
       conditionFound();
       replaceVisitedStatementWith(ConditionRewriter.rewriteImplicitCondition(stat, resources));

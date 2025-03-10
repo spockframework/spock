@@ -1,7 +1,7 @@
 public class Assertions extends java.lang.Object {
 
     @spock.lang.Verify
-    public static void brokenEvenIfPositive(int a) {
+    public static void evenIfPositive(int a) {
         org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
         org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
         try {

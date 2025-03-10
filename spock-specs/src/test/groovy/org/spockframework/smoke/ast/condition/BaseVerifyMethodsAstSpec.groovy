@@ -148,7 +148,7 @@ class Assertions {
     def result = compiler.transpile("""
 class Assertions {
     @${annotation.name}
-    static void brokenEvenIfPositive(int a) {
+    static void evenIfPositive(int a) {
         a != 0
         if (a > 0) {
             a % 2 == 0

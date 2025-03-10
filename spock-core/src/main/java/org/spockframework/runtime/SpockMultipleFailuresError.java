@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package org.spockframework.compiler;
+package org.spockframework.runtime;
 
-import org.codehaus.groovy.ast.ASTNode;
-import org.spockframework.compiler.condition.IConditionErrorRecorders;
+import org.opentest4j.MultipleFailuresError;
 
 import java.util.List;
 
-/**
- * @author Peter Niederwieser
- */
-public interface IRewriteResources {
-  AstNodeCache getAstNodeCache();
+public class SpockMultipleFailuresError extends MultipleFailuresError {
+  private static final long serialVersionUID = 1L;
 
-  String getSourceText(ASTNode node);
-
-  ErrorReporter getErrorReporter();
-
-  IConditionErrorRecorders getErrorRecorders();
-
+  public SpockMultipleFailuresError(String heading, List<? extends Throwable> failures) {
+    super(heading, failures);
+  }
 }

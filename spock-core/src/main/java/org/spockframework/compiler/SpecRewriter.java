@@ -23,6 +23,8 @@ import org.codehaus.groovy.syntax.Token;
 import org.codehaus.groovy.syntax.Types;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Opcodes;
+import org.spockframework.compiler.condition.DefaultConditionErrorRecorders;
+import org.spockframework.compiler.condition.IConditionErrorRecorders;
 import org.spockframework.compiler.model.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.SpockException;
@@ -43,7 +45,7 @@ import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
  * @author Peter Niederwieser
  */
 // IDEA: mock controller / leaveScope calls should only be inserted when necessary (increases robustness)
-public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResources {
+public class SpecRewriter extends AbstractSpecVisitor implements ISpecRewriteResources {
   // https://issues.apache.org/jira/browse/GROOVY-10403
   // needed for groovy-4 compatibility and only available since groovy-4
   private static final java.lang.reflect.Method GET_PLAIN_NODE_REFERENCE = ReflectionUtil.getMethodBySignature(ClassNode.class, "getPlainNodeReference", boolean.class);
@@ -51,6 +53,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   private final AstNodeCache nodeCache;
   private final SourceLookup lookup;
   private final ErrorReporter errorReporter;
+  private final IConditionErrorRecorders errorRecorders;
 
   private Spec spec;
   private int specDepth;
@@ -70,6 +73,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     this.nodeCache = nodeCache;
     this.lookup = lookup;
     this.errorReporter = errorReporter;
+    this.errorRecorders = new DefaultConditionErrorRecorders(nodeCache);
   }
 
   @Override
@@ -409,10 +413,10 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     }
 
     if (methodHasCondition) {
-      defineValueRecorder(method.getStatements(), "");
+      errorRecorders.defineValueRecorder(method.getStatements());
     }
     if (methodHasDeepNonGroupedCondition) {
-      defineErrorRethrower(method.getStatements());
+      errorRecorders.defineErrorRethrower(method.getStatements());
     }
   }
 
@@ -663,60 +667,6 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   @Override
-  public void defineValueRecorder(List<Statement> stats, String variableNameSuffix) {
-    // recorder variable needs to be defined in outermost scope,
-    // hence we insert it at the beginning of the block
-    stats.add(0,
-        new ExpressionStatement(
-            new DeclarationExpression(
-                new VariableExpression(SpockNames.VALUE_RECORDER + variableNameSuffix, nodeCache.ValueRecorder),
-                Token.newSymbol(Types.ASSIGN, -1, -1),
-                new ConstructorCallExpression(
-                    nodeCache.ValueRecorder,
-                    ArgumentListExpression.EMPTY_ARGUMENTS))));
-  }
-
-  // This is necessary as otherwise within `with(someMap) { ... }` the variable is resolved to `null`,
-  // but having this local variable beats the resolving against the closure delegate.
-  @Override
-  public void defineErrorRethrower(List<Statement> stats) {
-    stats.add(0,
-      new ExpressionStatement(
-        new DeclarationExpression(
-          new VariableExpression(SpockNames.ERROR_COLLECTOR, nodeCache.ErrorCollector),
-          Token.newSymbol(Types.ASSIGN, -1, -1),
-          new PropertyExpression(new ClassExpression(nodeCache.ErrorRethrower), "INSTANCE"))));
-  }
-
-  @Override
-  public void defineErrorCollector(List<Statement> stats, String variableNameSuffix) {
-    // collector variable needs to be defined in outermost scope,
-    // hence we insert it at the beginning of the block
-    List<Statement> allStats = new ArrayList<>(stats);
-
-    stats.clear();
-
-    stats.add(
-      new ExpressionStatement(
-        new DeclarationExpression(
-          new VariableExpression(SpockNames.ERROR_COLLECTOR + variableNameSuffix, nodeCache.ErrorCollector),
-          Token.newSymbol(Types.ASSIGN, -1, -1),
-          new ConstructorCallExpression(
-            nodeCache.ErrorCollector,
-            ArgumentListExpression.EMPTY_ARGUMENTS))));
-
-    stats.add(
-      new TryCatchStatement(
-        new BlockStatement(allStats, null),
-        new ExpressionStatement(
-          createDirectMethodCall(
-            new VariableExpression(SpockNames.ERROR_COLLECTOR + variableNameSuffix),
-            nodeCache.ErrorCollector_Validate,
-            ArgumentListExpression.EMPTY_ARGUMENTS
-          ))));
-  }
-
-  @Override
   public VariableExpression captureOldValue(Expression oldValue) {
     VariableExpression var = new OldValueExpression(oldValue, SpockNames.OLD_VALUE + oldValueCount++);
     DeclarationExpression decl = new DeclarationExpression(
@@ -785,6 +735,11 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   @Override
   public ErrorReporter getErrorReporter() {
     return errorReporter;
+  }
+
+  @Override
+  public IConditionErrorRecorders getErrorRecorders() {
+    return errorRecorders;
   }
 
   private FixtureMethod getSharedInitializerMethod() {

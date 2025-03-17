@@ -2,6 +2,7 @@ package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
+import org.spockframework.runtime.SpockMultipleFailuresError
 import org.spockframework.runtime.extension.ExtensionAnnotation
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension
 import org.spockframework.runtime.extension.builtin.RetryIterationInterceptor
@@ -172,7 +173,7 @@ class Foo extends Specification {
 
     then:
     result.failures.size() == 2
-    result.failures.collect { it.exception.getClass() } =~ [MultipleFailuresError]
+    result.failures.collect { it.exception.getClass() } =~ [SpockMultipleFailuresError]
     result.failures.collect { it.exception.failures.size() } =~ [4]
     result.failures.collectMany { it.exception.failures*.getClass() } =~ [ConditionNotSatisfiedError]
   }

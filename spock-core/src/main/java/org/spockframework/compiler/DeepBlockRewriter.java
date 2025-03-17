@@ -28,6 +28,8 @@ import org.spockframework.util.Nullable;
 import java.util.List;
 
 import static org.codehaus.groovy.ast.expr.MethodCallExpression.NO_ARGUMENTS;
+import static org.spockframework.compiler.condition.ImplicitConditionsUtils.checkIsValidImplicitCondition;
+import static org.spockframework.compiler.condition.ImplicitConditionsUtils.isImplicitCondition;
 
 /**
  * Walks the statement and expression tree to:
@@ -41,12 +43,12 @@ import static org.codehaus.groovy.ast.expr.MethodCallExpression.NO_ARGUMENTS;
  * @author Peter Niederwieser
  */
 public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
-  private final IRewriteResources resources;
+  private final ISpecRewriteResources resources;
   private boolean insideInteraction = false;
   private int interactionClosureDepth = 0;
   private int closureDepth = 0;
 
-  public DeepBlockRewriter(IRewriteResources resources) {
+  public DeepBlockRewriter(ISpecRewriteResources resources) {
     super(resources.getCurrentBlock(), resources.getAstNodeCache());
     this.resources = resources;
   }
@@ -200,7 +202,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     }
     if (!isImplicitCondition(stat)) return false;
 
-    checkIsValidImplicitCondition(stat);
+    checkIsValidImplicitCondition(stat, resources.getErrorReporter());
 
     String methodName = AstUtil.getMethodName(stat.getExpression());
     boolean isConditionMethodCall = Identifiers.CONDITION_METHODS.contains(methodName);
@@ -304,10 +306,10 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
 
   private void defineRecorders(ClosureExpression expr) {
     if (groupConditionFound) {
-      resources.defineErrorCollector(AstUtil.getStatements(expr), getErrorCollectorSuffix());
+      resources.getErrorRecorders().defineErrorCollector(AstUtil.getStatements(expr), getErrorCollectorSuffix());
     }
     if (conditionFound) {
-      resources.defineValueRecorder(AstUtil.getStatements(expr), getValueRecorderSuffix());
+      resources.getErrorRecorders().defineValueRecorder(AstUtil.getStatements(expr), getValueRecorderSuffix());
     }
   }
 
@@ -348,21 +350,6 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
       return rewriter.isInteraction(stat);
     } catch (InvalidSpecCompileException e) {
       return false;
-    }
-  }
-
-  // assumption: not already an interaction
-  public static boolean isImplicitCondition(Statement stat) {
-    return stat instanceof ExpressionStatement
-        && !(((ExpressionStatement) stat).getExpression() instanceof DeclarationExpression);
-  }
-
-  private void checkIsValidImplicitCondition(Statement stat) {
-    BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
-    if (binExpr == null) return;
-
-    if (Types.ofType(binExpr.getOperation().getType(), Types.ASSIGNMENT_OPERATOR)) {
-      resources.getErrorReporter().error(stat, "Expected a condition, but found an assignment. Did you intend to write '==' ?");
     }
   }
 }

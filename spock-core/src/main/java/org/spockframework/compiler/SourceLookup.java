@@ -20,7 +20,7 @@ import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.control.Janitor;
 import org.codehaus.groovy.control.SourceUnit;
 
-public class SourceLookup {
+public class SourceLookup implements AutoCloseable {
   private final SourceUnit sourceUnit;
   private final Janitor janitor = new Janitor();
 
@@ -48,6 +48,7 @@ public class SourceLookup {
     return text.toString().trim();
   }
 
+  @Override
   public void close() {
     janitor.cleanup();
   }

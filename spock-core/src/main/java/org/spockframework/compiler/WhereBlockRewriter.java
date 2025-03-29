@@ -48,7 +48,7 @@ import static org.spockframework.util.Identifiers.COMBINED;
 public class WhereBlockRewriter {
   private final WhereBlock whereBlock;
   private final FilterBlock filterBlock;
-  private final IRewriteResources resources;
+  private final ISpecRewriteResources resources;
   private final boolean defineErrorRethrower;
   private final InstanceFieldAccessChecker instanceFieldAccessChecker;
   private final ErrorRethrowerUsageDetector errorRethrowerUsageDetector;
@@ -66,7 +66,7 @@ public class WhereBlockRewriter {
   private final List<Expression> dataVariableMultiplications = new ArrayList<>();
   private int localVariableCount = 0;
 
-  private WhereBlockRewriter(WhereBlock whereBlock, FilterBlock filterBlock, IRewriteResources resources, boolean defineErrorRethrower) {
+  private WhereBlockRewriter(WhereBlock whereBlock, FilterBlock filterBlock, ISpecRewriteResources resources, boolean defineErrorRethrower) {
     this.whereBlock = whereBlock;
     this.filterBlock = filterBlock;
     this.resources = resources;
@@ -75,7 +75,7 @@ public class WhereBlockRewriter {
     errorRethrowerUsageDetector = defineErrorRethrower ? new ErrorRethrowerUsageDetector() : null;
   }
 
-  public static void rewrite(WhereBlock block, FilterBlock filterBlock, IRewriteResources resources, boolean defineErrorRethrower) {
+  public static void rewrite(WhereBlock block, FilterBlock filterBlock, ISpecRewriteResources resources, boolean defineErrorRethrower) {
     new WhereBlockRewriter(block, filterBlock, resources, defineErrorRethrower).rewrite();
   }
 
@@ -363,7 +363,7 @@ public class WhereBlockRewriter {
 
     List<Statement> dataProviderStats = new ArrayList<>();
     if (defineErrorRethrower && errorRethrowerUsageDetector.detectedErrorRethrowerUsage(dataProviderExpr)) {
-      resources.defineErrorRethrower(dataProviderStats);
+      resources.getErrorRecorders().defineErrorRethrower(dataProviderStats);
     }
 
     ReturnStatement returnStat = new ReturnStatement(dataProviderExpr);
@@ -822,7 +822,7 @@ public class WhereBlockRewriter {
     instanceFieldAccessChecker.check(dataProcessorStats);
 
     if (defineErrorRethrower && errorRethrowerUsageDetector.detectedErrorRethrowerUsage(dataProcessorStats)) {
-      resources.defineErrorRethrower(dataProcessorStats);
+      resources.getErrorRecorders().defineErrorRethrower(dataProcessorStats);
     }
 
     dataProcessorStats.add(
@@ -895,10 +895,10 @@ public class WhereBlockRewriter {
     instanceFieldAccessChecker.check(filterStats);
 
     if (deep.isConditionFound()) {
-      resources.defineValueRecorder(filterStats, "");
+      resources.getErrorRecorders().defineValueRecorder(filterStats, "");
     }
     if (deep.isDeepNonGroupedConditionFound()) {
-      resources.defineErrorRethrower(filterStats);
+      resources.getErrorRecorders().defineErrorRethrower(filterStats);
     }
 
     BlockStatement blockStat = new BlockStatement(filterStats, null);

@@ -28,7 +28,7 @@ public class ErrorInfoCollector {
       if (errorInfos.size() == 1) {
         ExceptionUtil.sneakyThrow(errorInfos.get(0).getException());
       }
-      throw new MultipleFailuresError("",
+      throw new SpockMultipleFailuresError("",
         errorInfos.stream().map(ErrorInfo::getException).collect(Collectors.toList()));
     }
   }

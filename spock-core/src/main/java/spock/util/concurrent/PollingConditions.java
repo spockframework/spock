@@ -38,8 +38,9 @@ import java.util.Locale;
  *
  * then:
  * conditions.eventually {
- *   assert machine.temperature >= 100
- *   assert machine.efficiency >= 0.9
+ *   def reading = machine.engineReading
+ *   assert reading.temperature >= 100
+ *   assert reading.efficiency >= 0.9
  * }
  * </pre>
  *

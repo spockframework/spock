@@ -110,7 +110,11 @@ public class TimeoutInterceptor implements IMethodInterceptor {
         // As this won't take long, it should also be acceptable if this thread
         // got interrupted by some other thread. To report on the latter case,
         // we save off the exception, overriding any previously saved exception.
-        saved = e;
+        if (saved != null) {
+          saved.addSuppressed(e);
+        } else {
+          saved = e;
+        }
       }
     }
     if (stackTrace.length > 0) {

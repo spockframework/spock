@@ -1,5 +1,3 @@
-import com.gradle.enterprise.gradleplugin.internal.extension.BuildScanExtensionWithHiddenFeatures
-
 pluginManagement {
   repositories {
     mavenCentral()

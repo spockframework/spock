@@ -48,6 +48,15 @@
 <div class="ulist">
 <ul>
 <li>
+<p>Improve publish module-alignment metadata <a href="https://github.com/spockframework/spock/pull/2082">#2082</a></p>
+</li>
+<li>
+<p>Improve render multidimensional arrays in comparisons and invocation matchers <a href="https://github.com/spockframework/spock/pull/2107">#2107</a></p>
+</li>
+<li>
+<p>Improve replace unnecessary reflection <a href="https://github.com/spockframework/spock/pull/2115">#2115</a></p>
+</li>
+<li>
 <p>Fix ExtensionException in OSGi environment for global extension <a href="https://github.com/spockframework/spock/issues/2076">#2076</a></p>
 <div class="ulist">
 <ul>
@@ -64,9 +73,30 @@
 <p>Fix <code>VerifyError: Stack map does not match the one at exception handler</code> introduced in 2.4-M5 <a href="https://github.com/spockframework/spock/issues/2080">#2080</a></p>
 </li>
 <li>
-<p>Throw <code>SpockMultipleFailuresError</code> instead of a generic <code>MultipleFailuresError</code> in case of multiple failed assertions <a href="https://github.com/spockframework/spock/pull/2112">#2112</a></p>
+<p>Fix throw <code>SpockMultipleFailuresError</code> instead of a generic <code>MultipleFailuresError</code> in case of multiple failed assertions <a href="https://github.com/spockframework/spock/pull/2112">#2112</a></p>
+</li>
+<li>
+<p>Fix cross-multiplication of multi-assignment data providers <a href="https://github.com/spockframework/spock/pull/2078">#2078</a></p>
+</li>
+<li>
+<p>Fix using the same previous data table column multiple times in the same cell <a href="https://github.com/spockframework/spock/pull/2084">#2084</a></p>
+</li>
+<li>
+<p>Fix unintuitive behavior by removing the optimization which data provider is remembered in a multiplication <a href="https://github.com/spockframework/spock/pull/2119">#2119</a></p>
+</li>
+<li>
+<p>Fix several bugs in cross-multiplication implementation <a href="https://github.com/spockframework/spock/pull/2123">#2123</a></p>
+</li>
+<li>
+<p>Fix filter blocks with shared fields and derived data variables <a href="https://github.com/spockframework/spock/pull/2088">#2088</a></p>
+</li>
+<li>
+<p>Fix combined labels with comments being ignored <a href="https://github.com/spockframework/spock/pull/2121">#2121</a></p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Andreas Turban, Björn Kautler, Christoph Loy, Marcin Zajączkowski, Pavlo Shevchenko</p>
 </div>
 </div>
 </div>
@@ -174,6 +204,9 @@
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Andreas Turban, Björn Kautler, Christoph Loy, Marcin Zajączkowski</p>
+</div>
 </div>
 </div>
 </div>
@@ -193,6 +226,9 @@
 </div>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Björn Kautler,</p>
 </div>
 </div>
 </div>
@@ -1371,13 +1407,13 @@ enable IDE support like code completion:</p>
 </div>
 </li>
 <li>
-<p>Execution with an unsupported Groovy version can be allowed with <code>-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true</code> (#1164)</p>
+<p>Execution with an unsupported Groovy version can be allowed with <code>-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true</code> <a href="https://github.com/spockframework/spock/pull/1164">#1164</a></p>
 </li>
 <li>
-<p>Relax maximum allowed Groovy version in snapshot builds (#1108)</p>
+<p>Relax maximum allowed Groovy version in snapshot builds <a href="https://github.com/spockframework/spock/pull/1108">#1108</a></p>
 </li>
 <li>
-<p>Upgrade Groovy to 2.5.12 (improved Java 14+ support) and 3.0.4 (fixes #1127)</p>
+<p>Upgrade Groovy to 2.5.12 (improved Java 14+ support) and 3.0.4 (fixes <a href="https://github.com/spockframework/spock/issues/1127">#1127</a>)</p>
 </li>
 <li>
 <p>Upgrade JUnit 4 to 4.13 (in <code>spock-junit4</code>)</p>
@@ -1431,43 +1467,43 @@ features by default if not overwritten by explicit <code>@Unroll</code> annotati
 Spock 2.0 behaviour.</p>
 </li>
 <li>
-<p>Updated OSGI support with using <code>bnd</code> (#1154, #1175)</p>
+<p>Updated OSGI support with using <code>bnd</code> (<a href="https://github.com/spockframework/spock/pull/1154">#1154</a>, <a href="https://github.com/spockframework/spock/pull/1175">#1175</a>)</p>
 </li>
 <li>
-<p>Fix <code>@PendingFeature</code> logic (#1103)</p>
+<p>Fix <code>@PendingFeature</code> logic <a href="https://github.com/spockframework/spock/pull/1103">#1103</a></p>
 </li>
 <li>
-<p>Do not strip type information from arguments (#1134)</p>
+<p>Do not strip type information from arguments <a href="https://github.com/spockframework/spock/pull/1134">#1134</a></p>
 </li>
 <li>
-<p>Simplify work-around to get the reference to the current closure (#1131)</p>
+<p>Simplify work-around to get the reference to the current closure <a href="https://github.com/spockframework/spock/pull/1131">#1131</a></p>
 </li>
 <li>
-<p>Set source position for return statement in data provider method (#1116)</p>
+<p>Set source position for return statement in data provider method <a href="https://github.com/spockframework/spock/pull/1116">#1116</a></p>
 </li>
 <li>
-<p>Add <code>Spy(T obj, Closure interactions)</code> (#1115)</p>
+<p>Add <code>Spy(T obj, Closure interactions)</code> <a href="https://github.com/spockframework/spock/pull/1115">#1115</a></p>
 </li>
 <li>
-<p>Reduce number of Groovy dependencies to just groovy.jar (#1109)</p>
+<p>Reduce number of Groovy dependencies to just groovy.jar <a href="https://github.com/spockframework/spock/pull/1109">#1109</a></p>
 </li>
 <li>
-<p>Improve <code>ExceptionUtil.sneakyThrow</code> declaration (#1077)</p>
+<p>Improve <code>ExceptionUtil.sneakyThrow</code> declaration <a href="https://github.com/spockframework/spock/pull/1077">#1077</a></p>
 </li>
 <li>
-<p>Print up to 5 last mock invocations for a wrong order error (#1093)</p>
+<p>Print up to 5 last mock invocations for a wrong order error <a href="https://github.com/spockframework/spock/pull/1093">#1093</a></p>
 </li>
 <li>
-<p>Fix <code>EmptyOrDummyResponse</code> returning mock instance for <code>Object</code> (#1092)</p>
+<p>Fix <code>EmptyOrDummyResponse</code> returning mock instance for <code>Object</code> <a href="https://github.com/spockframework/spock/pull/1092">#1092</a></p>
 </li>
 <li>
-<p>Remove unnecessary reflection for Java 8 types in <code>EmptyOrDummyResponse</code> (#1091)</p>
+<p>Remove unnecessary reflection for Java 8 types in <code>EmptyOrDummyResponse</code> <a href="https://github.com/spockframework/spock/pull/1091">#1091</a></p>
 </li>
 <li>
-<p>Update old Issue annotations to point to migrated github issues (#1003)</p>
+<p>Update old Issue annotations to point to migrated github issues <a href="https://github.com/spockframework/spock/pull/1003">#1003</a></p>
 </li>
 <li>
-<p>Test Spock with Java 14 (#1155)</p>
+<p>Test Spock with Java 14 <a href="https://github.com/spockframework/spock/pull/1155">#1155</a></p>
 </li>
 </ul>
 </div>
@@ -1726,40 +1762,40 @@ data structure, then you need to move the condition into a separate method that 
 <div class="ulist">
 <ul>
 <li>
-<p>Add implicit assertions for CodeArgument constraints (#956)</p>
+<p>Add implicit assertions for CodeArgument constraints <a href="https://github.com/spockframework/spock/pull/956">#956</a></p>
 </li>
 <li>
-<p>Add power assertion output to asserts with explicit message (#928)</p>
+<p>Add power assertion output to asserts with explicit message <a href="https://github.com/spockframework/spock/pull/928">#928</a></p>
 </li>
 <li>
-<p>Add support for mixed named and positional arguments in mocks (#919)</p>
+<p>Add support for mixed named and positional arguments in mocks <a href="https://github.com/spockframework/spock/pull/919">#919</a></p>
 </li>
 <li>
-<p>Add NamedParam support for groovy-2.5 with backport to 2.4 (#921)</p>
+<p>Add NamedParam support for groovy-2.5 with backport to 2.4 <a href="https://github.com/spockframework/spock/pull/921">#921</a></p>
 </li>
 <li>
-<p>Add special rendering for Set comparisons (#925)</p>
+<p>Add special rendering for Set comparisons <a href="https://github.com/spockframework/spock/pull/925">#925</a></p>
 </li>
 <li>
 <p>Add identity hash code to type hints in comparison failures if they are identical</p>
 </li>
 <li>
-<p>Fix erroneous regex where an optional colon was defined instead of a non-capturing group (#931)</p>
+<p>Fix erroneous regex where an optional colon was defined instead of a non-capturing group <a href="https://github.com/spockframework/spock/pull/931">#931</a></p>
 </li>
 <li>
-<p>Improve CodeArgumentConstraint by supporting assertions (#918)</p>
+<p>Improve CodeArgumentConstraint by supporting assertions <a href="https://github.com/spockframework/spock/pull/918">#918</a></p>
 </li>
 <li>
-<p>Improve IDE type inference in MockingApi (#920)</p>
+<p>Improve IDE type inference in MockingApi <a href="https://github.com/spockframework/spock/pull/920">#920</a></p>
 </li>
 <li>
-<p>Improve reporting of TooFewInvocationsError (#912)</p>
+<p>Improve reporting of TooFewInvocationsError <a href="https://github.com/spockframework/spock/pull/912">#912</a></p>
 </li>
 <li>
-<p>Improve render class loader for classes in comparison failures (#932)</p>
+<p>Improve render class loader for classes in comparison failures <a href="https://github.com/spockframework/spock/pull/932">#932</a></p>
 </li>
 <li>
-<p>Improve record class literal values to display FQCN in comparison failures (#935)</p>
+<p>Improve record class literal values to display FQCN in comparison failures <a href="https://github.com/spockframework/spock/pull/935">#935</a></p>
 </li>
 <li>
 <p>Improve filter Java 9+ reflection stack frames</p>
@@ -1771,13 +1807,13 @@ data structure, then you need to move the condition into a separate method that 
 <p>Improve use canonical class name in comparison failure results if present</p>
 </li>
 <li>
-<p>Improve render otherwise irrelevant expressions if they get a type hint in comparison failure (#936)</p>
+<p>Improve render otherwise irrelevant expressions if they get a type hint in comparison failure <a href="https://github.com/spockframework/spock/pull/936">#936</a></p>
 </li>
 <li>
-<p>Fix do not convert implicit "this" expression like when calling the constructor of a non-static inner class (#930)</p>
+<p>Fix do not convert implicit "this" expression like when calling the constructor of a non-static inner class <a href="https://github.com/spockframework/spock/pull/930">#930</a></p>
 </li>
 <li>
-<p>Fix class expression recording when there are comments with dots in the same line (#937)</p>
+<p>Fix class expression recording when there are comments with dots in the same line <a href="https://github.com/spockframework/spock/pull/937">#937</a></p>
 </li>
 </ul>
 </div>
@@ -1933,19 +1969,19 @@ Burk Hufnagel, signalw, Martin Vseticka, Tilman Ginzel</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Add support for Java 11+ (#895, #902, #903)</p>
+<p>Add support for Java 11+ (<a href="https://github.com/spockframework/spock/pull/895">#895</a>, <a href="https://github.com/spockframework/spock/pull/902">#902</a>, <a href="https://github.com/spockframework/spock/pull/903">#903</a>)</p>
 </li>
 <li>
-<p>Improve <code>@PendingFeature</code> to now have an optional <code>reason</code> attribute (#907)</p>
+<p>Improve <code>@PendingFeature</code> to now have an optional <code>reason</code> attribute <a href="https://github.com/spockframework/spock/pull/907">#907</a></p>
 </li>
 <li>
-<p>Fix use String renderer for Class instances (#909)</p>
+<p>Fix use String renderer for Class instances <a href="https://github.com/spockframework/spock/pull/909">#909</a></p>
 </li>
 <li>
-<p>Fix mark new Spring extensions as @Beta (#890)</p>
+<p>Fix mark new Spring extensions as @Beta <a href="https://github.com/spockframework/spock/pull/890">#890</a></p>
 </li>
 <li>
-<p>Fix exclude groovy-groovysh from compile dependencies (#882)</p>
+<p>Fix exclude groovy-groovysh from compile dependencies <a href="https://github.com/spockframework/spock/pull/882">#882</a></p>
 </li>
 </ul>
 </div>
@@ -1972,13 +2008,13 @@ Burk Hufnagel, signalw, Martin Vseticka, Tilman Ginzel</p>
 <p>Improve <code>@Retry</code> to be declarable on a spec class which will apply it to all feature methods in that class and subclasses (<a href="extensions.html#_retry">Docs</a>)</p>
 </li>
 <li>
-<p>Improve StepwiseExtension mark only subsequent features as skipped in case of failure (#893)</p>
+<p>Improve StepwiseExtension mark only subsequent features as skipped in case of failure <a href="https://github.com/spockframework/spock/pull/893">#893</a></p>
 </li>
 <li>
-<p>Fix issue with <code>@SpringBean</code> mocks throwing <code>InvocationTargetException</code> instead of actual declared exceptions (#878, #887)</p>
+<p>Fix issue with <code>@SpringBean</code> mocks throwing <code>InvocationTargetException</code> instead of actual declared exceptions (<a href="https://github.com/spockframework/spock/pull/878">#878</a>, <a href="https://github.com/spockframework/spock/pull/887">#887</a>)</p>
 </li>
 <li>
-<p>Fix void methods with implicit targets failing in <code>with</code> and <code>verifyAll</code> (#886)</p>
+<p>Fix void methods with implicit targets failing in <code>with</code> and <code>verifyAll</code> <a href="https://github.com/spockframework/spock/pull/886">#886</a></p>
 </li>
 </ul>
 </div>
@@ -2033,7 +2069,7 @@ this has been fixed by performing the injection earlier in the process</p>
 <p>Fix OSGi Import-Package header</p>
 </li>
 <li>
-<p>Fix re-declare recorder variables (#783), this caused annotations such as <code>@Slf4j</code> to break Specifications</p>
+<p>Fix re-declare recorder variables <a href="https://github.com/spockframework/spock/pull/783">#783</a>, this caused annotations such as <code>@Slf4j</code> to break Specifications</p>
 </li>
 <li>
 <p>Fix MissingFieldException in DiffedObjectAsBeanRenderer</p>
@@ -2042,7 +2078,7 @@ this has been fixed by performing the injection earlier in the process</p>
 <p>Fix problems with nested <code>with</code> and <code>verifyAll</code> method calls</p>
 </li>
 <li>
-<p>Fix assertion of mock invocation order with nested invocations (#475)</p>
+<p>Fix assertion of mock invocation order with nested invocations <a href="https://github.com/spockframework/spock/pull/475">#475</a></p>
 </li>
 <li>
 <p>Fix ignore inferred type for Spies on existing instance</p>
@@ -2170,7 +2206,7 @@ Burk Hufnagel</p>
 <p>Thanks to all the contributors to this release: Taylor Wicksell, Rafael Winterhalter, Marcin Zajączkowski, Eduardo Grajeda, Paul King, Andrii, Björn Kautler, Libor Rysavy</p>
 </div>
 <div class="paragraph">
-<p>Known issues with groovy 2.4.10 which breaks a smoke test, but should have little impact on normal use (#709).</p>
+<p>Known issues with groovy 2.4.10 which breaks a smoke test, but should have little impact on normal use <a href="https://github.com/spockframework/spock/pull/709">#709</a>.</p>
 </div>
 </div>
 </div>
@@ -3145,7 +3181,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2025-04-14 09:45:45 UTC
+Last updated 2025-04-15 09:26:06 UTC
 </div>
 </div>
 </body>

@@ -3,6 +3,58 @@
 
 include::include.adoc[]
 
+== 2.4 (tbd)
+
+_This is a summary of the highlights of the milestone releases_
+
+=== Highlights
+
+* Add support for combining two or more data providers using cartesian product spockIssue:1062[]
+* Add support for a `filter` block after a `where` block to filter out unwanted iterations spockPull:1927[]
+* Add <<extensions.adoc#block-listener,`IBlockListener`>> extension point to listen to block execution events within feature methods spockPull:1575[]
+* Add support for defining condition blocks with implicit assertions in helper methods annotated with `@Verify` or `@VerifyAll` spockPull:2112[]
+* Spock now supports pluggable <<extensions.adoc#mock-makers,mock makers>> loaded via ServiceLoader spockPull:1746[]
+** This allows external libraries to contribute mocking logic to Spock and use the same API for the users
+** You can select the used mock maker during mock creation: `Mock(mockMaker:MockMakers.byteBuddy)`
+* Added <<extensions.adoc#mock-makers-mockito,mockito>> mock maker spockPull:1753[] which supports:
+** Mocking of final classes and final methods
+** Mocking of static methods
+** Mocking of classes and interface from different classloaders spockPull:1878[]
+** Requires `org.mockito:mockito-core` >= 4.11 in the test class path
+* Added support for mocking of static methods also for Java code with the new API `SpyStatic()` spockPull:1756[]
+** The <<interaction_based_testing.adoc#static-mocks,static mock methods>> will delegate the creation to the mock makers
+* Add <<spock_primer.adoc#verify-each,verifyEach>> method to perform assertions on each element of an `Iterable` spockPull:1887[], spockPull:2043[]
+* Add <<extensions.adoc#parameter-injection,annotation extensions for parameters>> spockPull:1599[]
+* Add support for <<extensions.adoc#extension-store,keeping state in extensions>> spockPull:1692[]
+* Add <<extensions.adoc#spock-interceptors,feature-scoped interceptors>> spockPull:1844[]
+* Add `@Snapshot` extension for <<extensions.adoc#snapshot-testing,snapshot testing>> spockPull:1873[]
+* Add `!!` as <<spock_primer.adoc#opt-out-of-condition-handling,opt-out operator for assertions>> spockPull:1532[]
+
+=== Breaking Changes
+
+* _This affects users of the `@Snapshot` extension, only if you were using the snapshotter in parent specification classes._ +
+`@Snapshot` used to look up snapshots in directories named after the class containing feature methods. Now, the snapshots will be loaded from directories named after the bottom class in the specification hierarchy. The motivation of the change is to allow users to define features in base specification classes, but overwrite expected snapshots per child specification.
+spockPull:2112[]
+
+* _Most users will probably be unaffected by this change as it only becomes relevant in a multithreaded situation where multiple threads do interaction invocations that care about shared state._ +
+Calculated responses for interactions (`>> { ... }`) previously were all executed synchronized on the respective mock controller instance, so could safely mutate shared state to a certain degree, even if the invocations were happening
+on different threads.
+This also caused that one response calculation could not wait on something happening in another response calculation, as they were all executed sequentially due to the synchronization.
+Starting with this release, the response calculations are no longer happening synchronized.
+If you depend on shared state in such calculations, you now have to make sure yourself, that this is done in a thread-safe manner.
+spockPull:1910[]
+
+* _This should not affect most users, only if you were subclassing `SingleResponseGenerator` and doing unusual things._ +
+`SingleResponseGenerator#isAtEndOfCycle` is now `final` and `SingleResponseGenerator#doRespond` is now `protected`.
+When subclassing `SingleResponseGenerator` it does not make sense to override the first method, and it does not make sense to call the second method from somewhere else.
+spockPull:1910[]
+
+* Calling `old(...)` with multiple arguments is now a compilation error. Previously the additional arguments were simply ignored.
+* Creating `GroovyMock`/`GroovyStub`/`GroovySpy` for an already mocked type will now fail.
+* Creating a global `GroovyMock`/`GroovyStub`/`GroovySpy` when <<parallel_execution.adoc#parallel-execution, parallel execution>> is enabled,
+will now require that the spec is annotated with <<parallel_execution.adoc#isolated-execution, @Isolated>> or `@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)`. See <<interaction_based_testing.adoc#global-mocks-parallel-execution, Global mocks and parallel execution>> spockPull:1848[]
+* `@TempDir` `spock.tempDir.keep` has been replaced by `spock.tempdir.cleanup`. See <<extensions.adoc#temp-dir-cleanup,TempDir Cleanup>> spockPull:1525[]
+
 == 2.4-M6 (2025-04-15)
 
 === Highlights

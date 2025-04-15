@@ -5,7 +5,7 @@
 https://github.com/spockframework/spock/blob/master/LICENSE[image:https://img.shields.io/badge/License-Apache%202.0-blue.svg[License]]
 https://search.maven.org/search?q=g:org.spockframework[image:https://img.shields.io/maven-central/v/org.spockframework/spock-core.svg?label=Maven%20Central[Maven
 Central]]
-https://github.com/spockframework/spock/actions/workflows/release.yml[image:https://img.shields.io/github/actions/workflow/status/spockframework/spock/release.yml?branch=master[GitHub
+https://github.com/spockframework/spock/actions/workflows/release.yaml[image:https://img.shields.io/github/actions/workflow/status/spockframework/spock/release.yaml?branch=master[GitHub
 Workflow Status (branch)]]
 https://jitpack.io/#org.spockframework/spock[image:https://jitpack.io/v/org.spockframework/spock.svg[Jitpack]]
 https://codecov.io/gh/spockframework/spock[image:https://codecov.io/gh/spockframework/spock/branch/master/graph/badge.svg[Codecov]]

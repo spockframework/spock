@@ -17,11 +17,22 @@ spockPull:2112[]
 
 === Misc
 
+* Improve publish module-alignment metadata spockPull:2082[]
+* Improve render multidimensional arrays in comparisons and invocation matchers spockPull:2107[]
+* Improve replace unnecessary reflection spockPull:2115[]
 * Fix ExtensionException in OSGi environment for global extension spockIssue:2076[]
 ** This issue was introduced with spockPull:1995[]
 * Fix `@RestoreSystemProperties` not restoring state between iterations of a data-driven feature spockIssue:2104[]
 * Fix `VerifyError: Stack map does not match the one at exception handler` introduced in 2.4-M5 spockIssue:2080[]
-* Throw `SpockMultipleFailuresError` instead of a generic `MultipleFailuresError` in case of multiple failed assertions spockPull:2112[]
+* Fix throw `SpockMultipleFailuresError` instead of a generic `MultipleFailuresError` in case of multiple failed assertions spockPull:2112[]
+* Fix cross-multiplication of multi-assignment data providers spockPull:2078[]
+* Fix using the same previous data table column multiple times in the same cell spockPull:2084[]
+* Fix unintuitive behavior by removing the optimization which data provider is remembered in a multiplication spockPull:2119[]
+* Fix several bugs in cross-multiplication implementation spockPull:2123[]
+* Fix filter blocks with shared fields and derived data variables spockPull:2088[]
+* Fix combined labels with comments being ignored spockPull:2121[]
+
+Thanks to all the contributors to this release: Andreas Turban, Björn Kautler, Christoph Loy, Marcin Zajączkowski, Pavlo Shevchenko
 
 == 2.4-M5 (2025-01-07)
 
@@ -56,10 +67,14 @@ spockPull:2112[]
 * Fix exception when using `@RepeatUntilFailure` with a data provider with unknown iteration amount spockPull:2031[]
 * Fix compile error with single explicit assert in switch expression branch spockIssue:1845[]
 
+Thanks to all the contributors to this release: Andreas Turban, Björn Kautler, Christoph Loy, Marcin Zajączkowski
+
 == 2.4-M4 (2024-03-21)
 
 * Fix nested regex finding in conditions spockPull:1931[]
 ** Fixes spockIssue:1930[] a regression introduced in M2 by spockPull:1921[]
+
+Thanks to all the contributors to this release: Björn Kautler,
 
 == 2.4-M3 (2024-03-21)
 
@@ -676,11 +691,11 @@ Spy(constructorArgs: [null as String, (Pattern) null])
 def "I'll run everywhere but on Windows"() { ... }
 ----
 
-- Execution with an unsupported Groovy version can be allowed with `-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true` (#1164)
+- Execution with an unsupported Groovy version can be allowed with `-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true` spockPull:1164[]
 
-- Relax maximum allowed Groovy version in snapshot builds (#1108)
+- Relax maximum allowed Groovy version in snapshot builds spockPull:1108[]
 
-- Upgrade Groovy to 2.5.12 (improved Java 14+ support) and 3.0.4 (fixes #1127)
+- Upgrade Groovy to 2.5.12 (improved Java 14+ support) and 3.0.4 (fixes spockIssue:1127[])
 
 - Upgrade JUnit 4 to 4.13 (in `spock-junit4`)
 
@@ -723,31 +738,31 @@ def "I'll run everywhere but on Windows"() { ... }
   Spock 2.0 behaviour.
 // end::breaking-change-unroll[]
 
-- Updated OSGI support with using `bnd` (#1154, #1175)
+- Updated OSGI support with using `bnd` (spockPull:1154[], spockPull:1175[])
 
-- Fix `@PendingFeature` logic (#1103)
+- Fix `@PendingFeature` logic spockPull:1103[]
 
-- Do not strip type information from arguments (#1134)
+- Do not strip type information from arguments spockPull:1134[]
 
-- Simplify work-around to get the reference to the current closure (#1131)
+- Simplify work-around to get the reference to the current closure spockPull:1131[]
 
-- Set source position for return statement in data provider method (#1116)
+- Set source position for return statement in data provider method spockPull:1116[]
 
-- Add `Spy(T obj, Closure interactions)` (#1115)
+- Add `Spy(T obj, Closure interactions)` spockPull:1115[]
 
-- Reduce number of Groovy dependencies to just groovy.jar (#1109)
+- Reduce number of Groovy dependencies to just groovy.jar spockPull:1109[]
 
-- Improve `ExceptionUtil.sneakyThrow` declaration (#1077)
+- Improve `ExceptionUtil.sneakyThrow` declaration spockPull:1077[]
 
-- Print up to 5 last mock invocations for a wrong order error (#1093)
+- Print up to 5 last mock invocations for a wrong order error spockPull:1093[]
 
-- Fix `EmptyOrDummyResponse` returning mock instance for `Object` (#1092)
+- Fix `EmptyOrDummyResponse` returning mock instance for `Object` spockPull:1092[]
 
-- Remove unnecessary reflection for Java 8 types in `EmptyOrDummyResponse` (#1091)
+- Remove unnecessary reflection for Java 8 types in `EmptyOrDummyResponse` spockPull:1091[]
 
-- Update old Issue annotations to point to migrated github issues (#1003)
+- Update old Issue annotations to point to migrated github issues spockPull:1003[]
 
-- Test Spock with Java 14 (#1155)
+- Test Spock with Java 14 spockPull:1155[]
 
 Thanks to all the contributors to this release: Björn Kautler, Marcin Zajączkowski, Raymond Augé, Roman Tretiak, Camilo Jorquera, Shil Sinha
 
@@ -919,24 +934,24 @@ data structure, then you need to move the condition into a separate method that 
 
 === What's New In This release
 
-* Add implicit assertions for CodeArgument constraints (#956)
-* Add power assertion output to asserts with explicit message (#928)
-* Add support for mixed named and positional arguments in mocks (#919)
-* Add NamedParam support for groovy-2.5 with backport to 2.4 (#921)
-* Add special rendering for Set comparisons (#925)
+* Add implicit assertions for CodeArgument constraints spockPull:956[]
+* Add power assertion output to asserts with explicit message spockPull:928[]
+* Add support for mixed named and positional arguments in mocks spockPull:919[]
+* Add NamedParam support for groovy-2.5 with backport to 2.4 spockPull:921[]
+* Add special rendering for Set comparisons spockPull:925[]
 * Add identity hash code to type hints in comparison failures if they are identical
-* Fix erroneous regex where an optional colon was defined instead of a non-capturing group (#931)
-* Improve CodeArgumentConstraint by supporting assertions (#918)
-* Improve IDE type inference in MockingApi (#920)
-* Improve reporting of TooFewInvocationsError (#912)
-* Improve render class loader for classes in comparison failures (#932)
-* Improve record class literal values to display FQCN in comparison failures (#935)
+* Fix erroneous regex where an optional colon was defined instead of a non-capturing group spockPull:931[]
+* Improve CodeArgumentConstraint by supporting assertions spockPull:918[]
+* Improve IDE type inference in MockingApi spockPull:920[]
+* Improve reporting of TooFewInvocationsError spockPull:912[]
+* Improve render class loader for classes in comparison failures spockPull:932[]
+* Improve record class literal values to display FQCN in comparison failures spockPull:935[]
 * Improve filter Java 9+ reflection stack frames
 * Improve show stacktrace of throwables in comparison failure result
 * Improve use canonical class name in comparison failure results if present
-* Improve render otherwise irrelevant expressions if they get a type hint in comparison failure (#936)
-* Fix do not convert implicit "this" expression like when calling the constructor of a non-static inner class (#930)
-* Fix class expression recording when there are comments with dots in the same line (#937)
+* Improve render otherwise irrelevant expressions if they get a type hint in comparison failure spockPull:936[]
+* Fix do not convert implicit "this" expression like when calling the constructor of a non-static inner class spockPull:930[]
+* Fix class expression recording when there are comments with dots in the same line spockPull:937[]
 
 
 Thanks to all the contributors to this release: Björn Kautler, Marc Philipp, Marcin Zajączkowski, Martin Vseticka, Michael Kutz, Kacper Bublik
@@ -998,11 +1013,11 @@ Burk Hufnagel, signalw, Martin Vseticka, Tilman Ginzel
 
 === What's New In This release
 
-* Add support for Java 11+ (#895, #902, #903)
-* Improve `@PendingFeature` to now have an optional `reason` attribute (#907)
-* Fix use String renderer for Class instances (#909)
-* Fix mark new Spring extensions as @Beta (#890)
-* Fix exclude groovy-groovysh from compile dependencies (#882)
+* Add support for Java 11+ (spockPull:895[], spockPull:902[], spockPull:903[])
+* Improve `@PendingFeature` to now have an optional `reason` attribute spockPull:907[]
+* Fix use String renderer for Class instances spockPull:909[]
+* Fix mark new Spring extensions as @Beta spockPull:890[]
+* Fix exclude groovy-groovysh from compile dependencies spockPull:882[]
 
 
 Thanks to all the contributors to this release: Marc Philipp, Marcin Zajączkowski, signalw
@@ -1015,9 +1030,9 @@ Thanks to all the contributors to this release: Marc Philipp, Marcin Zajączkows
 * Add configurable `condition` to `@Retry` extension to allow for customizing when retries should be attempted (<<extensions.adoc#_retry,Docs>>)
 * Fix `Retry.Mode.FEATURE` and `Retry.Mode.SETUP_FEATURE_CLEANUP` to make a test pass if a retry was successful.
 * Improve `@Retry` to be declarable on a spec class which will apply it to all feature methods in that class and subclasses (<<extensions.adoc#_retry,Docs>>)
-* Improve StepwiseExtension mark only subsequent features as skipped in case of failure (#893)
-* Fix issue with `@SpringBean` mocks throwing `InvocationTargetException` instead of actual declared exceptions (#878, #887)
-* Fix void methods with implicit targets failing in `with` and `verifyAll` (#886)
+* Improve StepwiseExtension mark only subsequent features as skipped in case of failure spockPull:893[]
+* Fix issue with `@SpringBean` mocks throwing `InvocationTargetException` instead of actual declared exceptions (spockPull:878[], spockPull:887[])
+* Fix void methods with implicit targets failing in `with` and `verifyAll` spockPull:886[]
 
 Thanks to all the contributors to this release: Marc Philipp, Tilman Ginzel, Marcin Zajączkowski, Martin Vseticka
 
@@ -1039,10 +1054,10 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
   this has been fixed by performing the injection earlier in the process
 * Fix SpringMockTestExecutionListener initializes lazy beans
 * Fix OSGi Import-Package header
-* Fix re-declare recorder variables (#783), this caused annotations such as `@Slf4j` to break Specifications
+* Fix re-declare recorder variables spockPull:783[], this caused annotations such as `@Slf4j` to break Specifications
 * Fix MissingFieldException in DiffedObjectAsBeanRenderer
 * Fix problems with nested `with` and `verifyAll` method calls
-* Fix assertion of mock invocation order with nested invocations (#475)
+* Fix assertion of mock invocation order with nested invocations spockPull:475[]
 * Fix ignore inferred type for Spies on existing instance
 * Improve in assertions Spock now uses `DefaultGroovyMethods.dump` instead of `toString` if a class doesn't override the default `Object.toString`.
 * Improve `verifyAll` can now also have a target same as `with`
@@ -1091,7 +1106,7 @@ This should be the last rc for 1.1
 
 Thanks to all the contributors to this release: Taylor Wicksell, Rafael Winterhalter, Marcin Zajączkowski, Eduardo Grajeda, Paul King, Andrii, Björn Kautler, Libor Rysavy
 
-Known issues with groovy 2.4.10 which breaks a smoke test, but should have little impact on normal use (#709).
+Known issues with groovy 2.4.10 which breaks a smoke test, but should have little impact on normal use spockPull:709[].
 
 == 1.1-rc-3 (released 2016-10-17)
 

@@ -1,5 +1,5 @@
-:spock-release-version: 2.4-M5
-:spock-release-date: 2025-01-07
+:spock-release-version: 2.4-M6
+:spock-release-date: 2025-04-15
 :spock-snapshot-version: 2.4
 
 https://github.com/spockframework/spock/blob/master/LICENSE[image:https://img.shields.io/badge/License-Apache%202.0-blue.svg[License]]

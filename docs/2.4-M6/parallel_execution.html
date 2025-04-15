@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.23">
+<meta name="author" content="Peter Niederwieser, Leonard Brünings, The Spock Framework Team">
+<title>Parallel Execution</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+<style>
+  .includeSourceLinkerTable tr td:first-child {
+    padding: 0;
+  }
+</style>
+</head>
+<body id="parallel-execution" class="article">
+<div id="header">
+<h1>Parallel Execution</h1>
+<div class="details">
+<span id="author" class="author">Peter Niederwieser, Leonard Brünings, The Spock Framework Team</span><br>
+<span id="revnumber">version 2.4-M6</span>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+This is an experimental feature for Spock, which is based on the experimental implementation of parallel execution in the JUnit Platform.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Parallel execution has the potential to reduce the overall test execution time.
+The actual achievable reduction will heavily depend on the respective codebase and can vary wildly.</p>
+</div>
+<div class="paragraph">
+<p>By default, Spock runs tests sequentially with a single thread.
+As of version 2.0, Spock supports parallel execution based on the JUnit Platform.
+To enable parallel execution set the <code>runner.parallel.enabled</code> configuration to <code>true</code>.
+See <a href="extensions.html#spock-configuration-file">Spock Configuration File</a> for general information about this file.</p>
+</div>
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="title">SpockConfig.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">runner {
+  parallel {
+    enabled <span class="predefined-constant">true</span>
+  }
+}</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/579a20da6439dfd3a742767879624f58eaf50edb/spock-specs/src/test/groovy/org/spockframework/docs/parallel/ParallelConfigDoc.groovy#L32" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/579a20da6439dfd3a742767879624f58eaf50edb/spock-specs/src/test/groovy/org/spockframework/docs/parallel/ParallelConfigDoc.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+JUnit Jupiter also supports  <a href="https://junit.org/junit5/docs/5.7.0/user-guide/#writing-tests-parallel-execution">parallel execution</a>, both rely on the JUnit Platform implementation, but function independently of each other.
+      If you enable parallel execution in Spock it won&#8217;t affect Jupiter and vice versa.
+      The JUnit Platform executes the test engines (Spock, Jupiter) sequentially, so there should not be any interference between engines.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="execution-modes"><a class="anchor" href="#execution-modes"></a><a class="link" href="#execution-modes">Execution modes</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Spock supports two execution modes <code>SAME_THREAD</code> and <code>CONCURRENT</code>.
+You can define the execution mode explicitly for a specification or feature via the <code>@Execution</code> annotation.
+Otherwise, Spock will use the value of <code>defaultSpecificationExecutionMode</code> and <code>defaultExecutionMode</code> respectively, both have <code>CONCURRENT</code> as default value.
+Certain <a href="extensions.html#extensions">extensions</a> also set execution modes when they are applied.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>defaultSpecificationExecutionMode</code> controls what execution mode a specification will use by default.</p>
+</li>
+<li>
+<p><code>defaultExecutionMode</code> controls what execution mode a feature and its iterations (if data driven) will use by default.</p>
+</li>
+</ul>
+</div>
+<div id="figure-sequential-sequential-execution" class="imageblock">
+<div class="content">
+<img src="images/sequential-sequential-execution.svg" alt="sequential sequential execution" width="708" height="202">
+</div>
+<div class="title">Figure 1. Sequential Execution, either <code>runner.parallel.enabled=false</code> or <code>SAME_THREAD</code> Specifications, <code>SAME_THREAD</code> Features</div>
+</div>
+<div id="figure-concurrent-concurrent-execution" class="imageblock">
+<div class="content">
+<img src="images/concurrent-concurrent-execution.svg" alt="concurrent concurrent execution" width="260" height="202">
+</div>
+<div class="title">Figure 2. <code>CONCURRENT</code> Specifications, <code>CONCURRENT</code> Features</div>
+</div>
+<div id="figure-concurrent-sequential-execution" class="imageblock">
+<div class="content">
+<img src="images/concurrent-sequential-execution.svg" alt="concurrent sequential execution" width="388" height="202">
+</div>
+<div class="title">Figure 3. <code>CONCURRENT</code> Specifications, <code>SAME_THREAD</code> Features</div>
+</div>
+<div id="figure-sequential-concurrent-execution" class="imageblock">
+<div class="content">
+<img src="images/sequential-concurrent-execution.svg" alt="sequential concurrent execution" width="452" height="202">
+</div>
+<div class="title">Figure 4. <code>SAME_THREAD</code> Specifications, <code>CONCURRENT</code> Features</div>
+</div>
+<div class="sect2">
+<h3 id="_execution_hierarchy"><a class="anchor" href="#_execution_hierarchy"></a><a class="link" href="#_execution_hierarchy">Execution Hierarchy</a></h3>
+<div class="imageblock">
+<div class="content">
+<img src="images/wbs-legend.svg" alt="wbs legend" width="1051" height="226">
+</div>
+<div class="title">Figure 5. Legend for the following figures</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The node <code>Same Thread</code> will run in the same thread as its parent.</p>
+</li>
+<li>
+<p>The node <code>Concurrent</code> will be executed in another thread, all concurrent nodes can execute in different threads from each other.</p>
+</li>
+<li>
+<p>The node <code>ResourceLock(READ)</code> will be executed in another thread, but will also acquire a <code>READ</code>-lock for a resource.</p>
+</li>
+<li>
+<p>The node <code>ResourceLock(READ_WRITE)</code> will be executed in another thread, but will also acquire a <code>READ_WRITE</code>-lock for a resource.</p>
+</li>
+<li>
+<p>The node <code>Same Thread with Lock</code> will run in the same thread as its parent thus inheriting the lock.</p>
+</li>
+<li>
+<p>The node <code>Data Driven Feature</code> represents a data driven feature with <code>Data Driven Feature[1]</code> and <code>Data Driven Feature[2]</code> being the iterations.</p>
+</li>
+<li>
+<p>The node <code>Isolated</code> will run exclusively, no other specifications or features will run at the same time.</p>
+</li>
+</ul>
+</div>
+<div id="figure-execution-hierarchy-same-thread" class="imageblock">
+<div class="content">
+<img src="images/execution-hierarchy-same-thread.svg" alt="execution hierarchy same thread" width="300" height="324">
+</div>
+<div class="title">Figure 6. Single threaded execution</div>
+</div>
+<div class="paragraph">
+<p><a href="#figure-execution-hierarchy-same-thread">Figure 6</a> shows the default case when parallel execution is disabled (<code>runner.parallel.enabled=false</code>) or when both specifications (<code>defaultSpecificationExecutionMode</code>) and features (<code>defaultExecutionMode</code>) are set to <code>SAME_THREAD</code>.</p>
+</div>
+<div id="figure-execution-hierarchy-concurrent-sequential-execution" class="imageblock">
+<div class="content">
+<img src="images/execution-hierarchy-concurrent-sequential-execution.svg" alt="execution hierarchy concurrent sequential execution" width="300" height="324">
+</div>
+<div class="title">Figure 7. Execution with <code>CONCURRENT</code> Specifications, <code>SAME_THREAD</code></div>
+</div>
+<div class="paragraph">
+<p><a href="#figure-execution-hierarchy-concurrent-sequential-execution">Figure 7</a> shows the result of setting <code>defaultSpecificationExecutionMode=CONCURRENT</code> and <code>defaultExecutionMode=SAME_THREAD</code>, the specifications will run concurrently but all features will run in the same thread as their specification.</p>
+</div>
+<div id="figure-execution-hierarchy-sequential-concurrent-execution" class="imageblock">
+<div class="content">
+<img src="images/execution-hierarchy-sequential-concurrent-execution.svg" alt="execution hierarchy sequential concurrent execution" width="300" height="324">
+</div>
+<div class="title">Figure 8. Execution with <code>SAME_THREAD</code> Specifications, <code>CONCURRENT</code> Features</div>
+</div>
+<div class="paragraph">
+<p><a href="#figure-execution-hierarchy-sequential-concurrent-execution">Figure 8</a> shows the result of setting <code>defaultSpecificationExecutionMode=SAME_THREAD</code> and <code>defaultExecutionMode=CONCURRENT</code>, the specifications will run in the same thread, causing them to run one after the other.
+The features inside a specification will run concurrently.</p>
+</div>
+<div id="figure-execution-hierarchy-concurrent-concurrent-execution" class="imageblock">
+<div class="content">
+<img src="images/execution-hierarchy-concurrent-concurrent-execution.svg" alt="execution hierarchy concurrent concurrent execution" width="300" height="324">
+</div>
+<div class="title">Figure 9. Execution with <code>CONCURRENT</code> Specifications, <code>CONCURRENT</code> Features</div>
+</div>
+<div class="paragraph">
+<p><a href="#figure-execution-hierarchy-concurrent-concurrent-execution">Figure 9</a> shows the result of setting <code>defaultSpecificationExecutionMode=CONCURRENT</code> and <code>defaultExecutionMode=CONCURRENT</code>, both specifications and features will run concurrently.</p>
+</div>
+<div class="sect3">
+<h4 id="_execution_mode_inheritance"><a class="anchor" href="#_execution_mode_inheritance"></a><a class="link" href="#_execution_mode_inheritance">Execution Mode Inheritance</a></h4>
+<div class="paragraph">
+<p>If nothing else is explicit configured, specifications will use <code>defaultSpecificationExecutionMode</code> and features use <code>defaultExecutionMode</code>.
+However, this changes when you set the execution mode explicitly via <code>@Execution</code>.
+Each node (specification, feature) checks first if it has an explicit execution mode set,
+otherwise it will check its parents for an explicit setting and fall back to the respective defaults otherwise.</p>
+</div>
+<div class="paragraph">
+<p>The following examples have <code>defaultSpecificationExecutionMode=SAME_THREAD</code> and <code>defaultExecutionMode=SAME_THREAD</code>.
+If you invert the values <code>SAME_THREAD</code> and <code>CONCURRENT</code> in these examples you will get the inverse result.</p>
+</div>
+<div id="figure-execution-hierarchy-inheritance-feature-execution" class="imageblock">
+<div class="content">
+<img src="images/execution-hierarchy-inheritance-feature-execution.svg" alt="execution hierarchy inheritance feature execution" width="494" height="338">
+</div>
+<div class="title">Figure 10. Execution with <code>SAME_THREAD</code> Specifications, <code>SAME_THREAD</code> Features and explicit <code>@Execution</code> on Features</div>
+</div>
+<div class="paragraph">
+<p>In <a href="#figure-execution-hierarchy-inheritance-feature-execution">Figure 10</a> <code>@Execution</code> is applied on the features and those features and iterations will execute concurrently while the rest will execute in the same thread.</p>
+</div>
+<div id="figure-execution-hierarchy-inheritance-spec-execution" class="imageblock">
+<div class="content">
+<img src="images/execution-hierarchy-inheritance-spec-execution.svg" alt="execution hierarchy inheritance spec execution" width="364" height="338">
+</div>
+<div class="title">Figure 11. Execution with <code>SAME_THREAD</code> Specifications, <code>SAME_THREAD</code> Features and explicit <code>@Execution</code> on a Specification</div>
+</div>
+<div class="paragraph">
+<p>In <a href="#figure-execution-hierarchy-inheritance-spec-execution">Figure 11</a> <code>@Execution</code> is applied on one specification causing the specification and all its features to run concurrently.
+The features execute concurrently since they inherit the explicit execution mode from the specification.</p>
+</div>
+<div id="figure-execution-hierarchy-inheritance-spec-feature-execution" class="imageblock">
+<div class="content">
+<img src="images/execution-hierarchy-inheritance-spec-feature-execution.svg" alt="execution hierarchy inheritance spec feature execution" width="438" height="352">
+</div>
+<div class="title">Figure 12. Execution with <code>SAME_THREAD</code> Specifications, <code>SAME_THREAD</code> Features and explicit <code>@Execution</code> on Features and Specifications</div>
+</div>
+<div class="paragraph">
+<p><a href="#figure-execution-hierarchy-inheritance-spec-feature-execution">Figure 12</a> showcases the combined application of <code>@Execution</code> on a specification and some of its features.
+As in the previous example the specification and its features will execute concurrently except <code>testB1</code> since it has its own explicit execution mode set.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_resource_locks"><a class="anchor" href="#_resource_locks"></a><a class="link" href="#_resource_locks">Resource Locks</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>With parallel execution comes a new set of challenges for testing, as shared state can be modified and consumed by multiple tests at the same time.</p>
+</div>
+<div class="paragraph">
+<p>A simple example would be two features that test the use a system property, both setting it to a specific value in the respective <code>given</code> block and then executing the code to test the expected behavior.
+If they run sequentially then both complete without issue. However, if the run at the same time both <code>given</code> blocks will run before the <code>when</code> blocks and one feature will fail since the system property did not contain the expected value.</p>
+</div>
+<div class="paragraph">
+<p>The above example could simply be fixed if both features are part of the same specification by setting them to run in the same thread with <code>@Execution(SAME_THREAD)</code>.
+However, this is not really practicable when the features are in separate specifications.
+To solve this issue Spock has support to coordinate access to shared resources via <code>@ResourceLock</code>.</p>
+</div>
+<div class="paragraph">
+<p>With <code>@ResourceLock</code> you can define both a <code>key</code> and a <code>mode</code>. By default, <code>@ResourceLock</code> assumes <code>ResourceAccessMode.READ_WRITE</code>, but you can weaken it to <code>ResourceAccessMode.READ</code>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ResourceAccessMode.READ_WRITE</code> will enforce exclusive access to the resource.</p>
+</li>
+<li>
+<p><code>ResourceAccessMode.READ</code> will prevent any <code>READ_WRITE</code> locks, but will allow other <code>READ</code> locks.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><code>READ</code>-only locks will isolate tests from others that modify the shared resource, while at the same time allowing tests that also only read the resource to execute.
+You should not modify the shared resource when you only hold a <code>READ</code> lock, otherwise the assurances don&#8217;t hold.</p>
+</div>
+<div class="paragraph">
+<p>Certain <a href="extensions.html#extensions">extensions</a> also set implicit locks when they are applied.</p>
+</div>
+<div id="figure-lock-contention-basics" class="imageblock">
+<div class="content">
+<img src="images/lock-contention-basics.svg" alt="lock contention basics" width="416" height="338">
+</div>
+<div class="title">Figure 13. Two features with <code>@ResourceLock</code></div>
+</div>
+<div class="sect2">
+<h3 id="_lock_inheritance"><a class="anchor" href="#_lock_inheritance"></a><a class="link" href="#_lock_inheritance">Lock inheritance</a></h3>
+<div class="paragraph">
+<p>If a parent node has a <code>READ_WRITE</code> lock, it forces its children to run in the same thread.
+As <code>READ_WRITE</code> locks cause serialized execution anyway, this is effectively not different from what would happen if the lock would be applied to every child directly.
+However, if the parent node has only <code>READ</code> locks, then it allows parallel execution of its children.</p>
+</div>
+<div id="figure-lock-inherit-iterate-feature" class="imageblock">
+<div class="content">
+<img src="images/lock-inherit-iterate-feature.svg" alt="lock inherit iterate feature" width="560" height="338">
+</div>
+<div class="title">Figure 14. Locks on data driven features</div>
+</div>
+<div id="figure-lock-inherit-spec" class="imageblock">
+<div class="content">
+<img src="images/lock-inherit-spec.svg" alt="lock inherit spec" width="642" height="338">
+</div>
+<div class="title">Figure 15. Locks on spec inherited by features</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_lock_coarsening"><a class="anchor" href="#_lock_coarsening"></a><a class="link" href="#_lock_coarsening">Lock coarsening</a></h3>
+<div class="paragraph">
+<p>To avoid deadlocks, Spock pulls up locks to the specification, when locks are defined on both the specification and features.
+The Specification will then contain all defined locks.
+If the features both had <code>READ_WRITE</code> and <code>READ</code> locks for the same resource, then the <code>READ</code> will be merged into the <code>READ_WRITE</code>.</p>
+</div>
+<div id="figure-lock-coarsening-before" class="imageblock">
+<div class="content">
+<img src="images/lock-coarsening-before.svg" alt="lock coarsening before" width="253" height="268">
+</div>
+<div class="title">Figure 16. Lock coarsening - before</div>
+</div>
+<div id="figure-lock-coarsening-after" class="imageblock">
+<div class="content">
+<img src="images/lock-coarsening-after.svg" alt="lock coarsening after" width="169" height="268">
+</div>
+<div class="title">Figure 17. Lock coarsening - after</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="isolated-execution"><a class="anchor" href="#isolated-execution"></a><a class="link" href="#isolated-execution">Isolated Execution</a></h3>
+<div class="paragraph">
+<p>Sometimes, you want to modify and test something that affects every other feature, you could put a <code>READ</code> <code>@ResourceLock</code> on <em>every</em> feature, but that is impractical.
+The <code>@Isolated</code> extension enforces, that only this feature runs without any other features running at the same time.
+You can think of this as an implicit global lock.</p>
+</div>
+<div class="paragraph">
+<p>As with other locks, the features in an <code>@Isolated</code> specification will run in <code>SAME_THREAD</code> mode.
+<code>@Isolated</code> can only be applied at the specification level so if you have a large specification and only need it for a few features,
+you might want to consider splitting the spec into <code>@Isolated</code> and non isolated.</p>
+</div>
+<div id="figure-isolated" class="imageblock">
+<div class="content">
+<img src="images/isolated.svg" alt="isolated" width="312" height="324">
+</div>
+<div class="title">Figure 18. <code>@Isolated</code> execution</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="parallel-thread-pool"><a class="anchor" href="#parallel-thread-pool"></a><a class="link" href="#parallel-thread-pool">Parallel Thread Pool</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>With parallel execution enabled, specifications and features can execute concurrently.
+You can control the size of the thread pool that executes the features.
+Spock uses <code>Runtime.getRuntime().availableProcessors()</code> to determine the available processors.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>dynamic(BigDecimal factor)</code> - Computes the desired parallelism based on the number of available processors multiplied by the <code>factor</code> and rounded down to the nearest integer.
+For example a factor of <code>0.5</code> will use half your processors.</p>
+</li>
+<li>
+<p><code>dynamicWithReservedProcessors(BigDecimal factor, int reservedProcessors)</code> - Same as <code>dynamic</code> but ensures that the given amount of <code>reservedProcessors</code> is not used.
+The <code>reservedProcessors</code> are counted against the available cores not the result of the factor.</p>
+</li>
+<li>
+<p><code>fixed(int parallelism)</code> - Uses the given amount of threads.</p>
+</li>
+<li>
+<p><code>custom(int parallelism, int minimumRunnable, int maxPoolSize, int corePoolSize, int keepAliveSeconds)</code> - Allows complete control over the threadpool.
+However, it should only be used when the other options are insufficient, and you need that extra bit of control.
+Check the Javadoc of <code>spock.config.ParallelConfiguration</code> for a detailed description the parameters.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>By default, Spock uses <code>dynamicWithReservedProcessors(1.0, 2)</code> that is all your logical processors minus <code>2</code>.</p>
+</div>
+<div class="paragraph">
+<p>If the calculated parallelism is less than <code>2</code>, then Spock will execute single threaded, basically the same as <code>runner.parallel.enabled=false</code>.</p>
+</div>
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="title">Example SpockConfig.groovy with <code>fixed</code> setting</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">runner {
+  parallel {
+    enabled <span class="predefined-constant">true</span>
+    fixed(<span class="integer">4</span>)
+  }
+}</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/579a20da6439dfd3a742767879624f58eaf50edb/spock-specs/src/test/groovy/org/spockframework/docs/parallel/ParallelConfigDoc.groovy#L50" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/579a20da6439dfd3a742767879624f58eaf50edb/spock-specs/src/test/groovy/org/spockframework/docs/parallel/ParallelConfigDoc.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 2.4-M6<br>
+Last updated 2025-04-15 10:27:52 UTC
+</div>
+</div>
+</body>
+</html>

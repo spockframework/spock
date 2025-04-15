@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.23">
+<meta name="author" content="Peter Niederwieser, Leonard Brünings, The Spock Framework Team">
+<title>Spring Module</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+<style>
+  .includeSourceLinkerTable tr td:first-child {
+    padding: 0;
+  }
+</style>
+</head>
+<body id="spring-module" class="article">
+<div id="header">
+<h1>Spring Module</h1>
+<div class="details">
+<span id="author" class="author">Peter Niederwieser, Leonard Brünings, The Spock Framework Team</span><br>
+<span id="revnumber">version 2.4-M6</span>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Spring module enables integration with <a href="https://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework">Spring TestContext Framework</a>.
+It supports the following spring annotations <code>@ContextConfiguration</code> and <code>@ContextHierarchy</code>. Furthermore, it supports the meta-annotation <code>@BootstrapWith</code> and so any annotation that is annotated with <code>@BootstrapWith</code> will also work, such as <code>@SpringBootTest</code>, <code>@WebMvcTest</code>. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-spring"><code>org.spockframework:spock-spring</code></a> to your project.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="SpringMocks"><a class="anchor" href="#SpringMocks"></a><a class="link" href="#SpringMocks">Mocks</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Spock 1.1 introduced the <code>DetachedMockFactory</code> and the <code>SpockMockFactoryBean</code> which allow the creation of Spock mocks outside of a specification.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Although the mocks can be created outside of a specification, they only work properly inside the scope of a specification.
+      All interactions with them until they are attached to one, are handled by the default behavior and not recorded.
+     <br>
+      Furthermore, mocks can only be attached to one <code>Specification</code> instance at a time so keep that in mind when using multi-threaded executions
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_java_config"><a class="anchor" href="#_java_config"></a><a class="link" href="#_java_config">Java Config</a></h3>
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">DetachedJavaConfig</span> {
+  <span class="keyword">def</span> mockFactory = <span class="keyword">new</span> DetachedMockFactory()
+
+  <span class="annotation">@Bean</span>
+  GreeterService serviceMock() {
+    <span class="keyword">return</span> mockFactory.Mock(GreeterService)
+  }
+
+  <span class="annotation">@Bean</span>
+  GreeterService serviceStub() {
+    <span class="keyword">return</span> mockFactory.Stub(GreeterService)
+  }
+
+  <span class="annotation">@Bean</span>
+  GreeterService serviceSpy() {
+    <span class="keyword">return</span> mockFactory.Spy(GreeterServiceImpl)
+  }
+
+  <span class="annotation">@Bean</span>
+  FactoryBean&lt;GreeterService&gt; alternativeMock() {
+    <span class="keyword">return</span> <span class="keyword">new</span> SpockMockFactoryBean(GreeterService)
+  }
+}</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/579a20da6439dfd3a742767879624f58eaf50edb/spock-spring/src/test/groovy/org/spockframework/spring/docs/DetachedJavaConfig.groovy#L26" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/579a20da6439dfd3a742767879624f58eaf50edb/spock-spring/src/test/groovy/org/spockframework/spring/docs/DetachedJavaConfig.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_xml"><a class="anchor" href="#_xml"></a><a class="link" href="#_xml">XML</a></h3>
+<div class="paragraph">
+<p>Spock has spring namespace support, so if you declare the spock namespace with <code>xmlns:spock="https://www.spockframework.org/spring"</code> you get access to the convenience functions for creating mocks.</p>
+</div>
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="preprocessor">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="tag">&lt;beans</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.springframework.org/schema/beans</span><span class="delimiter">&quot;</span></span>
+       <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
+       <span class="attribute-name">xmlns:spock</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.spockframework.org/spring</span><span class="delimiter">&quot;</span></span>
+       <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.springframework.org/schema/beans</span>
+           <span class="content">http://www.springframework.org/schema/beans/spring-beans.xsd</span>
+           <span class="content">http://www.spockframework.org/spring https://www.spockframework.org/spring/spock.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+
+  <span class="tag">&lt;spock:mock</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">serviceMock</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework.spring.docs.GreeterService</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>   <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="tag">&lt;spock:stub</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">serviceStub</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework.spring.docs.GreeterService</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>   <i class="conum" data-value="2"></i><b>(2)</b>
+  <span class="tag">&lt;spock:spy</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">serviceSpy</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework.spring.docs.GreeterServiceImpl</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span> <i class="conum" data-value="3"></i><b>(3)</b>
+
+  <span class="tag">&lt;bean</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">someExistingBean</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">java.util.ArrayList</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>                              <i class="conum" data-value="4"></i><b>(4)</b>
+  <span class="tag">&lt;spock:wrapWithSpy</span> <span class="attribute-name">ref</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">someExistingBean</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>                                            <i class="conum" data-value="4"></i><b>(4)</b>
+
+  <span class="tag">&lt;bean</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">alternativeMock</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework.spring.xml.SpockMockFactoryBean</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span> <i class="conum" data-value="5"></i><b>(5)</b>
+    <span class="tag">&lt;constructor-arg</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework.spring.docs.GreeterService</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">mockNature</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">MOCK</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>                                           <i class="conum" data-value="6"></i><b>(6)</b>
+  <span class="tag">&lt;/bean&gt;</span>
+
+
+<span class="tag">&lt;/beans&gt;</span></code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/579a20da6439dfd3a742767879624f58eaf50edb/spock-spring/src/test/resources/org/spockframework/spring/docs/MockDocu-context.xml#L1" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Creates a <code>Mock</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Creates a <code>Stub</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Creates a <code>Spy</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Wraps an existing bean with a <code>Spy</code>. Fails fast if referenced bean is not found.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>If you don&#8217;t want to use the special namespace support you can create the beans via the <code>SpockMockFactoryBean</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>The <code>mockNature</code> can be <code>MOCK</code>, <code>STUB</code>, or <code>SPY</code> and defaults to <code>MOCK</code> if not declared.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_usage"><a class="anchor" href="#_usage"></a><a class="link" href="#_usage">Usage</a></h3>
+<div class="paragraph">
+<p>To use the mocks just inject them like any other bean and configure them as usual.</p>
+</div>
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Autowired</span> <span class="annotation">@Named</span>(<span class="string"><span class="delimiter">'</span><span class="content">serviceMock</span><span class="delimiter">'</span></span>)
+GreeterService serviceMock
+
+<span class="annotation">@Autowired</span> <span class="annotation">@Named</span>(<span class="string"><span class="delimiter">'</span><span class="content">serviceStub</span><span class="delimiter">'</span></span>)
+GreeterService serviceStub
+
+<span class="annotation">@Autowired</span> <span class="annotation">@Named</span>(<span class="string"><span class="delimiter">'</span><span class="content">serviceSpy</span><span class="delimiter">'</span></span>)
+GreeterService serviceSpy
+
+<span class="annotation">@Autowired</span> <span class="annotation">@Named</span>(<span class="string"><span class="delimiter">'</span><span class="content">alternativeMock</span><span class="delimiter">'</span></span>)
+GreeterService alternativeMock
+
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">mock service</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">when</span>:
+  <span class="keyword">def</span> result = serviceMock.greeting
+
+  <span class="key">then</span>:
+  result == <span class="string"><span class="delimiter">'</span><span class="content">mock me</span><span class="delimiter">'</span></span>
+  <span class="integer">1</span> * serviceMock.getGreeting() &gt;&gt; <span class="string"><span class="delimiter">'</span><span class="content">mock me</span><span class="delimiter">'</span></span>
+}
+
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">sub service</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">given</span>:
+  serviceStub.getGreeting() &gt;&gt; <span class="string"><span class="delimiter">'</span><span class="content">stub me</span><span class="delimiter">'</span></span>
+
+  <span class="key">expect</span>:
+  serviceStub.greeting == <span class="string"><span class="delimiter">'</span><span class="content">stub me</span><span class="delimiter">'</span></span>
+}
+
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">spy service</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">when</span>:
+  <span class="keyword">def</span> result = serviceSpy.greeting
+
+  <span class="key">then</span>:
+  result == <span class="string"><span class="delimiter">'</span><span class="content">Hello World</span><span class="delimiter">'</span></span>
+  <span class="integer">1</span> * serviceSpy.getGreeting()
+}
+
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">alternative mock service</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">when</span>:
+  <span class="keyword">def</span> result = alternativeMock.greeting
+
+  <span class="key">then</span>:
+  result == <span class="string"><span class="delimiter">'</span><span class="content">mock me</span><span class="delimiter">'</span></span>
+  <span class="integer">1</span> * alternativeMock.getGreeting() &gt;&gt; <span class="string"><span class="delimiter">'</span><span class="content">mock me</span><span class="delimiter">'</span></span>
+}</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/579a20da6439dfd3a742767879624f58eaf50edb/spock-spring/src/test/groovy/org/spockframework/spring/docs/MockExamples.groovy#L30" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/579a20da6439dfd3a742767879624f58eaf50edb/spock-spring/src/test/groovy/org/spockframework/spring/docs/MockExamples.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_annotation_driven"><a class="anchor" href="#_annotation_driven"></a><a class="link" href="#_annotation_driven">Annotation driven</a></h3>
+<div class="paragraph">
+<p>Spock 1.2 adds support for exporting mocks from a <code>Specification</code> into an <code>ApplicationContext</code>. This was inspired by
+Spring Boot&#8217;s <code>@MockBean</code>(realised via Mockito) but adapted to fit into Spock style. It does not require any Spring Boot dependencies,
+however it requires Spring Framework 4.3.5 or greater to work.</p>
+</div>
+<div class="sect3">
+<h4 id="_using_springbean"><a class="anchor" href="#_using_springbean"></a><a class="link" href="#_using_springbean">Using <code>@SpringBean</code></a></h4>
+<div class="paragraph">
+<p>Registers mock/stub/spy as a spring bean in the test context.</p>
+</div>
+<div class="paragraph">
+<p>To use <code>@SpringBean</code> you have to use a strongly typed field <code>def</code> or <code>Object</code> won&#8217;t work. You also need to directly assign the
+<code>Mock</code>/<code>Stub</code>/<code>Spy</code> to the field using the standard Spock syntax. You can even use the initializer blocks to define common behavior,
+however they are only picked up once they are attached to the <code>Specification</code>.</p>
+</div>
+<div class="paragraph">
+<p><code>@SpringBean</code> definitions can replace existing Beans in your <code>ApplicationContext</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Spock&#8217;s <code>@SpringBean</code> actually creates a proxy in the <code>ApplicationContext</code> which forwards everything to the current
+      mock instance. The type of the proxy is determined by the type of the annotated field.
+     <br>
+      The proxy attaches itself to the current mock in the setup phase, that is why the mock must be created when the field is initialized.
+</td>
+</tr>
+</table>
+</div>
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@SpringBean</span>
+Service1 service1 = Mock()
+
+<span class="annotation">@SpringBean</span>
+Service2 service2 = <span class="predefined-type">Stub</span>() {
+  generateQuickBrownFox() &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">blubb</span><span class="delimiter">&quot;</span></span>
+}
+
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">injection with stubbing works</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">expect</span>:
+  service2.generateQuickBrownFox() == <span class="string"><span class="delimiter">&quot;</span><span class="content">blubb</span><span class="delimiter">&quot;</span></span>
+}
+
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">mocking works was well</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">when</span>:
+  <span class="keyword">def</span> result = service1.generateString()
+
+  <span class="key">then</span>:
+  result == <span class="string"><span class="delimiter">&quot;</span><span class="content">Foo</span><span class="delimiter">&quot;</span></span>
+  <span class="integer">1</span> * service1.generateString() &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">Foo</span><span class="delimiter">&quot;</span></span>
+}</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/579a20da6439dfd3a742767879624f58eaf50edb/spock-spring/src/test/groovy/org/spockframework/spring/docs/SpringBeanExamples.groovy#L30" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/579a20da6439dfd3a742767879624f58eaf50edb/spock-spring/src/test/groovy/org/spockframework/spring/docs/SpringBeanExamples.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+As with Spring&#8217;s own <code>@MockBean</code> this will modify your <code>ApplicationContext</code>, and will create an unique context for your
+         <code>Specification</code> preventing it from being reused by Spring&#8217;s
+         <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/testing.html#testcontext-ctx-management-caching">Context Caching</a>
+         outside of the current <code>Specification</code>.
+        <br>
+         If you are using a small context this won&#8217;t matter much, but if it is a heavy context you might want to use
+         the other approaches, e.g., using the <code>DetachedMockFactory</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_using_springspy"><a class="anchor" href="#_using_springspy"></a><a class="link" href="#_using_springspy">Using <code>@SpringSpy</code></a></h4>
+<div class="paragraph">
+<p>If you want to spy on an existing bean, you can use the <code>@SpringSpy</code> annotation to wrap the bean in a spy.
+As with <code>@SpringBean</code> the field must be of the type you want to spy on, however you cannot use an initializer.</p>
+</div>
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@SpringSpy</span>
+Service2 service2
+
+<span class="annotation">@Autowired</span>
+Service1 service1
+
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">default implementation is used</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">expect</span>:
+  service1.generateString() == <span class="string"><span class="delimiter">&quot;</span><span class="content">The quick brown fox jumps over the lazy dog.</span><span class="delimiter">&quot;</span></span>
+}
+
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">mocking works was well</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">when</span>:
+  <span class="keyword">def</span> result = service1.generateString()
+
+  <span class="key">then</span>:
+  result == <span class="string"><span class="delimiter">&quot;</span><span class="content">Foo</span><span class="delimiter">&quot;</span></span>
+  <span class="integer">1</span> * service2.generateQuickBrownFox() &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">Foo</span><span class="delimiter">&quot;</span></span>
+}</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/579a20da6439dfd3a742767879624f58eaf50edb/spock-spring/src/test/groovy/org/spockframework/spring/docs/SpringSpyExamples.groovy#L30" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/579a20da6439dfd3a742767879624f58eaf50edb/spock-spring/src/test/groovy/org/spockframework/spring/docs/SpringSpyExamples.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_using_stubbeans"><a class="anchor" href="#_using_stubbeans"></a><a class="link" href="#_using_stubbeans">Using <code>@StubBeans</code></a></h4>
+<div class="paragraph">
+<p><code>@StubBeans</code> registers plain <code>Stub</code> instances in an <code>ApplicationContext</code>.
+Use this if you just need to satisfy some dependencies without actually doing anything with these stubs.
+If you need to control the stubs, e.g., configure return values then use <code>@SpringBean</code> instead.
+Like <code>@SpringBean</code> <code>@StubBeans</code> also replaced existing BeanDefinitions,so you can use it to remove real beans from an ApplicationContext.
+<code>@StubBeans</code> can be replaced by <code>@SpringBean</code>, this can be useful if you need to replace some <code>@StubBeans</code> defined in a parent class.</p>
+</div>
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@StubBeans</span>(Service2)
+<span class="annotation">@ContextConfiguration</span>(classes = DemoMockContext)
+<span class="type">class</span> <span class="class">StubBeansExamples</span> <span class="directive">extends</span> Specification {</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/579a20da6439dfd3a742767879624f58eaf50edb/spock-spring/src/test/groovy/org/spockframework/spring/docs/StubBeansExamples.groovy#L11" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/579a20da6439dfd3a742767879624f58eaf50edb/spock-spring/src/test/groovy/org/spockframework/spring/docs/StubBeansExamples.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_spring_boot"><a class="anchor" href="#_spring_boot"></a><a class="link" href="#_spring_boot">Spring Boot</a></h3>
+<div class="paragraph">
+<p>The recommended way to use Spock mocks in <code>@WebMvcTest</code> or other <code>@SpringBootTest</code>-style tests,
+is to use the <code>@SpringBean</code> and <code>@SpringSpy</code> annotations as shown above.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively you can use an embedded config annotated with <code>@TestConfiguration</code> and to create the mocks using the <code>DetachedMockFactory</code>.</p>
+</div>
+<table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
+<colgroup>
+<col style="width: 100%;">
+<col style="width: 0%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@WebMvcTest</span>
+<span class="type">class</span> <span class="class">WebMvcTestIntegrationSpec</span> <span class="directive">extends</span> Specification {
+
+  <span class="annotation">@Autowired</span>
+  MockMvc mvc
+
+  <span class="annotation">@Autowired</span>
+  HelloWorldService helloWorldService
+
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">spring context loads for web mvc slice</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">given</span>:
+    helloWorldService.getHelloMessage() &gt;&gt; <span class="string"><span class="delimiter">'</span><span class="content">hello world</span><span class="delimiter">'</span></span>
+
+    <span class="key">expect</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">controller is available</span><span class="delimiter">&quot;</span></span>
+    mvc.perform(MockMvcRequestBuilders.get(<span class="string"><span class="delimiter">&quot;</span><span class="content">/</span><span class="delimiter">&quot;</span></span>))
+      .andExpect(status().isOk())
+      .andExpect(content().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello world</span><span class="delimiter">&quot;</span></span>))
+  }
+
+  <span class="annotation">@TestConfiguration</span>
+  <span class="directive">static</span> <span class="type">class</span> <span class="class">MockConfig</span> {
+    <span class="keyword">def</span> detachedMockFactory = <span class="keyword">new</span> DetachedMockFactory()
+
+    <span class="annotation">@Bean</span>
+    HelloWorldService helloWorldService() {
+      <span class="keyword">return</span> detachedMockFactory.Stub(HelloWorldService)
+    }
+  }
+}</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/579a20da6439dfd3a742767879624f58eaf50edb/spock-spring/boot2-test/src/test/groovy/org/spockframework/boot2/WebMvcTestIntegrationSpec.groovy#L37" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/579a20da6439dfd3a742767879624f58eaf50edb/spock-spring/boot2-test/src/test/groovy/org/spockframework/boot2/WebMvcTestIntegrationSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>For more examples see the specs in the <a href="https://github.com/spockframework/spock/tree/master/spock-spring/src/test/groovy/org/spockframework/spring">codebase</a> and <a href="https://github.com/spockframework/spock/tree/master/spock-spring/boot-test/src/test/groovy/org/spockframework/boot">boot examples</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_scopes"><a class="anchor" href="#_scopes"></a><a class="link" href="#_scopes">Scopes</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Spock ignores bean that is not a <code>singleton</code> (in the <code>singleton</code> scope) by default. To enable mocks to work for scoped beans
+you need to add <code>@ScanScopedBeans</code> to the spec and make sure that the scope allows access to the bean during the setup phase.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The <code>request</code> and <code>session</code> scope will throw exceptions by default, if there is no active request/session.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can limit the scanning to certain scopes by using the <code>value</code> property of <code>@ScanScopedBeans</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_shared_fields_injection"><a class="anchor" href="#_shared_fields_injection"></a><a class="link" href="#_shared_fields_injection">Shared fields injection</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Due to certain limitations, injection into shared fields is not enabled by default but can be opted-in to.
+Refer to javadoc of <code>org.spockframework.spring.EnableSharedInjection</code> for further information.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 2.4-M6<br>
+Last updated 2025-04-15 10:27:52 UTC
+</div>
+</div>
+</body>
+</html>

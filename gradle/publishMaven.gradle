@@ -50,6 +50,16 @@ publishing {
             name = "Leonard Brünings"
             email = "lord_damokles@gmx.net"
           }
+          developer {
+            id = "Vampire"
+            name = "Björn Kautler"
+            email = "bjoern@kautler.net"
+          }
+          developer {
+            id = "AndreasTu"
+            name = "Andreas Turban"
+            email = "andreas.turban@net-baustelle.de"
+          }
         }
       }
     }

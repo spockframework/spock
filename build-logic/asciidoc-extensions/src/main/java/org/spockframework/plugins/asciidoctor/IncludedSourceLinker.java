@@ -585,7 +585,7 @@ public class IncludedSourceLinker {
               // complain that there is only inline code instead of including tested code;
               // if we are at a literal block, just do nothing and don't complain;
               // be aware that a literal block with `source` style in the sources ends up as listing block here
-              // Once https://github.com/asciidoctor/asciidoctor/issues/4556 is implemented we could add a recognition here
+              // but can be identified via the cloaked-context attribute read above.
               if (includeSourceMarkerLine.isEmpty()) {
                 if (listings && !cloakedLiteral && !lines.isEmpty()) {
                   log(new LogRecord(WARN, block.getSourceLocation(), "listing with only inline code found; " +

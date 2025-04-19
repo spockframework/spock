@@ -588,9 +588,14 @@ public class IncludedSourceLinker {
               // Once https://github.com/asciidoctor/asciidoctor/issues/4556 is implemented we could add a recognition here
               if (includeSourceMarkerLine.isEmpty()) {
                 if (listings && !cloakedLiteral && !lines.isEmpty()) {
-                  log(new LogRecord(WARN, "listing with only inline code found; " +
+                  log(new LogRecord(WARN, block.getSourceLocation(), "listing with only inline code found; " +
                     "if this is not source from a file, consider using a literal block instead; " +
-                    "first line: " + lines.get(0)));
+                    // work-around for https://github.com/asciidoctor/asciidoctor-gradle-plugin/issues/752
+                    // once it is fixed, check whether the Gradle output contains the source location,
+                    // otherwise add the source location instead of the first line here, it is just to find the spot
+                    ((block.getSourceLocation() == null)
+                      ? "first line: " + lines.get(0)
+                      : "")));
                 }
                 return;
               }

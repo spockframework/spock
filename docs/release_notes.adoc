@@ -671,9 +671,16 @@ It can be set back to the old pre Spock 2.0 behaviour by setting
   will be thrown at runtime.
 
 // tag::breaking-change-removed-ant-support[]
-==== Ant support removed
-`SpecClassFileSelector` was removed, which was the only class that required `ant`.
-If you are still using spock with `ant`, then you can just copy the class from the spock source code into your build.
+==== Ant custom selector removed
+The class `SpecClassFileSelector` that could be used to only select actual Spock specification classes when testing
+and creating a test report was removed. It was the only class that required `ant` and was basically just a one-line
+forward to the `SpecClassFileFinder` which is still available.
+
+If you are still using Spock with `ant`, then you can just copy the class from the spock source code into your build,
+or you simply use a `<scriptselector>` that does this forwarding as shown in the `spock-example` project.
+
+Alternatively, you can also use a naming convention to find the classes that are actual specifications and not helper
+or base classes, or you live with a bit of wasted time and some meaningless entries in the test reports.
 // end::breaking-change-removed-ant-support[]
 
 === Misc

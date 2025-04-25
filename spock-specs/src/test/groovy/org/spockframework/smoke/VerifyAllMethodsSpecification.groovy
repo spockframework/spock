@@ -29,7 +29,7 @@ class VerifyAllMethodsSpecification extends EmbeddedSpecification {
   }
 
   @VerifyAll
-  private static void isPositiveAndEven(int x) {
+  void isPositiveAndEven(int x) {
     x > 0
     x % 2 == 0
   }
@@ -41,22 +41,11 @@ class VerifyAllMethodsSpecification extends EmbeddedSpecification {
 
   def "@VerifyAll method fails"() {
     when:
-    def result = runner.runSpecBody '''
-@VerifyAll
-private static void isPositiveAndEven(int x) {
-    x > 0
-    x % 2 == 0
-}
-
-def "feature"() {
-    expect:
     isPositiveAndEven(-3)
-}
-'''
 
     then:
-    result.failures.size() == 1
-    with(result.failures[0].exception, SpockMultipleFailuresError) {
+    SpockMultipleFailuresError e = thrown()
+    with(e, SpockMultipleFailuresError) {
       failures.size() == 2
       with(failures[0], ConditionNotSatisfiedError) {
         condition.text == 'x > 0'
@@ -70,26 +59,11 @@ def "feature"() {
 
   def "@VerifyAll works on methods from non-spec helper classes"() {
     when:
-    def result = runner.runWithImports '''
-class Assertions {
-  @VerifyAll
-  static void isPositiveAndEven(int x) {
-      x > 0
-      x % 2 == 0
-  }
-}
-
-class SpecWithHelpers extends Specification {
-  def "feature"() {
-      expect:
-      Assertions.isPositiveAndEven(-3)
-  }
-}
-'''
+    Assertions.isPositiveAndEven(-3)
 
     then:
-    result.failures.size() == 1
-    with(result.failures[0].exception, SpockMultipleFailuresError) {
+    SpockMultipleFailuresError e = thrown()
+    with(e, SpockMultipleFailuresError) {
       failures.size() == 2
       with(failures[0], ConditionNotSatisfiedError) {
         condition.text == 'x > 0'
@@ -137,5 +111,13 @@ class SpecWithHelpers extends Specification {
         "Verification helper annotations can't be combined on 'foo', '@spock.lang.Verify' conflicts with '@spock.lang.VerifyAll'.",
         "Verification helper annotations can't be combined on 'foo', '@spock.lang.VerifyAll' conflicts with '@spock.lang.Verify'."
     ]
+  }
+}
+
+class Assertions {
+  @VerifyAll
+  static void isPositiveAndEven(int x) {
+    x > 0
+    x % 2 == 0
   }
 }

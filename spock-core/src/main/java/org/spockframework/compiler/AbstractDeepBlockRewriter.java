@@ -35,6 +35,7 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
   // following fields are filled in by subclasses
   protected boolean conditionFound;
   protected boolean deepNonGroupedConditionFound;
+  protected boolean topLevelGroupConditionFound;
   protected boolean groupConditionFound;
   protected boolean interactionFound;
   protected MethodCallExpression foundExceptionCondition;
@@ -45,14 +46,12 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
     this.nodeCache = nodeCache;
   }
 
-  protected void conditionFound() {
-    conditionFound = true;
-    groupConditionFound = currSpecialMethodCall.isGroupConditionBlock();
-    deepNonGroupedConditionFound |= !groupConditionFound;
-  }
-
   public boolean isDeepNonGroupedConditionFound() {
     return deepNonGroupedConditionFound;
+  }
+
+  public boolean isTopLevelGroupConditionFound() {
+    return topLevelGroupConditionFound;
   }
 
   public boolean isConditionFound() {

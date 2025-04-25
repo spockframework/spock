@@ -17,6 +17,8 @@
 package org.spockframework.compiler;
 
 import org.spockframework.compiler.model.*;
+import org.spockframework.lang.ConditionBlock;
+
 import spock.lang.Shared;
 
 import java.util.List;
@@ -24,6 +26,8 @@ import java.util.List;
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.stmt.Statement;
+import spock.lang.Verify;
+import spock.lang.VerifyAll;
 
 import static org.spockframework.util.Identifiers.*;
 
@@ -180,7 +184,20 @@ public class SpecParser implements GroovyClassVisitor {
     Method helper = new HelperMethod(spec, method);
     spec.getMethods().add(helper);
 
-    Block block = helper.addBlock(new AnonymousBlock(helper));
+    boolean verifyMethod = false;
+    boolean verifyAllMethod = false;
+    for (AnnotationNode annotation : method.getAnnotations()) {
+      String name = annotation.getClassNode().getName();
+      verifyMethod |= Verify.class.getName().equals(name);
+      verifyAllMethod |= VerifyAll.class.getName().equals(name);
+    }
+
+    Block block = helper.addBlock(verifyMethod
+        ? new VerifyBlock(helper)
+        : verifyAllMethod
+        ? new VerifyAllBlock(helper)
+        : new AnonymousBlock(helper)
+    );
     List<Statement> stats = AstUtil.getStatements(method);
     block.getAst().addAll(stats);
     stats.clear();

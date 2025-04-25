@@ -72,7 +72,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   }
 
   private String getErrorCollectorSuffix() {
-    return groupConditionFound ? String.valueOf(closureDepth) : "";
+    return groupConditionFound || (topLevelGroupConditionFound && closureDepth == 0) ? String.valueOf(closureDepth) : "";
   }
 
   @Override
@@ -194,6 +194,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
 
   private boolean handleImplicitCondition(ExpressionStatement stat) {
     if (!(stat == currTopLevelStat && isThenOrExpectOrFilterBlock()
+        || isVerifyOrVerifyAllBlock() && closureDepth == 0
         || currSpecialMethodCall.isConditionMethodCall()
         || currSpecialMethodCall.isConditionBlock()
         || currSpecialMethodCall.isGroupConditionBlock()
@@ -228,6 +229,15 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
       getValueRecorderSuffix(), getErrorCollectorSuffix());
     replaceVisitedStatementWith(condition);
     return true;
+  }
+
+
+  protected void conditionFound() {
+    conditionFound = true;
+    boolean topLevelGroupCondition = block instanceof VerifyAllBlock && closureDepth == 0;
+    topLevelGroupConditionFound |= topLevelGroupCondition;
+    groupConditionFound = currSpecialMethodCall.isGroupConditionBlock() || topLevelGroupCondition;
+    deepNonGroupedConditionFound |= !groupConditionFound;
   }
 
   private void replaceObjectExpressionWithCurrentClosure(ExpressionStatement stat) {
@@ -350,6 +360,12 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   private boolean isThenOrExpectOrFilterBlock() {
     return (block instanceof ThenBlock || block instanceof ExpectBlock || block instanceof FilterBlock);
   }
+
+  private boolean isVerifyOrVerifyAllBlock() {
+    return (block instanceof VerifyBlock || block instanceof VerifyAllBlock);
+  }
+
+
 
   private boolean isInteractionExpression(InteractionRewriter rewriter, ExpressionStatement stat) {
     try {

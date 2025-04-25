@@ -74,6 +74,11 @@ abstract class BaseVerifyMethodTransform implements ASTTransformation {
       }
     }
 
+    if (!method.isStatic() && method.getDeclaringClass().isDerivedFrom(nodeCache.Specification)) {
+      // This will be handled by the SpockTransform
+      return;
+    }
+
     IVerifyMethodRewriter rewriter = createRewriter(
         method,
         new DefaultConditionRewriterResources(nodeCache, sourceLookup, errorReporter, new DefaultConditionErrorRecorders(nodeCache))

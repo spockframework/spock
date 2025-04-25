@@ -239,8 +239,8 @@ public abstract class Specification extends MockingApi {
     @ClosureParams(SecondParam.FirstGenericType.class)
       Closure closure) {
     if (target != null && !type.isInstance(target)) {
-      throw new SpockAssertionError(String.format("Expected target of 'with' block to have type '%s', but got '%s'",
-          type, target.getClass().getName()));
+      throw new SpockAssertionError(String.format("Expected target of 'with' block to have type '%s', but got '%s'.\n%s",
+          type, target.getClass().getName(), target));
     }
     with(target, closure);
   }

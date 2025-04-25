@@ -62,6 +62,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements ISpecRewriteRes
 
   private boolean methodHasCondition;
   private boolean methodHasDeepNonGroupedCondition;
+  private boolean methodHasTopLevelGroupCondition;
   private boolean movedStatsBackToMethod;
   private boolean thenBlockChainHasExceptionCondition; // reset once per chain of then-blocks
 
@@ -303,6 +304,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements ISpecRewriteRes
     this.method = method;
     methodHasCondition = false;
     methodHasDeepNonGroupedCondition = false;
+    methodHasTopLevelGroupCondition = false;
     movedStatsBackToMethod = false;
 
     if (method instanceof FixtureMethod) {
@@ -418,6 +420,9 @@ public class SpecRewriter extends AbstractSpecVisitor implements ISpecRewriteRes
     if (methodHasDeepNonGroupedCondition) {
       errorRecorders.defineErrorRethrower(method.getStatements());
     }
+    if (methodHasTopLevelGroupCondition) {
+      errorRecorders.defineErrorCollector(method.getStatements(), "0");
+    }
   }
 
 
@@ -479,6 +484,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements ISpecRewriteRes
     deep.visit(block);
     methodHasCondition |= deep.isConditionFound();
     methodHasDeepNonGroupedCondition |= deep.isDeepNonGroupedConditionFound();
+    methodHasTopLevelGroupCondition |= deep.isTopLevelGroupConditionFound();
   }
 
   @Override

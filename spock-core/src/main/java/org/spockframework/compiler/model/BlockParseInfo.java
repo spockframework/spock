@@ -190,6 +190,21 @@ public enum BlockParseInfo {
     }
   },
 
+  VERIFY {
+    @Override
+    public Block addNewBlock(Method method) {
+      return method.addBlock(new VerifyBlock(method));
+    }
+    @Override
+    public EnumSet<BlockParseInfo> getSuccessors(Method method) {
+      return EnumSet.of(METHOD_END);
+    }
+    @Override
+    public boolean isSupportingBlockListeners() {
+      return false;
+    }
+  },
+
   METHOD_END {
     @Override
     public Block addNewBlock(Method method) {

@@ -14,6 +14,8 @@
 
 package org.spockframework.smoke
 
+import org.codehaus.groovy.control.MultipleCompilationErrorsException
+
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.SpockComparisonFailure
@@ -97,5 +99,43 @@ class SpecWithHelpers extends Specification {
         actual.stringRepresentation.trim() == "-1"
       }
     }
+  }
+
+  def "@VerifyAll can't be combined with @Verify standalone"() {
+    when:
+    runner.runWithImports '''
+    class Helper {
+      @Verify
+      @VerifyAll
+      void foo() {
+        1 == 2
+      }
+    }
+    '''
+
+    then:
+    MultipleCompilationErrorsException e = thrown()
+    e.errorCollector.errors.message =~ [
+        "Verification helper annotations can't be combined on 'foo', '@spock.lang.Verify' conflicts with '@spock.lang.VerifyAll'.",
+        "Verification helper annotations can't be combined on 'foo', '@spock.lang.VerifyAll' conflicts with '@spock.lang.Verify'."
+    ]
+  }
+
+  def "@VerifyAll can't be combined with @Verify within Specification"() {
+    when:
+    runner.runSpecBody'''
+      @Verify
+      @VerifyAll
+      void foo() {
+        1 == 2
+      }
+    '''
+
+    then:
+    MultipleCompilationErrorsException e = thrown()
+    e.errorCollector.errors.message =~ [
+        "Verification helper annotations can't be combined on 'foo', '@spock.lang.Verify' conflicts with '@spock.lang.VerifyAll'.",
+        "Verification helper annotations can't be combined on 'foo', '@spock.lang.VerifyAll' conflicts with '@spock.lang.Verify'."
+    ]
   }
 }

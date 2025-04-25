@@ -14,9 +14,18 @@
 package org.spockframework.compiler.condition;
 
 import org.codehaus.groovy.ast.ASTNode;
+import org.codehaus.groovy.ast.AnnotationNode;
 import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.transform.ASTTransformation;
+import spock.lang.Verify;
+import spock.lang.VerifyAll;
+
+import java.lang.annotation.Annotation;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.spockframework.compiler.AstNodeCache;
 import org.spockframework.compiler.ErrorReporter;
 import org.spockframework.compiler.IRewriteResources;
@@ -24,7 +33,14 @@ import org.spockframework.compiler.SourceLookup;
 
 abstract class BaseVerifyMethodTransform implements ASTTransformation {
 
+  private static final Set<String> ANNOTATIONS = Stream.of(Verify.class, VerifyAll.class).map(Class::getName).collect(Collectors.toSet());
   static final AstNodeCache nodeCache = new AstNodeCache();
+
+  private final Class<? extends Annotation> expectedAnnotation;
+
+  public BaseVerifyMethodTransform(Class<? extends Annotation> expectedAnnotation) {
+    this.expectedAnnotation = expectedAnnotation;
+  }
 
   abstract IVerifyMethodRewriter createRewriter(MethodNode methodNode, IRewriteResources resources);
 
@@ -47,6 +63,15 @@ abstract class BaseVerifyMethodTransform implements ASTTransformation {
     if (!method.isVoidMethod()) {
       errorReporter.error("Verification helper method '%s' must have a void return type.", method.getName());
       return;
+    }
+
+    for (AnnotationNode annotation : method.getAnnotations()) {
+      String name = annotation.getClassNode().getName();
+      if (name.equals(expectedAnnotation.getName())) continue;
+      if (ANNOTATIONS.contains(name)) {
+        errorReporter.error("Verification helper annotations can't be combined on '%s', '@%s' conflicts with '@%s'.", method.getName(), expectedAnnotation.getName(), name);
+        return;
+      }
     }
 
     IVerifyMethodRewriter rewriter = createRewriter(

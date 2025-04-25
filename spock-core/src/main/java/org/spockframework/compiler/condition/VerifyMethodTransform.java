@@ -17,10 +17,16 @@ package org.spockframework.compiler.condition;
 import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.control.CompilePhase;
 import org.codehaus.groovy.transform.GroovyASTTransformation;
+import spock.lang.Verify;
+
 import org.spockframework.compiler.IRewriteResources;
 
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
 public class VerifyMethodTransform extends BaseVerifyMethodTransform {
+
+  public VerifyMethodTransform() {
+    super(Verify.class);
+  }
 
   @Override
   IVerifyMethodRewriter createRewriter(MethodNode methodNode, IRewriteResources resources) {

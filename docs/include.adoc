@@ -34,3 +34,5 @@
 :base-sourcedir-spring-boot: spock-spring/boot2-test/src/test/groovy/org/spockframework/boot2
 :sourcedir-spring-boot: ../{base-sourcedir-spring-boot}
 :github-sourcedir-spring-boot: {github-blob-base}/{commit-ish}/{base-sourcedir-spring-boot}
+// Common Includes
+:spock-example-project: https://github.com/spockframework/spock-example

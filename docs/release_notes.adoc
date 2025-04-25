@@ -1,7 +1,8 @@
 [[release-notes]]
 = Release Notes
-
 include::include.adoc[]
+:SpecClassFileSelector: https://github.com/spockframework/spock/blob/03818ed010f4b4ca1136a292e214f79d518c4abe/spock-core/src/main/java/org/spockframework/buildsupport/ant/SpecClassFileSelector.java
+:scriptselector: {spock-example-project}/blob/963fd34d1609b7025ba92502483ce31b2c6d9d0a/build.xml#L167-L176
 
 == 2.4 (tbd)
 
@@ -676,8 +677,9 @@ The class `SpecClassFileSelector` that could be used to only select actual Spock
 and creating a test report was removed. It was the only class that required `ant` and was basically just a one-line
 forward to the `SpecClassFileFinder` which is still available.
 
-If you are still using Spock with `ant`, then you can just copy the class from the spock source code into your build,
-or you simply use a `<scriptselector>` that does this forwarding as shown in the `spock-example` project.
+If you are still using Spock with `ant`, then you can just copy {SpecClassFileSelector}[the class from the spock source code]
+into your build, or you simply use a {scriptselector}[`<scriptselector>`] that does this forwarding as shown in the
+{spock-example-project}[Spock Example Project].
 
 Alternatively, you can also use a naming convention to find the classes that are actual specifications and not helper
 or base classes, or you live with a bit of wasted time and some meaningless entries in the test reports.
@@ -1236,7 +1238,7 @@ Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.
 * Improved and restyled reference documentation at https://docs.spockframework.org. Generated with
   https://asciidoctor.org/[Asciidoctor] (what else?).
 * Maven plugin removed. Just let Maven Surefire run your Spock specs like your JUnit tests
-  (see https://examples.spockframework.org[spock-example] project).
+  (see {spock-example-project}[spock-example] project).
 * Official support for Java 1.8, Groovy 2.3 and Groovy 2.4. Make sure to pick the `groovy-2.0` binaries for Groovy
   2.0/2.1/2.2, `groovy-2.3` binaries for Groovy 2.3, and `groovy-2.4` binaries for Groovy 2.4 and higher.
 * Improved infrastructure to allow for easier community involvement: Switch to
@@ -1794,7 +1796,7 @@ their types inferred from the values in the table (!).
 === GitHub Repository
 
 All source code has moved to https://github.spockframework.org/. The https://github.spockframework.org/spock-grails[Grails Spock plugin],
-https://github.spockframework.org/spock-example[Spock Example] project, and
+{spock-example-project}[Spock Example] project, and
 https://github.spockframework.org/spockwebconsole[Spock Web Console] now have their own GitHub projects.
 Also available are slides and code for various Spock presentations (such as
 https://github.spockframework.org/smarter-testing-with-spock[this one]).

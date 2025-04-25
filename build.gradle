@@ -404,3 +404,11 @@ def configureGroovydoc(TaskProvider groovydoc) {
     include "spock/**"
   }
 }
+
+tasks.preprocessBranchesAndPrsWorkflow {
+  outputs.file('.github/codecov.yml').withPropertyName('codecovConfig')
+}
+
+tasks.preprocessReleaseWorkflow {
+  outputs.file('.github/codecov.yml').withPropertyName('codecovConfig')
+}

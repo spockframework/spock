@@ -13,17 +13,20 @@ import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
 
 @CompileStatic
+@CacheableTask
 abstract class PreprocessGithubWorkflow extends DefaultTask {
   @InputFile
+  @PathSensitive(PathSensitivity.RELATIVE)
   abstract RegularFileProperty getWorkflowScript()
 
   @InputFiles
+  @PathSensitive(PathSensitivity.RELATIVE)
   abstract ConfigurableFileCollection getImportedFiles()
 
-  @InputFiles
+  @Classpath
   abstract ConfigurableFileCollection getKotlinCompilerClasspath()
 
-  @InputFiles
+  @Classpath
   abstract ConfigurableFileCollection getMainKtsClasspath()
 
   @Nested

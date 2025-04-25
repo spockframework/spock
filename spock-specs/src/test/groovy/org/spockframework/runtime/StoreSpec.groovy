@@ -15,21 +15,22 @@
 
 package org.spockframework.runtime
 
+import spock.config.ConfigurationObject
+import spock.lang.IgnoreIf
+import spock.lang.Shared
+import spock.lang.Snapshot
+
+import java.lang.annotation.Retention
+import java.lang.annotation.RetentionPolicy
+import java.util.concurrent.atomic.AtomicReference
+
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.extension.*
 import org.spockframework.runtime.model.MethodKind
 import org.spockframework.runtime.model.SpecInfo
 import org.spockframework.specs.extension.SpockSnapshotter
-import spock.lang.Snapshot
 import org.spockframework.util.Assert
 import org.spockframework.util.InternalSpockError
-import spock.config.ConfigurationObject
-import spock.lang.IgnoreIf
-import spock.lang.Shared
-
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
-import java.util.concurrent.atomic.AtomicReference
 
 class StoreSpec extends EmbeddedSpecification {
 
@@ -129,7 +130,8 @@ class StoreSpec extends EmbeddedSpecification {
     sharedList.get() ==~ supportedMethodKinds
 
     where:
-    methodKinds << supportedMethodKinds.subsequences()
+    // methodKinds << supportedMethodKinds.subsequences() // full coverage but takes ages due to the embedded runner
+    methodKinds << [supportedMethodKinds] + supportedMethodKinds.collate(1)
   }
 }
 

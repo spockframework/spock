@@ -29,37 +29,57 @@ abstract class BaseVerifyMethodsAstSpec extends EmbeddedSpecification {
 
   abstract Class<? extends Annotation> getAnnotation()
 
-  def "transforms conditions in methods inside spec classes"() {
+  def "transforms conditions in methods inside spec classes: #scenario"(String code) {
     given:
     snapshotter.specBody()
 
     when:
     def result = compiler.transpileSpecBody("""
 @${annotation.name}
-void isPositiveAndEven(int a) {
-    a > 0
-    a % 2 == 0
+void myHelper(int a) {
+    $code
 }
 """)
 
     then:
     snapshotter.assertThat(result.source).matchesSnapshot()
+
+    where:
+    [scenario, code] << VARIANTS
   }
 
-  def "transforms conditions in methods outside of spec classes"() {
+  static final VARIANTS = [
+      [
+          scenario: 'simple expressions',
+          code: '''
+            a > 0
+            a % 2 == 0
+          '''
+      ],
+      [
+          scenario: 'closure expressions',
+          code: '''
+            (1.3).every { it < a }
+          '''
+      ]
+  ]
+
+  def "transforms conditions in methods outside of spec classes: #scenario"(String code) {
     when:
     def result = compiler.transpile("""
 class Assertions {
     @${annotation.name}
-    void isPositiveAndEven(int a) {
-        a > 0
-        a % 2 == 0
+    void myHelper(int a) {
+        $code
     }
 }
 """)
 
     then:
     snapshotter.assertThat(result.source).matchesSnapshot()
+
+    where:
+    [scenario, code] << VARIANTS
   }
 
   def "transforms conditions in private methods"() {

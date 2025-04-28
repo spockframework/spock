@@ -15,6 +15,7 @@
 package org.spockframework.compiler.condition;
 
 import org.codehaus.groovy.ast.MethodNode;
+import org.codehaus.groovy.ast.expr.ClosureExpression;
 import org.codehaus.groovy.ast.stmt.AssertStatement;
 import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.ast.stmt.Statement;
@@ -35,6 +36,7 @@ abstract class BaseVerifyMethodRewriter extends StatementReplacingVisitorSupport
   final IRewriteResources resources;
   private final MethodNode methodNode;
   private boolean conditionFound = false;
+  private int closureDepth = 0;
 
   BaseVerifyMethodRewriter(MethodNode methodNode, IRewriteResources resources) {
     this.resources = notNull(resources);
@@ -51,6 +53,11 @@ abstract class BaseVerifyMethodRewriter extends StatementReplacingVisitorSupport
       statements.set(replace(next));
     }
     defineRecorders();
+  }
+
+  @Override
+  public void visitClosureExpression(ClosureExpression expression) {
+    // stop processing, we don't want to transform closure content
   }
 
   @Override

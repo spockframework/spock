@@ -405,31 +405,30 @@ def configureGroovydoc(TaskProvider groovydoc) {
   }
 }
 
-def preprocessBranchesAndPrsWorkflowCodecovOutput = layout.buildDirectory.file('codecov_branches-and-prs.yml')
-def preprocessReleaseWorkflowCodecovOutput = layout.buildDirectory.file('codecov_release.yml')
+tasks.preprocessBranchesAndPrsWorkflow {
+  inputs.file('.github/codecov.yml').withPropertyName('codecovConfig')
+  def preprocessBranchesAndPrsWorkflowCodecovOutput = layout.buildDirectory.file('codecov_branches-and-prs.yml')
+  outputs.file(preprocessBranchesAndPrsWorkflowCodecovOutput).withPropertyName('codecovConfig')
 
-def copyCodecovConfig = tasks.register('copyCodecovConfig') {
   doLast {
     copy {
-      from(
-        [
-          preprocessBranchesAndPrsWorkflowCodecovOutput,
-          preprocessReleaseWorkflowCodecovOutput
-        ].max {it.get().asFile.lastModified() })
+      from(preprocessBranchesAndPrsWorkflowCodecovOutput)
       into('.github')
       rename { 'codecov.yml' }
     }
   }
 }
 
-tasks.preprocessBranchesAndPrsWorkflow {
-  inputs.file('.github/codecov.yml').withPropertyName('codecovConfig')
-  outputs.file(preprocessBranchesAndPrsWorkflowCodecovOutput).withPropertyName('codecovConfig')
-  finalizedBy(copyCodecovConfig)
-}
-
 tasks.preprocessReleaseWorkflow {
   inputs.file('.github/codecov.yml').withPropertyName('codecovConfig')
+  def preprocessReleaseWorkflowCodecovOutput = layout.buildDirectory.file('codecov_release.yml')
   outputs.file(preprocessReleaseWorkflowCodecovOutput).withPropertyName('codecovConfig')
-  finalizedBy(copyCodecovConfig)
+
+  doLast {
+    copy {
+      from(preprocessReleaseWorkflowCodecovOutput)
+      into('.github')
+      rename { 'codecov.yml' }
+    }
+  }
 }

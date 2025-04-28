@@ -80,6 +80,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     InteractionRewriter rewriter = visitInteractionAwareExpressionStatement(stat);
 
     if (!pastSpecialMethodCallStats.contains(stat)
+      || topLevelGroupConditionFound
       || currSpecialMethodCall.isConditionMethodCall()
       || currSpecialMethodCall.isGroupConditionBlock()) {
 

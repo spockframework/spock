@@ -8,6 +8,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.jvm.toolchain.JavaLauncher
+import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 
 import javax.inject.Inject
@@ -16,10 +17,12 @@ import javax.inject.Inject
 @CacheableTask
 abstract class PreprocessGithubWorkflow extends DefaultTask {
   @InputFile
+  @NormalizeLineEndings
   @PathSensitive(PathSensitivity.RELATIVE)
   abstract RegularFileProperty getWorkflowScript()
 
   @InputFiles
+  @NormalizeLineEndings
   @PathSensitive(PathSensitivity.RELATIVE)
   abstract ConfigurableFileCollection getImportedFiles()
 

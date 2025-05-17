@@ -20,6 +20,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.api.tasks.Delete
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainService
 
@@ -61,6 +62,12 @@ class PreprocessWorkflowsPlugin implements Plugin<Project> {
         it.javaLauncher.set(project.extensions.getByType(JavaToolchainService).launcherFor {
           it.languageVersion.set(JavaLanguageVersion.of(17))
         })
+      }
+      def deleteWorkflowYaml = project.tasks.register("delete${pascalCasedWorkflowName}WorkflowYaml", Delete) {
+        it.delete(preprocessWorkflow.flatMap { it.workflowFile })
+      }
+      preprocessWorkflow.configure {
+        it.dependsOn(deleteWorkflowYaml)
       }
       project.pluginManager.withPlugin('io.spring.nohttp') {
         // iff both tasks are run, workflow files should be generated before checkstyle check

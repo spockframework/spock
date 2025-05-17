@@ -8,7 +8,7 @@ junit = '5.12.2'
 asm = '9.8'
 mockito4 = '4.11.0'
 mockito5 = '5.17.0'
-workflows-kotlin = "2.1.20"
+workflows-kotlin = "2.1.21"
 
 [libraries]
 jetbrains-annotations = "org.jetbrains:annotations:26.0.2"

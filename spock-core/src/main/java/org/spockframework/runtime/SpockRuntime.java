@@ -217,7 +217,7 @@ public abstract class SpockRuntime {
   }
 
   private static <T> SpockAssertionError getAssertionFailedError(Function<? super T, ?> namer, InternalItemFailure<T> failure) {
-    SpockAssertionError error = new SpockAssertionError(String.format("Assertions failed for item[%d] %s:\n%s", failure.index, namer.apply(failure.item), failure.throwable.getMessage()));
+    SpockAssertionError error = new SpockAssertionError(String.format("Assertions failed for item[%d] %s:\n%s", failure.index, namer.apply(failure.item), failure.throwable.toString()));
     error.setStackTrace(failure.throwable.getStackTrace());
     return error;
   }

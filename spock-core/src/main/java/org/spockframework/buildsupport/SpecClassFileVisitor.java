@@ -25,7 +25,7 @@ class SpecClassFileVisitor extends ClassVisitor {
   private boolean isAbstract;
 
   SpecClassFileVisitor() {
-    super(Opcodes.ASM4);
+    super(Opcodes.ASM9);
   }
 
   public boolean isSpec() {
@@ -73,4 +73,3 @@ class SpecClassFileVisitor extends ClassVisitor {
   @Override
   public void visitEnd() {}
 }
-

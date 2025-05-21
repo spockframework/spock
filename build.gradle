@@ -404,3 +404,40 @@ def configureGroovydoc(TaskProvider groovydoc) {
     include "spock/**"
   }
 }
+
+def preprocessBranchesAndPrsWorkflowCodecovOutput = layout.buildDirectory.file('codecov_branches-and-prs.yml')
+def preprocessReleaseWorkflowCodecovOutput = layout.buildDirectory.file('codecov_release.yml')
+
+def copyCodecovConfig = tasks.register('copyCodecovConfig') {
+  doLast {
+    copy {
+      from(
+        [
+          preprocessBranchesAndPrsWorkflowCodecovOutput,
+          preprocessReleaseWorkflowCodecovOutput
+        ].max {it.get().asFile.lastModified() })
+      into('.github')
+      rename { 'codecov.yml' }
+    }
+  }
+}
+
+tasks.preprocessBranchesAndPrsWorkflow {
+  inputs
+    .file('.github/codecov.yml')
+    .normalizeLineEndings()
+    .withPathSensitivity(PathSensitivity.RELATIVE)
+    .withPropertyName('codecovConfig')
+  outputs.file(preprocessBranchesAndPrsWorkflowCodecovOutput).withPropertyName('codecovConfig')
+  finalizedBy(copyCodecovConfig)
+}
+
+tasks.preprocessReleaseWorkflow {
+  inputs
+    .file('.github/codecov.yml')
+    .normalizeLineEndings()
+    .withPathSensitivity(PathSensitivity.RELATIVE)
+    .withPropertyName('codecovConfig')
+  outputs.file(preprocessReleaseWorkflowCodecovOutput).withPropertyName('codecovConfig')
+  finalizedBy(copyCodecovConfig)
+}

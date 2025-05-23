@@ -204,12 +204,17 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
 
     checkIsValidImplicitCondition(stat, resources.getErrorReporter());
 
-    String methodName = AstUtil.getMethodName(stat.getExpression());
-    boolean isConditionMethodCall = Identifiers.CONDITION_METHODS.contains(methodName);
+    boolean isConditionMethodCall;
+    if (stat.getExpression() instanceof MethodCallExpression) {
+      isConditionMethodCall = SpecialMethodCall.checkIsConditionMethodCall(((MethodCallExpression) stat.getExpression()));
+    } else {
+      isConditionMethodCall = false;
+    }
 
     if (isConditionMethodCall) {
       groupConditionFound = currSpecialMethodCall.isGroupConditionBlock();
-    } else {
+    }
+    if (!isConditionMethodCall || currSpecialMethodCall.isConditionMethodCall() || currSpecialMethodCall.isGroupConditionBlock()) {
       conditionFound();
     }
 

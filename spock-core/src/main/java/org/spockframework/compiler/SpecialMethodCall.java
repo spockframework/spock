@@ -269,6 +269,11 @@ public class SpecialMethodCall implements ISpecialMethodCall {
         methodName, inferredName, inferredType, methodCallExpr, closureExpr, conditionBlock);
   }
 
+  static boolean checkIsConditionMethodCall(MethodCallExpression expr) {
+    if (!AstUtil.isThisOrSuperExpression(expr.getObjectExpression())) return false;
+    return Identifiers.CONDITION_METHODS.contains(expr.getMethodAsString());
+  }
+
   private static boolean checkIsBuiltInMethodCall(MethodCallExpression expr) {
     if (!AstUtil.isThisOrSuperExpression(expr.getObjectExpression())) return false;
     return Identifiers.BUILT_IN_METHODS.contains(expr.getMethodAsString());

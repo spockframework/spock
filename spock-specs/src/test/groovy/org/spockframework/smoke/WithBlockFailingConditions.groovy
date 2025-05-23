@@ -14,10 +14,11 @@
 
 package org.spockframework.smoke
 
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.*
 import spock.lang.*
 
-class WithBlockFailingConditions extends Specification {
+class WithBlockFailingConditions extends EmbeddedSpecification {
   @FailsWith(ConditionNotSatisfiedError)
   def "basic usage"() {
     def list = [1, 2]
@@ -154,5 +155,147 @@ class WithBlockFailingConditions extends Specification {
     with(list) {
       size() == 3
     }
+  }
+
+  @FailsWith(ConditionNotSatisfiedError)
+  def "GDK method that looks like built-in method as implicit condition"() {
+    expect:
+    null.with {
+      false
+    }
+  }
+
+  @FailsWith(ConditionNotSatisfiedError)
+  def "GDK method that looks like built-in method as explicit condition"() {
+    expect:
+    assert null.with {
+      false
+    }
+  }
+
+  def "condition method #conditionMethod within condition method #conditionMethod"() {
+    when:
+    runner.runFeatureBody("""
+expect:
+$conditionMethod(['']) {
+  $conditionMethod(['']) {
+    false
+  }
+}
+""")
+
+    then:
+    thrown(expectedException)
+
+    where:
+    conditionMethod || expectedException
+    'with'          || ConditionNotSatisfiedError
+    'verifyAll'     || ConditionNotSatisfiedError
+    'verifyEach'    || SpockAssertionError
+  }
+
+  def "condition method #conditionMethod within condition method #conditionMethod with exception"() {
+    when:
+    runner.runFeatureBody("""
+expect:
+$conditionMethod(['']) {
+  $conditionMethod(['']) {
+    true
+    throw new Exception('foo')
+  }
+}
+""")
+
+    then:
+    def exception = thrown(expectedException)
+    exception.message."${expectedException == Exception ? 'equals' : 'contains'}"('foo')
+
+    where:
+    conditionMethod || expectedException
+    'with'          || Exception
+    'verifyAll'     || Exception
+    'verifyEach'    || SpockAssertionError
+  }
+
+  def "condition method #conditionMethod within condition method #conditionMethod with only exception"() {
+    when:
+    runner.runFeatureBody("""
+expect:
+$conditionMethod(['']) {
+  $conditionMethod(['']) {
+    throw new Exception('foo')
+  }
+}
+""")
+
+    then:
+    def exception = thrown(expectedException)
+    exception.message."${expectedException == Exception ? 'equals' : 'contains'}"('foo')
+
+    where:
+    conditionMethod || expectedException
+    'with'          || Exception
+    'verifyAll'     || Exception
+    'verifyEach'    || SpockAssertionError
+  }
+
+  def "condition method #conditionMethod"() {
+    when:
+    runner.runFeatureBody("""
+expect:
+$conditionMethod(['']) {
+  false
+}
+""")
+
+    then:
+    thrown(expectedException)
+
+    where:
+    conditionMethod || expectedException
+    'with'          || ConditionNotSatisfiedError
+    'verifyAll'     || ConditionNotSatisfiedError
+    'verifyEach'    || SpockAssertionError
+  }
+
+  def "condition method #conditionMethod with exception"() {
+    when:
+    runner.runFeatureBody("""
+expect:
+$conditionMethod(['']) {
+  true
+  throw new Exception('foo')
+}
+""")
+
+    then:
+    def exception = thrown(expectedException)
+    exception.message."${expectedException == Exception ? 'equals' : 'contains'}"('foo')
+
+    where:
+    conditionMethod || expectedException
+    'with'          || Exception
+    'verifyAll'     || Exception
+    'verifyEach'    || SpockAssertionError
+  }
+
+  def "condition method #conditionMethod with only exception"() {
+    when:
+    runner.runFeatureBody("""
+expect:
+$conditionMethod(['']) {
+  throw new Exception('foo')
+}
+""")
+
+    then:
+    def exception = thrown(expectedException)
+    exception.message."${expectedException == Exception ? 'equals' : 'contains'}"('foo')
+
+    where:
+    conditionMethod || expectedException
+    'with'          || Exception
+    'verifyAll'     || Exception
+    'verifyEach'    || SpockAssertionError
   }
 }

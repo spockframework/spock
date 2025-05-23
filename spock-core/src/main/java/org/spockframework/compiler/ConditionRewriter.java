@@ -41,6 +41,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
 import static org.spockframework.compiler.AstUtil.primitiveConstExpression;
+import static org.spockframework.compiler.SpecialMethodCall.checkIsConditionMethodCall;
 
 // NOTE: currently some conversions reference old expression objects rather than copying them;
 // this can potentially lead to aliasing problems (e.g. for Condition.originalExpression)
@@ -641,8 +642,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
     // method conditions with spread operator are not lifted because MOP doesn't support spreading
     if (expr instanceof MethodCallExpression && !((MethodCallExpression) expr).isSpreadSafe()) {
       MethodCallExpression methodCallExpression = (MethodCallExpression)expr;
-      String methodName = AstUtil.getMethodName(methodCallExpression);
-      if ((Identifiers.CONDITION_METHODS.contains(methodName))) {
+      if (checkIsConditionMethodCall(methodCallExpression)) {
         return surroundSpecialTryCatch(expr);
       }
       return rewriteMethodCondition(methodCallExpression, message, explicit, optOut);

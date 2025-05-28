@@ -18,7 +18,7 @@ import org.objectweb.asm.*;
 
 class EmptyAnnotationVisitor extends AnnotationVisitor {
   public EmptyAnnotationVisitor() {
-    super(Opcodes.ASM4);
+    super(Opcodes.ASM9);
   }
 
   @Override

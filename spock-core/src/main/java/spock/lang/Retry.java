@@ -28,7 +28,7 @@ import groovy.lang.Closure;
 
 
 /**
- * Retries the given feature if an exception occurs during execution.
+ * Retries the given feature if an exception occurs during execution of the feature method.
  *
  * <p>Retries can be applied to feature methods and spec classes. Applying it to
  * a spec class has the same effect as applying it to each feature method that
@@ -50,7 +50,7 @@ public @interface Retry {
   /**
    * Configures which types of Exceptions should be retried.
    *
-   * Subclasses are included if their parent class is listed.
+   * <p>Subclasses are included if their parent class is listed.
    *
    * @return array of Exception classes to retry.
    */
@@ -77,12 +77,12 @@ public @interface Retry {
    * Condition that is evaluated to decide whether the feature should be
    * retried.
    *
-   * The configured closure is called with a delegate of type
+   * <p>The configured closure is called with a delegate of type
    * {@link org.spockframework.runtime.extension.builtin.RetryConditionContext}
    * which provides access to the current exception and {@code Specification}
    * instance.
    *
-   * The feature is retried if the exception class passes the type check and the
+   * <p>The feature is retried if the exception class passes the type check and the
    * specified condition holds true. If no condition is specified, only the type
    * check is performed.
    *
@@ -113,12 +113,14 @@ public @interface Retry {
 
   enum Mode {
     /**
-     * Retry the iterations individually.
+     * Retry only the feature method execution, setup and cleanup are not running on retries.
      */
     ITERATION,
 
     /**
-     * Retry the feature together with the setup and cleanup methods.
+     * Retry the iteration together with setup and cleanup.
+     * Even in this mode, the retry is only triggered if the feature method is failing
+     * in the expected way. If the setup or cleanup is failing, the test fails immediately.
      */
     SETUP_FEATURE_CLEANUP
   }

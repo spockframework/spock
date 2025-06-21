@@ -1,0 +1,5 @@
+Multiple Failures (2 failures)
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[4] 5:
+java.lang.RuntimeException: x == 5
+	org.spockframework.runtime.SpockAssertionError: Assertions failed for item[5] 6:
+java.lang.RuntimeException: x == 6

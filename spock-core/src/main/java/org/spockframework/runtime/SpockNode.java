@@ -2,13 +2,14 @@ package org.spockframework.runtime;
 
 import org.spockframework.runtime.model.*;
 import org.spockframework.runtime.model.parallel.ResourceAccessMode;
+//import org.spockframework.util.ClassUtil;
+import org.spockframework.util.ClassUtil;
 import org.spockframework.util.ExceptionUtil;
 import spock.config.RunnerConfiguration;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.junit.platform.commons.util.ClassUtils;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.descriptor.*;
 import org.junit.platform.engine.support.hierarchical.*;
@@ -91,7 +92,7 @@ public abstract class SpockNode<T extends SpecElementInfo<?,?>>
   protected static MethodSource featureToMethodSource(FeatureInfo info) {
     return MethodSource.from(info.getSpec().getBottomSpec().getReflection().getName(),
       info.getName(),
-      ClassUtils.nullSafeToString(info.getFeatureMethod().getReflection().getParameterTypes()) // TODO replace internal API
+      ClassUtil.allNullSafeToString(info.getFeatureMethod().getReflection().getParameterTypes())
     );
   }
 

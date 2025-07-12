@@ -2,7 +2,6 @@ package org.spockframework.runtime;
 
 import org.spockframework.runtime.model.*;
 import org.spockframework.runtime.model.parallel.ResourceAccessMode;
-//import org.spockframework.util.ClassUtil;
 import org.spockframework.util.ClassUtil;
 import org.spockframework.util.ExceptionUtil;
 import spock.config.RunnerConfiguration;

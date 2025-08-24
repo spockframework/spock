@@ -21,6 +21,11 @@
       allowedVersions: "(,5.0)"
     },
     {
+      matchPackageNames: ["/^org.apache.groovy:/"],
+      matchCurrentValue: "/^5\\./",
+      allowedVersions: "(,6.0)"
+    },
+    {
       matchPackageNames: ["/^org.mockito:/"],
       matchCurrentValue: "/^4\\./",
       allowedVersions: "(,5.0)"
@@ -34,6 +39,11 @@
       matchPackageNames: ["/^org.spockframework:spock-/"],
       matchCurrentVersion: "/-groovy-4\\.0$/",
       allowedVersions: "/-groovy-4\\.0$/"
+    },
+    {
+      matchPackageNames: ["/^org.spockframework:spock-/"],
+      matchCurrentVersion: "/-groovy-5\\.0$/",
+      allowedVersions: "/-groovy-5\\.0$/"
     }
   ]
 }

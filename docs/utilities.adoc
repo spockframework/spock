@@ -49,6 +49,8 @@ Since Spock 2.1 you can use two new conditions:
 * `x =~ [1, 2, 3]` is a lenient match, i.e., checking that x contains at least one instance of every item in the list (same semantics as casting both to `Set` before comparing).
 * `x ==~ [1, 2, 3, 3]` is a strict match, i.e., checking that x contains exactly the items in the list regardless of their order (using Hamcrest's `containsInAnyOrder` under the hood).
 
+NOTE: This is a Spock feature, not a Groovy feature. So it only works where Spock treats an expression as a <<spock_primer.adoc#implicit-and-explicit-conditions,condition>>.
+
 === Lenient Match
 [source,groovy,indent=0]
 ----

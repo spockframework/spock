@@ -226,6 +226,7 @@ stack.size() == 2
 As you can see, Spock captures all values produced during the evaluation of a condition, and presents them in an easily
 digestible form. Nice, isn't it?
 
+[#implicit-and-explicit-conditions]
 ===== Implicit and explicit conditions
 
 Conditions are an essential ingredient of `then` blocks and `expect` blocks. Except for calls to `void` methods and

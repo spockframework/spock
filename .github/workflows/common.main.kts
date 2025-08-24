@@ -138,7 +138,10 @@ val Matrix.Companion.full
         operatingSystems = listOf("ubuntu-latest"),
         variants = axes.variants,
         javaVersions = axes.javaVersions + "23",
-        exclude = { (variant == "2.5") && (javaVersion!!.toInt() >= 17) },
+        exclude = {
+            (variant == "2.5") && (javaVersion!!.toInt() >= 17)
+                    || (variant == "5.0") && (javaVersion!!.toInt() < 11)
+        },
         includes = listOf("windows-latest", "macos-latest")
             .map {
                 Matrix.Element(

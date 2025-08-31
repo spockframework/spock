@@ -114,7 +114,8 @@ if (javaVersion == 8) {
 include "spock-unitils"
 
 if (javaVersion <= 17) {
-  include "spock-spring:boot2-test"
+  // include "spock-spring:boot2-test" TODO adapt this according to the outstanding discussion
+  // https://github.com/spockframework/spock/discussions/2200
 }
 include "spock-spring:spring3-test"
 include "spock-spring:spring5-test"

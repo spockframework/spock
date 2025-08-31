@@ -8,15 +8,13 @@ ext {
 publishing {
   publications {
     maven(MavenPublication) {
-      afterEvaluate {
-        pom.packaging = project.ext.packaging
-        if (project.ext.packaging == "pom") {
-          from(components.javaPlatform)
-        } else {
-          from(components.java)
-          artifact(sourcesJar)
-          artifact(javadocJar)
-        }
+      plugins.withId("java-library") {
+        from(components.named("java").get())
+        artifact(sourcesJar)
+        artifact(javadocJar)
+      }
+      plugins.withId("java-platform") {
+        from(components.javaPlatform)
       }
       pom {
         name = provider { project.ext.displayName }

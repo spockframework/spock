@@ -22,6 +22,7 @@ import org.mockito.exceptions.base.MockitoException
 import org.spockframework.mock.CannotCreateMockException
 import org.spockframework.mock.MockUtil
 import org.spockframework.runtime.InvalidSpecException
+import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.mock.MockMakers
@@ -478,6 +479,18 @@ class MockitoStaticMocksSpec extends Specification {
     ex.message.contains("It is not possible to mock static methods of java.lang.Thread")
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/2161")
+  def "SpyStatic with varargs in method"() {
+    given:
+    SpyStatic(StaticClass)
+    StaticClass.staticVarargsMethod("test") >> true
+    StaticClass.staticVarargsMethod("test2") >> false
+
+    expect:
+    StaticClass.staticVarargsMethod("test")
+    !StaticClass.staticVarargsMethod("test2")
+  }
+
   static class StaticClass {
 
     String instanceMethod() {
@@ -490,6 +503,11 @@ class MockitoStaticMocksSpec extends Specification {
 
     static String staticMethod2() {
       return REAL_VALUE
+    }
+
+    @SuppressWarnings('unused')
+    static boolean staticVarargsMethod(String str, String... varargs) {
+      return true
     }
   }
 

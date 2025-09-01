@@ -131,15 +131,14 @@ public class AsyncConditions {
    * @throws Throwable the first exception thrown by an evaluate block
    */
   public void await(double seconds) throws Throwable {
-    latch.await((long) (seconds * 1000), TimeUnit.MILLISECONDS);
+    boolean evalBlocksFinished = latch.await((long) (seconds * 1000), TimeUnit.MILLISECONDS);
     if (!exceptions.isEmpty())
       throw exceptions.poll();
 
-    long pendingEvalBlocks = latch.getCount();
-    if (pendingEvalBlocks > 0) {
+    if (!evalBlocksFinished) {
       String msg = String.format("Async conditions timed out " +
           "after %1.2f seconds; %d out of %d evaluate blocks did not complete in time",
-          seconds, pendingEvalBlocks, numEvalBlocks);
+          seconds, latch.getCount(), numEvalBlocks);
       throw new SpockTimeoutError(seconds, msg);
     }
   }

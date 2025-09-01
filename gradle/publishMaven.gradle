@@ -8,12 +8,12 @@ ext {
 publishing {
   publications {
     maven(MavenPublication) {
-      plugins.withId("java-library") {
+      pluginManager.withPlugin("java-library") {
         from(components.java)
         artifact(sourcesJar)
         artifact(javadocJar)
       }
-      plugins.withId("java-platform") {
+      pluginManager.withPlugin("java-platform") {
         from(components.javaPlatform)
       }
       pom {

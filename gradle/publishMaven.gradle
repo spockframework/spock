@@ -9,7 +9,7 @@ publishing {
   publications {
     maven(MavenPublication) {
       plugins.withId("java-library") {
-        from(components.named("java").get())
+        from(components.java)
         artifact(sourcesJar)
         artifact(javadocJar)
       }

@@ -85,6 +85,7 @@ data class Matrix(
 
     data class Axes(
         val javaVersions: List<String>,
+        val additionalJavaTestVersions: List<String>,
         val variants: List<String>
     )
 
@@ -137,7 +138,7 @@ val Matrix.Companion.full
     get() = Matrix(
         operatingSystems = listOf("ubuntu-latest"),
         variants = axes.variants,
-        javaVersions = axes.javaVersions + "23",
+        javaVersions = axes.javaVersions + axes.additionalJavaTestVersions,
         exclude = { (variant == "2.5") && (javaVersion!!.toInt() >= 17) },
         includes = listOf("windows-latest", "macos-latest")
             .map {
@@ -159,6 +160,7 @@ val Matrix.Companion.axes by lazy {
 
         Matrix.Axes(
             properties.getList("javaVersionsList"),
+            properties.getList("additionalJavaTestVersionsList"),
             properties.getList("variantsList")
         )
     }

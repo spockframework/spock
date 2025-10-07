@@ -41,7 +41,7 @@ class IgnoreIfExtension extends EmbeddedSpecification {
 
   @IgnoreIf({
     jvm.java8 || jvm.java9 || jvm.java10 || jvm.java11 || jvm.java12 || jvm.java13 || jvm.java14 || jvm.java15 || jvm.java16 || jvm.java17 ||
-      jvm.java18 || jvm.java19 || jvm.java20 || jvm.java21 || jvm.java22 || jvm.java23 || jvm.java24
+      jvm.java18 || jvm.java19 || jvm.java20 || jvm.java21 || jvm.java22 || jvm.java23 || jvm.java24 || jvm.java25
   })
   def "provides JVM information"() {
     expect: false

@@ -454,6 +454,8 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     }
   }
 
+  // work-around for https://issues.apache.org/jira/browse/GROOVY-11780
+  @CompileDynamic
   @Override
   void visitClass(ClassNode node) {
 

@@ -1154,7 +1154,8 @@ then:
     then:
     TooFewInvocationsError e = thrown()
     def exceptionMessage = normalize(e.message)
-    exceptionMessage =~ /(?m)^\Q1 * list.add(<org.spockframework.smoke.mock.TooFewInvocations\E.Person@\w+ name=Foo age=18>\)$/
+    // work-around for https://issues.apache.org/jira/browse/GROOVY-11779 (the "|inaccessible")
+    exceptionMessage =~ /(?m)^\Q1 * list.add(<org.spockframework.smoke.mock.TooFewInvocations\E.Person@\w+ name=(?:Foo|inaccessible) age=(?:18|inaccessible)>\)$/
   }
 
   def "correctly renders multidimensional arrays"() {

@@ -824,8 +824,8 @@ public class SpecRewriter extends AbstractSpecVisitor implements ISpecRewriteRes
       MethodCallExpression methodCallExpression = (MethodCallExpression)rightExpression;
       if (methodCallExpression.isImplicitThis())
         if (declExpr.isMultipleAssignmentDeclaration()) {
-          ArgumentListExpression argumentListExpression = (ArgumentListExpression)declExpr.getLeftExpression();
-          argumentListExpression.getExpressions().stream()
+          TupleExpression tupleExpression = (TupleExpression)declExpr.getLeftExpression();
+          tupleExpression.getExpressions().stream()
             .filter(VariableExpression.class::isInstance)
             .map(VariableExpression.class::cast)
             .map(VariableExpression::getName)

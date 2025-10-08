@@ -30,6 +30,7 @@ class MockingAndBridgeMethods extends Specification {
     then:
     1 * comparator.compare(0, 0) >> { IMockInvocation inv ->
       assert inv.getMethod().getParameterTypes() == [Integer, Integer]
+      0
     }
   }
 
@@ -68,9 +69,11 @@ class MockingAndBridgeMethods extends Specification {
     then:
     1 * di.getId() >> { IMockInvocation inv ->
       assert inv.method.method.bridge == isCglib
+      0
     }
     1 * dpi.getId() >> { IMockInvocation inv ->
       assert inv.method.method.bridge == false
+      0
     }
     diId == 0
     dpiId == 0
@@ -90,9 +93,11 @@ class MockingAndBridgeMethods extends Specification {
     then:
     1 * di.getPrice() >> { IMockInvocation inv ->
       assert inv.method.method.bridge == false
+      0
     }
     1 * dpi.getPrice() >> { IMockInvocation inv ->
       assert inv.method.method.bridge == false
+      0
     }
     diPrice == 0
     dpiPrice == 0

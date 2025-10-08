@@ -39,7 +39,8 @@ import java.time.Duration
 class SpockBasePlugin implements Plugin<Project> {
 
   @VisibleForTesting
-  public static final JavaLanguageVersion COMPILER_VERSION = JavaLanguageVersion.of(8)
+  public static final JavaLanguageVersion COMPILER_VERSION = JavaLanguageVersion.of(11)
+  public static final int COMPILER_RELEASE_VERSION = 8
 
   void apply(Project project) {
     applyPlugins(project)
@@ -65,6 +66,7 @@ class SpockBasePlugin implements Plugin<Project> {
           comp.javaCompiler.set(javaToolchains.compilerFor {
             it.languageVersion.set(COMPILER_VERSION)
           })
+          comp.options.release.set(COMPILER_RELEASE_VERSION)
         }
         comp.options.encoding = 'UTF-8'
       }

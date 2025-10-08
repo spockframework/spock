@@ -49,7 +49,7 @@ abstract class BaseTimeoutExtensionSpecification extends EmbeddedSpecification {
     }
   }
 
-  private class OutputListener implements IStandardStreamsListener {
+  protected class OutputListener implements IStandardStreamsListener {
 
     private final StringBuilder messages = new StringBuilder()
 

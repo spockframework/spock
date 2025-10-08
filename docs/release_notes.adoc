@@ -29,6 +29,7 @@ _This is a summary of the highlights of the milestone releases_
 * Add <<extensions.adoc#spock-interceptors,feature-scoped interceptors>> spockPull:1844[]
 * Add `@Snapshot` extension for <<extensions.adoc#snapshot-testing,snapshot testing>> spockPull:1873[]
 * Add `!!` as <<spock_primer.adoc#opt-out-of-condition-handling,opt-out operator for assertions>> spockPull:1532[]
+* Add support for Groovy 5.0 spockIssue:2196[]
 
 === Breaking Changes
 

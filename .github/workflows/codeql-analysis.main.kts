@@ -125,7 +125,8 @@ workflow(
                 "--stacktrace",
                 "--no-build-cache",
                 "testClasses",
-                """"-Dvariant=${expr(Matrix.variant)}""""
+                """"-Dvariant=${expr(Matrix.variant)}"""",
+                """"-DjavaVersion=${expr("${Matrix.variant} == '5.0' && '11' || '${Matrix.axes.javaVersions.first()}'")}""""
             ).joinToString(" ")
         )
         uses(

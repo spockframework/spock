@@ -41,7 +41,7 @@ jobs:
         - '11'
         - '17'
         - '21'
-        - '23'
+        - '24'
         os:
         - 'ubuntu-latest'
         exclude:
@@ -52,7 +52,7 @@ jobs:
           java: '21'
           os: 'ubuntu-latest'
         - variant: '2.5'
-          java: '23'
+          java: '24'
           os: 'ubuntu-latest'
         include:
         - variant: '2.5'

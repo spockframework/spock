@@ -27,6 +27,7 @@ import org.codehaus.groovy.runtime.*;
 import org.codehaus.groovy.runtime.metaclass.MetaClassRegistryImpl;
 import org.codehaus.groovy.runtime.typehandling.*;
 
+import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
 
 /**
@@ -41,6 +42,8 @@ public abstract class GroovyRuntimeUtil {
   private static final String GET = "get";
   private static final String IS = "is";
 
+  @Internal
+  public static final int MAJOR_VERSION = parseInt(GroovySystem.getVersion().split("\\.", 2)[0]);
   public static Object[] EMPTY_ARGUMENTS = new Object[0];
 
   public static boolean isTruthy(Object obj) {
@@ -328,27 +331,5 @@ public abstract class GroovyRuntimeUtil {
   public static Method toMethod(@Nullable MetaMethod metaMethod) {
     CachedMethod cachedMethod = ObjectUtil.asInstance(metaMethod, CachedMethod.class);
     return cachedMethod == null ? null : cachedMethod.getCachedMethod();
-  }
-
-  @Internal
-  public static boolean isGroovy2() {
-    return GroovySystem.getVersion().startsWith("2.");
-  }
-
-  @Internal
-  public static boolean isGroovy3orNewer() {
-    //Having isGroovy3() with just "startsWith("3.") there could be (in the future) no tests executed at all for Groovy 4
-    return !isGroovy2();
-  }
-
-  @Internal
-  public static boolean isGroovy3orOlder() {
-    return isGroovy2() || GroovySystem.getVersion().startsWith("3.");
-  }
-
-  @Internal
-  public static boolean isGroovy4orNewer() {
-    //Having isGroovy4() with just "startsWith("4.") there could be (in the future) no tests executed at all for Groovy 5
-    return !isGroovy3orOlder();
   }
 }

@@ -289,6 +289,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
       return true;
     }
 
+    expr.setObjectExpression(new ClassExpression(resources.getAstNodeCache().SpecialMethodCallTarget));
     expr.setMethod(new ConstantExpression(expr.getMethodAsString() + "Impl"));
     List<Expression> args = AstUtil.getArgumentList(expr);
     if (args.size() != 1) {

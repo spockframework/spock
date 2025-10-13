@@ -21,7 +21,7 @@ public void $spock_feature_0_0() {
     }
     org.spockframework.runtime.SpockRuntime.callBlockExited(this, 0)
     org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 1)
-    this.thrownImpl(null, null, java.lang.IllegalStateException)
+    org.spockframework.runtime.SpecialMethodCallTarget.thrownImpl(this, null, null, java.lang.IllegalStateException)
     org.spockframework.runtime.SpockRuntime.callBlockExited(this, 1)
     this.getSpecificationContext().getMockController().leaveScope()
 }

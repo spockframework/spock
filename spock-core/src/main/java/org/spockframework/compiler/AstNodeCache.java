@@ -42,6 +42,7 @@ public class AstNodeCache {
   public final ClassNode ErrorRethrower = ClassHelper.makeWithoutCaching(ErrorRethrower.class);
   public final ClassNode Specification = ClassHelper.makeWithoutCaching(Specification.class);
   public final ClassNode SpecInternals = ClassHelper.makeWithoutCaching(SpecInternals.class);
+  public final ClassNode SpecialMethodCallTarget = ClassHelper.makeWithoutCaching(SpecialMethodCallTarget.class);
   public final ClassNode MockController = ClassHelper.makeWithoutCaching(MockController.class);
   public final ClassNode SpecificationContext = ClassHelper.makeWithoutCaching(SpecificationContext.class);
   public final ClassNode DataVariableMultiplication = ClassHelper.makeWithoutCaching(DataVariableMultiplication.class);

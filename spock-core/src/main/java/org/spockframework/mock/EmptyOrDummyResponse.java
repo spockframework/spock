@@ -14,7 +14,6 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.extension.IDefaultValueProviderExtension;
 import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.ThreadSafe;
@@ -161,8 +160,7 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
     Class<?> type = invocation.getMethod().getReturnType();
     Type genericType = invocation.getMethod().getExactReturnType();
     Specification spec = invocation.getMockObject().getSpecification();
-    return GroovyRuntimeUtil.invokeMethod(spec, "createMock",
-        "dummy", genericType, MockNature.STUB, GroovyObject.class.isAssignableFrom(type) ?
+    return spec.createMock("dummy", genericType, MockNature.STUB, GroovyObject.class.isAssignableFrom(type) ?
         MockImplementation.GROOVY : MockImplementation.JAVA, emptyMap(), null);
   }
 }

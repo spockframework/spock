@@ -15,12 +15,10 @@
 
 package org.spockframework.runtime;
 
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 import org.junit.platform.engine.support.hierarchical.Node;
 import org.junit.platform.engine.support.hierarchical.ThrowableCollector;
-import spock.lang.Specification;
 
 public class SpockEngineDescriptor extends EngineDescriptor implements Node<SpockExecutionContext> {
   private final RunContext runContext;
@@ -37,7 +35,6 @@ public class SpockEngineDescriptor extends EngineDescriptor implements Node<Spoc
 
   @Override
   public SpockExecutionContext before(SpockExecutionContext context) throws Exception {
-    DefaultGroovyMethods.mixin(Specification.class, SpecialMethodCallTarget.class);
     SpockExecution spockExecution = new SpockExecution(context.getStoreProvider());
     context.getRunContext().startExecution(spockExecution);
     return context;

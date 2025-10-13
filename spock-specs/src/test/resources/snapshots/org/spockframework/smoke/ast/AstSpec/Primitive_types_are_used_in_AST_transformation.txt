@@ -160,11 +160,12 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     ALOAD 1
     LDC 2
     AALOAD
+    LDC Lorg/spockframework/runtime/SpecialMethodCallTarget;.class
     ALOAD 0
     ACONST_NULL
     ACONST_NULL
     LDC Ljava/lang/RuntimeException;.class
-    INVOKEINTERFACE org/codehaus/groovy/runtime/callsite/CallSite.callCurrent (Lgroovy/lang/GroovyObject;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; (itf)
+    INVOKEINTERFACE org/codehaus/groovy/runtime/callsite/CallSite.call (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; (itf)
     POP
     ALOAD 0
     ICONST_2

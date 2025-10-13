@@ -14,8 +14,17 @@
 
 package org.spockframework.lang;
 
+import org.spockframework.mock.*;
+import org.spockframework.mock.runtime.*;
 import org.spockframework.runtime.*;
 import org.spockframework.util.*;
+
+import java.lang.reflect.Type;
+import java.util.*;
+
+import groovy.lang.Closure;
+
+import static org.spockframework.util.ObjectUtil.uncheckedCast;
 
 public abstract class SpecInternals {
   private final ISpecificationContext specificationContext = new SpecificationContext();
@@ -23,5 +32,29 @@ public abstract class SpecInternals {
   @Beta
   public ISpecificationContext getSpecificationContext() {
     return specificationContext;
+  }
+
+  @Beta
+  public <T> T createMock(@Nullable String name, Type type, MockNature nature,
+      MockImplementation implementation, Map<String, Object> options, @Nullable Closure<?> closure) {
+    return createMock(name, null, type, nature, implementation, options, closure);
+  }
+
+  @Beta
+  public <T> T createMock(@Nullable String name, T instance, Type type, MockNature nature,
+      MockImplementation implementation, Map<String, Object> options, @Nullable Closure<?> closure) {
+    Object mock = CompositeMockFactory.INSTANCE.create(
+        new MockConfiguration(name, type, instance, nature, implementation, options), uncheckedCast(this));
+    if (closure != null) {
+      GroovyRuntimeUtil.invokeClosure(closure, mock);
+    }
+    return uncheckedCast(mock);
+  }
+
+  @Beta
+  public void createStaticMock(Type type, MockNature nature,
+                               Map<String, Object> options) {
+    MockConfiguration configuration = new MockConfiguration(null, type, null, nature, MockImplementation.JAVA, options);
+    JavaMockFactory.INSTANCE.createStaticMock(configuration, uncheckedCast(this));
   }
 }

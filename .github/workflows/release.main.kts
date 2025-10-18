@@ -55,7 +55,13 @@ workflow(
     with(__FILE__.parentFile.resolve("../codecov.yml")) {
         readText()
             .replace("after_n_builds:.*+$".toRegex(), "after_n_builds: ${matrix.size}")
-            .let(::writeText)
+            .let {
+                parentFile
+                    .resolve("../build/")
+                    .apply { mkdirs() }
+                    .resolve("codecov_release.yml")
+                    .writeText(it)
+            }
     }
     val buildAndVerify = job(
         id = "build-and-verify",

@@ -55,6 +55,10 @@ spockPull:1910[]
 will now require that the spec is annotated with <<parallel_execution.adoc#isolated-execution, @Isolated>> or `@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)`. See <<interaction_based_testing.adoc#global-mocks-parallel-execution, Global mocks and parallel execution>> spockPull:1848[]
 * `@TempDir` `spock.tempDir.keep` has been replaced by `spock.tempdir.cleanup`. See <<extensions.adoc#temp-dir-cleanup,TempDir Cleanup>> spockPull:1525[]
 
+=== Misc
+
+* Fix vararg handling in SpyStatic spockIssue:2161[]
+
 == 2.4-M6 (2025-04-15)
 
 === Highlights

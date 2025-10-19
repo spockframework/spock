@@ -10,7 +10,7 @@ pluginManagement {
     id "org.asciidoctor.jvm.convert" version "4.0.5"
     id "net.nemerosa.versioning" version "3.1.0"
     id "io.github.gradle-nexus.publish-plugin" version "2.0.0"
-    id "com.github.ben-manes.versions" version "0.52.0"
+    id "com.github.ben-manes.versions" version "0.53.0"
     id "biz.aQute.bnd.builder" version "7.1.0"
     id "io.spring.nohttp" version "0.0.11"
   }

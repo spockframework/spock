@@ -344,8 +344,10 @@ class Ext <T extends Serializable, V extends Cloneable> {
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
-  @Requires({ GroovyRuntimeUtil.groovy4orNewer })
-  def "Primitive types are used in AST transformation Groovy >= 4"() {
+  def "Primitive types are used in AST transformation"() {
+    given:
+    def snapshotId = GroovyRuntimeUtil.groovy4orNewer ? "groovy4" : ""
+
     when:
     def result = compiler.transpileWithImports('''
 class TestSpec extends Specification {
@@ -363,28 +365,6 @@ class TestSpec extends Specification {
         CompilePhase.OUTPUT)
 
     then:
-    textSnapshotter.assertThat(result.source).matchesSnapshot()
-  }
-
-  @Requires({ GroovyRuntimeUtil.groovy3orOlder })
-  def "Primitive types are used in AST transformation Groovy <= 3"() {
-    when:
-    def result = compiler.transpileWithImports('''
-class TestSpec extends Specification {
-  def 'test'() {
-    expect:
-    true
-    when:
-    true
-    then:
-    thrown(RuntimeException)
-  }
-}
-''',
-        EnumSet.of(Show.METHODS),
-        CompilePhase.OUTPUT)
-
-    then:
-    textSnapshotter.assertThat(result.source).matchesSnapshot()
+    textSnapshotter.assertThat(result.source).matchesSnapshot(snapshotId)
   }
 }

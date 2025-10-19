@@ -51,7 +51,7 @@ abstract class PreprocessGithubWorkflow extends DefaultTask {
   }
 
   @TaskAction
-  def determineImportedFiles() {
+  def preprocessGithubWorkflow() {
     workerExecutor.noIsolation().submit(PreprocessGithubWorkflowWorkAction) {
       it.workflowScript.set(workflowScript)
       it.kotlinCompilerClasspath.from(kotlinCompilerClasspath)

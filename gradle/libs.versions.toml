@@ -7,7 +7,7 @@ jacoco = '0.8.14'
 junit = '5.14.0'
 asm = '9.9'
 mockito4 = '4.11.0'
-mockito5 = '5.18.0'
+mockito5 = '5.20.0'
 workflows-kotlin = "2.1.21"
 
 [libraries]

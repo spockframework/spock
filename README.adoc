@@ -18,9 +18,9 @@ image::docs/images/spock-main-logo.png[width=100px,float=right]
 == Spock Framework
 
 Spock is a BDD-style developer testing and specification framework for
-Java and https://groovy-lang.org/[Groovy] applications.To learn more
+Java and https://groovy-lang.org/[Groovy] applications. To learn more
 about Spock, visit
-https://spockframework.org[https://spockframework.org].To run a sample
+https://spockframework.org[https://spockframework.org]. To run a sample
 spec in your browser use the
 https://groovyconsole.dev/[Groovy Web Console].
 
@@ -29,9 +29,9 @@ https://groovyconsole.dev/[Groovy Web Console].
 * The latest 2.x release version is *{spock-release-version}* ({spock-release-version}-groovy-2.5,
 {spock-release-version}-groovy-3.0, {spock-release-version}-groovy-4.0), released on {spock-release-date}.
 * The current development version is *{spock-snapshot-version}-SNAPSHOT*
-({spock-snapshot-version}-groovy-2.5-SNAPSHOT, {spock-snapshot-version}-groovy-3.0-SNAPSHOT, , {spock-snapshot-version}-groovy-4.0-SNAPSHOT).
+({spock-snapshot-version}-groovy-2.5-SNAPSHOT, {spock-snapshot-version}-groovy-3.0-SNAPSHOT, {spock-snapshot-version}-groovy-4.0-SNAPSHOT).
 
-*NOTE:* Spock 2.x is based on the JUnit 5 Platform and require Java
+*NOTE:* Spock 2.x is based on the JUnit 5 Platform and requires Java
 8+/groovy-2.5+ (Groovy 3.0 or 4.0 is recommended, especially in projects using
 Java 12+).
 
@@ -44,7 +44,7 @@ OSS].
 ==== Ad-Hoc Intermediate Releases
 
 For intermediate stable builds we recommend to use
-https://jitpack.io/#org.spockframework/spock[Jitpack] (go here for
+https://jitpack.io/#org.spockframework/spock[JitPack] (go here for
 instructions):
 
 . Add https://jitpack.io[https://jitpack.io] as a repository
@@ -117,13 +117,13 @@ To build a specific variant of Spock, use the variant name as a parameter
 ....
 
 To test against a specific Java version, use the java version name as a parameter, the path to the Java version must be set via an environment variable `JDK<version>=<PATH>`.
-Of course, this can combined with the variant selection from above.
+Of course, this can be combined with the variant selection from above.
 
 ....
 ./gradlew build -DjavaVersion=17
 ....
 
-(Windows: `gradlew build`). All build dependencies, including the
+(In `cmd.exe`: `gradlew build`). All build dependencies, including the
 https://www.gradle.org[build tool] itself, will be downloaded
 automatically (unless already present).
 
@@ -142,8 +142,8 @@ feedback is appreciated!
 === Java 9 Module Names
 
 All published jars (beginning with Spock 1.2) will contain
-Automatic-Module-Name manifest attribute. This allows for Spock to be
-used in a Java 9 Module Path.
+`Automatic-Module-Name` manifest attribute. This allows for Spock to be
+used in a Java 9+ Module Path.
 
 * spock-core -- `org.spockframework.core`
 * spock-spring -- `org.spockframework.spring`

@@ -165,7 +165,11 @@ val Matrix.Companion.axes by lazy {
 }
 
 fun Properties.getList(key: String) =
-    getProperty(key).trim().split("""\s*+,\s*+""".toRegex())
+    getProperty(key)
+        ?.trim()
+        ?.split("""\s*+,\s*+""".toRegex())
+        ?.filter { it.isNotBlank() }
+        ?: emptyList()
 
 data class SetupBuildEnv(
     val additionalJavaVersion: String? = null

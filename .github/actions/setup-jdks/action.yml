@@ -8,7 +8,7 @@ runs:
   using: "composite"
   steps:
     - name: 'Set up JDK ${{ inputs.additional-java-version }}'
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       if: inputs.additional-java-version != 8 && inputs.additional-java-version != 17
       with:
         distribution: 'temurin'
@@ -18,7 +18,7 @@ runs:
       run: echo "JDK${{ inputs.additional-java-version }}=$JAVA_HOME" >> $GITHUB_ENV
     # We need JDK to compile Spock Core
     - name: 'Set up JDK 8'
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         # Temurin JDK 8 for macos on ARM is not available: https://github.com/adoptium/adoptium/issues/96
         distribution: ${{ ((runner.os == 'macOS') && (runner.arch == 'ARM64')) && 'zulu' || 'temurin' }}
@@ -28,7 +28,7 @@ runs:
       run: echo "JDK8=$JAVA_HOME" >> $GITHUB_ENV
     # We need JDK 17 for the Gradle build logic
     - name: 'Set up JDK 17'
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         distribution: 'temurin'
         java-version: 17

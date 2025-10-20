@@ -359,7 +359,7 @@ a[b]
     }
   }
 
-  @Requires({ GroovyRuntimeUtil.isGroovy2() })
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION == 2 })
   def "PostfixExpression (Groovy 2)"() {
     expect:
     isRendered """
@@ -372,7 +372,7 @@ x++ == null
     }
   }
 
-  @Requires({ GroovyRuntimeUtil.isGroovy3orNewer() })
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION >= 3 })
   def "PostfixExpression"() {
     expect:
     isRendered """
@@ -558,7 +558,7 @@ interface java.util.List
     }
   }
 
-  @Requires({ GroovyRuntimeUtil.isGroovy2() })  //comments are no longer included in power assertion's error message in Groovy 3
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION == 2 })  //comments are no longer included in power assertion's error message in Groovy 3
   def "ClassExpression with dot-containing comments (Groovy 2)"() {
     expect:
     isRendered """
@@ -571,7 +571,7 @@ java.util./*.awt.*/List == java.lang.String // I. Like. Dots.
     }
   }
 
-  @Requires({ GroovyRuntimeUtil.isGroovy3orNewer() })
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION >= 3 })
   def "ClassExpression with dot-containing comments"() {
     expect:
     isRendered """

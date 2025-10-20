@@ -58,6 +58,7 @@ will now require that the spec is annotated with <<parallel_execution.adoc#isola
 === Misc
 
 * Fix vararg handling in SpyStatic spockIssue:2161[]
+* Fix Spock incompatible with JUnit 6 / OSGi spockIssue:2231[]
 
 == 2.4-M6 (2025-04-15)
 

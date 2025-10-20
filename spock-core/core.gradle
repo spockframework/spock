@@ -59,11 +59,18 @@ tasks.named("jar", Jar) {
       'Automatic-Module-Name': 'org.spockframework.core'
     )
   }
+
+  String junitPlatformVersionRange = libs.versions.junitPlatformVersionRange.get()
+
   bundle {
     bnd(
       'Export-Package': ['org.spockframework.*', 'spock.*'].join(','),
       'Import-Package': [
-        'org.junit.platform.testkit.*;resolution:=optional',
+        /* We need to override the OSGi version for JUnit platform here, otherwise the version range would be [1.12,2)
+         * which would exclude JUnit 6 in the OSGi case. Note: JUnit Platform changed the versioning from 1.x to 6.x.
+         */
+        "org.junit.platform.testkit.*;resolution:=optional;version=\"$junitPlatformVersionRange\"",
+        "org.junit.platform.*;version=\"$junitPlatformVersionRange\"",
         'org.hamcrest.*;resolution:=optional',
         'org.objenesis.*;resolution:=optional',
         'net.bytebuddy.*;resolution:=optional',

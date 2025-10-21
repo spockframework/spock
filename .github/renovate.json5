@@ -26,6 +26,16 @@
       allowedVersions: "(,6.0)"
     },
     {
+      matchPackageNames: ["/^org.junit:/"],
+      matchCurrentValue: "/^5\\./",
+      allowedVersions: "(,6.0)"
+    },
+    {
+      matchPackageNames: ["/^org.junit:/"],
+      matchCurrentValue: "/^6\\./",
+      allowedVersions: "(,7.0)"
+    },
+    {
       matchPackageNames: ["/^org.mockito:/"],
       matchCurrentValue: "/^4\\./",
       allowedVersions: "(,5.0)"

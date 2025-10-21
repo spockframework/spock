@@ -115,7 +115,7 @@ x == 123
     }
   }
 
-  @Requires({ GroovyRuntimeUtil.isGroovy2() })
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION == 2 })
   def "values with same literal representations (Groovy 2)"() {
     expect:
     isRendered """
@@ -128,7 +128,7 @@ x == 123
     }
   }
 
-  @Requires({ GroovyRuntimeUtil.isGroovy3orNewer() })
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION >= 3 })
   def "values with same literal representations"() {
     expect:
     isRendered """
@@ -207,4 +207,3 @@ x.equals(y)
     boolean equals(other) { false }
   }
 }
-

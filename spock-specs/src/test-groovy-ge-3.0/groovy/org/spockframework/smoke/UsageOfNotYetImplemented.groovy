@@ -10,7 +10,7 @@ import spock.lang.Specification
 
 //Those tests requires Groovy 3.0.3+, see UsageOfNotYetImplementedJUnit4 for deprecated groovy.transform.NotYetImplemented tests
 @Issue(["https://github.com/spockframework/spock/issues/1127", "https://issues.apache.org/jira/browse/GROOVY-9492"])
-@Requires({ GroovyRuntimeUtil.isGroovy3orNewer() })
+@Requires({ GroovyRuntimeUtil.MAJOR_VERSION >= 3 })
 class UsageOfNotYetImplemented extends Specification {
 
   @NotYetImplemented

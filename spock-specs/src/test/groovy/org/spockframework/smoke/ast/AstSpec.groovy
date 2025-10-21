@@ -104,7 +104,7 @@ class AstSpec extends EmbeddedSpecification {
     textSnapshotter.assertThat(result.source.normalize()).matchesSnapshot()
   }
 
-  @Requires({ GroovyRuntimeUtil.groovy3orNewer })
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION >= 3 })
   def "groovy 3 language features"() {
     when:
     def result = compiler.transpile('''
@@ -139,7 +139,7 @@ class Foo {
   def "enums"() {
     given:
     // groovy 4 renders differently
-    def snapshotId = GroovyRuntimeUtil.groovy4orNewer ? "groovy4" : ""
+    def snapshotId = (GroovyRuntimeUtil.MAJOR_VERSION >= 4) ? "groovy4" : ""
 
     when:
     def result = compiler.transpile('''
@@ -344,8 +344,10 @@ class Ext <T extends Serializable, V extends Cloneable> {
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
-  @Requires({ GroovyRuntimeUtil.groovy4orNewer })
-  def "Primitive types are used in AST transformation Groovy >= 4"() {
+  def "Primitive types are used in AST transformation"() {
+    given:
+    def snapshotId = (GroovyRuntimeUtil.MAJOR_VERSION >= 4) ? "groovy4" : ""
+
     when:
     def result = compiler.transpileWithImports('''
 class TestSpec extends Specification {
@@ -363,28 +365,6 @@ class TestSpec extends Specification {
         CompilePhase.OUTPUT)
 
     then:
-    textSnapshotter.assertThat(result.source).matchesSnapshot()
-  }
-
-  @Requires({ GroovyRuntimeUtil.groovy3orOlder })
-  def "Primitive types are used in AST transformation Groovy <= 3"() {
-    when:
-    def result = compiler.transpileWithImports('''
-class TestSpec extends Specification {
-  def 'test'() {
-    expect:
-    true
-    when:
-    true
-    then:
-    thrown(RuntimeException)
-  }
-}
-''',
-        EnumSet.of(Show.METHODS),
-        CompilePhase.OUTPUT)
-
-    then:
-    textSnapshotter.assertThat(result.source).matchesSnapshot()
+    textSnapshotter.assertThat(result.source).matchesSnapshot(snapshotId)
   }
 }

@@ -72,7 +72,7 @@ class JavaMocksForGroovyClasses extends Specification {
     1 * mockMe.setBar("value")
   }
 
-  @Requires({ GroovyRuntimeUtil.isGroovy3orOlder() })
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION <= 3 })
   def "mock call to GroovyObject.getProperty Groovy 2&3"() {
     when:
     def value = mockMe.getProperty("bar")
@@ -97,7 +97,7 @@ class JavaMocksForGroovyClasses extends Specification {
    https://github.com/spockframework/spock/pull/1717
    where Groovy 4.0.7 changed the compilation to indy, which makes the mockMe.getProperty("bar") call not distinguishable from mockMe.bar
    */
-  @Requires({ GroovyRuntimeUtil.isGroovy4orNewer() })
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION >= 4 })
   def "mock call to GroovyObject.getProperty Groovy >=4.0.7"() {
     when:
     def value = mockMe.getProperty("bar")
@@ -287,7 +287,7 @@ class JavaMocksForGroovyClasses extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1256")
-  @Requires({ GroovyRuntimeUtil.isGroovy3orOlder() })
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION <= 3 })
   def "Mock object boolean (get + is) accessor via dot-notation (Groovy 2&3)"() {
     given:
     ExampleData mockData = Mock(ExampleData)
@@ -308,7 +308,7 @@ class JavaMocksForGroovyClasses extends Specification {
    * whereas Groovy 2 & 3 resolved the 'get'.
    */
   @Issue("https://github.com/spockframework/spock/issues/1256")
-  @Requires({ GroovyRuntimeUtil.isGroovy4orNewer() })
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION >= 4 })
   def "Mock object boolean (get + is) accessor via dot-notation (Groovy 4)"() {
     given:
     ExampleData mockData = Mock(ExampleData)
@@ -324,7 +324,7 @@ class JavaMocksForGroovyClasses extends Specification {
     result == "Data is current"
   }
 
-  @Requires({ GroovyRuntimeUtil.isGroovy3orOlder() })
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION <= 3 })
   def "Real object boolean (get + is) accessor via dot-notation (Groovy 2&3)"() {
     given:
     def data = new ExampleData()
@@ -332,7 +332,7 @@ class JavaMocksForGroovyClasses extends Specification {
     data.active
   }
 
-  @Requires({ GroovyRuntimeUtil.isGroovy4orNewer() })
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION >= 4 })
   def "Real object boolean (get + is) accessor via dot-notation (Groovy 4)"() {
     given:
     def data = new ExampleData()

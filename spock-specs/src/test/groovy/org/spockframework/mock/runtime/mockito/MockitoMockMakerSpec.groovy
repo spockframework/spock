@@ -317,7 +317,7 @@ Can not mock final classes with the following settings :
     mySpy.accessNonStaticFlag()
   }
 
-  @Requires({ GroovyRuntimeUtil.isGroovy3orNewer() })
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION >= 3 })
   def "Access protected Groovy fields should still be accessible in Groovy 3&4 when @Internal annotation is not copied due to sub-class mock maker"() {
     when:
     AccessProtectedSubClass mySpy = Spy(mockMaker: mockito { s ->
@@ -331,7 +331,7 @@ Can not mock final classes with the following settings :
     mySpy.accessStaticFlag()
   }
 
-  @Requires({ GroovyRuntimeUtil.isGroovy2() })
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION == 2 })
   def "Access protected Groovy fields should be accessible in Groovy 2 when @Internal annotation is not copied due to sub-class mock maker"() {
     when:
     AccessProtectedSubClass mySpy = Spy(mockMaker: mockito { s ->

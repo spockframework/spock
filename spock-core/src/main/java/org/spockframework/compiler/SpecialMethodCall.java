@@ -178,7 +178,7 @@ public class SpecialMethodCall implements ISpecialMethodCall {
     ArgumentListExpression argsExpr = new ArgumentListExpression(args);
     AstUtil.copySourcePosition(methodCallExpr.getArguments(), argsExpr);
     methodCallExpr.setArguments(argsExpr);
-    methodCallExpr.setObjectExpression(new ClassExpression(nodeCache.SpecialMethodCallTarget));
+    methodCallExpr.setObjectExpression(new ClassExpression(nodeCache.SpecInternals));
     methodCallExpr.setMethod(new ConstantExpression(methodName + "Impl"));
   }
 

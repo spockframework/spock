@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 the original author or authors.
+ * Copyright 2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,58 @@
 
 package org.spockframework.runtime;
 
-import groovy.lang.Closure;
 import groovy.transform.stc.ClosureParams;
 import groovy.transform.stc.SecondParam;
 import groovy.transform.stc.ThirdParam;
-import org.spockframework.mock.MockImplementation;
-import org.spockframework.mock.MockNature;
-import org.spockframework.mock.MockUtil;
-import org.spockframework.util.Nullable;
+import org.spockframework.mock.*;
+import org.spockframework.mock.runtime.*;
+import org.spockframework.util.*;
 import spock.lang.Specification;
-import spock.mock.IMockMakerSettings;
 
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
+
+import groovy.lang.Closure;
+import spock.mock.IMockMakerSettings;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static org.spockframework.util.ObjectUtil.uncheckedCast;
 
+/**
+ * Internal class for {@link Specification} implementation methods used by AST-transformed code.
+ *
+ * <p>This class is not intended for direct use.
+ *
+ * @since 2.4
+ */
 @SuppressWarnings("UnusedDeclaration")
-public class SpecialMethodCallTarget {
+public final class SpecInternals {
+  private SpecInternals() {
+  }
+
   private static final MockUtil MOCK_UTIL = new MockUtil();
+
+  public static <T> T createMock(Specification specification, @Nullable String name, Type type, MockNature nature,
+      MockImplementation implementation, Map<String, Object> options, @Nullable Closure<?> closure) {
+    return createMock(specification, name, null, type, nature, implementation, options, closure);
+  }
+
+  public static <T> T createMock(Specification specification, @Nullable String name, T instance, Type type, MockNature nature,
+      MockImplementation implementation, Map<String, Object> options, @Nullable Closure<?> closure) {
+    Object mock = CompositeMockFactory.INSTANCE.create(
+        new MockConfiguration(name, type, instance, nature, implementation, options), specification);
+    if (closure != null) {
+      GroovyRuntimeUtil.invokeClosure(closure, mock);
+    }
+    return uncheckedCast(mock);
+  }
+
+  public static void createStaticMock(Specification specification, Type type, MockNature nature,
+                                      Map<String, Object> options) {
+    MockConfiguration configuration = new MockConfiguration(null, type, null, nature, MockImplementation.JAVA, options);
+    JavaMockFactory.INSTANCE.createStaticMock(configuration, specification);
+  }
 
   public static <T> T oldImpl(T expression) {
     return expression;
@@ -299,7 +329,7 @@ public class SpecialMethodCallTarget {
       throw new InvalidSpecException(nature + " object type cannot be inferred automatically. " +
           "Please specify a type explicitly (e.g. '" + nature + "(Person)').");
     }
-    return specification.createMock(inferredName, instance, effectiveType, nature, implementation, options, closure);
+    return createMock(specification, inferredName, instance, effectiveType, nature, implementation, options, closure);
   }
 
   public static void SpyStaticImpl(Specification specification, String inferredName, Class<?> inferredType, Class<?> specifiedType) {
@@ -318,6 +348,6 @@ public class SpecialMethodCallTarget {
     if (mockMakerSettings != null) {
       options = Collections.singletonMap("mockMaker", mockMakerSettings);
     }
-    specification.createStaticMock(specifiedType, nature, options);
+    createStaticMock(specification, specifiedType, nature, options);
   }
 }

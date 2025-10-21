@@ -59,7 +59,7 @@ will now require that the spec is annotated with <<parallel_execution.adoc#isola
 
 * Fix vararg handling in SpyStatic spockIssue:2161[]
 * Fix incompatibility with JUnit 6 in OSGi environment spockIssue:2231[]
-* OSGi: Pin the `Require-Capability:osgi.ee=JavaSE` to Java `8` spockPull::xxx[]
+* OSGi: Pin the `Require-Capability:osgi.ee=JavaSE` to Java `8` spockPull:2233[]
 
 == 2.4-M6 (2025-04-15)
 

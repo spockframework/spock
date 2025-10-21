@@ -71,10 +71,9 @@ public class SpecRunHistory implements Comparable<SpecRunHistory> {
       Long d1 = data.featureDurations.get(f1.getName());
       Long d2 = data.featureDurations.get(f2.getName());
 
-      if (d1 == null && d2 == null) return 0;
       if (d1 == null) return 1;
       if (d2 == null) return -1;
-      return Long.compare(d1, d2);
+      return d1< d2 ? -1 : 1;
     });
   }
 

@@ -302,8 +302,6 @@ thrown(RuntimeException)
     WrongExceptionThrownError e = thrown()
 
     stackTraceLooksLike e, """
-org.spockframework.lang.SpecInternals|checkExceptionThrown|-
-org.spockframework.lang.SpecInternals|thrownImpl|-
 apackage.ASpec|a feature|5
     """
 

@@ -17,7 +17,6 @@
 package org.spockframework.compiler;
 
 import org.codehaus.groovy.runtime.wrappers.PojoWrapper;
-import org.spockframework.lang.SpecInternals;
 import org.spockframework.mock.runtime.MockController;
 import org.spockframework.runtime.*;
 import org.spockframework.runtime.extension.RepeatedExtensionAnnotations;
@@ -48,8 +47,8 @@ public class AstNodeCache {
   public final ClassNode DataVariableMultiplicationFactor = ClassHelper.makeWithoutCaching(DataVariableMultiplicationFactor.class);
   public final ClassNode BlockInfo = ClassHelper.makeWithoutCaching(BlockInfo.class);
 
-  public final MethodNode SpecInternals_GetSpecificationContext =
-      SpecInternals.getDeclaredMethods(Identifiers.GET_SPECIFICATION_CONTEXT).get(0);
+  public final MethodNode Specification_GetSpecificationContext =
+    Specification.getDeclaredMethods(Identifiers.GET_SPECIFICATION_CONTEXT).get(0);
 
   public final MethodNode SpockRuntime_VerifyCondition =
       SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.VERIFY_CONDITION).get(0);

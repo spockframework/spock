@@ -114,7 +114,7 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     ACONST_NULL
     POP
     ALOAD 0
-    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    INVOKEVIRTUAL spock/lang/Specification.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
     INVOKEDYNAMIC cast(Lorg/spockframework/lang/ISpecificationContext;)Lorg/spockframework/runtime/SpecificationContext; [
       // handle kind 0x6 : INVOKESTATIC
       org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
@@ -136,7 +136,7 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     ASTORE 5
    L15
     ALOAD 0
-    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    INVOKEVIRTUAL spock/lang/Specification.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
     INVOKEDYNAMIC cast(Lorg/spockframework/lang/ISpecificationContext;)Lorg/spockframework/runtime/SpecificationContext; [
       // handle kind 0x6 : INVOKESTATIC
       org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
@@ -173,16 +173,17 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     POP
    L17
     LINENUMBER 8 L17
+    LDC Lorg/spockframework/runtime/SpecInternals;.class
     ALOAD 0
     ACONST_NULL
     ACONST_NULL
     LDC Ljava/lang/RuntimeException;.class
-    INVOKEDYNAMIC invoke(Lapackage/TestSpec;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object; [
+    INVOKEDYNAMIC invoke(Ljava/lang/Class;Lapackage/TestSpec;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object; [
       // handle kind 0x6 : INVOKESTATIC
       org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
       // arguments:
       "thrownImpl", 
-      2
+      0
     ]
     POP
     ALOAD 0
@@ -191,7 +192,7 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     ACONST_NULL
     POP
     ALOAD 0
-    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    INVOKEVIRTUAL spock/lang/Specification.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
     INVOKEDYNAMIC cast(Lorg/spockframework/lang/ISpecificationContext;)Lorg/spockframework/runtime/SpecificationContext; [
       // handle kind 0x6 : INVOKESTATIC
       org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;

@@ -19,6 +19,7 @@ import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import groovy.transform.stc.*;
 import org.junit.platform.commons.annotation.Testable;
+import org.spockframework.lang.ISpecificationContext;
 import org.spockframework.lang.Wildcard;
 import org.spockframework.runtime.*;
 import org.spockframework.util.Beta;
@@ -47,6 +48,17 @@ public abstract class Specification extends MockingApi {
    * </ul>
    */
   public static final Object _ = Wildcard.INSTANCE;
+
+  private final ISpecificationContext specificationContext = new SpecificationContext();
+
+  /**
+   * Returns the current execution context of this specification.
+   * This is mostly used internally, but could, for example, be used to log the current iteration.
+   */
+  @Beta
+  public ISpecificationContext getSpecificationContext() {
+    return specificationContext;
+  }
 
   /**
    * Specifies that the preceding <tt>when</tt> block should throw an exception.

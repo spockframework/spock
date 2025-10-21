@@ -45,10 +45,11 @@ public class SpecialMethodCall implements ISpecialMethodCall {
   @Nullable
   private final ClosureExpression closureExpr;
   private final boolean conditionBlock;
+  private final AstNodeCache nodeCache;
 
   public SpecialMethodCall(String methodName, Expression inferredName, Expression inferredType,
       MethodCallExpression methodCallExpr, @Nullable BinaryExpression binaryExpr,
-      @Nullable ClosureExpression closureExpr, boolean conditionBlock) {
+      @Nullable ClosureExpression closureExpr, boolean conditionBlock, AstNodeCache nodeCache) {
     this.methodName = methodName;
     this.inferredName = inferredName;
     this.inferredType = inferredType;
@@ -56,6 +57,7 @@ public class SpecialMethodCall implements ISpecialMethodCall {
     this.methodCallExpr = methodCallExpr;
     this.closureExpr = closureExpr;
     this.conditionBlock = conditionBlock;
+    this.nodeCache = nodeCache;
   }
 
   @Override
@@ -168,6 +170,7 @@ public class SpecialMethodCall implements ISpecialMethodCall {
   @Override
   public void expand() {
     List<Expression> args = new ArrayList<>();
+    args.add(VariableExpression.THIS_EXPRESSION);
     args.add(inferredName);
     args.add(inferredType);
     args.addAll(AstUtil.getArgumentList(methodCallExpr));
@@ -175,6 +178,7 @@ public class SpecialMethodCall implements ISpecialMethodCall {
     ArgumentListExpression argsExpr = new ArgumentListExpression(args);
     AstUtil.copySourcePosition(methodCallExpr.getArguments(), argsExpr);
     methodCallExpr.setArguments(argsExpr);
+    methodCallExpr.setObjectExpression(new ClassExpression(nodeCache.SpecInternals));
     methodCallExpr.setMethod(new ConstantExpression(methodName + "Impl"));
   }
 
@@ -208,7 +212,7 @@ public class SpecialMethodCall implements ISpecialMethodCall {
     }
     wrapCastedConstructorArgs(arguments, nodeCache);
 
-    return new SpecialMethodCall(methodName, inferredName, inferredType, methodCallExpr, binaryExpr, closureExpr, conditionBlock);
+    return new SpecialMethodCall(methodName, inferredName, inferredType, methodCallExpr, binaryExpr, closureExpr, conditionBlock, nodeCache);
   }
 
   private static void wrapCastedConstructorArgs(List<Expression> arguments, AstNodeCache nodeCache) {

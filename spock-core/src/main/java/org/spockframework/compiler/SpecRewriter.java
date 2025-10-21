@@ -683,7 +683,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements ISpecRewriteRes
 
   public MethodCallExpression getSpecificationContext() {
     return createDirectMethodCall(VariableExpression.THIS_EXPRESSION,
-        nodeCache.SpecInternals_GetSpecificationContext, ArgumentListExpression.EMPTY_ARGUMENTS);
+        nodeCache.Specification_GetSpecificationContext, ArgumentListExpression.EMPTY_ARGUMENTS);
   }
 
   @Override

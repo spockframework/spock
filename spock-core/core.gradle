@@ -91,6 +91,18 @@ tasks.named("jar", Jar) {
        * https://bnd.bndtools.org/instructions/reproducible.html
        */
       '-reproducible': 'true',
+      /*
+       * Disable automatic EE detection: https://bnd.bndtools.org/instructions/noee.html
+       * Which would generate something like:
+       * {@code Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=21))"}
+       * in Java 21, which is wrong, because we want to be runnable in Java 8 and newer.
+       *
+       * Note: Currently in bnd 7.1.0 and Java 25 you will get:
+       * {@code Require-Capability: osgi.ee;filter:="(osgi.ee=UNKNOWN)"}
+       */
+      ' -noee': 'true',
+      //Instead set the osgi.ee manually to Java 8
+      'Require-Capability': 'osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"'
     )
   }
 }

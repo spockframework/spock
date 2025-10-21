@@ -47,13 +47,14 @@ dependencies {
 
 
 tasks.named("jar", Jar) {
+  def projName = project.name
   manifest {
     attributes(
       'Build-Revision': versioning.info.commit,
-      'Specification-Title': project.name,
+      'Specification-Title': projName,
       'Specification-Version': baseVersion,
       'Specification-Vendor': 'spockframework.org',
-      'Implementation-Title': project.name,
+      'Implementation-Title': projName,
       'Implementation-Version': variantLessVersion,
       'Implementation-Vendor': 'spockframework.org',
       'Automatic-Module-Name': 'org.spockframework.core'

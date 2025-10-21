@@ -131,7 +131,15 @@ tasks.register("coreConsole", JavaExec) {
 def osgiProperties = tasks.register('osgiProperties', WriteProperties) {
   destinationFile = layout.getBuildDirectory().file("verifyOSGiProperties.bndrun")
   property('-standalone', true)
-  property('-runee', "JavaSE-${javaVersion < 9 ? '1.' + javaVersion : javaVersion}")
+  def osgiJavaVersion = javaVersion < 9 ? '1.' + javaVersion : javaVersion
+  if (javaVersion == 25) {
+    /*
+     * FIXME: remove the if and the override here, after bnd supports Java 25
+     * We currently need to pin it to 21, otherwise the verifyOSGi task fails on Java 25.
+     */
+    osgiJavaVersion = "21"
+  }
+  property('-runee', "JavaSE-${osgiJavaVersion}")
   property('-runrequires', "osgi.identity;filter:='(osgi.identity=${project.name})'")
 }
 

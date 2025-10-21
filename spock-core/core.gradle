@@ -22,7 +22,7 @@ configurations {
 
 dependencies {
   api groovylibs.groovy // easiest way to add Groovy dependency to POM
-  api platform(libs.junit.bom)
+  api platform(libs.junit5.bom)
   api 'org.junit.platform:junit-platform-engine'
   api libs.hamcrest
   if (variant == 2.5) {

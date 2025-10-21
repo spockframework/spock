@@ -1,0 +1,9 @@
+ext.displayName = "Spock Framework - Integration Specs for JUnit 6"
+
+description = "Integration Specs for JUnit 6 as runtime platform"
+
+
+dependencies {
+  testImplementation(projects.spockCore)
+  testImplementation(platform(libs.junit6.bom))
+}

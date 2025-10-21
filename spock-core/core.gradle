@@ -100,7 +100,7 @@ tasks.named("jar", Jar) {
        * Note: Currently in bnd 7.1.0 and Java 25 you will get:
        * {@code Require-Capability: osgi.ee;filter:="(osgi.ee=UNKNOWN)"}
        */
-      ' -noee': 'true',
+      '-noee': 'true',
       //Instead set the osgi.ee manually to Java 8
       'Require-Capability': 'osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"'
     )

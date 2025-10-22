@@ -3,7 +3,7 @@ asciidoctorj = '3.0.0'
 groovy2 = '2.5.23'
 groovy3 = '3.0.25'
 groovy4 = '4.0.29'
-groovy5 = '5.0.1'
+groovy5 = '5.0.2'
 jacoco = '0.8.14'
 junit = '5.14.0'
 # The VersionRange used by OSGi to check compatibility with JUnit Platform.

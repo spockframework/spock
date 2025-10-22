@@ -138,24 +138,15 @@ class GroovyMockAbstractGlobalClass extends Specification {
   }
 
   static abstract class AbstractClassA {
-    //TODO: verify whether it is necessity to qualify the field access here due to a change in Groovy 5
-    //      or whether it is a Spock bug that needs to be fixed
-    //      https://issues.apache.org/jira/browse/GROOVY-11781
-    static String getStaticName() { GroovyMockAbstractGlobalClass.NAME }
+    static String getStaticName() { NAME }
 
-    //TODO: verify whether it is necessity to qualify the field access here due to a change in Groovy 5
-    //      or whether it is a Spock bug that needs to be fixed
-    //      https://issues.apache.org/jira/browse/GROOVY-11781
     @SuppressWarnings('GrMethodMayBeStatic')
-    String getName() { GroovyMockAbstractGlobalClass.NAME }
+    String getName() { NAME }
   }
 
   static class SubClassA extends AbstractClassA {}
 
   static abstract class ClassB {
-    //TODO: verify whether it is necessity to qualify the field access here due to a change in Groovy 5
-    //      or whether it is a Spock bug that needs to be fixed
-    //      https://issues.apache.org/jira/browse/GROOVY-11781
-    static String getStaticName() { GroovyMockAbstractGlobalClass.NAME }
+    static String getStaticName() { NAME }
   }
 }

@@ -331,10 +331,10 @@ class ReflectionUtilSpec extends Specification {
     SubTypeWithAnno    | Narrative       | 2
   }
 
-  @Narrative
+  @Narrative("")
   private static class TypeWithAnno {}
 
-  @Narrative
+  @Narrative("")
   private static class SubTypeWithAnno extends TypeWithAnno {}
 
   private static class SubTypeNoAnno extends TypeWithAnno {}

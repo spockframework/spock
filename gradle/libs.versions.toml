@@ -3,6 +3,7 @@ asciidoctorj = '3.0.0'
 groovy2 = '2.5.23'
 groovy3 = '3.0.25'
 groovy4 = '4.0.29'
+groovy5 = '5.0.2'
 jacoco = '0.8.14'
 junit = '5.14.0'
 # The VersionRange used by OSGi to check compatibility with JUnit Platform.
@@ -46,3 +47,4 @@ workflows-kotlin-scriptingCompiler = { module = "org.jetbrains.kotlin:kotlin-scr
 groovy-v2 = { module = "org.codehaus.groovy:groovy", version.ref="groovy2" }
 groovy-v3 = { module = "org.codehaus.groovy:groovy", version.ref="groovy3" }
 groovy-v4 = { module = "org.apache.groovy:groovy", version.ref="groovy4" }
+groovy-v5 = { module = "org.apache.groovy:groovy", version.ref="groovy5" }

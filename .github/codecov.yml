@@ -3,4 +3,4 @@ codecov:
 
 comment:
   layout: "reach, diff, flags, files"
-  after_n_builds: 18
+  after_n_builds: 24

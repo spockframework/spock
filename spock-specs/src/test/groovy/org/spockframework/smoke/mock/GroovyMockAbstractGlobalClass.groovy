@@ -28,7 +28,10 @@ import spock.lang.*
 @SuppressWarnings('GroovyAssignabilityCheck')
 class GroovyMockAbstractGlobalClass extends Specification {
   private static final String NAME = "Name"
+  private static String MUTABLE_FIELD
   private static final String MOCKED_NAME = "MockedName"
+
+  private static String outerStaticMethod() { NAME }
 
   @Issue('https://github.com/spockframework/spock/issues/464')
   def "Creating a Global GroovyMock from abstract class shall not fail"() {
@@ -47,6 +50,47 @@ class GroovyMockAbstractGlobalClass extends Specification {
     AbstractClassA.staticName == null
   }
 
+  @Issue('https://github.com/spockframework/spock/issues/2196')
+  def "Static property access to staticName is working for the non-spied class"() {
+    expect:
+    AbstractClassA.staticName == NAME
+  }
+
+  @Issue('https://github.com/spockframework/spock/issues/2196')
+  def "Static getProperty() access to staticName is working when a global spy was created"() {
+    given:
+    GroovySpy(AbstractClassA, global: true)
+
+    expect:
+    AbstractClassA.staticName == NAME
+  }
+
+  @Issue('https://github.com/spockframework/spock/issues/2196')
+  def "Static setProperty() to staticMutableField is working when a global spy was created"() {
+    given:
+    GroovySpy(AbstractClassA, global: true)
+
+    expect:
+    AbstractClassA.staticMutableField == null
+
+    when:
+    AbstractClassA.staticMutableField = NAME
+    then:
+    AbstractClassA.staticMutableField == NAME
+
+    cleanup:
+    AbstractClassA.staticMutableField = null
+  }
+
+  @Issue('https://github.com/spockframework/spock/issues/2196')
+  def "Static invokeMethod() to callsOuterStaticMethod is working when a global spy was created"() {
+    given:
+    GroovySpy(AbstractClassA, global: true)
+
+    expect:
+    AbstractClassA.callsOuterStaticMethod() == NAME
+  }
+
   @Issue('https://github.com/spockframework/spock/issues/464')
   def "Creating a Global GroovySpy from abstract class shall not fail"() {
     given:
@@ -57,6 +101,7 @@ class GroovyMockAbstractGlobalClass extends Specification {
 
     then:
     1 * AbstractClassA.getStaticName() >> MOCKED_NAME
+    0 * _
     result == MOCKED_NAME
     m instanceof AbstractClassA
 
@@ -138,7 +183,21 @@ class GroovyMockAbstractGlobalClass extends Specification {
   }
 
   static abstract class AbstractClassA {
-    static String getStaticName() { NAME }
+    static String getStaticName() {
+      return NAME
+    }
+
+    static String getStaticMutableField() {
+      MUTABLE_FIELD
+    }
+
+    static void setStaticMutableField(String newValue) {
+      MUTABLE_FIELD = newValue
+    }
+
+    static String callsOuterStaticMethod() {
+      return outerStaticMethod()
+    }
 
     @SuppressWarnings('GrMethodMayBeStatic')
     String getName() { NAME }
@@ -149,4 +208,5 @@ class GroovyMockAbstractGlobalClass extends Specification {
   static abstract class ClassB {
     static String getStaticName() { NAME }
   }
+
 }

@@ -21,6 +21,7 @@ import spock.lang.Specification;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.Function;
 
 import groovy.lang.*;
 
@@ -53,21 +54,47 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
 
   @Override
   public Object getProperty(Object target, String property) {
+    return getProperty(delegate.getTheClass(), target, property, false, false);
+  }
+
+  @Override
+  public void setProperty(Object target, String property, Object newValue) {
+    setProperty(delegate.getTheClass(), target, property, newValue, false, false);
+  }
+
+
+  @Override
+  public Object getProperty(Class sender, Object target, String property, boolean useSuper, boolean fromInsideClass) {
+    final String methodName = propertyToGetterMethodName(property);
+    return doInvokeMethod(target, methodName, GroovyRuntimeUtil.EMPTY_ARGUMENTS, isTargetStatic(target),
+      metaClass -> new GroovyRealGetPropertyInvoker(metaClass, sender, property, useSuper, fromInsideClass));
+  }
+
+  @Override
+  public void setProperty(Class sender, Object target, String property, Object newValue, boolean useSuper, boolean fromInsideClass) {
+    String methodName = GroovyRuntimeUtil.propertyToSetterMethodName(property);
+    doInvokeMethod(target, methodName, new Object[]{newValue}, isTargetStatic(target),
+      metaClass -> new GroovyRealSetPropertyInvoker(metaClass, sender, property, useSuper, fromInsideClass));
+  }
+
+  private String propertyToGetterMethodName(String property) {
     String methodName = GroovyRuntimeUtil.propertyToBooleanGetterMethodName(property);
     MetaMethod metaMethod = delegate.getMetaMethod(methodName, GroovyRuntimeUtil.EMPTY_ARGUMENTS);
     if (metaMethod == null || metaMethod.getReturnType() != boolean.class) {
       methodName = GroovyRuntimeUtil.propertyToGetterMethodName(property);
     }
-    return invokeMethod(target, methodName, GroovyRuntimeUtil.EMPTY_ARGUMENTS);
+    return methodName;
   }
 
-  @Override
-  public void setProperty(Object target, String property, Object newValue) {
-    String methodName = GroovyRuntimeUtil.propertyToSetterMethodName(property);
-    invokeMethod(target, methodName, new Object[] {newValue});
+  private boolean isTargetStatic(Object target) {
+    return target instanceof Class && delegate.getTheClass() != Class.class;
   }
 
   private Object doInvokeMethod(Object target, String methodName, Object[] arguments, boolean isStatic) {
+    return doInvokeMethod(target, methodName, arguments, isStatic, GroovyRealMethodInvoker::new);
+  }
+
+  private Object doInvokeMethod(Object target, String methodName, Object[] arguments, boolean isStatic, Function<MetaClass, IResponseGenerator> invokerFactory) {
     Object[] args = GroovyRuntimeUtil.asArgumentArray(arguments);
 
     if (isGetMetaClassCallOnGroovyObject(target, methodName, args, isStatic)) {
@@ -110,7 +137,8 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
       // getMetaClass was already handled earlier; setMetaClass isn't handled specially
     }
 
-    IMockInvocation invocation = createMockInvocation(metaMethod, target, methodName, args, isStatic);
+    final IResponseGenerator invoker = invokerFactory.apply(getAdaptee());
+    IMockInvocation invocation = createMockInvocation(metaMethod, target, methodName, args, isStatic, invoker);
     IMockController controller = specification.getSpecificationContext().getMockController();
     return controller.handle(invocation);
   }
@@ -120,7 +148,8 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
   }
 
   private IMockInvocation createMockInvocation(MetaMethod metaMethod, Object target,
-      String methodName, Object[] arguments, boolean isStatic) {
+                                               String methodName, Object[] arguments, boolean isStatic,
+                                               IResponseGenerator invoker) {
     IMockObject mockObject = new MockObject(configuration, target, specification, this);
     IMockMethod mockMethod;
     if (metaMethod != null) {
@@ -129,7 +158,7 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
     } else {
       mockMethod = new DynamicMockMethod(methodName, arguments.length, isStatic);
     }
-    return new MockInvocation(mockObject, mockMethod, asList(arguments), new GroovyRealMethodInvoker(getAdaptee()));
+    return new MockInvocation(mockObject, mockMethod, asList(arguments), invoker);
   }
 
   @Override

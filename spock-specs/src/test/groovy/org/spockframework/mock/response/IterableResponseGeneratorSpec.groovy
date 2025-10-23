@@ -39,7 +39,7 @@ class IterableResponseGeneratorSpec extends Specification {
 
   def "iterate over empty list"() {
     def gen = new IterableResponseGenerator([])
-    def method = ReflectionUtil.getMethodByName(Object, "hashCode")
+    def method = ReflectionUtil.getMethodByName(Object, "toString")
     inv.getMethod() >> new StaticMockMethod(method, Object)
 
     expect:

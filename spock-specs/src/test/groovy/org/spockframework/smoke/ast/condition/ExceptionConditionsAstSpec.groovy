@@ -16,6 +16,7 @@
 package org.spockframework.smoke.ast.condition
 
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.specs.extension.SpockSnapshotter
 import spock.lang.Snapshot
 import spock.lang.Issue
@@ -52,6 +53,7 @@ def foobar() {
   def "thrown rewrite keeps correct method reference for multi-assignments"() {
     given:
     snapshotter.specBody()
+    def snapshotId = (GroovyRuntimeUtil.MAJOR_VERSION >= 5) ? "groovy5" : ""
 
     when:
     def result = compiler.transpileSpecBody('''
@@ -68,6 +70,6 @@ def foobar() {
 }''', EnumSet.of(Show.METHODS))
 
     then:
-    snapshotter.assertThat(result.source).matchesSnapshot()
+    snapshotter.assertThat(result.source).matchesSnapshot(snapshotId)
   }
 }

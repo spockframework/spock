@@ -139,15 +139,20 @@ val Matrix.Companion.full
         operatingSystems = listOf("ubuntu-latest"),
         variants = axes.variants,
         javaVersions = axes.javaVersions + axes.additionalJavaTestVersions,
-        exclude = { (variant == "2.5") && (javaVersion!!.toInt() >= 17) },
+        exclude = {
+            ((variant == "2.5") && (javaVersion!!.toInt() >= 17)) ||
+                ((variant == "5.0") && (javaVersion!!.toInt() < 11))
+        },
         includes = listOf("windows-latest", "macos-latest")
-            .map {
-                Matrix.Element(
-                    operatingSystem = it,
-                    javaVersion = axes.javaVersions.first()
-                )
+            .map { Matrix.Element(operatingSystem = it) }
+            .flatMap { element ->
+                axes.variants.map {
+                    element.copy(
+                        variant = it,
+                        javaVersion = if (it == "5.0") "11" else axes.javaVersions.first()
+                    )
+                }
             }
-            .flatMap { element -> axes.variants.map { element.copy(variant = it) } }
     )
 
 val Matrix.Companion.axes by lazy {

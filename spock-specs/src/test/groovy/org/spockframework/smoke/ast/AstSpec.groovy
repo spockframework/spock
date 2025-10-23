@@ -155,6 +155,9 @@ class Foo {
   }
 
   def "full feature exercise"() {
+    given:
+    def snapshotId = (GroovyRuntimeUtil.MAJOR_VERSION >= 5) ? "groovy5" : ""
+
     when:
     def result = compiler.transpile('''
 @Ann
@@ -341,12 +344,23 @@ class Ext <T extends Serializable, V extends Cloneable> {
 ''')
 
     then:
-    snapshotter.assertThat(result.source).matchesSnapshot()
+    snapshotter.assertThat(result.source).matchesSnapshot(snapshotId)
   }
 
   def "Primitive types are used in AST transformation"() {
     given:
-    def snapshotId = (GroovyRuntimeUtil.MAJOR_VERSION >= 4) ? "groovy4" : ""
+    def snapshotId
+    switch (GroovyRuntimeUtil.MAJOR_VERSION) {
+      case 5..Integer.MAX_VALUE:
+        snapshotId = "groovy5"
+        break
+      case 4:
+        snapshotId = "groovy4"
+        break
+      default:
+        snapshotId = ""
+        break
+    }
 
     when:
     def result = compiler.transpileWithImports('''

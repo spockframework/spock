@@ -44,6 +44,14 @@ ext {
     groovyVersion = libs.versions.groovy4.get()
     minGroovyVersion = "4.0.0"
     maxGroovyVersion = "4.9.99"
+  } else if (variant == 5.0) {
+    groovyGroup = "org.apache.groovy"
+    groovyVersion = libs.versions.groovy5.get()
+    minGroovyVersion = "5.0.0"
+    maxGroovyVersion = "5.9.99"
+    if (javaVersion < 11) {
+      throw new InvalidUserDataException("Groovy $variant is not compatible with Java $javaVersion")
+    }
   } else {
     throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")
   }

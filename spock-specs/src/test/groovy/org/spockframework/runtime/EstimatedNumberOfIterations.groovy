@@ -63,7 +63,7 @@ class EstimatedNumberOfIterations extends Specification {
   }
 
 
-  @DataProviderMetadata(dataVariables = ['a'])
+  @DataProviderMetadata(line = -1, dataVariables = ['a'])
   Iterator<String> dataProvider2() {
     ['a'].iterator()
   }
@@ -84,7 +84,7 @@ class EstimatedNumberOfIterations extends Specification {
     factory.createFeatureDataIterator(context.withCurrentFeature(featureInfo)).estimatedNumIterations == 3
   }
 
-  @DataProviderMetadata(dataVariables = ['a'])
+  @DataProviderMetadata(line = -1, dataVariables = ['a'])
   List<String> dataProvider3() {
     ['a', 'b', 'c']
   }
@@ -111,17 +111,17 @@ class EstimatedNumberOfIterations extends Specification {
   }
 
 
-  @DataProviderMetadata(dataVariables = ['a'])
+  @DataProviderMetadata(line = -1, dataVariables = ['a'])
   List<String> dataProvider4_1() {
     ['a']
   }
 
-  @DataProviderMetadata(dataVariables = ['b'])
+  @DataProviderMetadata(line = -1, dataVariables = ['b'])
   Range<Integer> dataProvider4_2() {
     (1..3)
   }
 
-  @DataProviderMetadata(dataVariables = ['c'])
+  @DataProviderMetadata(line = -1, dataVariables = ['c'])
   Iterable<Integer> dataProvider4_3() {
     [1, 2]
   }
@@ -149,17 +149,17 @@ class EstimatedNumberOfIterations extends Specification {
   }
 
 
-  @DataProviderMetadata(dataVariables = ['a'])
+  @DataProviderMetadata(line = -1, dataVariables = ['a'])
   Iterator<String> dataProvider5_1() {
     ['a'].iterator()
   }
 
-  @DataProviderMetadata(dataVariables = ['b'])
+  @DataProviderMetadata(line = -1, dataVariables = ['b'])
   Range<Integer> dataProvider5_2() {
     (1..3)
   }
 
-  @DataProviderMetadata(dataVariables = ['c'])
+  @DataProviderMetadata(line = -1, dataVariables = ['c'])
   Iterable<Integer> dataProvider5_3() {
     [1, 2]
   }

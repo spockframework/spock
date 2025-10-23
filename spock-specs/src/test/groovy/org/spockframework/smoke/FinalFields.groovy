@@ -48,7 +48,7 @@ class FinalFields extends Specification {
 
         then:
         ReadOnlyPropertyException ex = thrown()
-        ex.message == 'Cannot set readonly property: finalField for class: org.spockframework.smoke.FinalFields'
+        ex.message ==~ /\QCannot set read\E-?\Qonly property: finalField for class: org.spockframework.smoke.FinalFields\E/
         finalField == 'final field'
     }
 
@@ -61,7 +61,7 @@ class FinalFields extends Specification {
 
         then:
         ReadOnlyPropertyException ex = thrown()
-        ex.message == 'Cannot set readonly property: finalShared for class: org.spockframework.smoke.FinalFields'
+        ex.message ==~ /\QCannot set read\E-?\Qonly property: finalShared for class: org.spockframework.smoke.FinalFields\E/
         finalShared == 'final shared field'
     }
 }

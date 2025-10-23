@@ -75,9 +75,7 @@ class FooSpec extends Specification {
     ''                                      || 0
     '@Foo'                                  || 1
     '@Foo @Foo'                             || 2
-    '          @FooContainer()'             || 0
     '          @FooContainer([])'           || 0
-    '@Foo      @FooContainer()'             || 1
     '@Foo      @FooContainer([])'           || 1
     '          @FooContainer(@Foo)'         || 1
     '          @FooContainer([@Foo])'       || 1
@@ -107,9 +105,7 @@ def foo() {
     ''                                      || 0
     '@Foo'                                  || 1
     '@Foo @Foo'                             || 2
-    '          @FooContainer()'             || 0
     '          @FooContainer([])'           || 0
-    '@Foo      @FooContainer()'             || 1
     '@Foo      @FooContainer([])'           || 1
     '          @FooContainer(@Foo)'         || 1
     '          @FooContainer([@Foo])'       || 1
@@ -142,9 +138,7 @@ def foo() {
     ''                                      || 0
     '@Foo'                                  || 1
     '@Foo @Foo'                             || 2
-    '          @FooContainer()'             || 0
     '          @FooContainer([])'           || 0
-    '@Foo      @FooContainer()'             || 1
     '@Foo      @FooContainer([])'           || 1
     '          @FooContainer(@Foo)'         || 1
     '          @FooContainer([@Foo])'       || 1
@@ -176,9 +170,7 @@ def foo() {
     ''                                      || 0
     '@Foo'                                  || 1
     '@Foo @Foo'                             || 2
-    '          @FooContainer()'             || 0
     '          @FooContainer([])'           || 0
-    '@Foo      @FooContainer()'             || 1
     '@Foo      @FooContainer([])'           || 1
     '          @FooContainer(@Foo)'         || 1
     '          @FooContainer([@Foo])'       || 1

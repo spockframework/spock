@@ -29,10 +29,11 @@ https://groovyconsole.dev/[Groovy Web Console].
 * The latest 2.x release version is *{spock-release-version}* ({spock-release-version}-groovy-2.5,
 {spock-release-version}-groovy-3.0, {spock-release-version}-groovy-4.0), released on {spock-release-date}.
 * The current development version is *{spock-snapshot-version}-SNAPSHOT*
-({spock-snapshot-version}-groovy-2.5-SNAPSHOT, {spock-snapshot-version}-groovy-3.0-SNAPSHOT, {spock-snapshot-version}-groovy-4.0-SNAPSHOT).
+({spock-snapshot-version}-groovy-2.5-SNAPSHOT, {spock-snapshot-version}-groovy-3.0-SNAPSHOT,
+{spock-snapshot-version}-groovy-4.0-SNAPSHOT), {spock-snapshot-version}-groovy-5.0-SNAPSHOT).
 
 *NOTE:* Spock 2.x is based on the JUnit 5 Platform and requires Java
-8+/groovy-2.5+ (Groovy 3.0 or 4.0 is recommended, especially in projects using
+8+/groovy-2.5+ (Groovy 3.0 or newer is recommended, especially in projects using
 Java 12+).
 
 Releases are available from
@@ -86,25 +87,26 @@ https://tapestry.apache.org/[Tapestry 5] IoC container.
 
 ==== Prerequisites
 
-Spock needs both a JDK 8 and JDK 17+ installed.
+Spock needs both a JDK 11 and JDK 17+ installed.
 
-* JDK 8 is required to compile Spock via toolchains (automatic download is disabled).
+* JDK 11 is required to compile Spock via toolchains (automatic download is disabled).
 * The gradle build itself requires at least JDK 17 to run.
 
 JDK locations must be made known to toolchains via `JDK<version>=<PATH>` environment
-variable, e.g., `JDK8=/path/to/jdk8`.
+variable if they are not in standard places recognized by Gradle, e.g. `JDK11=/path/to/jdk11`.
 
 ==== Supported versions
 
 Spock is supported for Java version 8+.
 
-Spock is supported for Groovy versions 2.5, 3.0, and 4.0.
+Spock is supported for Groovy versions 2.5, 3.0, 4.0, and 5.0.
 
 The tests are testing Spock with the specific versions (variants) of
 Groovy and Java. Default Groovy version is 2.5.
 
 The Groovy 3.0 and 4.0 variant should pass on all supported JDK versions,
 Groovy 2.5 does not work with Java 17+:
+Groovy 5.0 and newer does not work with Java <11:
 
 ....
 ./gradlew build

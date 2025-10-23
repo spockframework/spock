@@ -2025,6 +2025,10 @@ class GroovySpiesThatAreGlobal extends Specification {
       public String PUBLIC_FIELD = "public shadowing sub"
       String PROPERTY = "shadowing sub property"
 
+      static {
+        resetStatics()
+      }
+
       static void resetStatics() {
         STATIC_FIELD = "shadowing sub static"
         PUBLIC_STATIC_FIELD = "public shadowing sub static"

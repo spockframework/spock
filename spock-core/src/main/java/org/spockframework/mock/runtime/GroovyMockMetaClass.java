@@ -14,6 +14,7 @@
 
 package org.spockframework.mock.runtime;
 
+import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.spockframework.mock.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.ReflectionUtil;
@@ -27,6 +28,10 @@ import groovy.lang.*;
 import static java.util.Arrays.asList;
 
 public class GroovyMockMetaClass extends DelegatingMetaClass implements SpecificationAttachable {
+  private static final String STATIC_PROPERTY_MISSING = "$static_propertyMissing";
+  private static final Class<?>[] GETTER_MISSING_ARGS = {String.class};
+  private static final Class<?>[] SETTER_MISSING_ARGS = {String.class, Object.class};
+
   private final IMockConfiguration configuration;
   private final Specification specification;
 
@@ -58,13 +63,60 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
     if (metaMethod == null || metaMethod.getReturnType() != boolean.class) {
       methodName = GroovyRuntimeUtil.propertyToGetterMethodName(property);
     }
-    return invokeMethod(target, methodName, GroovyRuntimeUtil.EMPTY_ARGUMENTS);
+    try {
+      return invokeMethod(target, methodName, GroovyRuntimeUtil.EMPTY_ARGUMENTS);
+    } catch (InvokerInvocationException | MissingMethodException e) {
+      return handleMissingProperty(target, property, null, true);
+    }
+  }
+  
+  private Object handleMissingProperty(Object target, String property, Object newValue, boolean isGetter) {
+    //https://issues.apache.org/jira/browse/GROOVY-11781
+    //Since Groovy 5: Groovy uses getProperty() and setProperty() for field access of outer classes.
+    //So we need to implement the "property missing" workflow from MetaClassImpl.getProperty().
+    if (target instanceof Class && delegate.getTheClass() != Class.class) {
+      return invokeStaticMissingProperty(target, property, newValue, isGetter);
+    }
+
+    return invokeMissingProperty(target, property, newValue, isGetter);
+  }
+
+  private Object invokeStaticMissingProperty(Object target, String property, Object newValue, boolean isGetter) {
+    if (isGetter) {
+      MetaMethod propertyMissing = delegate.getMetaMethod(STATIC_PROPERTY_MISSING, GETTER_MISSING_ARGS);
+      if (propertyMissing != null) {
+        return propertyMissing.invoke(target, new Object[]{property});
+      }
+    } else {
+      MetaMethod propertyMissing = delegate.getMetaMethod(STATIC_PROPERTY_MISSING, SETTER_MISSING_ARGS);
+      if (propertyMissing != null) {
+        return propertyMissing.invoke(target, new Object[]{property, newValue});
+      }
+    }
+    throw new MissingPropertyException(property, (Class<?>) target);
   }
 
   @Override
   public void setProperty(Object target, String property, Object newValue) {
     String methodName = GroovyRuntimeUtil.propertyToSetterMethodName(property);
-    invokeMethod(target, methodName, new Object[] {newValue});
+
+    try {
+      invokeMethod(target, methodName, new Object[]{newValue});
+    } catch (InvokerInvocationException | MissingMethodException e) {
+      handleMissingProperty(target, property, newValue, false);
+    }
+  }
+
+  @Override
+  public void setProperty(Class sender, Object receiver, String messageName, Object messageValue, boolean useSuper, boolean fromInsideClass) {
+    //TODO we need to also do here the mocking logic, because Groovy 5 now calls this method for setter instead of setProperty(Object target, String property, Object newValue)
+    super.setProperty(sender, receiver, messageName, messageValue, useSuper, fromInsideClass);
+  }
+
+  @Override
+  public Object getProperty(Class sender, Object receiver, String messageName, boolean useSuper, boolean fromInsideClass) {
+    //TODO we probably also need to override this method
+    return super.getProperty(sender, receiver, messageName, useSuper, fromInsideClass);
   }
 
   private Object doInvokeMethod(Object target, String methodName, Object[] arguments, boolean isStatic) {

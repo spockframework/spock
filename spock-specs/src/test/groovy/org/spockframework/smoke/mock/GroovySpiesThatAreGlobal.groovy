@@ -1855,9 +1855,9 @@ class GroovySpiesThatAreGlobal extends Specification {
     }
 
     static class Sub extends Super {
-      private static String SUB_STATIC_FIELD = "sub static"
-      public static String PUBLIC_SUB_STATIC_FIELD = "public sub static"
-      static String SUB_STATIC_PROPERTY = "sub static property"
+      private static String SUB_STATIC_FIELD
+      public static String PUBLIC_SUB_STATIC_FIELD
+      static String SUB_STATIC_PROPERTY
       private String SUB_FIELD = "sub"
       public String PUBLIC_SUB_FIELD = "public sub"
       String SUB_PROPERTY = "sub property"

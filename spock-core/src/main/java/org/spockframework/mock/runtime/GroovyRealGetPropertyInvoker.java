@@ -30,9 +30,6 @@ import org.spockframework.util.ThreadSafe;
  */
 @ThreadSafe
 public class GroovyRealGetPropertyInvoker extends GroovyRealMethodInvoker {
-  static final String STATIC_PROPERTY_MISSING = "$static_propertyMissing";
-  private static final Class<?>[] GETTER_MISSING_ARGS = {String.class};
-
   private final MetaClass metaClass;
   private final Class<?> sender;
   private final String property;
@@ -57,37 +54,9 @@ public class GroovyRealGetPropertyInvoker extends GroovyRealMethodInvoker {
       try {
         return metaClass.getProperty(sender, receiver, property, useSuper, fromInsideClass);
       } catch (InvokerInvocationException | MissingMethodException e2) {
-        try {
-          return handleMissingProperty(receiver, property);
-        } catch (MissingPropertyException e3) {
-          e3.addSuppressed(e2);
-          e3.addSuppressed(e1);
-          throw e3;
+        e2.addSuppressed(e1);
+        throw e2;
         }
       }
     }
-  }
-
-  private Object handleMissingProperty(Object target, String property) {
-    //https://issues.apache.org/jira/browse/GROOVY-11781
-    //Since Groovy 5: Groovy uses getProperty() and setProperty() for field access of outer classes.
-    //So we need to implement the "property missing" workflow from MetaClassImpl.getProperty().
-    if (isTargetStatic(target)) {
-      return invokeStaticMissingProperty(target, property);
-    }
-
-    return metaClass.invokeMissingProperty(target, property, null, true);
-  }
-
-  private Object invokeStaticMissingProperty(Object target, String property) {
-    MetaMethod propertyMissing = metaClass.getMetaMethod(STATIC_PROPERTY_MISSING, GETTER_MISSING_ARGS);
-    if (propertyMissing != null) {
-      return propertyMissing.invoke(target, new Object[]{property});
-    }
-    throw new MissingPropertyException(property, (Class<?>) target);
-  }
-
-  private boolean isTargetStatic(Object target) {
-    return target instanceof Class && metaClass.getTheClass() != Class.class;
-  }
 }

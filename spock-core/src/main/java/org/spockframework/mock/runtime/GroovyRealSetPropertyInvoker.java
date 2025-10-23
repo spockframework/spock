@@ -30,8 +30,6 @@ import org.spockframework.util.ThreadSafe;
  */
 @ThreadSafe
 public class GroovyRealSetPropertyInvoker extends GroovyRealMethodInvoker {
-  private static final Class<?>[] SETTER_MISSING_ARGS = {String.class, Object.class};
-
   private final MetaClass metaClass;
   private final Class<?> sender;
   private final String property;
@@ -58,38 +56,9 @@ public class GroovyRealSetPropertyInvoker extends GroovyRealMethodInvoker {
         metaClass.setProperty(sender, receiver, property, newValue, useSuper, fromInsideClass);
         return null;
       } catch (InvokerInvocationException | MissingMethodException e2) {
-        try {
-          return handleMissingProperty(receiver, property, newValue);
-        } catch (MissingPropertyException e3) {
-          e3.addSuppressed(e2);
-          e3.addSuppressed(e1);
-          throw e3;
+        e2.addSuppressed(e1);
+        throw e2;
         }
-      }
     }
-  }
-
-  private Object handleMissingProperty(Object target, String property, Object newValue) {
-    //https://issues.apache.org/jira/browse/GROOVY-11781
-    //Since Groovy 5: Groovy uses getProperty() and setProperty() for field access of outer classes.
-    //So we need to implement the "property missing" workflow from MetaClassImpl.getProperty().
-    if (isTargetStatic(target)) {
-      return invokeStaticMissingProperty(target, property, newValue);
-    }
-
-    return metaClass.invokeMissingProperty(target, property, newValue, false);
-  }
-  
-  private Object invokeStaticMissingProperty(Object target, String property, Object newValue) {
-    MetaMethod propertyMissing = metaClass.getMetaMethod(GroovyRealGetPropertyInvoker.STATIC_PROPERTY_MISSING, SETTER_MISSING_ARGS);
-    if (propertyMissing != null) {
-      return propertyMissing.invoke(target, new Object[]{property, newValue});
-    }
-
-    throw new MissingPropertyException(property, (Class<?>) target);
-  }
-
-  private boolean isTargetStatic(Object target) {
-    return target instanceof Class && metaClass.getTheClass() != Class.class;
   }
 }

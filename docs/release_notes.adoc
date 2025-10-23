@@ -63,6 +63,7 @@ will now require that the spec is annotated with <<parallel_execution.adoc#isola
 * Fix incompatibility with JUnit 6 in OSGi environment spockIssue:2231[]
 * OSGi: Pin the `Require-Capability:osgi.ee=JavaSE` to Java `8` spockPull:2233[]
 * Fix: Prevent NPE in SpecRunHistory.sortFeatures when duration is missing spockIssue:2234[]
+* `Retry` extension does not mesh with `TestAbortedException` and `PendingFeature` spockIssue:1863[]
 
 == 2.4-M6 (2025-04-15)
 

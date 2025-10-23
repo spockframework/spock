@@ -1862,6 +1862,10 @@ class GroovySpiesThatAreGlobal extends Specification {
       public String PUBLIC_SUB_FIELD = "public sub"
       String SUB_PROPERTY = "sub property"
 
+      static {
+        resetStatics()
+      }
+
       static void resetStatics() {
         SUB_STATIC_FIELD = "sub static"
         PUBLIC_SUB_STATIC_FIELD = "public sub static"

@@ -1701,9 +1701,13 @@ class GroovySpiesThatAreGlobal extends Specification {
   }
 
   static class Enclosing {
-    private static String ENCLOSING_FIELD = "enclosing"
-    public static String PUBLIC_ENCLOSING_FIELD = "public enclosing"
-    static String ENCLOSING_PROPERTY = "enclosing property"
+    private static String ENCLOSING_FIELD
+    public static String PUBLIC_ENCLOSING_FIELD
+    static String ENCLOSING_PROPERTY
+
+    static {
+      resetStatics()
+    }
 
     static void resetStatics() {
       ENCLOSING_FIELD = "enclosing"

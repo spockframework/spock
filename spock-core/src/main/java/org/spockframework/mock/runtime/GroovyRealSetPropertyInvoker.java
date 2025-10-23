@@ -55,7 +55,7 @@ public class GroovyRealSetPropertyInvoker extends GroovyRealMethodInvoker {
       try {
         metaClass.setProperty(sender, receiver, property, newValue, useSuper, fromInsideClass);
         return null;
-      } catch (InvokerInvocationException | MissingMethodException e2) {
+      } catch (InvokerInvocationException | MissingPropertyException e2) {
         e2.addSuppressed(e1);
         throw e2;
         }

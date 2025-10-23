@@ -53,7 +53,7 @@ public class GroovyRealGetPropertyInvoker extends GroovyRealMethodInvoker {
       Object receiver = invocation.getMockObject().getInstance();
       try {
         return metaClass.getProperty(sender, receiver, property, useSuper, fromInsideClass);
-      } catch (InvokerInvocationException | MissingMethodException e2) {
+      } catch (InvokerInvocationException | MissingPropertyException e2) {
         e2.addSuppressed(e1);
         throw e2;
         }

@@ -247,6 +247,49 @@ class GroovySpiesThatAreGlobal extends Specification {
     _ | { PersonWithOverloadedMethods.perform((Pattern) null) }
   }
 
+  def "Accessing non-existing property throws MissingPropertyException"() {
+    when:
+    Enclosing.Super.NON_EXISTING_FIELD
+    then:
+    def ex = thrown(MissingPropertyException)
+    ex.message.contains("NON_EXISTING_FIELD")
+  }
+
+  def "Accessing non-existing property through global spy throws MissingPropertyException"() {
+    given:
+    GroovySpy(Enclosing.Super, global: true)
+
+    when:
+    Enclosing.Super.NON_EXISTING_FIELD
+    then:
+    def ex = thrown(MissingPropertyException)
+    ex.message.contains(" NON_EXISTING_FIELD ")
+    def suppressed = ex.getSuppressed()[0].cause
+    suppressed instanceof MissingMethodException
+    suppressed.message.contains("getNON_EXISTING_FIELD")
+  }
+
+  def "Accessing non-existing property setter throws MissingPropertyException"() {
+    when:
+    Enclosing.Super.NON_EXISTING_FIELD = ""
+    then:
+    thrown(MissingPropertyException)
+  }
+
+  def "Accessing non-existing property setter through global spy throws MissingPropertyException"() {
+    given:
+    GroovySpy(Enclosing.Super, global: true)
+
+    when:
+    Enclosing.Super.NON_EXISTING_FIELD = ""
+    then:
+    def ex = thrown(MissingPropertyException)
+    ex.message.contains(" NON_EXISTING_FIELD ")
+    def suppressed = ex.getSuppressed()[0].cause
+    suppressed instanceof MissingMethodException
+    suppressed.message.contains("setNON_EXISTING_FIELD")
+  }
+
   def "Accessing static field through global spy shall only log single invocation"() {
     given:
     GroovySpy(Enclosing.Super, global: true)

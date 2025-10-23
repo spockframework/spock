@@ -2018,9 +2018,9 @@ class GroovySpiesThatAreGlobal extends Specification {
     }
 
     static class ShadowingSub extends Super {
-      private static String STATIC_FIELD = "shadowing sub static"
-      public static String PUBLIC_STATIC_FIELD = "public shadowing sub static"
-      static String STATIC_PROPERTY = "shadowing sub static property"
+      private static String STATIC_FIELD
+      public static String PUBLIC_STATIC_FIELD
+      static String STATIC_PROPERTY
       private String FIELD = "shadowing sub"
       public String PUBLIC_FIELD = "public shadowing sub"
       String PROPERTY = "shadowing sub property"

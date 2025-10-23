@@ -247,6 +247,17 @@ class GroovySpiesThatAreGlobal extends Specification {
     _ | { PersonWithOverloadedMethods.perform((Pattern) null) }
   }
 
+  def "Accessing static field through global spy shall only log single invocation"() {
+    given:
+    GroovySpy(Enclosing.Super, global: true)
+
+    when:
+    def result = Enclosing.Super.STATIC_FIELD
+    then:
+    1 * _
+    result == result
+  }
+
   /**
    * This test should verify that the resolution logic around fields and properties
    * works identically when normal Groovy logic is used and when a global spy
@@ -1597,6 +1608,9 @@ class GroovySpiesThatAreGlobal extends Specification {
     then:
     shadowingSub.retrieveSubProperty() == "foo $i"
 
+    cleanup:
+    resetStatics()
+
     where:
     createSpies << [false, true]
   }
@@ -1636,10 +1650,23 @@ class GroovySpiesThatAreGlobal extends Specification {
     }
   }
 
+  def resetStatics() {
+    Enclosing.resetStatics()
+    Enclosing.Super.resetStatics()
+    Enclosing.Sub.resetStatics()
+    Enclosing.ShadowingSub.resetStatics()
+  }
+
   static class Enclosing {
     private static String ENCLOSING_FIELD = "enclosing"
     public static String PUBLIC_ENCLOSING_FIELD = "public enclosing"
     static String ENCLOSING_PROPERTY = "enclosing property"
+
+    static void resetStatics() {
+      ENCLOSING_FIELD = "enclosing"
+      PUBLIC_ENCLOSING_FIELD = "public enclosing"
+      ENCLOSING_PROPERTY = "enclosing property"
+    }
 
     static class Super {
       private static String STATIC_FIELD = "super static"
@@ -1648,6 +1675,12 @@ class GroovySpiesThatAreGlobal extends Specification {
       private String FIELD = "super"
       public String PUBLIC_FIELD = "public super"
       public String PROPERTY = "super property"
+
+      static void resetStatics() {
+        STATIC_FIELD = "super static"
+        PUBLIC_STATIC_FIELD = "public super static"
+        STATIC_PROPERTY = "super static property"
+      }
 
       static retrieveEnclosingField() {
         ENCLOSING_FIELD
@@ -1777,6 +1810,12 @@ class GroovySpiesThatAreGlobal extends Specification {
       private String SUB_FIELD = "sub"
       public String PUBLIC_SUB_FIELD = "public sub"
       String SUB_PROPERTY = "sub property"
+
+      static void resetStatics() {
+        SUB_STATIC_FIELD = "sub static"
+        PUBLIC_SUB_STATIC_FIELD = "public sub static"
+        SUB_STATIC_PROPERTY = "sub static property"
+      }
 
       static retrieveSuperStaticField() {
         STATIC_FIELD
@@ -1930,6 +1969,12 @@ class GroovySpiesThatAreGlobal extends Specification {
       private String FIELD = "shadowing sub"
       public String PUBLIC_FIELD = "public shadowing sub"
       String PROPERTY = "shadowing sub property"
+
+      static void resetStatics() {
+        STATIC_FIELD = "shadowing sub static"
+        PUBLIC_STATIC_FIELD = "public shadowing sub static"
+        STATIC_PROPERTY = "shadowing sub static property"
+      }
 
       static retrieveSubStaticField() {
         STATIC_FIELD

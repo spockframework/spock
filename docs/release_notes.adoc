@@ -77,6 +77,7 @@ will now require that the spec is annotated with <<parallel_execution.adoc#isola
 * OSGi: Pin the `Require-Capability:osgi.ee=JavaSE` to Java `8` spockPull:2233[]
 * Fix: Prevent NPE in SpecRunHistory.sortFeatures when duration is missing spockIssue:2234[]
 * `Retry` extension does not mesh with `TestAbortedException` and `PendingFeature` spockIssue:1863[]
+* Fix display of caught exceptions within `verifyEach` blocks spockPull:2163[]
 
 Thanks to all the contributors to this release: Andreas Turban, Björn Kautler, Christoph Loy, Leonard Brünings, Thanos Tsiamis
 

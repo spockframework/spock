@@ -298,6 +298,7 @@ class GroovySpiesThatAreGlobal extends Specification {
     def result = Enclosing.Super.STATIC_FIELD
     then:
     1 * _
+    0 * _
     result == result
   }
 

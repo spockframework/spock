@@ -16,7 +16,9 @@
 
 package spock.lang;
 
+import org.opentest4j.TestAbortedException;
 import org.spockframework.runtime.extension.ExtensionAnnotation;
+import org.spockframework.runtime.extension.builtin.PendingFeatureSuccessfulError;
 import org.spockframework.runtime.extension.builtin.RetryExtension;
 import org.spockframework.util.Beta;
 
@@ -53,6 +55,23 @@ public @interface Retry {
    * @return array of Exception classes to retry.
    */
   Class<? extends Throwable>[] exceptions() default {Exception.class, AssertionError.class};
+
+  /**
+   * Configures which types of Exceptions should skip any remaining retry.
+   * If the retry is skipped, the exception will be thrown.
+   *
+   * <p>Subclasses are included if their parent class is listed.
+   *
+   * <p>These Exceptions are evaluated before {@link #exceptions()} are evaluated.
+   *
+   * @return array of Exception classes which cause the retry to skip.
+   * @since 2.4
+   */
+  @Beta
+  Class<? extends Throwable>[] skipRetryExceptions() default {
+    TestAbortedException.class, //TestAbortedException shall skip to allow interop with annotations like @IgnoreIf, see https://github.com/spockframework/spock/issues/1863
+    PendingFeatureSuccessfulError.class //Iterop with @PendingFeature to skip the Retry
+  };
 
   /**
    * Condition that is evaluated to decide whether the feature should be
@@ -99,7 +118,7 @@ public @interface Retry {
     ITERATION,
 
     /**
-     * Retry the the feature together with the setup and cleanup methods.
+     * Retry the feature together with the setup and cleanup methods.
      */
     SETUP_FEATURE_CLEANUP
   }

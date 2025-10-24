@@ -23,7 +23,7 @@
 @file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.5.0")
 
 @file:Repository("https://bindings.krzeminski.it/")
-@file:DependsOn("actions:checkout___major:[v4,v5-alpha)")
+@file:DependsOn("actions:checkout___major:[v4,6.0)")
 @file:DependsOn("actions:upload-artifact___major:[v4,v5-alpha)")
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout

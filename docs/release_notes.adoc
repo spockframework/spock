@@ -79,6 +79,7 @@ will now require that the spec is annotated with <<parallel_execution.adoc#isola
 * `Retry` extension does not mesh with `TestAbortedException` and `PendingFeature` spockIssue:1863[]
 * Fix display of caught exceptions within `verifyEach` blocks spockPull:2163[]
 * Fix extensions that call `invocation.proceed()` multiple times like `@Retry` does spockIssue:1862[]
+* Fix setting the whole argument array of an invocation spockPull:2240[]
 
 Thanks to all the contributors to this release: Andreas Turban, Björn Kautler, Christoph Loy, Leonard Brünings, Thanos Tsiamis
 

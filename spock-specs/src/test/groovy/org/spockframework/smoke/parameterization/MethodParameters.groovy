@@ -257,12 +257,54 @@ def foo() {
     ]
   }
 
+  @Unroll
+  def "method arguments in #fixtureMethod can be provided by extensions by setting the whole arguments array"() {
+    given:
+    runner.addClassImport(Bar)
+
+    when:
+    runner.runSpecBody """
+@Bar
+def $fixtureMethod(x) {
+  assert x == 'bar'
+}
+
+def foo() {
+  expect:
+  true
+}
+"""
+
+    then:
+    noExceptionThrown()
+
+    where:
+    fixtureMethod << [
+      "setupSpec",
+      "setup",
+      "cleanup",
+      "cleanupSpec"
+    ]
+  }
+
   @Foo
   def "method arguments in data driven feature methods can be provided by extensions"(a) {
     expect:
     x == 1
     y == 2
     a == 'foo'
+
+    where:
+    x = 1
+    y = 2
+  }
+
+  @Bar
+  def "method arguments in data driven feature methods can be provided by extensions by setting the whole arguments array"(a) {
+    expect:
+    x == 1
+    y == 2
+    a == 'bar'
 
     where:
     x = 1
@@ -347,9 +389,36 @@ def foo() {
       }
     }
   }
+
+  static class BarExtension implements IAnnotationDrivenExtension<Bar> {
+    @Override
+    void visitFixtureAnnotation(Bar annotation, MethodInfo fixtureMethod) {
+      fixtureMethod.addInterceptor {
+        assert it.arguments.size() == 1
+        assert it.arguments.first() == MISSING_ARGUMENT
+        it.arguments = ['bar']
+        it.proceed()
+      }
+    }
+
+    @Override
+    void visitFeatureAnnotation(Bar annotation, FeatureInfo feature) {
+      feature.featureMethod.addInterceptor {
+        assert it.arguments.size() == 3
+        assert it.arguments[2] == MISSING_ARGUMENT
+        it.arguments = it.arguments.clone().tap {it[2] = 'bar' }
+        it.proceed()
+      }
+    }
+  }
 }
 
 @Retention(RetentionPolicy.RUNTIME)
 @ExtensionAnnotation(MethodParameters.FooExtension)
 @interface Foo {
+}
+
+@Retention(RetentionPolicy.RUNTIME)
+@ExtensionAnnotation(MethodParameters.BarExtension)
+@interface Bar {
 }

@@ -27,6 +27,7 @@ class RetryFeatureExtensionSpec extends EmbeddedSpecification {
   static AtomicInteger setupCounter = new AtomicInteger()
   static AtomicInteger cleanupCounter = new AtomicInteger()
   static AtomicInteger featureCounter = new AtomicInteger()
+  static AtomicInteger extensionCounter = new AtomicInteger()
   static StringBuffer iterationBuffer
 
   def setup() {
@@ -34,6 +35,7 @@ class RetryFeatureExtensionSpec extends EmbeddedSpecification {
     setupCounter.set(0)
     cleanupCounter.set(0)
     featureCounter.set(0)
+    extensionCounter.set(0)
     iterationBuffer = new StringBuffer()
   }
 
@@ -772,6 +774,33 @@ class Foo extends Specification {
     )
   }
 
+  def "@Retry interceptor chains to enclosed interceptors each time"() {
+    when:
+    def result = runner.runWithImports("""
+import spock.lang.Retry
+import org.spockframework.smoke.extension.CountExecution
+
+class Foo extends Specification {
+  @Retry
+  @CountExecution
+  def bar(baz) {
+    expect: false
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 1
+    result.testsSucceededCount == 0
+    result.testsFailedCount == 1
+    with(result.failures.exception[0], MultipleFailuresError) {
+      failures.size() == 4
+      failures.every { it instanceof ConditionNotSatisfiedError }
+    }
+    result.testsSkippedCount == 0
+    extensionCounter.get() == 4
+  }
+
   private def withParallelExecution(boolean enableParallelExecution) {
     runner.configurationScript {
       runner {
@@ -795,9 +824,25 @@ class Foo extends Specification {
       }
     }
   }
+
+  static class CountExecutionExtension implements IAnnotationDrivenExtension<CountExecution> {
+    @Override
+    void visitFeatureAnnotation(CountExecution annotation, FeatureInfo feature) {
+      feature.featureMethod.addInterceptor { invocation ->
+        org.spockframework.smoke.extension.RetryFeatureExtensionSpec.extensionCounter.incrementAndGet()
+        invocation.resolveArgument(0, "BAZ")
+        invocation.proceed()
+      }
+    }
+  }
 }
 
 @Retention(RetentionPolicy.RUNTIME)
 @ExtensionAnnotation(RetryFeatureExtensionSpec.ChangeThreadExtension)
 @interface ChangeThread {
+}
+
+@Retention(RetentionPolicy.RUNTIME)
+@ExtensionAnnotation(RetryFeatureExtensionSpec.CountExecutionExtension)
+@interface CountExecution {
 }

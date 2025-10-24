@@ -4,12 +4,15 @@ include::include.adoc[]
 :SpecClassFileSelector: https://github.com/spockframework/spock/blob/03818ed010f4b4ca1136a292e214f79d518c4abe/spock-core/src/main/java/org/spockframework/buildsupport/ant/SpecClassFileSelector.java
 :scriptselector: {spock-example-project}/blob/963fd34d1609b7025ba92502483ce31b2c6d9d0a/build.xml#L167-L176
 
+////
 == 2.4 (tbd)
 
 _This is a summary of the highlights of the milestone releases_
 
 === Highlights
 
+* Spock supports Groovy 5.0 spockIssue:2196[]
+* Spock is also tested to run correctly on Java 25 LTS spockPull:2212[]
 * Add support for combining two or more data providers using cartesian product spockIssue:1062[]
 * Add support for a `filter` block after a `where` block to filter out unwanted iterations spockPull:1927[]
 * Add <<extensions.adoc#block-listener,`IBlockListener`>> extension point to listen to block execution events within feature methods spockPull:1575[]
@@ -57,13 +60,25 @@ spockPull:1910[]
 will now require that the spec is annotated with <<parallel_execution.adoc#isolated-execution, @Isolated>> or `@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)`. See <<interaction_based_testing.adoc#global-mocks-parallel-execution, Global mocks and parallel execution>> spockPull:1848[]
 * `@TempDir` `spock.tempDir.keep` has been replaced by `spock.tempdir.cleanup`. See <<extensions.adoc#temp-dir-cleanup,TempDir Cleanup>> spockPull:1525[]
 
+////
+
+== 2.4-M7 (tbd)
+
+=== Highlights
+
+* Spock supports Groovy 5.0 spockIssue:2196[]
+* Spock is also tested to run correctly on Java 25 LTS spockPull:2212[]
+
 === Misc
 
+* Fix handling of condition method calls spockPull:2162[]
 * Fix vararg handling in SpyStatic spockIssue:2161[]
 * Fix incompatibility with JUnit 6 in OSGi environment spockIssue:2231[]
 * OSGi: Pin the `Require-Capability:osgi.ee=JavaSE` to Java `8` spockPull:2233[]
 * Fix: Prevent NPE in SpecRunHistory.sortFeatures when duration is missing spockIssue:2234[]
 * `Retry` extension does not mesh with `TestAbortedException` and `PendingFeature` spockIssue:1863[]
+
+Thanks to all the contributors to this release: Andreas Turban, Björn Kautler, Christoph Loy, Leonard Brünings, Thanos Tsiamis
 
 == 2.4-M6 (2025-04-15)
 

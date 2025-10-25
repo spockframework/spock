@@ -25,7 +25,7 @@
 @file:Repository("https://bindings.krzeminski.it/")
 @file:DependsOn("actions:checkout___major:[v4,v5-alpha)")
 @file:DependsOn("github:codeql-action__analyze___major:[v3,v4-alpha)")
-@file:DependsOn("github:codeql-action__init___major:[v3,v4-alpha)")
+@file:DependsOn("github:codeql-action__init___major:[v3,4.32)")
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.actions.github.CodeqlActionAnalyze

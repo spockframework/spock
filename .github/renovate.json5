@@ -44,6 +44,28 @@
       matchPackageNames: ["/^org.spockframework:spock-/"],
       matchCurrentVersion: "/-groovy-5\\.0$/",
       allowedVersions: "/-groovy-5\\.0$/"
+    },
+    {
+      groupName: "actions-checkout",
+      matchPackageNames: [
+        "actions/checkout",
+        "actions:checkout___major"
+      ]
+    },
+    {
+      groupName: "actions-upload-artifact",
+      matchPackageNames: [
+        "actions/upload-artifact",
+        "actions:upload-artifact___major"
+      ]
+    },
+    {
+      groupName: "actions-codeql-action",
+      matchPackageNames: [
+        "github/codeql-action",
+        "github:codeql-action__analyze___major",
+        "github:codeql-action__analyze___major"
+      ]
     }
   ]
 }

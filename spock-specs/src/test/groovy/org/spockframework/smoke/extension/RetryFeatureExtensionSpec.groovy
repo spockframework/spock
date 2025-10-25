@@ -21,11 +21,6 @@ import static org.junit.platform.testkit.engine.EventConditions.finishedWithFail
 import static org.junit.platform.testkit.engine.EventConditions.test
 import static org.spockframework.runtime.model.parallel.ExecutionMode.SAME_THREAD
 
-@Retention(RetentionPolicy.RUNTIME)
-@ExtensionAnnotation(RetryFeatureExtensionSpec.ChangeThreadExtension)
-@interface ChangeThread {
-}
-
 @Execution(value = SAME_THREAD, reason = "tests use static field")
 class RetryFeatureExtensionSpec extends EmbeddedSpecification {
 
@@ -693,17 +688,15 @@ def bar() {
   }
 
   def "@Retry interceptor chains to enclosed interceptors each time"() {
-    when:
-    def result = runner.runWithImports("""
-import spock.lang.Retry
-import org.spockframework.smoke.extension.CountExecution
+    given:
+    runner.addClassImport(CountExecution)
 
-class Foo extends Specification {
-  @Retry
-  @CountExecution
-  def bar(baz) {
-    expect: false
-  }
+    when:
+    def result = runner.runSpecBody("""
+@Retry
+@CountExecution
+def bar(baz) {
+  expect: false
 }
     """)
 
@@ -747,12 +740,17 @@ class Foo extends Specification {
     @Override
     void visitFeatureAnnotation(CountExecution annotation, FeatureInfo feature) {
       feature.featureMethod.addInterceptor { invocation ->
-        org.spockframework.smoke.extension.RetryFeatureExtensionSpec.extensionCounter.incrementAndGet()
+        extensionCounter.incrementAndGet()
         invocation.resolveArgument(0, "BAZ")
         invocation.proceed()
       }
     }
   }
+}
+
+@Retention(RetentionPolicy.RUNTIME)
+@ExtensionAnnotation(RetryFeatureExtensionSpec.ChangeThreadExtension)
+@interface ChangeThread {
 }
 
 @Retention(RetentionPolicy.RUNTIME)

@@ -35,7 +35,7 @@ jobs:
     steps:
     - id: 'step-0'
       name: 'Checkout Repository'
-      uses: 'actions/checkout@v4'
+      uses: 'actions/checkout@v5'
     - id: 'step-1'
       name: 'Regenerate all Workflow YAMLs'
       run: 'find .github/workflows -mindepth 1 -maxdepth 1 -name ''*.main.kts'' -exec {} \;'
@@ -106,7 +106,7 @@ jobs:
     steps:
     - id: 'step-0'
       name: 'Checkout Repository'
-      uses: 'actions/checkout@v4'
+      uses: 'actions/checkout@v5'
       with:
         fetch-depth: '2'
     - id: 'step-1'

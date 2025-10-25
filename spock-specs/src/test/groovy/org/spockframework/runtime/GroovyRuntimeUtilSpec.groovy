@@ -15,6 +15,7 @@
 package org.spockframework.runtime
 
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
+import spock.lang.Requires
 import spock.lang.Specification
 
 import static org.spockframework.runtime.GroovyRuntimeUtil.propertyToBooleanGetterMethodName
@@ -46,6 +47,28 @@ class GroovyRuntimeUtilSpec extends Specification {
     "isfoo"           | String     | null
 
     "setFoo"          | void       | null
+  }
+
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION <= 3 })
+  def "getterMethodToPropertyName Groovy <= 3"() {
+    expect:
+    GroovyRuntimeUtil.getterMethodToPropertyName(methodName, [], returnType) == propertyName
+
+    where:
+    methodName | returnType | propertyName
+    "isEmpty"  | Boolean    | "empty"
+    "isEmpty"  | boolean    | "isEmpty"
+  }
+
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION >= 4 })
+  def "getterMethodToPropertyName Groovy >= 4"() {
+    expect:
+    GroovyRuntimeUtil.getterMethodToPropertyName(methodName, [], returnType) == propertyName
+
+    where:
+    methodName | returnType | propertyName
+    "isEmpty"  | Boolean    | null //In Groovy >= 4 not a property anymore, see https://issues.apache.org/jira/browse/GROOVY-9382
+    "isEmpty"  | boolean    | "empty"
   }
 
   def "propertyToGetterMethodName"() {

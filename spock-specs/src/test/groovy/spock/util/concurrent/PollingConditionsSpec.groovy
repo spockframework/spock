@@ -44,7 +44,7 @@ class PollingConditionsSpec extends EmbeddedSpecification {
     }
   }
 
-  @PendingFeatureIf(value = { !data.conditionMethod }, reason = "Known limitation")
+  @PendingFeatureIf(value = { !data.conditionMethod }, reason = "Known limitation, cannot know the used method is 'call' at runtime")
   @Retry
   def "succeeds if all conditions are eventually satisfied with condition method '#conditionMethod' and field"() {
     when:
@@ -106,11 +106,11 @@ class PollingConditionsSpec extends EmbeddedSpecification {
     conditionMethod << [".eventually", ".call", ""]
   }
 
-  @PendingFeatureIf(value = { !data.conditionMethod }, reason = "Known limitation")
+  @PendingFeatureIf(value = { !data.conditionMethod }, reason = "Known limitation, cannot know the used method is 'call' at runtime")
   def "fails if any condition isn't satisfied in time with condition method '#conditionMethod' and field"() {
     when:
     runner.runSpecBody """
-      PollingConditions conditions = new PollingConditions()
+      PollingConditions conditions = new PollingConditions(timeout: 0.1)
 
       volatile int num = 0
       volatile String str = null
@@ -140,7 +140,7 @@ class PollingConditionsSpec extends EmbeddedSpecification {
       volatile String str = null
 
       def 'a feature'() {
-        PollingConditions conditions = new PollingConditions()
+        PollingConditions conditions = new PollingConditions(timeout: 0.1)
         num = 42
 
         expect:
@@ -158,12 +158,12 @@ class PollingConditionsSpec extends EmbeddedSpecification {
     conditionMethod << [".eventually", ".call", ""]
   }
 
-  @PendingFeatureIf(value = { !data.conditionMethod }, reason = "Known limitation")
+  @PendingFeatureIf(value = { !data.conditionMethod }, reason = "Known limitation, cannot know the used method is 'call' at runtime")
   @Issue("https://github.com/spockframework/spock/issues/413")
   def "reports failed condition of last failed attempt with condition method '#conditionMethod' and field"() {
     when:
     runner.runSpecBody """
-      PollingConditions conditions = new PollingConditions()
+      PollingConditions conditions = new PollingConditions(timeout: 0.1)
 
       volatile int num = 0
       volatile String str = null
@@ -198,7 +198,7 @@ class PollingConditionsSpec extends EmbeddedSpecification {
       volatile String str = null
 
       def 'a feature'() {
-        PollingConditions conditions = new PollingConditions()
+        PollingConditions conditions = new PollingConditions(timeout: 0.1)
         num = 42
 
         expect:
@@ -224,7 +224,7 @@ class PollingConditionsSpec extends EmbeddedSpecification {
   def "fails if condition is not met and assert keyword is used for def declared conditions object with condition method '#conditionMethod' and field"() {
     when:
     runner.runSpecBody """
-      def defConditions = new PollingConditions()
+      def defConditions = new PollingConditions(timeout: 0.1)
       volatile int num = 0
 
       def 'a feature'() {
@@ -248,7 +248,7 @@ class PollingConditionsSpec extends EmbeddedSpecification {
   def "fails if condition is not met and assert keyword is used for def declared conditions object with condition method '#conditionMethod' and local variable"() {
     when:
     runner.runSpecBody """
-      def defConditions = new PollingConditions()
+      def defConditions = new PollingConditions(timeout: 0.1)
       volatile int num = 0
 
       def 'a feature'() {
@@ -268,13 +268,13 @@ class PollingConditionsSpec extends EmbeddedSpecification {
     conditionMethod << [".eventually", ".call", ""]
   }
 
-  @PendingFeature(reason = "Known limitation")
+  @PendingFeature(reason = "Known limitation, cannot know the type of 'defConditions' at runtime")
   @Requires({ (GroovyRuntimeUtil.MAJOR_VERSION >= 3) || data.conditionMethod })
   @Issue("https://github.com/spockframework/spock/issues/1054")
   def "fails if condition is not met and assert keyword is not used for def declared conditions object with condition method '#conditionMethod' and field"() {
     when:
     runner.runSpecBody """
-      def defConditions = new PollingConditions()
+      def defConditions = new PollingConditions(timeout: 0.1)
       volatile int num = 0
 
       def 'a feature'() {
@@ -294,13 +294,13 @@ class PollingConditionsSpec extends EmbeddedSpecification {
     conditionMethod << [".eventually", ".call", ""]
   }
 
-  @PendingFeature(reason = "Known limitation")
+  @PendingFeature(reason = "Known limitation, cannot know the type of 'defConditions' at runtime")
   @Requires({ (GroovyRuntimeUtil.MAJOR_VERSION >= 3) || data.conditionMethod })
   @Issue("https://github.com/spockframework/spock/issues/1054")
   def "fails if condition is not met and assert keyword is not used for def declared conditions object with condition method '#conditionMethod' and local variable"() {
     when:
     runner.runSpecBody """
-      def defConditions = new PollingConditions()
+      def defConditions = new PollingConditions(timeout: 0.1)
       volatile int num = 0
 
       def 'a feature'() {
@@ -320,8 +320,7 @@ class PollingConditionsSpec extends EmbeddedSpecification {
     conditionMethod << [".eventually", ".call", ""]
   }
 
-  @PendingFeatureIf(value = { !data.conditionMethod }, reason = "Known limitation")
-  @Requires({ (GroovyRuntimeUtil.MAJOR_VERSION >= 3) || data.conditionMethod })
+  @PendingFeatureIf(value = { !data.conditionMethod }, reason = "Known limitation, cannot know the used method is 'call' at runtime")
   def "can override timeout per invocation with condition method '#conditionMethod' and field"() {
     when:
     runner.runSpecBody """
@@ -419,8 +418,9 @@ class PollingConditionsSpec extends EmbeddedSpecification {
 
   def "correctly creates timeout error message"() {
     given:
-    PollingConditions conditions = new PollingConditions()
-    conditions.onTimeout(onTimeoutClosure)
+    def onTimeout = onTimeoutClosure == null ? null : PollingConditionsSpec."$onTimeoutClosure"
+    PollingConditions conditions = new PollingConditions(timeout: 0.1)
+    conditions.onTimeout(onTimeout)
 
     when:
     conditions.eventually {
@@ -432,17 +432,19 @@ class PollingConditionsSpec extends EmbeddedSpecification {
     e.message ==~ /Condition not satisfied after \d+(\.\d+)? seconds and \d+ attempts/ + expectedMessageSuffix
 
     where:
-    onTimeoutClosure    || expectedMessageSuffix
-    null                || ""
-    noArgClosure        || ": test"
-    throwableArgClosure || ": ConditionNotSatisfiedError"
+    onTimeoutClosure      || expectedMessageSuffix
+    null                  || ""
+    "noArgClosure"        || ": test"
+    "throwableArgClosure" || ": ConditionNotSatisfiedError"
   }
 
   def "correctly creates timeout error message when onTimeout called multiple times"() {
     given:
-    PollingConditions conditions = new PollingConditions()
-    conditions.onTimeout(onTimeoutClosure)
-    conditions.onTimeout(secondOnTimeoutClosure)
+    def onTimeout = onTimeoutClosure == null ? null : PollingConditionsSpec."$onTimeoutClosure"
+    def secondOnTimeout = secondOnTimeoutClosure == null ? null : PollingConditionsSpec."$secondOnTimeoutClosure"
+    PollingConditions conditions = new PollingConditions(timeout: 0.1)
+    conditions.onTimeout(onTimeout)
+    conditions.onTimeout(secondOnTimeout)
 
     when:
     conditions.eventually {
@@ -454,9 +456,9 @@ class PollingConditionsSpec extends EmbeddedSpecification {
     e.message ==~ /Condition not satisfied after \d+(\.\d+)? seconds and \d+ attempts/ + expectedMessageSuffix
 
     where:
-    onTimeoutClosure    | secondOnTimeoutClosure || expectedMessageSuffix
-    noArgClosure        | null                   || ""
-    null                | noArgClosure           || ": test"
-    throwableArgClosure | noArgClosure           || ": test"
+    onTimeoutClosure      | secondOnTimeoutClosure   || expectedMessageSuffix
+    "noArgClosure"        | null                     || ""
+    null                  | "noArgClosure"           || ": test"
+    "throwableArgClosure" | "noArgClosure"           || ": test"
   }
 }

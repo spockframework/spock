@@ -23,29 +23,37 @@ import static org.spockframework.runtime.GroovyRuntimeUtil.propertyToSetterMetho
 
 class GroovyRuntimeUtilSpec extends Specification {
   def "getterMethodToPropertyName"() {
+    given:
+    def propertyName = GroovyRuntimeUtil.MAJOR_VERSION >= 4 ? groovy4orHigherProperty : groovy3orLowerProperty
+
     expect:
     GroovyRuntimeUtil.getterMethodToPropertyName(methodName, [], returnType) == propertyName
 
     where:
-    methodName        | returnType | propertyName
-    "getLength"       | Integer    | "length"
-    "isEmpty"         | boolean    | "empty"
-    "getValid"        | boolean    | "valid"
+    methodName        | returnType | groovy3orLowerProperty | groovy4orHigherProperty
+    "getLength"       | Integer    | "length"               | "length"
+    "getValid"        | boolean    | "valid"                | "valid"
 
-    "getLengthStatic" | Integer    | "lengthStatic"
-    "isEmptyStatic"   | boolean    | "emptyStatic"
-    "getValidStatic"  | boolean    | "validStatic"
+    //is getters
+    "isEmpty"         | boolean    | "empty"                | "empty"
+    "isEmpty"         | Boolean    | "empty"                | null //In Groovy >= 4 not a property anymore, see https://issues.apache.org/jira/browse/GROOVY-9382
 
-    "getURL"          | URL        | "URL"
-    "getfoo"          | String     | "foo"
-    "isfoo"           | boolean    | "foo"
+    "getLengthStatic" | Integer    | "lengthStatic"         | "lengthStatic"
+    "isEmptyStatic"   | boolean    | "emptyStatic"          | "emptyStatic"
+    "getValidStatic"  | boolean    | "validStatic"          | "validStatic"
+    "getEmpty"        | boolean    | "empty"                | "empty"
+    "getEmpty"        | Boolean    | "empty"                | "empty"
 
-    "get"             | Integer    | null
-    "is"              | boolean    | null
-    "foo"             | String     | null
-    "isfoo"           | String     | null
+    "getURL"          | URL        | "URL"                  | "URL"
+    "getfoo"          | String     | "foo"                  | "foo"
+    "isfoo"           | boolean    | "foo"                  | "foo"
 
-    "setFoo"          | void       | null
+    "get"             | Integer    | null                   | null
+    "is"              | boolean    | null                   | null
+    "foo"             | String     | null                   | null
+    "isfoo"           | String     | null                   | null
+
+    "setFoo"          | void       | null                   | null
   }
 
   def "propertyToGetterMethodName"() {

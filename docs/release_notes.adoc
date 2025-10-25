@@ -111,6 +111,7 @@ spockPull:2112[]
 * Fix several bugs in cross-multiplication implementation spockPull:2123[]
 * Fix filter blocks with shared fields and derived data variables spockPull:2088[]
 * Fix combined labels with comments being ignored spockPull:2121[]
+* Fix boxed Boolean `is` getter methods not properly mocked in Groovy <= 3 spockIssue:2131[]
 
 Thanks to all the contributors to this release: Andreas Turban, Björn Kautler, Christoph Loy, Marcin Zajączkowski, Pavlo Shevchenko
 

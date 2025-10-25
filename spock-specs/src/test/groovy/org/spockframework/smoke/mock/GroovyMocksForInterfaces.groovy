@@ -16,7 +16,10 @@
 package org.spockframework.smoke.mock
 
 import org.spockframework.mock.CannotCreateMockException
+import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.runtime.model.parallel.Resources
+import spock.lang.Issue
+import spock.lang.Requires
 import spock.lang.ResourceLock
 import spock.lang.Specification
 
@@ -126,11 +129,160 @@ class GroovyMocksForInterfaces extends Specification {
     ex.message == "Cannot create mock for interface java.lang.Runnable. Global mocking is only possible for classes, but not for interfaces."
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/2131")
+  def "Boolean is getters shall be mockable"() {
+    expect:
+    m.booleanValue
+    m.isBooleanValue()
+
+    where:
+    m << [
+      Stub(BooleanGetters) {
+        booleanValue >> true
+      },
+      Stub(BooleanGetters) {
+        isBooleanValue() >> true
+      }
+    ]
+  }
+
+  /**
+   * Verify that a boxed Boolean is getter does not have a property representation in Groovy >= 4.
+   */
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION >= 4 })
+  def "Boolean boxed is getters Groovy >=4 semantic check"() {
+    given:
+    def m = createBooleanGetterInterfaceObjPlain()
+
+    expect:
+    m.isBooleanValueBoxed()
+
+    when:
+    m.booleanValueBoxed
+    then:
+    thrown(MissingPropertyException)
+    //The property for a boxed Boolean does not exist in Groovy >=4
+  }
+
+  /**
+   * Verify that a boxed Boolean is getter does have a property representation in Groovy <= 3.
+   */
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION <= 3 })
+  def "Boolean boxed is getters Groovy <= 3 semantic check"() {
+    given:
+    def m = createBooleanGetterInterfaceObjPlain()
+
+    expect:
+    m.booleanValueBoxed
+    m.isBooleanValueBoxed()
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/2131")
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION >= 4 })
+  def "Boolean boxed is getters is not mockable Groovy >= 4"() {
+    given:
+    def m = Stub(BooleanGetters) {
+      isBooleanValueBoxed() >> true
+    }
+
+    expect:
+    m.isBooleanValueBoxed()
+
+    when:
+    m.booleanValueBoxed
+    then:
+    thrown(MissingPropertyException)
+    //According to Groovy >=4 rules the property for a boxed Boolean is getter does not exist.
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/2131")
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION <= 3 })
+  def "Boolean boxed is getters shall be mockable Groovy <= 3"() {
+    expect:
+    //Groovy <= 3 does not throw an MissingProperty exception
+    m.booleanValueBoxed
+    m.isBooleanValueBoxed()
+
+    where:
+    m << [
+      Stub(BooleanGetters) {
+        booleanValueBoxed >> true
+      },
+      Stub(BooleanGetters) {
+        isBooleanValueBoxed() >> true
+      }
+    ]
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/2131")
+  def "Boolean get getters shall be mockable"() {
+    expect:
+    m.isBooleanValue
+    m.getIsBooleanValue()
+
+    where:
+    m << [
+      Stub(BooleanGetters) {
+        isBooleanValue >> true
+      },
+      Stub(BooleanGetters) {
+        getIsBooleanValue() >> true
+      }
+    ]
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/2131")
+  def "Boolean boxed get getters shall be mockable"() {
+    expect:
+    m.isBooleanValueBoxed
+    m.getIsBooleanValueBoxed()
+
+    where:
+    m << [
+      Stub(BooleanGetters) {
+        isBooleanValueBoxed >> true
+      },
+      Stub(BooleanGetters) {
+        getIsBooleanValueBoxed() >> true
+      }
+    ]
+  }
+
   interface Person {
     String getName()
 
     void setName(String name)
 
     void sing(String song)
+  }
+
+  interface BooleanGetters {
+    boolean isBooleanValue()
+
+    Boolean isBooleanValueBoxed()
+
+    boolean getIsBooleanValue()
+
+    Boolean getIsBooleanValueBoxed()
+  }
+
+  private BooleanGetters createBooleanGetterInterfaceObjPlain() {
+    new BooleanGetters() {
+      boolean isBooleanValue() {
+        true
+      }
+
+      Boolean isBooleanValueBoxed() {
+        true
+      }
+
+      boolean getIsBooleanValue() {
+        true
+      }
+
+      Boolean getIsBooleanValueBoxed() {
+        true
+      }
+    }
   }
 }

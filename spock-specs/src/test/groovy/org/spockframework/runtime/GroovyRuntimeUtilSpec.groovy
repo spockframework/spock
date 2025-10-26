@@ -104,6 +104,13 @@ class GroovyRuntimeUtilSpec extends Specification {
     thrown(GroovyCastException)
   }
 
+  def "coerce with empty types throws IllegalArgumentException"() {
+    when:
+    GroovyRuntimeUtil.coerce("x")
+    then:
+    thrown(IllegalArgumentException)
+  }
+
   def "instantiate closure"() {
     def owner = [x : 1]
     def thisObject = new Object() {
@@ -125,6 +132,51 @@ class GroovyRuntimeUtilSpec extends Specification {
     then:
     l.size() == 1
     l == ["A"]
+  }
+
+  def "GroovyRuntimeUtil.#method unwraps InvokerInvocationException"() {
+    when:
+    GroovyRuntimeUtil."$method"(*args)
+    then:
+    thrown(TestObjThrowingEx.TestException)
+
+    where:
+    method                 | args
+    "getProperty"          | [new TestObjThrowingEx(), "a"]
+    "setProperty"          | [new TestObjThrowingEx(), "a", "b"]
+    "invokeConstructor"    | [TestObjThrowingEx, "a"]
+    "invokeMethod"         | [new TestObjThrowingEx(), "method"]
+    "invokeMethodNullSafe" | [new TestObjThrowingEx(), "method"]
+    "asIterator"           | [new TestObjThrowingEx()]
+  }
+
+  @SuppressWarnings(['GrMethodMayBeStatic', 'unused'])
+  static class TestObjThrowingEx {
+    static class TestException extends Exception {
+      TestException() {}
+    }
+
+    TestObjThrowingEx() {}
+
+    TestObjThrowingEx(String param) {
+      throw new TestException()
+    }
+
+    def getA() {
+      throw new TestException()
+    }
+
+    def setA(Object value) {
+      throw new TestException()
+    }
+
+    def iterator() {
+      throw new TestException()
+    }
+
+    void method() {
+      throw new TestException()
+    }
   }
 }
 

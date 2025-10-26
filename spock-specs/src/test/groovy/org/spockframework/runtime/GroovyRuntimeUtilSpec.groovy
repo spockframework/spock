@@ -23,29 +23,37 @@ import static org.spockframework.runtime.GroovyRuntimeUtil.propertyToSetterMetho
 
 class GroovyRuntimeUtilSpec extends Specification {
   def "getterMethodToPropertyName"() {
+    given:
+    def propertyName = GroovyRuntimeUtil.MAJOR_VERSION >= 4 ? groovy4orHigherProperty : groovy3orLowerProperty
+
     expect:
     GroovyRuntimeUtil.getterMethodToPropertyName(methodName, [], returnType) == propertyName
 
     where:
-    methodName        | returnType | propertyName
-    "getLength"       | Integer    | "length"
-    "isEmpty"         | boolean    | "empty"
-    "getValid"        | boolean    | "valid"
+    methodName        | returnType | groovy3orLowerProperty | groovy4orHigherProperty
+    "getLength"       | Integer    | "length"               | "length"
+    "getValid"        | boolean    | "valid"                | "valid"
 
-    "getLengthStatic" | Integer    | "lengthStatic"
-    "isEmptyStatic"   | boolean    | "emptyStatic"
-    "getValidStatic"  | boolean    | "validStatic"
+    //is getters
+    "isEmpty"         | boolean    | "empty"                | "empty"
+    "isEmpty"         | Boolean    | "empty"                | null //In Groovy >= 4 not a property anymore, see https://issues.apache.org/jira/browse/GROOVY-9382
 
-    "getURL"          | URL        | "URL"
-    "getfoo"          | String     | "foo"
-    "isfoo"           | boolean    | "foo"
+    "getLengthStatic" | Integer    | "lengthStatic"         | "lengthStatic"
+    "isEmptyStatic"   | boolean    | "emptyStatic"          | "emptyStatic"
+    "getValidStatic"  | boolean    | "validStatic"          | "validStatic"
+    "getEmpty"        | boolean    | "empty"                | "empty"
+    "getEmpty"        | Boolean    | "empty"                | "empty"
 
-    "get"             | Integer    | null
-    "is"              | boolean    | null
-    "foo"             | String     | null
-    "isfoo"           | String     | null
+    "getURL"          | URL        | "URL"                  | "URL"
+    "getfoo"          | String     | "foo"                  | "foo"
+    "isfoo"           | boolean    | "foo"                  | "foo"
 
-    "setFoo"          | void       | null
+    "get"             | Integer    | null                   | null
+    "is"              | boolean    | null                   | null
+    "foo"             | String     | null                   | null
+    "isfoo"           | String     | null                   | null
+
+    "setFoo"          | void       | null                   | null
   }
 
   def "propertyToGetterMethodName"() {
@@ -96,6 +104,13 @@ class GroovyRuntimeUtilSpec extends Specification {
     thrown(GroovyCastException)
   }
 
+  def "coerce with empty types throws IllegalArgumentException"() {
+    when:
+    GroovyRuntimeUtil.coerce("x")
+    then:
+    thrown(IllegalArgumentException)
+  }
+
   def "instantiate closure"() {
     def owner = [x : 1]
     def thisObject = new Object() {
@@ -117,6 +132,51 @@ class GroovyRuntimeUtilSpec extends Specification {
     then:
     l.size() == 1
     l == ["A"]
+  }
+
+  def "GroovyRuntimeUtil.#method unwraps InvokerInvocationException"() {
+    when:
+    GroovyRuntimeUtil."$method"(*args)
+    then:
+    thrown(TestObjThrowingEx.TestException)
+
+    where:
+    method                 | args
+    "getProperty"          | [new TestObjThrowingEx(), "a"]
+    "setProperty"          | [new TestObjThrowingEx(), "a", "b"]
+    "invokeConstructor"    | [TestObjThrowingEx, "a"]
+    "invokeMethod"         | [new TestObjThrowingEx(), "method"]
+    "invokeMethodNullSafe" | [new TestObjThrowingEx(), "method"]
+    "asIterator"           | [new TestObjThrowingEx()]
+  }
+
+  @SuppressWarnings(['GrMethodMayBeStatic', 'unused'])
+  static class TestObjThrowingEx {
+    static class TestException extends Exception {
+      TestException() {}
+    }
+
+    TestObjThrowingEx() {}
+
+    TestObjThrowingEx(String param) {
+      throw new TestException()
+    }
+
+    def getA() {
+      throw new TestException()
+    }
+
+    def setA(Object value) {
+      throw new TestException()
+    }
+
+    def iterator() {
+      throw new TestException()
+    }
+
+    void method() {
+      throw new TestException()
+    }
   }
 }
 

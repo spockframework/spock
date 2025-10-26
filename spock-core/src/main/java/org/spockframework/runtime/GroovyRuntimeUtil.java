@@ -137,8 +137,10 @@ public abstract class GroovyRuntimeUtil {
     if (methodName.startsWith(GET))
       return getPropertyName(methodName, 3);
 
-    if (methodName.startsWith(IS)
-        && returnType == boolean.class) // Boolean.class is not allowed
+    if (methodName.startsWith(IS) && (
+      returnType == boolean.class // Boolean.class is not allowed for Groovy >= 4
+        || (MAJOR_VERSION <= 3 && returnType == Boolean.class) // In Groovy <= 3 a isGetter can also be a boxed Boolean.
+    ))
       return getPropertyName(methodName, 2);
 
     return null;

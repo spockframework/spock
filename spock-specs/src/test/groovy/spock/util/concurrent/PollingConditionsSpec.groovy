@@ -14,22 +14,25 @@
 
 package spock.util.concurrent
 
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
+import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.runtime.SpockTimeoutError
 import spock.lang.Issue
 import spock.lang.PendingFeature
+import spock.lang.PendingFeatureIf
+import spock.lang.Requires
 import spock.lang.Retry
-import spock.lang.Specification
 
-class PollingConditionsSpec extends Specification {
+class PollingConditionsSpec extends EmbeddedSpecification {
   PollingConditions conditions = new PollingConditions()
-  def defConditions = new PollingConditions()
-
-  volatile int num = 0
-  volatile String str = null
 
   private static def noArgClosure = { "test" }
   private static def throwableArgClosure = { Throwable err -> err.getClass().simpleName }
+
+  def setup() {
+    runner.addClassImport(PollingConditions)
+  }
 
   def "defaults"() {
     expect:
@@ -41,46 +44,140 @@ class PollingConditionsSpec extends Specification {
     }
   }
 
+  @PendingFeatureIf(value = { !data.conditionMethod }, reason = "Known limitation, cannot know the used method is 'call' at runtime")
   @Retry
-  def "succeeds if all conditions are eventually satisfied"() {
-    num = 42
-    Thread.start {
-      sleep(500)
-      str = "hello"
-    }
-
+  def "succeeds if all conditions are eventually satisfied with condition method '#conditionMethod' and field"() {
     when:
-    conditions.eventually {
-      num == 42
-      str == "hello"
-    }
+    runner.runSpecBody """
+      PollingConditions conditions = new PollingConditions()
+
+      volatile int num = 0
+      volatile String str = null
+
+      def 'a feature'() {
+        num = 42
+        Thread.start {
+          sleep(500)
+          str = "hello"
+        }
+
+        expect:
+        conditions$conditionMethod {
+          num == 42
+          str == "hello"
+        }
+      }
+    """
 
     then:
     noExceptionThrown()
+
+    where:
+    conditionMethod << [".eventually", ".call", ""]
   }
 
-  def "fails if any condition isn't satisfied in time"() {
-    num = 42
-
+  @Retry
+  def "succeeds if all conditions are eventually satisfied with condition method '#conditionMethod' and local variable"() {
     when:
-    conditions.eventually {
-      num == 42
-      str == "bye"
-    }
+    runner.runSpecBody """
+      volatile int num = 0
+      volatile String str = null
+
+      def 'a feature'() {
+        PollingConditions conditions = new PollingConditions()
+        num = 42
+        Thread.start {
+          sleep(500)
+          str = "hello"
+        }
+
+        expect:
+        conditions$conditionMethod {
+          num == 42
+          str == "hello"
+        }
+      }
+    """
+
+    then:
+    noExceptionThrown()
+
+    where:
+    conditionMethod << [".eventually", ".call", ""]
+  }
+
+  @PendingFeatureIf(value = { !data.conditionMethod }, reason = "Known limitation, cannot know the used method is 'call' at runtime")
+  def "fails if any condition isn't satisfied in time with condition method '#conditionMethod' and field"() {
+    when:
+    runner.runSpecBody """
+      PollingConditions conditions = new PollingConditions(timeout: 0.1)
+
+      volatile int num = 0
+      volatile String str = null
+
+      def 'a feature'() {
+        num = 42
+
+        expect:
+        conditions$conditionMethod {
+          num == 42
+          str == "bye"
+        }
+      }
+    """
 
     then:
     thrown(SpockTimeoutError)
+
+    where:
+    conditionMethod << [".eventually", ".call", ""]
   }
 
-  @Issue("https://github.com/spockframework/spock/issues/413")
-  def "reports failed condition of last failed attempt"() {
-    num = 42
-
+  def "fails if any condition isn't satisfied in time with condition method '#conditionMethod' and local variable"() {
     when:
-    conditions.eventually {
-      num == 42
-      str == "bye"
-    }
+    runner.runSpecBody """
+      volatile int num = 0
+      volatile String str = null
+
+      def 'a feature'() {
+        PollingConditions conditions = new PollingConditions(timeout: 0.1)
+        num = 42
+
+        expect:
+        conditions$conditionMethod {
+          num == 42
+          str == "bye"
+        }
+      }
+    """
+
+    then:
+    thrown(SpockTimeoutError)
+
+    where:
+    conditionMethod << [".eventually", ".call", ""]
+  }
+
+  @PendingFeatureIf(value = { !data.conditionMethod }, reason = "Known limitation, cannot know the used method is 'call' at runtime")
+  @Issue("https://github.com/spockframework/spock/issues/413")
+  def "reports failed condition of last failed attempt with condition method '#conditionMethod' and field"() {
+    when:
+    runner.runSpecBody """
+      PollingConditions conditions = new PollingConditions(timeout: 0.1)
+
+      volatile int num = 0
+      volatile String str = null
+
+      def 'a feature'() {
+        num = 42
+
+        expect:
+        conditions$conditionMethod {
+          num == 42
+          str == "bye"
+        }
+      }
+    """
 
     then:
     SpockTimeoutError e = thrown()
@@ -88,47 +185,194 @@ class PollingConditionsSpec extends Specification {
       it instanceof ConditionNotSatisfiedError
       condition.text == 'str == "bye"'
     }
+
+    where:
+    conditionMethod << [".eventually", ".call", ""]
   }
 
-  def "fails if condition is not met and assert keyword is used for def declared conditions object"() {
-    num = 50
-
+  @Issue("https://github.com/spockframework/spock/issues/413")
+  def "reports failed condition of last failed attempt with condition method '#conditionMethod' and local variable"() {
     when:
-    defConditions.eventually {
-      assert num == 42
+    runner.runSpecBody """
+      volatile int num = 0
+      volatile String str = null
+
+      def 'a feature'() {
+        PollingConditions conditions = new PollingConditions(timeout: 0.1)
+        num = 42
+
+        expect:
+        conditions$conditionMethod {
+          num == 42
+          str == "bye"
+        }
+      }
+    """
+
+    then:
+    SpockTimeoutError e = thrown()
+    with(e.cause) {
+      it instanceof ConditionNotSatisfiedError
+      condition.text == 'str == "bye"'
     }
+
+    where:
+    conditionMethod << [".eventually", ".call", ""]
+  }
+
+  @Requires({ (GroovyRuntimeUtil.MAJOR_VERSION >= 3) || data.conditionMethod })
+  def "fails if condition is not met and assert keyword is used for def declared conditions object with condition method '#conditionMethod' and field"() {
+    when:
+    runner.runSpecBody """
+      def defConditions = new PollingConditions(timeout: 0.1)
+      volatile int num = 0
+
+      def 'a feature'() {
+        num = 50
+
+        expect:
+        defConditions$conditionMethod {
+          assert num == 42
+        }
+      }
+    """
 
     then:
     thrown(SpockTimeoutError)
+
+    where:
+    conditionMethod << [".eventually", ".call", ""]
   }
 
-  @PendingFeature(reason = "Known limitation")
+  @Requires({ (GroovyRuntimeUtil.MAJOR_VERSION >= 3) || data.conditionMethod })
+  def "fails if condition is not met and assert keyword is used for def declared conditions object with condition method '#conditionMethod' and local variable"() {
+    when:
+    runner.runSpecBody """
+      def defConditions = new PollingConditions(timeout: 0.1)
+      volatile int num = 0
+
+      def 'a feature'() {
+        num = 50
+
+        expect:
+        defConditions$conditionMethod {
+          assert num == 42
+        }
+      }
+    """
+
+    then:
+    thrown(SpockTimeoutError)
+
+    where:
+    conditionMethod << [".eventually", ".call", ""]
+  }
+
+  @PendingFeature(reason = "Known limitation, cannot know the type of 'defConditions' at runtime")
+  @Requires({ (GroovyRuntimeUtil.MAJOR_VERSION >= 3) || data.conditionMethod })
   @Issue("https://github.com/spockframework/spock/issues/1054")
-  def "fails if condition is not met and assert keyword is not used for def declared conditions object"() {
-    num = 50
-
+  def "fails if condition is not met and assert keyword is not used for def declared conditions object with condition method '#conditionMethod' and field"() {
     when:
-    defConditions.eventually {
-      num == 42
-    }
+    runner.runSpecBody """
+      def defConditions = new PollingConditions(timeout: 0.1)
+      volatile int num = 0
+
+      def 'a feature'() {
+        num = 50
+
+        expect:
+        defConditions$conditionMethod {
+          num == 42
+        }
+      }
+    """
 
     then:
     thrown(SpockTimeoutError)
+
+    where:
+    conditionMethod << [".eventually", ".call", ""]
   }
 
-  def "can override timeout per invocation"() {
-    Thread.start {
-      Thread.sleep(250)
-      num = 42
-    }
-
+  @PendingFeature(reason = "Known limitation, cannot know the type of 'defConditions' at runtime")
+  @Requires({ (GroovyRuntimeUtil.MAJOR_VERSION >= 3) || data.conditionMethod })
+  @Issue("https://github.com/spockframework/spock/issues/1054")
+  def "fails if condition is not met and assert keyword is not used for def declared conditions object with condition method '#conditionMethod' and local variable"() {
     when:
-    conditions.within(0) {
-      num == 42
-    }
+    runner.runSpecBody """
+      def defConditions = new PollingConditions(timeout: 0.1)
+      volatile int num = 0
+
+      def 'a feature'() {
+        num = 50
+
+        expect:
+        defConditions$conditionMethod {
+          num == 42
+        }
+      }
+    """
 
     then:
     thrown(SpockTimeoutError)
+
+    where:
+    conditionMethod << [".eventually", ".call", ""]
+  }
+
+  @PendingFeatureIf(value = { !data.conditionMethod }, reason = "Known limitation, cannot know the used method is 'call' at runtime")
+  def "can override timeout per invocation with condition method '#conditionMethod' and field"() {
+    when:
+    runner.runSpecBody """
+      PollingConditions conditions = new PollingConditions()
+
+      volatile int num = 0
+
+      def 'a feature'() {
+        Thread.start {
+          Thread.sleep(250)
+          num = 42
+        }
+
+        expect:
+        conditions$conditionMethod(0) {
+          num == 42
+        }
+      }
+    """
+
+    then:
+    thrown(SpockTimeoutError)
+
+    where:
+    conditionMethod << [".within", ".call", ""]
+  }
+
+  @Requires({ (GroovyRuntimeUtil.MAJOR_VERSION >= 3) || data.conditionMethod })
+  def "can override timeout per invocation with condition method '#conditionMethod' and local variable"() {
+    when:
+    runner.runSpecBody """
+      volatile int num = 0
+
+      def 'a feature'() {
+        PollingConditions conditions = new PollingConditions()
+        Thread.start {
+          Thread.sleep(250)
+          num = 42
+        }
+
+        expect:
+        conditions$conditionMethod(0) {
+          num == 42
+        }
+      }
+    """
+
+    then:
+    thrown(SpockTimeoutError)
+
+    where:
+    conditionMethod << [".within", ".call", ""]
   }
 
   @Retry
@@ -174,8 +418,9 @@ class PollingConditionsSpec extends Specification {
 
   def "correctly creates timeout error message"() {
     given:
-    PollingConditions conditions = new PollingConditions()
-    conditions.onTimeout(onTimeoutClosure)
+    def onTimeout = onTimeoutClosure == null ? null : PollingConditionsSpec."$onTimeoutClosure"
+    PollingConditions conditions = new PollingConditions(timeout: 0.1)
+    conditions.onTimeout(onTimeout)
 
     when:
     conditions.eventually {
@@ -187,17 +432,19 @@ class PollingConditionsSpec extends Specification {
     e.message ==~ /Condition not satisfied after \d+(\.\d+)? seconds and \d+ attempts/ + expectedMessageSuffix
 
     where:
-    onTimeoutClosure    || expectedMessageSuffix
-    null                || ""
-    noArgClosure        || ": test"
-    throwableArgClosure || ": ConditionNotSatisfiedError"
+    onTimeoutClosure      || expectedMessageSuffix
+    null                  || ""
+    "noArgClosure"        || ": test"
+    "throwableArgClosure" || ": ConditionNotSatisfiedError"
   }
 
   def "correctly creates timeout error message when onTimeout called multiple times"() {
     given:
-    PollingConditions conditions = new PollingConditions()
-    conditions.onTimeout(onTimeoutClosure)
-    conditions.onTimeout(secondOnTimeoutClosure)
+    def onTimeout = onTimeoutClosure == null ? null : PollingConditionsSpec."$onTimeoutClosure"
+    def secondOnTimeout = secondOnTimeoutClosure == null ? null : PollingConditionsSpec."$secondOnTimeoutClosure"
+    PollingConditions conditions = new PollingConditions(timeout: 0.1)
+    conditions.onTimeout(onTimeout)
+    conditions.onTimeout(secondOnTimeout)
 
     when:
     conditions.eventually {
@@ -209,9 +456,9 @@ class PollingConditionsSpec extends Specification {
     e.message ==~ /Condition not satisfied after \d+(\.\d+)? seconds and \d+ attempts/ + expectedMessageSuffix
 
     where:
-    onTimeoutClosure    | secondOnTimeoutClosure || expectedMessageSuffix
-    noArgClosure        | null                   || ""
-    null                | noArgClosure           || ": test"
-    throwableArgClosure | noArgClosure           || ": test"
+    onTimeoutClosure      | secondOnTimeoutClosure   || expectedMessageSuffix
+    "noArgClosure"        | null                     || ""
+    null                  | "noArgClosure"           || ": test"
+    "throwableArgClosure" | "noArgClosure"           || ": test"
   }
 }

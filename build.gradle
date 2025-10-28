@@ -373,7 +373,10 @@ tasks.named("asciidoctor") {
 nexusPublishing {
   packageGroup = 'org.spockframework'
   repositories {
+    // see https://central.sonatype.org/publish/publish-portal-ossrh-staging-api/#configuration
     sonatype {
+      nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+      snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
       username = System.getenv("SONATYPE_OSS_USER")
       password = System.getenv("SONATYPE_OSS_PASSWORD")
     }

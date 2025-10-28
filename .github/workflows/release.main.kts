@@ -113,12 +113,21 @@ workflow(
         name = "Release Spock",
         runsOn = RunnerType.Custom(expr(Matrix.operatingSystem)),
         needs = listOf(buildAndVerify),
-        strategyMatrix = mapOf(
-            // publish needs to be done for all versions
-            "variant" to Matrix.axes.variants,
-            // publish needs the min supported java version
-            "java" to Matrix.axes.javaVersions.take(1),
-            "os" to listOf("ubuntu-latest")
+        _customArguments = mapOf(
+            "strategy" to Strategy(
+                matrix = Matrix(
+                    operatingSystems = listOf("ubuntu-latest"),
+                    variants = Matrix.axes.variants.filter { it != "5.0" },
+                    javaVersions = Matrix.axes.javaVersions.take(1),
+                    includes = listOf(
+                        Matrix.Element(
+                            variant = "5.0",
+                            javaVersion = "11",
+                            operatingSystem = "ubuntu-latest"
+                        )
+                    )
+                )
+            ).toCustomArguments()
         )
     ) {
         uses(

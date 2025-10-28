@@ -114,16 +114,20 @@ jobs:
     - 'build-and-verify'
     - 'check_yaml_consistency'
     strategy:
+      fail-fast: false
       matrix:
         variant:
         - '2.5'
         - '3.0'
         - '4.0'
-        - '5.0'
         java:
         - '8'
         os:
         - 'ubuntu-latest'
+        include:
+        - variant: '5.0'
+          java: '11'
+          os: 'ubuntu-latest'
     steps:
     - id: 'step-0'
       name: 'Checkout Repository'

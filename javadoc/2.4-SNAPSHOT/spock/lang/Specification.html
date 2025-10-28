@@ -72,10 +72,8 @@ loadScripts(document, 'script');</script>
 <h1 title="Class Specification" class="title">Class Specification</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance">org.spockframework.lang.SpecInternals
 <div class="inheritance"><a href="../mock/MockingApi.html" title="class in spock.mock">spock.mock.MockingApi</a>
 <div class="inheritance">spock.lang.Specification</div>
-</div>
 </div>
 </div>
 <section class="class-description" id="class-description">
@@ -133,79 +131,84 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#noExceptionThrown()" class="member-name-link">noExceptionThrown</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.spockframework.lang.ISpecificationContext</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSpecificationContext()" class="member-name-link">getSpecificationContext</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the current execution context of this specification.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#noExceptionThrown()" class="member-name-link">noExceptionThrown</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Specifies that no exception should be thrown, failing with a
  <code>UnallowedExceptionThrownError</code> otherwise.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#notThrown(java.lang.Class)" class="member-name-link">notThrown</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&gt;&nbsp;type)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#notThrown(java.lang.Class)" class="member-name-link">notThrown</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&gt;&nbsp;type)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Specifies that no exception of the given type should be
  thrown, failing with a <code>UnallowedExceptionThrownError</code> otherwise.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#old(T)" class="member-name-link">old</a><wbr>(T&nbsp;expression)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#old(T)" class="member-name-link">old</a><wbr>(T&nbsp;expression)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Used in a then-block to access an expression's value at the time just
  before the previous where-block was entered.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&gt;<br>T</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#thrown()" class="member-name-link">thrown</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&gt;<br>T</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#thrown()" class="member-name-link">thrown</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Specifies that the preceding <tt>when</tt> block should throw an exception.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&gt;<br>T</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#thrown(java.lang.Class)" class="member-name-link">thrown</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&gt;<br>T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#thrown(java.lang.Class)" class="member-name-link">thrown</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Specifies that the preceding <tt>when</tt> block should throw an exception
  of the given type.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#verifyAll(groovy.lang.Closure)" class="member-name-link">verifyAll</a><wbr>(<a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;closure)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#verifyAll(groovy.lang.Closure)" class="member-name-link">verifyAll</a><wbr>(<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;closure)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">All assertions in this block are executed and the errors recorded and reported at the end.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;U&gt;&nbsp;void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#verifyAll(java.lang.Object,java.lang.Class,groovy.lang.Closure)" class="member-name-link">verifyAll</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;target,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;U&gt;&nbsp;void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#verifyAll(java.lang.Object,java.lang.Class,groovy.lang.Closure)" class="member-name-link">verifyAll</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;target,
  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;U&gt;&nbsp;type,
- <a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;closure)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+ <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;closure)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">A combination of <a href="#with(java.lang.Object,java.lang.Class,groovy.lang.Closure)"><code>with(Object, Class, Closure)</code></a> and <a href="#verifyAll(groovy.lang.Closure)"><code>verifyAll(Closure)</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;U&gt;&nbsp;void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#verifyAll(U,groovy.lang.Closure)" class="member-name-link">verifyAll</a><wbr>(U&nbsp;target,
- <a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;U&gt;&nbsp;void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#verifyAll(U,groovy.lang.Closure)" class="member-name-link">verifyAll</a><wbr>(U&nbsp;target,
+ <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">A combination of <a href="#with(U,groovy.lang.Closure)"><code>with(Object, Closure)</code></a> and <a href="#verifyAll(groovy.lang.Closure)"><code>verifyAll(Closure)</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;U&gt;&nbsp;void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#verifyEach(java.lang.Iterable,groovy.lang.Closure)" class="member-name-link">verifyEach</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link">Iterable</a>&lt;U&gt;&nbsp;things,
- <a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Performs assertions on each item, collecting up failures instead of stopping at first.</div>
-</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;U&gt;&nbsp;void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#verifyEach(java.lang.Iterable,java.util.function.Function,groovy.lang.Closure)" class="member-name-link">verifyEach</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link">Iterable</a>&lt;U&gt;&nbsp;things,
- <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super U,<wbr>?&gt;&nbsp;namer,
- <a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#verifyEach(java.lang.Iterable,groovy.lang.Closure)" class="member-name-link">verifyEach</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link">Iterable</a>&lt;U&gt;&nbsp;things,
+ <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Performs assertions on each item, collecting up failures instead of stopping at first.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;U&gt;&nbsp;void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#with(java.lang.Object,java.lang.Class,groovy.lang.Closure)" class="member-name-link">with</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;target,
- <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;U&gt;&nbsp;type,
- <a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;closure)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#verifyEach(java.lang.Iterable,java.util.function.Function,groovy.lang.Closure)" class="member-name-link">verifyEach</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link">Iterable</a>&lt;U&gt;&nbsp;things,
+ <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super U,<wbr>?&gt;&nbsp;namer,
+ <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Performs assertions on each item, collecting up failures instead of stopping at first.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;U&gt;&nbsp;void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#with(java.lang.Object,java.lang.Class,groovy.lang.Closure)" class="member-name-link">with</a><wbr>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;target,
+ <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;U&gt;&nbsp;type,
+ <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;closure)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Same as <a href="#with(U,groovy.lang.Closure)"><code>with(Object, groovy.lang.Closure)</code></a>, except that it also states that
  the specified target has the specified type, throwing a <code>SpockAssertionError</code>
  otherwise.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;U&gt;&nbsp;void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#with(U,groovy.lang.Closure)" class="member-name-link">with</a><wbr>(U&nbsp;target,
- <a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;U&gt;&nbsp;void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#with(U,groovy.lang.Closure)" class="member-name-link">with</a><wbr>(U&nbsp;target,
+ <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the specified object as the implicit target of the top-level conditions and/or
  interactions contained in the specified code block, thereby avoiding the need to repeat
  the same expression multiple times.</div>
@@ -216,9 +219,6 @@ loadScripts(document, 'script');</script>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-spock.mock.MockingApi">Methods inherited from class&nbsp;spock.mock.<a href="../mock/MockingApi.html" title="class in spock.mock">MockingApi</a></h3>
 <code><a href="../mock/MockingApi.html#GroovyMock()">GroovyMock</a>, <a href="../mock/MockingApi.html#GroovyMock(groovy.lang.Closure)">GroovyMock</a>, <a href="../mock/MockingApi.html#GroovyMock(java.lang.Class)">GroovyMock</a>, <a href="../mock/MockingApi.html#GroovyMock(java.lang.Class,groovy.lang.Closure)">GroovyMock</a>, <a href="../mock/MockingApi.html#GroovyMock(java.util.Map)">GroovyMock</a>, <a href="../mock/MockingApi.html#GroovyMock(java.util.Map,groovy.lang.Closure)">GroovyMock</a>, <a href="../mock/MockingApi.html#GroovyMock(java.util.Map,java.lang.Class)">GroovyMock</a>, <a href="../mock/MockingApi.html#GroovyMock(java.util.Map,java.lang.Class,groovy.lang.Closure)">GroovyMock</a>, <a href="../mock/MockingApi.html#GroovySpy()">GroovySpy</a>, <a href="../mock/MockingApi.html#GroovySpy(groovy.lang.Closure)">GroovySpy</a>, <a href="../mock/MockingApi.html#GroovySpy(java.lang.Class)">GroovySpy</a>, <a href="../mock/MockingApi.html#GroovySpy(java.lang.Class,groovy.lang.Closure)">GroovySpy</a>, <a href="../mock/MockingApi.html#GroovySpy(java.util.Map)">GroovySpy</a>, <a href="../mock/MockingApi.html#GroovySpy(java.util.Map,groovy.lang.Closure)">GroovySpy</a>, <a href="../mock/MockingApi.html#GroovySpy(java.util.Map,java.lang.Class)">GroovySpy</a>, <a href="../mock/MockingApi.html#GroovySpy(java.util.Map,java.lang.Class,groovy.lang.Closure)">GroovySpy</a>, <a href="../mock/MockingApi.html#GroovySpy(T)">GroovySpy</a>, <a href="../mock/MockingApi.html#GroovySpy(T,groovy.lang.Closure)">GroovySpy</a>, <a href="../mock/MockingApi.html#GroovyStub()">GroovyStub</a>, <a href="../mock/MockingApi.html#GroovyStub(groovy.lang.Closure)">GroovyStub</a>, <a href="../mock/MockingApi.html#GroovyStub(java.lang.Class)">GroovyStub</a>, <a href="../mock/MockingApi.html#GroovyStub(java.lang.Class,groovy.lang.Closure)">GroovyStub</a>, <a href="../mock/MockingApi.html#GroovyStub(java.util.Map)">GroovyStub</a>, <a href="../mock/MockingApi.html#GroovyStub(java.util.Map,groovy.lang.Closure)">GroovyStub</a>, <a href="../mock/MockingApi.html#GroovyStub(java.util.Map,java.lang.Class)">GroovyStub</a>, <a href="../mock/MockingApi.html#GroovyStub(java.util.Map,java.lang.Class,groovy.lang.Closure)">GroovyStub</a>, <a href="../mock/MockingApi.html#interaction(groovy.lang.Closure)">interaction</a>, <a href="../mock/MockingApi.html#Mock()">Mock</a>, <a href="../mock/MockingApi.html#Mock(groovy.lang.Closure)">Mock</a>, <a href="../mock/MockingApi.html#Mock(java.lang.Class)">Mock</a>, <a href="../mock/MockingApi.html#Mock(java.lang.Class,groovy.lang.Closure)">Mock</a>, <a href="../mock/MockingApi.html#Mock(java.util.Map)">Mock</a>, <a href="../mock/MockingApi.html#Mock(java.util.Map,groovy.lang.Closure)">Mock</a>, <a href="../mock/MockingApi.html#Mock(java.util.Map,java.lang.Class)">Mock</a>, <a href="../mock/MockingApi.html#Mock(java.util.Map,java.lang.Class,groovy.lang.Closure)">Mock</a>, <a href="../mock/MockingApi.html#runWithThreadAwareMocks(java.lang.Runnable)">runWithThreadAwareMocks</a>, <a href="../mock/MockingApi.html#Spy()">Spy</a>, <a href="../mock/MockingApi.html#Spy(groovy.lang.Closure)">Spy</a>, <a href="../mock/MockingApi.html#Spy(java.lang.Class)">Spy</a>, <a href="../mock/MockingApi.html#Spy(java.lang.Class,groovy.lang.Closure)">Spy</a>, <a href="../mock/MockingApi.html#Spy(java.util.Map)">Spy</a>, <a href="../mock/MockingApi.html#Spy(java.util.Map,groovy.lang.Closure)">Spy</a>, <a href="../mock/MockingApi.html#Spy(java.util.Map,java.lang.Class)">Spy</a>, <a href="../mock/MockingApi.html#Spy(java.util.Map,java.lang.Class,groovy.lang.Closure)">Spy</a>, <a href="../mock/MockingApi.html#Spy(T)">Spy</a>, <a href="../mock/MockingApi.html#Spy(T,groovy.lang.Closure)">Spy</a>, <a href="../mock/MockingApi.html#SpyStatic(java.lang.Class)">SpyStatic</a>, <a href="../mock/MockingApi.html#SpyStatic(java.lang.Class,spock.mock.IMockMakerSettings)">SpyStatic</a>, <a href="../mock/MockingApi.html#Stub()">Stub</a>, <a href="../mock/MockingApi.html#Stub(groovy.lang.Closure)">Stub</a>, <a href="../mock/MockingApi.html#Stub(java.lang.Class)">Stub</a>, <a href="../mock/MockingApi.html#Stub(java.lang.Class,groovy.lang.Closure)">Stub</a>, <a href="../mock/MockingApi.html#Stub(java.util.Map)">Stub</a>, <a href="../mock/MockingApi.html#Stub(java.util.Map,groovy.lang.Closure)">Stub</a>, <a href="../mock/MockingApi.html#Stub(java.util.Map,java.lang.Class)">Stub</a>, <a href="../mock/MockingApi.html#Stub(java.util.Map,java.lang.Class,groovy.lang.Closure)">Stub</a>, <a href="../mock/MockingApi.html#withActiveThreadAwareMocks(java.util.concurrent.Callable)">withActiveThreadAwareMocks</a></code></div>
-<div class="inherited-list">
-<h3 id="methods-inherited-from-class-org.spockframework.lang.SpecInternals">Methods inherited from class&nbsp;org.spockframework.lang.SpecInternals</h3>
-<code>createMock, createMock, getSpecificationContext</code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
 <code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#clone--" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#equals-java.lang.Object-" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#finalize--" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#getClass--" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#hashCode--" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#notify--" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#notifyAll--" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#toString--" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#wait--" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#wait-long-" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#wait-long-int-" title="class or interface in java.lang" class="external-link">wait</a></code></div>
@@ -268,6 +268,15 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="getSpecificationContext()">
+<h3>getSpecificationContext</h3>
+<div class="member-signature"><span class="annotations">@Beta
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">org.spockframework.lang.ISpecificationContext</span>&nbsp;<span class="element-name">getSpecificationContext</span>()</div>
+<div class="block">Returns the current execution context of this specification.
+ This is mostly used internally, but could, for example, be used to log the current iteration.</div>
+</section>
+</li>
 <li>
 <section class="detail" id="thrown()">
 <h3>thrown</h3>
@@ -362,9 +371,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="with(U,groovy.lang.Closure)">
 <h3 id="with(java.lang.Object,groovy.lang.Closure)">with</h3>
 <div class="member-signature"><span class="annotations">@Beta
-</span><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;U&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">with</span><wbr><span class="parameters">(U&nbsp;target,
- <a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/DelegatesTo.html" title="class or interface in groovy.lang" class="external-link">@DelegatesTo</a>(<a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/DelegatesTo.html#strategy--" title="class or interface in groovy.lang" class="external-link">strategy</a>=1)
- <a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</span></div>
+</span><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;U&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">with</span><wbr><span class="parameters">(<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/DelegatesTo.Target.html" title="class or interface in groovy.lang" class="external-link">@Target</a>
+ U&nbsp;target,
+ <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/DelegatesTo.html" title="class or interface in groovy.lang" class="external-link">@DelegatesTo</a>(<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/DelegatesTo.html#strategy--" title="class or interface in groovy.lang" class="external-link">strategy</a>=1) <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/transform/stc/ClosureParams.html" title="class or interface in groovy.transform.stc" class="external-link">@ClosureParams</a>(<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/transform/stc/FirstParam.html" title="class or interface in groovy.transform.stc" class="external-link">groovy.transform.stc.FirstParam.class</a>)
+ <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</span></div>
 <div class="block">Sets the specified object as the implicit target of the top-level conditions and/or
  interactions contained in the specified code block, thereby avoiding the need to repeat
  the same expression multiple times. Implicit conditions are supported. (In other words,
@@ -417,9 +427,10 @@ loadScripts(document, 'script');</script>
 <h3>with</h3>
 <div class="member-signature"><span class="annotations">@Beta
 </span><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;U&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">with</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;target,
+ <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/DelegatesTo.Target.html" title="class or interface in groovy.lang" class="external-link">@Target</a>
  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;U&gt;&nbsp;type,
- <a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/DelegatesTo.html" title="class or interface in groovy.lang" class="external-link">@DelegatesTo</a>(<a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/DelegatesTo.html#genericTypeIndex--" title="class or interface in groovy.lang" class="external-link">genericTypeIndex</a>=0,<a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/DelegatesTo.html#strategy--" title="class or interface in groovy.lang" class="external-link">strategy</a>=1)
- <a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;closure)</span></div>
+ <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/DelegatesTo.html" title="class or interface in groovy.lang" class="external-link">@DelegatesTo</a>(<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/DelegatesTo.html#genericTypeIndex--" title="class or interface in groovy.lang" class="external-link">genericTypeIndex</a>=0,<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/DelegatesTo.html#strategy--" title="class or interface in groovy.lang" class="external-link">strategy</a>=1) <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/transform/stc/ClosureParams.html" title="class or interface in groovy.transform.stc" class="external-link">@ClosureParams</a>(<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/transform/stc/SecondParam.FirstGenericType.html" title="class or interface in groovy.transform.stc" class="external-link">groovy.transform.stc.SecondParam.FirstGenericType.class</a>)
+ <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;closure)</span></div>
 <div class="block">Same as <a href="#with(U,groovy.lang.Closure)"><code>with(Object, groovy.lang.Closure)</code></a>, except that it also states that
  the specified target has the specified type, throwing a <code>SpockAssertionError</code>
  otherwise. As a side effect, this may give better code completion in IDEs.
@@ -451,7 +462,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="verifyAll(groovy.lang.Closure)">
 <h3>verifyAll</h3>
 <div class="member-signature"><span class="annotations">@Beta
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">verifyAll</span><wbr><span class="parameters">(<a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;closure)</span></div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">verifyAll</span><wbr><span class="parameters">(<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;closure)</span></div>
 <div class="block">All assertions in this block are executed and the errors recorded and reported at the end.
 
  <p>Example:
@@ -475,9 +486,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="verifyAll(U,groovy.lang.Closure)">
 <h3 id="verifyAll(java.lang.Object,groovy.lang.Closure)">verifyAll</h3>
 <div class="member-signature"><span class="annotations">@Beta
-</span><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;U&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">verifyAll</span><wbr><span class="parameters">(U&nbsp;target,
- <a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/DelegatesTo.html" title="class or interface in groovy.lang" class="external-link">@DelegatesTo</a>(<a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/DelegatesTo.html#strategy--" title="class or interface in groovy.lang" class="external-link">strategy</a>=1)
- <a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</span></div>
+</span><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;U&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">verifyAll</span><wbr><span class="parameters">(<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/DelegatesTo.Target.html" title="class or interface in groovy.lang" class="external-link">@Target</a>
+ U&nbsp;target,
+ <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/DelegatesTo.html" title="class or interface in groovy.lang" class="external-link">@DelegatesTo</a>(<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/DelegatesTo.html#strategy--" title="class or interface in groovy.lang" class="external-link">strategy</a>=1) <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/transform/stc/ClosureParams.html" title="class or interface in groovy.transform.stc" class="external-link">@ClosureParams</a>(<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/transform/stc/FirstParam.html" title="class or interface in groovy.transform.stc" class="external-link">groovy.transform.stc.FirstParam.class</a>)
+ <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</span></div>
 <div class="block">A combination of <a href="#with(U,groovy.lang.Closure)"><code>with(Object, Closure)</code></a> and <a href="#verifyAll(groovy.lang.Closure)"><code>verifyAll(Closure)</code></a>.</div>
 <dl class="notes">
 <dt>Type Parameters:</dt>
@@ -495,9 +507,10 @@ loadScripts(document, 'script');</script>
 <h3>verifyAll</h3>
 <div class="member-signature"><span class="annotations">@Beta
 </span><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;U&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">verifyAll</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;target,
+ <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/DelegatesTo.Target.html" title="class or interface in groovy.lang" class="external-link">@Target</a>
  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;U&gt;&nbsp;type,
- <a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/DelegatesTo.html" title="class or interface in groovy.lang" class="external-link">@DelegatesTo</a>(<a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/DelegatesTo.html#genericTypeIndex--" title="class or interface in groovy.lang" class="external-link">genericTypeIndex</a>=0,<a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/DelegatesTo.html#strategy--" title="class or interface in groovy.lang" class="external-link">strategy</a>=1)
- <a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;closure)</span></div>
+ <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/DelegatesTo.html" title="class or interface in groovy.lang" class="external-link">@DelegatesTo</a>(<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/DelegatesTo.html#genericTypeIndex--" title="class or interface in groovy.lang" class="external-link">genericTypeIndex</a>=0,<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/DelegatesTo.html#strategy--" title="class or interface in groovy.lang" class="external-link">strategy</a>=1) <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/transform/stc/ClosureParams.html" title="class or interface in groovy.transform.stc" class="external-link">@ClosureParams</a>(<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/transform/stc/SecondParam.FirstGenericType.html" title="class or interface in groovy.transform.stc" class="external-link">groovy.transform.stc.SecondParam.FirstGenericType.class</a>)
+ <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&nbsp;closure)</span></div>
 <div class="block">A combination of <a href="#with(java.lang.Object,java.lang.Class,groovy.lang.Closure)"><code>with(Object, Class, Closure)</code></a> and <a href="#verifyAll(groovy.lang.Closure)"><code>verifyAll(Closure)</code></a>.</div>
 <dl class="notes">
 <dt>Type Parameters:</dt>
@@ -516,8 +529,8 @@ loadScripts(document, 'script');</script>
 <h3>verifyEach</h3>
 <div class="member-signature"><span class="annotations">@Beta
 </span><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;U&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">verifyEach</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link">Iterable</a>&lt;U&gt;&nbsp;things,
- <a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/DelegatesTo.html" title="class or interface in groovy.lang" class="external-link">@DelegatesTo</a>(<a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/DelegatesTo.html#type--" title="class or interface in groovy.lang" class="external-link">type</a>="U",<a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/DelegatesTo.html#strategy--" title="class or interface in groovy.lang" class="external-link">strategy</a>=1)
- <a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</span></div>
+ <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/transform/stc/ClosureParams.html" title="class or interface in groovy.transform.stc" class="external-link">@ClosureParams</a>(<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/transform/stc/ClosureParams.html#value--" title="class or interface in groovy.transform.stc" class="external-link">value</a>=<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/transform/stc/FromString.html" title="class or interface in groovy.transform.stc" class="external-link">groovy.transform.stc.FromString.class</a>,<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/transform/stc/ClosureParams.html#options--" title="class or interface in groovy.transform.stc" class="external-link">options</a>={"U","U, int"}) <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/DelegatesTo.html" title="class or interface in groovy.lang" class="external-link">@DelegatesTo</a>(<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/DelegatesTo.html#type--" title="class or interface in groovy.lang" class="external-link">type</a>="U",<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/DelegatesTo.html#strategy--" title="class or interface in groovy.lang" class="external-link">strategy</a>=1)
+ <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</span></div>
 <div class="block">Performs assertions on each item, collecting up failures instead of stopping at first.
  <p>
  Exception messages will contain a toString() of the item to identify it.
@@ -542,8 +555,8 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="annotations">@Beta
 </span><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;U&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">verifyEach</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link">Iterable</a>&lt;U&gt;&nbsp;things,
  <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;? super U,<wbr>?&gt;&nbsp;namer,
- <a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/DelegatesTo.html" title="class or interface in groovy.lang" class="external-link">@DelegatesTo</a>(<a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/DelegatesTo.html#type--" title="class or interface in groovy.lang" class="external-link">type</a>="U",<a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/DelegatesTo.html#strategy--" title="class or interface in groovy.lang" class="external-link">strategy</a>=1)
- <a href="https://docs.groovy-lang.org/docs/groovy-4.0.26/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</span></div>
+ <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/transform/stc/ClosureParams.html" title="class or interface in groovy.transform.stc" class="external-link">@ClosureParams</a>(<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/transform/stc/ClosureParams.html#value--" title="class or interface in groovy.transform.stc" class="external-link">value</a>=<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/transform/stc/FromString.html" title="class or interface in groovy.transform.stc" class="external-link">groovy.transform.stc.FromString.class</a>,<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/transform/stc/ClosureParams.html#options--" title="class or interface in groovy.transform.stc" class="external-link">options</a>={"U","U, int"}) <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/DelegatesTo.html" title="class or interface in groovy.lang" class="external-link">@DelegatesTo</a>(<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/DelegatesTo.html#type--" title="class or interface in groovy.lang" class="external-link">type</a>="U",<a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/DelegatesTo.html#strategy--" title="class or interface in groovy.lang" class="external-link">strategy</a>=1)
+ <a href="https://docs.groovy-lang.org/docs/groovy-5.0.2/html/gapi/groovy/lang/Closure.html" title="class or interface in groovy.lang" class="external-link">Closure</a>&lt;?&gt;&nbsp;closure)</span></div>
 <div class="block">Performs assertions on each item, collecting up failures instead of stopping at first.
  <p>
  Exception messages will contain the result of calling the namer for an item to identify it.

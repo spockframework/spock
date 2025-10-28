@@ -177,10 +177,20 @@ b = a</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_ant_support_removed"><a class="anchor" href="#_ant_support_removed"></a><a class="link" href="#_ant_support_removed">Ant support removed</a></h3>
+<h3 id="_ant_custom_selector_removed"><a class="anchor" href="#_ant_custom_selector_removed"></a><a class="link" href="#_ant_custom_selector_removed">Ant custom selector removed</a></h3>
 <div class="paragraph">
-<p><code>SpecClassFileSelector</code> was removed, which was the only class that required <code>ant</code>.
-If you are still using spock with <code>ant</code>, then you can just copy the class from the spock source code into your build.</p>
+<p>The class <code>SpecClassFileSelector</code> that could be used to only select actual Spock specification classes when testing
+and creating a test report was removed. It was the only class that required <code>ant</code> and was basically just a one-line
+forward to the <code>SpecClassFileFinder</code> which is still available.</p>
+</div>
+<div class="paragraph">
+<p>If you are still using Spock with <code>ant</code>, then you can just copy {SpecClassFileSelector}[the class from the spock source code]
+into your build, or you simply use a {scriptselector}[<code>&lt;scriptselector&gt;</code>] that does this forwarding as shown in the
+<a href="https://github.com/spockframework/spock-example">Spock Example Project</a>.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, you can also use a naming convention to find the classes that are actual specifications and not helper
+or base classes, or you live with a bit of wasted time and some meaningless entries in the test reports.</p>
 </div>
 </div>
 <div class="sect2">
@@ -422,7 +432,7 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2025-06-16 18:20:38 UTC
+Last updated 2025-10-28 22:42:38 UTC
 </div>
 </div>
 </body>

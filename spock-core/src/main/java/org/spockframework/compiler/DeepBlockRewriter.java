@@ -193,7 +193,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   }
 
   private boolean handleImplicitCondition(ExpressionStatement stat) {
-    if (!(stat == currTopLevelStat && isThenOrExpectOrFilterBlock()
+    if (!(((currSpecialMethodCall == NoSpecialMethodCall.INSTANCE) && isThenOrExpectOrFilterBlock())
         || currSpecialMethodCall.isConditionMethodCall()
         || currSpecialMethodCall.isConditionBlock()
         || currSpecialMethodCall.isGroupConditionBlock()

@@ -56,6 +56,19 @@ class ConditionEvaluation extends EmbeddedSpecification {
         7
   }
 
+  @FailsWith(ConditionNotSatisfiedError)
+  def "failing non-top-level condition"() {
+    expect:
+    if (true) {
+      2 * 3 == 7
+    }
+  }
+
+  def "failing non-top-level non-condition"() {
+    expect:
+    [1, 2, 3].any { it == 2 }
+  }
+
   def "MethodCallExpression"() {
     expect:
     [1, 2, 3].size() == 3

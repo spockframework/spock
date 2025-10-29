@@ -151,7 +151,7 @@ class JUnitFixtureMethods extends JUnitBaseSpec {
     then:
     def e = result.failures[exceptionPos].exception
     if (suppressed) {
-      e = e.suppressed[0]
+      !!(e = e.suppressed[0])
     }
     e instanceof RuntimeException
     e.message == name

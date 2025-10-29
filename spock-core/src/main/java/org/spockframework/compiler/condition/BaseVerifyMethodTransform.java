@@ -17,16 +17,16 @@ import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.transform.ASTTransformation;
-import org.spockframework.compiler.AstNodeCache;
-import org.spockframework.compiler.ErrorReporter;
-import org.spockframework.compiler.IRewriteResources;
-import org.spockframework.compiler.SourceLookup;
+import org.spockframework.compiler.*;
+import org.spockframework.compiler.model.Method;
 
 abstract class BaseVerifyMethodTransform implements ASTTransformation {
 
   static final AstNodeCache nodeCache = new AstNodeCache();
 
-  abstract IVerifyMethodRewriter createRewriter(MethodNode methodNode, IRewriteResources resources);
+  abstract IVerifyMethodRewriter createRewriter(Method method, IRewriteResources resources);
+
+  abstract Method createVerifyMethod(MethodNode methodNode);
 
   @Override
   public void visit(ASTNode[] astNodes, SourceUnit sourceUnit) {
@@ -38,20 +38,34 @@ abstract class BaseVerifyMethodTransform implements ASTTransformation {
           continue;
         }
 
-        processVerificationHelperMethod((MethodNode) node, errorReporter, sourceLookup);
+        if (((MethodNode) node).getDeclaringClass().isDerivedFrom(nodeCache.Specification)) {
+          // SpecRewriter already handles the method, so don't transform it again
+          continue;
+        }
+
+        boolean hasVerifyAnnotation = !((MethodNode) node).getAnnotations(nodeCache.Verify).isEmpty();
+        boolean hasVerifyAllAnnotation = !((MethodNode) node).getAnnotations(nodeCache.VerifyAll).isEmpty();
+        if (hasVerifyAnnotation && hasVerifyAllAnnotation) {
+          errorReporter.error(node, "Method '%s' cannot be annotated with both @Verify and @VerifyAll", ((MethodNode) node).getName());
+        }
+
+        processVerificationHelperMethod(createVerifyMethod((MethodNode) node), errorReporter, sourceLookup);
       }
     }
   }
 
-  private void processVerificationHelperMethod(MethodNode method, ErrorReporter errorReporter, SourceLookup sourceLookup) {
-    if (!method.isVoidMethod()) {
-      errorReporter.error("Verification helper method '%s' must have a void return type.", method.getName());
+  private void processVerificationHelperMethod(Method method, ErrorReporter errorReporter, SourceLookup sourceLookup) {
+    MethodNode methodAst = method.getAst();
+    if (!methodAst.isVoidMethod() && !methodAst.isDynamicReturnType()) {
+      errorReporter.error("Verification helper method '%s' must have a void or dynamic return type.", method.getName());
       return;
     }
 
+    methodAst.setReturnType(nodeCache.Void);
+
     IVerifyMethodRewriter rewriter = createRewriter(
         method,
-        new DefaultConditionRewriterResources(nodeCache, sourceLookup, errorReporter, new DefaultConditionErrorRecorders(nodeCache))
+        new DefaultConditionRewriterResources(method, nodeCache, sourceLookup, errorReporter, new DefaultConditionErrorRecorders(nodeCache))
     );
 
     try {

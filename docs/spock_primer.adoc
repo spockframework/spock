@@ -582,8 +582,9 @@ Not very helpful. Fortunately, we can do better:
 include::{sourcedir}/primer/VerifyMethodsDocSpec.groovy[tag=verify-helper-method]
 ----
 
-When factoring out conditions into a helper method, you need to ensure the method has return type `void`.
-Otherwise, Spock might interpret the return value as a failing condition, which is not what we want.
+When factoring out conditions into a helper method, you need to ensure the method has return type of `void`,
+or a dynamic return type. After compilation it will in both cases be `void` and any other return type causes
+a compilation error, as Spock might interpret the return value as a failing condition otherwise.
 
 As expected, the improved helper method tells us exactly what's wrong:
 

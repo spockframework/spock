@@ -36,7 +36,7 @@ abstract class BaseVerifyMethodsAstSpec extends EmbeddedSpecification {
     when:
     def result = compiler.transpileSpecBody("""
 @${annotation.name}
-void isPositiveAndEven(int a) {
+def isPositiveAndEven(int a) {
     a > 0
     a % 2 == 0
 }
@@ -68,9 +68,33 @@ class Assertions {
 
     when:
     def result = compiler.transpileSpecBody("""
+def foo() {
+    expect:
+    [true, false].any { it }
+    if (true) {
+        [true, false].any { it }
+    }
+    with {
+        [true, false].any { it }
+        if (true) {
+            [true, false].any { it }
+        }
+    }
+}
+
 @${annotation.name}
-private void isPositive(int a) {
+private isPositive(int a) {
     a > 0
+    [true, false].any { it }
+    if (true) {
+        [true, false].any { it }
+    }
+    with {
+        [true, false].any { it }
+        if (true) {
+            [true, false].any { it }
+        }
+    }
 }
 """)
 
@@ -83,7 +107,7 @@ private void isPositive(int a) {
     def result = compiler.transpile("""
 class Assertions {
     @${annotation.name}
-    static void isPositive(int a) {
+    static isPositive(int a) {
         a > 0
     }
 }
@@ -98,7 +122,7 @@ class Assertions {
     def result = compiler.transpile("""
 class Assertions {
     @${annotation.name}
-    static void isPositiveAndEven(int a) {
+    static isPositiveAndEven(int a) {
         assert a > 0
         assert a % 2 == 0
     }
@@ -114,9 +138,61 @@ class Assertions {
     def result = compiler.transpile("""
 class NonAssertions {
     @${annotation.name}
-    static void copy(Integer a) {
+    static copy(Integer a) {
         def uselessCopy = a
     }
+}
+""")
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
+  def "methods without condition declarations stay unchanged in specs"() {
+    given:
+    snapshotter.specBody()
+
+    when:
+    def result = compiler.transpileSpecBody("""
+def foo() {
+    expect:
+    true
+}
+
+@${annotation.name}
+static copy(Integer a) {
+    def uselessCopy = a
+}
+""")
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
+  def "interactions are illegal in verify methods"() {
+    when:
+    def result = compiler.transpile("""
+class NonAssertions {
+    @${annotation.name}
+    def copy(Integer a) {
+        1 * Mock(Object).toString()
+    }
+}
+""")
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
+  def "interactions are illegal in verify methods in specs"() {
+    given:
+    snapshotter.specBody()
+
+    when:
+    def result = compiler.transpileSpecBody("""
+@${annotation.name}
+def copy(Integer a) {
+    1 * Mock(Object).toString()
 }
 """)
 
@@ -129,7 +205,7 @@ class NonAssertions {
     def result = compiler.transpile("""
 class Assertions {
     @${annotation.name}
-    static void isPositive(int a) {
+    static isPositive(int a) {
         a > 0
     }
 
@@ -166,7 +242,7 @@ class Assertions {
     compiler.compile("""
 class Assertions {
     @${annotation.name}
-    static void assignmentNotCondition(int a) {
+    static assignmentNotCondition(int a) {
         a = 3
     }
 }
@@ -199,7 +275,7 @@ class SpecificAssertions extends BaseAssertions {
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
-  def "fails when verification method has a non-void return value"() {
+  def "fails when verification method has a non-void or -dynamic return value"() {
     when:
     compiler.compile("""
 class Assertions {
@@ -213,7 +289,22 @@ class Assertions {
 
     then:
     MultipleCompilationErrorsException e = thrown()
-    e.message.contains("Verification helper method 'isPositiveWithReturn' must have a void return type.")
+    e.message.contains("Verification helper method 'isPositiveWithReturn' must have a void or dynamic return type.")
+  }
+
+  def "fails when verification method has a non-void or -dynamic return value in Spec"() {
+    when:
+    compiler.compileSpecBody("""
+@${annotation.name}
+static boolean isPositiveWithReturn(int a) {
+    a > 0
+    return true
+}
+""")
+
+    then:
+    MultipleCompilationErrorsException e = thrown()
+    e.message.contains("Verification helper method 'isPositiveWithReturn' must have a void or dynamic return type.")
   }
 
 }

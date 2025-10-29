@@ -25,6 +25,8 @@ import org.spockframework.util.Identifiers;
 import spock.lang.Specification;
 
 import org.codehaus.groovy.ast.*;
+import spock.lang.Verify;
+import spock.lang.VerifyAll;
 
 import java.util.Set;
 
@@ -46,6 +48,9 @@ public class AstNodeCache {
   public final ClassNode DataVariableMultiplication = ClassHelper.makeWithoutCaching(DataVariableMultiplication.class);
   public final ClassNode DataVariableMultiplicationFactor = ClassHelper.makeWithoutCaching(DataVariableMultiplicationFactor.class);
   public final ClassNode BlockInfo = ClassHelper.makeWithoutCaching(BlockInfo.class);
+  public final ClassNode Verify = ClassHelper.makeWithoutCaching(Verify.class);
+  public final ClassNode VerifyAll = ClassHelper.makeWithoutCaching(VerifyAll.class);
+  public final ClassNode Void = ClassHelper.makeWithoutCaching(void.class);
 
   public final MethodNode Specification_GetSpecificationContext =
     Specification.getDeclaredMethods(Identifiers.GET_SPECIFICATION_CONTEXT).get(0);

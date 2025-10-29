@@ -17,14 +17,27 @@
 package org.spockframework.compiler;
 
 import org.codehaus.groovy.ast.ASTNode;
-import org.spockframework.compiler.condition.IConditionErrorRecorders;
+import org.codehaus.groovy.ast.expr.Expression;
+import org.codehaus.groovy.ast.expr.MethodCallExpression;
+import org.codehaus.groovy.ast.expr.VariableExpression;
 
-import java.util.List;
+import org.spockframework.compiler.condition.IConditionErrorRecorders;
+import org.spockframework.compiler.model.Block;
+import org.spockframework.compiler.model.Method;
 
 /**
+ *
  * @author Peter Niederwieser
  */
 public interface IRewriteResources {
+  Method getCurrentMethod();
+
+  Block getCurrentBlock();
+
+  VariableExpression captureOldValue(Expression oldValue);
+
+  MethodCallExpression getMockInvocationMatcher();
+
   AstNodeCache getAstNodeCache();
 
   String getSourceText(ASTNode node);

@@ -14,7 +14,9 @@
 
 package org.spockframework.smoke
 
+import org.opentest4j.MultipleFailuresError
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.compiler.InvalidSpecCompileException
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.SpockComparisonFailure
 import org.spockframework.runtime.SpockMultipleFailuresError
@@ -27,7 +29,7 @@ class VerifyAllMethodsSpecification extends EmbeddedSpecification {
   }
 
   @VerifyAll
-  private static void isPositiveAndEven(int x) {
+  private static isPositiveAndEven(int x) {
     x > 0
     x % 2 == 0
   }
@@ -41,7 +43,7 @@ class VerifyAllMethodsSpecification extends EmbeddedSpecification {
     when:
     def result = runner.runSpecBody '''
 @VerifyAll
-private static void isPositiveAndEven(int x) {
+private static isPositiveAndEven(int x) {
     x > 0
     x % 2 == 0
 }
@@ -71,7 +73,7 @@ def "feature"() {
     def result = runner.runWithImports '''
 class Assertions {
   @VerifyAll
-  static void isPositiveAndEven(int x) {
+  static isPositiveAndEven(int x) {
       x > 0
       x % 2 == 0
   }
@@ -97,5 +99,47 @@ class SpecWithHelpers extends Specification {
         actual.stringRepresentation.trim() == "-1"
       }
     }
+  }
+
+  def "@Verify with @VerifyAll does not compile"() {
+    when:
+    def result = compiler.compileWithImports '''
+class Assertions {
+  @Verify
+  @VerifyAll
+  static isPositiveAndEven(int x) {
+      x > 0
+      x % 2 == 0
+  }
+}
+'''
+
+    then:
+    MultipleFailuresError e = thrown()
+    e.failures.every {
+      it instanceof InvalidSpecCompileException
+      it.message.contains("Method 'isPositiveAndEven' cannot be annotated with both @Verify and @VerifyAll")
+    }
+  }
+
+  def "@Verify with @VerifyAll does not compile in Spec"() {
+    when:
+    def result = compiler.compileSpecBody '''
+@Verify
+@VerifyAll
+private static isPositiveAndEven(int x) {
+    x > 0
+    x % 2 == 0
+}
+
+def "feature"() {
+    expect:
+    isPositiveAndEven(-3)
+}
+'''
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.contains("Method 'isPositiveAndEven' cannot be annotated with both @Verify and @VerifyAll")
   }
 }

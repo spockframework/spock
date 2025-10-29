@@ -37,6 +37,25 @@ _This is a summary of the highlights of the milestone releases_
 
 === Breaking Changes
 
+* It is no longer true that only top-level expression statements are treated as implicit conditions.
+Just like within `with { ... }`, `verifyAll { ... }`, `@ConditionBlock` methods, and other places,
+each expression statement is now considered an implicit condition, except for statements in unknown
+closures.
++
+This enables the usage of `if` and similar while also being able to still safely use `.every { ... }`,
+but without the regular confusion why a test is not failing if the condition is inside an `if`.
+You can even have interactions in those nested places now.
++
+As now expression statements are considered implicit conditions that previously were not,
+this can lead to compilation errors in existing code-bases, because such nested statements were
+previously simply ignored by the Spock compiler and now also must be valid conditions.
++
+If those compile errors are not accidentally written assignments that should have been conditions
+or similar, you can for example use the <<spock_primer.adoc#opt-out-of-condition-handling,`!!` prefix operator>>
+to declare an expression statement explicitly as not being an implicit condition.
++
+spockPull:2250[]
+
 * _This affects users of the `@Snapshot` extension, only if you were using the snapshotter in parent specification classes._ +
 `@Snapshot` used to look up snapshots in directories named after the class containing feature methods. Now, the snapshots will be loaded from directories named after the bottom class in the specification hierarchy. The motivation of the change is to allow users to define features in base specification classes, but overwrite expected snapshots per child specification.
 spockPull:2112[]
@@ -68,6 +87,27 @@ will now require that the spec is annotated with <<parallel_execution.adoc#isola
 
 * Spock supports Groovy 5.0 spockIssue:2196[]
 * Spock is also tested to run correctly on Java 25 LTS spockPull:2212[]
+
+=== Breaking Changes
+
+* It is no longer true that only top-level expression statements are treated as implicit conditions.
+Just like within `with { ... }`, `verifyAll { ... }`, `@ConditionBlock` methods, and other places,
+each expression statement is now considered an implicit condition, except for statements in unknown
+closures.
++
+This enables the usage of `if` and similar while also being able to still safely use `.every { ... }`,
+but without the regular confusion why a test is not failing if the condition is inside an `if`.
+You can even have interactions in those nested places now.
++
+As now expression statements are considered implicit conditions that previously were not,
+this can lead to compilation errors in existing code-bases, because such nested statements were
+previously simply ignored by the Spock compiler and now also must be valid conditions.
++
+If those compile errors are not accidentally written assignments that should have been conditions
+or similar, you can for example use the <<spock_primer.adoc#opt-out-of-condition-handling,`!!` prefix operator>>
+to declare an expression statement explicitly as not being an implicit condition.
++
+spockPull:2250[]
 
 === Misc
 

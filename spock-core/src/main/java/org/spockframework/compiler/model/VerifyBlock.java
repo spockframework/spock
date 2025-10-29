@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package org.spockframework.compiler;
+package org.spockframework.compiler.model;
 
-import org.codehaus.groovy.ast.expr.Expression;
-import org.codehaus.groovy.ast.expr.MethodCallExpression;
-import org.codehaus.groovy.ast.expr.VariableExpression;
-import org.spockframework.compiler.model.Block;
-import org.spockframework.compiler.model.Method;
-import org.spockframework.compiler.model.Spec;
+public class VerifyBlock extends Block {
+  public VerifyBlock(Method parent) {
+    super(parent);
+    setName("verify");
+  }
 
-public interface ISpecRewriteResources extends IRewriteResources {
-  Spec getCurrentSpec();
+  @Override
+  public void accept(ISpecVisitor visitor) throws Exception {
+    visitor.visitAnyBlock(this);
+    visitor.visitVerifyBlock(this);
+  }
 
-  Method getCurrentMethod();
-
-  Block getCurrentBlock();
-
-  VariableExpression captureOldValue(Expression oldValue);
-
-  MethodCallExpression getMockInvocationMatcher();
+  @Override
+  public BlockParseInfo getParseInfo() {
+    return BlockParseInfo.VERIFY;
+  }
 }

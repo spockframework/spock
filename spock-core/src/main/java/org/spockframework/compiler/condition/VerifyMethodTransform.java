@@ -18,12 +18,19 @@ import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.control.CompilePhase;
 import org.codehaus.groovy.transform.GroovyASTTransformation;
 import org.spockframework.compiler.IRewriteResources;
+import org.spockframework.compiler.model.Method;
+import org.spockframework.compiler.model.VerifyMethod;
 
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
 public class VerifyMethodTransform extends BaseVerifyMethodTransform {
 
   @Override
-  IVerifyMethodRewriter createRewriter(MethodNode methodNode, IRewriteResources resources) {
-    return new VerifyMethodRewriter(methodNode, resources);
+  IVerifyMethodRewriter createRewriter(Method method, IRewriteResources resources) {
+    return new VerifyMethodRewriter(method, resources);
+  }
+
+  @Override
+  Method createVerifyMethod(MethodNode methodNode) {
+    return new VerifyMethod(methodNode);
   }
 }

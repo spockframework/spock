@@ -36,7 +36,7 @@ import static org.spockframework.compiler.AstUtil.primitiveConstExpression;
  * @author Peter Niederwieser
  */
 public class InteractionRewriter {
-  private final ISpecRewriteResources resources;
+  private final IRewriteResources resources;
   private final ClosureExpression activeWithOrMockClosure;
 
   // information about the interaction; filled in by parse()
@@ -52,7 +52,7 @@ public class InteractionRewriter {
   // "new InteractionBuilder(..).setCount(..).setTarget(..).setMethod(..).addArg(..).addResult(..).build()"
   private Expression builderExpr;
 
-  public InteractionRewriter(ISpecRewriteResources resources, @Nullable ClosureExpression activeWithOrMockClosure) {
+  public InteractionRewriter(IRewriteResources resources, @Nullable ClosureExpression activeWithOrMockClosure) {
     this.resources = resources;
     this.activeWithOrMockClosure = activeWithOrMockClosure;
   }

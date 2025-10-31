@@ -1,24 +1,19 @@
-ext.displayName = "Spock Framework - Temp Specs for Core Module"
+plugins {
+  id 'jvm-test-suite'
+}
 
-//configurations {
-//  junit
-//}
+ext.displayName = "Spock Framework - Spock TestKit Specs for Core Module"
 
 dependencies {
   api projects.spockCore
 
-  testRuntimeOnly libs.asm
-  testRuntimeOnly libs.bytebuddy
-  testRuntimeOnly libs.cglib
-  testRuntimeOnly libs.objenesis
-  testRuntimeOnly libs.h2database
   testRuntimeOnly libs.junit.platform.console
-  testImplementation libs.junit.platform.testkit
 
+  testImplementation libs.junit.platform.testkit
   testImplementation libs.junit.jupiter
 }
 
-tasks.named("test", Test) {
+tasks.withType(Test).configureEach {
   reports.junitXml.required = true
   reports.html.required = false
 
@@ -42,4 +37,32 @@ tasks.register("consoleLauncherTest", JavaExec) {
   args("--include-classname", ".*TestCase")
   args("--reports-dir", reportsDir)
 //  systemProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager")
+}
+
+
+if (javaVersion >= 17) {
+  testing {
+    suites {
+      junit6Test(JvmTestSuite) {
+        useJUnitJupiter(libs.versions.junit6)
+        sources {
+          groovy {
+            srcDirs = ['src/test/groovy']
+          }
+        }
+
+        dependencies {
+          implementation projects.spockCore
+
+          implementation platform(libs.junit6.bom)
+          implementation libs.junit.platform.testkit
+          implementation libs.junit.jupiter
+        }
+      }
+    }
+  }
+
+  tasks.named('check') {
+    dependsOn(testing.suites.junit6Test)
+  }
 }

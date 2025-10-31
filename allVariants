@@ -1,4 +1,4 @@
 #!/bin/sh
-for var in 2.5 3.0 4.0; do
+for var in 2.5 3.0 4.0 5.0; do
     ./gradlew -Dvariant="$var" "$@"
 done

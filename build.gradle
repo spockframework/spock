@@ -237,8 +237,8 @@ if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParam
   }
 
   if (originalStartParameterTaskNames == ["ghActionsPublish"]) {
-    if (javaVersion != javaVersions.min()) {
-      throw new IllegalArgumentException("ghActionsPublish can only be run on Java ${javaVersions.min()} but was run on $javaVersion")
+    if ((javaVersion != javaVersions.min()) && ((variant != 5.0) || (javaVersion != 11))) {
+      throw new IllegalArgumentException("ghActionsPublish can only be run on Java ${javaVersions.min()} (or 11 for variant 5.0) but was run on $javaVersion")
     }
     /*
       We want to release only snapshots directly from master, final releases will be tagged and then published from that tag.

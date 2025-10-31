@@ -39,8 +39,24 @@ Java 12+).
 Releases are available from
 https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.spockframework%22[Maven
 Central]. Development snapshots are available from
-https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/[Sonatype
+https://central.sonatype.com/repository/maven-snapshots/org/spockframework/spock-core/maven-metadata.xml[Sonatype
 OSS].
+
+==== Snapshot Releases
+
+Snapshots can be used by adding the Sonatype OSS repository:
+
+[source,groovy,subs="attributes"]
+----
+repositories {
+    // ...
+    maven { url 'https://central.sonatype.com/repository/maven-snapshots/' }
+}
+
+dependencies {
+    testImplementation 'org.spockframework:spock-core:{spock-snapshot-version}-groovy-4.0-SNAPSHOT'
+}
+----
 
 ==== Ad-Hoc Intermediate Releases
 

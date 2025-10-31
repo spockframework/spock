@@ -34,13 +34,15 @@ import static org.spockframework.util.Identifiers.*;
  * @author Peter Niederwieser
  */
 public class SpecParser implements GroovyClassVisitor {
+  private final AstNodeCache nodeCache;
   private final ErrorReporter errorReporter;
 
   private Spec spec;
   private int fieldCount = 0;
   private int featureMethodCount = 0;
 
-  public SpecParser(ErrorReporter errorReporter) {
+  public SpecParser(AstNodeCache nodeCache, ErrorReporter errorReporter) {
+    this.nodeCache = nodeCache;
     this.errorReporter = errorReporter;
   }
 
@@ -90,6 +92,8 @@ public class SpecParser implements GroovyClassVisitor {
       buildFixtureMethod(method);
     else if (isFeatureMethod(method))
       buildFeatureMethod(method);
+    else if (isVerifyMethod(method))
+      buildVerifyMethod(method);
     else buildHelperMethod(method);
   }
 
@@ -174,6 +178,31 @@ public class SpecParser implements GroovyClassVisitor {
       return;
     }
     spec.getMethods().add(feature);
+  }
+
+  private boolean isVerifyMethod(MethodNode method) {
+    boolean hasVerifyAnnotation = !method.getAnnotations(nodeCache.Verify).isEmpty();
+    boolean hasVerifyAllAnnotation = !method.getAnnotations(nodeCache.VerifyAll).isEmpty();
+    if (hasVerifyAnnotation && hasVerifyAllAnnotation) {
+      errorReporter.error(method, "Method '%s' cannot be annotated with both @Verify and @VerifyAll", method.getName());
+      return false;
+    }
+    return hasVerifyAnnotation || hasVerifyAllAnnotation;
+  }
+
+  private void buildVerifyMethod(MethodNode method) {
+    if (!method.isVoidMethod() && !method.isDynamicReturnType()) {
+      errorReporter.error("Verification helper method '%s' must have a void or dynamic return type.", method.getName());
+    }
+    method.setReturnType(nodeCache.Void);
+
+    Method verify;
+    if (method.getAnnotations(nodeCache.Verify).isEmpty()) {
+      verify = new VerifyAllMethod(spec, method);
+    } else {
+      verify = new VerifyMethod(spec, method);
+    }
+    spec.getMethods().add(verify);
   }
 
   private void buildHelperMethod(MethodNode method) {

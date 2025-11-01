@@ -16,6 +16,7 @@ import org.spockframework.util.Beta;
  * <p>If you provide a method, you can define your settings in a typesafe manner for the user,
  * e.g. with a {@link Closure} parameter to configure the mock.
  *
+ * @author Andreas Turban
  * @since 2.4
  */
 @Beta
@@ -41,5 +42,8 @@ public interface IMockMakerSettings {
     };
   }
 
+  /**
+   * @return the {@link MockMakerId} to use, must not be {@code null}.
+   */
   MockMakerId getMockMakerId();
 }

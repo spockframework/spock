@@ -16,11 +16,13 @@
 
 package org.spockframework.mock.runtime;
 
+import groovy.lang.Closure;
 import org.spockframework.mock.CannotCreateMockException;
 import org.spockframework.mock.IMockObject;
 import org.spockframework.mock.ISpockMockObject;
 import org.spockframework.mock.runtime.IMockMaker.IStaticMock;
 import org.spockframework.mock.runtime.IMockMaker.MockMakerCapability;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.Nullable;
 import org.spockframework.util.ThreadSafe;
@@ -28,6 +30,7 @@ import spock.mock.IMockMakerSettings;
 import spock.mock.MockMakerId;
 
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -145,6 +148,10 @@ public final class MockMakerRegistry {
       MockMakerId mockMakerId = mockMakerSettings.getMockMakerId();
       IMockMaker mockMaker = makerMap.get(mockMakerId);
       if (mockMaker == null) {
+        if (mockMakerId == null && (mockMakerSettings instanceof Proxy || mockMakerSettings instanceof Closure)) {
+          throw new CannotCreateMockException(settings.getMockType(), " because the MockMakerSettings returned the invalid ID 'null'. Please check that a closure did not get accidentally casted to IMockMakerSettings."
+            + " The settings object was '" + GroovyRuntimeUtil.toString(mockMakerSettings) + "'.");
+        }
         throw new CannotCreateMockException(settings.getMockType(), " because MockMaker with ID '" + mockMakerId + "' does not exist.");
       }
       verifyIsMockable(mockMaker, settings);

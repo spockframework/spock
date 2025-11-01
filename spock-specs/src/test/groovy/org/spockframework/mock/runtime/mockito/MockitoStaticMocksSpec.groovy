@@ -25,6 +25,7 @@ import org.spockframework.runtime.InvalidSpecException
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.mock.IMockMakerSettings
 import spock.mock.MockMakers
 
 import java.util.concurrent.Callable
@@ -489,6 +490,64 @@ class MockitoStaticMocksSpec extends Specification {
     expect:
     StaticClass.staticVarargsMethod("test")
     !StaticClass.staticVarargsMethod("test2")
+  }
+
+  def "SpyStatic with closure shall not lead an exception"() {
+    when:
+    SpyStatic(StaticClass) {
+
+    }
+
+    then:
+    noExceptionThrown()
+  }
+
+  def "SpyStatic with closure can specify interactions"() {
+    given:
+    SpyStatic(StaticClass) {
+      StaticClass.staticVarargsMethod("test") >> true
+    }
+
+    expect:
+    StaticClass.staticVarargsMethod("test")
+  }
+
+  def "SpyStatic with closure could use it instead of ClassName"() {
+    given:
+    SpyStatic(StaticClass) {
+      //Note: This does not have code completion support.
+      it.staticVarargsMethod("test") >> true
+    }
+
+    expect:
+    StaticClass.staticVarargsMethod("test")
+  }
+
+  def "SpyStatic with closure could use no prefix instead of ClassName"() {
+    given:
+    SpyStatic(StaticClass) {
+      //Note: This does not have code completion support.
+      staticVarargsMethod("test") >> true
+    }
+
+    expect:
+    StaticClass.staticVarargsMethod("test")
+  }
+
+  /**
+   * The IMockMakerSettings has only a single method, so it could be converted from a Groovy closure automatically.
+   * This shall check that the API produces a nice error to the user in such cases.
+   */
+  def "SpyStatic with closure casted as IMockMakerSettings shall produce nice error message"() {
+    when:
+    SpyStatic(StaticClass, {
+
+    } as IMockMakerSettings)
+
+    then:
+    def ex = thrown(CannotCreateMockException)
+    ex.message.startsWith(
+      "Cannot create mock for class $StaticClass.name because the MockMakerSettings returned the invalid ID 'null'. Please check that a closure did not get accidentally casted to IMockMakerSettings. The settings object was ")
   }
 
   static class StaticClass {

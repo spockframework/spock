@@ -165,7 +165,7 @@ subprojects {
   dependencies {
     api platform(projects.spockBom)
     implementation(project.name == "spock-gradle" ? [] : groovylibs.groovy)
-    testImplementation(platform(libs.junit.bom))
+    testImplementation(platform(libs.junit5.bom))
     testImplementation(libs.junit.platform.launcher)
   }
 

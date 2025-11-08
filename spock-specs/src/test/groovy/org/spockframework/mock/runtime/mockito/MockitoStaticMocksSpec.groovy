@@ -494,33 +494,31 @@ class MockitoStaticMocksSpec extends Specification {
     !StaticClass.staticVarargsMethod("test2")
   }
 
-  def "SpyStatic with closure shall fail with MissingMethodException because it can not auto-convert the closure to IMockMakerSettings"() {
+  def "SpyStatic with closure as IMockMakerSettings shall produce nice error message"() {
     when:
     SpyStatic(StaticClass) {
 
     }
 
     then:
-    def ex = thrown(MissingMethodException)
-    ex.type == SpecInternals
-    ex.method == "SpyStaticImpl"
-    ex.arguments[0] == this
-    ex.arguments[1] == null
-    ex.arguments[2] == null
-    ex.arguments[3] == StaticClass
-    ex.arguments[4] instanceof Closure
+    def ex = thrown(CannotCreateMockException)
+    ex.message.startsWith(
+      """Cannot create mock for class $StaticClass.name because the MockMakerSettings returned the invalid ID 'null'.
+The syntax SpyStatic(StaticClass){} is not supported, please use SpyStatic(StaticClass) without a Closure instead.""")
   }
 
-  def "SpyStatic with closure casted as IMockMakerSettings shall produce nice error message"() {
+  def "SpyStatic with closure returning something shall produce nice error message"() {
     when:
-    SpyStatic(StaticClass, {
-
-    } as IMockMakerSettings)
+    SpyStatic(StaticClass) {
+      "Dummy"
+    }
 
     then:
     def ex = thrown(CannotCreateMockException)
     ex.message.startsWith(
-      "Cannot create mock for class $StaticClass.name because the MockMakerSettings returned the invalid ID 'null'. Please check that a closure did not get accidentally casted to IMockMakerSettings. The settings object was ")
+      """Cannot create mock for class $StaticClass.name because the MockMakerSettings returned the invalid ID 'null'.
+The syntax SpyStatic(StaticClass){} is not supported, please use SpyStatic(StaticClass) without a Closure instead.""")
+    ex.cause instanceof ClassCastException
   }
 
   static class StaticClass {

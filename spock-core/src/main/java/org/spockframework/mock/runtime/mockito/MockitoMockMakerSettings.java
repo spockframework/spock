@@ -42,11 +42,6 @@ public final class MockitoMockMakerSettings implements IMockMakerSettings {
     return MockMakers.mockito.getMockMakerId();
   }
 
-  @Override
-  public MockMakerId mockMakerId() {
-    return getMockMakerId();
-  }
-
   void applySettings(MockSettings mockitoSettings) {
     requireNonNull(mockitoSettings);
     Closure<?> mockitoCode = uncheckedCast(this.mockitoCode.clone());

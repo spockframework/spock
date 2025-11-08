@@ -36,11 +36,6 @@ public interface IMockMakerSettings {
       }
 
       @Override
-      public MockMakerId mockMakerId() {
-        return id;
-      }
-
-      @Override
       public String toString() {
         return id + " default mock maker settings";
       }
@@ -51,11 +46,4 @@ public interface IMockMakerSettings {
    * @return the {@link MockMakerId} to use, must not be {@code null}.
    */
   MockMakerId getMockMakerId();
-
-  /**
-   * <p>Note: This method shall return the same as {@link #getMockMakerId()}. It is here to prevent Groovy to auto-convert Closures into {@link IMockMakerSettings} instances.</p>
-   *
-   * @return the {@link MockMakerId} to use, must not be {@code null}.
-   */
-  MockMakerId mockMakerId();
 }

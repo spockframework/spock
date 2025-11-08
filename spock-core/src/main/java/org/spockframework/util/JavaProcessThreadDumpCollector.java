@@ -16,12 +16,15 @@
 
 package org.spockframework.util;
 
+import org.codehaus.groovy.runtime.ResourceGroovyMethods;
 import org.spockframework.runtime.SpockException;
 import org.spockframework.runtime.extension.builtin.ThreadDumpUtility;
 import org.spockframework.runtime.extension.builtin.ThreadDumpUtilityType;
 
 import java.io.*;
 import java.lang.management.ManagementFactory;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -66,21 +69,23 @@ public interface JavaProcessThreadDumpCollector {
         .append(TextUtil.repeatChar('-', utilityName.length()))
         .append("\n");
 
+
+      File threadDumpFile = Files.createTempFile("Spock-threaddump", ".txt").toFile();
+
       Process process = new ProcessBuilder(command)
         .redirectErrorStream(true)
+        .redirectOutput(ProcessBuilder.Redirect.to(threadDumpFile))
         .start();
 
-      captureProcessOutput(process, builder);
       process.waitFor();
+
+      readAndDeleteFile(builder, threadDumpFile);
     }
 
-    private void captureProcessOutput(Process process, StringBuilder builder) throws IOException {
-      try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-        String line;
-        while ((line = reader.readLine()) != null) {
-          builder.append(line).append("\n");
-        }
-      }
+    private void readAndDeleteFile(StringBuilder builder, File threadDumpFile) throws IOException {
+      builder.append(ResourceGroovyMethods.getText(threadDumpFile, StandardCharsets.UTF_8.name()));
+      //noinspection ResultOfMethodCallIgnored
+      threadDumpFile.delete(); // We do not care if the temp file could not be deleted.
     }
 
     private static Path getJavaHome() {

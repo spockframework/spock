@@ -492,52 +492,17 @@ class MockitoStaticMocksSpec extends Specification {
     !StaticClass.staticVarargsMethod("test2")
   }
 
-  def "SpyStatic with closure shall not lead an exception"() {
+  def "SpyStatic with closure shall fail with MissingMethodException because it can not auto-convert the closure to IMockMakerSettings"() {
     when:
     SpyStatic(StaticClass) {
 
     }
 
     then:
-    noExceptionThrown()
+    def ex = thrown(MissingMethodException)
+    ex.message.contains("No signature of method: static org.spockframework.runtime.SpecInternals.SpyStaticImpl() is applicable for argument types")
   }
 
-  def "SpyStatic with closure can specify interactions"() {
-    given:
-    SpyStatic(StaticClass) {
-      StaticClass.staticVarargsMethod("test") >> true
-    }
-
-    expect:
-    StaticClass.staticVarargsMethod("test")
-  }
-
-  def "SpyStatic with closure could use it instead of ClassName"() {
-    given:
-    SpyStatic(StaticClass) {
-      //Note: This does not have code completion support.
-      it.staticVarargsMethod("test") >> true
-    }
-
-    expect:
-    StaticClass.staticVarargsMethod("test")
-  }
-
-  def "SpyStatic with closure could use no prefix instead of ClassName"() {
-    given:
-    SpyStatic(StaticClass) {
-      //Note: This does not have code completion support.
-      staticVarargsMethod("test") >> true
-    }
-
-    expect:
-    StaticClass.staticVarargsMethod("test")
-  }
-
-  /**
-   * The IMockMakerSettings has only a single method, so it could be converted from a Groovy closure automatically.
-   * This shall check that the API produces a nice error to the user in such cases.
-   */
   def "SpyStatic with closure casted as IMockMakerSettings shall produce nice error message"() {
     when:
     SpyStatic(StaticClass, {

@@ -333,18 +333,14 @@ public final class SpecInternals {
   }
 
   public static void SpyStaticImpl(Specification specification, String inferredName, Type inferredType, Class<?> specifiedType) {
-    createStaticMockImpl(specification, MockNature.SPY, specifiedType, null, null);
-  }
-
-  public static void SpyStaticImpl(Specification specification, String inferredName, Type inferredType, Class<?> specifiedType, Closure<?> closure) {
-    createStaticMockImpl(specification, MockNature.SPY, specifiedType, null, closure);
+    createStaticMockImpl(specification, MockNature.SPY, specifiedType, null);
   }
 
   public static void SpyStaticImpl(Specification specification, String inferredName, Type inferredType, Class<?> specifiedType, IMockMakerSettings mockMakerSettings) {
-    createStaticMockImpl(specification, MockNature.SPY, specifiedType, mockMakerSettings, null);
+    createStaticMockImpl(specification, MockNature.SPY, specifiedType, mockMakerSettings);
   }
 
-  private static void createStaticMockImpl(Specification specification, MockNature nature, Class<?> specifiedType, @Nullable IMockMakerSettings mockMakerSettings, @Nullable Closure<?> closure) {
+  private static void createStaticMockImpl(Specification specification, MockNature nature, Class<?> specifiedType, @Nullable IMockMakerSettings mockMakerSettings) {
     if (specifiedType == null) {
       throw new InvalidSpecException("The type must not be null.");
     }
@@ -353,8 +349,5 @@ public final class SpecInternals {
       options = Collections.singletonMap("mockMaker", mockMakerSettings);
     }
     createStaticMock(specification, specifiedType, nature, options);
-    if (closure != null) {
-      GroovyRuntimeUtil.invokeClosure(closure, specifiedType);
-    }
   }
 }

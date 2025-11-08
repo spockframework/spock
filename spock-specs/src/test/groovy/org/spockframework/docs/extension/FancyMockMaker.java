@@ -98,6 +98,11 @@ final class FancyMockMakerSettings implements IMockMakerSettings {
     return FancyMockMaker.ID;
   }
 
+  @Override
+  public MockMakerId mockMakerId() {
+    return getMockMakerId();
+  }
+
   public void withSerialization() {
     serialization = true;
   }

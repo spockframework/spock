@@ -1649,32 +1649,6 @@ public class MockingApi implements MockFactory {
    * Example:
    *
    * <pre>
-   *   SpyStatic(Person){
-   *      Person.staticMethod() >> "result"
-   *   }
-   * </pre>
-   *
-   * <p>Please use the class name as a prefix, instead of relying on {@code it} from Groovy.</p>
-   *
-   * <p>If you want to activate the static mocks on a different {@code Thread},
-   * please call {@link #runWithThreadAwareMocks(Runnable)} on the different {@code Thread}.
-   *
-   * @param type         the type of which the static methods shall be spied
-   * @param interactions a description of the static spy's interactions
-   */
-  @Beta
-  public <T> void SpyStatic(Class<T> type, Closure<?> interactions //Note: We can't specify here @ClosureParams or @DelegatesTo because there is no syntax to express that it means the Class object
-  ) {
-
-    throw invalidMockCreation();
-  }
-
-  /**
-   * Creates a thread-local spy for all static methods of the passed type.
-   * <p>
-   * Example:
-   *
-   * <pre>
    *   SpyStatic(Person, spock.mock.MockMakers.mockitoInline)
    * </pre>
    *
@@ -1688,6 +1662,7 @@ public class MockingApi implements MockFactory {
   public <T> void SpyStatic(Class<T> type, IMockMakerSettings mockMakerSettings) {
     throw invalidMockCreation();
   }
+
 
   /**
    * Runs the code with the thread-aware mocks activated on the current {@link Thread}.

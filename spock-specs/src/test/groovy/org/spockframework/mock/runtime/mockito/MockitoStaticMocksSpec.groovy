@@ -521,6 +521,16 @@ The syntax SpyStatic(StaticClass){} is not supported, please use SpyStatic(Stati
     ex.cause instanceof ClassCastException
   }
 
+  def "ClassCastException inside the getMockMakerId() from a non-static Spy is thrown as-is and is not processed by the SpyStatic(){} closure check"() {
+    when:
+    Spy(Runnable, mockMaker: {
+      throw new ClassCastException()
+    })
+    
+    then:
+    thrown(ClassCastException)
+  }
+
   static class StaticClass {
 
     String instanceMethod() {

@@ -525,8 +525,8 @@ The syntax SpyStatic(StaticClass){} is not supported, please use SpyStatic(Stati
     when:
     Spy(Runnable, mockMaker: {
       throw new ClassCastException()
-    })
-    
+    } as IMockMakerSettings)
+
     then:
     thrown(ClassCastException)
   }

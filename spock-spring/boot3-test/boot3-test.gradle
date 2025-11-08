@@ -20,7 +20,7 @@ plugins {
 }
 
 // Spring dependency management downgrades the jupiter version to 5.7.2 otherwise
-ext['junit-jupiter.version'] = libs.versions.junit.get()
+ext['junit-jupiter.version'] = libs.versions.junit5.get()
 
 java {
   toolchain {

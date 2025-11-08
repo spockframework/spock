@@ -22,6 +22,8 @@ import org.mockito.exceptions.base.MockitoException
 import org.spockframework.mock.CannotCreateMockException
 import org.spockframework.mock.MockUtil
 import org.spockframework.runtime.InvalidSpecException
+import org.spockframework.runtime.SpecInternals
+import org.spockframework.runtime.model.SpecInfo
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
@@ -500,7 +502,13 @@ class MockitoStaticMocksSpec extends Specification {
 
     then:
     def ex = thrown(MissingMethodException)
-    ex.message.contains("No signature of method: static org.spockframework.runtime.SpecInternals.SpyStaticImpl() is applicable for argument types")
+    ex.type == SpecInternals
+    ex.method == "SpyStaticImpl"
+    ex.arguments[0] == this
+    ex.arguments[1] == null
+    ex.arguments[2] == null
+    ex.arguments[3] == StaticClass
+    ex.arguments[4] instanceof Closure
   }
 
   def "SpyStatic with closure casted as IMockMakerSettings shall produce nice error message"() {

@@ -19,6 +19,11 @@ import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.transform.ASTTransformation;
 import org.spockframework.compiler.*;
 import org.spockframework.compiler.model.Method;
+import org.spockframework.compiler.model.VerifyMethod;
+import spock.lang.Verify;
+import spock.lang.VerifyAll;
+
+import static org.spockframework.compiler.AstUtil.hasAnnotation;
 
 abstract class BaseVerifyMethodTransform implements ASTTransformation {
 
@@ -37,27 +42,25 @@ abstract class BaseVerifyMethodTransform implements ASTTransformation {
         if (!(node instanceof MethodNode)) {
           continue;
         }
+        MethodNode methodNode = (MethodNode) node;
 
-        if (((MethodNode) node).getDeclaringClass().isDerivedFrom(nodeCache.Specification)) {
+        if (methodNode.getDeclaringClass().isDerivedFrom(nodeCache.Specification)) {
           // SpecRewriter already handles the method, so don't transform it again
           continue;
         }
 
-        boolean hasVerifyAnnotation = !((MethodNode) node).getAnnotations(nodeCache.Verify).isEmpty();
-        boolean hasVerifyAllAnnotation = !((MethodNode) node).getAnnotations(nodeCache.VerifyAll).isEmpty();
-        if (hasVerifyAnnotation && hasVerifyAllAnnotation) {
-          errorReporter.error(node, "Method '%s' cannot be annotated with both @Verify and @VerifyAll", ((MethodNode) node).getName());
+        if (hasAnnotation(node, Verify.class) && hasAnnotation(node, VerifyAll.class)) {
+          errorReporter.error(node, "Method '%s' cannot be annotated with both @Verify and @VerifyAll.", methodNode.getName());
         }
 
-        processVerificationHelperMethod(createVerifyMethod((MethodNode) node), errorReporter, sourceLookup);
+        processVerificationHelperMethod(createVerifyMethod(methodNode), errorReporter, sourceLookup);
       }
     }
   }
 
   private void processVerificationHelperMethod(Method method, ErrorReporter errorReporter, SourceLookup sourceLookup) {
     MethodNode methodAst = method.getAst();
-    if (!methodAst.isVoidMethod() && !methodAst.isDynamicReturnType()) {
-      errorReporter.error("Verification helper method '%s' must have a void or dynamic return type.", method.getName());
+    if (!VerifyMethod.verifyReturnType(methodAst, errorReporter)) {
       return;
     }
 

@@ -47,6 +47,10 @@ public class SpecialMethodCall implements ISpecialMethodCall {
   private final boolean conditionBlock;
   private final AstNodeCache nodeCache;
 
+  public SpecialMethodCall(String methodName, AstNodeCache nodeCache) {
+    this(methodName, null, null, null, null, null, false, nodeCache);
+  }
+
   public SpecialMethodCall(String methodName, Expression inferredName, Expression inferredType,
       MethodCallExpression methodCallExpr, @Nullable BinaryExpression binaryExpr,
       @Nullable ClosureExpression closureExpr, boolean conditionBlock, AstNodeCache nodeCache) {

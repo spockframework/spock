@@ -184,9 +184,14 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     // would also want to enforce this for when-blocks, but unfortunately it's not that uncommon
     // for projects to have interactions in when-blocks (Gradle, Tapestry). Before we enforce this,
     // we should at least support multiple setup-blocks.
-    if ((block instanceof ExpectBlock) || (block instanceof VerifyBlock)) {
+    if (block instanceof ExpectBlock) {
       resources.getErrorReporter().error(stat, "Interactions are not allowed in '%s' blocks. " +
           "Put them before the '%s' block or into a 'then' block.", block.getName(), block.getName());
+      return true;
+    }
+
+    if (block instanceof VerifyBlock) {
+      resources.getErrorReporter().error(stat, "Interactions are not allowed in '@Verify' and '@VerifyAll' methods.");
       return true;
     }
 

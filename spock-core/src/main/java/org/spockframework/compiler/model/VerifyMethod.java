@@ -19,6 +19,7 @@ package org.spockframework.compiler.model;
 import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.ast.stmt.Statement;
 import org.spockframework.compiler.AstUtil;
+import org.spockframework.compiler.ErrorReporter;
 
 import java.util.List;
 
@@ -37,5 +38,13 @@ public class VerifyMethod extends Method {
     block.getAst().addAll(stats);
     stats.clear();
     addBlock(block);
+  }
+
+  public static boolean verifyReturnType(MethodNode method, ErrorReporter errorReporter) {
+    if (!method.isVoidMethod() && !method.isDynamicReturnType()) {
+      errorReporter.error("Verification helper method '%s' must have a void or dynamic return type.", method.getName());
+      return false;
+    }
+    return true;
   }
 }

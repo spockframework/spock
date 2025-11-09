@@ -24,7 +24,10 @@ import java.util.List;
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.stmt.Statement;
+import spock.lang.Verify;
+import spock.lang.VerifyAll;
 
+import static org.spockframework.compiler.AstUtil.hasAnnotation;
 import static org.spockframework.util.Identifiers.*;
 
 /**
@@ -67,7 +70,7 @@ public class SpecParser implements GroovyClassVisitor {
     if (gField.isStatic()) return;
 
     Field field = new Field(spec, gField, fieldCount++);
-    field.setShared(AstUtil.hasAnnotation(gField, Shared.class));
+    field.setShared(hasAnnotation(gField, Shared.class));
     field.setOwner(owner);
     spec.getFields().add(field);
   }
@@ -181,26 +184,24 @@ public class SpecParser implements GroovyClassVisitor {
   }
 
   private boolean isVerifyMethod(MethodNode method) {
-    boolean hasVerifyAnnotation = !method.getAnnotations(nodeCache.Verify).isEmpty();
-    boolean hasVerifyAllAnnotation = !method.getAnnotations(nodeCache.VerifyAll).isEmpty();
+    boolean hasVerifyAnnotation = hasAnnotation(method, Verify.class);
+    boolean hasVerifyAllAnnotation = hasAnnotation(method, VerifyAll.class);
     if (hasVerifyAnnotation && hasVerifyAllAnnotation) {
-      errorReporter.error(method, "Method '%s' cannot be annotated with both @Verify and @VerifyAll", method.getName());
+      errorReporter.error(method, "Method '%s' cannot be annotated with both @Verify and @VerifyAll.", method.getName());
       return false;
     }
     return hasVerifyAnnotation || hasVerifyAllAnnotation;
   }
 
   private void buildVerifyMethod(MethodNode method) {
-    if (!method.isVoidMethod() && !method.isDynamicReturnType()) {
-      errorReporter.error("Verification helper method '%s' must have a void or dynamic return type.", method.getName());
-    }
+    VerifyMethod.verifyReturnType(method, errorReporter);
     method.setReturnType(nodeCache.Void);
 
     Method verify;
-    if (method.getAnnotations(nodeCache.Verify).isEmpty()) {
-      verify = new VerifyAllMethod(spec, method);
-    } else {
+    if (hasAnnotation(method, Verify.class)) {
       verify = new VerifyMethod(spec, method);
+    } else {
+      verify = new VerifyAllMethod(spec, method);
     }
     spec.getMethods().add(verify);
   }

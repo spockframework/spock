@@ -39,7 +39,6 @@ public class VerifyAllMethodRewriter extends BaseVerifyMethodRewriter {
 
   @Override
   ISpecialMethodCall createSpecialMethodCall() {
-    return new SpecialMethodCall(Identifiers.VERIFY_ALL, null, null, null,
-      null, null, false, resources.getAstNodeCache());
+    return new SpecialMethodCall(Identifiers.VERIFY_ALL, resources.getAstNodeCache());
   }
 }

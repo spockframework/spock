@@ -48,8 +48,6 @@ public class AstNodeCache {
   public final ClassNode DataVariableMultiplication = ClassHelper.makeWithoutCaching(DataVariableMultiplication.class);
   public final ClassNode DataVariableMultiplicationFactor = ClassHelper.makeWithoutCaching(DataVariableMultiplicationFactor.class);
   public final ClassNode BlockInfo = ClassHelper.makeWithoutCaching(BlockInfo.class);
-  public final ClassNode Verify = ClassHelper.makeWithoutCaching(Verify.class);
-  public final ClassNode VerifyAll = ClassHelper.makeWithoutCaching(VerifyAll.class);
   public final ClassNode Void = ClassHelper.makeWithoutCaching(void.class);
 
   public final MethodNode Specification_GetSpecificationContext =

@@ -275,7 +275,7 @@ class SpecificAssertions extends BaseAssertions {
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
-  def "fails when verification method has a non-void or -dynamic return value"() {
+  def "fails when verification method has a non-void or non-dynamic return value"() {
     when:
     compiler.compile("""
 class Assertions {
@@ -292,7 +292,7 @@ class Assertions {
     e.message.contains("Verification helper method 'isPositiveWithReturn' must have a void or dynamic return type.")
   }
 
-  def "fails when verification method has a non-void or -dynamic return value in Spec"() {
+  def "fails when verification method has a non-void or non-dynamic return value in Spec"() {
     when:
     compiler.compileSpecBody("""
 @${annotation.name}

@@ -829,7 +829,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="spock/lang/Retry.Mode.html#ITERATION" class="member-name-link">ITERATION</a> - Enum constant in enum spock.lang.<a href="spock/lang/Retry.Mode.html" title="enum in spock.lang">Retry.Mode</a></dt>
 <dd>
-<div class="block">Retry the iterations individually.</div>
+<div class="block">Retry only the feature method execution, setup and cleanup are not running on retries.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:J">J</h2>
@@ -1177,7 +1177,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="spock/lang/Retry.html" class="type-name-link" title="annotation in spock.lang">Retry</a> - Annotation Type in <a href="spock/lang/package-summary.html">spock.lang</a></dt>
 <dd>
-<div class="block">Retries the given feature if an exception occurs during execution.</div>
+<div class="block">Retries the given feature if an exception occurs during execution of the feature method.</div>
 </dd>
 <dt><a href="spock/lang/Retry.Mode.html" class="type-name-link" title="enum in spock.lang">Retry.Mode</a> - Enum in <a href="spock/lang/package-summary.html">spock.lang</a></dt>
 <dd>&nbsp;</dd>
@@ -1243,7 +1243,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="spock/lang/Retry.Mode.html#SETUP_FEATURE_CLEANUP" class="member-name-link">SETUP_FEATURE_CLEANUP</a> - Enum constant in enum spock.lang.<a href="spock/lang/Retry.Mode.html" title="enum in spock.lang">Retry.Mode</a></dt>
 <dd>
-<div class="block">Retry the feature together with the setup and cleanup methods.</div>
+<div class="block">Retry the iteration together with setup and cleanup.</div>
 </dd>
 <dt><a href="spock/lang/Shared.html" class="type-name-link" title="annotation in spock.lang">Shared</a> - Annotation Type in <a href="spock/lang/package-summary.html">spock.lang</a></dt>
 <dd>

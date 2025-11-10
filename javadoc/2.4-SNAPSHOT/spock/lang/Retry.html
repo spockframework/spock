@@ -71,7 +71,7 @@ loadScripts(document, 'script');</script>
 <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Retention.html" title="class or interface in java.lang.annotation" class="external-link">@Retention</a>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/RetentionPolicy.html#RUNTIME" title="class or interface in java.lang.annotation" class="external-link">RUNTIME</a>)
 <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Target.html" title="class or interface in java.lang.annotation" class="external-link">@Target</a>({<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/ElementType.html#TYPE" title="class or interface in java.lang.annotation" class="external-link">TYPE</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/ElementType.html#METHOD" title="class or interface in java.lang.annotation" class="external-link">METHOD</a>})
 </span><span class="modifiers">public @interface </span><span class="element-name type-name-label">Retry</span></div>
-<div class="block">Retries the given feature if an exception occurs during execution.
+<div class="block">Retries the given feature if an exception occurs during execution of the feature method.
 
  <p>Retries can be applied to feature methods and spec classes. Applying it to
  a spec class has the same effect as applying it to each feature method that
@@ -161,7 +161,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&gt;[]</span>&nbsp;<span class="element-name">exceptions</span></div>
 <div class="block">Configures which types of Exceptions should be retried.
 
- Subclasses are included if their parent class is listed.</div>
+ <p>Subclasses are included if their parent class is listed.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>array of Exception classes to retry.</dd>
@@ -202,12 +202,12 @@ loadScripts(document, 'script');</script>
 <div class="block">Condition that is evaluated to decide whether the feature should be
  retried.
 
- The configured closure is called with a delegate of type
+ <p>The configured closure is called with a delegate of type
  <code>RetryConditionContext</code>
  which provides access to the current exception and <code>Specification</code>
  instance.
 
- The feature is retried if the exception class passes the type check and the
+ <p>The feature is retried if the exception class passes the type check and the
  specified condition holds true. If no condition is specified, only the type
  check is performed.</div>
 <dl class="notes">

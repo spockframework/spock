@@ -110,11 +110,11 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code><a href="#ITERATION" class="member-name-link">ITERATION</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Retry the iterations individually.</div>
+<div class="block">Retry only the feature method execution, setup and cleanup are not running on retries.</div>
 </div>
 <div class="col-first odd-row-color"><code><a href="#SETUP_FEATURE_CLEANUP" class="member-name-link">SETUP_FEATURE_CLEANUP</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Retry the feature together with the setup and cleanup methods.</div>
+<div class="block">Retry the iteration together with setup and cleanup.</div>
 </div>
 </div>
 </section>
@@ -165,14 +165,16 @@ the order they are declared.</div>
 <section class="detail" id="ITERATION">
 <h3>ITERATION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="Retry.Mode.html" title="enum in spock.lang">Retry.Mode</a></span>&nbsp;<span class="element-name">ITERATION</span></div>
-<div class="block">Retry the iterations individually.</div>
+<div class="block">Retry only the feature method execution, setup and cleanup are not running on retries.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="SETUP_FEATURE_CLEANUP">
 <h3>SETUP_FEATURE_CLEANUP</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="Retry.Mode.html" title="enum in spock.lang">Retry.Mode</a></span>&nbsp;<span class="element-name">SETUP_FEATURE_CLEANUP</span></div>
-<div class="block">Retry the feature together with the setup and cleanup methods.</div>
+<div class="block">Retry the iteration together with setup and cleanup.
+ Even in this mode, the retry is only triggered if the feature method is failing
+ in the expected way. If the setup or cleanup is failing, the test fails immediately.</div>
 </section>
 </li>
 </ul>

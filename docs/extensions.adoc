@@ -351,63 +351,27 @@ With the flag `applyGlobalTimeoutToFixtures` you can control if the global timeo
 The `@Retry` extensions can be used for flaky integration tests, where remote systems can fail sometimes.
 By default it retries an iteration `3` times with `0` delay if either an `Exception` or `AssertionError` has been thrown, all this is configurable.
 In addition, an optional `condition` closure can be used to determine if a feature should be retried.
-It also provides special support for data driven features, offering to either retry all iterations or just the failing ones.
+In its standard mode it only retries the feature method execution, but this can be changed using `mode` to
+also run setup and cleanup on retries. Even in this mode, the retry is only triggered if the feature method is failing
+in the expected way. If the setup or cleanup is failing, the test fails immediately.
 
 [source,groovy]
 ----
-class FlakyIntegrationSpec extends Specification {
-  @Retry
-  def retry3Times() { ... }
-
-  @Retry(count = 5)
-  def retry5Times() { ... }
-
-  @Retry(exceptions=[IOException])
-  def onlyRetryIOException() { ... }
-
-  @Retry(condition = { failure.message.contains('foo') })
-  def onlyRetryIfConditionOnFailureHolds() { ... }
-
-  @Retry(condition = { instance.field != null })
-  def onlyRetryIfConditionOnInstanceHolds() { ... }
-
-  @Retry
-  def retryFailingIterations() {
-    ...
-    where:
-    data << sql.select()
-  }
-
-  @Retry(mode = Retry.Mode.FEATURE)
-  def retryWholeFeature() {
-    ...
-    where:
-    data << sql.select()
-  }
-
-  @Retry(delay = 1000)
-  def retryAfter1000MsDelay() { ... }
-}
+include::{sourcedir}/extension/RetryDocSpec.groovy[tag=example-common]
+include::{sourcedir}/extension/RetryDocSpec.groovy[tag=example-a]
 ----
 
 Retries can also be applied to spec classes which has the same effect as applying it to each feature method that isn't
-already annotated with {@code Retry}.
+already annotated with `@Retry`.
 
 [source,groovy]
 ----
-@Retry
-class FlakyIntegrationSpec extends Specification {
-  def "will be retried with config from class"() {
-    ...
-  }
-  @Retry(count = 5)
-  def "will be retried using its own config"() {
-    ...
-  }
-}
+include::{sourcedir}/extension/RetryDocSpec.groovy[tag=example-b1]
+include::{sourcedir}/extension/RetryDocSpec.groovy[tag=example-common]
+include::{sourcedir}/extension/RetryDocSpec.groovy[tag=example-b2]
 ----
 
-A {@code @Retry} annotation that is declared on a spec class is applied to all features in all subclasses as well,
+A `@Retry` annotation that is declared on a spec class is applied to all features in all subclasses as well,
 unless a subclass declares its own annotation. If so, the retries defined in the subclass are applied to all feature
 methods declared in the subclass as well as inherited ones.
 
@@ -416,25 +380,7 @@ Running `BarIntegrationSpec` will execute `inherited` and `bar` with two retries
 
 [source,groovy]
 ----
-@Retry(count = 1)
-abstract class AbstractIntegrationSpec extends Specification {
-  def inherited() {
-    ...
-  }
-}
-
-class FooIntegrationSpec extends AbstractIntegrationSpec {
-  def foo() {
-    ...
-  }
-}
-
-@Retry(count = 2)
-class BarIntegrationSpec extends AbstractIntegrationSpec {
-  def bar() {
-    ...
-  }
-}
+include::{sourcedir}/extension/RetryDocSpec.groovy[tag=example-c]
 ----
 
 Check https://github.com/spockframework/spock/blob/master/spock-specs/src/test/groovy/org/spockframework/smoke/extension/RetryFeatureExtensionSpec.groovy[RetryFeatureExtensionSpec] for more examples.

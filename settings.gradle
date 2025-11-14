@@ -104,6 +104,7 @@ if (variant == 2.5) {
   // require Java 17 which isn't supported by Groovy 2.5
   include "spock-spring:boot3-test"
   include "spock-spring:spring6-test"
+  include "spock-spring:spring7-test"
 }
 
 // https://issues.apache.org/jira/projects/TAP5/issues/TAP5-2588

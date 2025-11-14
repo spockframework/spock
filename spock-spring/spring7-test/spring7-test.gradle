@@ -1,0 +1,34 @@
+def springVersion = "7.0.0"
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(17)
+  }
+}
+
+tasks.withType(JavaCompile).configureEach {
+  javaCompiler = javaToolchains.compilerFor {
+    languageVersion = JavaLanguageVersion.of(17)
+  }
+  options.encoding = 'UTF-8'
+}
+
+dependencies {
+  implementation "org.springframework:spring-core"
+
+  testImplementation projects.spockCore
+  testImplementation projects.spockSpring
+  testImplementation libs.junit4
+  testImplementation "org.springframework:spring-context"
+  testImplementation("org.springframework:spring-test")
+
+}
+
+
+configurations.all {
+  resolutionStrategy.eachDependency {
+    if (requested.group == "org.springframework" ) {
+      useVersion(springVersion)
+    }
+  }
+}

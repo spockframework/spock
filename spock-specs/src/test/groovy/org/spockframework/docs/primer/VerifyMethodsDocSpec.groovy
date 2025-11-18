@@ -62,6 +62,41 @@ pc.clockRate >= 2333
 """ /* end::verify-helper-method-result[] */)
   }
 
+  def "simple static @Verify helper method"() {
+    when:
+    def result = runner.runSpecBody("""
+@groovy.transform.Canonical
+static class PC {
+    final String vendor
+    final int clockRate
+    final int ram
+    final String os
+}
+
+@Verify
+static matchesPreferredConfiguration(PC pc) {
+  pc.vendor == "Sunny"
+  pc.clockRate >= 2333
+  pc.ram >= 4096
+  pc.os == "Linux"
+}
+
+def "offered PC matches preferred configuration"() {
+    expect:
+    matchesPreferredConfiguration(new PC("Sunny", 1666, 4096, "Linux"))
+}
+""")
+
+    then:
+    result.failures[0].exception.message.startsWith("""\
+Condition not satisfied:
+
+pc.clockRate >= 2333
+|  |         |
+|  1666      false
+""")
+  }
+
   def "simple @VerifyAll helper method"() {
     when:
     def result = runner.runSpecBody("""
@@ -75,7 +110,7 @@ static class PC {
 
 // tag::verify-all-helper-method[]
 @VerifyAll
-void matchesPreferredConfiguration(PC pc) {
+def matchesPreferredConfiguration(PC pc) {
   pc.vendor == "Sunny"
   pc.clockRate >= 2333
   pc.ram >= 406

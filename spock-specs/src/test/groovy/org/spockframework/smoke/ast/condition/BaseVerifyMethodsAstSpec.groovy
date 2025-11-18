@@ -289,7 +289,7 @@ class Assertions {
 
     then:
     MultipleCompilationErrorsException e = thrown()
-    e.message.contains("Verification helper method 'isPositiveWithReturn' must have a void or dynamic return type.")
+    e.message.contains("Verification helper method 'isPositiveWithReturn' must have a void return type or use a dynamic return type ('def' or no declared type).")
   }
 
   def "fails when verification method has a non-void or non-dynamic return value in Spec"() {
@@ -304,7 +304,7 @@ static boolean isPositiveWithReturn(int a) {
 
     then:
     MultipleCompilationErrorsException e = thrown()
-    e.message.contains("Verification helper method 'isPositiveWithReturn' must have a void or dynamic return type.")
+    e.message.contains("Verification helper method 'isPositiveWithReturn' must have a void return type or use a dynamic return type ('def' or no declared type).")
   }
 
 }

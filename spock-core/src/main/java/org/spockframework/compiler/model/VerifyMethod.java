@@ -42,7 +42,7 @@ public class VerifyMethod extends Method {
 
   public static boolean verifyReturnType(MethodNode method, ErrorReporter errorReporter) {
     if (!method.isVoidMethod() && !method.isDynamicReturnType()) {
-      errorReporter.error("Verification helper method '%s' must have a void or dynamic return type.", method.getName());
+      errorReporter.error("Verification helper method '%s' must have a void return type or use a dynamic return type ('def' or no declared type).", method.getName());
       return false;
     }
     return true;

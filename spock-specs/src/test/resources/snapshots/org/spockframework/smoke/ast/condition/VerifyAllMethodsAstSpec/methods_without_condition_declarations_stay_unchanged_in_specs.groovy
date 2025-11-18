@@ -10,8 +10,8 @@ public static void copy(java.lang.Integer a) {
 
 @org.spockframework.runtime.model.FeatureMetadata(name = 'foo', ordinal = 0, line = 1, blocks = [@org.spockframework.runtime.model.BlockMetadata(kind = org.spockframework.runtime.model.BlockKind.EXPECT, texts = [])], parameterNames = [])
 public void $spock_feature_0_0() {
-    org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
+    org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 0)
     try {
         org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), 'true', 3, 5, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), true))

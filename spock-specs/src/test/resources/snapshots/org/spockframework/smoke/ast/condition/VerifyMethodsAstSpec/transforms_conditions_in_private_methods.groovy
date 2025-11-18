@@ -5,8 +5,8 @@ class ASpec extends Specification {
 /*--------- tag::snapshot[] ---------*/
 @spock.lang.Verify
 private void isPositive(int a) {
-    org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
+    org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     try {
         org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), 'a > 0', 17, 5, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), a) > $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), 0)))
     }
@@ -67,8 +67,8 @@ private void isPositive(int a) {
 
 @org.spockframework.runtime.model.FeatureMetadata(name = 'foo', ordinal = 0, line = 1, blocks = [@org.spockframework.runtime.model.BlockMetadata(kind = org.spockframework.runtime.model.BlockKind.EXPECT, texts = [])], parameterNames = [])
 public void $spock_feature_0_0() {
-    org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
+    org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 0)
     try {
         org.spockframework.runtime.SpockRuntime.verifyMethodCondition($spock_errorCollector, $spock_valueRecorder.reset(), '[true, false].any { it }', 3, 5, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), [$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), true), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), false)]), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(3), 'any'), new java.lang.Object[]{$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(4), { ->

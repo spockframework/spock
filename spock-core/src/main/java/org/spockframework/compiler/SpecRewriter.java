@@ -413,15 +413,15 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       method.getStatements().add(createMockControllerCall(nodeCache.MockController_LeaveScope));
     }
 
-    if (methodHasCondition) {
-      errorRecorders.defineValueRecorder(method.getStatements());
-    }
     if (method instanceof VerifyAllMethod) {
       if (methodHasCondition) {
         errorRecorders.defineErrorCollector(method.getStatements());
       }
     } else if (methodHasDeepNonGroupedCondition) {
       errorRecorders.defineErrorRethrower(method.getStatements());
+    }
+    if (methodHasCondition) {
+      errorRecorders.defineValueRecorder(method.getStatements());
     }
   }
 

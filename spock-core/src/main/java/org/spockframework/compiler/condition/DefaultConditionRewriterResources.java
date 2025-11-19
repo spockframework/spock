@@ -60,7 +60,7 @@ class DefaultConditionRewriterResources implements IRewriteResources {
 
   @Override
   public VariableExpression captureOldValue(Expression oldValue) {
-    throw new UnsupportedOperationException("captureOldValue");
+    throw new UnsupportedOperationException("This should only be called when processing a then-block");
   }
 
   @Override

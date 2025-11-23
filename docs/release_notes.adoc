@@ -71,6 +71,7 @@ will now require that the spec is annotated with <<parallel_execution.adoc#isola
 
 === Misc
 
+* Fix handling of `@Verify` and `@VerifyAll` spockIssue:2150[]
 * Fix handling of condition method calls spockPull:2162[]
 * Fix vararg handling in SpyStatic spockIssue:2161[]
 * Fix incompatibility with JUnit 6 in OSGi environment spockIssue:2231[]

@@ -14,32 +14,59 @@
 package org.spockframework.compiler.condition;
 
 import org.codehaus.groovy.ast.ASTNode;
+import org.codehaus.groovy.ast.expr.Expression;
+import org.codehaus.groovy.ast.expr.MethodCallExpression;
+import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.spockframework.compiler.AstNodeCache;
 import org.spockframework.compiler.ErrorReporter;
 import org.spockframework.compiler.IRewriteResources;
 import org.spockframework.compiler.SourceLookup;
+import org.spockframework.compiler.model.Block;
+import org.spockframework.compiler.model.Method;
 
 import static org.spockframework.util.Assert.notNull;
 
 class DefaultConditionRewriterResources implements IRewriteResources {
 
+  private final Method method;
   private final AstNodeCache nodeCache;
   private final SourceLookup lookup;
   private final ErrorReporter errorReporter;
   private final IConditionErrorRecorders errorRecorders;
 
   DefaultConditionRewriterResources(
+    Method method,
     AstNodeCache nodeCache,
     SourceLookup lookup,
     ErrorReporter errorReporter,
     IConditionErrorRecorders errorRecorders
   ) {
+    this.method = notNull(method);
     this.nodeCache = notNull(nodeCache);
     this.lookup = notNull(lookup);
     this.errorReporter = notNull(errorReporter);
     this.errorRecorders = notNull(errorRecorders);
   }
 
+  @Override
+  public Method getCurrentMethod() {
+    return method;
+  }
+
+  @Override
+  public Block getCurrentBlock() {
+    return method.getFirstBlock();
+  }
+
+  @Override
+  public VariableExpression captureOldValue(Expression oldValue) {
+    throw new UnsupportedOperationException("This should only be called when processing a then-block");
+  }
+
+  @Override
+  public MethodCallExpression getMockInvocationMatcher() {
+    return null;
+  }
 
   @Override
   public AstNodeCache getAstNodeCache() {

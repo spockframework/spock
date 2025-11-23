@@ -69,7 +69,7 @@ public class SpockTransform implements ASTTransformation {
 
     void processSpec(SourceUnit sourceUnit, ClassNode clazz, ErrorReporter errorReporter, SourceLookup sourceLookup) {
       try {
-        Spec spec = new SpecParser(errorReporter).build(clazz);
+        Spec spec = new SpecParser(nodeCache, errorReporter).build(clazz);
         spec.accept(new SpecRewriter(nodeCache, sourceLookup, errorReporter));
         spec.accept(new SpecAnnotator(nodeCache));
         // if there were no errors so far, let the variable scope visitor fix up variable scopes

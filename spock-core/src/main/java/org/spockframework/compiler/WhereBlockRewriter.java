@@ -48,7 +48,7 @@ import static org.spockframework.util.Identifiers.COMBINED;
 public class WhereBlockRewriter {
   private final WhereBlock whereBlock;
   private final FilterBlock filterBlock;
-  private final ISpecRewriteResources resources;
+  private final IRewriteResources resources;
   private final boolean defineErrorRethrower;
   private final InstanceFieldAccessChecker instanceFieldAccessChecker;
   private final ErrorRethrowerUsageDetector errorRethrowerUsageDetector;
@@ -66,7 +66,7 @@ public class WhereBlockRewriter {
   private final List<Expression> dataVariableMultiplications = new ArrayList<>();
   private int localVariableCount = 0;
 
-  private WhereBlockRewriter(WhereBlock whereBlock, FilterBlock filterBlock, ISpecRewriteResources resources, boolean defineErrorRethrower) {
+  private WhereBlockRewriter(WhereBlock whereBlock, FilterBlock filterBlock, IRewriteResources resources, boolean defineErrorRethrower) {
     this.whereBlock = whereBlock;
     this.filterBlock = filterBlock;
     this.resources = resources;
@@ -75,7 +75,7 @@ public class WhereBlockRewriter {
     errorRethrowerUsageDetector = defineErrorRethrower ? new ErrorRethrowerUsageDetector() : null;
   }
 
-  public static void rewrite(WhereBlock block, FilterBlock filterBlock, ISpecRewriteResources resources, boolean defineErrorRethrower) {
+  public static void rewrite(WhereBlock block, FilterBlock filterBlock, IRewriteResources resources, boolean defineErrorRethrower) {
     new WhereBlockRewriter(block, filterBlock, resources, defineErrorRethrower).rewrite();
   }
 
@@ -895,7 +895,7 @@ public class WhereBlockRewriter {
     instanceFieldAccessChecker.check(filterStats);
 
     if (deep.isConditionFound()) {
-      resources.getErrorRecorders().defineValueRecorder(filterStats, "");
+      resources.getErrorRecorders().defineValueRecorder(filterStats);
     }
     if (deep.isDeepNonGroupedConditionFound()) {
       resources.getErrorRecorders().defineErrorRethrower(filterStats);

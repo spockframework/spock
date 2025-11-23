@@ -24,7 +24,10 @@ import java.util.List;
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.stmt.Statement;
+import spock.lang.Verify;
+import spock.lang.VerifyAll;
 
+import static org.spockframework.compiler.AstUtil.hasAnnotation;
 import static org.spockframework.util.Identifiers.*;
 
 /**
@@ -34,13 +37,15 @@ import static org.spockframework.util.Identifiers.*;
  * @author Peter Niederwieser
  */
 public class SpecParser implements GroovyClassVisitor {
+  private final AstNodeCache nodeCache;
   private final ErrorReporter errorReporter;
 
   private Spec spec;
   private int fieldCount = 0;
   private int featureMethodCount = 0;
 
-  public SpecParser(ErrorReporter errorReporter) {
+  public SpecParser(AstNodeCache nodeCache, ErrorReporter errorReporter) {
+    this.nodeCache = nodeCache;
     this.errorReporter = errorReporter;
   }
 
@@ -65,7 +70,7 @@ public class SpecParser implements GroovyClassVisitor {
     if (gField.isStatic()) return;
 
     Field field = new Field(spec, gField, fieldCount++);
-    field.setShared(AstUtil.hasAnnotation(gField, Shared.class));
+    field.setShared(hasAnnotation(gField, Shared.class));
     field.setOwner(owner);
     spec.getFields().add(field);
   }
@@ -90,6 +95,8 @@ public class SpecParser implements GroovyClassVisitor {
       buildFixtureMethod(method);
     else if (isFeatureMethod(method))
       buildFeatureMethod(method);
+    else if (isVerifyMethod(method))
+      buildVerifyMethod(method);
     else buildHelperMethod(method);
   }
 
@@ -174,6 +181,29 @@ public class SpecParser implements GroovyClassVisitor {
       return;
     }
     spec.getMethods().add(feature);
+  }
+
+  private boolean isVerifyMethod(MethodNode method) {
+    boolean hasVerifyAnnotation = hasAnnotation(method, Verify.class);
+    boolean hasVerifyAllAnnotation = hasAnnotation(method, VerifyAll.class);
+    if (hasVerifyAnnotation && hasVerifyAllAnnotation) {
+      errorReporter.error(method, "Method '%s' cannot be annotated with both @Verify and @VerifyAll.", method.getName());
+      return false;
+    }
+    return hasVerifyAnnotation || hasVerifyAllAnnotation;
+  }
+
+  private void buildVerifyMethod(MethodNode method) {
+    VerifyMethod.verifyReturnType(method, errorReporter);
+    method.setReturnType(nodeCache.Void);
+
+    Method verify;
+    if (hasAnnotation(method, Verify.class)) {
+      verify = new VerifyMethod(spec, method);
+    } else {
+      verify = new VerifyAllMethod(spec, method);
+    }
+    spec.getMethods().add(verify);
   }
 
   private void buildHelperMethod(MethodNode method) {

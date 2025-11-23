@@ -13,23 +13,6 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     TRYCATCHBLOCK L4 L5 L6 null
     TRYCATCHBLOCK L5 L7 L6 null
    L8
-    LDC Lorg/spockframework/runtime/ErrorRethrower;.class
-    INVOKEDYNAMIC getProperty(Ljava/lang/Class;)Ljava/lang/Object; [
-      // handle kind 0x6 : INVOKESTATIC
-      org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
-      // arguments:
-      "INSTANCE", 
-      0
-    ]
-    INVOKEDYNAMIC cast(Ljava/lang/Object;)Lorg/spockframework/runtime/ErrorCollector; [
-      // handle kind 0x6 : INVOKESTATIC
-      org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
-      // arguments:
-      "()", 
-      0
-    ]
-    ASTORE 1
-   L9
     LDC Lorg/spockframework/runtime/ValueRecorder;.class
     INVOKEDYNAMIC init(Ljava/lang/Class;)Ljava/lang/Object; [
       // handle kind 0x6 : INVOKESTATIC
@@ -45,6 +28,23 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
       "()", 
       0
     ]
+    ASTORE 1
+   L9
+    LDC Lorg/spockframework/runtime/ErrorRethrower;.class
+    INVOKEDYNAMIC getProperty(Ljava/lang/Class;)Ljava/lang/Object; [
+      // handle kind 0x6 : INVOKESTATIC
+      org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
+      // arguments:
+      "INSTANCE", 
+      0
+    ]
+    INVOKEDYNAMIC cast(Ljava/lang/Object;)Lorg/spockframework/runtime/ErrorCollector; [
+      // handle kind 0x6 : INVOKESTATIC
+      org/codehaus/groovy/vmplugin/v8/IndyInterface.bootstrap(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;I)Ljava/lang/invoke/CallSite;
+      // arguments:
+      "()", 
+      0
+    ]
     ASTORE 2
    L10
     ALOAD 0
@@ -52,15 +52,15 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     INVOKESTATIC org/spockframework/runtime/SpockRuntime.callBlockEntered (Lspock/lang/Specification;I)V
    L0
     LINENUMBER 4 L0
-    ALOAD 1
     ALOAD 2
+    ALOAD 1
     INVOKEVIRTUAL org/spockframework/runtime/ValueRecorder.reset ()Lorg/spockframework/runtime/ValueRecorder;
     LDC "true"
     ICONST_4
     ICONST_5
     ACONST_NULL
-    ALOAD 2
-    ALOAD 2
+    ALOAD 1
+    ALOAD 1
     ICONST_0
     INVOKEVIRTUAL org/spockframework/runtime/ValueRecorder.startRecordingValue (I)I
     ICONST_1
@@ -69,11 +69,11 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     INVOKESTATIC org/spockframework/runtime/SpockRuntime.verifyCondition (Lorg/spockframework/runtime/ErrorCollector;Lorg/spockframework/runtime/ValueRecorder;Ljava/lang/String;IILjava/lang/Object;Ljava/lang/Object;)V
     GOTO L11
    L1
-   FRAME FULL [apackage/TestSpec org/spockframework/runtime/ErrorCollector org/spockframework/runtime/ValueRecorder] [java/lang/Throwable]
+   FRAME FULL [apackage/TestSpec org/spockframework/runtime/ValueRecorder org/spockframework/runtime/ErrorCollector] [java/lang/Throwable]
     ASTORE 3
    L12
-    ALOAD 1
     ALOAD 2
+    ALOAD 1
     LDC "true"
     ICONST_4
     ICONST_5
@@ -189,8 +189,8 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     LINENUMBER 9 L18
     RETURN
     LOCALVARIABLE this Lapackage/TestSpec; L8 L18 0
-    LOCALVARIABLE $spock_errorCollector Lorg/spockframework/runtime/ErrorCollector; L9 L18 1
-    LOCALVARIABLE $spock_valueRecorder Lorg/spockframework/runtime/ValueRecorder; L10 L18 2
+    LOCALVARIABLE $spock_valueRecorder Lorg/spockframework/runtime/ValueRecorder; L9 L18 1
+    LOCALVARIABLE $spock_errorCollector Lorg/spockframework/runtime/ErrorCollector; L10 L18 2
     LOCALVARIABLE $spock_condition_throwable Ljava/lang/Throwable; L12 L3 3
     LOCALVARIABLE $spock_ex Ljava/lang/Throwable; L15 L7 5
     MAXSTACK = 9

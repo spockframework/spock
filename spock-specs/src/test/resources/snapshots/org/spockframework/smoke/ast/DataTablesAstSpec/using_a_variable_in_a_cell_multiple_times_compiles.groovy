@@ -5,8 +5,8 @@ class ASpec extends Specification {
   def "aFeature"() {
 /*--------- tag::snapshot[] ---------*/
 public void $spock_feature_0_0(java.lang.Object a, java.lang.Object b, java.lang.Object result) {
-    org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
+    org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 0)
     try {
         org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), 'a + b == result', 2, 9, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(4), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), a) + $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), b)) == $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(3), result)))

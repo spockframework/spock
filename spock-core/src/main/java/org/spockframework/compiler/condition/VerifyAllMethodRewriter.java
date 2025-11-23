@@ -14,21 +14,31 @@
 
 package org.spockframework.compiler.condition;
 
-import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.ast.stmt.Statement;
 import org.spockframework.compiler.IRewriteResources;
+import org.spockframework.compiler.ISpecialMethodCall;
+import org.spockframework.compiler.SpecialMethodCall;
+import org.spockframework.compiler.model.Method;
+import org.spockframework.util.Identifiers;
 
 import java.util.List;
 
 public class VerifyAllMethodRewriter extends BaseVerifyMethodRewriter {
 
-  public VerifyAllMethodRewriter(MethodNode methodNode, IRewriteResources resources) {
-    super(methodNode, resources);
+  public VerifyAllMethodRewriter(Method method, IRewriteResources resources) {
+    super(method, resources);
   }
 
   @Override
-  void defineErrorCollector(List<Statement> statements) {
-    resources.getErrorRecorders().defineErrorCollector(statements);
+  void defineErrorCollector(boolean methodHasCondition, boolean methodHasDeepNonGroupedCondition,
+                            List<Statement> statements) {
+    if (methodHasCondition) {
+      resources.getErrorRecorders().defineErrorCollector(statements);
+    }
   }
 
+  @Override
+  ISpecialMethodCall createSpecialMethodCall() {
+    return new SpecialMethodCall(Identifiers.VERIFY_ALL, resources.getAstNodeCache());
+  }
 }

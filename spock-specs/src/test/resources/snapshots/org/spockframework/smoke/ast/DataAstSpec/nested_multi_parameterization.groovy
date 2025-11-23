@@ -6,8 +6,8 @@ class ASpec extends Specification {
 /*--------- tag::snapshot[] ---------*/
 @org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 1, blocks = [@org.spockframework.runtime.model.BlockMetadata(kind = org.spockframework.runtime.model.BlockKind.EXPECT, texts = []), @org.spockframework.runtime.model.BlockMetadata(kind = org.spockframework.runtime.model.BlockKind.WHERE, texts = [])], parameterNames = ['a', 'b'])
 public void $spock_feature_0_0(java.lang.Object a, java.lang.Object b) {
-    org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
+    org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 0)
     try {
         org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), 'a == b', 1, 83, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), a) == $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), b)))

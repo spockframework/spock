@@ -31,6 +31,7 @@ public interface ISpecVisitor {
   void visitExpectBlock(ExpectBlock block) throws Exception;
   void visitWhenBlock(WhenBlock block) throws Exception;
   void visitThenBlock(ThenBlock block) throws Exception;
+  void visitVerifyBlock(VerifyBlock block) throws Exception;
   void visitFilterBlock(FilterBlock block) throws Exception;
   void visitCleanupBlock(CleanupBlock block) throws Exception;
   void visitWhereBlock(WhereBlock block) throws Exception;

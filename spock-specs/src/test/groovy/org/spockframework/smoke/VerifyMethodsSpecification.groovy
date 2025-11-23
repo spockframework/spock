@@ -22,18 +22,19 @@ import spock.lang.Verify
 class VerifyMethodsSpecification extends Specification {
 
   @Verify
-  private static void isPositive(int x) {
+  private static isPositive(int x) {
+    [true, false].any { it }
     x > 0
   }
 
   private static class Assertions {
     @Verify
-    private static void isPositive(int x) {
+    private static isPositive(int x) {
       x > 0
     }
 
     @Verify
-    private static void isPositiveAndEven(int x) {
+    private static isPositiveAndEven(int x) {
       x > 0
       x % 2 == 0
     }

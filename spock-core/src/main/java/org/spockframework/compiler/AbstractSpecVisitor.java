@@ -43,6 +43,8 @@ public class AbstractSpecVisitor implements ISpecVisitor {
   @Override
   public void visitThenBlock(ThenBlock block) throws Exception {}
   @Override
+  public void visitVerifyBlock(VerifyBlock block) throws Exception {}
+  @Override
   public void visitCleanupBlock(CleanupBlock block) throws Exception {}
   @Override
   public void visitWhereBlock(WhereBlock block) throws Exception {}

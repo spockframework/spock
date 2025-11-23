@@ -16,11 +16,13 @@
 
 package org.spockframework.mock.runtime;
 
+import groovy.lang.Closure;
 import org.spockframework.mock.CannotCreateMockException;
 import org.spockframework.mock.IMockObject;
 import org.spockframework.mock.ISpockMockObject;
 import org.spockframework.mock.runtime.IMockMaker.IStaticMock;
 import org.spockframework.mock.runtime.IMockMaker.MockMakerCapability;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.Nullable;
 import org.spockframework.util.ThreadSafe;
@@ -28,6 +30,7 @@ import spock.mock.IMockMakerSettings;
 import spock.mock.MockMakerId;
 
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -77,7 +80,7 @@ public final class MockMakerRegistry {
     MockMakerId preferredMockMakerId;
     if (preferredMockMakerParam != null) {
       preferredMockMakerId = preferredMockMakerParam.getMockMakerId();
-      if (makerMap.get(preferredMockMakerParam.getMockMakerId()) == null) {
+      if (makerMap.get(preferredMockMakerId) == null) {
         throw new IllegalStateException("No IMockMaker with ID '" + preferredMockMakerId + "' exists, but was request via mockMaker.preferredMockMaker configuration. Is a runtime dependency missing?");
       }
     } else {
@@ -142,15 +145,35 @@ public final class MockMakerRegistry {
   public <T> T makeMockInternal(IMockCreationSettings settings, BiFunction<IMockMaker, IMockCreationSettings, T> code) throws CannotCreateMockException {
     IMockMakerSettings mockMakerSettings = settings.getMockMakerSettings();
     if (mockMakerSettings != null) {
-      MockMakerId mockMakerId = mockMakerSettings.getMockMakerId();
+      MockMakerId mockMakerId = getMockMakerId(settings, mockMakerSettings);
       IMockMaker mockMaker = makerMap.get(mockMakerId);
       if (mockMaker == null) {
+        checkForStaticMockUsageWithClosure(settings, mockMakerSettings, mockMakerId, null);
         throw new CannotCreateMockException(settings.getMockType(), " because MockMaker with ID '" + mockMakerId + "' does not exist.");
       }
       verifyIsMockable(mockMaker, settings);
       return code.apply(mockMaker, settings);
     }
     return createWithAppropriateMockMaker(settings, code);
+  }
+
+  private static MockMakerId getMockMakerId(IMockCreationSettings settings, IMockMakerSettings mockMakerSettings) {
+    try {
+      return mockMakerSettings.getMockMakerId();
+    } catch (ClassCastException ex) {
+      checkForStaticMockUsageWithClosure(settings, mockMakerSettings, null, ex);
+      throw ex;
+    }
+  }
+
+  private static void checkForStaticMockUsageWithClosure(IMockCreationSettings settings, IMockMakerSettings mockMakerSettings, @Nullable MockMakerId mockMakerId, @Nullable Throwable cause) {
+    if (settings.isStaticMock() && (mockMakerSettings instanceof Proxy || mockMakerSettings instanceof Closure)) {
+      String nature = settings.getMockNature().toString();
+      throw new CannotCreateMockException(settings.getMockType(), " because the MockMakerSettings returned the invalid ID '" + mockMakerId + "'."
+        + "\nThe syntax " + nature + "Static(" + settings.getMockType().getSimpleName() + "){} is not supported, please use " + nature + "Static(" + settings.getMockType().getSimpleName() + ") without a Closure instead."
+        , cause
+      );
+    }
   }
 
   /**

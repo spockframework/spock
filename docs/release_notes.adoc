@@ -62,7 +62,7 @@ will now require that the spec is annotated with <<parallel_execution.adoc#isola
 
 ////
 
-== 2.4-M7 (tbd)
+== 2.4-M7 (2025-11-23)
 
 === Highlights
 

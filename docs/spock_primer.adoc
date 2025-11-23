@@ -577,7 +577,7 @@ false                         ...
 
 Not very helpful. Fortunately, we can do better:
 
-[#at-verify-helper-method]]
+[#at-verify-helper-method]
 === Using `@Verify` helper methods to assert expectations
 
 [source,groovy,indent=0]
@@ -688,7 +688,7 @@ Alternatively, `verifyAll` conditions can be extracted into a helper method anno
 include::{sourcedir}/primer/VerifyMethodsDocSpec.groovy[tag=verify-all-helper-method]
 ----
 
-It has the same return type constraints as the <<at-verify-helper-method,`@Verify`>> methods.
+It has the same return type constraints as the <<at-verify-helper-method,@Verify>> methods.
 
 == Using `verifyEach` to assert on each element of an `Iterable`
 

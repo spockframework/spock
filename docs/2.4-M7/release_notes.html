@@ -1,0 +1,3270 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.26">
+<meta name="author" content="Peter Niederwieser, Leonard Brünings, The Spock Framework Team">
+<title>Release Notes</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+<style>
+  .includeSourceLinkerTable tr td:first-child {
+    padding: 0;
+  }
+</style>
+</head>
+<body id="release-notes" class="article">
+<div id="header">
+<h1>Release Notes</h1>
+<div class="details">
+<span id="author" class="author">Peter Niederwieser, Leonard Brünings, The Spock Framework Team</span><br>
+<span id="revnumber">version 2.4-M7</span>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_2_4_m7_2025_11_23"><a class="anchor" href="#_2_4_m7_2025_11_23"></a><a class="link" href="#_2_4_m7_2025_11_23">2.4-M7 (2025-11-23)</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_highlights"><a class="anchor" href="#_highlights"></a><a class="link" href="#_highlights">Highlights</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add support for Groovy 5.0 <a href="https://github.com/spockframework/spock/issues/2196">#2196</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_misc"><a class="anchor" href="#_misc"></a><a class="link" href="#_misc">Misc</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Improve Spock is also tested to run correctly on Java 25 LTS <a href="https://github.com/spockframework/spock/pull/2212">#2212</a></p>
+</li>
+<li>
+<p>Fix handling of <code>@Verify</code> and <code>@VerifyAll</code> <a href="https://github.com/spockframework/spock/issues/2150">#2150</a></p>
+</li>
+<li>
+<p>Fix handling of condition method calls <a href="https://github.com/spockframework/spock/pull/2162">#2162</a></p>
+</li>
+<li>
+<p>Fix vararg handling in <code>SpyStatic</code> <a href="https://github.com/spockframework/spock/issues/2161">#2161</a></p>
+</li>
+<li>
+<p>Fix incompatibility with JUnit 6 in OSGi environment <a href="https://github.com/spockframework/spock/issues/2231">#2231</a></p>
+</li>
+<li>
+<p>Fix OSGi metadata by pinning the <code>Require-Capability:osgi.ee=JavaSE</code> to Java <code>8</code> <a href="https://github.com/spockframework/spock/pull/2233">#2233</a></p>
+</li>
+<li>
+<p>Fix NPE in <code>SpecRunHistory.sortFeatures</code> when duration is missing <a href="https://github.com/spockframework/spock/issues/2234">#2234</a></p>
+</li>
+<li>
+<p>Fix <code>Retry</code> extension does not mesh with <code>TestAbortedException</code> and <code>PendingFeature</code> <a href="https://github.com/spockframework/spock/issues/1863">#1863</a></p>
+</li>
+<li>
+<p>Fix display of caught exceptions within <code>verifyEach</code> blocks <a href="https://github.com/spockframework/spock/pull/2163">#2163</a></p>
+</li>
+<li>
+<p>Fix extensions that call <code>invocation.proceed()</code> multiple times like <code>@Retry</code> does <a href="https://github.com/spockframework/spock/issues/1862">#1862</a></p>
+</li>
+<li>
+<p>Fix setting the whole argument array of an invocation <a href="https://github.com/spockframework/spock/pull/2240">#2240</a></p>
+</li>
+<li>
+<p>Fix <code>SpyStatic()</code> with an interaction closure throws NullPointerException <a href="https://github.com/spockframework/spock/pull/2254">#2254</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Andreas Turban, Björn Kautler, Christoph Loy, Leonard Brünings, Thanos Tsiamis</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_4_m6_2025_04_15"><a class="anchor" href="#_2_4_m6_2025_04_15"></a><a class="link" href="#_2_4_m6_2025_04_15">2.4-M6 (2025-04-15)</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_highlights_2"><a class="anchor" href="#_highlights_2"></a><a class="link" href="#_highlights_2">Highlights</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add support for defining condition blocks with implicit assertions in helper methods annotated with <code>@Verify</code> or <code>@VerifyAll</code> <a href="https://github.com/spockframework/spock/pull/2112">#2112</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p><em>This affects users of the <code>@Snapshot</code> extension, only if you were using the snapshotter in parent specification classes.</em><br>
+<code>@Snapshot</code> used to look up snapshots in directories named after the class containing feature methods. Now, the snapshots will be loaded from directories named after the bottom class in the specification hierarchy. The motivation of the change is to allow users to define features in base specification classes, but overwrite expected snapshots per child specification.
+<a href="https://github.com/spockframework/spock/pull/2112">#2112</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_misc_2"><a class="anchor" href="#_misc_2"></a><a class="link" href="#_misc_2">Misc</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Improve publish module-alignment metadata <a href="https://github.com/spockframework/spock/pull/2082">#2082</a></p>
+</li>
+<li>
+<p>Improve render multidimensional arrays in comparisons and invocation matchers <a href="https://github.com/spockframework/spock/pull/2107">#2107</a></p>
+</li>
+<li>
+<p>Improve replace unnecessary reflection <a href="https://github.com/spockframework/spock/pull/2115">#2115</a></p>
+</li>
+<li>
+<p>Fix ExtensionException in OSGi environment for global extension <a href="https://github.com/spockframework/spock/issues/2076">#2076</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>This issue was introduced with <a href="https://github.com/spockframework/spock/pull/1995">#1995</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Fix <code>@RestoreSystemProperties</code> not restoring state between iterations of a data-driven feature <a href="https://github.com/spockframework/spock/issues/2104">#2104</a></p>
+</li>
+<li>
+<p>Fix <code>VerifyError: Stack map does not match the one at exception handler</code> introduced in 2.4-M5 <a href="https://github.com/spockframework/spock/issues/2080">#2080</a></p>
+</li>
+<li>
+<p>Fix throw <code>SpockMultipleFailuresError</code> instead of a generic <code>MultipleFailuresError</code> in case of multiple failed assertions <a href="https://github.com/spockframework/spock/pull/2112">#2112</a></p>
+</li>
+<li>
+<p>Fix cross-multiplication of multi-assignment data providers <a href="https://github.com/spockframework/spock/pull/2078">#2078</a></p>
+</li>
+<li>
+<p>Fix using the same previous data table column multiple times in the same cell <a href="https://github.com/spockframework/spock/pull/2084">#2084</a></p>
+</li>
+<li>
+<p>Fix unintuitive behavior by removing the optimization which data provider is remembered in a multiplication <a href="https://github.com/spockframework/spock/pull/2119">#2119</a></p>
+</li>
+<li>
+<p>Fix several bugs in cross-multiplication implementation <a href="https://github.com/spockframework/spock/pull/2123">#2123</a></p>
+</li>
+<li>
+<p>Fix filter blocks with shared fields and derived data variables <a href="https://github.com/spockframework/spock/pull/2088">#2088</a></p>
+</li>
+<li>
+<p>Fix combined labels with comments being ignored <a href="https://github.com/spockframework/spock/pull/2121">#2121</a></p>
+</li>
+<li>
+<p>Fix boxed Boolean <code>is</code> getter methods not properly mocked in Groovy &#8656; 3 <a href="https://github.com/spockframework/spock/issues/2131">#2131</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Andreas Turban, Björn Kautler, Christoph Loy, Marcin Zajączkowski, Pavlo Shevchenko</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_4_m5_2025_01_07"><a class="anchor" href="#_2_4_m5_2025_01_07"></a><a class="link" href="#_2_4_m5_2025_01_07">2.4-M5 (2025-01-07)</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_highlights_3"><a class="anchor" href="#_highlights_3"></a><a class="link" href="#_highlights_3">Highlights</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add support for combining two or more data providers using cartesian product <a href="https://github.com/spockframework/spock/issues/1062">#1062</a></p>
+</li>
+<li>
+<p>Add support for a <code>filter</code> block after a <code>where</code> block to filter out unwanted iterations <a href="https://github.com/spockframework/spock/pull/1927">#1927</a></p>
+</li>
+<li>
+<p>Add <a href="extensions.html#block-listener"><code>IBlockListener</code></a> extension point to listen to block execution events within feature methods <a href="https://github.com/spockframework/spock/pull/1575">#1575</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_misc_3"><a class="anchor" href="#_misc_3"></a><a class="link" href="#_misc_3">Misc</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add <code>globalTimeout</code> to the  <code>@Timeout</code> extension to apply a timeout to all features in a specification, configurable via the Spock configuration file <a href="https://github.com/spockframework/spock/pull/1986">#1986</a></p>
+</li>
+<li>
+<p>Add new <a href="extensions.html#default-value-provider"><code>IDefaultValueProviderExtension</code></a> extension point to add support for special classes in the Stub&#8217;s default <code>EmptyOrDummyResponse</code> <a href="https://github.com/spockframework/spock/pull/1994">#1994</a></p>
+</li>
+<li>
+<p>Add support for Groovy-4-style range expressions <a href="https://github.com/spockframework/spock/issues/1956">#1956</a></p>
+</li>
+<li>
+<p>Add <code>IStatelessAnnotationDrivenExtension</code> to allow a single extension instance to be reused across all specifications <a href="https://github.com/spockframework/spock/pull/2055">#2055</a></p>
+</li>
+<li>
+<p>Add new well-known versions to <code>Jvm</code> helper to support versions up to <code>29</code> <a href="https://github.com/spockframework/spock/pull/2057">#2057</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Built-in extensions have been updated to use this new interface where applicable</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Add best-effort error reporting for interactions on final methods when using the <code>byte-buddy</code> mock maker <a href="https://github.com/spockframework/spock/issues/2039">#2039</a></p>
+</li>
+<li>
+<p>Add support for <code>@FailsWith</code> to assert an exception message <a href="https://github.com/spockframework/spock/issues/2039">#2039</a></p>
+</li>
+<li>
+<p>Add support for accessing the <code>IStore</code> via <code>ISpecificationContext</code> <a href="https://github.com/spockframework/spock/pull/2064">#2064</a></p>
+</li>
+<li>
+<p>Add support for ContextClassLoader when loading optional classes via <code>ReflectionUtil</code> <a href="https://github.com/spockframework/spock/pull/1995">#1995</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>This enables the loading of optional classes in, e.g., OSGi environments</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Improve <code>@Timeout</code> extension will now use virtual threads if available <a href="https://github.com/spockframework/spock/pull/1986">#1986</a></p>
+</li>
+<li>
+<p>Improve mock argument matching; types constraints or arguments in interactions can now handle primitive types like <code>_ as int</code> <a href="https://github.com/spockframework/spock/issues/1974">#1974</a></p>
+</li>
+<li>
+<p>Improve <code>verifyEach</code> to accept an optional second index parameter for the assertion block closure <a href="https://github.com/spockframework/spock/pull/2043">#2043</a></p>
+</li>
+<li>
+<p>Improve size of data providers is no longer calculated multiple times but only once <a href="https://github.com/spockframework/spock/pull/2032">#2032</a></p>
+</li>
+<li>
+<p>Improve documentation about data providers and <code>size()</code> calls <a href="https://github.com/spockframework/spock/issues/2022">#2022</a></p>
+</li>
+<li>
+<p>Improve <code>EmbeddedSpecRunner</code> and <code>EmbeddedSpecCompiler</code> now support the construction with a custom <code>ClassLoader</code> <a href="https://github.com/spockframework/spock/pull/1988">#1988</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>This allows the use of these classes in an OSGi environment, where the class imports in the embedded spec are not visible to the Spock OSGi bundle ClassLoader</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Fix a mocking issue with the ByteBuddy MockMaker when using multiple classloaders in Java 21 <a href="https://github.com/spockframework/spock/issues/2017">#2017</a></p>
+</li>
+<li>
+<p>Fix the mocking of final classes via <code>@SpringBean</code> and <code>@SpringSpy</code> <a href="https://github.com/spockframework/spock/issues/1960">#1960</a></p>
+</li>
+<li>
+<p>Fix exception when using <code>@RepeatUntilFailure</code> with a data provider with unknown iteration amount <a href="https://github.com/spockframework/spock/pull/2031">#2031</a></p>
+</li>
+<li>
+<p>Fix compile error with single explicit assert in switch expression branch <a href="https://github.com/spockframework/spock/issues/1845">#1845</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Andreas Turban, Björn Kautler, Christoph Loy, Marcin Zajączkowski</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_4_m4_2024_03_21"><a class="anchor" href="#_2_4_m4_2024_03_21"></a><a class="link" href="#_2_4_m4_2024_03_21">2.4-M4 (2024-03-21)</a></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Fix nested regex finding in conditions <a href="https://github.com/spockframework/spock/pull/1931">#1931</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Fixes <a href="https://github.com/spockframework/spock/issues/1930">#1930</a> a regression introduced in M2 by <a href="https://github.com/spockframework/spock/pull/1921">#1921</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Björn Kautler,</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_4_m3_2024_03_21"><a class="anchor" href="#_2_4_m3_2024_03_21"></a><a class="link" href="#_2_4_m3_2024_03_21">2.4-M3 (2024-03-21)</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_breaking_changes_2"><a class="anchor" href="#_breaking_changes_2"></a><a class="link" href="#_breaking_changes_2">Breaking Changes</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p><em>Most users will probably be unaffected by this change as it only becomes relevant in a multithreaded situation where multiple threads do interaction invocations that care about shared state.</em><br>
+Calculated responses for interactions (<code>&gt;&gt; { &#8230;&#8203; }</code>) previously were all executed synchronized on the respective mock controller instance, so could safely mutate shared state to a certain degree, even if the invocations were happening
+on different threads.
+This also caused that one response calculation could not wait on something happening in another response calculation, as they were all executed sequentially due to the synchronization.
+Starting with this release, the response calculations are no longer happening synchronized.
+If you depend on shared state in such calculations, you now have to make sure yourself, that this is done in a thread-safe manner.
+<a href="https://github.com/spockframework/spock/pull/1910">#1910</a></p>
+</li>
+<li>
+<p><em>This should not affect most users, only if you were subclassing <code>SingleResponseGenerator</code> and doing unusual things.</em><br>
+<code>SingleResponseGenerator#isAtEndOfCycle</code> is now <code>final</code> and <code>SingleResponseGenerator#doRespond</code> is now <code>protected</code>.
+When subclassing <code>SingleResponseGenerator</code> it does not make sense to override the first method, and it does not make sense to call the second method from somewhere else.
+<a href="https://github.com/spockframework/spock/pull/1910">#1910</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_misc_4"><a class="anchor" href="#_misc_4"></a><a class="link" href="#_misc_4">Misc</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add option to create Groovy spies with existing instances <a href="https://github.com/spockframework/spock/pull/1825">#1825</a></p>
+</li>
+<li>
+<p>Improve Spock&#8217;s documentation by automatically linking source snippets in the docs to the code <a href="https://github.com/spockframework/spock/pull/1904">#1904</a></p>
+</li>
+<li>
+<p>Improve <code>@Retry</code> extension parallel-safeness <a href="https://github.com/spockframework/spock/pull/1701">#1701</a></p>
+</li>
+<li>
+<p>Improve <code>@RepeatUntilFailure</code> by allowing multiple annotations in the same specification <a href="https://github.com/spockframework/spock/pull/1912">#1912</a></p>
+</li>
+<li>
+<p><span class="line-through">Improve collection matchers by supporting them in nested in complex assertions <a href="https://github.com/spockframework/spock/pull/1921">#1921</a></span></p>
+</li>
+<li>
+<p>Improve stacktrace filtering by also handling suppressed exceptions <a href="https://github.com/spockframework/spock/pull/1923">#1923</a></p>
+</li>
+<li>
+<p>Fix possible deadlock when blocking in mock response generators <a href="https://github.com/spockframework/spock/pull/1910">#1910</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Fix fallout of <a href="https://github.com/spockframework/spock/pull/1885">#1885</a> introduced in M2</p>
+</li>
+<li>
+<p>This actually fixes the issues: <a href="https://github.com/spockframework/spock/issues/583">#583</a>, <a href="https://github.com/spockframework/spock/issues/1882">#1882</a>, <a href="https://github.com/spockframework/spock/issues/1899">#1899</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Fix possible <code>StackOverflowError</code> when filtering exception cause loops <a href="https://github.com/spockframework/spock/pull/1922">#1922</a></p>
+</li>
+<li>
+<p>Fix NullPointerException after exception in data provider <a href="https://github.com/spockframework/spock/pull/1925">#1925</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Andreas Turban, Björn Kautler, Marcin Zajączkowski</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_4_m2_2024_02_26"><a class="anchor" href="#_2_4_m2_2024_02_26"></a><a class="link" href="#_2_4_m2_2024_02_26">2.4-M2 (2024-02-26)</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_highlights_4"><a class="anchor" href="#_highlights_4"></a><a class="link" href="#_highlights_4">Highlights</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Spock now supports pluggable <a href="extensions.html#mock-makers">mock makers</a> loaded via ServiceLoader <a href="https://github.com/spockframework/spock/pull/1746">#1746</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>This allows external libraries to contribute mocking logic to Spock and use the same API for the users</p>
+</li>
+<li>
+<p>You can select the used mock maker during mock creation: <code>Mock(mockMaker:MockMakers.byteBuddy)</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Added <a href="extensions.html#mock-makers-mockito">mockito</a> mock maker <a href="https://github.com/spockframework/spock/pull/1753">#1753</a> which supports:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Mocking of final classes and final methods</p>
+</li>
+<li>
+<p>Mocking of static methods</p>
+</li>
+<li>
+<p>Mocking of classes and interface from different classloaders <a href="https://github.com/spockframework/spock/pull/1878">#1878</a></p>
+</li>
+<li>
+<p>Requires <code>org.mockito:mockito-core</code> &gt;= 4.11 in the test class path</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Added support for mocking of static methods also for Java code with the new API <code>SpyStatic()</code> <a href="https://github.com/spockframework/spock/pull/1756">#1756</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>The <a href="interaction_based_testing.html#static-mocks">static mock methods</a> will delegate the creation to the mock makers</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Add <a href="spock_primer.html#verify-each">verifyEach</a> method to perform assertions on each element of an <code>Iterable</code> <a href="https://github.com/spockframework/spock/pull/1887">#1887</a></p>
+</li>
+<li>
+<p>Add <a href="extensions.html#parameter-injection">annotation extensions for parameters</a> <a href="https://github.com/spockframework/spock/pull/1599">#1599</a></p>
+</li>
+<li>
+<p>Add support for <a href="extensions.html#extension-store">keeping state in extensions</a> <a href="https://github.com/spockframework/spock/pull/1692">#1692</a></p>
+</li>
+<li>
+<p>Add <a href="extensions.html#spock-interceptors">feature-scoped interceptors</a> <a href="https://github.com/spockframework/spock/pull/1844">#1844</a></p>
+</li>
+<li>
+<p>Add <code>@Snapshot</code> extension for <a href="extensions.html#snapshot-testing">snapshot testing</a> <a href="https://github.com/spockframework/spock/pull/1873">#1873</a></p>
+</li>
+<li>
+<p>Add <code>!!</code> as <a href="spock_primer.html#opt-out-of-condition-handling">opt-out operator for assertions</a> <a href="https://github.com/spockframework/spock/pull/1532">#1532</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_breaking_changes_3"><a class="anchor" href="#_breaking_changes_3"></a><a class="link" href="#_breaking_changes_3">Breaking Changes</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Calling <code>old(&#8230;&#8203;)</code> with multiple arguments is now a compilation error. Previously the additional arguments were simply ignored.</p>
+</li>
+<li>
+<p>Creating <code>GroovyMock</code>/<code>GroovyStub</code>/<code>GroovySpy</code> for an already mocked type will now fail.</p>
+</li>
+<li>
+<p>Creating a global <code>GroovyMock</code>/<code>GroovyStub</code>/<code>GroovySpy</code> when <a href="parallel_execution.html#parallel-execution">parallel execution</a> is enabled,
+will now require that the spec is annotated with <a href="parallel_execution.html#isolated-execution">@Isolated</a> or <code>@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)</code>. See <a href="interaction_based_testing.html#global-mocks-parallel-execution">Global mocks and parallel execution</a> <a href="https://github.com/spockframework/spock/pull/1848">#1848</a></p>
+</li>
+<li>
+<p><code>@TempDir</code> <code>spock.tempDir.keep</code> has been replaced by <code>spock.tempdir.cleanup</code>. See <a href="extensions.html#temp-dir-cleanup">TempDir Cleanup</a> <a href="https://github.com/spockframework/spock/pull/1525">#1525</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_misc_5"><a class="anchor" href="#_misc_5"></a><a class="link" href="#_misc_5">Misc</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add support for parameter injection of <code>@TempDir</code></p>
+</li>
+<li>
+<p>Add cleanup switch for <code>@TempDir</code> <a href="https://github.com/spockframework/spock/pull/1525">#1525</a></p>
+</li>
+<li>
+<p>Add support for creation of global Groovy mocks for abstract classes <a href="https://github.com/spockframework/spock/pull/1754">#1754</a></p>
+</li>
+<li>
+<p>Add optional reason to <code>@ResourceLock</code> <a href="https://github.com/spockframework/spock/pull/1890">#1890</a></p>
+</li>
+<li>
+<p>Add optional reason to <code>@Execution</code> <a href="https://github.com/spockframework/spock/pull/1576">#1576</a></p>
+</li>
+<li>
+<p>Add <code>onTimeout</code> support for <code>PollingConditions</code> <a href="https://github.com/spockframework/spock/pull/1853">#1853</a></p>
+</li>
+<li>
+<p>Add <code>SpecInfo#getAll&#8230;&#8203;Methods()</code> methods <a href="https://github.com/spockframework/spock/pull/1770">#1770</a></p>
+</li>
+<li>
+<p>Add array support to collection conditions <a href="https://github.com/spockframework/spock/pull/1734">#1734</a></p>
+</li>
+<li>
+<p>Add support for logging thread dumps when <a href="extensions.html#timeout-extension">@Timeout interrupts</a> are ignored <a href="https://github.com/spockframework/spock/pull/1658">#1658</a></p>
+</li>
+<li>
+<p>Add implied features to force execution of features even when removed by a build tool <a href="https://github.com/spockframework/spock/pull/1598">#1598</a></p>
+</li>
+<li>
+<p>Improve StackTraceFilter by ignoring <code>java.lang.invoke.*</code> <a href="https://github.com/spockframework/spock/pull/1892">#1892</a></p>
+</li>
+<li>
+<p>Improve <code>@TempDir</code> field injection, now it happens before field initialization, so it can be used by other field initializers.</p>
+</li>
+<li>
+<p>Improve Spock-Compiler does not use wrapper types anymore <a href="https://github.com/spockframework/spock/pull/1765">#1765</a></p>
+</li>
+<li>
+<p>Improve reduce lock contention of the <code>byte-buddy</code> mock maker, when multiple mocks are created concurrently <a href="https://github.com/spockframework/spock/pull/1778">#1778</a></p>
+</li>
+<li>
+<p>Improve <code>@Use</code> on feature and fixture method for parallel execution <a href="https://github.com/spockframework/spock/pull/1691">#1691</a></p>
+</li>
+<li>
+<p>Improve IDE support</p>
+<div class="ulist">
+<ul>
+<li>
+<p>by adding a closure signature hint that derives closure argument type from variable type <a href="https://github.com/spockframework/spock/pull/1785">#1785</a></p>
+</li>
+<li>
+<p>by adding missing closure hints for Spy(T, Closure) <a href="https://github.com/spockframework/spock/pull/1786">#1786</a></p>
+</li>
+<li>
+<p>by adding GDSL/DSLD for ConditionalExtension&#8217;s annotations <a href="https://github.com/spockframework/spock/pull/1808">#1808</a></p>
+</li>
+<li>
+<p>by making <code>spock.gdsl</code> fail-safe and cover some more cases <a href="https://github.com/spockframework/spock/pull/1783">#1783</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Improve RunContexts behavior in multithreaded executions <a href="https://github.com/spockframework/spock/pull/1758">#1758</a>, <a href="https://github.com/spockframework/spock/pull/1846">#1846</a></p>
+</li>
+<li>
+<p>Improve generic handling by replacing <code>gentyref</code> code with <a href="https://github.com/leangen/geantyref">geantyref</a> library <a href="https://github.com/spockframework/spock/pull/1743">#1743</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>This is now a required dependency used by spock: <code>io.leangen.geantyref:geantyref:1.3.14</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Improve handling of passing <code>null</code> to <code>thrown()</code> to be consistent with mock object creation <a href="https://github.com/spockframework/spock/pull/1799">#1799</a></p>
+</li>
+<li>
+<p>Improve <code>old(&#8230;&#8203;)</code> calls by validating their argument count <a href="https://github.com/spockframework/spock/pull/1810">#1810</a></p>
+</li>
+<li>
+<p>Improve robustness of the AST transformation against missing classes in the compile classpath <a href="https://github.com/spockframework/spock/pull/1704">#1704</a></p>
+</li>
+<li>
+<p>Improve handling of <code>shared.</code> conditions in <code>@IgnoreIf</code>/<code>@Requires</code>, the condition is now checked before creating data providers <a href="https://github.com/spockframework/spock/pull/1711">#1711</a></p>
+</li>
+<li>
+<p>Fix issue with mocks of Groovy classes, where the Groovy MOP for <code>@Internal</code> methods was not honored by the <code>byte-buddy</code> mock maker <a href="https://github.com/spockframework/spock/pull/1729">#1729</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>This fixes multiple issues with Groovy MOP: <a href="https://github.com/spockframework/spock/issues/1501">#1501</a>, <a href="https://github.com/spockframework/spock/issues/1452">#1452</a>, <a href="https://github.com/spockframework/spock/issues/1608">#1608</a> and <a href="https://github.com/spockframework/spock/issues/1145">#1145</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Improve support for generic return types for mocks <a href="https://github.com/spockframework/spock/pull/1731">#1731</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>This fixes the issues: <a href="https://github.com/spockframework/spock/issues/520">#520</a>, <a href="https://github.com/spockframework/spock/issues/1163">#1163</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Fix the lifecycle of simple features <a href="https://github.com/spockframework/spock/pull/1675">#1675</a></p>
+</li>
+<li>
+<p>Fix exception when configured <code>baseDir</code> was not existing, now <code>@TempDir</code> will create the baseDir directory if it is missing.</p>
+</li>
+<li>
+<p>Fix bad error message for collection conditions, when one of the operands is <code>null</code></p>
+</li>
+<li>
+<p>Fix docs about initializer method interceptors <a href="https://github.com/spockframework/spock/pull/1666">#1666</a></p>
+</li>
+<li>
+<p><span class="line-through">Fix possible deadlock, when blocking in mock response generators <a href="https://github.com/spockframework/spock/pull/1885">#1885</a></span></p>
+<div class="ulist">
+<ul>
+<li>
+<p><span class="line-through">This fixes the issues: <a href="https://github.com/spockframework/spock/issues/583">#583</a>, <a href="https://github.com/spockframework/spock/issues/1882">#1882</a></span></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Fix SpringSpy not working with <code>DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD</code> <a href="https://github.com/spockframework/spock/pull/1869">#1869</a></p>
+</li>
+<li>
+<p>Fix null handling for collection conditions <a href="https://github.com/spockframework/spock/pull/1858">#1858</a></p>
+</li>
+<li>
+<p>Fix interceptor contexts <a href="https://github.com/spockframework/spock/pull/1676">#1676</a></p>
+</li>
+<li>
+<p>Fix properly call <code>IRunListener.specSkipped</code> and <code>.featureSkipped</code> <a href="https://github.com/spockframework/spock/pull/1811">#1811</a></p>
+</li>
+<li>
+<p>Fix defining responses for additionalInterfaces <a href="https://github.com/spockframework/spock/pull/1730">#1730</a></p>
+</li>
+<li>
+<p>Fix lost execution mode for iteration nodes of implied data-driven features <a href="https://github.com/spockframework/spock/pull/1615">#1615</a></p>
+</li>
+<li>
+<p>Fix docs how to register all possible interceptors <a href="https://github.com/spockframework/spock/pull/1667">#1667</a>, <a href="https://github.com/spockframework/spock/pull/1824">#1824</a></p>
+</li>
+<li>
+<p>Document <code>@ConditionBlock</code> Annotation <a href="https://github.com/spockframework/spock/pull/1709">#1709</a></p>
+</li>
+<li>
+<p>Document <code>old</code>-Method <a href="https://github.com/spockframework/spock/pull/1708">#1708</a></p>
+</li>
+<li>
+<p>Document for DetachedMockFactory <a href="https://github.com/spockframework/spock/pull/1728">#1728</a></p>
+</li>
+<li>
+<p>Clarify documentation for global Mocks <a href="https://github.com/spockframework/spock/pull/1755">#1755</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release:  Andreas Turban, Björn Kautler, Goooler, Jérôme Prinet, Marcin Zajączkowski, Michał Wiśniewski, Nelson Osacky, Pavlo Shevchenko, RahulGautamSingh, Said Boudjelda, Tasuku Nakagawa, jochenberger, soosue</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_4_m1_2022_11_30"><a class="anchor" href="#_2_4_m1_2022_11_30"></a><a class="link" href="#_2_4_m1_2022_11_30">2.4-M1 (2022-11-30)</a></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Fix issues with Spring 6/Spring Boot 3 <a href="https://github.com/spockframework/spock/pull/1541">#1541</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_3_2022_09_29"><a class="anchor" href="#_2_3_2022_09_29"></a><a class="link" href="#_2_3_2022_09_29">2.3 (2022-09-29)</a></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Add RepeatUntilFailure extension <a href="https://github.com/spockframework/spock/pull/1522">#1522</a></p>
+</li>
+<li>
+<p>Fix problem with TempDir failing when using a custom class that extends from <code>File</code> or <code>Path</code> <a href="https://github.com/spockframework/spock/pull/1519">#1519</a></p>
+</li>
+<li>
+<p>Fix issue with <code>Object</code> methods on interface spies <a href="https://github.com/spockframework/spock/pull/1529">#1529</a></p>
+</li>
+<li>
+<p>Fix equality checking of Mocks that implement <code>Comparable</code> <a href="https://github.com/spockframework/spock/pull/1323">#1323</a></p>
+</li>
+<li>
+<p>Validate uniqueness of fixture methods per specification class <a href="https://github.com/spockframework/spock/pull/1521">#1521</a></p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The changes to equality checking for <code>Comparable</code> mocks can lead to different behavior when no explicit <code>compareTo</code> interactions was defined.
+For example, Groovy will use <code>compareTo</code> to check equality when classes implement <code>Compareable</code>.
+Until now, the mock would return <code>0</code> for default invocations, which would lead to the objects being considered equal.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Jackson Popkin</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_2_2022_08_31"><a class="anchor" href="#_2_2_2022_08_31"></a><a class="link" href="#_2_2_2022_08_31">2.2 (2022-08-31)</a></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Support for <code>@SpringBean</code> and <code>@SpringSpy</code> marked with <code>@Primary</code> <a href="https://github.com/spockframework/spock/pull/1503">#1503</a></p>
+</li>
+<li>
+<p>Fix issue that <code>displayName</code> values for the <code>Specification</code>, which were changed by extensions such as <a href="extensions.html#title-and-narrative-extension">@Title</a>, not being picked up. <a href="https://github.com/spockframework/spock/pull/1509">#1509</a></p>
+</li>
+<li>
+<p>Update to JUnit 5.9.0</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Alexander Kriegisch, Marcin Zajączkowski, Jonny Carter, alopukhov, Jerome Prinet, Matthew Moss, BJ Hargrave, konradczajka</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_2_m3_2022_07_15"><a class="anchor" href="#_2_2_m3_2022_07_15"></a><a class="link" href="#_2_2_m3_2022_07_15">2.2-M3 (2022-07-15)</a></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Add support for <code>IterationSelector</code> to run individual iterations</p>
+</li>
+<li>
+<p>Update to JUnit 5.9.0-RC1</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Marc Philipp</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_2_m2_2022_07_15"><a class="anchor" href="#_2_2_m2_2022_07_15"></a><a class="link" href="#_2_2_m2_2022_07_15">2.2-M2 (2022-07-15)</a></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Add junit-platform <code>TestTag</code> support with the <a href="extensions.html#test-tag-extension">@Tag</a> extension <a href="https://github.com/spockframework/spock/pull/1467">#1467</a></p>
+</li>
+<li>
+<p>Add <code>IDataDriver</code> extension point and refactor data provider handling <a href="https://github.com/spockframework/spock/pull/1479">#1479</a></p>
+</li>
+<li>
+<p>Add <a href="data_driven_testing.html#multi-data-pipe-named">named deconstruction</a> for multi variable datapipes.
+This might lead to changed behavior results if the data object implements <code>Map</code> but supports both positional <code>getAt(int)</code> and named <code>getAt(String)</code> access. In earlier versions, the positional access was used, but now the named access will be used. <a href="https://github.com/spockframework/spock/pull/1463">#1463</a></p>
+</li>
+<li>
+<p>Add custom class support to <code>@TempDir</code>, you can use any class that has a single <code>java.io.File</code> or <code>java.nio.file.Path</code> as constructor parameter <a href="https://github.com/spockframework/spock/pull/1430">#1430</a></p>
+</li>
+<li>
+<p>Improve <code>@Stepwise</code> can be applied to data-driven feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations is one iteration fails. <a href="https://github.com/spockframework/spock/pull/1442">#1442</a></p>
+</li>
+<li>
+<p>Improve <code>EmbeddedSpecCompiler</code> by making package declaration configurable in <code>EmbeddedSpecCompiler</code></p>
+</li>
+<li>
+<p>Improve do not evaluate feature-skipping conditions for skipped specs <a href="https://github.com/spockframework/spock/pull/1459">#1459</a></p>
+</li>
+<li>
+<p>Improve behavior when trying to run Spock with unsupported Groovy version in IDEA <a href="https://github.com/spockframework/spock/issues/1421">#1421</a></p>
+</li>
+<li>
+<p>Improve Java 17 compatibility by using new <code>invokeDefault</code> instead of reflection</p>
+</li>
+<li>
+<p>Fix compatibility with certain locales, for example <code>tr_TR</code> <a href="https://github.com/spockframework/spock/issues/1414">#1414</a></p>
+</li>
+<li>
+<p>Fix Spring 6 incompatibility <a href="https://github.com/spockframework/spock/issues/1428">#1428</a></p>
+</li>
+<li>
+<p>Fix test reporting issue with Maven, where an error on the Specification level was not visible <a href="https://github.com/spockframework/spock/issues/1444">#1444</a></p>
+</li>
+<li>
+<p>Fix context pollution in <code>IterationNode.around()</code> <a href="https://github.com/spockframework/spock/issues/1441">#1441</a></p>
+</li>
+<li>
+<p>Fix Discard unnecessary state in <code>ConfineMetaClassChangesInterceptor</code> <a href="https://github.com/spockframework/spock/pull/1460">#1460</a></p>
+</li>
+<li>
+<p>Fix make <code>EnableSharedInjection</code> public <a href="https://github.com/spockframework/spock/pull/1472">#1472</a></p>
+</li>
+<li>
+<p>Fix gradle module metadata dependencies <a href="https://github.com/spockframework/spock/pull/1490">#1490</a></p>
+</li>
+<li>
+<p>Remove runtime dependency on Jetbrains Annotations <a href="https://github.com/spockframework/spock/pull/1468">#1468</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Alexander Kriegisch, Marcin Zajączkowski, Jonny Carter, alopukhov, Jerome Prinet, Matthew Moss, BJ Hargrave</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_2_m1_2022_02_16"><a class="anchor" href="#_2_2_m1_2022_02_16"></a><a class="link" href="#_2_2_m1_2022_02_16">2.2-M1 (2022-02-16)</a></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Add Groovy 4 support <a href="https://github.com/spockframework/spock/pull/1382">#1382</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>No other changes to the 2.1 release.</p>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Marcin Zajączkowski</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_1_2022_02_15"><a class="anchor" href="#_2_1_2022_02_15"></a><a class="link" href="#_2_1_2022_02_15">2.1 (2022-02-15)</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>No functional changes to 2.1-M2.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_official_spock_logo"><a class="anchor" href="#_official_spock_logo"></a><a class="link" href="#_official_spock_logo">Official Spock Logo</a></h2>
+<div class="sectionbody">
+<div class="imageblock text-center">
+<div class="content">
+<img src="images/spock-main-logo.png" alt="Spock Logo" width="20%">
+</div>
+</div>
+<div class="paragraph">
+<p>The Spock Framework Project has an official logo.
+Many thanks to Ayşe Altınsoy (@AltinsoyAyse) for creating the logo through many iterations.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_misc_6"><a class="anchor" href="#_misc_6"></a><a class="link" href="#_misc_6">Misc</a></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Documentation fixes</p>
+</li>
+<li>
+<p>Build maintenance</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Marc Philipp, Miles Thomason, BJ Hargrave, Marcin Zajączkowski, Lőrinc Pap, Felipe Pedrosa, Marcin Świerczyński, Benedikt Ritter, Alexander Kriegisch, Jérôme Prinet, Pin Zhang</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_1_m2_2021_11_12"><a class="anchor" href="#_2_1_m2_2021_11_12"></a><a class="link" href="#_2_1_m2_2021_11_12">2.1-M2 (2021-11-12)</a></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Fix issue with generated gradle module metadata that caused issues with consumers.</p>
+</li>
+<li>
+<p>Update JUnit, ASM, ByteBuddy dependencies.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_1_m1_2021_11_12"><a class="anchor" href="#_2_1_m1_2021_11_12"></a><a class="link" href="#_2_1_m1_2021_11_12">2.1-M1 (2021-11-12)</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_highlights_5"><a class="anchor" href="#_highlights_5"></a><a class="link" href="#_highlights_5">Highlights</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add <a href="utilities.html#collection-conditions">collection conditions</a> <a href="https://github.com/spockframework/spock/issues/1372">#1372</a></p>
+</li>
+<li>
+<p>Add support for selecting individual iterations via their unique ID (IDE support required). <a href="https://github.com/spockframework/spock/pull/1376">#1376</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_breaking_changes_4"><a class="anchor" href="#_breaking_changes_4"></a><a class="link" href="#_breaking_changes_4">Breaking Changes</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add <code>data.</code> support to conditional extensions <a href="https://github.com/spockframework/spock/issues/1360">#1360</a>.
+This replaces the  current behavior of accessing data variables without any prefix.
+See <a href="extensions.html#precondition-context">Precondition Context</a> for more details.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_misc_7"><a class="anchor" href="#_misc_7"></a><a class="link" href="#_misc_7">Misc</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add exception translation to JUnit4 Rules <a href="https://github.com/spockframework/spock/pull/1342">#1342</a></p>
+</li>
+<li>
+<p>Add option to omit feature name from iterations <a href="https://github.com/spockframework/spock/pull/1386">#1386</a>
+and add additional <a href="data_driven_testing.html#unroll-tokens">Special Tokens</a> to unroll patterns.</p>
+</li>
+<li>
+<p>Add optional reason to <code>@Requires</code> and <code>@IgnoreIf</code> <a href="https://github.com/spockframework/spock/pull/1362">#1362</a></p>
+</li>
+<li>
+<p>Add <code>shared.</code> support to conditional extensions <a href="https://github.com/spockframework/spock/pull/1359">#1359</a>.
+See <a href="extensions.html#precondition-context">Precondition Context</a> for more details.</p>
+</li>
+<li>
+<p>Set the owner for condition closures on spec annotations <a href="https://github.com/spockframework/spock/pull/1357">#1357</a></p>
+<div class="paragraph">
+<p>This allows access to static methods when <code>@IgnoreIf</code>, <code>@Requires</code> and <code>@PendingFeatureIf</code> is used on a Specification.</p>
+</div>
+</li>
+<li>
+<p>Update bnd Gradle plugin to 6.0.0 (OSGI) <a href="https://github.com/spockframework/spock/pull/1377">#1377</a></p>
+</li>
+<li>
+<p>Fix selector ordering issue <a href="https://github.com/spockframework/spock/pull/1375">#1375</a></p>
+</li>
+<li>
+<p>Fix <code>@TempDir</code> not working for <code>@Shared</code> inherited fields <a href="https://github.com/spockframework/spock/pull/1373">#1373</a></p>
+</li>
+<li>
+<p>Fix JUnit rule run order <a href="https://github.com/spockframework/spock/pull/1363">#1363</a></p>
+</li>
+<li>
+<p>Prevent removal of ErrorSpecNode from execution hierarchy <a href="https://github.com/spockframework/spock/pull/1358">#1358</a></p>
+<div class="paragraph">
+<p>As the ErrorSpecNode does not have children it would get removed
+when trying to select specific tests methods
+For example, gradle will report that no test were found,
+and not report the actual error.</p>
+</div>
+</li>
+<li>
+<p>Fix double invocation of IRunListener.beforeSpec and IRunListener.afterSpec <a href="https://github.com/spockframework/spock/pull/1344">#1344</a></p>
+</li>
+<li>
+<p>Fix regression with multi-assignment of method call result <a href="https://github.com/spockframework/spock/pull/1333">#1333</a></p>
+</li>
+<li>
+<p>Fix Build MethodSource with the correct spec class name <a href="https://github.com/spockframework/spock/pull/1345">#1345</a></p>
+<div class="paragraph">
+<p>Prior to this fix, all <code>SpockNode</code> that use a <code>MethodSource</code>
+did not use the actual test class of the discovered method, and
+instead used the declaring class. This was problematic for inherited test
+methods, since they appeared to come from the declaring class instead of
+the current test class. In addition, the Maven Surefire provider failed
+to match such methods when executing tests matching a mask (e.g., via
+<code>-Dtest=*MaskTest</code>).</p>
+</div>
+</li>
+<li>
+<p>Automatically test on CI with JDK 17 (only <code>-groovy-3.0</code> variant)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Marc Philipp, Miles Thomason, BJ Hargrave, Marcin Zajączkowski, Lőrinc Pap, Felipe Pedrosa, Marcin Świerczyński, Benedikt Ritter</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_0_2021_05_17"><a class="anchor" href="#_2_0_2021_05_17"></a><a class="link" href="#_2_0_2021_05_17">2.0 (2021-05-17)</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_highlights_6"><a class="anchor" href="#_highlights_6"></a><a class="link" href="#_highlights_6">Highlights</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Spock is now a test engine based on the JUnit Platform</p>
+</li>
+<li>
+<p>Spock now supports <a href="parallel_execution.html#parallel-execution">Parallel Execution</a> on the spec and feature level, with powerful tools for shared resource access.</p>
+</li>
+<li>
+<p>Support for Groovy 3</p>
+</li>
+<li>
+<p>Data driven tests are now unrolled by default with a more informative naming scheme</p>
+</li>
+<li>
+<p>Data driven tests can now declare a subset of parameters, which are injected by name instead of position.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>... and many more, read the full release notes for every detail.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_migrating_from_1_x"><a class="anchor" href="#_migrating_from_1_x"></a><a class="link" href="#_migrating_from_1_x">Migrating from 1.x</a></h3>
+<div class="paragraph">
+<p>The <a href="migration_guide.html#migration-guide-2-0">Migration Guide 1.x - 2.0</a> covers the major breaking changes between 1.3 and 2.0</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_breaking_changes_from_2_0_m5"><a class="anchor" href="#_breaking_changes_from_2_0_m5"></a><a class="link" href="#_breaking_changes_from_2_0_m5">Breaking Changes (from 2.0-M5)</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Remove <code>@ResourceLockChildren</code> again, as JUnit Platform 5.7.2 makes it obsolete.
+With the update a <code>READ</code> lock on a parent node, does not force same thread execution on its children.
+If you are one of the few that have already used <code>@ResourceLockChildren</code>, just replace it with <code>@ResourceLock</code>.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_misc_8"><a class="anchor" href="#_misc_8"></a><a class="link" href="#_misc_8">Misc</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Fix NPE if variable is initialized using a method with the same in features with cleanup blocks or using thrown condition <a href="https://github.com/spockframework/spock/issues/1266">#1266</a> <a href="https://github.com/spockframework/spock/issues/1313">#1313</a></p>
+</li>
+<li>
+<p>Fix implicit this conversion after bugfix in Groovy 3.0.8 <a href="https://github.com/spockframework/spock/issues/1318">#1318</a></p>
+</li>
+<li>
+<p>Fix extension-provided method arguments in fixture methods <a href="https://github.com/spockframework/spock/issues/1305">#1305</a></p>
+</li>
+<li>
+<p>Update <code>Jvm</code> helper to support versions up to 23 (next LTS release)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors (all 2.0 Milestones): Björn Kautler, Marcin Zajączkowski, DQYuan, Marcin Erdmann, Alexander Kriegisch, Jasper Vandemalle, Tom Wieczorek, Josh Soref, Vaidotas Valuckas, Raymond Augé, Roman Tretiak, Camilo Jorquera, Shil Sinha, Ryan Gardner, k3v1n0x90</p>
+</div>
+<div class="paragraph">
+<p>Special thanks goes to Marc Philipp who helped a lot with the integration of the JUnit Platform.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_0_m5_2021_03_23"><a class="anchor" href="#_2_0_m5_2021_03_23"></a><a class="link" href="#_2_0_m5_2021_03_23">2.0-M5 (2021-03-23)</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_breaking_changes_5"><a class="anchor" href="#_breaking_changes_5"></a><a class="link" href="#_breaking_changes_5">Breaking Changes</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>ReportLogExtension</code> vestiges were removed. As this extension was mostly used for an unreleased Spock module, this won&#8217;t affect many users.
+If you are using a <a href="extensions.html#spock-configuration-file">Spock Configuration File</a> with a <code>report</code> section,
+then you must delete everything from this section except for <code>issueNamePrefix</code> and <code>issueUrlPrefix</code>.
+These two properties are still supported and used by the <code>@Issue</code> extension.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_misc_9"><a class="anchor" href="#_misc_9"></a><a class="link" href="#_misc_9">Misc</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add support for injection into <code>@Shared</code> fields in <code>spock-spring</code> module which users can opt-in for by adding
+<code>@EnableSharedInjection</code> to the specification. <a href="https://github.com/spockframework/spock/issues/76">#76</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Add new <code>displayName</code> via <code>INameable</code> for <code>SpecInfo</code>, <code>FeatureInfo</code>, and <code>IterationInfo</code>.
+This field can be set via extensions to change the reported name.
+The existing iteration <code>NameProvider</code> now also sets the <code>displayName</code> instead of the <code>name</code>.
+Modifying the <code>name</code> instead of <code>displayName</code> is now considered <code>deprecated</code> for extensions.
+<a href="https://github.com/spockframework/spock/issues/1236">#1236</a></p>
+</li>
+<li>
+<p>Add support for constructor injection for extensions</p>
+</li>
+<li>
+<p>Improve final field handling.
+Final fields are now transformed similar to shared fields, so that we can still delay the initialization but keep them
+unmodifiable to user code. <a href="https://github.com/spockframework/spock/issues/1011">#1011</a></p>
+</li>
+<li>
+<p>Improve parallel extensions to support inheritance <a href="https://github.com/spockframework/spock/issues/1245">#1245</a></p>
+</li>
+<li>
+<p>Improve PollingConditions</p>
+</li>
+<li>
+<p>Improve some AST transformation code regarding error handling</p>
+</li>
+<li>
+<p>Deprecate <code>AbstractGlobalExtension</code> and replace with <code>IGlobalExtension</code></p>
+</li>
+<li>
+<p>Remove unnecessary try-finally construct for assertions</p>
+</li>
+<li>
+<p>Fix ErrorSpecNode throw Exception in <code>prepare</code> instead of <code>execute</code>
+this fixes an issue that interceptors for <code>prepare</code>, <code>before</code>, and <code>around</code>
+were still executed and any Exception they throw would hide the actual cause.</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1294">#1294</a> swallowing of unrecoverable Errors</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1260">#1260</a> Change InteractionRewriter to keep casting of ListExpressions intact</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1282">#1282</a> Make TempDirInterceptor safe for parallel invocation of iterations</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1267">#1267</a> Retry extension behavior for unrolled tests</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1267">#1267</a> Retry extension behavior for unrolled tests</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1229">#1229</a> <code>@TempDir</code> not working for inherited fields</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1232">#1232</a> compile error for nested conditions without top-level condition</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1256">#1256</a> handling of <code>is</code> as getter for boolean properties on Mocks</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1270">#1270</a> handling of <code>is</code> as getter for boolean properties on GroovyMocks</p>
+</li>
+<li>
+<p>Fix <code>ErrorSpecNode</code> to re-throw <code>Exception</code> in <code>prepare</code> instead of <code>execute</code>,
+this fixes an issue that interceptors for <code>prepare</code>, <code>before</code>, and <code>around</code>
+were still executed and any Exception they throw would hide the actual cause.</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1263">#1263</a> ExceptionAdapterExtension to also handle inherited fixture methods</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1279">#1279</a> Cast data variables with type coercion to the declared parameter type</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Marcin Erdmann, Björn Kautler, Alexander Kriegisch, Josh Soref, Vaidotas Valuckas</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_0_m4_2020_11_01"><a class="anchor" href="#_2_0_m4_2020_11_01"></a><a class="link" href="#_2_0_m4_2020_11_01">2.0-M4 (2020-11-01)</a></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Added <a href="parallel_execution.html#parallel-execution">Parallel Execution</a> support</strong></p>
+</li>
+<li>
+<p>Add a way to register <code>ConfigurationObject</code> globally without the need for a global extension.</p>
+</li>
+<li>
+<p>Annotations for local extensions can now be defined as <code>@Repeatable</code> and applied multiple times to the same target.
+Spock will handle this appropriately and call the extensions <code>visitSpecAnnotations</code> method with all annotations.
+If these methods are not overwritten, they forward to the usual <code>visitSpecAnnotation</code> methods once for each annotation.</p>
+</li>
+<li>
+<p><code>@ConfineMetaClassChanges</code>, <code>@Issue</code>, <code>@IgnoreIf</code>, <code>@PendingFeatureIf</code>, <code>@Requires</code>, <code>@See</code>, <code>@Subject</code>, <code>@Use</code>, and <code>@UseModules</code> are now repeatable annotations</p>
+</li>
+<li>
+<p><code>@Requires</code>, <code>@IgnoreIf</code> and <code>@PendingFeatureIf</code> can now access instance fields, shared fields and instance methods
+by using the <code>instance.</code> qualifier inside the condition closure.</p>
+</li>
+<li>
+<p><code>AbstractAnnotationDrivenExtension</code> is now deprecated and its logic was moved to <code>default</code> methods of
+<code>IAnnotationDrivenExtension</code> which should be implemented directly now instead of extending the abstract class.</p>
+</li>
+<li>
+<p>Add <code>@TempDir</code> built-in extension</p>
+</li>
+<li>
+<p><code>@PendingFeature</code> and <code>@PendingFeatureIf</code> can now be used together</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1158">#1158</a> Fix strange bug with setter/getter handling of mocks in groovy</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1216">#1216</a> perform argument coercion for <code>GroovyMock</code> method arguments</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1169">#1169</a> check skipped state in Node.prepare and do nothing if already skipped</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1200">#1200</a> name clashes where variables that are named like method calls destroy the method call</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1202">#1202</a> NullPointerException with array initializers</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/994">#994</a> don&#8217;t treat nested closures in argument constraints as implicit assertions anymore</p>
+</li>
+<li>
+<p>Replace <code>hamcrest-core</code> dependency by <code>hamcrest</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Björn Kautler, Marcin Zajączkowski, DQYuan, Tom Wieczorek, Alexander Kriegisch, Jasper Vandemalle</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_0_m3_2020_06_11"><a class="anchor" href="#_2_0_m3_2020_06_11"></a><a class="link" href="#_2_0_m3_2020_06_11">2.0-M3 (2020-06-11)</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_breaking_changes_6"><a class="anchor" href="#_breaking_changes_6"></a><a class="link" href="#_breaking_changes_6">Breaking Changes</a></h3>
+<div class="sect3">
+<h4 id="_sputnik_runner_removed_an_alternative"><a class="anchor" href="#_sputnik_runner_removed_an_alternative"></a><a class="link" href="#_sputnik_runner_removed_an_alternative">Sputnik Runner removed (an alternative)</a></h4>
+<div class="paragraph">
+<p>In 2.0-M1 the Sputnik runner was removed and the 2.0-M2 release notes explicitly mentioned that enhancements
+that extend <code>Sputnik</code> or use it as a delegate like for example the <code>PowerMockRunnerDelegate</code> will not work anymore.</p>
+</div>
+<div class="paragraph">
+<p>This is not the full truth though, but be aware that the information in this section is just for informational purpose.
+This is not a solution the Spock maintainers explicitly support or maintain. It is just mentioned as hint for those
+that have no other choice right now. It is strongly recommended to instead use native solutions or integrations. If
+those are not available, you might consider asking about proper integration with Spock for a proper long-term solution.
+As long as this is not available, the work-around described here is at least usable as fallback and mid-term solution
+as long as the JUnit team decides to maintain this legacy support module.</p>
+</div>
+<div class="paragraph">
+<p>There is a JUnit 4 runner provided by JUnit 5 called <code>JUnitPlatform</code> that can
+run any JUnit platform based tests - like Spock 2+ based tests - in a JUnit 4 environment. This is intended
+for situations where an IDE, build tool, CI server, or similar does not yet natively support JUnit platform.
+It is provided in the artifact <code>org.junit.platform:junit-platform-runner</code>.</p>
+</div>
+<div class="paragraph">
+<p>This means, if you make sure your tests are launched with JUnit 4 and you use <code>JUnitPlatform</code> where you before used
+<code>Sputnik</code>, all should work out properly. In case of PowerMock this means you annotate your specification with
+<code>@RunWith(PowerMockRunner)</code> and <code>@PowerMockRunnerDelegate(JUnitPlatform)</code> and make sure your tests are launched
+using JUnit 4.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_removal_of_junit_4_dependency_from_spock_core"><a class="anchor" href="#_removal_of_junit_4_dependency_from_spock_core"></a><a class="link" href="#_removal_of_junit_4_dependency_from_spock_core">Removal of JUnit 4 dependency from spock-core</a></h4>
+<div class="paragraph">
+<p>Spock 2.0 from the beginning has leveraged JUnit Platform to execute tests. However, starting with 2.0-M3 <code>junit4.jar</code> is no longer a transitive dependency of <code>spock-core</code>. This might affect people using <code>@Before/@After/&#8230;&#8203;</code> instead of Spock-native <code>setup/cleanup/&#8230;&#8203;</code> fixture methods. To keep it work the <code>spock-junit4</code> dependency has to be added.</p>
+</div>
+<div class="paragraph">
+<p>As a side effect of the removal, the order of the fixture methods execution has changed from:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>beforeClass, setupSpec, before, setup, cleanup, after, setup, before, cleanup, after, cleanupSpec, afterClass</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>to:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>setupSpec, beforeClass, setup, before, cleanup, after, setup, before, cleanup, after, cleanupSpec, afterClass</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>which should not be a problem in the majority of cases.</p>
+</div>
+<div class="paragraph">
+<p>At the same time, using JUnit 4&#8217;s annotations is discouraged (and considered <code>deprecated</code>), the same using the other elements of JUnit 4 (as <code>(Class)Rule</code>&#8203;s).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reduce_spock_core_direct_groovy_dependencies"><a class="anchor" href="#_reduce_spock_core_direct_groovy_dependencies"></a><a class="link" href="#_reduce_spock_core_direct_groovy_dependencies">Reduce spock-core direct groovy dependencies</a></h4>
+<div class="paragraph">
+<p><code>spock-core</code> now only depends on <code>groovy.jar</code>. All other Groovy dependencies have been removed,
+this should make dependency management a bit easier.
+If you relied on other groovy dependencies transitively, you will need to add them directly.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_upgrade_to_junit_5_6_and_junit_platform_1_6"><a class="anchor" href="#_upgrade_to_junit_5_6_and_junit_platform_1_6"></a><a class="link" href="#_upgrade_to_junit_5_6_and_junit_platform_1_6">Upgrade to JUnit 5.6 (and JUnit Platform 1.6)</a></h4>
+<div class="paragraph">
+<p>JUnit Platform 1.6 <a href="https://junit.org/junit5/docs/5.6.0/release-notes/index.html#deprecations-and-breaking-changes">deprecated</a> methods (from experimental API)  in <code>EngineExecutionResults</code> that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_new_meaning_of"><a class="anchor" href="#_new_meaning_of"></a><a class="link" href="#_new_meaning_of">New meaning of <code>&gt;&gt; _</code></a></h4>
+<div class="paragraph">
+<p>The meaning of <code>&gt;&gt; _</code> has changed from "use the default response" to "return a stubbed value" (<a href="interaction_based_testing.html#_returning_a_default_response">Docs</a>).
+The original behavior was only ever documented in the Javadocs and was basically the same to just omitting it.
+The only use-case was chained responses <code>&gt;&gt; "a" &gt;&gt; _ &gt;&gt; "b"</code>,
+but even here it is clearer to just use <code>null</code> or <code>{ callRealMethod() }</code> explicitly.
+With the new behavior, you can have a <code>Mock</code> or <code>Spy</code> return the same value as a <code>Stub</code> would.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">subscriber.receive(_) &gt;&gt; _</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_renamed_iterationcount_token"><a class="anchor" href="#_renamed_iterationcount_token"></a><a class="link" href="#_renamed_iterationcount_token">Renamed iterationCount token</a></h4>
+<div class="paragraph">
+<p>The token <code>#iterationCount</code> in unroll patterns was renamed to <code>#iterationIndex</code>.
+If you use it somewhere, you have to manually change it to the new name
+or the test will fail unless you disabled expression asserting,
+then you will get an <code>#Error:iterationCount</code> rendering instead.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_no_access_to_data_variables_in_data_pipes_anymore"><a class="anchor" href="#_no_access_to_data_variables_in_data_pipes_anymore"></a><a class="link" href="#_no_access_to_data_variables_in_data_pipes_anymore">No access to data variables in data pipes anymore</a></h4>
+<div class="paragraph">
+<p>It is not possible anymore to access any data variable from a data pipe or anything else but a previous data table
+column in a data table cell. This access was partly possible, but could easily prematurely drain iterators, access
+data providers sooner as expected, behaved differently depending on the concrete code construct used. All these
+points are more confusing than necessary. If you want to calculate a data variable from others, you can always use
+a derived data variable that has full access to all previous data variables and can also call helper methods for
+more complex logic.</p>
+</div>
+<div class="paragraph">
+<p>If you switch your tests that are fully green to use Spock 2.0 and get any <code>MissingPropertyException</code>s, you are probably hitting this change, you should then change to a derived data variable there instead of a data pipe.</p>
+</div>
+<div class="paragraph">
+<p>If you for example had:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">where</span>:
+a &lt;&lt; [<span class="integer">1</span>, <span class="integer">2</span>]
+b &lt;&lt; a</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>what you want instead is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">where</span>:
+a &lt;&lt; [<span class="integer">1</span>, <span class="integer">2</span>]
+b = a</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_assert_unroll_expressions_by_default"><a class="anchor" href="#_assert_unroll_expressions_by_default"></a><a class="link" href="#_assert_unroll_expressions_by_default">Assert unroll expressions by default</a></h4>
+<div class="paragraph">
+<p>The system property <code>spock.assertUnrollExpressions</code> is not supported anymore.
+Instead the new default behavior is equal to having this property set to <code>true</code>.
+This means tests that were successful but had an <code>#Error:</code> name rendering will now fail.
+It can be set back to the old pre Spock 2.0 behaviour by setting
+<code>unroll { validateExpressions false }</code> in the Spock configuration file.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_for_extension_developers"><a class="anchor" href="#_for_extension_developers"></a><a class="link" href="#_for_extension_developers">For extension developers</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>FeatureInfo#getDataVariables()</code> and <code>FeatureInfo#getParameterNames()</code> used to return the
+same value, the parameter names, in the order of the method parameters. This can disturb some calculations like method
+argument determination and so on and is plainly wrong, as some parameters could be injected by extensions like
+injecting mock objects or test proxies or similar. <code>FeatureInfo#getDataVariables()</code> now only returns the actual data
+variables and in the order how they are defined in the <code>where</code> block.</p>
+</li>
+<li>
+<p>Method arguments in <code>MethodInfo</code> now have a value of <code>MethodInfo.MISSING_ARGUMENT</code> if no value was set so far,
+for example by some extensions or from data variables. If any of these is not replaced by some value, an exception
+will be thrown at runtime.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_ant_custom_selector_removed"><a class="anchor" href="#_ant_custom_selector_removed"></a><a class="link" href="#_ant_custom_selector_removed">Ant custom selector removed</a></h4>
+<div class="paragraph">
+<p>The class <code>SpecClassFileSelector</code> that could be used to only select actual Spock specification classes when testing
+and creating a test report was removed. It was the only class that required <code>ant</code> and was basically just a one-line
+forward to the <code>SpecClassFileFinder</code> which is still available.</p>
+</div>
+<div class="paragraph">
+<p>If you are still using Spock with <code>ant</code>, then you can just copy <a href="https://github.com/spockframework/spock/blob/03818ed010f4b4ca1136a292e214f79d518c4abe/spock-core/src/main/java/org/spockframework/buildsupport/ant/SpecClassFileSelector.java">the class from the spock source code</a>
+into your build, or you simply use a <a href="https://github.com/spockframework/spock-example/blob/963fd34d1609b7025ba92502483ce31b2c6d9d0a/build.xml#L167-L176"><code>&lt;scriptselector&gt;</code></a> that does this forwarding as shown in the
+<a href="https://github.com/spockframework/spock-example">Spock Example Project</a>.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, you can also use a naming convention to find the classes that are actual specifications and not helper
+or base classes, or you live with a bit of wasted time and some meaningless entries in the test reports.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_misc_10"><a class="anchor" href="#_misc_10"></a><a class="link" href="#_misc_10">Misc</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>A new <code>MutableClock</code> utility class to support time related testing, see <a href="utilities.html#mutable-clock">docs</a>.</p>
+</li>
+<li>
+<p>Defining interactions on property getters within Mock instantiation closures or <code>with</code> closures works now without
+the need to explicitly qualify the property access with <code>it.</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Foo foo = <span class="predefined-type">Stub</span> {
+    bar &gt;&gt; <span class="string"><span class="delimiter">'</span><span class="content">my stubbed property</span><span class="delimiter">'</span></span>
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>A sequence of two or more underscores can be used to separate multiple data tables in one <code>where</code> block.</p>
+</li>
+<li>
+<p>Type casts in conditions are now properly carried over to properly disambiguate method calls.
+For more information see issue <a href="https://github.com/spockframework/spock/issues/1022">#1022</a>.</p>
+</li>
+<li>
+<p>Data tables now support any amount of semicolons to separate data table columns as alternative
+to pipes and double pipes, but cannot be mixed with them in one table:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">where</span>:
+a ; b ;; c
+<span class="integer">1</span> ; <span class="integer">2</span> ;; <span class="integer">3</span></code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The default unroll pattern changed from the rather generic <code>#featureName[#iterationIndex]</code> to a more fancy
+version that lists all data variables and their values additionally to the feature name and iteration index.
+If you prefer to retain the old behaviour, you can set the setting
+<code>unroll { defaultPattern '#featureName[#iterationIndex]' }</code> in the Spock configuration file
+and you will get the same result as previously.</p>
+</li>
+<li>
+<p>If neither a parameter to the <code>@Unroll</code> annotation is given, nor the method name contains a <code>#</code>,
+now the configuration file setting <code>unroll { defaultPattern }</code> is inspected. If it is set to a non-<code>null</code> string,
+this value is used as unroll pattern.</p>
+</li>
+<li>
+<p><code>IterationInfo</code> now has a property for the <code>iterationIndex</code> and one for a map of data variable names to values.
+This is typically not interesting for the average user, but might be helpful for authors of Spock extensions.</p>
+</li>
+<li>
+<p><code>constructorArgs</code> now properly transport type cast information to the constructor selection,
+for example to disambiguate multiple candidate constructors:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Spy(<span class="key">constructorArgs</span>: [<span class="predefined-constant">null</span> <span class="keyword">as</span> <span class="predefined-type">String</span>, (<span class="predefined-type">Pattern</span>) <span class="predefined-constant">null</span>])</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Accessing previous data table columns was broken in some cases, now it should work properly,
+even cross-table and without being disturbed by previous derived data variables.</p>
+</li>
+<li>
+<p>The order of parameters in a data-driven feature does no longer have to be identical to
+the declaration order in the <code>where</code> block. Data variables are now injected by name.</p>
+</li>
+<li>
+<p>Data driven features do no longer have the requirement that either none or all data variables are declared as
+parameters and that all parameters are also data variables. Now you can either declare none, some, or all data
+variables as parameters and also have additional method parameters that are no data variables.
+Those additional parameters must be provided by some Spock extension though. If they are not set at execution time,
+an exception will be thrown.</p>
+</li>
+<li>
+<p>Condition closures used in <code>@Requires</code>, <code>@IgnoreIf</code> and <code>@PendingFeatureIf</code> now also get the context passed
+as argument, so you can use this, typed as <code>org.spockframework.runtime.extension.builtin.PreconditionContext</code> to
+enable IDE support like code completion:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@IgnoreIf</span>({ PreconditionContext <span class="local-variable">it</span> -&gt; <span class="local-variable">it</span>.os.windows })
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll run everywhere but on Windows</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Execution with an unsupported Groovy version can be allowed with <code>-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true</code> <a href="https://github.com/spockframework/spock/pull/1164">#1164</a></p>
+</li>
+<li>
+<p>Relax maximum allowed Groovy version in snapshot builds <a href="https://github.com/spockframework/spock/pull/1108">#1108</a></p>
+</li>
+<li>
+<p>Upgrade Groovy to 2.5.12 (improved Java 14+ support) and 3.0.4 (fixes <a href="https://github.com/spockframework/spock/issues/1127">#1127</a>)</p>
+</li>
+<li>
+<p>Upgrade JUnit 4 to 4.13 (in <code>spock-junit4</code>)</p>
+</li>
+<li>
+<p>Upgrade Hamcrest to 2.2 (from 1.3 provided previously by <code>junit4.jar</code>)</p>
+</li>
+<li>
+<p>Derived data variables (assignments in <code>where</code> blocks) now also support multi-assignment syntax, including ignoring
+some values with the wildcard expression.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">(a, b, _, c) = row</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Multi-variable data pipes now also support nesting.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">[a, [_, b]] &lt;&lt; [
+  [<span class="integer">1</span>, [<span class="integer">5</span>, <span class="integer">1</span>]],
+  [<span class="integer">2</span>, [<span class="integer">5</span>, <span class="integer">2</span>]]
+]</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>The condition closures for <code>@IgnoreIf</code>, <code>@Requires</code> and <code>@PendingFeatureIf</code> can now access data variables
+if applied to a data driven feature. This has further implications that are documented in the respective
+documentation parts and JavaDocs.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Data driven features are now unrolled by default. <code>@Unroll</code> can still be used to specify a custom naming pattern.
+A simple <code>@Unroll</code> without argument is not needed anymore except when undoing a spec-level <code>@Rollup</code> annotation
+or if unrolling by default is disabled, so any simple <code>@Unroll</code> annotations can be removed from existing code. You
+can verify this by looking at the test count which should not have been changed after you removed the simple
+<code>@Unroll</code> annotations.</p>
+</li>
+<li>
+<p><code>@Rollup</code> can now be used on feature and spec level to explicitly roll up any feature where the reporting of single
+iterations is not wanted.</p>
+</li>
+<li>
+<p>The setting <code>unroll { unrollByDefault false }</code> in the Spock configuration file can be set to roll up all
+features by default if not overwritten by explicit <code>@Unroll</code> annotations and thus reinstate the pre
+Spock 2.0 behaviour.</p>
+</li>
+<li>
+<p>Updated OSGI support with using <code>bnd</code> (<a href="https://github.com/spockframework/spock/pull/1154">#1154</a>, <a href="https://github.com/spockframework/spock/pull/1175">#1175</a>)</p>
+</li>
+<li>
+<p>Fix <code>@PendingFeature</code> logic <a href="https://github.com/spockframework/spock/pull/1103">#1103</a></p>
+</li>
+<li>
+<p>Do not strip type information from arguments <a href="https://github.com/spockframework/spock/pull/1134">#1134</a></p>
+</li>
+<li>
+<p>Simplify work-around to get the reference to the current closure <a href="https://github.com/spockframework/spock/pull/1131">#1131</a></p>
+</li>
+<li>
+<p>Set source position for return statement in data provider method <a href="https://github.com/spockframework/spock/pull/1116">#1116</a></p>
+</li>
+<li>
+<p>Add <code>Spy(T obj, Closure interactions)</code> <a href="https://github.com/spockframework/spock/pull/1115">#1115</a></p>
+</li>
+<li>
+<p>Reduce number of Groovy dependencies to just groovy.jar <a href="https://github.com/spockframework/spock/pull/1109">#1109</a></p>
+</li>
+<li>
+<p>Improve <code>ExceptionUtil.sneakyThrow</code> declaration <a href="https://github.com/spockframework/spock/pull/1077">#1077</a></p>
+</li>
+<li>
+<p>Print up to 5 last mock invocations for a wrong order error <a href="https://github.com/spockframework/spock/pull/1093">#1093</a></p>
+</li>
+<li>
+<p>Fix <code>EmptyOrDummyResponse</code> returning mock instance for <code>Object</code> <a href="https://github.com/spockframework/spock/pull/1092">#1092</a></p>
+</li>
+<li>
+<p>Remove unnecessary reflection for Java 8 types in <code>EmptyOrDummyResponse</code> <a href="https://github.com/spockframework/spock/pull/1091">#1091</a></p>
+</li>
+<li>
+<p>Update old Issue annotations to point to migrated github issues <a href="https://github.com/spockframework/spock/pull/1003">#1003</a></p>
+</li>
+<li>
+<p>Test Spock with Java 14 <a href="https://github.com/spockframework/spock/pull/1155">#1155</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Björn Kautler, Marcin Zajączkowski, Raymond Augé, Roman Tretiak, Camilo Jorquera, Shil Sinha</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_0_m2_2020_02_10"><a class="anchor" href="#_2_0_m2_2020_02_10"></a><a class="link" href="#_2_0_m2_2020_02_10">2.0-M2 (2020-02-10)</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_groovy_3_0_support"><a class="anchor" href="#_groovy_3_0_support"></a><a class="link" href="#_groovy_3_0_support">Groovy-3.0 Support</a></h3>
+<div class="paragraph">
+<p>The main feature of this milestone is support for Groovy 3.
+To use Spock in your Groovy 3 project just select the <code>spock-\*-2.0-M2</code> artifact(s) ending with <code>-groovy-3.0</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+As Groovy 3 is not backward compatible with Groovy 2, there is a layer of abstraction in Spock to allow to build (and use) the project with both Groovy 2 and 3.
+      As a result, an extra artifact <code>spock-groovy2-compat</code> is (automatically) used in projects with Groovy 2.
+      It is <strong>very important</strong> to <strong>do not mix</strong> the <code>spock-*-2.x-groovy-2.5</code> artifacts with the <code>groovy-*-3.x</code> artifacts on a classpath.
+      This may result in weird runtime errors.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_breaking_changes_7"><a class="anchor" href="#_breaking_changes_7"></a><a class="link" href="#_breaking_changes_7">Breaking Changes</a></h3>
+<div class="sect3">
+<h4 id="_sputnik_runner_removed"><a class="anchor" href="#_sputnik_runner_removed"></a><a class="link" href="#_sputnik_runner_removed">Sputnik Runner removed</a></h4>
+<div class="paragraph">
+<p>Although already in 2.0-M1 it wasn&#8217;t explicitly mentioned: All enhancements that either extended <code>Sputnik</code>
+or used it as a delegate runner will not work anymore, e.g, <code>PowerMockRunnerDelegate</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_misc_11"><a class="anchor" href="#_misc_11"></a><a class="link" href="#_misc_11">Misc</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add <code>@PendingFeatureIf</code> annotation (<a href="extensions.html#_pendingfeatureif">Docs</a>)</p>
+</li>
+<li>
+<p>Fail-fast for invalid <code>Stub</code> interactions, added new validation that catches more invalid usage of <code>Stub</code></p>
+</li>
+<li>
+<p>Forbid spying on <code>Spy</code> instances, as this doesn&#8217;t work anyway and leads to wrong expectations (<a href="https://github.com/spockframework/spock/issues/1029">#1029</a>)</p>
+</li>
+<li>
+<p>Update <code>Jvm</code> helper utility to include new Java versions, removed pre 8 versions</p>
+</li>
+<li>
+<p>Update docs regarding ByteBuddy, cglib, objenesis</p>
+</li>
+<li>
+<p>Provide compatibility to both JUnit 5.5.2 and 5.6.0</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Marcin Zajączkowski (Groovy 3 support), Björn Kautler, Ryan Gardner</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_0_m1_2019_12_31"><a class="anchor" href="#_2_0_m1_2019_12_31"></a><a class="link" href="#_2_0_m1_2019_12_31">2.0-M1 (2019-12-31)</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This is the first milestone release to version 2.0. This means that we have migrated to the new
+JUnit Platform and all internal tests pass. We have tried to keep the API as compatible as possible
+and if you&#8217;ve only used the public spock API then there is a high possibility that all you have to
+do is to update the spock version and configure gradle/maven to use the JUnit Platform.</p>
+</div>
+<div class="paragraph">
+<p>However, this doesn&#8217;t mean that the API is finalized yet, the goal for the first milestone was just
+to get it running on the new platform. The next milestones will focus on improvements like the much
+requested parallel execution support.</p>
+</div>
+<div class="paragraph">
+<p>Please try it out and report any new bugs so that we can fix them for the final 2.0 release.</p>
+</div>
+<div class="sect2">
+<h3 id="_breaking_changes_8"><a class="anchor" href="#_breaking_changes_8"></a><a class="link" href="#_breaking_changes_8">Breaking Changes</a></h3>
+<div class="sect3">
+<h4 id="_new_junit_platform"><a class="anchor" href="#_new_junit_platform"></a><a class="link" href="#_new_junit_platform">New JUnit Platform</a></h4>
+<div class="paragraph">
+<p>Switch from JUnit 4 to the JUnit Platform.
+See <a href="https://junit.org/junit5/docs/current/user-guide/#running-tests-build" class="bare">https://junit.org/junit5/docs/current/user-guide/#running-tests-build</a> on how to configure
+maven and gradle to use the JUnit Platform.</p>
+</div>
+<div class="paragraph">
+<p>JUnit 4 Rules are not supported by <code>spock-core</code> anymore, however, there is a new  <code>spock-junit4</code>
+module that provides best effort support to ease migration.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_misc_12"><a class="anchor" href="#_misc_12"></a><a class="link" href="#_misc_12">Misc</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Spock now requires at least Java 8</p>
+</li>
+<li>
+<p>All data-driven test iterations are always reported (unrolled), while <code>@Unroll</code> is not necessary anymore
+it can still be used to define the name template</p>
+</li>
+<li>
+<p><code>@Retry.Mode.FEATURE</code> didn&#8217;t work anymore and has been removed</p>
+</li>
+<li>
+<p><code>spock-report</code> module has been removed, it was never officially released</p>
+</li>
+<li>
+<p>The <code>SpockReportingExtension</code> has been disabled until we can integrate it with JUnitPlatform</p>
+</li>
+<li>
+<p>Removed testing for <code>spring-2.x</code> as it is incompatible</p>
+</li>
+<li>
+<p>Fix some Javadocs</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Special thanks goes to Marc Philipp who helped a lot with the integration of the JUnit Platform.</p>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Marcin Zajączkowski, k3v1n0x90</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_3_2019_03_05"><a class="anchor" href="#_1_3_2019_03_05"></a><a class="link" href="#_1_3_2019_03_05">1.3 (2019-03-05)</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>No functional changes</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_3_rc1_2019_01_22"><a class="anchor" href="#_1_3_rc1_2019_01_22"></a><a class="link" href="#_1_3_rc1_2019_01_22">1.3-RC1 (2019-01-22)</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The theme for this release is to increase the information that is provided when an assertion failed.</p>
+</div>
+<div class="sect2">
+<h3 id="_potential_breaking_changes"><a class="anchor" href="#_potential_breaking_changes"></a><a class="link" href="#_potential_breaking_changes">Potential breaking changes</a></h3>
+<div class="sect3">
+<h4 id="_code_argument_constraints_are_treated_as_implicit_assertions"><a class="anchor" href="#_code_argument_constraints_are_treated_as_implicit_assertions"></a><a class="link" href="#_code_argument_constraints_are_treated_as_implicit_assertions">code argument constraints are treated as implicit assertions</a></h4>
+<div class="paragraph">
+<p>Before this release the code argument constrains worked by returning a boolean result.
+This was fine if you just wanted to do a simple comparison, but it breaks down if you
+need to do 5 comparisons. Users also often assumed that it worked like the assertions in
+<code>then</code> blocks and didn&#8217;t add <code>&amp;&amp;</code> to chain multiple assertions together, so their constraint
+ignored all before the next line.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="integer">1</span> * mock.foo( { <span class="local-variable">it</span>.size() &gt; <span class="integer">1</span>
+                <span class="local-variable">it</span>[<span class="integer">0</span>].length == <span class="integer">2</span> })</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This would only use the length comparison, to make it work you had to add <code>&amp;&amp;</code>.
+Another problem arises by having more than one comparison inside the constraints,
+you don&#8217;t know which of the 5 comparisons failed. If you just expected one method
+call you could use an explicit <code>assert</code> as a workaround, but since it immediately
+breaks, you can&#8217;t use it if you want to have multiple different calls to the same
+mock.</p>
+</div>
+<div class="paragraph">
+<p>With 1.3 the above code will actually work as intended, and even more important it
+will give actual feedback what didn&#8217;t match.</p>
+</div>
+<div class="paragraph">
+<p>So what can break?</p>
+</div>
+<div class="paragraph">
+<p>If you used the code argument constraint as a way of capturing
+the argument value, then this will most likely not work anymore, since assignments
+to already declared variables are forbidden in implicit assertion block.
+If you still need access to the argument, you can use the response generator closure
+instead.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> extern = <span class="predefined-constant">null</span>
+
+<span class="integer">1</span> * mock.foo( { extern = <span class="local-variable">it</span>; <span class="local-variable">it</span>.size() &gt; <span class="integer">0</span> })  <span class="comment">// old</span>
+<span class="integer">1</span> * mock.foo( { <span class="local-variable">it</span>.size() &gt; <span class="integer">0</span> }) &gt;&gt; { extern = <span class="local-variable">it</span>[<span class="integer">0</span>] } <span class="comment">// new</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The added benefit of this changes is, that it clearly differentiates the condition from
+the capture.</p>
+</div>
+<div class="paragraph">
+<p>Another consequence of the change is, that the empty <code>{}</code> assertion block will now pass
+instead of fail, since no assertion error is being treated as passing, while it required
+a <code>true</code> result beforehand.</p>
+</div>
+<div class="paragraph">
+<p>It is advised, that if you have multiple conditions joined by <code>&amp;&amp;</code>, that you remove
+it to get individual assertions reports instead of a large joined block.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_assertions_with_explicit_messages_now_include_power_assertions_output"><a class="anchor" href="#_assertions_with_explicit_messages_now_include_power_assertions_output"></a><a class="link" href="#_assertions_with_explicit_messages_now_include_power_assertions_output">assertions with explicit messages now include power assertions output.</a></h4>
+<div class="listingblock">
+<div class="title">Given</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> a = <span class="integer">1</span>
+<span class="keyword">def</span> b = <span class="integer">2</span>
+<span class="keyword">assert</span> a == b : <span class="string"><span class="delimiter">&quot;</span><span class="content">Additional message</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Before</div>
+<div class="content">
+<pre>a == b
+
+Additional message</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Now</div>
+<div class="content">
+<pre>a == b
+| |  |
+1 |  2
+  false
+
+Additional message</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you relied on this behavior to hide some output, or to prevent a stack overflow due to a self referencing
+data structure, then you need to move the condition into a separate method that just returns the boolean result.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_whats_new_in_this_release"><a class="anchor" href="#_whats_new_in_this_release"></a><a class="link" href="#_whats_new_in_this_release">What&#8217;s New In This release</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add implicit assertions for CodeArgument constraints <a href="https://github.com/spockframework/spock/pull/956">#956</a></p>
+</li>
+<li>
+<p>Add power assertion output to asserts with explicit message <a href="https://github.com/spockframework/spock/pull/928">#928</a></p>
+</li>
+<li>
+<p>Add support for mixed named and positional arguments in mocks <a href="https://github.com/spockframework/spock/pull/919">#919</a></p>
+</li>
+<li>
+<p>Add NamedParam support for groovy-2.5 with backport to 2.4 <a href="https://github.com/spockframework/spock/pull/921">#921</a></p>
+</li>
+<li>
+<p>Add special rendering for Set comparisons <a href="https://github.com/spockframework/spock/pull/925">#925</a></p>
+</li>
+<li>
+<p>Add identity hash code to type hints in comparison failures if they are identical</p>
+</li>
+<li>
+<p>Fix erroneous regex where an optional colon was defined instead of a non-capturing group <a href="https://github.com/spockframework/spock/pull/931">#931</a></p>
+</li>
+<li>
+<p>Improve CodeArgumentConstraint by supporting assertions <a href="https://github.com/spockframework/spock/pull/918">#918</a></p>
+</li>
+<li>
+<p>Improve IDE type inference in MockingApi <a href="https://github.com/spockframework/spock/pull/920">#920</a></p>
+</li>
+<li>
+<p>Improve reporting of TooFewInvocationsError <a href="https://github.com/spockframework/spock/pull/912">#912</a></p>
+</li>
+<li>
+<p>Improve render class loader for classes in comparison failures <a href="https://github.com/spockframework/spock/pull/932">#932</a></p>
+</li>
+<li>
+<p>Improve record class literal values to display FQCN in comparison failures <a href="https://github.com/spockframework/spock/pull/935">#935</a></p>
+</li>
+<li>
+<p>Improve filter Java 9+ reflection stack frames</p>
+</li>
+<li>
+<p>Improve show stacktrace of throwables in comparison failure result</p>
+</li>
+<li>
+<p>Improve use canonical class name in comparison failure results if present</p>
+</li>
+<li>
+<p>Improve render otherwise irrelevant expressions if they get a type hint in comparison failure <a href="https://github.com/spockframework/spock/pull/936">#936</a></p>
+</li>
+<li>
+<p>Fix do not convert implicit "this" expression like when calling the constructor of a non-static inner class <a href="https://github.com/spockframework/spock/pull/930">#930</a></p>
+</li>
+<li>
+<p>Fix class expression recording when there are comments with dots in the same line <a href="https://github.com/spockframework/spock/pull/937">#937</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Björn Kautler, Marc Philipp, Marcin Zajączkowski, Martin Vseticka, Michael Kutz, Kacper Bublik</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_2_2018_09_23"><a class="anchor" href="#_1_2_2018_09_23"></a><a class="link" href="#_1_2_2018_09_23">1.2 (2018-09-23)</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3</p>
+</div>
+<div class="sect2">
+<h3 id="_whats_new_in_this_release_2"><a class="anchor" href="#_whats_new_in_this_release_2"></a><a class="link" href="#_whats_new_in_this_release_2">What&#8217;s New In This release</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add support for Java 11+ (<a href="https://github.com/spockframework/spock/issues/895">#895</a>, <a href="https://github.com/spockframework/spock/issues/902">#902</a>, <a href="https://github.com/spockframework/spock/issues/903">#903</a>)</p>
+</li>
+<li>
+<p>Add Groovy 2.5.0 Variant for better Java 10+ Support</p>
+</li>
+<li>
+<p>Add <code>@SpringBean</code> and <code>@SpringSpy</code> inspired by <code>@MockBean</code>, Also add <code>@StubBeans</code> (<a href="module_spring.html#_annotation_driven">Docs</a>)</p>
+</li>
+<li>
+<p>Add <code>@UnwrapAopProxy</code> to make automatically unwrap SpringAopProxies</p>
+</li>
+<li>
+<p>Add <code>@AutoAttach</code> extension  (<a href="extensions.html#_autoattach">Docs</a>)</p>
+</li>
+<li>
+<p>Add <code>@Retry</code> extension (<a href="extensions.html#_retry">Docs</a>)</p>
+</li>
+<li>
+<p>Add flag to UnrollNameProvider to assert unroll expressions (set the system property <code>spock.assertUnrollExpressions</code> to <code>true</code>) (<a href="https://github.com/spockframework/spock/issues/767">#767</a>)</p>
+</li>
+<li>
+<p>Add automatic module name descriptors for Java 9</p>
+</li>
+<li>
+<p>Add configurable <code>condition</code> to <code>@Retry</code> extension to allow for customizing when retries should be attempted (<a href="extensions.html#_retry">Docs</a>)</p>
+</li>
+<li>
+<p>Improve <code>@PendingFeature</code> to now have an optional <code>reason</code> attribute (<a href="https://github.com/spockframework/spock/issues/907">#907</a>)</p>
+</li>
+<li>
+<p>Improve <code>@Retry</code> to be declarable on a spec class which will apply it to all feature methods in that class and subclasses (<a href="extensions.html#_retry">Docs</a>)</p>
+</li>
+<li>
+<p>Improve StepwiseExtension mark only subsequent features as skipped in case of failure (<a href="https://github.com/spockframework/spock/issues/893">#893</a>)</p>
+</li>
+<li>
+<p>Improve in assertions Spock now uses <code>DefaultGroovyMethods.dump</code> instead of <code>toString</code> if a class doesn&#8217;t override the default <code>Object.toString</code>.</p>
+</li>
+<li>
+<p>Improve <code>verifyAll</code> can now also have a target same as <code>with</code></p>
+</li>
+<li>
+<p>Improve static type hints for <code>verifyAll</code> and <code>with</code></p>
+</li>
+<li>
+<p>Improve reporting of exceptions during cleanup, they are now properly reported as suppressed exceptions instead of hiding the real exception</p>
+</li>
+<li>
+<p>Improve default responses for stubs, Java 8 types like <code>Optional</code> and <code>Streams</code> now return empty, <code>CompletableFuture</code> completes with <code>null</code> result</p>
+</li>
+<li>
+<p>Improve support for builder pattern, stubs now return themselves if the return type matches the type of the stub</p>
+</li>
+<li>
+<p>Improve tapestry support with by supporting <code>@ImportModule</code></p>
+</li>
+<li>
+<p>Improve <code>constructorArgs</code> for spies can now accept a map directly without the need to wrap it in a list</p>
+</li>
+<li>
+<p>Improve <a href="modules.html#_guice_module">Guice Module</a> now automatically attaches detached mocks</p>
+</li>
+<li>
+<p>Improve unmatched mock messages by using <code>dump</code> instead of <code>inspect</code> for classes which don&#8217;t provide a custom <code>toString</code></p>
+</li>
+<li>
+<p>Improve spying on concrete instances to enable partial mocking</p>
+</li>
+<li>
+<p>Fix use String renderer for Class instances (<a href="https://github.com/spockframework/spock/issues/909">#909</a>)</p>
+</li>
+<li>
+<p>Fix mark new Spring extensions as @Beta (<a href="https://github.com/spockframework/spock/issues/890">#890</a>)</p>
+</li>
+<li>
+<p>Fix exclude groovy-groovysh from compile dependencies (<a href="https://github.com/spockframework/spock/issues/882">#882</a>)</p>
+</li>
+<li>
+<p>Fix <code>Retry.Mode.FEATURE</code> and <code>Retry.Mode.SETUP_FEATURE_CLEANUP</code> to make a test pass if a retry was successful.</p>
+</li>
+<li>
+<p>Fix issue with <code>@SpringBean</code> mocks throwing <code>InvocationTargetException</code> instead of actual declared exceptions (<a href="https://github.com/spockframework/spock/issues/878">#878</a>, <a href="https://github.com/spockframework/spock/issues/887">#887</a>)</p>
+</li>
+<li>
+<p>Fix void methods with implicit targets failing in <code>with</code> and <code>verifyAll</code> (<a href="https://github.com/spockframework/spock/issues/886">#886</a>)</p>
+</li>
+<li>
+<p>Fix SpockAssertionErrors and its subclasses now are properly <code>Serializable</code></p>
+</li>
+<li>
+<p>Fix Spring injection of JUnit Rules, due to the changes in 1.1 the rules where initialized before Spring could inject them,
+this has been fixed by performing the injection earlier in the process</p>
+</li>
+<li>
+<p>Fix SpringMockTestExecutionListener initializes lazy beans</p>
+</li>
+<li>
+<p>Fix OSGi Import-Package header</p>
+</li>
+<li>
+<p>Fix re-declare recorder variables (<a href="https://github.com/spockframework/spock/issues/783">#783</a>), this caused annotations such as <code>@Slf4j</code> to break Specifications</p>
+</li>
+<li>
+<p>Fix MissingFieldException in DiffedObjectAsBeanRenderer</p>
+</li>
+<li>
+<p>Fix problems with nested <code>with</code> and <code>verifyAll</code> method calls</p>
+</li>
+<li>
+<p>Fix assertion of mock invocation order with nested invocations (<a href="https://github.com/spockframework/spock/issues/475">#475</a>)</p>
+</li>
+<li>
+<p>Fix ignore inferred type for Spies on existing instance</p>
+</li>
+<li>
+<p>General dependency update</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Marc Philipp, Rob Elliot, jochenberger, Jan Papenbrock, Paul King, Marcin Zajączkowski, mrb-twx,
+Alexander Kazakov, Serban Iordache, Xavier Fournet, timothy-long, John Osberg, AlexElin, Benjamin Muschko, Andreas Neumann, geoand,
+Burk Hufnagel, signalw, Martin Vseticka, Tilman Ginzel</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_2_rc3_2018_09_16"><a class="anchor" href="#_1_2_rc3_2018_09_16"></a><a class="link" href="#_1_2_rc3_2018_09_16">1.2-RC3 (2018-09-16)</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_whats_new_in_this_release_3"><a class="anchor" href="#_whats_new_in_this_release_3"></a><a class="link" href="#_whats_new_in_this_release_3">What&#8217;s New In This release</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add support for Java 11+ (<a href="https://github.com/spockframework/spock/pull/895">#895</a>, <a href="https://github.com/spockframework/spock/pull/902">#902</a>, <a href="https://github.com/spockframework/spock/pull/903">#903</a>)</p>
+</li>
+<li>
+<p>Improve <code>@PendingFeature</code> to now have an optional <code>reason</code> attribute <a href="https://github.com/spockframework/spock/pull/907">#907</a></p>
+</li>
+<li>
+<p>Fix use String renderer for Class instances <a href="https://github.com/spockframework/spock/pull/909">#909</a></p>
+</li>
+<li>
+<p>Fix mark new Spring extensions as @Beta <a href="https://github.com/spockframework/spock/pull/890">#890</a></p>
+</li>
+<li>
+<p>Fix exclude groovy-groovysh from compile dependencies <a href="https://github.com/spockframework/spock/pull/882">#882</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Marc Philipp, Marcin Zajączkowski, signalw</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_2_rc2_2018_09_04"><a class="anchor" href="#_1_2_rc2_2018_09_04"></a><a class="link" href="#_1_2_rc2_2018_09_04">1.2-RC2 (2018-09-04)</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_whats_new_in_this_release_4"><a class="anchor" href="#_whats_new_in_this_release_4"></a><a class="link" href="#_whats_new_in_this_release_4">What&#8217;s New In This release</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add configurable <code>condition</code> to <code>@Retry</code> extension to allow for customizing when retries should be attempted (<a href="extensions.html#_retry">Docs</a>)</p>
+</li>
+<li>
+<p>Fix <code>Retry.Mode.FEATURE</code> and <code>Retry.Mode.SETUP_FEATURE_CLEANUP</code> to make a test pass if a retry was successful.</p>
+</li>
+<li>
+<p>Improve <code>@Retry</code> to be declarable on a spec class which will apply it to all feature methods in that class and subclasses (<a href="extensions.html#_retry">Docs</a>)</p>
+</li>
+<li>
+<p>Improve StepwiseExtension mark only subsequent features as skipped in case of failure <a href="https://github.com/spockframework/spock/pull/893">#893</a></p>
+</li>
+<li>
+<p>Fix issue with <code>@SpringBean</code> mocks throwing <code>InvocationTargetException</code> instead of actual declared exceptions (<a href="https://github.com/spockframework/spock/pull/878">#878</a>, <a href="https://github.com/spockframework/spock/pull/887">#887</a>)</p>
+</li>
+<li>
+<p>Fix void methods with implicit targets failing in <code>with</code> and <code>verifyAll</code> <a href="https://github.com/spockframework/spock/pull/886">#886</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Marc Philipp, Tilman Ginzel, Marcin Zajączkowski, Martin Vseticka</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_2_rc1_2018_08_14"><a class="anchor" href="#_1_2_rc1_2018_08_14"></a><a class="link" href="#_1_2_rc1_2018_08_14">1.2-RC1 (2018-08-14)</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3</p>
+</div>
+<div class="sect2">
+<h3 id="_whats_new_in_this_release_5"><a class="anchor" href="#_whats_new_in_this_release_5"></a><a class="link" href="#_whats_new_in_this_release_5">What&#8217;s New In This release</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add Groovy 2.5.0 Variant for better Java 10 Support</p>
+</li>
+<li>
+<p>Add @SpringBean and @SpringSpy inspired by @MockBean, Also add @StubBeans</p>
+</li>
+<li>
+<p>Add @UnwrapAopProxy to make automatically unwrap SpringAopProxies</p>
+</li>
+<li>
+<p>Add flag to UnrollNameProvider to assert unroll expressions (set the system property <code>spock.assertUnrollExpressions</code> to <code>true</code>) <a href="https://github.com/spockframework/spock/issues/767">#767</a></p>
+</li>
+<li>
+<p>Add automatic module name descriptors for Java 9</p>
+</li>
+<li>
+<p>Add <code>@AutoAttach</code> extension (<a href="extensions.html#_autoattach">Docs</a>)</p>
+</li>
+<li>
+<p>Add <code>@Retry</code> extension (<a href="extensions.html#_retry">Docs</a>)</p>
+</li>
+<li>
+<p>Fix SpockAssertionErrors and its subclasses now are properly <code>Serializable</code></p>
+</li>
+<li>
+<p>Fix Spring injection of JUnit Rules, due to the changes in 1.1 the rules where initialized before Spring could inject them,
+this has been fixed by performing the injection earlier in the process</p>
+</li>
+<li>
+<p>Fix SpringMockTestExecutionListener initializes lazy beans</p>
+</li>
+<li>
+<p>Fix OSGi Import-Package header</p>
+</li>
+<li>
+<p>Fix re-declare recorder variables <a href="https://github.com/spockframework/spock/pull/783">#783</a>, this caused annotations such as <code>@Slf4j</code> to break Specifications</p>
+</li>
+<li>
+<p>Fix MissingFieldException in DiffedObjectAsBeanRenderer</p>
+</li>
+<li>
+<p>Fix problems with nested <code>with</code> and <code>verifyAll</code> method calls</p>
+</li>
+<li>
+<p>Fix assertion of mock invocation order with nested invocations <a href="https://github.com/spockframework/spock/pull/475">#475</a></p>
+</li>
+<li>
+<p>Fix ignore inferred type for Spies on existing instance</p>
+</li>
+<li>
+<p>Improve in assertions Spock now uses <code>DefaultGroovyMethods.dump</code> instead of <code>toString</code> if a class doesn&#8217;t override the default <code>Object.toString</code>.</p>
+</li>
+<li>
+<p>Improve <code>verifyAll</code> can now also have a target same as <code>with</code></p>
+</li>
+<li>
+<p>Improve static type hints for <code>verifyAll</code> and <code>with</code></p>
+</li>
+<li>
+<p>Improve reporting of exceptions during cleanup, they are now properly reported as suppressed exceptions instead of hiding the real exception</p>
+</li>
+<li>
+<p>Improve default responses for stubs, Java 8 types like <code>Optional</code> and <code>Streams</code> now return empty, <code>CompletableFuture</code> completes with <code>null</code> result</p>
+</li>
+<li>
+<p>Improve support for builder pattern, stubs now return themselves if the return type matches the type of the stub</p>
+</li>
+<li>
+<p>Improve tapestry support with by supporting <code>@ImportModule</code></p>
+</li>
+<li>
+<p>Improve <code>constructorArgs</code> for spies can now accept a map directly without the need to wrap it in a list</p>
+</li>
+<li>
+<p>Improve <a href="modules.html#_guice_module">Guice Module</a> now automatically attaches detached mocks</p>
+</li>
+<li>
+<p>Improve unmatched mock messages by using <code>dump</code> instead of <code>inspect</code> for classes which don&#8217;t provide a custom <code>toString</code></p>
+</li>
+<li>
+<p>Improve spying on concrete instances to enable partial mocking</p>
+</li>
+<li>
+<p>General dependency update</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Rob Elliot, jochenberger, Jan Papenbrock, Paul King, Marcin Zajączkowski, mrb-twx,
+Alexander Kazakov, Serban Iordache, Xavier Fournet, timothy-long, John Osberg, AlexElin, Benjamin Muschko, Andreas Neumann, geoand,
+Burk Hufnagel</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_known_issues"><a class="anchor" href="#_known_issues"></a><a class="link" href="#_known_issues">Known Issues</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Groovy 2.4.10 introduced a bug that interfered with the way <code>verifyAll</code> works, it has been fixed in 2.4.12</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_1_2017_05_01"><a class="anchor" href="#_1_1_2017_05_01"></a><a class="link" href="#_1_1_2017_05_01">1.1 (2017-05-01)</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_whats_new_in_this_release_6"><a class="anchor" href="#_whats_new_in_this_release_6"></a><a class="link" href="#_whats_new_in_this_release_6">What&#8217;s New In This release</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Update docs to include info/examples for Spying instantiated objects</p>
+</li>
+<li>
+<p>Fix integer overflow that could occur when the OutOfMemoryError protection while comparing huge strings kicked in</p>
+</li>
+<li>
+<p>Improve rendering for OutOfMemoryError protection</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_1_rc_4_2017_03_28"><a class="anchor" href="#_1_1_rc_4_2017_03_28"></a><a class="link" href="#_1_1_rc_4_2017_03_28">1.1-rc-4 (2017-03-28)</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This should be the last rc for 1.1</p>
+</div>
+<div class="sect2">
+<h3 id="_whats_new_in_this_release_7"><a class="anchor" href="#_whats_new_in_this_release_7"></a><a class="link" href="#_whats_new_in_this_release_7">What&#8217;s New In This release</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>15 merged pull requests</p>
+</li>
+<li>
+<p>Spies can now be created with an already existing target</p>
+</li>
+<li>
+<p>Fix for scoped Spring Beans</p>
+</li>
+<li>
+<p>Fix incompatibility with Spring 2/3 that was introduced in 1.1-rc-1</p>
+</li>
+<li>
+<p>Fix groovy compatibility</p>
+</li>
+<li>
+<p>Fix ByteBuddy compatibility</p>
+</li>
+<li>
+<p>Fix OutOfMemoryError when comparing huge strings</p>
+</li>
+<li>
+<p>Improve default response for <code>java.util.Optional&lt;T&gt;</code>, will now return empty optional</p>
+</li>
+<li>
+<p>Improve detection of Spring Boot tests</p>
+</li>
+<li>
+<p>Improve documentation for global extensions</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Taylor Wicksell, Rafael Winterhalter, Marcin Zajączkowski, Eduardo Grajeda, Paul King, Andrii, Björn Kautler, Libor Rysavy</p>
+</div>
+<div class="paragraph">
+<p>Known issues with groovy 2.4.10 which breaks a smoke test, but should have little impact on normal use <a href="https://github.com/spockframework/spock/pull/709">#709</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_1_rc_3_released_2016_10_17"><a class="anchor" href="#_1_1_rc_3_released_2016_10_17"></a><a class="link" href="#_1_1_rc_3_released_2016_10_17">1.1-rc-3 (released 2016-10-17)</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Adds compatibility with ByteBuddy as an alternative to cglib for generating mocks and stubs for classes.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_1_rc_2_released_2016_08_22"><a class="anchor" href="#_1_1_rc_2_released_2016_08_22"></a><a class="link" href="#_1_1_rc_2_released_2016_08_22">1.1-rc-2 (released 2016-08-22)</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>1.1 should be here soon but in the meantime there&#8217;s a new release candidate.</p>
+</div>
+<div class="sect2">
+<h3 id="_whats_new_in_this_release_8"><a class="anchor" href="#_whats_new_in_this_release_8"></a><a class="link" href="#_whats_new_in_this_release_8">What&#8217;s New In This release</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Support for the new test annotations in Spring Boot 1.4.</p>
+</li>
+<li>
+<p>Fixed the integration of JUnit method rules which now correctly happen "outside" the <code>setup</code> / <code>cleanup</code> methods.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Jochen Berger, Leonard Brünings, Mariusz Gilewicz, Tomasz Juchniewicz, Gamal Mateo, Tobias Schulte, Florian Wilhelm, Kevin Wittek</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_1_rc_1_released_2016_06_30"><a class="anchor" href="#_1_1_rc_1_released_2016_06_30"></a><a class="link" href="#_1_1_rc_1_released_2016_06_30">1.1-rc-1 (released 2016-06-30)</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A number of excellent pull requests have been integrated into the 1.1 stream.
+Currently some features are incubating.
+We encourage users to try out these new features and provide feedback so we can finalize the content for a 1.1 release.</p>
+</div>
+<div class="sect2">
+<h3 id="_whats_new_in_this_release_9"><a class="anchor" href="#_whats_new_in_this_release_9"></a><a class="link" href="#_whats_new_in_this_release_9">What&#8217;s New In This release</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>44 merged pull requests</p>
+</li>
+<li>
+<p>The <code>verifyAll</code> method can be used to assert multiple boolean expressions <em>without</em> short-circuiting those after a failure.
+For example:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>then:
+verifyAll {
+  a == b
+  b == c
+}</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Detached mocks via the <code>DetachedMockFactory</code> and <code>SpockMockFactoryBean</code> classes see the <a href="module_spring.html#spring-module">Spring Module Docs</a>.</p>
+</li>
+<li>
+<p>Cells in a data table can refer to the current value for a column to the left.</p>
+</li>
+<li>
+<p><code>Spy</code> can be used to create partial mocks for Java 8 interfaces with <code>default</code> methods just as it can for abstract classes.</p>
+</li>
+<li>
+<p>Improved power assert output when an exception occurs evaluating an assertion.</p>
+</li>
+<li>
+<p>A new <code>@PendingFeature</code> annotation to distinguish incomplete functionality from features with <code>@Ignore</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Special thanks to all the contributors to this release: Dmitry Andreychuk, Aseem Bansal, Daniel Bechler, Fedor Bobin, Leonard Brünings, Leonard Daume, Marcin Erdmann, Jarl Friis, Søren Berg Glasius, Serban Iordache, Michal Kordas, Pap Lőrinc, Vlad Muresan, Etienne Neveu, Glyn Normington, David Norton, Magnus Palmér, Gus Power, Oliver Reissig, Kevin Wittek and Marcin Zajączkowski</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_0_released_2015_03_02"><a class="anchor" href="#_1_0_released_2015_03_02"></a><a class="link" href="#_1_0_released_2015_03_02">1.0 (released 2015-03-02)</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>1.0 has arrived! Finally (and some years late) the version number communicates what
+<a href="https://code.google.com/p/spock/wiki/WhoIsUsingSpock">Spock users</a> have known for ages - that Spock isn&#8217;t only useful
+and fun, but also reliable, mature, and here to stay. So please, go out and tell everyone who hasn&#8217;t been assimilated
+that now is the time to join the party!</p>
+</div>
+<div class="paragraph">
+<p>A special thanks goes to all our tireless speakers and supporters, only a few of which are listed here: Andres Almiray,
+Cédric Champeau, David Dawson, Rob Fletcher, Sean Gilligan, Ken Kousen, Guillaume Laforge,
+<a href="https://www.nofluffjuststuff.com/home/main">NFJS Tour</a>, Graeme Rocher, Baruch Sadogursky, Odin Hole Standal,
+Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.</p>
+</div>
+<div class="sect2">
+<h3 id="_whats_new_in_this_release_10"><a class="anchor" href="#_whats_new_in_this_release_10"></a><a class="link" href="#_whats_new_in_this_release_10">What&#8217;s New In This Release</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#_contributors">17 contributors</a>, <a href="#_resolved_issues">21 resolved issues</a>, <a href="#_merged_pull_requests">18 merged pull requests</a>,
+<a href="#_ongoing_work">some ongoing work</a>. No ground-breaking new features, but significant improvements and fixes across the board.</p>
+</li>
+<li>
+<p>Minimum runtime requirements raised to JRE 1.6 and Groovy 2.0.</p>
+</li>
+<li>
+<p>Improved and restyled reference documentation at <a href="https://docs.spockframework.org" class="bare">https://docs.spockframework.org</a>. Generated with
+<a href="https://asciidoctor.org/">Asciidoctor</a> (what else?).</p>
+</li>
+<li>
+<p>Maven plugin removed. Just let Maven Surefire run your Spock specs like your JUnit tests
+(see <a href="https://github.com/spockframework/spock-example">spock-example</a> project).</p>
+</li>
+<li>
+<p>Official support for Java 1.8, Groovy 2.3 and Groovy 2.4. Make sure to pick the <code>groovy-2.0</code> binaries for Groovy
+2.0/2.1/2.2, <code>groovy-2.3</code> binaries for Groovy 2.3, and <code>groovy-2.4</code> binaries for Groovy 2.4 and higher.</p>
+</li>
+<li>
+<p>Improved infrastructure to allow for easier community involvement: Switch to
+<a href="https://issues.spockframework.org">GitHub issue tracker</a>, <a href="https://winbuilds.spockframework.org">Windows</a> and
+<a href="https://builds.spockframework.org">Linux</a> CI builds, pull requests automatically tested, all development on <code>master</code>
+branch (bye-bye <code>groovy-x.y</code> branches!).</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_other_news"><a class="anchor" href="#_other_news"></a><a class="link" href="#_other_news">Other News</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Follow our new <a href="https://twitter.spockframework.org">Twitter account</a></p>
+</li>
+<li>
+<p>Try these <a href="#_new_third_party_extensions">new third-party extensions</a></p>
+</li>
+<li>
+<p>Check out the upcoming <a href="https://manning.com/kapelonis/">Java Testing with Spock</a> book from Manning</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_whats_up_next"><a class="anchor" href="#_whats_up_next"></a><a class="link" href="#_whats_up_next">What&#8217;s Up Next?</a></h3>
+<div class="paragraph">
+<p>With a revamped build/release process and a reforming core team, we hope to release much more frequently from now on.
+Another big focus will be to better involve the community and their valuable contributions. Last but not least, we are
+finally shooting for a professional logo and website. Stay tuned for announcements!</p>
+</div>
+<div class="paragraph">
+<p>Test Long And Prosper,</p>
+</div>
+<div class="paragraph">
+<p>The Spock Team</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_contributors"><a class="anchor" href="#_contributors"></a><a class="link" href="#_contributors">Contributors</a></h3>
+<div class="paragraph">
+<p>17 awesome people contributed to this release:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/jblack10101">Jordan Black</a></p>
+</li>
+<li>
+<p><a href="https://github.com/Fuud">Fedor Bobin</a></p>
+</li>
+<li>
+<p><a href="https://github.com/leonard84">Leonard Brünings</a></p>
+</li>
+<li>
+<p><a href="https://github.com/cetnar">cetnar</a></p>
+</li>
+<li>
+<p><a href="https://github.com/ldaley">Luke Daley</a></p>
+</li>
+<li>
+<p><a href="https://github.com/daviddawson">David Dawson</a></p>
+</li>
+<li>
+<p><a href="https://github.com/selenium34">Scott G</a></p>
+</li>
+<li>
+<p><a href="https://github.com/msgilligan">Sean Gilligan</a></p>
+</li>
+<li>
+<p><a href="https://github.com/tawus">Taha Hafeez</a></p>
+</li>
+<li>
+<p><a href="https://github.com/lhotari">Lari Hotari</a></p>
+</li>
+<li>
+<p><a href="https://github.com/niligulmohar">Nicklas Lindgren</a></p>
+</li>
+<li>
+<p><a href="https://github.com/david-w-millar">David W Millar</a></p>
+</li>
+<li>
+<p><a href="https://github.com/pniederw">Peter Niederwieser</a></p>
+</li>
+<li>
+<p><a href="https://github.com/palmplam">Jean-Baptiste Nallet</a></p>
+</li>
+<li>
+<p><a href="https://github.com/Opalo">Opalo</a></p>
+</li>
+<li>
+<p><a href="https://github.com/magdzikk">Magda Stożek</a></p>
+</li>
+<li>
+<p><a href="https://github.com/rvarlikli">Ramazan VARLIKLI</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_resolved_issues"><a class="anchor" href="#_resolved_issues"></a><a class="link" href="#_resolved_issues">Resolved Issues</a></h3>
+<div class="paragraph">
+<p>21 burning issues were fixed:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=221">Create a example which uses ConfineMetaClassChanges</a></p>
+</li>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=273">Mistakes in PollingConditions sphinx docs</a></p>
+</li>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=274">Closure used as data value in where-block can&#8217;t be called with method syntax</a></p>
+</li>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=276">old() expression blows up when part of failing condition</a></p>
+</li>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=278">Reflect subsequent filtering/sorting in a spec&#8217;s JUnit description</a></p>
+</li>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=282">After/AfterClass/Before/BeforeClass methods from superclass should not be called if they have been overrided in the derived class</a></p>
+</li>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=286">Data values in where-block are not resolved in nested closures</a></p>
+</li>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=290">spock-maven:0.7-groovy-2.0 has an invalid descriptor (and a workaround for this)</a></p>
+</li>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=291">PollingConditions doesn&#8217;t report failed assertion</a></p>
+</li>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=292">Provide a Specification.with() overload that states the expected target type</a></p>
+</li>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=294">Problem with array arguments to mock methods</a></p>
+</li>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=296">spock-tapestry should support @javax.inject.Inject and @InjectService</a></p>
+</li>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=297">Compilation error when using multi assignment</a></p>
+</li>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=302">Groovy mocks should allow to mock final classes/methods</a></p>
+</li>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=307">Better generics support for mocks and stubs</a></p>
+</li>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=338">GC calls to finalize() on mocks cause strict interaction specifications (0 * _) to fail intermittently</a></p>
+</li>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=371">Multiple Assignment in when: and anything in cleanup:</a></p>
+</li>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=385">Move OptimizeRunOrderSuite from spock-core to spock-maven to solve a problem with Android&#8217;s test runner</a></p>
+</li>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=391">Support running on JDK 8</a></p>
+</li>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=392">Release binary variants for Groovy 2.3 and Groovy 2.4</a></p>
+</li>
+<li>
+<p><a href="https://code.google.com/p/spock/issues/detail?id=393">Port reference documentation to Asciidoc</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_merged_pull_requests"><a class="anchor" href="#_merged_pull_requests"></a><a class="link" href="#_merged_pull_requests">Merged Pull Requests</a></h3>
+<div class="paragraph">
+<p>18 hand-crafted pull requests were merged or cherry-picked:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/51">Update extensions.rst</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/48">allow one column data-table to be passed as parameter</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/45">Use https:// link to Maven Central</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/44">Change Snapshot Repository to use https:// URL</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/43">Fix incorrect code listing in docs</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/41">Minor documentation corrections: spelling, code examples. README.md corr&#8230;&#8203;</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/40">added manifest to core.gradle to allow spock core to work in OSGi land</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/38">Allow Build on Windows</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/33">Small typo fixed</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/32">Update interaction_based_testing.rst</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/31">Closure used as data value in where-block can&#8217;t be called with method syntax</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/30">Added docs for Stepwise, Timeout, Use, ConfineMetaClassChanges, AutoClea&#8230;&#8203;</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/16">Spring @ContextHierarchy support</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/14">Add groovy console support for the specs project, to ease debugging of the AST.</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/13">Update spock-report/src/test/groovy/org/spockframework/report/sample/Fig&#8230;&#8203;</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/12">spock-tapestry: added support for @InjectService, @javax.inject.Inject</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/11">missing code</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/10">Support overriding Junit After*/Before* methods in the derived class</a>(</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_new_third_party_extensions"><a class="anchor" href="#_new_third_party_extensions"></a><a class="link" href="#_new_third_party_extensions">New Third Party Extensions</a></h3>
+<div class="paragraph">
+<p>These awesome extensions have been published or updated:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/marcingrzejszczak/spock-subjects-collaborators-extension">Spock Subjects-Collaborators Extension</a></p>
+</li>
+<li>
+<p><a href="https://github.com/renatoathaydes/spock-reports">Spock Reports Extension</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ongoing_work"><a class="anchor" href="#_ongoing_work"></a><a class="link" href="#_ongoing_work">Ongoing Work</a></h3>
+<div class="paragraph">
+<p>These great features didn&#8217;t make it into this release (but hopefully the next!):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://spockframework.github.io/spock/sampleReports/Ninja%20Commander.html">Spock reports</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/49">Render exceptions in conditions as condition failure</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/50">Soft asserts: check all then throw all failures</a></p>
+</li>
+<li>
+<p><a href="https://github.com/spockframework/spock/pull/17">Detached mocks</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_0_7_released_2012_10_08"><a class="anchor" href="#_0_7_released_2012_10_08"></a><a class="link" href="#_0_7_released_2012_10_08">0.7 (released 2012-10-08)</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_snapshot_repository_moved"><a class="anchor" href="#_snapshot_repository_moved"></a><a class="link" href="#_snapshot_repository_moved">Snapshot Repository Moved</a></h3>
+<div class="paragraph">
+<p>Spock snapshots are now available from <a href="https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/" class="bare">https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_new_reference_documentation"><a class="anchor" href="#_new_reference_documentation"></a><a class="link" href="#_new_reference_documentation">New Reference Documentation</a></h3>
+<div class="paragraph">
+<p>The new Spock reference documentation is available at <a href="https://docs.spockframework.org" class="bare">https://docs.spockframework.org</a>.
+It will gradually replace the documentation at <a href="https://wiki.spockframework.org" class="bare">https://wiki.spockframework.org</a>.
+Each Spock version is documented separately (e.g. <a href="https://docs.spockframework.org/en/spock-0.7-groovy-1.8" class="bare">https://docs.spockframework.org/en/spock-0.7-groovy-1.8</a>).
+Documentation for the latest Spock snapshot is at <a href="https://docs.spockframework.org/en/latest" class="bare">https://docs.spockframework.org/en/latest</a>.
+As of Spock 0.7, the chapters on <a href="data_driven_testing.html#data-driven-testing">Data Driven Testing</a> and
+<a href="interaction_based_testing.html#interaction-based-testing">Interaction Based Testing</a> are complete.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_improved_mocking_failure_message_for_toomanyinvocationserror"><a class="anchor" href="#_improved_mocking_failure_message_for_toomanyinvocationserror"></a><a class="link" href="#_improved_mocking_failure_message_for_toomanyinvocationserror">Improved Mocking Failure Message for <code>TooManyInvocationsError</code></a></h3>
+<div class="paragraph">
+<p>The diagnostic message accompanying a <code>TooManyInvocationsError</code> has been greatly improved.
+Here is an example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Too many invocations for:
+
+3 * person.sing(_)   (4 invocations)
+
+Matching invocations (ordered by last occurrence):
+
+2 * person.sing("do")   &lt;-- this triggered the error
+1 * person.sing("re")
+1 * person.sing("mi")</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><a href="interaction_based_testing.html#_verification_of_interactions">Reference Documentation</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_improved_mocking_failure_message_for_toofewinvocationserror"><a class="anchor" href="#_improved_mocking_failure_message_for_toofewinvocationserror"></a><a class="link" href="#_improved_mocking_failure_message_for_toofewinvocationserror">Improved Mocking Failure Message for <code>TooFewInvocationsError</code></a></h3>
+<div class="paragraph">
+<p>The diagnostic message accompanying a <code>TooFewInvocationsError</code> has been greatly improved.
+Here is an example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Too few invocations for:
+
+1 * person.sing("fa")   (0 invocations)
+
+Unmatched invocations (ordered by similarity):
+
+1 * person.sing("re")
+1 * person.say("fa")
+1 * person2.shout("mi")</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><a href="interaction_based_testing.html#_verification_of_interactions">Reference Documentation</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_stubs"><a class="anchor" href="#_stubs"></a><a class="link" href="#_stubs">Stubs</a></h3>
+<div class="paragraph">
+<p>Besides mocks, Spock now has explicit support for stubs:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> person = <span class="predefined-type">Stub</span>(Person)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A stub is a restricted form of mock object that responds to invocations without ever demanding them.
+Other than not having a cardinality, a stub&#8217;s interactions look just like a mock&#8217;s interactions.
+Using a stub over a mock is an effective way to communicate its role to readers of the specification.</p>
+</div>
+<div class="paragraph">
+<p><a href="interaction_based_testing.html#Stubs">Reference Documentation</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_spies"><a class="anchor" href="#_spies"></a><a class="link" href="#_spies">Spies</a></h3>
+<div class="paragraph">
+<p>Besides mocks, Spock now has support for spies:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> person = Spy(Person, <span class="key">constructorArgs</span>: [<span class="string"><span class="delimiter">&quot;</span><span class="content">Fred</span><span class="delimiter">&quot;</span></span>])</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A spy sits atop a real object, in this example an instance of class <code>Person</code>. All invocations on the spy
+that don&#8217;t match an interaction are delegated to that object. This allows to listen in on and selectively
+change the behavior of the real object. Furthermore, spies can be used as partial mocks.</p>
+</div>
+<div class="paragraph">
+<p><a href="interaction_based_testing.html#Spies">Reference Documentation</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_declaring_interactions_at_mock_creation_time"><a class="anchor" href="#_declaring_interactions_at_mock_creation_time"></a><a class="link" href="#_declaring_interactions_at_mock_creation_time">Declaring Interactions at Mock Creation Time</a></h3>
+<div class="paragraph">
+<p>Interactions can now be declared at mock creation time:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> person = Mock(Person) {
+    sing() &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">tra-la-la</span><span class="delimiter">&quot;</span></span>
+    <span class="integer">3</span> * eat()
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This feature is particularly attractive for <a href="#_stubs">Stubs</a>.</p>
+</div>
+<div class="paragraph">
+<p><a href="interaction_based_testing.html#Stubs">Reference Documentation</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_groovy_mocks"><a class="anchor" href="#_groovy_mocks"></a><a class="link" href="#_groovy_mocks">Groovy Mocks</a></h3>
+<div class="paragraph">
+<p>Spock now offers specialized mock objects for spec&#8217;ing Groovy code:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> mock = GroovyMock(Person)
+<span class="keyword">def</span> stub = GroovyStub(Person)
+<span class="keyword">def</span> spy = GroovySpy(Person)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A Groovy mock automatically implements <code>groovy.lang.GroovyObject</code>. It allows stubbing and mocking
+of dynamic methods just like for statically declared methods. When a Groovy mock is called from Java
+rather than Groovy code, it behaves like a regular mock.</p>
+</div>
+<div class="paragraph">
+<p><a href="interaction_based_testing.html#GroovyMocks">Reference Documentation</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_global_mocks"><a class="anchor" href="#_global_mocks"></a><a class="link" href="#_global_mocks">Global Mocks</a></h3>
+<div class="paragraph">
+<p>A Groovy mock can be made <em>global</em>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">GroovySpy(Person, <span class="key">global</span>: <span class="predefined-constant">true</span>)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A global mock can only be created for a class type. It effectively replaces all instances of that type and makes them
+amenable to stubbing and mocking. (You may know this behavior from Groovy&#8217;s <code>MockFor</code> and <code>StubFor</code> facilities.)
+Furthermore, a global mock allows mocking of the type&#8217;s constructors and static methods.</p>
+</div>
+<div class="paragraph">
+<p><a href="interaction_based_testing.html#MockingAllInstancesOfAType">Reference Documentation</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_grouping_conditions_with_same_target_object"><a class="anchor" href="#_grouping_conditions_with_same_target_object"></a><a class="link" href="#_grouping_conditions_with_same_target_object">Grouping Conditions with Same Target Object</a></h3>
+<div class="paragraph">
+<p>Inspired from Groovy&#8217;s <code>Object.with</code> method, the <code>Specification.with</code> method allows to group conditions
+involving the same target object:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> person = <span class="keyword">new</span> Person(<span class="key">name</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">Fred</span><span class="delimiter">&quot;</span></span>, <span class="key">age</span>: <span class="integer">33</span>, <span class="key">sex</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">male</span><span class="delimiter">&quot;</span></span>)
+
+<span class="key">expect</span>:
+with(person) {
+    name == <span class="string"><span class="delimiter">&quot;</span><span class="content">Fred</span><span class="delimiter">&quot;</span></span>
+    age == <span class="integer">33</span>
+    sex == <span class="string"><span class="delimiter">&quot;</span><span class="content">male</span><span class="delimiter">&quot;</span></span>
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_grouping_interactions_with_same_target_object"><a class="anchor" href="#_grouping_interactions_with_same_target_object"></a><a class="link" href="#_grouping_interactions_with_same_target_object">Grouping Interactions with Same Target Object</a></h3>
+<div class="paragraph">
+<p>The <code>with</code> method can also be used for grouping interactions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> service = Mock(Service)
+app.service = service
+
+<span class="key">when</span>:
+app.run()
+
+<span class="key">then</span>:
+with(service) {
+    <span class="integer">1</span> * start()
+    <span class="integer">1</span> * act()
+    <span class="integer">1</span> * stop()
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><a href="interaction_based_testing.html#_grouping_interactions_with_same_target">Reference Documentation</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_polling_conditions"><a class="anchor" href="#_polling_conditions"></a><a class="link" href="#_polling_conditions">Polling Conditions</a></h3>
+<div class="paragraph">
+<p><code>spock.util.concurrent.PollingConditions</code> joins <code>AsyncConditions</code> and <code>BlockingVariable(s)</code> as another utility for
+testing asynchronous code:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> person = <span class="keyword">new</span> Person(<span class="key">name</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">Fred</span><span class="delimiter">&quot;</span></span>, <span class="key">age</span>: <span class="integer">22</span>)
+<span class="keyword">def</span> conditions = <span class="keyword">new</span> PollingConditions(<span class="key">timeout</span>: <span class="integer">10</span>)
+
+<span class="key">when</span>:
+<span class="predefined-type">Thread</span>.start {
+    sleep(<span class="integer">1000</span>)
+    person.age = <span class="integer">42</span>
+    sleep(<span class="integer">5000</span>)
+    person.name = <span class="string"><span class="delimiter">&quot;</span><span class="content">Barney</span><span class="delimiter">&quot;</span></span>
+}
+
+<span class="key">then</span>:
+conditions.within(<span class="integer">2</span>) {
+    <span class="keyword">assert</span> person.age == <span class="integer">42</span>
+}
+
+conditions.eventually {
+    <span class="keyword">assert</span> person.name == <span class="string"><span class="delimiter">&quot;</span><span class="content">Barney</span><span class="delimiter">&quot;</span></span>
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_experimental_dsl_support_for_eclipse"><a class="anchor" href="#_experimental_dsl_support_for_eclipse"></a><a class="link" href="#_experimental_dsl_support_for_eclipse">Experimental DSL Support for Eclipse</a></h3>
+<div class="paragraph">
+<p>Spock now ships with a DSL descriptor that lets Groovy Eclipse better
+understand certain parts of Spock&#8217;s DSL. The descriptor is automatically
+detected and activated by the IDE. Here is an example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// currently need to type variable for the following to work</span>
+Person person = <span class="keyword">new</span> Person(<span class="key">name</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">Fred</span><span class="delimiter">&quot;</span></span>, <span class="key">age</span>: <span class="integer">42</span>)
+
+<span class="key">expect</span>:
+with(person) {
+    name == <span class="string"><span class="delimiter">&quot;</span><span class="content">Fred</span><span class="delimiter">&quot;</span></span> <span class="comment">// editor understands and auto-completes 'name'</span>
+    age == <span class="integer">42</span>      <span class="comment">// editor understands and auto-completes 'age'</span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Another example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> person = <span class="predefined-type">Stub</span>(Person) {
+    getName() &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">Fred</span><span class="delimiter">&quot;</span></span> <span class="comment">// editor understands and auto-completes 'getName()'</span>
+    getAge() &gt;&gt; <span class="integer">42</span>      <span class="comment">// editor understands and auto-completes 'getAge()'</span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>DSL support is activated for Groovy Eclipse 2.7.1 and higher. If necessary,
+it can be deactivated in the Groovy Eclipse preferences.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_experimental_dsl_support_for_intellij_idea"><a class="anchor" href="#_experimental_dsl_support_for_intellij_idea"></a><a class="link" href="#_experimental_dsl_support_for_intellij_idea">Experimental DSL Support for IntelliJ IDEA</a></h3>
+<div class="paragraph">
+<p>Spock now ships with a DSL descriptor that lets Intellij IDEA better
+understand certain parts of Spock&#8217;s DSL. The descriptor is automatically
+detected and activated by the IDE. Here is an example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> person = <span class="keyword">new</span> Person(<span class="key">name</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">Fred</span><span class="delimiter">&quot;</span></span>, <span class="key">age</span>: <span class="integer">42</span>)
+
+<span class="key">expect</span>:
+with(person) {
+    name == <span class="string"><span class="delimiter">&quot;</span><span class="content">Fred</span><span class="delimiter">&quot;</span></span> <span class="comment">// editor understands and auto-completes 'name'</span>
+    age == <span class="integer">42</span>      <span class="comment">// editor understands and auto-completes 'age'</span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Another example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> person = <span class="predefined-type">Stub</span>(Person) {
+    getName() &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">Fred</span><span class="delimiter">&quot;</span></span> <span class="comment">// editor understands and auto-completes 'getName()'</span>
+    getAge() &gt;&gt; <span class="integer">42</span>      <span class="comment">// editor understands and auto-completes 'getAge()'</span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>DSL support is activated for IntelliJ IDEA 11.1 and higher.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_splitting_up_class_specification"><a class="anchor" href="#_splitting_up_class_specification"></a><a class="link" href="#_splitting_up_class_specification">Splitting up Class Specification</a></h3>
+<div class="paragraph">
+<p>Parts of class <code>spock.lang.Specification</code> were pulled up into two new super classes: <code>spock.lang.MockingApi</code>
+now contains all mocking-related methods, and <code>org.spockframework.lang.SpecInternals</code> contains internal methods
+which aren&#8217;t meant to be used directly.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_improved_failure_messages_for_notthrown_and_noexceptionthrown"><a class="anchor" href="#_improved_failure_messages_for_notthrown_and_noexceptionthrown"></a><a class="link" href="#_improved_failure_messages_for_notthrown_and_noexceptionthrown">Improved Failure Messages for <code>notThrown</code> and <code>noExceptionThrown</code></a></h3>
+<div class="paragraph">
+<p>Instead of just passing through exceptions, <code>Specification.notThrown</code> and <code>Specification.noExceptionThrown</code>
+now fail with messages like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Expected no exception to be thrown, but got 'java.io.FileNotFoundException'
+
+Caused by: java.io.FileNotFoundException: ...</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_hamcrestsupport_expect"><a class="anchor" href="#_hamcrestsupport_expect"></a><a class="link" href="#_hamcrestsupport_expect"><code>HamcrestSupport.expect</code></a></h3>
+<div class="paragraph">
+<p>Class <code>spock.util.matcher.HamcrestSupport</code> has a new <code>expect</code> method that makes
+<a href="https://hamcrest.org/JavaHamcrest/">Hamcrest</a> assertions read better in then-blocks:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">when</span>:
+<span class="keyword">def</span> x = computeValue()
+
+<span class="key">then</span>:
+expect x, closeTo(<span class="integer">42</span>, <span class="float">0.01</span>)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_beta"><a class="anchor" href="#_beta"></a><a class="link" href="#_beta">@Beta</a></h3>
+<div class="paragraph">
+<p>Recently introduced classes and methods may be annotated with <code>@Beta</code>, as a sign that they may still undergo incompatible
+changes. This gives us a chance to incorporate valuable feedback from our users. (Yes, we need your feedback!) Typically,
+a <code>@Beta</code> annotation is removed within one or two releases.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_fixed_issues"><a class="anchor" href="#_fixed_issues"></a><a class="link" href="#_fixed_issues">Fixed Issues</a></h3>
+<div class="paragraph">
+<p>See the <a href="https://code.google.com/p/spock/issues/list?can=1&amp;q=label%3AMilestone-0.7">issue tracker</a> for a list of fixed issues.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_0_6_released_2012_05_02"><a class="anchor" href="#_0_6_released_2012_05_02"></a><a class="link" href="#_0_6_released_2012_05_02">0.6 (released 2012-05-02)</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_mocking_improvements"><a class="anchor" href="#_mocking_improvements"></a><a class="link" href="#_mocking_improvements">Mocking Improvements</a></h3>
+<div class="paragraph">
+<p>The mocking framework now provides better diagnostic messages in some cases.</p>
+</div>
+<div class="paragraph">
+<p>Multiple result declarations can be chained. The following causes method bar to throw an <code>IOException</code> when first called,
+return the numbers one, two, and three on the next calls, and throw a <code>RuntimeException</code> for all subsequent calls:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">foo.bar() &gt;&gt; { <span class="keyword">throw</span> <span class="keyword">new</span> <span class="exception">IOException</span>() } &gt;&gt;&gt; [<span class="integer">1</span>, <span class="integer">2</span>, <span class="integer">3</span>] &gt;&gt; { <span class="keyword">throw</span> <span class="keyword">new</span> <span class="exception">RuntimeException</span>() }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It&#8217;s now possible to match any argument list (including the empty list) with <code>foo.bar(*_)</code>.</p>
+</div>
+<div class="paragraph">
+<p>Method arguments can now be constrained with <a href="https://hamcrest.org/JavaHamcrest/">Hamcrest</a> matchers:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">static</span> <span class="include">spock.util.matcher.HamcrestMatchers.closeTo</span>
+
+...
+
+<span class="integer">1</span> * foo.bar(closeTo(<span class="integer">42</span>, <span class="float">0.001</span>))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_extended_junit_rules_support"><a class="anchor" href="#_extended_junit_rules_support"></a><a class="link" href="#_extended_junit_rules_support">Extended JUnit Rules Support</a></h3>
+<div class="paragraph">
+<p>In addition to rules implementing <code>org.junit.rules.MethodRule</code> (which has been deprecated in JUnit 4.9), Spock now also
+supports rules implementing the new <code>org.junit.rules.TestRule</code> interface. Also supported is the new <code>@ClassRule</code>
+annotation. Rule declarations are now verified and can leave off the initialization part. I that case Spock will
+automatically initialize the rule by calling the default constructor. The <code>@TestName</code> rule, and rules in general, now
+honor the <code>@Unroll</code> annotation and any defined naming pattern.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="https://code.google.com/p/spock/issues/detail?id=240">Issue 240</a> for a known limitation with Spock&#8217;s TestRule support.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_condition_rendering_improvements"><a class="anchor" href="#_condition_rendering_improvements"></a><a class="link" href="#_condition_rendering_improvements">Condition Rendering Improvements</a></h3>
+<div class="paragraph">
+<p>When two objects are compared with the <code>==</code> operator, they are unequal, but their string representations are the same,
+Spock will now print the objects' types:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>enteredNumber == 42
+|             |
+|             false
+42 (java.lang.String)</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_junit_fixture_annotations"><a class="anchor" href="#_junit_fixture_annotations"></a><a class="link" href="#_junit_fixture_annotations">JUnit Fixture Annotations</a></h3>
+<div class="paragraph">
+<p>Fixture methods can now be declared with JUnit&#8217;s <code>@Before</code>, <code>@After</code>, <code>@BeforeClass</code>, and <code>@AfterClass</code> annotations,
+as an addition or alternative to Spock&#8217;s own fixture methods. This was particularly needed for Grails 2.0 support.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tapestry_5_3_support"><a class="anchor" href="#_tapestry_5_3_support"></a><a class="link" href="#_tapestry_5_3_support">Tapestry 5.3 Support</a></h3>
+<div class="paragraph">
+<p>Thanks to a contribution from <a href="https://howardlewisship.com/">Howard Lewis Ship</a>, the Tapestry module is now compatible
+with Tapestry 5.3. Older 5.x versions are still supported.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ibm_jdk_support"><a class="anchor" href="#_ibm_jdk_support"></a><a class="link" href="#_ibm_jdk_support">IBM JDK Support</a></h3>
+<div class="paragraph">
+<p>Spock now runs fine on IBM JDKs, working around a bug in the IBM JDK&#8217;s verifier.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_improved_junit_compatibility"><a class="anchor" href="#_improved_junit_compatibility"></a><a class="link" href="#_improved_junit_compatibility">Improved JUnit Compatibility</a></h3>
+<div class="paragraph">
+<p><code>org.junit.internal.AssumptionViolatedException</code> is now recognized and handled as known from JUnit. <code>@Unrolled</code> methods
+no longer cause "yellow" nodes in IDEs.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="improved-unroll-0.6"><a class="anchor" href="#improved-unroll-0.6"></a><a class="link" href="#improved-unroll-0.6">Improved <code>@Unroll</code></a></h3>
+<div class="paragraph">
+<p>The <code>@Unroll</code> naming pattern can now be provided in the method name, instead of as an argument to the annotation:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Unroll</span>
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of #a and #b is #c</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">expect</span>:
+    <span class="predefined-type">Math</span>.max(a, b) == c
+
+    <span class="key">where</span>:
+    a | b | c
+    <span class="integer">1</span> | <span class="integer">2</span> | <span class="integer">2</span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The naming pattern now supports property access and zero-arg method calls:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Unroll</span>
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#person.name.toUpperCase() is #person.age years old</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>@Unroll</code> annotation can now be applied to a spec class. In this case, all data-driven feature methods in the class
+will be unrolled.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_improved_timeout"><a class="anchor" href="#_improved_timeout"></a><a class="link" href="#_improved_timeout">Improved <code>@Timeout</code></a></h3>
+<div class="paragraph">
+<p>The <code>@Timeout</code> annotation can now be applied to a spec class. In this case, the timeout applies to all feature methods
+(individually) that aren&#8217;t already annotated with <code>@Timeout</code>. Timed methods are now executed on the regular test
+framework thread. This can be important for tests that rely on thread-local state (like Grails integration tests).
+Also the interruption behavior has been improved, to increase the chance that a timeout can be enforced.</p>
+</div>
+<div class="paragraph">
+<p>The failure exception that is thrown when a timeout occurs now contains the stacktrace of test execution, allowing you
+to see where the test was “stuck” or how far it got in the allocated time.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_improved_data_table_syntax"><a class="anchor" href="#_improved_data_table_syntax"></a><a class="link" href="#_improved_data_table_syntax">Improved Data Table Syntax</a></h3>
+<div class="paragraph">
+<p>Table cells can now be separated with double pipes. This can be used to visually set apart expected outputs from
+provided inputs:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+where:
+a | b || sum
+<span class="integer">1</span> | <span class="integer">2</span> || <span class="integer">3</span>
+<span class="integer">3</span> | <span class="integer">1</span> || <span class="integer">4</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_groovy_1_82_0_support"><a class="anchor" href="#_groovy_1_82_0_support"></a><a class="link" href="#_groovy_1_82_0_support">Groovy 1.8/2.0 Support</a></h3>
+<div class="paragraph">
+<p>Spock 0.6 ships in three variants for Groovy 1.7, 1.8, and 2.0. Make sure to pick the right version - for example,
+for Groovy 1.8 you need to use spock-core-0.6-groovy-1.8 (likewise for all other modules). The Groovy 2.0 variant
+is based on Groovy 2.0-beta-3-SNAPSHOT and only available from <a href="https://m2repo.spockframework.org" class="bare">https://m2repo.spockframework.org</a>. The Groovy 1.7 and
+1.8 variants are also available from Maven Central. The next version of Spock will no longer support Groovy 1.7.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_grails_2_0_support"><a class="anchor" href="#_grails_2_0_support"></a><a class="link" href="#_grails_2_0_support">Grails 2.0 Support</a></h3>
+<div class="paragraph">
+<p>Spock&#8217;s Grails plugin was split off into a separate project and now lives at <a href="https://github.spockframework.org/spock-grails" class="bare">https://github.spockframework.org/spock-grails</a>.
+The plugin supports both Grails 1.3 and 2.0.</p>
+</div>
+<div class="paragraph">
+<p>The Spock Grails plugin supports all of the new Grails 2.0 test mixins, effectively deprecating the existing unit
+testing classes (e.g. UnitSpec). For integration testing, IntegrationSpec must still be used.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_intellij_idea_integration"><a class="anchor" href="#_intellij_idea_integration"></a><a class="link" href="#_intellij_idea_integration">IntelliJ IDEA Integration</a></h3>
+<div class="paragraph">
+<p>The folks from <a href="https://www.jetbrains.com">JetBrains</a> have added a few handy features around data tables. Data tables
+will now be layed out automatically when reformatting code. Data variables are no longer shown as "unknown" and have
+their types inferred from the values in the table (!).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_github_repository"><a class="anchor" href="#_github_repository"></a><a class="link" href="#_github_repository">GitHub Repository</a></h3>
+<div class="paragraph">
+<p>All source code has moved to <a href="https://github.spockframework.org/" class="bare">https://github.spockframework.org/</a>. The <a href="https://github.spockframework.org/spock-grails">Grails Spock plugin</a>,
+<a href="https://github.com/spockframework/spock-example">Spock Example</a> project, and
+<a href="https://github.spockframework.org/spockwebconsole">Spock Web Console</a> now have their own GitHub projects.
+Also available are slides and code for various Spock presentations (such as
+<a href="https://github.spockframework.org/smarter-testing-with-spock">this one</a>).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_gradle_build"><a class="anchor" href="#_gradle_build"></a><a class="link" href="#_gradle_build">Gradle Build</a></h3>
+<div class="paragraph">
+<p>Spock is now exclusively built with Gradle. Building Spock yourself is as easy as cloning the
+<a href="https://github.spockframework.org/spock">Github repo</a> and executing <code>gradlew build</code>. No build tool installation is
+required; the only prerequisite for building Spock is a JDK installation (1.5 or higher).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_fixed_issues_2"><a class="anchor" href="#_fixed_issues_2"></a><a class="link" href="#_fixed_issues_2">Fixed Issues</a></h3>
+<div class="paragraph">
+<p>See the <a href="https://code.google.com/p/spock/issues/list?can=1&amp;q=label%3AMilestone-0.6">issue tracker</a> for a list of fixed issues.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 2.4-M7<br>
+Last updated 2025-11-23 18:52:12 UTC
+</div>
+</div>
+</body>
+</html>

@@ -66,21 +66,22 @@ will now require that the spec is annotated with <<parallel_execution.adoc#isola
 
 === Highlights
 
-* Spock supports Groovy 5.0 spockIssue:2196[]
-* Spock is also tested to run correctly on Java 25 LTS spockPull:2212[]
+* Add support for Groovy 5.0 spockIssue:2196[]
 
 === Misc
 
+* Improve Spock is also tested to run correctly on Java 25 LTS spockPull:2212[]
 * Fix handling of `@Verify` and `@VerifyAll` spockIssue:2150[]
 * Fix handling of condition method calls spockPull:2162[]
-* Fix vararg handling in SpyStatic spockIssue:2161[]
+* Fix vararg handling in `SpyStatic` spockIssue:2161[]
 * Fix incompatibility with JUnit 6 in OSGi environment spockIssue:2231[]
-* OSGi: Pin the `Require-Capability:osgi.ee=JavaSE` to Java `8` spockPull:2233[]
-* Fix: Prevent NPE in SpecRunHistory.sortFeatures when duration is missing spockIssue:2234[]
-* `Retry` extension does not mesh with `TestAbortedException` and `PendingFeature` spockIssue:1863[]
+* Fix OSGi metadata by pinning the `Require-Capability:osgi.ee=JavaSE` to Java `8` spockPull:2233[]
+* Fix NPE in `SpecRunHistory.sortFeatures` when duration is missing spockIssue:2234[]
+* Fix `Retry` extension does not mesh with `TestAbortedException` and `PendingFeature` spockIssue:1863[]
 * Fix display of caught exceptions within `verifyEach` blocks spockPull:2163[]
 * Fix extensions that call `invocation.proceed()` multiple times like `@Retry` does spockIssue:1862[]
 * Fix setting the whole argument array of an invocation spockPull:2240[]
+* Fix `SpyStatic()` with an interaction closure throws NullPointerException spockPull:2254[]
 
 Thanks to all the contributors to this release: Andreas Turban, Björn Kautler, Christoph Loy, Leonard Brünings, Thanos Tsiamis
 
@@ -113,7 +114,6 @@ spockPull:2112[]
 * Fix filter blocks with shared fields and derived data variables spockPull:2088[]
 * Fix combined labels with comments being ignored spockPull:2121[]
 * Fix boxed Boolean `is` getter methods not properly mocked in Groovy <= 3 spockIssue:2131[]
-* Fix `SpyStatic()` with an interaction closure throws NullPointerException spockPull:2254[]
 
 Thanks to all the contributors to this release: Andreas Turban, Björn Kautler, Christoph Loy, Marcin Zajączkowski, Pavlo Shevchenko
 

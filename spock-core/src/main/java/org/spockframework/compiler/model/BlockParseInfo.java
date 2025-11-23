@@ -130,6 +130,21 @@ public enum BlockParseInfo {
     }
   },
 
+  VERIFY {
+    @Override
+    public Block addNewBlock(Method method) {
+      throw new UnsupportedOperationException("addNewBlock");
+    }
+    @Override
+    public EnumSet<BlockParseInfo> getSuccessors(Method method) {
+      throw new UnsupportedOperationException("getSuccessors");
+    }
+    @Override
+    public boolean isSupportingBlockListeners() {
+      return false;
+    }
+  },
+
   CLEANUP {
     @Override
     public Block addNewBlock(Method method) {

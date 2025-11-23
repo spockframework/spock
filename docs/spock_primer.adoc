@@ -577,13 +577,17 @@ false                         ...
 
 Not very helpful. Fortunately, we can do better:
 
+[#at-verify-helper-method]
+=== Using `@Verify` helper methods to assert expectations
+
 [source,groovy,indent=0]
 ----
 include::{sourcedir}/primer/VerifyMethodsDocSpec.groovy[tag=verify-helper-method]
 ----
 
-When factoring out conditions into a helper method, you need to ensure the method has return type `void`.
-Otherwise, Spock might interpret the return value as a failing condition, which is not what we want.
+When factoring out conditions into a `@Verify` annotated helper method, you need to ensure the method has a return type of `void`, or uses a dynamic return type (`def` or no declared type).
+After compilation, it will be `void` in both cases, and any other return type causes a compilation error, as Spock might interpret the return value as a failing condition otherwise.
+You can use `@Verify` for instance methods or static methods of a Specification class, or in separate utility classes.
 
 As expected, the improved helper method tells us exactly what's wrong:
 
@@ -683,6 +687,8 @@ Alternatively, `verifyAll` conditions can be extracted into a helper method anno
 ----
 include::{sourcedir}/primer/VerifyMethodsDocSpec.groovy[tag=verify-all-helper-method]
 ----
+
+It has the same return type constraints as the <<at-verify-helper-method,@Verify>> methods.
 
 == Using `verifyEach` to assert on each element of an `Iterable`
 

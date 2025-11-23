@@ -22,7 +22,6 @@ import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.groovy.syntax.Types;
 import org.spockframework.compiler.model.*;
-import org.spockframework.util.Identifiers;
 import org.spockframework.util.Nullable;
 
 import java.util.List;
@@ -43,13 +42,17 @@ import static org.spockframework.compiler.condition.ImplicitConditionsUtils.isIm
  * @author Peter Niederwieser
  */
 public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
-  private final ISpecRewriteResources resources;
+  private final IRewriteResources resources;
   private boolean insideInteraction = false;
   private int interactionClosureDepth = 0;
   private int closureDepth = 0;
 
-  public DeepBlockRewriter(ISpecRewriteResources resources) {
-    super(resources.getCurrentBlock(), resources.getAstNodeCache());
+  public DeepBlockRewriter(IRewriteResources resources) {
+    this(resources, NoSpecialMethodCall.INSTANCE);
+  }
+
+  public DeepBlockRewriter(IRewriteResources resources, ISpecialMethodCall currSpecialMethodCall) {
+    super(resources.getCurrentBlock(), resources.getAstNodeCache(), currSpecialMethodCall);
     this.resources = resources;
   }
 
@@ -72,7 +75,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   }
 
   private String getErrorCollectorSuffix() {
-    return groupConditionFound ? String.valueOf(closureDepth) : "";
+    return (groupConditionFound && (closureDepth > 0)) ? String.valueOf(closureDepth) : "";
   }
 
   @Override
@@ -184,6 +187,11 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     if (block instanceof ExpectBlock) {
       resources.getErrorReporter().error(stat, "Interactions are not allowed in '%s' blocks. " +
           "Put them before the '%s' block or into a 'then' block.", block.getName(), block.getName());
+      return true;
+    }
+
+    if (block instanceof VerifyBlock) {
+      resources.getErrorReporter().error(stat, "Interactions are not allowed in '@Verify' and '@VerifyAll' methods.");
       return true;
     }
 

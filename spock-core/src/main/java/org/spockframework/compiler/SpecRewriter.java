@@ -28,6 +28,7 @@ import org.spockframework.compiler.condition.IConditionErrorRecorders;
 import org.spockframework.compiler.model.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.SpockException;
+import org.spockframework.util.Identifiers;
 import org.spockframework.util.InternalIdentifiers;
 import org.spockframework.util.ObjectUtil;
 import org.spockframework.util.ReflectionUtil;
@@ -45,7 +46,7 @@ import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
  * @author Peter Niederwieser
  */
 // IDEA: mock controller / leaveScope calls should only be inserted when necessary (increases robustness)
-public class SpecRewriter extends AbstractSpecVisitor implements ISpecRewriteResources {
+public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResources {
   // https://issues.apache.org/jira/browse/GROOVY-10403
   // needed for groovy-4 compatibility and only available since groovy-4
   private static final java.lang.reflect.Method GET_PLAIN_NODE_REFERENCE = ReflectionUtil.getMethodBySignature(ClassNode.class, "getPlainNodeReference", boolean.class);
@@ -412,11 +413,15 @@ public class SpecRewriter extends AbstractSpecVisitor implements ISpecRewriteRes
       method.getStatements().add(createMockControllerCall(nodeCache.MockController_LeaveScope));
     }
 
+    if (method instanceof VerifyAllMethod) {
+      if (methodHasCondition) {
+        errorRecorders.defineErrorCollector(method.getStatements());
+      }
+    } else if (methodHasDeepNonGroupedCondition) {
+      errorRecorders.defineErrorRethrower(method.getStatements());
+    }
     if (methodHasCondition) {
       errorRecorders.defineValueRecorder(method.getStatements());
-    }
-    if (methodHasDeepNonGroupedCondition) {
-      errorRecorders.defineErrorRethrower(method.getStatements());
     }
   }
 
@@ -474,8 +479,19 @@ public class SpecRewriter extends AbstractSpecVisitor implements ISpecRewriteRes
   public void visitAnyBlock(Block block) {
     this.block = block;
     if (block instanceof ThenBlock) return;
+    if (block instanceof VerifyBlock) return;
 
     DeepBlockRewriter deep = new DeepBlockRewriter(this);
+    deep.visit(block);
+    methodHasCondition |= deep.isConditionFound();
+    methodHasDeepNonGroupedCondition |= deep.isDeepNonGroupedConditionFound();
+  }
+
+  @Override
+  public void visitVerifyBlock(VerifyBlock block) {
+    DeepBlockRewriter deep = new DeepBlockRewriter(this, new SpecialMethodCall(
+      method instanceof VerifyAllMethod ? Identifiers.VERIFY_ALL : Identifiers.WITH,
+      null, null, null, null, null, false, nodeCache));
     deep.visit(block);
     methodHasCondition |= deep.isConditionFound();
     methodHasDeepNonGroupedCondition |= deep.isDeepNonGroupedConditionFound();
@@ -650,11 +666,6 @@ public class SpecRewriter extends AbstractSpecVisitor implements ISpecRewriteRes
   }
 
   // IRewriteResources members
-
-  @Override
-  public Spec getCurrentSpec() {
-    return spec;
-  }
 
   @Override
   public Method getCurrentMethod() {

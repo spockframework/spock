@@ -8,8 +8,8 @@ public java.lang.Object foobar() {
 }
 
 public void $spock_feature_0_0() {
-    org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
+    org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     java.lang.Object foobar
     java.lang.Throwable $spock_feature_throwable
     try {

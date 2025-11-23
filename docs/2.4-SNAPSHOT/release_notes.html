@@ -27,17 +27,147 @@
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_2_4_m7_tbd"><a class="anchor" href="#_2_4_m7_tbd"></a><a class="link" href="#_2_4_m7_tbd">2.4-M7 (tbd)</a></h2>
+<h2 id="_2_4_tbd"><a class="anchor" href="#_2_4_tbd"></a><a class="link" href="#_2_4_tbd">2.4 (tbd)</a></h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p><em>This is a summary of the highlights of the milestone releases</em></p>
+</div>
 <div class="sect2">
 <h3 id="_highlights"><a class="anchor" href="#_highlights"></a><a class="link" href="#_highlights">Highlights</a></h3>
 <div class="ulist">
 <ul>
 <li>
-<p>Spock supports Groovy 5.0 <a href="https://github.com/spockframework/spock/issues/2196">#2196</a></p>
+<p>Add support for Groovy 5.0 <a href="https://github.com/spockframework/spock/issues/2196">#2196</a></p>
 </li>
 <li>
-<p>Spock is also tested to run correctly on Java 25 LTS <a href="https://github.com/spockframework/spock/pull/2212">#2212</a></p>
+<p>Add support for combining two or more data providers using cartesian product <a href="https://github.com/spockframework/spock/issues/1062">#1062</a></p>
+</li>
+<li>
+<p>Add support for a <code>filter</code> block after a <code>where</code> block to filter out unwanted iterations <a href="https://github.com/spockframework/spock/pull/1927">#1927</a></p>
+</li>
+<li>
+<p>Add <a href="extensions.html#block-listener"><code>IBlockListener</code></a> extension point to listen to block execution events within feature methods <a href="https://github.com/spockframework/spock/pull/1575">#1575</a></p>
+</li>
+<li>
+<p>Add support for defining condition blocks with implicit assertions in helper methods annotated with <code>@Verify</code> or <code>@VerifyAll</code> <a href="https://github.com/spockframework/spock/pull/2112">#2112</a></p>
+</li>
+<li>
+<p>Spock now supports pluggable <a href="extensions.html#mock-makers">mock makers</a> loaded via ServiceLoader <a href="https://github.com/spockframework/spock/pull/1746">#1746</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>This allows external libraries to contribute mocking logic to Spock and use the same API for the users</p>
+</li>
+<li>
+<p>You can select the used mock maker during mock creation: <code>Mock(mockMaker:MockMakers.byteBuddy)</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Added <a href="extensions.html#mock-makers-mockito">mockito</a> mock maker <a href="https://github.com/spockframework/spock/pull/1753">#1753</a> which supports:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Mocking of final classes and final methods</p>
+</li>
+<li>
+<p>Mocking of static methods</p>
+</li>
+<li>
+<p>Mocking of classes and interface from different classloaders <a href="https://github.com/spockframework/spock/pull/1878">#1878</a></p>
+</li>
+<li>
+<p>Requires <code>org.mockito:mockito-core</code> &gt;= 4.11 in the test class path</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Added support for mocking of static methods also for Java code with the new API <code>SpyStatic()</code> <a href="https://github.com/spockframework/spock/pull/1756">#1756</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>The <a href="interaction_based_testing.html#static-mocks">static mock methods</a> will delegate the creation to the mock makers</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Add <a href="spock_primer.html#verify-each">verifyEach</a> method to perform assertions on each element of an <code>Iterable</code> <a href="https://github.com/spockframework/spock/pull/1887">#1887</a>, <a href="https://github.com/spockframework/spock/pull/2043">#2043</a></p>
+</li>
+<li>
+<p>Add <a href="extensions.html#parameter-injection">annotation extensions for parameters</a> <a href="https://github.com/spockframework/spock/pull/1599">#1599</a></p>
+</li>
+<li>
+<p>Add support for <a href="extensions.html#extension-store">keeping state in extensions</a> <a href="https://github.com/spockframework/spock/pull/1692">#1692</a></p>
+</li>
+<li>
+<p>Add <a href="extensions.html#spock-interceptors">feature-scoped interceptors</a> <a href="https://github.com/spockframework/spock/pull/1844">#1844</a></p>
+</li>
+<li>
+<p>Add <code>@Snapshot</code> extension for <a href="extensions.html#snapshot-testing">snapshot testing</a> <a href="https://github.com/spockframework/spock/pull/1873">#1873</a></p>
+</li>
+<li>
+<p>Add <code>!!</code> as <a href="spock_primer.html#opt-out-of-condition-handling">opt-out operator for assertions</a> <a href="https://github.com/spockframework/spock/pull/1532">#1532</a></p>
+</li>
+<li>
+<p>Add support for Groovy 5.0 <a href="https://github.com/spockframework/spock/issues/2196">#2196</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p><em>This affects users of the <code>@Snapshot</code> extension, only if you were using the snapshotter in parent specification classes.</em><br>
+<code>@Snapshot</code> used to look up snapshots in directories named after the class containing feature methods. Now, the snapshots will be loaded from directories named after the bottom class in the specification hierarchy. The motivation of the change is to allow users to define features in base specification classes, but overwrite expected snapshots per child specification.
+<a href="https://github.com/spockframework/spock/pull/2112">#2112</a></p>
+</li>
+<li>
+<p><em>Most users will probably be unaffected by this change as it only becomes relevant in a multithreaded situation where multiple threads do interaction invocations that care about shared state.</em><br>
+Calculated responses for interactions (<code>&gt;&gt; { &#8230;&#8203; }</code>) previously were all executed synchronized on the respective mock controller instance, so could safely mutate shared state to a certain degree, even if the invocations were happening
+on different threads.
+This also caused that one response calculation could not wait on something happening in another response calculation, as they were all executed sequentially due to the synchronization.
+Starting with this release, the response calculations are no longer happening synchronized.
+If you depend on shared state in such calculations, you now have to make sure yourself, that this is done in a thread-safe manner.
+<a href="https://github.com/spockframework/spock/pull/1910">#1910</a></p>
+</li>
+<li>
+<p><em>This should not affect most users, only if you were subclassing <code>SingleResponseGenerator</code> and doing unusual things.</em><br>
+<code>SingleResponseGenerator#isAtEndOfCycle</code> is now <code>final</code> and <code>SingleResponseGenerator#doRespond</code> is now <code>protected</code>.
+When subclassing <code>SingleResponseGenerator</code> it does not make sense to override the first method, and it does not make sense to call the second method from somewhere else.
+<a href="https://github.com/spockframework/spock/pull/1910">#1910</a></p>
+</li>
+<li>
+<p>Calling <code>old(&#8230;&#8203;)</code> with multiple arguments is now a compilation error. Previously the additional arguments were simply ignored.</p>
+</li>
+<li>
+<p>Creating <code>GroovyMock</code>/<code>GroovyStub</code>/<code>GroovySpy</code> for an already mocked type will now fail.</p>
+</li>
+<li>
+<p>Creating a global <code>GroovyMock</code>/<code>GroovyStub</code>/<code>GroovySpy</code> when <a href="parallel_execution.html#parallel-execution">parallel execution</a> is enabled,
+will now require that the spec is annotated with <a href="parallel_execution.html#isolated-execution">@Isolated</a> or <code>@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)</code>. See <a href="interaction_based_testing.html#global-mocks-parallel-execution">Global mocks and parallel execution</a> <a href="https://github.com/spockframework/spock/pull/1848">#1848</a></p>
+</li>
+<li>
+<p><code>@TempDir</code> <code>spock.tempDir.keep</code> has been replaced by <code>spock.tempdir.cleanup</code>. See <a href="extensions.html#temp-dir-cleanup">TempDir Cleanup</a> <a href="https://github.com/spockframework/spock/pull/1525">#1525</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_4_m7_2025_11_23"><a class="anchor" href="#_2_4_m7_2025_11_23"></a><a class="link" href="#_2_4_m7_2025_11_23">2.4-M7 (2025-11-23)</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_highlights_2"><a class="anchor" href="#_highlights_2"></a><a class="link" href="#_highlights_2">Highlights</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add support for Groovy 5.0 <a href="https://github.com/spockframework/spock/issues/2196">#2196</a></p>
 </li>
 </ul>
 </div>
@@ -47,25 +177,28 @@
 <div class="ulist">
 <ul>
 <li>
+<p>Improve Spock is also tested to run correctly on Java 25 LTS <a href="https://github.com/spockframework/spock/pull/2212">#2212</a></p>
+</li>
+<li>
 <p>Fix handling of <code>@Verify</code> and <code>@VerifyAll</code> <a href="https://github.com/spockframework/spock/issues/2150">#2150</a></p>
 </li>
 <li>
 <p>Fix handling of condition method calls <a href="https://github.com/spockframework/spock/pull/2162">#2162</a></p>
 </li>
 <li>
-<p>Fix vararg handling in SpyStatic <a href="https://github.com/spockframework/spock/issues/2161">#2161</a></p>
+<p>Fix vararg handling in <code>SpyStatic</code> <a href="https://github.com/spockframework/spock/issues/2161">#2161</a></p>
 </li>
 <li>
 <p>Fix incompatibility with JUnit 6 in OSGi environment <a href="https://github.com/spockframework/spock/issues/2231">#2231</a></p>
 </li>
 <li>
-<p>OSGi: Pin the <code>Require-Capability:osgi.ee=JavaSE</code> to Java <code>8</code> <a href="https://github.com/spockframework/spock/pull/2233">#2233</a></p>
+<p>Fix OSGi metadata by pinning the <code>Require-Capability:osgi.ee=JavaSE</code> to Java <code>8</code> <a href="https://github.com/spockframework/spock/pull/2233">#2233</a></p>
 </li>
 <li>
-<p>Fix: Prevent NPE in SpecRunHistory.sortFeatures when duration is missing <a href="https://github.com/spockframework/spock/issues/2234">#2234</a></p>
+<p>Fix NPE in <code>SpecRunHistory.sortFeatures</code> when duration is missing <a href="https://github.com/spockframework/spock/issues/2234">#2234</a></p>
 </li>
 <li>
-<p><code>Retry</code> extension does not mesh with <code>TestAbortedException</code> and <code>PendingFeature</code> <a href="https://github.com/spockframework/spock/issues/1863">#1863</a></p>
+<p>Fix <code>Retry</code> extension does not mesh with <code>TestAbortedException</code> and <code>PendingFeature</code> <a href="https://github.com/spockframework/spock/issues/1863">#1863</a></p>
 </li>
 <li>
 <p>Fix display of caught exceptions within <code>verifyEach</code> blocks <a href="https://github.com/spockframework/spock/pull/2163">#2163</a></p>
@@ -75,6 +208,9 @@
 </li>
 <li>
 <p>Fix setting the whole argument array of an invocation <a href="https://github.com/spockframework/spock/pull/2240">#2240</a></p>
+</li>
+<li>
+<p>Fix <code>SpyStatic()</code> with an interaction closure throws NullPointerException <a href="https://github.com/spockframework/spock/pull/2254">#2254</a></p>
 </li>
 </ul>
 </div>
@@ -88,7 +224,7 @@
 <h2 id="_2_4_m6_2025_04_15"><a class="anchor" href="#_2_4_m6_2025_04_15"></a><a class="link" href="#_2_4_m6_2025_04_15">2.4-M6 (2025-04-15)</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_highlights_2"><a class="anchor" href="#_highlights_2"></a><a class="link" href="#_highlights_2">Highlights</a></h3>
+<h3 id="_highlights_3"><a class="anchor" href="#_highlights_3"></a><a class="link" href="#_highlights_3">Highlights</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -98,7 +234,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_2"><a class="anchor" href="#_breaking_changes_2"></a><a class="link" href="#_breaking_changes_2">Breaking Changes</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -174,7 +310,7 @@
 <h2 id="_2_4_m5_2025_01_07"><a class="anchor" href="#_2_4_m5_2025_01_07"></a><a class="link" href="#_2_4_m5_2025_01_07">2.4-M5 (2025-01-07)</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_highlights_3"><a class="anchor" href="#_highlights_3"></a><a class="link" href="#_highlights_3">Highlights</a></h3>
+<h3 id="_highlights_4"><a class="anchor" href="#_highlights_4"></a><a class="link" href="#_highlights_4">Highlights</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -305,7 +441,7 @@
 <h2 id="_2_4_m3_2024_03_21"><a class="anchor" href="#_2_4_m3_2024_03_21"></a><a class="link" href="#_2_4_m3_2024_03_21">2.4-M3 (2024-03-21)</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_breaking_changes_2"><a class="anchor" href="#_breaking_changes_2"></a><a class="link" href="#_breaking_changes_2">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_3"><a class="anchor" href="#_breaking_changes_3"></a><a class="link" href="#_breaking_changes_3">Breaking Changes</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -379,7 +515,7 @@ When subclassing <code>SingleResponseGenerator</code> it does not make sense to 
 <h2 id="_2_4_m2_2024_02_26"><a class="anchor" href="#_2_4_m2_2024_02_26"></a><a class="link" href="#_2_4_m2_2024_02_26">2.4-M2 (2024-02-26)</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_highlights_4"><a class="anchor" href="#_highlights_4"></a><a class="link" href="#_highlights_4">Highlights</a></h3>
+<h3 id="_highlights_5"><a class="anchor" href="#_highlights_5"></a><a class="link" href="#_highlights_5">Highlights</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -446,7 +582,7 @@ When subclassing <code>SingleResponseGenerator</code> it does not make sense to 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_breaking_changes_3"><a class="anchor" href="#_breaking_changes_3"></a><a class="link" href="#_breaking_changes_3">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_4"><a class="anchor" href="#_breaking_changes_4"></a><a class="link" href="#_breaking_changes_4">Breaking Changes</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -874,7 +1010,7 @@ Many thanks to Ayşe Altınsoy (@AltinsoyAyse) for creating the logo through man
 <h2 id="_2_1_m1_2021_11_12"><a class="anchor" href="#_2_1_m1_2021_11_12"></a><a class="link" href="#_2_1_m1_2021_11_12">2.1-M1 (2021-11-12)</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_highlights_5"><a class="anchor" href="#_highlights_5"></a><a class="link" href="#_highlights_5">Highlights</a></h3>
+<h3 id="_highlights_6"><a class="anchor" href="#_highlights_6"></a><a class="link" href="#_highlights_6">Highlights</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -887,7 +1023,7 @@ Many thanks to Ayşe Altınsoy (@AltinsoyAyse) for creating the logo through man
 </div>
 </div>
 <div class="sect2">
-<h3 id="_breaking_changes_4"><a class="anchor" href="#_breaking_changes_4"></a><a class="link" href="#_breaking_changes_4">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_5"><a class="anchor" href="#_breaking_changes_5"></a><a class="link" href="#_breaking_changes_5">Breaking Changes</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -976,7 +1112,7 @@ to match such methods when executing tests matching a mask (e.g., via
 <h2 id="_2_0_2021_05_17"><a class="anchor" href="#_2_0_2021_05_17"></a><a class="link" href="#_2_0_2021_05_17">2.0 (2021-05-17)</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_highlights_6"><a class="anchor" href="#_highlights_6"></a><a class="link" href="#_highlights_6">Highlights</a></h3>
+<h3 id="_highlights_7"><a class="anchor" href="#_highlights_7"></a><a class="link" href="#_highlights_7">Highlights</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -1049,7 +1185,7 @@ If you are one of the few that have already used <code>@ResourceLockChildren</co
 <h2 id="_2_0_m5_2021_03_23"><a class="anchor" href="#_2_0_m5_2021_03_23"></a><a class="link" href="#_2_0_m5_2021_03_23">2.0-M5 (2021-03-23)</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_breaking_changes_5"><a class="anchor" href="#_breaking_changes_5"></a><a class="link" href="#_breaking_changes_5">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_6"><a class="anchor" href="#_breaking_changes_6"></a><a class="link" href="#_breaking_changes_6">Breaking Changes</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -1219,7 +1355,7 @@ by using the <code>instance.</code> qualifier inside the condition closure.</p>
 <h2 id="_2_0_m3_2020_06_11"><a class="anchor" href="#_2_0_m3_2020_06_11"></a><a class="link" href="#_2_0_m3_2020_06_11">2.0-M3 (2020-06-11)</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_breaking_changes_6"><a class="anchor" href="#_breaking_changes_6"></a><a class="link" href="#_breaking_changes_6">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_7"><a class="anchor" href="#_breaking_changes_7"></a><a class="link" href="#_breaking_changes_7">Breaking Changes</a></h3>
 <div class="sect3">
 <h4 id="_sputnik_runner_removed_an_alternative"><a class="anchor" href="#_sputnik_runner_removed_an_alternative"></a><a class="link" href="#_sputnik_runner_removed_an_alternative">Sputnik Runner removed (an alternative)</a></h4>
 <div class="paragraph">
@@ -1618,7 +1754,7 @@ As Groovy 3 is not backward compatible with Groovy 2, there is a layer of abstra
 </div>
 </div>
 <div class="sect2">
-<h3 id="_breaking_changes_7"><a class="anchor" href="#_breaking_changes_7"></a><a class="link" href="#_breaking_changes_7">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_8"><a class="anchor" href="#_breaking_changes_8"></a><a class="link" href="#_breaking_changes_8">Breaking Changes</a></h3>
 <div class="sect3">
 <h4 id="_sputnik_runner_removed"><a class="anchor" href="#_sputnik_runner_removed"></a><a class="link" href="#_sputnik_runner_removed">Sputnik Runner removed</a></h4>
 <div class="paragraph">
@@ -1675,7 +1811,7 @@ requested parallel execution support.</p>
 <p>Please try it out and report any new bugs so that we can fix them for the final 2.0 release.</p>
 </div>
 <div class="sect2">
-<h3 id="_breaking_changes_8"><a class="anchor" href="#_breaking_changes_8"></a><a class="link" href="#_breaking_changes_8">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_9"><a class="anchor" href="#_breaking_changes_9"></a><a class="link" href="#_breaking_changes_9">Breaking Changes</a></h3>
 <div class="sect3">
 <h4 id="_new_junit_platform"><a class="anchor" href="#_new_junit_platform"></a><a class="link" href="#_new_junit_platform">New JUnit Platform</a></h4>
 <div class="paragraph">
@@ -3260,7 +3396,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2025-11-23 17:30:43 UTC
+Last updated 2025-11-23 20:08:41 UTC
 </div>
 </div>
 </body>

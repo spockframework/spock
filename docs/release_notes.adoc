@@ -58,6 +58,10 @@ spockPull:1910[]
 will now require that the spec is annotated with <<parallel_execution.adoc#isolated-execution, @Isolated>> or `@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)`. See <<interaction_based_testing.adoc#global-mocks-parallel-execution, Global mocks and parallel execution>> spockPull:1848[]
 * `@TempDir` `spock.tempDir.keep` has been replaced by `spock.tempdir.cleanup`. See <<extensions.adoc#temp-dir-cleanup,TempDir Cleanup>> spockPull:1525[]
 
+=== Misc
+
+* Fix handling of condition method calls and Groovy `with()` method spockPull:2162[]
+** This could break tests using `with()` which relied on the bug in the past spockIssue:2269[]
 
 == 2.4-M7 (2025-11-23)
 

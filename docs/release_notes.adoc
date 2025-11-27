@@ -62,6 +62,7 @@ will now require that the spec is annotated with <<parallel_execution.adoc#isola
 
 * Fix handling of condition method calls and Groovy `with()` method spockPull:2162[]
 ** This could break tests using `with()` which relied on the bug in the past spockIssue:2269[]
+** Use the Spock `with(yourObject)` instead of `yourObject.with()` or prefix it `!!` to fix your test
 
 == 2.4-M7 (2025-11-23)
 

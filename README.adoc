@@ -27,7 +27,7 @@ https://groovyconsole.dev/[Groovy Web Console].
 === Latest Versions
 
 * The latest 2.x release version is *{spock-release-version}* ({spock-release-version}-groovy-2.5,
-{spock-release-version}-groovy-3.0, {spock-release-version}-groovy-4.0), released on {spock-release-date}.
+{spock-release-version}-groovy-3.0, {spock-release-version}-groovy-4.0, {spock-release-version}-groovy-5.0), released on {spock-release-date}.
 * The current development version is *{spock-snapshot-version}-SNAPSHOT*
 ({spock-snapshot-version}-groovy-2.5-SNAPSHOT, {spock-snapshot-version}-groovy-3.0-SNAPSHOT,
 {spock-snapshot-version}-groovy-4.0-SNAPSHOT), {spock-snapshot-version}-groovy-5.0-SNAPSHOT).

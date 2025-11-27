@@ -168,6 +168,9 @@ will now require that the spec is annotated with <a href="parallel_execution.htm
 <li>
 <p>This could break tests using <code>with()</code> which relied on the bug in the past <a href="https://github.com/spockframework/spock/issues/2269">#2269</a></p>
 </li>
+<li>
+<p>Use the Spock <code>with(yourObject)</code> instead of <code>yourObject.with()</code> or prefix it <code>!!</code> to fix your test</p>
+</li>
 </ul>
 </div>
 </li>
@@ -3413,7 +3416,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.4-SNAPSHOT<br>
-Last updated 2025-11-27 14:54:28 UTC
+Last updated 2025-11-27 15:33:03 UTC
 </div>
 </div>
 </body>

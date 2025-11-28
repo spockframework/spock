@@ -16,26 +16,25 @@
 
 package org.spockframework.util;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Arrays;
+
 import static java.util.stream.Collectors.joining;
 
 public class ClassUtil {
-  public static @NotNull String nullSafeToString(@Nullable Class<?> clazz) {
+  public static String nullSafeToString(@Nullable Class<?> clazz) {
     if (clazz != null)
-      return clazz.toString();
+      return clazz.getName();
     else
       return "null";
   }
 
   // not an overload because I couldn't fix
   // ambiguous overload errors in the spec
-  public static @NotNull String allNullSafeToString(@Nullable Class<?>... clazzes) {
+  public static String allNullSafeToString(@Nullable Class<?>... clazzes) {
     if (clazzes != null)
       return Arrays.stream(clazzes)
-             .map(ClassUtil::nullSafeToString)
-             .collect(joining(", "));
+        .map(ClassUtil::nullSafeToString)
+        .collect(joining(", "));
     else
       return "";
   }

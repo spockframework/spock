@@ -19,11 +19,11 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     ALOAD 1
     LDC 0
     AALOAD
-    LDC Lorg/spockframework/runtime/ErrorRethrower;.class
-    INVOKEINTERFACE org/codehaus/groovy/runtime/callsite/CallSite.callGetProperty (Ljava/lang/Object;)Ljava/lang/Object; (itf)
-    LDC Lorg/spockframework/runtime/ErrorCollector;.class
+    LDC Lorg/spockframework/runtime/ValueRecorder;.class
+    INVOKEINTERFACE org/codehaus/groovy/runtime/callsite/CallSite.callConstructor (Ljava/lang/Object;)Ljava/lang/Object; (itf)
+    LDC Lorg/spockframework/runtime/ValueRecorder;.class
     INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
-    CHECKCAST org/spockframework/runtime/ErrorCollector
+    CHECKCAST org/spockframework/runtime/ValueRecorder
     ASTORE 2
    L9
     ALOAD 2
@@ -31,11 +31,11 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     ALOAD 1
     LDC 1
     AALOAD
-    LDC Lorg/spockframework/runtime/ValueRecorder;.class
-    INVOKEINTERFACE org/codehaus/groovy/runtime/callsite/CallSite.callConstructor (Ljava/lang/Object;)Ljava/lang/Object; (itf)
-    LDC Lorg/spockframework/runtime/ValueRecorder;.class
+    LDC Lorg/spockframework/runtime/ErrorRethrower;.class
+    INVOKEINTERFACE org/codehaus/groovy/runtime/callsite/CallSite.callGetProperty (Ljava/lang/Object;)Ljava/lang/Object; (itf)
+    LDC Lorg/spockframework/runtime/ErrorCollector;.class
     INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
-    CHECKCAST org/spockframework/runtime/ValueRecorder
+    CHECKCAST org/spockframework/runtime/ErrorCollector
     ASTORE 3
    L10
     ALOAD 3
@@ -47,15 +47,15 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     POP
    L0
     LINENUMBER 4 L0
-    ALOAD 2
     ALOAD 3
+    ALOAD 2
     INVOKEVIRTUAL org/spockframework/runtime/ValueRecorder.reset ()Lorg/spockframework/runtime/ValueRecorder;
     LDC "true"
     ICONST_4
     ICONST_5
     ACONST_NULL
-    ALOAD 3
-    ALOAD 3
+    ALOAD 2
+    ALOAD 2
     ICONST_0
     INVOKEVIRTUAL org/spockframework/runtime/ValueRecorder.startRecordingValue (I)I
     ICONST_1
@@ -66,11 +66,11 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     POP
     GOTO L11
    L1
-   FRAME FULL [apackage/TestSpec [Lorg/codehaus/groovy/runtime/callsite/CallSite; org/spockframework/runtime/ErrorCollector org/spockframework/runtime/ValueRecorder] [java/lang/Throwable]
+   FRAME FULL [apackage/TestSpec [Lorg/codehaus/groovy/runtime/callsite/CallSite; org/spockframework/runtime/ValueRecorder org/spockframework/runtime/ErrorCollector] [java/lang/Throwable]
     ASTORE 4
    L12
-    ALOAD 2
     ALOAD 3
+    ALOAD 2
     LDC "true"
     ICONST_4
     ICONST_5
@@ -103,7 +103,7 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     ACONST_NULL
     POP
     ALOAD 0
-    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    INVOKEVIRTUAL spock/lang/Specification.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
     LDC Lorg/spockframework/runtime/SpecificationContext;.class
     INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
     CHECKCAST org/spockframework/runtime/SpecificationContext
@@ -124,7 +124,7 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     ASTORE 6
    L15
     ALOAD 0
-    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    INVOKEVIRTUAL spock/lang/Specification.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
     LDC Lorg/spockframework/runtime/SpecificationContext;.class
     INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
     CHECKCAST org/spockframework/runtime/SpecificationContext
@@ -160,11 +160,12 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     ALOAD 1
     LDC 2
     AALOAD
+    LDC Lorg/spockframework/runtime/SpecInternals;.class
     ALOAD 0
     ACONST_NULL
     ACONST_NULL
     LDC Ljava/lang/RuntimeException;.class
-    INVOKEINTERFACE org/codehaus/groovy/runtime/callsite/CallSite.callCurrent (Lgroovy/lang/GroovyObject;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; (itf)
+    INVOKEINTERFACE org/codehaus/groovy/runtime/callsite/CallSite.call (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; (itf)
     POP
     ALOAD 0
     ICONST_2
@@ -172,7 +173,7 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     ACONST_NULL
     POP
     ALOAD 0
-    INVOKEVIRTUAL org/spockframework/lang/SpecInternals.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
+    INVOKEVIRTUAL spock/lang/Specification.getSpecificationContext ()Lorg/spockframework/lang/ISpecificationContext;
     LDC Lorg/spockframework/runtime/SpecificationContext;.class
     INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
     CHECKCAST org/spockframework/runtime/SpecificationContext
@@ -186,8 +187,8 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
    L18
     RETURN
     LOCALVARIABLE this Lapackage/TestSpec; L8 L18 0
-    LOCALVARIABLE $spock_errorCollector Lorg/spockframework/runtime/ErrorCollector; L9 L18 2
-    LOCALVARIABLE $spock_valueRecorder Lorg/spockframework/runtime/ValueRecorder; L10 L18 3
+    LOCALVARIABLE $spock_valueRecorder Lorg/spockframework/runtime/ValueRecorder; L9 L18 2
+    LOCALVARIABLE $spock_errorCollector Lorg/spockframework/runtime/ErrorCollector; L10 L18 3
     LOCALVARIABLE $spock_condition_throwable Ljava/lang/Throwable; L12 L3 4
     LOCALVARIABLE $spock_ex Ljava/lang/Throwable; L15 L7 6
     MAXSTACK = 9

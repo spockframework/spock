@@ -137,10 +137,10 @@ Functional tests for `spock-core` are located under https://github.spockframewor
 === Command Line Build
 
 Spock is built with https://www.gradle.org[Gradle].
-The only prerequisite for executing the build is an installation of JDK 8 and JDK 17.
-The build itself must be run with JDK 17, but JDK 8 must be available via toolchain.
+The only prerequisite for executing the build is an installation of JDK 11 and JDK 17.
+The build itself must be run with JDK 17, but JDK 11 must be available via toolchain.
 You can check if Gradle can locate the necessary JDKs by running `./gradlew javaToolchains`.
-If gradle can't locate your JDK 8, you can make the location of the JDK 8 available via an environment variable called `JDK8`.
+If Gradle can't locate your JDK 11, you can make the location of the JDK 11 available via an environment variable called `JDK11`.
 
 After cloning the https://github.com/spockframework/spock[GitHub repository], cd into the top directory and execute `./gradlew build`. The build should succeed without any errors. `./gradlew tasks` lists the available tasks.
 Always use the Gradle Wrapper (`gradlew` command) rather than your own Gradle installation.

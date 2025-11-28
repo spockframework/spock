@@ -20,12 +20,12 @@
 
 @file:Repository("https://repo.maven.apache.org/maven2/")
 // work-around for https://youtrack.jetbrains.com/issue/KT-69145
-@file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.4.0")
+@file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.5.0")
 
 @file:Repository("https://bindings.krzeminski.it/")
-@file:DependsOn("actions:checkout___major:[v4,v5-alpha)")
-@file:DependsOn("github:codeql-action__analyze___major:[v3,v4-alpha)")
-@file:DependsOn("github:codeql-action__init___major:[v3,v4-alpha)")
+@file:DependsOn("actions:checkout___major:[v5,v6-alpha)")
+@file:DependsOn("github:codeql-action__analyze___major:[v4,v5-alpha)")
+@file:DependsOn("github:codeql-action__init___major:[v4,v5-alpha)")
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.actions.github.CodeqlActionAnalyze
@@ -125,7 +125,8 @@ workflow(
                 "--stacktrace",
                 "--no-build-cache",
                 "testClasses",
-                """"-Dvariant=${expr(Matrix.variant)}""""
+                """"-Dvariant=${expr(Matrix.variant)}"""",
+                """"-DjavaVersion=${expr("${Matrix.variant} == '5.0' && '11' || '${Matrix.axes.javaVersions.first()}'")}""""
             ).joinToString(" ")
         )
         uses(

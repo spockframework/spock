@@ -20,11 +20,11 @@
 
 @file:Repository("https://repo.maven.apache.org/maven2/")
 // work-around for https://youtrack.jetbrains.com/issue/KT-69145
-@file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.4.0")
+@file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.5.0")
 
 @file:Repository("https://bindings.krzeminski.it/")
-@file:DependsOn("actions:checkout___major:[v4,v5-alpha)")
-@file:DependsOn("actions:upload-artifact___major:[v4,v5-alpha)")
+@file:DependsOn("actions:checkout___major:[v5,v6-alpha)")
+@file:DependsOn("actions:upload-artifact___major:[v5,v6-alpha)")
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.actions.actions.Checkout.FetchDepth

@@ -16,6 +16,7 @@
 
 package org.spockframework.runtime.extension.builtin;
 
+import org.opentest4j.TestAbortedException;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.extension.*;
 import spock.lang.Retry;
@@ -58,6 +59,12 @@ public class RetryBaseInterceptor {
   }
 
   private boolean hasExpectedClass(Throwable failure) {
+    for (Class<? extends Throwable> exception : retry.skipRetryExceptions()) {
+      if (exception.isInstance(failure)) {
+        return false;
+      }
+    }
+
     for (Class<? extends Throwable> exception : retry.exceptions()) {
       if (exception.isInstance(failure)) {
         return true;

@@ -1,5 +1,5 @@
-:spock-release-version: 2.4-M6
-:spock-release-date: 2025-04-15
+:spock-release-version: 2.4-M7
+:spock-release-date: 2025-11-23
 :spock-snapshot-version: 2.4
 
 https://github.com/spockframework/spock/blob/master/LICENSE[image:https://img.shields.io/badge/License-Apache%202.0-blue.svg[License]]
@@ -18,33 +18,50 @@ image::docs/images/spock-main-logo.png[width=100px,float=right]
 == Spock Framework
 
 Spock is a BDD-style developer testing and specification framework for
-Java and https://groovy-lang.org/[Groovy] applications.To learn more
+Java and https://groovy-lang.org/[Groovy] applications. To learn more
 about Spock, visit
-https://spockframework.org[https://spockframework.org].To run a sample
+https://spockframework.org[https://spockframework.org]. To run a sample
 spec in your browser use the
 https://groovyconsole.dev/[Groovy Web Console].
 
 === Latest Versions
 
 * The latest 2.x release version is *{spock-release-version}* ({spock-release-version}-groovy-2.5,
-{spock-release-version}-groovy-3.0, {spock-release-version}-groovy-4.0), released on {spock-release-date}.
+{spock-release-version}-groovy-3.0, {spock-release-version}-groovy-4.0, {spock-release-version}-groovy-5.0), released on {spock-release-date}.
 * The current development version is *{spock-snapshot-version}-SNAPSHOT*
-({spock-snapshot-version}-groovy-2.5-SNAPSHOT, {spock-snapshot-version}-groovy-3.0-SNAPSHOT, , {spock-snapshot-version}-groovy-4.0-SNAPSHOT).
+({spock-snapshot-version}-groovy-2.5-SNAPSHOT, {spock-snapshot-version}-groovy-3.0-SNAPSHOT,
+{spock-snapshot-version}-groovy-4.0-SNAPSHOT), {spock-snapshot-version}-groovy-5.0-SNAPSHOT).
 
-*NOTE:* Spock 2.x is based on the JUnit 5 Platform and require Java
-8+/groovy-2.5+ (Groovy 3.0 or 4.0 is recommended, especially in projects using
+*NOTE:* Spock 2.x is based on the JUnit 5 Platform and requires Java
+8+/groovy-2.5+ (Groovy 3.0 or newer is recommended, especially in projects using
 Java 12+).
 
 Releases are available from
 https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.spockframework%22[Maven
 Central]. Development snapshots are available from
-https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/[Sonatype
-OSS].
+https://central.sonatype.com/repository/maven-snapshots/org/spockframework/spock-core/maven-metadata.xml[Sonatype
+Snapshot].
+
+==== Snapshot Releases
+
+Snapshots can be used by adding the Sonatype Snapshot repository:
+
+[source,groovy,subs="attributes"]
+----
+repositories {
+    // ...
+    maven { url 'https://central.sonatype.com/repository/maven-snapshots/' }
+}
+
+dependencies {
+    testImplementation 'org.spockframework:spock-core:{spock-snapshot-version}-groovy-4.0-SNAPSHOT'
+}
+----
 
 ==== Ad-Hoc Intermediate Releases
 
 For intermediate stable builds we recommend to use
-https://jitpack.io/#org.spockframework/spock[Jitpack] (go here for
+https://jitpack.io/#org.spockframework/spock[JitPack] (go here for
 instructions):
 
 . Add https://jitpack.io[https://jitpack.io] as a repository
@@ -86,25 +103,26 @@ https://tapestry.apache.org/[Tapestry 5] IoC container.
 
 ==== Prerequisites
 
-Spock needs both a JDK 8 and JDK 17+ installed.
+Spock needs both a JDK 11 and JDK 17+ installed.
 
-* JDK 8 is required to compile Spock via toolchains (automatic download is disabled).
+* JDK 11 is required to compile Spock via toolchains (automatic download is disabled).
 * The gradle build itself requires at least JDK 17 to run.
 
 JDK locations must be made known to toolchains via `JDK<version>=<PATH>` environment
-variable, e.g., `JDK8=/path/to/jdk8`.
+variable if they are not in standard places recognized by Gradle, e.g. `JDK11=/path/to/jdk11`.
 
 ==== Supported versions
 
 Spock is supported for Java version 8+.
 
-Spock is supported for Groovy versions 2.5, 3.0, and 4.0.
+Spock is supported for Groovy versions 2.5, 3.0, 4.0, and 5.0.
 
 The tests are testing Spock with the specific versions (variants) of
 Groovy and Java. Default Groovy version is 2.5.
 
 The Groovy 3.0 and 4.0 variant should pass on all supported JDK versions,
 Groovy 2.5 does not work with Java 17+:
+Groovy 5.0 and newer does not work with Java <11:
 
 ....
 ./gradlew build
@@ -117,13 +135,13 @@ To build a specific variant of Spock, use the variant name as a parameter
 ....
 
 To test against a specific Java version, use the java version name as a parameter, the path to the Java version must be set via an environment variable `JDK<version>=<PATH>`.
-Of course, this can combined with the variant selection from above.
+Of course, this can be combined with the variant selection from above.
 
 ....
 ./gradlew build -DjavaVersion=17
 ....
 
-(Windows: `gradlew build`). All build dependencies, including the
+(In `cmd.exe`: `gradlew build`). All build dependencies, including the
 https://www.gradle.org[build tool] itself, will be downloaded
 automatically (unless already present).
 
@@ -142,8 +160,8 @@ feedback is appreciated!
 === Java 9 Module Names
 
 All published jars (beginning with Spock 1.2) will contain
-Automatic-Module-Name manifest attribute. This allows for Spock to be
-used in a Java 9 Module Path.
+`Automatic-Module-Name` manifest attribute. This allows for Spock to be
+used in a Java 9+ Module Path.
 
 * spock-core -- `org.spockframework.core`
 * spock-spring -- `org.spockframework.spring`

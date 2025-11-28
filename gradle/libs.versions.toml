@@ -1,21 +1,25 @@
 [versions]
-asciidoctorj = '3.0.0'
+asciidoctorj = '3.0.1'
 groovy2 = '2.5.23'
-groovy3 = '3.0.24'
-groovy4 = '4.0.26'
-jacoco = '0.8.13'
-junit = '5.12.2'
-asm = '9.8'
+groovy3 = '3.0.25'
+groovy4 = '4.0.29'
+groovy5 = '5.0.2'
+jacoco = '0.8.14'
+junit5 = '5.14.1'
+junit6 = '6.0.1'
+# The VersionRange used by OSGi to check compatibility with JUnit Platform.
+junitPlatformVersionRange = "[1.12,7)"
+asm = '9.9'
 mockito4 = '4.11.0'
-mockito5 = '5.18.0'
-workflows-kotlin = "2.1.21"
+mockito5 = '5.20.0'
+workflows-kotlin = "2.2.21"
 
 [libraries]
-jetbrains-annotations = "org.jetbrains:annotations:26.0.2"
+jetbrains-annotations = "org.jetbrains:annotations:26.0.2-1"
 asciidoctorj = { module = "org.asciidoctor:asciidoctorj", version.ref = "asciidoctorj" }
 asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
 asmUtil = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
-bytebuddy = "net.bytebuddy:byte-buddy:1.17.8"
+bytebuddy = "net.bytebuddy:byte-buddy:1.18.2"
 cglib = "cglib:cglib-nodep:3.3.0"
 geantyref = "io.leangen.geantyref:geantyref:1.3.16"
 h2database = "com.h2database:h2:2.2.224"
@@ -29,7 +33,8 @@ mockito5 = { module = "org.mockito:mockito-core", version.ref = "mockito5" }
 objenesis = "org.objenesis:objenesis:3.4"
 # This needs a classifier, but it has to be specified on the usage end https://melix.github.io/blog/2021/03/version-catalogs-faq.html#_why_can_t_i_use_excludes_or_classifiers
 jacoco-agent = { module = "org.jacoco:org.jacoco.agent", version.ref = "jacoco" }
-junit-bom =  { module = "org.junit:junit-bom",  version.ref = "junit" }
+junit5-bom =  { module = "org.junit:junit-bom",  version.ref = "junit5" }
+junit6-bom =  { module = "org.junit:junit-bom",  version.ref = "junit6" }
 # to omit the version we have to use this syntax, the version is managed by the junit-bom
 junit-jupiter.module = "org.junit.jupiter:junit-jupiter"
 junit-platform-console.module = "org.junit.platform:junit-platform-console"
@@ -44,3 +49,4 @@ workflows-kotlin-scriptingCompiler = { module = "org.jetbrains.kotlin:kotlin-scr
 groovy-v2 = { module = "org.codehaus.groovy:groovy", version.ref="groovy2" }
 groovy-v3 = { module = "org.codehaus.groovy:groovy", version.ref="groovy3" }
 groovy-v4 = { module = "org.apache.groovy:groovy", version.ref="groovy4" }
+groovy-v5 = { module = "org.apache.groovy:groovy", version.ref="groovy5" }

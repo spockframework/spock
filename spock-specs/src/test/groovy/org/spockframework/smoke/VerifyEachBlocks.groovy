@@ -83,6 +83,44 @@ class VerifyEachBlocks extends EmbeddedSpecification {
     snap.assertThat(e.message).matchesSnapshot()
   }
 
+  def "verifyEach fails handles exception"(@Snapshot Snapshotter snap) {
+    given:
+    def range = (1..10)
+
+    when:
+    verifyEach(range) {
+      if (it == 5) {
+        throw new RuntimeException("x == $it").tap {
+          // remove stack trace to make snapshot stable
+          it.stackTrace = []
+        }
+      }
+    }
+
+    then:
+    SpockAssertionError e = thrown()
+    snap.assertThat(e.message).matchesSnapshot()
+  }
+
+  def "verifyEach fails handles exceptions"(@Snapshot Snapshotter snap) {
+    given:
+    def range = (1..10)
+
+    when:
+    verifyEach(range) {
+      if (it in (5..6)) {
+        throw new RuntimeException("x == $it").tap {
+          // remove stack trace to make snapshot stable
+          it.stackTrace = []
+        }
+      }
+    }
+
+    then:
+    MultipleFailuresError e = thrown()
+    snap.assertThat(e.message).matchesSnapshot()
+  }
+
   def "verifyEach fails handles nested exceptions"(@Snapshot Snapshotter snap) {
     given:
     def range = (1..10)

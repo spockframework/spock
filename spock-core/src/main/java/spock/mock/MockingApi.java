@@ -22,11 +22,12 @@ import groovy.transform.*;
 import groovy.transform.stc.ClosureParams;
 import groovy.transform.stc.FirstParam;
 import groovy.transform.stc.SecondParam;
-import org.spockframework.lang.SpecInternals;
+import spock.lang.Specification;
 import org.spockframework.mock.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.util.Beta;
+import org.spockframework.util.ObjectUtil;
 
 import groovy.lang.Closure;
 
@@ -76,7 +77,7 @@ import groovy.lang.Closure;
  * </pre>
  */
 @SuppressWarnings({"unused", "SameReturnValue"})
-public class MockingApi extends SpecInternals implements MockFactory {
+public class MockingApi implements MockFactory {
   /**
    * Encloses one or more interaction definitions in a <tt>then</tt> block.
    * Required when an interaction definition uses a statement that doesn't
@@ -1672,7 +1673,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @param code the code to execute
    */
   public void runWithThreadAwareMocks(Runnable code) {
-    getSpecificationContext().getThreadAwareMockController().runWithThreadAwareMocks(code);
+    ObjectUtil.<Specification>uncheckedCast(this).getSpecificationContext().getThreadAwareMockController().runWithThreadAwareMocks(code);
   }
 
   /**
@@ -1686,7 +1687,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return the return value of the executed code
    */
   public <R> R withActiveThreadAwareMocks(Callable<R> code) {
-    return getSpecificationContext().getThreadAwareMockController().withActiveThreadAwareMocks(code);
+    return ObjectUtil.<Specification>uncheckedCast(this).getSpecificationContext().getThreadAwareMockController().withActiveThreadAwareMocks(code);
   }
 
   private InvalidSpecException invalidMockCreation() {

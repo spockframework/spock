@@ -39,7 +39,24 @@ public class RetryIterationInterceptor extends RetryBaseInterceptor implements I
 
   public RetryIterationInterceptor(Retry retry, MethodInfo featureMethod) {
     super(retry);
-    featureMethod.addInterceptor(new InnerRetryInterceptor(retry, condition));
+    InnerRetryInterceptor interceptor = new InnerRetryInterceptor(retry, condition);
+    addInterceptorToFeatureMethod(featureMethod, interceptor);
+  }
+
+  private static void addInterceptorToFeatureMethod(MethodInfo featureMethod, InnerRetryInterceptor interceptor) {
+    List<IMethodInterceptor> interceptors = featureMethod.getInterceptors();
+    for (int i = 0; i < interceptors.size(); i++) {
+      IMethodInterceptor existing = interceptors.get(i);
+      if (existing instanceof PendingFeatureInterceptor) {
+        //Make sure we insert the RetryInterceptor before the PendingFeatureInterceptor
+        //otherwise the PendingFeatureInterceptor will fail, because the RetryInterceptor swallowed the exceptions.
+        //This would lead to a PendingFeatureSuccessfulError
+        //TODO: Change this when https://github.com/spockframework/spock/issues/646 got implement to remove the hard-coded logic.
+        interceptors.add(i, interceptor);
+        return;
+      }
+    }
+    interceptors.add(interceptor);
   }
 
   @Override
@@ -59,7 +76,7 @@ public class RetryIterationInterceptor extends RetryBaseInterceptor implements I
 
   private class InnerRetryInterceptor extends RetryBaseInterceptor implements IMethodInterceptor {
 
-    public InnerRetryInterceptor(Retry retry, Closure condition) {
+    public InnerRetryInterceptor(Retry retry, Closure<?> condition) {
       super(retry, condition);
     }
 

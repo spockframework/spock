@@ -41,6 +41,7 @@ public class MethodInvocation implements IMethodInvocation {
   private final MethodInfo method;
   private Object[] arguments;
   private final Iterator<IMethodInterceptor> interceptors;
+  private IMethodInterceptor nextInterceptor;
 
   private final StoreProvider storeProvider;
 
@@ -57,6 +58,19 @@ public class MethodInvocation implements IMethodInvocation {
     interceptors = scopedInterceptors.isEmpty()
       ? method.getInterceptors().iterator()
       : CollectionUtil.concat(scopedInterceptors, method.getInterceptors()).iterator();
+  }
+
+  private MethodInvocation(FeatureInfo feature, IterationInfo iteration, StoreProvider storeProvider, Object sharedInstance,
+                          Object instance, Object target, MethodInfo method, Iterator<IMethodInterceptor> interceptors, Object[] arguments) {
+    this.feature = feature;
+    this.iteration = iteration;
+    this.storeProvider = storeProvider;
+    this.sharedInstance = sharedInstance;
+    this.instance = instance;
+    this.target = target;
+    this.method = method;
+    this.interceptors = interceptors;
+    this.arguments = arguments;
   }
 
   @Override
@@ -106,7 +120,7 @@ public class MethodInvocation implements IMethodInvocation {
 
   @Override
   public void setArguments(Object[] arguments) {
-    Checks.checkArgument(arguments.length != this.arguments.length, () -> "length of arguments array must not change from " + this.arguments.length + " to " + arguments.length);
+    Checks.checkArgument(arguments.length == this.arguments.length, () -> "length of arguments array must not change from " + this.arguments.length + " to " + arguments.length);
     this.arguments = arguments;
   }
 
@@ -118,8 +132,12 @@ public class MethodInvocation implements IMethodInvocation {
 
   @Override
   public void proceed() throws Throwable {
-    if (interceptors.hasNext())
-      interceptors.next().intercept(this);
+    if ((nextInterceptor == null) && interceptors.hasNext()) {
+      nextInterceptor = interceptors.next();
+    }
+    if (nextInterceptor != null)
+      nextInterceptor.intercept(new MethodInvocation(feature, iteration, storeProvider,
+        sharedInstance, instance, target, method, interceptors, arguments.clone()));
     else method.invoke(target, arguments);
   }
 }

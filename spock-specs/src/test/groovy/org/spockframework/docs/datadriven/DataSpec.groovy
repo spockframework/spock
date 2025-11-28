@@ -111,7 +111,7 @@ class DataSpec extends EmbeddedSpecification {
       - `feature [a: 2, b: 4, c: 6, d: 1, e: 6, #3]`
       end::data-providers-combined-result[]
     '''
-      .stripIndent(*(GroovyRuntimeUtil.groovy3orNewer ? [true] : []))
+      .stripIndent(*((GroovyRuntimeUtil.MAJOR_VERSION >= 3) ? [true] : []))
       .readLines()
       .findAll {it.startsWith('-') }
       .join('\n')
@@ -206,7 +206,7 @@ class DataSpec extends EmbeddedSpecification {
       - `feature [a: 6, b: 6, c: 9, #5]`
       end::single-data-providers-combined-result1[]
     '''
-      .stripIndent(*(GroovyRuntimeUtil.groovy3orNewer ? [true] : []))
+      .stripIndent(*((GroovyRuntimeUtil.MAJOR_VERSION >= 3) ? [true] : []))
       .readLines()
       .findAll {it.startsWith('-') }
       .join('\n')
@@ -251,7 +251,7 @@ class DataSpec extends EmbeddedSpecification {
       - `feature [a: 2, b: 4, c: 6, #3]`
       end::single-data-providers-combined-result2[]
     '''
-      .stripIndent(*(GroovyRuntimeUtil.groovy3orNewer ? [true] : []))
+      .stripIndent(*((GroovyRuntimeUtil.MAJOR_VERSION >= 3) ? [true] : []))
       .readLines()
       .findAll {it.startsWith('-') }
       .join('\n')

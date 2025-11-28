@@ -1,7 +1,8 @@
 [[release-notes]]
 = Release Notes
-
 include::include.adoc[]
+:SpecClassFileSelector: https://github.com/spockframework/spock/blob/03818ed010f4b4ca1136a292e214f79d518c4abe/spock-core/src/main/java/org/spockframework/buildsupport/ant/SpecClassFileSelector.java
+:scriptselector: {spock-example-project}/blob/963fd34d1609b7025ba92502483ce31b2c6d9d0a/build.xml#L167-L176
 
 == 2.4 (tbd)
 
@@ -9,6 +10,7 @@ _This is a summary of the highlights of the milestone releases_
 
 === Highlights
 
+* Add support for Groovy 5.0 spockIssue:2196[]
 * Add support for combining two or more data providers using cartesian product spockIssue:1062[]
 * Add support for a `filter` block after a `where` block to filter out unwanted iterations spockPull:1927[]
 * Add <<extensions.adoc#block-listener,`IBlockListener`>> extension point to listen to block execution events within feature methods spockPull:1575[]
@@ -29,6 +31,7 @@ _This is a summary of the highlights of the milestone releases_
 * Add <<extensions.adoc#spock-interceptors,feature-scoped interceptors>> spockPull:1844[]
 * Add `@Snapshot` extension for <<extensions.adoc#snapshot-testing,snapshot testing>> spockPull:1873[]
 * Add `!!` as <<spock_primer.adoc#opt-out-of-condition-handling,opt-out operator for assertions>> spockPull:1532[]
+* Add support for Groovy 5.0 spockIssue:2196[]
 
 === Breaking Changes
 
@@ -57,7 +60,32 @@ will now require that the spec is annotated with <<parallel_execution.adoc#isola
 
 === Misc
 
-* Fix vararg handling in SpyStatic spockIssue:2161[]
+* Fix handling of condition method calls and Groovy `with()` method spockPull:2162[]
+** This could break tests using `with()` which relied on the bug in the past spockIssue:2269[]
+** Use the Spock `with(yourObject)` instead of `yourObject.with()` or prefix it `!!` to fix your test
+
+== 2.4-M7 (2025-11-23)
+
+=== Highlights
+
+* Add support for Groovy 5.0 spockIssue:2196[]
+
+=== Misc
+
+* Improve Spock is also tested to run correctly on Java 25 LTS spockPull:2212[]
+* Fix handling of `@Verify` and `@VerifyAll` spockIssue:2150[]
+* Fix handling of condition method calls spockPull:2162[]
+* Fix vararg handling in `SpyStatic` spockIssue:2161[]
+* Fix incompatibility with JUnit 6 in OSGi environment spockIssue:2231[]
+* Fix OSGi metadata by pinning the `Require-Capability:osgi.ee=JavaSE` to Java `8` spockPull:2233[]
+* Fix NPE in `SpecRunHistory.sortFeatures` when duration is missing spockIssue:2234[]
+* Fix `Retry` extension does not mesh with `TestAbortedException` and `PendingFeature` spockIssue:1863[]
+* Fix display of caught exceptions within `verifyEach` blocks spockPull:2163[]
+* Fix extensions that call `invocation.proceed()` multiple times like `@Retry` does spockIssue:1862[]
+* Fix setting the whole argument array of an invocation spockPull:2240[]
+* Fix `SpyStatic()` with an interaction closure throws NullPointerException spockPull:2254[]
+
+Thanks to all the contributors to this release: Andreas Turban, Björn Kautler, Christoph Loy, Leonard Brünings, Thanos Tsiamis
 
 == 2.4-M6 (2025-04-15)
 
@@ -87,6 +115,7 @@ spockPull:2112[]
 * Fix several bugs in cross-multiplication implementation spockPull:2123[]
 * Fix filter blocks with shared fields and derived data variables spockPull:2088[]
 * Fix combined labels with comments being ignored spockPull:2121[]
+* Fix boxed Boolean `is` getter methods not properly mocked in Groovy <= 3 spockIssue:2131[]
 
 Thanks to all the contributors to this release: Andreas Turban, Björn Kautler, Christoph Loy, Marcin Zajączkowski, Pavlo Shevchenko
 
@@ -668,9 +697,17 @@ It can be set back to the old pre Spock 2.0 behaviour by setting
   will be thrown at runtime.
 
 // tag::breaking-change-removed-ant-support[]
-==== Ant support removed
-`SpecClassFileSelector` was removed, which was the only class that required `ant`.
-If you are still using spock with `ant`, then you can just copy the class from the spock source code into your build.
+==== Ant custom selector removed
+The class `SpecClassFileSelector` that could be used to only select actual Spock specification classes when testing
+and creating a test report was removed. It was the only class that required `ant` and was basically just a one-line
+forward to the `SpecClassFileFinder` which is still available.
+
+If you are still using Spock with `ant`, then you can just copy {SpecClassFileSelector}[the class from the spock source code]
+into your build, or you simply use a {scriptselector}[`<scriptselector>`] that does this forwarding as shown in the
+{spock-example-project}[Spock Example Project].
+
+Alternatively, you can also use a naming convention to find the classes that are actual specifications and not helper
+or base classes, or you live with a bit of wasted time and some meaningless entries in the test reports.
 // end::breaking-change-removed-ant-support[]
 
 === Misc
@@ -1226,7 +1263,7 @@ Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.
 * Improved and restyled reference documentation at https://docs.spockframework.org. Generated with
   https://asciidoctor.org/[Asciidoctor] (what else?).
 * Maven plugin removed. Just let Maven Surefire run your Spock specs like your JUnit tests
-  (see https://examples.spockframework.org[spock-example] project).
+  (see {spock-example-project}[spock-example] project).
 * Official support for Java 1.8, Groovy 2.3 and Groovy 2.4. Make sure to pick the `groovy-2.0` binaries for Groovy
   2.0/2.1/2.2, `groovy-2.3` binaries for Groovy 2.3, and `groovy-2.4` binaries for Groovy 2.4 and higher.
 * Improved infrastructure to allow for easier community involvement: Switch to
@@ -1784,7 +1821,7 @@ their types inferred from the values in the table (!).
 === GitHub Repository
 
 All source code has moved to https://github.spockframework.org/. The https://github.spockframework.org/spock-grails[Grails Spock plugin],
-https://github.spockframework.org/spock-example[Spock Example] project, and
+{spock-example-project}[Spock Example] project, and
 https://github.spockframework.org/spockwebconsole[Spock Web Console] now have their own GitHub projects.
 Also available are slides and code for various Spock presentations (such as
 https://github.spockframework.org/smarter-testing-with-spock[this one]).

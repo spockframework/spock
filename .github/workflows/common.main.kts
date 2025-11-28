@@ -17,7 +17,7 @@
  */
 
 @file:Repository("https://repo.maven.apache.org/maven2/")
-@file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.4.0")
+@file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.5.0")
 
 import io.github.typesafegithub.workflows.domain.Job
 import io.github.typesafegithub.workflows.domain.JobOutputs.EMPTY
@@ -85,6 +85,7 @@ data class Matrix(
 
     data class Axes(
         val javaVersions: List<String>,
+        val additionalJavaTestVersions: List<String>,
         val variants: List<String>
     )
 
@@ -137,16 +138,21 @@ val Matrix.Companion.full
     get() = Matrix(
         operatingSystems = listOf("ubuntu-latest"),
         variants = axes.variants,
-        javaVersions = axes.javaVersions + "23",
-        exclude = { (variant == "2.5") && (javaVersion!!.toInt() >= 17) },
+        javaVersions = axes.javaVersions + axes.additionalJavaTestVersions,
+        exclude = {
+            ((variant == "2.5") && (javaVersion!!.toInt() >= 17)) ||
+                ((variant == "5.0") && (javaVersion!!.toInt() < 11))
+        },
         includes = listOf("windows-latest", "macos-latest")
-            .map {
-                Matrix.Element(
-                    operatingSystem = it,
-                    javaVersion = axes.javaVersions.first()
-                )
+            .map { Matrix.Element(operatingSystem = it) }
+            .flatMap { element ->
+                axes.variants.map {
+                    element.copy(
+                        variant = it,
+                        javaVersion = if (it == "5.0") "11" else axes.javaVersions.first()
+                    )
+                }
             }
-            .flatMap { element -> axes.variants.map { element.copy(variant = it) } }
     )
 
 val Matrix.Companion.axes by lazy {
@@ -159,13 +165,18 @@ val Matrix.Companion.axes by lazy {
 
         Matrix.Axes(
             properties.getList("javaVersionsList"),
+            properties.getList("additionalJavaTestVersionsList"),
             properties.getList("variantsList")
         )
     }
 }
 
 fun Properties.getList(key: String) =
-    getProperty(key).trim().split("""\s*+,\s*+""".toRegex())
+    getProperty(key)
+        ?.trim()
+        ?.split("""\s*+,\s*+""".toRegex())
+        ?.filter { it.isNotBlank() }
+        ?: emptyList()
 
 data class SetupBuildEnv(
     val additionalJavaVersion: String? = null

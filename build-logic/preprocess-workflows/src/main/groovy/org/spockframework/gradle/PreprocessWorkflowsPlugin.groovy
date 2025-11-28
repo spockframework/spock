@@ -57,6 +57,7 @@ class PreprocessWorkflowsPlugin implements Plugin<Project> {
       def preprocessWorkflow = project.tasks.register("preprocess${pascalCasedWorkflowName}Workflow", PreprocessGithubWorkflow) {
         it.workflowScript.set(workflowScript)
         it.importedFiles.from(determineImportedFiles.flatMap { it.importedFiles }.map { it.asFile.readLines() })
+        it.importedFiles.from(project.layout.projectDirectory.file('gradle.properties'))
         it.kotlinCompilerClasspath.from(kotlinCompilerClasspath)
         it.mainKtsClasspath.from(mainKtsClasspath)
         it.javaLauncher.set(project.extensions.getByType(JavaToolchainService).launcherFor {

@@ -35,23 +35,23 @@ jobs:
     steps:
     - id: 'step-0'
       name: 'Checkout Repository'
-      uses: 'actions/checkout@v4'
+      uses: 'actions/checkout@v5'
       with:
         fetch-depth: '1'
     - id: 'step-1'
       name: 'Set up JDKs'
       uses: './.github/actions/setup-build-env'
       with:
-        additional-java-version: '21'
+        additional-java-version: '25'
     - id: 'step-2'
       name: 'Install GraphViz'
       run: 'sudo apt update && sudo apt install --yes graphviz'
     - id: 'step-3'
       name: 'Build Docs'
-      run: './gradlew --stacktrace asciidoctor javadoc "-Dvariant=4.0" "-DjavaVersion=21"'
+      run: './gradlew --stacktrace asciidoctor javadoc "-Dvariant=5.0" "-DjavaVersion=25"'
     - id: 'step-4'
       name: 'Archive and upload docs'
-      uses: 'actions/upload-artifact@v4'
+      uses: 'actions/upload-artifact@v5'
       with:
         name: 'docs'
         path: |-

@@ -68,9 +68,12 @@ public class SpecRunHistory implements Comparable<SpecRunHistory> {
       if (!confidence1.equals(confidence2))
         return confidence1 - confidence2;
 
-      long duration1 = data.featureDurations.get(f1.getName()); // never null
-      long duration2 = data.featureDurations.get(f2.getName()); // never null
-      return duration1 < duration2 ? -1 : 1;
+      Long d1 = data.featureDurations.get(f1.getName());
+      Long d2 = data.featureDurations.get(f2.getName());
+
+      if (d1 == null) return 1;
+      if (d2 == null) return -1;
+      return d1< d2 ? -1 : 1;
     });
   }
 

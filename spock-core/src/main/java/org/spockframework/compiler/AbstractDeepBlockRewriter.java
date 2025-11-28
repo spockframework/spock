@@ -29,7 +29,7 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
   protected BinaryExpression currBinaryExpr;
   protected MethodCallExpression currMethodCallExpr;
   protected ClosureExpression currClosure;
-  protected ISpecialMethodCall currSpecialMethodCall = NoSpecialMethodCall.INSTANCE;
+  protected ISpecialMethodCall currSpecialMethodCall;
   protected Collection<Statement> pastSpecialMethodCallStats = new HashSet<>();
 
   // following fields are filled in by subclasses
@@ -41,8 +41,13 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
   protected final List<Statement> thenBlockInteractionStats = new ArrayList<>();
 
   public AbstractDeepBlockRewriter(Block block, AstNodeCache nodeCache) {
+    this(block, nodeCache, NoSpecialMethodCall.INSTANCE);
+  }
+
+  public AbstractDeepBlockRewriter(Block block, AstNodeCache nodeCache, ISpecialMethodCall currSpecialMethodCall) {
     this.block = block;
     this.nodeCache = nodeCache;
+    this.currSpecialMethodCall = currSpecialMethodCall;
   }
 
   protected void conditionFound() {

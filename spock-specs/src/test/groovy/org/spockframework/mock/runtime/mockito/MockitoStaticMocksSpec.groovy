@@ -22,9 +22,12 @@ import org.mockito.exceptions.base.MockitoException
 import org.spockframework.mock.CannotCreateMockException
 import org.spockframework.mock.MockUtil
 import org.spockframework.runtime.InvalidSpecException
+import org.spockframework.runtime.SpecInternals
+import org.spockframework.runtime.model.SpecInfo
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.mock.IMockMakerSettings
 import spock.mock.MockMakers
 
 import java.util.concurrent.Callable
@@ -489,6 +492,43 @@ class MockitoStaticMocksSpec extends Specification {
     expect:
     StaticClass.staticVarargsMethod("test")
     !StaticClass.staticVarargsMethod("test2")
+  }
+
+  def "SpyStatic with closure as IMockMakerSettings shall produce nice error message"() {
+    when:
+    SpyStatic(StaticClass) {
+
+    }
+
+    then:
+    def ex = thrown(CannotCreateMockException)
+    ex.message.startsWith(
+      """Cannot create mock for class $StaticClass.name because the MockMakerSettings returned the invalid ID 'null'.
+The syntax SpyStatic(StaticClass){} is not supported, please use SpyStatic(StaticClass) without a Closure instead.""")
+  }
+
+  def "SpyStatic with closure returning something shall produce nice error message"() {
+    when:
+    SpyStatic(StaticClass) {
+      "Dummy"
+    }
+
+    then:
+    def ex = thrown(CannotCreateMockException)
+    ex.message.startsWith(
+      """Cannot create mock for class $StaticClass.name because the MockMakerSettings returned the invalid ID 'null'.
+The syntax SpyStatic(StaticClass){} is not supported, please use SpyStatic(StaticClass) without a Closure instead.""")
+    ex.cause instanceof ClassCastException
+  }
+
+  def "ClassCastException inside the getMockMakerId() from a non-static Spy is thrown as-is and is not processed by the SpyStatic(){} closure check"() {
+    when:
+    Spy(Runnable, mockMaker: {
+      throw new ClassCastException()
+    } as IMockMakerSettings)
+
+    then:
+    thrown(ClassCastException)
   }
 
   static class StaticClass {

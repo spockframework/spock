@@ -44,17 +44,25 @@ ext {
     groovyVersion = libs.versions.groovy4.get()
     minGroovyVersion = "4.0.0"
     maxGroovyVersion = "4.9.99"
+  } else if (variant == 5.0) {
+    groovyGroup = "org.apache.groovy"
+    groovyVersion = libs.versions.groovy5.get()
+    minGroovyVersion = "5.0.0"
+    maxGroovyVersion = "5.9.99"
+    if (javaVersion < 11) {
+      throw new InvalidUserDataException("Groovy $variant is not compatible with Java $javaVersion")
+    }
   } else {
     throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")
   }
 
   groovyDependencies = [
-    [group: groovyGroup, name: "groovy", version: groovyVersion]
+    dependencyFactory.create(groovyGroup, "groovy", groovyVersion)
   ]
   groovyConsoleExtraDependencies = [
-    [group: groovyGroup, name: "groovy-console", version: groovyVersion],
-    [group: groovyGroup, name: "groovy-test-junit5", version: groovyVersion], // for executing specs
-    [group: "org.apache.ivy", name: "ivy", version: "2.5.3"] // for @Grab support
+    dependencyFactory.create(groovyGroup, "groovy-console", groovyVersion),
+    dependencyFactory.create(groovyGroup, "groovy-test-junit5", groovyVersion), // for executing specs
+    dependencyFactory.create("org.apache.ivy", "ivy", "2.5.3"), // For @Grab support
   ]
   maxGroovyVersion = snapshotVersion ? "9.9.99" : maxGroovyVersion
   if (System.getProperty("groovyVersion")) {
@@ -157,7 +165,7 @@ subprojects {
   dependencies {
     api platform(projects.spockBom)
     implementation(project.name == "spock-gradle" ? [] : groovylibs.groovy)
-    testImplementation(platform(libs.junit.bom))
+    testImplementation(platform(libs.junit5.bom))
     testImplementation(libs.junit.platform.launcher)
   }
 
@@ -229,8 +237,8 @@ if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParam
   }
 
   if (originalStartParameterTaskNames == ["ghActionsPublish"]) {
-    if (javaVersion != javaVersions.min()) {
-      throw new IllegalArgumentException("ghActionsPublish can only be run on Java ${javaVersions.min()} but was run on $javaVersion")
+    if ((javaVersion != javaVersions.min()) && ((variant != 5.0) || (javaVersion != 11))) {
+      throw new IllegalArgumentException("ghActionsPublish can only be run on Java ${javaVersions.min()} (or 11 for variant 5.0) but was run on $javaVersion")
     }
     /*
       We want to release only snapshots directly from master, final releases will be tagged and then published from that tag.
@@ -365,7 +373,10 @@ tasks.named("asciidoctor") {
 nexusPublishing {
   packageGroup = 'org.spockframework'
   repositories {
+    // see https://central.sonatype.org/publish/publish-portal-ossrh-staging-api/#configuration
     sonatype {
+      nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+      snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
       username = System.getenv("SONATYPE_OSS_USER")
       password = System.getenv("SONATYPE_OSS_PASSWORD")
     }

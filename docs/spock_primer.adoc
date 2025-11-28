@@ -230,8 +230,9 @@ digestible form. Nice, isn't it?
 ===== Implicit and explicit conditions
 
 Conditions are an essential ingredient of `then` blocks and `expect` blocks. Except for calls to `void` methods and
-expressions classified as interactions, all top-level expressions in these blocks are implicitly treated as conditions.
-To use conditions in other places, you need to designate them with Groovy's assert keyword:
+expressions classified as interactions, all expression statements in these blocks are implicitly treated as conditions
+except if they happen inside some unknown closure.
+To use conditions in other places, you need to designate them with Groovy's `assert` keyword:
 
 [source,groovy]
 ----

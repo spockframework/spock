@@ -19,65 +19,29 @@ package org.spockframework.util
 import spock.lang.Specification
 
 class ClassUtilSpec extends Specification {
-  def "get string representation of non-null class"() {
+  def "get string representation of class"() {
     expect:
-    ClassUtil.nullSafeToString(clazz) == clazz.getName()
+    ClassUtil.nullSafeToString(clazz) == expectedString
 
     where:
-    clazz << [Set, Tuple, ClassUtil]
+    clazz     | expectedString
+    Set       | "java.util.Set"
+    Tuple     | "groovy.lang.Tuple"
+    ClassUtil | "org.spockframework.util.ClassUtil"
+    null      | "null"
   }
 
-  def "get string representation of null class"() {
-    when:
-    String result = ClassUtil.nullSafeToString(null)
-
-    then:
-    result == "null"
-  }
-
-  def "get string representation of multiple potentially null classes"(Class<?>... clazzes) {
-    given:
-    def clazzStrings = []
-    for (clazz in clazzes) {
-      clazzStrings.add(ClassUtil.nullSafeToString(clazz))
-    }
-
-    when:
-    String result = ClassUtil.allNullSafeToString(clazzes)
-
-    then: "result is names from single class overload separated by a comma and space each"
-    notThrown(NullPointerException)
-    result == String.join(", ", clazzStrings)
+  def "get string representation of none, one, or multiple potentially null classes"(Class<?>[] clazzes, String expectedString) {
+    expect: "result is names from single class overload separated by a comma and space each"
+    ClassUtil.allNullSafeToString(clazzes) == expectedString
 
     where:
-    clazzes << [[List, Set, Queue, Map],
-                [File, null, URL],
-                [null, null]]
-  }
-
-  def "get string representation of one class not known to be just one"() {
-    given:
-    Class<?>[] singleton = [Specification.class]
-    Class<?>[] singletonOfNull = [null]
-
-    expect:
-    ClassUtil.allNullSafeToString(singleton) == ClassUtil.nullSafeToString(Specification.class)
-    ClassUtil.allNullSafeToString(singletonOfNull) == ClassUtil.nullSafeToString(null)
-  }
-
-  def "get string representation of no classes"() {
-    expect:
-    ClassUtil.allNullSafeToString() == ""
-  }
-
-  def "get string representation of null array of classes"() {
-    given:
-    Class<?>[] nullArray = null
-
-    when:
-    String result = ClassUtil.allNullSafeToString(nullArray)
-
-    then:
-    result == ""
+    clazzes                 | expectedString
+    [List, Set, Queue, Map] | "java.util.List, java.util.Set, java.util.Queue, java.util.Map"
+    [File, null, URL]       | "java.io.File, null, java.net.URL"
+    [null, null]            | "null, null"
+    [File]                  | "java.io.File"
+    []                      | ""
+    null                    | ""
   }
 }

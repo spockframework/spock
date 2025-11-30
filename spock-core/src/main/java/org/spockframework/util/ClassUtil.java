@@ -20,22 +20,21 @@ import java.util.Arrays;
 
 import static java.util.stream.Collectors.joining;
 
+/**
+ * Utility methods for working with {@link Class} objects.
+ *
+ * @since 2.4
+ */
 public class ClassUtil {
   public static String nullSafeToString(@Nullable Class<?> clazz) {
-    if (clazz != null)
-      return clazz.getName();
-    else
-      return "null";
+    return clazz == null ? "null" : clazz.getName();
   }
 
-  // not an overload because I couldn't fix
-  // ambiguous overload errors in the spec
   public static String allNullSafeToString(@Nullable Class<?>... clazzes) {
-    if (clazzes != null)
-      return Arrays.stream(clazzes)
-        .map(ClassUtil::nullSafeToString)
-        .collect(joining(", "));
-    else
-      return "";
+    if (clazzes == null) return "";
+
+    return Arrays.stream(clazzes)
+      .map(ClassUtil::nullSafeToString)
+      .collect(joining(", "));
   }
 }

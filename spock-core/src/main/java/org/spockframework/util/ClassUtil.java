@@ -30,7 +30,7 @@ public class ClassUtil {
     return clazz == null ? "null" : clazz.getName();
   }
 
-  public static String allNullSafeToString(@Nullable Class<?>... clazzes) {
+  public static String nullSafeToString(@Nullable Class<?>... clazzes) {
     if (clazzes == null) return "";
 
     return Arrays.stream(clazzes)

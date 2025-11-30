@@ -91,7 +91,7 @@ public abstract class SpockNode<T extends SpecElementInfo<?,?>>
   protected static MethodSource featureToMethodSource(FeatureInfo info) {
     return MethodSource.from(info.getSpec().getBottomSpec().getReflection().getName(),
       info.getName(),
-      ClassUtil.allNullSafeToString(info.getFeatureMethod().getReflection().getParameterTypes())
+      ClassUtil.nullSafeToString(info.getFeatureMethod().getReflection().getParameterTypes())
     );
   }
 

@@ -21,7 +21,7 @@ import spock.lang.Specification
 class ClassUtilSpec extends Specification {
   def "get string representation of class"() {
     expect:
-    ClassUtil.nullSafeToString(clazz) == expectedString
+    ClassUtil.nullSafeToString(clazz as Class<?>) == expectedString
 
     where:
     clazz     | expectedString
@@ -33,7 +33,7 @@ class ClassUtilSpec extends Specification {
 
   def "get string representation of none, one, or multiple potentially null classes"(Class<?>[] clazzes, String expectedString) {
     expect: "result is names from single class overload separated by a comma and space each"
-    ClassUtil.allNullSafeToString(clazzes) == expectedString
+    ClassUtil.nullSafeToString(clazzes as Class<?>[]) == expectedString
 
     where:
     clazzes                 | expectedString

@@ -23,7 +23,7 @@
 @file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.6.0")
 
 @file:Repository("https://bindings.krzeminski.it/")
-@file:DependsOn("actions:checkout___major:[v5,v6-alpha)")
+@file:DependsOn("actions:checkout___major:[v5,7.0)")
 @file:DependsOn("github:codeql-action__analyze___major:[v4,v5-alpha)")
 @file:DependsOn("github:codeql-action__init___major:[v4,v5-alpha)")
 

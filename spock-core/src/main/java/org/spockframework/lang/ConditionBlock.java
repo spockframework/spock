@@ -14,9 +14,10 @@
 
 package org.spockframework.lang;
 
-import org.spockframework.util.Beta;
-
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Indicates that the closure argument(s) of the annotated method are code blocks
@@ -30,7 +31,6 @@ import java.lang.annotation.*;
  * - the annotated method is called on object of type known at compilation time (no "def").
  * If the annotated method is overloaded, the closure arguments of all overloads are considered code blocks.
  */
-@Beta
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConditionBlock {}

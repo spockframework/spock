@@ -1,7 +1,5 @@
 package spock.mock;
 
-import org.spockframework.util.Beta;
-
 import java.util.Map;
 
 /**
@@ -39,7 +37,6 @@ public interface MockFactory {
    *
    * @return a mock with the specified options and type
    */
-  @Beta
   <T> T Mock(Map<String, Object> options, Class<T> type);
 
   /**
@@ -56,7 +53,6 @@ public interface MockFactory {
    *
    * @return a stub with the specified type
    */
-  @Beta
   <T> T Stub(Class<T> type);
 
   /**
@@ -74,7 +70,6 @@ public interface MockFactory {
    *
    * @return a stub with the specified options and type
    */
-  @Beta
   <T> T Stub(Map<String, Object> options, Class<T> type);
 
   /**
@@ -91,7 +86,6 @@ public interface MockFactory {
    *
    * @return a spy with the specified type
    */
-  @Beta
   <T> T Spy(Class<T> type);
   
   /**
@@ -108,7 +102,6 @@ public interface MockFactory {
    *
    * @return a spy with the specified type
    */
-  @Beta
   <T> T Spy(T obj);
 
   /**
@@ -126,7 +119,6 @@ public interface MockFactory {
    *
    * @return a spy with the specified options and type
    */
-  @Beta
   <T> T Spy(Map<String, Object> options, Class<T> type);
 
 }

@@ -16,12 +16,12 @@ package spock.util.concurrent;
 
 import groovy.lang.Closure;
 
+import java.util.Locale;
+
 import org.spockframework.lang.ConditionBlock;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.SpockTimeoutError;
 import org.spockframework.util.Beta;
-
-import java.util.Locale;
 
 /**
  * Repeatedly evaluates one or more conditions until they are satisfied or a timeout has elapsed.
@@ -49,7 +49,6 @@ import java.util.Locale;
  *   PollingConditions conditions = new PollingConditions(timeout: 10, initialDelay: 1.5, factor: 1.25)
  * </pre>
  */
-@Beta
 public class PollingConditions {
   private double timeout = 1;
   private double initialDelay = 0;
@@ -141,7 +140,7 @@ public class PollingConditions {
    * @param timeoutMessage the closure that is evaluated when a timeout is reached
    * @since 2.4
    */
-   @Beta
+  @Beta
   public void onTimeout(Closure<String> timeoutMessage) {
     this.timeoutMessage = timeoutMessage;
   }

@@ -1,13 +1,10 @@
 package org.spockframework.runtime.model.parallel;
 
-import org.spockframework.util.Beta;
-
 /**
  * Supported execution modes for parallel test execution.
  *
  * @since 2.0
  */
-@Beta
 public enum ExecutionMode {
 
   /**

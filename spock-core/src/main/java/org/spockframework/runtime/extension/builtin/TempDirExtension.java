@@ -15,23 +15,22 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.extension.IStatelessAnnotationDrivenExtension;
-import org.spockframework.runtime.model.*;
-import org.spockframework.tempdir.TempDirConfiguration;
-import org.spockframework.util.Beta;
-import org.spockframework.util.Checks;
-import org.spockframework.util.UnreachableCodeError;
 import spock.lang.TempDir;
 
 import java.util.EnumSet;
 import java.util.Set;
 
+import org.spockframework.runtime.extension.IMethodInterceptor;
+import org.spockframework.runtime.extension.IStatelessAnnotationDrivenExtension;
+import org.spockframework.runtime.model.*;
+import org.spockframework.tempdir.TempDirConfiguration;
+import org.spockframework.util.Checks;
+import org.spockframework.util.UnreachableCodeError;
+
 /**
  * @author dqyuan
  * @since 2.0
  */
-@Beta
 public class TempDirExtension implements IStatelessAnnotationDrivenExtension<TempDir> {
 
   private static final Set<MethodKind> VALID_METHOD_KINDS = EnumSet.of(MethodKind.SETUP, MethodKind.SETUP_SPEC, MethodKind.FEATURE);

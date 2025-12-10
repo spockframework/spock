@@ -16,11 +16,10 @@
 
 package spock.util.mop;
 
+import java.lang.annotation.*;
+
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.ConfineMetaClassChangesExtension;
-import org.spockframework.util.Beta;
-
-import java.lang.annotation.*;
 
 /**
  * Confines any changes made to the meta classes of the specified classes to the
@@ -58,7 +57,6 @@ public @interface ConfineMetaClassChanges {
   /**
    * @since 2.0
    */
-  @Beta
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ElementType.TYPE, ElementType.METHOD})
   @interface Container {

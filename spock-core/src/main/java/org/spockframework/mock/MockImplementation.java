@@ -14,14 +14,12 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.util.Beta;
 import spock.mock.MockingApi;
 
 /**
  * Determines how method calls are processed and matched against interactions. A mock implementation
  * is chosen at mock creation time, typically by selecting the appropriate {@link MockingApi} factory method.
  */
-@Beta
 public enum MockImplementation {
   /**
    * A generic implementation targeting any callers. Used by the {@link MockingApi#Mock},

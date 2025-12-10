@@ -15,9 +15,10 @@
  */
 package org.spockframework.spring;
 
-import org.spockframework.util.Beta;
-
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Adds one or more plain Stubs to the ApplicationContext.
@@ -37,7 +38,6 @@ import java.lang.annotation.*;
  * @author Leonard Brünings
  * @since 1.2
  */
-@Beta
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface StubBeans {

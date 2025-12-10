@@ -18,7 +18,6 @@ import java.lang.annotation.*;
 
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.SeeExtension;
-import org.spockframework.util.Beta;
 
 /**
  * One or more references to external information related to a specification or feature.
@@ -40,7 +39,6 @@ public @interface See {
   /**
    * @since 2.0
    */
-  @Beta
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ElementType.TYPE, ElementType.METHOD})
   @interface Container {

@@ -16,8 +16,6 @@
 
 package org.spockframework.runtime.extension;
 
-import org.spockframework.util.Beta;
-
 import java.lang.annotation.*;
 import java.lang.reflect.AnnotatedElement;
 
@@ -34,7 +32,6 @@ import java.lang.reflect.AnnotatedElement;
  *
  * @since 2.0
  */
-@Beta
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
 public @interface RepeatedExtensionAnnotations {

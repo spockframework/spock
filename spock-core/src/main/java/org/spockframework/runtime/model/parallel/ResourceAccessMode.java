@@ -1,8 +1,5 @@
 package org.spockframework.runtime.model.parallel;
 
-import org.spockframework.util.Beta;
-
-@Beta
 public enum ResourceAccessMode {
 
   /**

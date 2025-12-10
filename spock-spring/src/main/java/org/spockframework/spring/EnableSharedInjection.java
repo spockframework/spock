@@ -1,7 +1,5 @@
 package org.spockframework.spring;
 
-import org.spockframework.util.Beta;
-
 import java.lang.annotation.*;
 
 /**
@@ -24,7 +22,6 @@ import java.lang.annotation.*;
  *
  * @since 2.0
  */
-@Beta
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited

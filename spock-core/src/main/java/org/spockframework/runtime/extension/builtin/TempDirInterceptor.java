@@ -16,13 +16,6 @@
 package org.spockframework.runtime.extension.builtin;
 
 import org.codehaus.groovy.runtime.ResourceGroovyMethods;
-import org.spockframework.runtime.InvalidSpecException;
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.extension.IMethodInvocation;
-import org.spockframework.runtime.extension.IStore;
-import org.spockframework.runtime.model.FieldInfo;
-import org.spockframework.runtime.model.ParameterInfo;
-import org.spockframework.util.*;
 import spock.lang.TempDir;
 
 import java.io.File;
@@ -35,13 +28,23 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.regex.Pattern;
 
+import org.spockframework.runtime.InvalidSpecException;
+import org.spockframework.runtime.extension.IMethodInterceptor;
+import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.extension.IStore;
+import org.spockframework.runtime.model.FieldInfo;
+import org.spockframework.runtime.model.ParameterInfo;
+import org.spockframework.util.Checks;
+import org.spockframework.util.ExceptionUtil;
+import org.spockframework.util.IThrowableBiConsumer;
+import org.spockframework.util.IThrowableFunction;
+
 import static java.nio.file.FileVisitResult.CONTINUE;
 
 /**
  * @author dqyuan
  * @since 2.0
  */
-@Beta
 public class TempDirInterceptor implements IMethodInterceptor {
 
   private static final IStore.Namespace NAMESPACE = IStore.Namespace.create(TempDirInterceptor.class);

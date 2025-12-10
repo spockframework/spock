@@ -1,12 +1,14 @@
 package org.spockframework.mock;
 
-import org.spockframework.mock.runtime.IMockMaker;
 import spock.mock.IMockMakerSettings;
-import org.spockframework.util.*;
 import spock.mock.MockingApi;
 
 import java.lang.reflect.Type;
 import java.util.List;
+
+import org.spockframework.mock.runtime.IMockMaker;
+import org.spockframework.util.Beta;
+import org.spockframework.util.Nullable;
 
 /**
  * Configuration options for mock objects. Once a mock object has been created, its configuration cannot be changed.
@@ -19,7 +21,6 @@ import java.util.List;
  * {@link #getConstructorArgs()} corresponds to the {@code constructorArgs:} named argument,
  * {@link #isGlobal()} to the {@code global:} named argument, etc.
  */
-@Beta
 public interface IMockConfiguration {
   /**
    * Returns the name of the mock object.
@@ -95,6 +96,7 @@ public interface IMockConfiguration {
    *
    * @return the custom settings to use for the creation of the mock, or {@code null}
    */
+  @Beta
   @Nullable
   IMockMakerSettings getMockMaker();
 

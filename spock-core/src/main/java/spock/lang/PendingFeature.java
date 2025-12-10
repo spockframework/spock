@@ -1,11 +1,13 @@
 package spock.lang;
 
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.PendingFeatureExtension;
-import org.spockframework.util.Beta;
-
-import java.lang.annotation.*;
 
 /**
  * Indicates that the feature is not fully implemented yet and should not be reported as error.
@@ -31,7 +33,6 @@ import java.lang.annotation.*;
  *</p>
  * @author Leonard Brünings
  */
-@Beta
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 @ExtensionAnnotation(PendingFeatureExtension.class)

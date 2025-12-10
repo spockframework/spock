@@ -14,12 +14,12 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.util.*;
+import org.spockframework.util.ReflectionUtil;
+import org.spockframework.util.ThreadSafe;
 
 /**
  * A response strategy that returns zero, false, or null, depending on the method's return type.
  */
-@Beta
 @ThreadSafe
 public class ZeroOrNullResponse implements IDefaultResponse {
   public static final ZeroOrNullResponse INSTANCE = new ZeroOrNullResponse();

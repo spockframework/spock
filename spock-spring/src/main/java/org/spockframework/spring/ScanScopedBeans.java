@@ -16,9 +16,10 @@
 
 package org.spockframework.spring;
 
-import org.spockframework.util.Beta;
-
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Indicates that Spock should scan scoped spring beans for mocks.
@@ -32,7 +33,6 @@ import java.lang.annotation.*;
  * {@code prototype} scoped mocks will not work since spring will create different
  * instances for each injection target.
  */
-@Beta
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ScanScopedBeans {

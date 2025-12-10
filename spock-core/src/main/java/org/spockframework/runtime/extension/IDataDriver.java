@@ -1,13 +1,14 @@
 package org.spockframework.runtime.extension;
 
-import static java.lang.System.arraycopy;
-import static org.spockframework.runtime.model.MethodInfo.MISSING_ARGUMENT;
+import java.util.Arrays;
+import java.util.List;
 
 import org.spockframework.runtime.IDataIterator;
-import org.spockframework.runtime.model.*;
-import org.spockframework.util.Beta;
+import org.spockframework.runtime.model.MethodInfo;
+import org.spockframework.runtime.model.ParameterInfo;
 
-import java.util.*;
+import static java.lang.System.arraycopy;
+import static org.spockframework.runtime.model.MethodInfo.MISSING_ARGUMENT;
 
 /**
  * The data driver is responsible to map the data from the data providers to the individual iterations.
@@ -21,7 +22,6 @@ import java.util.*;
  * @author Leonard Brünings
  * @since 2.2
  */
-@Beta
 public interface IDataDriver {
   /**
    * The default implementation of IDataDriver.

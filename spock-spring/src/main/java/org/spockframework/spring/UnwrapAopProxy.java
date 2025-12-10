@@ -16,12 +16,13 @@
 
 package org.spockframework.spring;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import org.spockframework.runtime.extension.ExtensionAnnotation;
-import org.spockframework.util.Beta;
 
-import java.lang.annotation.*;
-
-@Beta
 @Target({ ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @ExtensionAnnotation(UnwrapAopProxyExtension.class)

@@ -1,8 +1,7 @@
 package org.spockframework.runtime;
 
-import org.spockframework.util.Beta;
-
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A special iterator, that gives to the data produced by Spock's data providers.
@@ -15,7 +14,6 @@ import java.util.*;
  * @author Leonard Brünings
  * @since 2.2
  */
-@Beta
 public interface IDataIterator extends Iterator<Object[]>, AutoCloseable {
   /**
    * @return the number of data sets that are provided by this iterator. This will be {@code -1} if it cannot be determined.

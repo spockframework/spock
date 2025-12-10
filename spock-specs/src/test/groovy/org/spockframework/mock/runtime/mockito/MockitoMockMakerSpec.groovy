@@ -19,17 +19,19 @@ package org.spockframework.mock.runtime.mockito
 import org.mockito.MockMakers
 import org.mockito.Mockito
 import org.mockito.exceptions.base.MockitoException
-import org.spockframework.mock.CannotCreateMockException
-import org.spockframework.mock.MockUtil
-import org.spockframework.mock.runtime.ByteBuddyTestClassLoader
-import org.spockframework.runtime.GroovyRuntimeUtil
 import spock.lang.Issue
 import spock.lang.Requires
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
+import spock.util.environment.Jvm
 
 import java.lang.reflect.Proxy
 import java.util.concurrent.Callable
+
+import org.spockframework.mock.CannotCreateMockException
+import org.spockframework.mock.MockUtil
+import org.spockframework.mock.runtime.ByteBuddyTestClassLoader
+import org.spockframework.runtime.GroovyRuntimeUtil
 
 import static spock.mock.MockMakers.mockito
 
@@ -442,12 +444,17 @@ Can not mock final classes with the following settings :
   }
 
   def "Class is not mockable sample for asking org.mockito.plugins.MockMaker.isTypeMockable"() {
+    given:
+    def expectedMessage = Jvm.current.java8
+        ? "Cannot create mock for class java.lang.Class. mockito: Cannot mock wrapper types, String.class or Class.class"
+        : "Cannot create mock for class java.lang.Class. mockito: Cannot mock primitive wrapper types, String, Class, or WeakReference"
+
     when:
     Mock(mockMaker: mockito, Class)
 
     then:
     CannotCreateMockException ex = thrown()
-    ex.message == "Cannot create mock for class java.lang.Class. mockito: Cannot mock wrapper types, String.class or Class.class"
+    ex.message == expectedMessage
   }
 
   def "mockito mock setting without mockito settings shall not fail"() {

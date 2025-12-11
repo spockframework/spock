@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.26">
+<meta name="author" content="Peter Niederwieser, Leonard Brünings, The Spock Framework Team">
+<title>Frequently Asked Questions (FAQ)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+  .includeSourceLinkerTable tr td:first-child {
+    padding: 0;
+  }
+</style>
+</head>
+<body class="article">
+<div id="header">
+<h1>Frequently Asked Questions (FAQ)</h1>
+<div class="details">
+<span id="author" class="author">Peter Niederwieser, Leonard Brünings, The Spock Framework Team</span><br>
+<span id="revnumber">version 2.5-SNAPSHOT</span>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_what_are_spocks_optional_dependencies_used_for"><a class="anchor" href="#_what_are_spocks_optional_dependencies_used_for"></a><a class="link" href="#_what_are_spocks_optional_dependencies_used_for">What are Spock&#8217;s optional dependencies used for?</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Spock runs fine without optional dependencies, hence the term <em>optional</em>. So what are they used for?</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Objenesis (artifact <code>org.objenesis:objenesis</code>) is required for mocking classes without default constructors.</p>
+</li>
+<li>
+<p>Either ByteBuddy (artifact <code>net.bytebuddy:byte-buddy</code>) or CGLIB (artifact <code>cglib:cglib-nodep</code>) are required for mocking classes and not just interfaces.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>See also <a href="interaction_based_testing.html#_mocking_classes">Mocking Classes</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_why_are_there_two_options_bytebuddy_vs_cglib_for_mocking_classes"><a class="anchor" href="#_why_are_there_two_options_bytebuddy_vs_cglib_for_mocking_classes"></a><a class="link" href="#_why_are_there_two_options_bytebuddy_vs_cglib_for_mocking_classes">Why are there two options (ByteBuddy vs CGLIB) for mocking classes?</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The main reason is backwards compatibility.
+CGLIB came first historically, ByteBuddy was added later.
+Both libraries basically provide identical features from a Spock user&#8217;s perspective.</p>
+</div>
+<div class="paragraph">
+<p>If you are starting with Spock now, we recommend ByteBuddy as our preferred choice.</p>
+</div>
+<div class="paragraph">
+<p>CGLIB is in legacy support mode, we will support it as long as the maintenance effort is relatively low.
+So you may continue to use CGLIB for now if e.g. your tests use it in another context already.
+If you have no compelling reasons to avoid ByteBuddy, you can just switch from CGLIB to ByteBuddy in an existing project.
+Your tests should continue to run like before.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 2.5-SNAPSHOT<br>
+Last updated 2025-12-11 18:11:54 UTC
+</div>
+</div>
+</body>
+</html>

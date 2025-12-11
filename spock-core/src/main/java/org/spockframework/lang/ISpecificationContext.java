@@ -14,17 +14,16 @@
 
 package org.spockframework.lang;
 
+import org.spockframework.mock.IMockController;
 import org.spockframework.mock.IThreadAwareMockController;
 import org.spockframework.runtime.extension.IStoreProvider;
 import org.spockframework.runtime.model.BlockInfo;
 import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.runtime.model.IterationInfo;
 import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.Beta;
-import org.spockframework.mock.IMockController;
-import org.spockframework.runtime.model.IterationInfo;
 import org.spockframework.util.Nullable;
 
-@Beta
 public interface ISpecificationContext extends IStoreProvider {
   @Nullable
   SpecInfo getCurrentSpec();
@@ -33,6 +32,7 @@ public interface ISpecificationContext extends IStoreProvider {
 
   IterationInfo getCurrentIteration();
 
+  @Beta
   @Nullable
   BlockInfo getCurrentBlock();
 
@@ -41,5 +41,6 @@ public interface ISpecificationContext extends IStoreProvider {
 
   IMockController getMockController();
 
+  @Beta
   IThreadAwareMockController getThreadAwareMockController();
 }

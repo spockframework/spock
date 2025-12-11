@@ -16,14 +16,13 @@
 
 package spock.lang;
 
-import java.lang.annotation.*;
+import groovy.lang.Closure;
 
-import groovy.lang.*;
+import java.lang.annotation.*;
 
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.PreconditionContext;
 import org.spockframework.runtime.extension.builtin.RequiresExtension;
-import org.spockframework.util.Beta;
 
 /**
  * Ignores the annotated spec, feature or selected iterations unless the given condition holds.
@@ -76,7 +75,6 @@ public @interface Requires {
   /**
    * @since 2.0
    */
-  @Beta
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ElementType.TYPE, ElementType.METHOD})
   @interface Container {

@@ -1,7 +1,5 @@
 package org.spockframework.runtime.model.parallel;
 
-import org.spockframework.util.Beta;
-
 import java.util.Objects;
 
 /**
@@ -10,7 +8,6 @@ import java.util.Objects;
  *
  * @since 2.0
  */
-@Beta
 public class ExclusiveResource {
 
   private final String key;

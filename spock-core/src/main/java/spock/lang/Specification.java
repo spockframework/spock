@@ -17,17 +17,21 @@ package spock.lang;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
-import groovy.transform.stc.*;
+import groovy.transform.stc.ClosureParams;
+import groovy.transform.stc.FirstParam;
+import groovy.transform.stc.FromString;
+import groovy.transform.stc.SecondParam;
 import org.junit.platform.commons.annotation.Testable;
+import spock.mock.MockingApi;
+
+import java.util.Objects;
+import java.util.function.Function;
+
 import org.spockframework.lang.ISpecificationContext;
 import org.spockframework.lang.Wildcard;
 import org.spockframework.runtime.*;
 import org.spockframework.util.Beta;
 import org.spockframework.util.ExceptionUtil;
-import spock.mock.MockingApi;
-
-import java.util.Objects;
-import java.util.function.Function;
 
 /**
  * Base class for Spock specifications. All specifications must inherit from
@@ -55,7 +59,6 @@ public abstract class Specification extends MockingApi {
    * Returns the current execution context of this specification.
    * This is mostly used internally, but could, for example, be used to log the current iteration.
    */
-  @Beta
   public ISpecificationContext getSpecificationContext() {
     return specificationContext;
   }
@@ -191,7 +194,6 @@ public abstract class Specification extends MockingApi {
    * @param closure a code block containing top-level conditions and/or interactions
    * @param <U> type of target
    */
-  @Beta
   public <U> void with(
     @DelegatesTo.Target
     U target,
@@ -230,7 +232,6 @@ public abstract class Specification extends MockingApi {
    * @param closure a code block containing top-level conditions and/or interactions
    * @param <U> type of target
    */
-  @Beta
   public <U> void with(
     Object target,
     @DelegatesTo.Target
@@ -263,7 +264,6 @@ public abstract class Specification extends MockingApi {
    *
    * @param closure a code block containing top-level conditions and/or interactions
    */
-  @Beta
   public void verifyAll(Closure closure){
     GroovyRuntimeUtil.invokeClosure(closure);
   }
@@ -276,7 +276,6 @@ public abstract class Specification extends MockingApi {
    * @param closure a code block containing top-level conditions and/or interactions
    * @param <U> type of target
    */
-  @Beta
   public <U> void verifyAll(
     @DelegatesTo.Target
       U target,
@@ -300,7 +299,6 @@ public abstract class Specification extends MockingApi {
    * @param closure a code block containing top-level conditions and/or interactions
    * @param <U> type of target
    */
-  @Beta
   public <U> void verifyAll(
     Object target,
     @DelegatesTo.Target

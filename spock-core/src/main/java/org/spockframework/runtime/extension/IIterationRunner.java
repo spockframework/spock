@@ -1,9 +1,8 @@
 package org.spockframework.runtime.extension;
 
-import org.spockframework.runtime.model.ExecutionResult;
-import org.spockframework.util.Beta;
-
 import java.util.concurrent.CompletableFuture;
+
+import org.spockframework.runtime.model.ExecutionResult;
 
 import static org.spockframework.runtime.DataIteratorFactory.UNKNOWN_ITERATIONS;
 
@@ -13,7 +12,6 @@ import static org.spockframework.runtime.DataIteratorFactory.UNKNOWN_ITERATIONS;
  * @since 2.2
  * @author Leonard Brünings
  */
-@Beta
 public interface IIterationRunner {
   /**
    * Runs the iteration.

@@ -1,13 +1,12 @@
 package spock.lang;
 
-import org.spockframework.runtime.extension.ExtensionAnnotation;
-import org.spockframework.runtime.extension.builtin.RepeatUntilFailureExtension;
-import org.spockframework.util.Beta;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.spockframework.runtime.extension.ExtensionAnnotation;
+import org.spockframework.runtime.extension.builtin.RepeatUntilFailureExtension;
 
 /**
  * Repeats a feature until it fails or the maximum number of repetitions is reached.
@@ -18,7 +17,6 @@ import java.lang.annotation.Target;
  * @author Leonard Brünings
  * @since 2.3
  */
-@Beta
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @ExtensionAnnotation(RepeatUntilFailureExtension.class)

@@ -16,20 +16,20 @@
 
 package org.spockframework.mock.runtime;
 
-import org.spockframework.mock.IMockConfiguration;
-import org.spockframework.mock.MockNature;
-import org.spockframework.util.Beta;
-import org.spockframework.util.Nullable;
 import spock.mock.IMockMakerSettings;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.spockframework.mock.IMockConfiguration;
+import org.spockframework.mock.MockNature;
+import org.spockframework.util.Beta;
+import org.spockframework.util.Nullable;
+
 import static java.util.Objects.requireNonNull;
 import static org.spockframework.util.ObjectUtil.uncheckedCast;
 
-@Beta
 public class MockCreationSettings implements IMockMaker.IMockCreationSettings {
 
   private final IMockMakerSettings mockMakerSettings;
@@ -47,6 +47,7 @@ public class MockCreationSettings implements IMockMaker.IMockCreationSettings {
     return new MockCreationSettings(mockConfig.getMockMaker(), mockConfig.getType(), mockConfig.getNature(), new ArrayList<>(mockConfig.getAdditionalInterfaces()), mockConfig.getConstructorArgs(), interceptor, classLoader, mockConfig.isUseObjenesis(), false);
   }
 
+  @Beta
   public static MockCreationSettings settingsFromMockConfigurationForStaticMock(IMockConfiguration mockConfig, IProxyBasedMockInterceptor interceptor, ClassLoader classLoader) {
     return new MockCreationSettings(mockConfig.getMockMaker(), mockConfig.getType(), mockConfig.getNature(), Collections.emptyList(), null, interceptor, classLoader, false, true);
   }

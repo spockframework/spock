@@ -14,14 +14,12 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.util.Beta;
 import spock.mock.MockingApi;
 
 /**
  * A named set of defaults for a mock's configuration options. A mock nature is chosen at
  * mock creation time, typically by selecting the appropriate {@link MockingApi} factory method.
  */
-@Beta
 public enum MockNature {
   /**
    * A mock object whose method calls are verified, which instantiates class-based mock objects with Objenesis,

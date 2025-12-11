@@ -14,18 +14,21 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.mock.runtime.*;
-import org.spockframework.runtime.RunContext;
-import org.spockframework.util.*;
 import spock.lang.Specification;
 
 import java.lang.reflect.Type;
 import java.util.Map;
 
+import org.spockframework.mock.runtime.CompositeMockFactory;
+import org.spockframework.mock.runtime.MockConfiguration;
+import org.spockframework.mock.runtime.MockMakerRegistry;
+import org.spockframework.runtime.RunContext;
+import org.spockframework.util.Beta;
+import org.spockframework.util.Nullable;
+
 /**
  * Detects mock objects and provides information about them.
  */
-@Beta
 public class MockUtil {
   /**
    * Tells whether the given object is a (Spock) mock object.
@@ -44,6 +47,7 @@ public class MockUtil {
    * @param clazz the class to check
    * @return {@code true} if this class is a Spock static mock currently active on the current {@code Thread}
    */
+  @Beta
   public boolean isStaticMock(Class<?> clazz) {
     return getMockMakerRegistry().isStaticMock(clazz);
   }
@@ -75,6 +79,7 @@ public class MockUtil {
    * @param object a mock object
    * @return information about the mock object or {@code null}, if the object is not a mock.
    */
+  @Beta
   @Nullable
   public IMockObject asMockOrNull(Object object) {
     return getMockMakerRegistry().asMockOrNull(object);
@@ -110,7 +115,6 @@ public class MockUtil {
    * @param classloader the classloader to use
    * @return the mock
    */
-  @Beta
   public Object createDetachedMock(@Nullable String name, Type type, MockNature nature,
       MockImplementation implementation, Map<String, Object> options,  ClassLoader classloader) {
 
@@ -130,7 +134,6 @@ public class MockUtil {
    * @param classloader the classloader to use
    * @return the mock
    */
-  @Beta
   public Object createDetachedMock(@Nullable String name, Object obj, MockNature nature,
       MockImplementation implementation, Map<String, Object> options,  ClassLoader classloader) {
 

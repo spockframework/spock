@@ -16,11 +16,10 @@
 
 package spock.util.mop;
 
+import java.lang.annotation.*;
+
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.UseExtension;
-import org.spockframework.util.Beta;
-
-import java.lang.annotation.*;
 
 /**
  * Activates one or more Groovy categories while the annotated spec method
@@ -66,7 +65,6 @@ public @interface Use {
   /**
    * @since 2.0
    */
-  @Beta
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ElementType.TYPE, ElementType.METHOD})
   @interface Container {

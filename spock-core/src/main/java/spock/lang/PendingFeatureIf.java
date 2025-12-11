@@ -1,12 +1,12 @@
 package spock.lang;
 
 import groovy.lang.Closure;
+
+import java.lang.annotation.*;
+
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.PendingFeatureIfExtension;
 import org.spockframework.runtime.extension.builtin.PreconditionContext;
-import org.spockframework.util.Beta;
-
-import java.lang.annotation.*;
 
 /**
  * Marks the annotated feature or selected iterations as {@link PendingFeature} if the
@@ -24,7 +24,6 @@ import java.lang.annotation.*;
  *
  * @see PreconditionContext
  */
-@Beta
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 @ExtensionAnnotation(PendingFeatureIfExtension.class)
@@ -60,7 +59,6 @@ public @interface PendingFeatureIf {
   /**
    * @since 2.0
    */
-  @Beta
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ElementType.METHOD})
   @interface Container {

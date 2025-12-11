@@ -14,17 +14,23 @@
 
 package org.spockframework.mock.runtime;
 
-import org.spockframework.mock.*;
-import org.spockframework.util.*;
 import spock.mock.IMockMakerSettings;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+
+import org.spockframework.mock.IDefaultResponse;
+import org.spockframework.mock.IMockConfiguration;
+import org.spockframework.mock.MockImplementation;
+import org.spockframework.mock.MockNature;
+import org.spockframework.util.Beta;
+import org.spockframework.util.GenericTypeReflectorUtil;
+import org.spockframework.util.Nullable;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
-@Beta
 public class MockConfiguration implements IMockConfiguration {
   private final String name;
   private final Type type;
@@ -123,6 +129,7 @@ public class MockConfiguration implements IMockConfiguration {
     return useObjenesis;
   }
 
+  @Beta
   @Override
   public IMockMakerSettings getMockMaker() {
     return mockMakerSettings;

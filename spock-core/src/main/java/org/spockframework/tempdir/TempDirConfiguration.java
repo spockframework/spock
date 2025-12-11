@@ -15,7 +15,6 @@
 
 package org.spockframework.tempdir;
 
-import org.spockframework.util.Beta;
 import spock.config.ConfigurationObject;
 import spock.lang.TempDir;
 
@@ -39,7 +38,6 @@ import java.util.Optional;
  * @author dqyuan
  * @since 2.0
  */
-@Beta
 @ConfigurationObject("tempdir")
 public class TempDirConfiguration {
 

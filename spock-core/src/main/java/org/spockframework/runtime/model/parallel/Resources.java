@@ -1,8 +1,6 @@
 package org.spockframework.runtime.model.parallel;
 
 
-import org.spockframework.util.Beta;
-
 /**
  * Common resource names for synchronizing test execution.
  *
@@ -10,7 +8,6 @@ import org.spockframework.util.Beta;
  * @see ExclusiveResource
  * @since 2.0
  */
-@Beta
 public final class Resources {
 
   /**

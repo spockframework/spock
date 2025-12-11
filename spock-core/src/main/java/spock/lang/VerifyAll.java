@@ -15,13 +15,13 @@
 package spock.lang;
 
 import org.codehaus.groovy.transform.GroovyASTTransformationClass;
-import org.spockframework.compiler.condition.VerifyAllMethodTransform;
-import org.spockframework.util.Beta;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.spockframework.compiler.condition.VerifyAllMethodTransform;
 
 /**
  * Indicates that the code blocks of the annotated methods
@@ -35,7 +35,6 @@ import java.lang.annotation.Target;
  * @author Pavlo Shevchenko
  * @since 2.4
  */
-@Beta
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.SOURCE)
 @GroovyASTTransformationClass(classes = VerifyAllMethodTransform.class)

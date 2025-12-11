@@ -14,8 +14,6 @@
 
 package spock.lang;
 
-import org.spockframework.util.Beta;
-
 import java.lang.annotation.*;
 
 /**
@@ -42,7 +40,6 @@ public @interface Subject {
   /**
    * @since 2.0
    */
-  @Beta
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ElementType.TYPE, ElementType.FIELD, ElementType.LOCAL_VARIABLE})
   @interface Container {

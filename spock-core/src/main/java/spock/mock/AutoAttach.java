@@ -13,10 +13,12 @@
  */
 package spock.mock;
 
-import org.spockframework.runtime.extension.ExtensionAnnotation;
-import org.spockframework.util.Beta;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.lang.annotation.*;
+import org.spockframework.runtime.extension.ExtensionAnnotation;
 
 /**
  * Automatically attaches detached mocks {@link DetachedMockFactory} to a Specification.
@@ -30,7 +32,6 @@ import java.lang.annotation.*;
  * @author Leonard Brünings
  */
 
-@Beta
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @ExtensionAnnotation(AutoAttachExtension.class)

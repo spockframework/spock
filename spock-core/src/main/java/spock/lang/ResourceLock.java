@@ -15,12 +15,11 @@
 
 package spock.lang;
 
+import java.lang.annotation.*;
+
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.ResourceLockExtension;
 import org.spockframework.runtime.model.parallel.ResourceAccessMode;
-import org.spockframework.util.Beta;
-
-import java.lang.annotation.*;
 
 /**
  * Allows to control access to a shared resource.
@@ -35,7 +34,6 @@ import java.lang.annotation.*;
  *
  * @since 2.0
  */
-@Beta
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 @ExtensionAnnotation(ResourceLockExtension.class)
@@ -62,7 +60,6 @@ public @interface ResourceLock {
    */
   String reason() default "";
 
-  @Beta
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ElementType.TYPE, ElementType.METHOD})
   @interface Container {

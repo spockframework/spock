@@ -15,6 +15,9 @@
 
 package org.spockframework.runtime.model;
 
+import java.lang.reflect.AnnotatedElement;
+import java.util.*;
+
 import org.spockframework.runtime.extension.IBlockListener;
 import org.spockframework.runtime.extension.IDataDriver;
 import org.spockframework.runtime.extension.IMethodInterceptor;
@@ -23,9 +26,6 @@ import org.spockframework.runtime.model.parallel.ExecutionMode;
 import org.spockframework.util.Beta;
 import org.spockframework.util.Checks;
 import org.spockframework.util.Nullable;
-
-import java.lang.reflect.AnnotatedElement;
-import java.util.*;
 
 /**
  * @author Peter Niederwieser
@@ -372,7 +372,6 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
   }
 
 
-  @Beta
   public boolean isForceParameterized() {
     return forceParameterized;
   }
@@ -382,7 +381,6 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
    *
    * @since 2.3
    */
-  @Beta
   public void setForceParameterized(boolean forceParameterized) {
     this.forceParameterized = forceParameterized;
   }

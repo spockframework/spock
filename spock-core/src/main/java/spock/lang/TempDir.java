@@ -15,14 +15,17 @@
 
 package spock.lang;
 
-import org.spockframework.runtime.extension.ExtensionAnnotation;
-import org.spockframework.runtime.extension.builtin.TempDirExtension;
-import org.spockframework.util.Beta;
 import spock.util.io.FileSystemFixture;
 
 import java.io.File;
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.nio.file.Path;
+
+import org.spockframework.runtime.extension.ExtensionAnnotation;
+import org.spockframework.runtime.extension.builtin.TempDirExtension;
 
 /**
  * Generate a temp directory for test, and delete it after test.
@@ -59,7 +62,6 @@ import java.nio.file.Path;
  * @author dqyuan
  * @since 2.0
  */
-@Beta
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @ExtensionAnnotation(TempDirExtension.class)

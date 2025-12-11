@@ -13,11 +13,14 @@
  */
 package spock.mock;
 
-import org.spockframework.mock.*;
-import org.spockframework.util.*;
 import spock.lang.Specification;
 
-import java.util.*;
+import java.util.Map;
+
+import org.spockframework.mock.MockImplementation;
+import org.spockframework.mock.MockNature;
+import org.spockframework.mock.MockUtil;
+import org.spockframework.util.Nullable;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
@@ -29,7 +32,6 @@ import static java.util.Collections.singletonMap;
  * In order to be usable those Mocks must be manually attached to the {@link spock.lang.Specification}
  * using {@link MockUtil#attachMock(Object, Specification)} and detached afterwards {@link MockUtil#detachMock(Object)}.
  */
-@Beta
 public class DetachedMockFactory implements MockFactory {
   /**
      * Creates a mock with the specified type. The mock name will be the types simple name.

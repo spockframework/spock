@@ -14,14 +14,14 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.util.Beta;
-import org.spockframework.util.Nullable;
-
 import spock.config.ConfigurationObject;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.spockframework.util.Beta;
+import org.spockframework.util.Nullable;
 
 /**
  * Configuration settings for the Timeout extension.
@@ -42,7 +42,6 @@ import java.util.List;
  *
  * @since 2.4
  */
-@Beta
 @ConfigurationObject("timeout")
 public class TimeoutConfiguration {
 
@@ -50,12 +49,14 @@ public class TimeoutConfiguration {
    * If set to a valid duration, it will apply for all features that do not have a specific timeout set, default null.
    * @since 2.4
    */
+  @Beta
   public @Nullable Duration globalTimeout = null;
 
   /**
    * Determines whether the global timeout will be applied to fixtures, default false.
    * @since 2.4
    */
+  @Beta
   public boolean applyGlobalTimeoutToFixtures = false;
 
   /**

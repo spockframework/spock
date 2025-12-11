@@ -1,13 +1,14 @@
 package spock.util.io;
 
-import org.spockframework.util.Beta;
-
-import java.io.*;
-import java.net.URL;
-import java.nio.file.*;
-
-import groovy.lang.*;
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * FileSystemFixture can be used to create temporary directories and files.
@@ -17,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
  * @author Leonard Brünings
  * @since 2.2
  */
-@Beta
 public class FileSystemFixture implements DirectoryFixture {
   private final Path currentPath;
   private final Class<?> contextClass;
@@ -33,7 +33,7 @@ public class FileSystemFixture implements DirectoryFixture {
   }
 
   /**
-   * @return the path of the this fixture
+   * @return the path of this fixture
    */
   public Path getCurrentPath() {
     return currentPath;

@@ -16,8 +16,8 @@ plugins {
 description = "Spock Framework"
 
 ext {
-  baseVersion = "2.4"
-  snapshotVersion = false
+  baseVersion = "2.5"
+  snapshotVersion = true
   milestone = 0
   javaVersions = javaVersionsList.trim().split(/\s*+,\s*+/).collect { it as int }
   javaVersion = (System.getProperty("javaVersion") ?: 8) as int

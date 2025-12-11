@@ -4,7 +4,7 @@ include::include.adoc[]
 :SpecClassFileSelector: https://github.com/spockframework/spock/blob/03818ed010f4b4ca1136a292e214f79d518c4abe/spock-core/src/main/java/org/spockframework/buildsupport/ant/SpecClassFileSelector.java
 :scriptselector: {spock-example-project}/blob/963fd34d1609b7025ba92502483ce31b2c6d9d0a/build.xml#L167-L176
 
-== 2.4 (tbd)
+== 2.4 (2025-12-11)
 
 _This is a summary of the highlights of the milestone releases_
 

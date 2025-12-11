@@ -1,5 +1,5 @@
-:spock-release-version: 2.4-M7
-:spock-release-date: 2025-11-23
+:spock-release-version: 2.4
+:spock-release-date: 2025-12-11
 :spock-snapshot-version: 2.4
 
 https://github.com/spockframework/spock/blob/master/LICENSE[image:https://img.shields.io/badge/License-Apache%202.0-blue.svg[License]]
@@ -32,7 +32,7 @@ https://groovyconsole.dev/[Groovy Web Console].
 ({spock-snapshot-version}-groovy-2.5-SNAPSHOT, {spock-snapshot-version}-groovy-3.0-SNAPSHOT,
 {spock-snapshot-version}-groovy-4.0-SNAPSHOT), {spock-snapshot-version}-groovy-5.0-SNAPSHOT).
 
-*NOTE:* Spock 2.x is based on the JUnit 5 Platform and requires Java
+*NOTE:* Spock 2.x is based on the JUnit Platform and requires Java
 8+/groovy-2.5+ (Groovy 3.0 or newer is recommended, especially in projects using
 Java 12+).
 

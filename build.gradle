@@ -1,5 +1,3 @@
-import java.time.Duration
-
 import static org.spockframework.gradle.AsciiDocLinkVerifier.verifyAnchorlessCrossDocumentLinks
 import static org.spockframework.gradle.AsciiDocLinkVerifier.verifyLinksAndAnchors
 
@@ -19,7 +17,7 @@ description = "Spock Framework"
 
 ext {
   baseVersion = "2.4"
-  snapshotVersion = true
+  snapshotVersion = false
   milestone = 0
   javaVersions = javaVersionsList.trim().split(/\s*+,\s*+/).collect { it as int }
   javaVersion = (System.getProperty("javaVersion") ?: 8) as int

@@ -53,6 +53,10 @@ spockPull:1910[]
 When subclassing `SingleResponseGenerator` it does not make sense to override the first method, and it does not make sense to call the second method from somewhere else.
 spockPull:1910[]
 
+ * The default Groovy method `.with {}` no longer has the Spock special behavior of treating it as a condition block.
+This will break tests using `.with {}` in assertions.
+Use the Spock `with(yourObject) {}` instead of `yourObject.with {}` or prefix it `!!` to fix your test.
+
 * Calling `old(...)` with multiple arguments is now a compilation error. Previously the additional arguments were simply ignored.
 * Creating `GroovyMock`/`GroovyStub`/`GroovySpy` for an already mocked type will now fail.
 * Creating a global `GroovyMock`/`GroovyStub`/`GroovySpy` when <<parallel_execution.adoc#parallel-execution, parallel execution>> is enabled,
@@ -61,9 +65,9 @@ will now require that the spec is annotated with <<parallel_execution.adoc#isola
 
 === Misc
 
-* Fix handling of condition method calls and Groovy `with()` method spockPull:2162[]
-** This could break tests using `with()` which relied on the bug in the past spockIssue:2269[]
-** Use the Spock `with(yourObject)` instead of `yourObject.with()` or prefix it `!!` to fix your test
+* Fix handling of condition method calls and Groovy `.with {}` method spockPull:2162[]
+** This will break tests using `.with {}` in assertions which relied on the bug in the past spockIssue:2269[]
+** Use the Spock `with(yourObject) {}` instead of `yourObject.with {}` or prefix it `!!` to fix your test
 * Fix module testing not working due to call to JUnit internal API spockPull:2187[]
 ** This also fixes the usage of Spock with JUnit 6 in OSGi environments
 

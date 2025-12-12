@@ -10604,6 +10604,11 @@ When subclassing <code>SingleResponseGenerator</code> it does not make sense to 
 <a href="https://github.com/spockframework/spock/pull/1910">#1910</a></p>
 </li>
 <li>
+<p>The default Groovy method <code>.with {}</code> no longer has the Spock special behavior of treating it as a condition block.
+This will break tests using <code>.with {}</code> in assertions.
+Use the Spock <code>with(yourObject) {}</code> instead of <code>yourObject.with {}</code> or prefix it <code>!!</code> to fix your test.</p>
+</li>
+<li>
 <p>Calling <code>old(&#8230;&#8203;)</code> with multiple arguments is now a compilation error. Previously the additional arguments were simply ignored.</p>
 </li>
 <li>
@@ -10624,14 +10629,14 @@ will now require that the spec is annotated with <a href="#isolated-execution">@
 <div class="ulist">
 <ul>
 <li>
-<p>Fix handling of condition method calls and Groovy <code>with()</code> method <a href="https://github.com/spockframework/spock/pull/2162">#2162</a></p>
+<p>Fix handling of condition method calls and Groovy <code>.with {}</code> method <a href="https://github.com/spockframework/spock/pull/2162">#2162</a></p>
 <div class="ulist">
 <ul>
 <li>
-<p>This could break tests using <code>with()</code> which relied on the bug in the past <a href="https://github.com/spockframework/spock/issues/2269">#2269</a></p>
+<p>This will break tests using <code>.with {}</code> in assertions which relied on the bug in the past <a href="https://github.com/spockframework/spock/issues/2269">#2269</a></p>
 </li>
 <li>
-<p>Use the Spock <code>with(yourObject)</code> instead of <code>yourObject.with()</code> or prefix it <code>!!</code> to fix your test</p>
+<p>Use the Spock <code>with(yourObject) {}</code> instead of <code>yourObject.with {}</code> or prefix it <code>!!</code> to fix your test</p>
 </li>
 </ul>
 </div>

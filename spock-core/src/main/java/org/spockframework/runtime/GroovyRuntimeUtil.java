@@ -42,9 +42,29 @@ public abstract class GroovyRuntimeUtil {
   private static final String GET = "get";
   private static final String IS = "is";
 
+  /**
+   * Fallback Groovy version used, when the parsing of the real Groovy version fails.
+   */
+  private static final int GROOVY_DEFAULT_FALLBACK_VERSION = 4;
   @Internal
-  public static final int MAJOR_VERSION = parseInt(GroovySystem.getVersion().split("\\.", 2)[0]);
+  public static final int MAJOR_VERSION = parseGroovyMajorVersion();
   public static Object[] EMPTY_ARGUMENTS = new Object[0];
+
+  /**
+   * See <a href="https://github.com/spockframework/spock/issues/2282">Issue2282</a>.
+   *
+   * @return The Groovy major version or {@link #GROOVY_DEFAULT_FALLBACK_VERSION} if the parsing failed.
+   */
+  private static int parseGroovyMajorVersion() {
+    String version = GroovySystem.getVersion();
+    if (version != null && !version.isEmpty()) {
+      try {
+        return parseInt(version.split("\\.", 2)[0]);
+      } catch (Exception ignored) {
+      }
+    }
+    return GROOVY_DEFAULT_FALLBACK_VERSION;
+  }
 
   public static boolean isTruthy(Object obj) {
     return DefaultTypeTransformation.castToBoolean(obj);
@@ -306,7 +326,7 @@ public abstract class GroovyRuntimeUtil {
     // in the end it's probably best to rely on NullAwareInvokeMethodSpec to tell us if
     // everything is OK
     MetaClass metaClass = target instanceof Class ?
-        InvokerHelper.getMetaClass((Class) target) : InvokerHelper.getMetaClass(target);
+      InvokerHelper.getMetaClass((Class) target) : InvokerHelper.getMetaClass(target);
 
     // seems to find more methods than getMetaMethod()
     MetaMethod metaMethod = metaClass.pickMethod(method, argTypes);

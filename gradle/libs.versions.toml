@@ -9,7 +9,7 @@ junit5 = '5.14.1'
 junit6 = '6.0.1'
 # The VersionRange used by OSGi to check compatibility with JUnit Platform.
 junitPlatformVersionRange = "[1.12,7)"
-asm = '9.9'
+asm = '9.9.1'
 mockito4 = '4.11.0'
 mockito5 = '5.21.0'
 workflows-kotlin = "2.2.21"

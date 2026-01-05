@@ -24,19 +24,15 @@
 
 @file:Repository("https://bindings.krzeminski.it/")
 @file:DependsOn("actions:checkout___major:[v5,v6-alpha)")
-@file:DependsOn("github:codeql-action__analyze___major:[v4,v5-alpha)")
-@file:DependsOn("github:codeql-action__init___major:[v4,v5-alpha)")
+@file:DependsOn("github:codeql-action__analyze___major:v4")
+@file:DependsOn("github:codeql-action__init___major:v4")
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.actions.github.CodeqlActionAnalyze
 import io.github.typesafegithub.workflows.actions.github.CodeqlActionInit
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
-import io.github.typesafegithub.workflows.domain.triggers.Cron
-import io.github.typesafegithub.workflows.domain.triggers.MergeGroup
-import io.github.typesafegithub.workflows.domain.triggers.PullRequest
-import io.github.typesafegithub.workflows.domain.triggers.Push
-import io.github.typesafegithub.workflows.domain.triggers.Schedule
+import io.github.typesafegithub.workflows.domain.triggers.*
 import io.github.typesafegithub.workflows.dsl.expressions.Contexts.github
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow

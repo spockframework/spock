@@ -42,18 +42,35 @@
     },
     {
       matchPackageNames: ["/^org.spockframework:spock-/"],
-      matchCurrentVersion: "/-groovy-3\\.0$/",
-      allowedVersions: "/-groovy-3\\.0$/"
+      versionCompatibility: "^(?<version>.*)-(?<compatibility>groovy-.*)$"
     },
     {
-      matchPackageNames: ["/^org.spockframework:spock-/"],
-      matchCurrentVersion: "/-groovy-4\\.0$/",
-      allowedVersions: "/-groovy-4\\.0$/"
+      groupName: "actions-checkout",
+      matchPackageNames: [
+        "actions/checkout",
+        "/^actions:checkout(__.*)?$/"
+      ]
     },
     {
-      matchPackageNames: ["/^org.spockframework:spock-/"],
-      matchCurrentVersion: "/-groovy-5\\.0$/",
-      allowedVersions: "/-groovy-5\\.0$/"
+      groupName: "actions-upload-artifact",
+      matchPackageNames: [
+        "actions/upload-artifact",
+        "/^actions:upload-artifact(__.*)?$/"
+      ]
+    },
+    {
+      groupName: "codecov-codecov-action",
+      matchPackageNames: [
+        "codecov/codecov-action",
+        "/^codecov:codecov-action(__.*)?$/"
+      ]
+    },
+    {
+      groupName: "github-codeql-action",
+      matchPackageNames: [
+        "github/codeql-action",
+        "/^github:codeql-action(__.*)?$/"
+      ]
     }
   ]
 }

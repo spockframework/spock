@@ -18,15 +18,14 @@ package org.spockframework.runtime;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import groovy.transform.stc.ClosureParams;
-import groovy.transform.stc.FirstParam;
 import groovy.transform.stc.FromString;
+import org.codehaus.groovy.runtime.InvokerHelper;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.opentest4j.MultipleFailuresError;
 import spock.lang.Specification;
 
-import org.spockframework.lang.ISpecificationContext;
 import org.spockframework.runtime.extension.IBlockListener;
 import org.spockframework.runtime.model.BlockInfo;
 import org.spockframework.runtime.model.ExpressionInfo;
@@ -154,8 +153,7 @@ public abstract class SpockRuntime {
     } else if ((left == null) || (right == null)) {
       return (left == null) && (right == null);
     } else {
-      Pattern pattern = Pattern.compile(String.valueOf(right));
-      return pattern.matcher(String.valueOf(left));
+      return InvokerHelper.findRegex(left, right);
     }
   }
 
@@ -173,10 +171,7 @@ public abstract class SpockRuntime {
     } else if ((left == null) || (right == null)) {
       return (left == null) && (right == null);
     } else {
-      Pattern pattern = Pattern.compile(String.valueOf(right));
-      java.util.regex.Matcher matcher = pattern.matcher(String.valueOf(left));
-
-      return matcher.matches();
+      return InvokerHelper.matchRegex(left, right);
     }
   }
 

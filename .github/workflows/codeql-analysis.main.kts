@@ -23,13 +23,13 @@
 @file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.7.0")
 
 @file:Repository("https://bindings.krzeminski.it/")
-@file:DependsOn("actions:checkout___major:[v5,v6-alpha)")
-@file:DependsOn("github:codeql-action__analyze___major:v4")
-@file:DependsOn("github:codeql-action__init___major:v4")
+@file:DependsOn("actions:checkout___major:[v6,v7-alpha)")
+@file:DependsOn("github:codeql-action__analyze___major:[v4.32.4,v5-alpha)")
+@file:DependsOn("github:codeql-action__init___major:[v4.32.4,v5-alpha)")
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout
-import io.github.typesafegithub.workflows.actions.github.CodeqlActionAnalyze
-import io.github.typesafegithub.workflows.actions.github.CodeqlActionInit
+import io.github.typesafegithub.workflows.actions.github.CodeqlActionAnalyze_Untyped
+import io.github.typesafegithub.workflows.actions.github.CodeqlActionInit_Untyped
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
 import io.github.typesafegithub.workflows.domain.triggers.*
@@ -85,7 +85,7 @@ workflow(
         // Initializes the CodeQL tools for scanning
         uses(
             name = "Initialize CodeQL",
-            action = CodeqlActionInit(
+            action = CodeqlActionInit_Untyped(
                 // Override language selection by uncommenting this and choosing your languages
                 // languages = listOf("go", "javascript", "csharp", "python", "cpp", "java"),
             )
@@ -127,7 +127,7 @@ workflow(
         )
         uses(
             name = "Perform CodeQL Analysis",
-            action = CodeqlActionAnalyze()
+            action = CodeqlActionAnalyze_Untyped()
         )
     }
 }

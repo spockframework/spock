@@ -24,6 +24,8 @@ import spock.lang.Issue
 import spock.lang.Snapshot
 import spock.lang.Snapshotter
 
+import java.util.regex.Pattern
+
 import static java.lang.Integer.MAX_VALUE
 import static java.lang.Math.max
 import static java.lang.Math.min
@@ -441,6 +443,22 @@ class ConditionEvaluation extends EmbeddedSpecification {
     null =~ null
     a ==~ b
     a =~ b
+  }
+
+  def "Groovy regex conditions still work"() {
+    given:
+    def regularPattern = ~/[abc]ello/
+    def patternWithFlags = Pattern.compile(/[abc]ello/, Pattern.CASE_INSENSITIVE)
+
+    expect: "The strict collection match still works as regex match"
+    "bello" ==~ regularPattern
+    "BELLO" ==~ patternWithFlags
+
+    and: "The lenient collection match still builds a matcher"
+    def regularMatcher = "bello" =~ regularPattern
+    regularMatcher.matches()
+    def matcherWithFlags = "BELLO" =~ patternWithFlags
+    matcherWithFlags.matches()
   }
 
   @FailsWith(ConditionFailedWithExceptionError)

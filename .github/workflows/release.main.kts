@@ -20,15 +20,15 @@
 
 @file:Repository("https://repo.maven.apache.org/maven2/")
 // work-around for https://youtrack.jetbrains.com/issue/KT-69145
-@file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.6.0")
+@file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.7.0")
 
 @file:Repository("https://bindings.krzeminski.it/")
-@file:DependsOn("actions:checkout___major:[v5,v6-alpha)")
+@file:DependsOn("actions:checkout___major:[v6,v7-alpha)")
 @file:DependsOn("codecov:codecov-action___major:[v5,v6-alpha)")
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.actions.actions.Checkout.FetchDepth
-import io.github.typesafegithub.workflows.actions.codecov.CodecovAction
+import io.github.typesafegithub.workflows.actions.codecov.CodecovAction_Untyped
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.dsl.expressions.Contexts.github
@@ -103,8 +103,8 @@ workflow(
         )
         uses(
             name = "Upload to Codecov.io",
-            action = CodecovAction(
-                failCiIfError = true
+            action = CodecovAction_Untyped(
+                failCiIfError_Untyped = "true"
             )
         )
     }

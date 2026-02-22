@@ -44,7 +44,7 @@ jobs:
     steps:
     - id: 'step-0'
       name: 'Checkout Repository'
-      uses: 'actions/checkout@v5'
+      uses: 'actions/checkout@v6'
     - id: 'step-1'
       name: 'Set up JDKs'
       uses: './.github/actions/setup-build-env'

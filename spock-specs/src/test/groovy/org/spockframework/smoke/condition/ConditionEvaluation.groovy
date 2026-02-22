@@ -445,6 +445,7 @@ class ConditionEvaluation extends EmbeddedSpecification {
     a =~ b
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/2298")
   def "Groovy regex conditions still work"() {
     given:
     def regularPattern = ~/[abc]oo/
@@ -456,6 +457,7 @@ class ConditionEvaluation extends EmbeddedSpecification {
 
     and: "The lenient collection match still builds a matcher"
     ("boo" =~ regularPattern).matches()
+    !("BOO" =~ regularPattern).matches()
     ("BOO" =~ patternWithFlags).matches()
   }
 

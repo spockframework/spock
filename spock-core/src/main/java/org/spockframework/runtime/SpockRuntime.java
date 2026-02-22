@@ -387,8 +387,7 @@ public abstract class SpockRuntime {
         }
         values.set(3, false);
       } else {
-        Pattern pattern = Pattern.compile(String.valueOf(right));
-        java.util.regex.Matcher matcher = pattern.matcher(String.valueOf(left));
+        java.util.regex.Matcher matcher = InvokerHelper.findRegex(left, right);
 
         values.set(idxActual, left);
         values.set(idxExpected, right);

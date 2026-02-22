@@ -447,18 +447,16 @@ class ConditionEvaluation extends EmbeddedSpecification {
 
   def "Groovy regex conditions still work"() {
     given:
-    def regularPattern = ~/[abc]ello/
-    def patternWithFlags = Pattern.compile(/[abc]ello/, Pattern.CASE_INSENSITIVE)
+    def regularPattern = ~/[abc]oo/
+    def patternWithFlags = Pattern.compile(/[abc]oo/, Pattern.CASE_INSENSITIVE)
 
     expect: "The strict collection match still works as regex match"
-    "bello" ==~ regularPattern
-    "BELLO" ==~ patternWithFlags
+    "boo" ==~ regularPattern
+    "BOO" ==~ patternWithFlags
 
     and: "The lenient collection match still builds a matcher"
-    def regularMatcher = "bello" =~ regularPattern
-    regularMatcher.matches()
-    def matcherWithFlags = "BELLO" =~ patternWithFlags
-    matcherWithFlags.matches()
+    ("boo" =~ regularPattern).matches()
+    ("BOO" =~ patternWithFlags).matches()
   }
 
   @FailsWith(ConditionFailedWithExceptionError)

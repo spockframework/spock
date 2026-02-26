@@ -131,3 +131,23 @@ You can limit the scanning to certain scopes by using the `value` property of `@
 
 Due to certain limitations, injection into shared fields is not enabled by default but can be opted-in to.
 Refer to javadoc of `org.spockframework.spring.EnableSharedInjection` for further information.
+
+=== Spring Boot 4 and JUnit 6 Compatibility
+
+Spring Boot 4 introduces pure JUnit 6 extensions
+(for example `@EnableWireMock` from wiremock-spring-boot)
+that rely on the JUnit Platform extension lifecycle.
+
+Spock does not automatically execute arbitrary JUnit 6 extensions.
+As a result, field-level injection mechanisms such as
+`@InjectWireMock` may not work as expected in Spock specifications.
+
+To enable full compatibility, add:
+
+[source,groovy]
+----
+testImplementation 'ru.vyarus:spock-junit6'
+----
+
+This bridges the JUnit 6 extension lifecycle into Spock
+and restores expected behavior when using such extensions.

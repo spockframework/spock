@@ -51,7 +51,7 @@ jobs:
       run: './gradlew --stacktrace asciidoctor javadoc "-Dvariant=5.0" "-DjavaVersion=25"'
     - id: 'step-4'
       name: 'Archive and upload docs'
-      uses: 'actions/upload-artifact@v6'
+      uses: 'actions/upload-artifact@v7'
       with:
         name: 'docs'
         path: |-

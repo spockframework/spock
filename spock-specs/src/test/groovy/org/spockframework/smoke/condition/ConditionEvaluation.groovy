@@ -24,6 +24,9 @@ import spock.lang.Issue
 import spock.lang.Snapshot
 import spock.lang.Snapshotter
 
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
 import static java.lang.Integer.MAX_VALUE
 import static java.lang.Math.max
 import static java.lang.Math.min
@@ -441,6 +444,29 @@ class ConditionEvaluation extends EmbeddedSpecification {
     null =~ null
     a ==~ b
     a =~ b
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/2298")
+  def "Groovy regex conditions still work"() {
+    given:
+    def patternWithFlags = Pattern.compile(/[abc]oo/, Pattern.CASE_INSENSITIVE)
+    def patternWithInlineFlags = ~/(?i)[abc]oo/
+    def patternWithPartialMatchAndFlags = Pattern.compile(/[abc]o/, Pattern.CASE_INSENSITIVE)
+    def patternWithPartialMatchAndInlineFlags = ~/(?i)[abc]o/
+
+    expect: "The strict collection match still works as regex match"
+    "BOO" ==~ patternWithFlags
+    "BOO" ==~ patternWithInlineFlags
+
+    and: "The lenient collection match still builds a matcher"
+    ("boo" =~ patternWithPartialMatchAndFlags) instanceof Matcher
+    ("boo" =~ patternWithPartialMatchAndInlineFlags) instanceof Matcher
+    ("BOO" =~ /[ABC]o/) instanceof Matcher
+
+    and: "Groovy truth applies to the returned matcher"
+    "boo" =~ patternWithPartialMatchAndFlags
+    "boo" =~ patternWithPartialMatchAndInlineFlags
+    "BOO" =~ /[ABC]O/
   }
 
   @FailsWith(ConditionFailedWithExceptionError)

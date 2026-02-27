@@ -24,7 +24,7 @@
 
 @file:Repository("https://bindings.krzeminski.it/")
 @file:DependsOn("actions:checkout___major:[v6,v7-alpha)")
-@file:DependsOn("actions:upload-artifact___major:[v5,7.0)")
+@file:DependsOn("actions:upload-artifact___major:[v7,v8-alpha)")
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.actions.actions.Checkout.FetchDepth

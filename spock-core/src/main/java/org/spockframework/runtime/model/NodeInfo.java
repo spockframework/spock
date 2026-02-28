@@ -20,6 +20,7 @@ import org.spockframework.util.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.util.UUID;
 
 /**
  * Base class for runtime information about an element in a Spock specification.
@@ -27,11 +28,28 @@ import java.lang.reflect.AnnotatedElement;
  * @author Peter Niederwieser
  */
 public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
+  private String uniqueId = UUID.randomUUID().toString();
   private String name;
   private int line = -1;
   private P parent;
   private R reflection;
   private Object metadata;
+
+  /**
+   * A unique ID for this node during the current execution. Although some subclasses might
+   * provide semantic IDs, and the default implementation uses UUIDs, no semantic or format
+   * or maximum length is guaranteed. The only thing that should be assumed is, that the ID
+   * is unique across all nodes during the same invocation.
+   *
+   * @return the unique ID for this node
+   */
+  public String getUniqueId() {
+    return uniqueId;
+  }
+
+  public void setUniqueId(String uniqueId) {
+    this.uniqueId = uniqueId;
+  }
 
   public String getName() {
     return name;

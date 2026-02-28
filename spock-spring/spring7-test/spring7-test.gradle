@@ -1,4 +1,4 @@
-def springVersion = "6.0.0"
+def springVersion = "7.0.0"
 
 java {
   toolchain {

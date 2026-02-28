@@ -5,14 +5,14 @@ groovy3 = '3.0.25'
 groovy4 = '4.0.30'
 groovy5 = '5.0.4'
 jacoco = '0.8.14'
-junit5 = '5.14.1'
-junit6 = '6.0.1'
+junit5 = '5.14.3'
+junit6 = '6.0.3'
 # The VersionRange used by OSGi to check compatibility with JUnit Platform.
 junitPlatformVersionRange = "[1.12,7)"
 asm = '9.9.1'
 mockito4 = '4.11.0'
-mockito5 = '5.21.0'
-workflows-kotlin = "2.3.0"
+mockito5 = '5.22.0'
+workflows-kotlin = "2.3.10"
 
 [libraries]
 jetbrains-annotations = "org.jetbrains:annotations:26.1.0"
@@ -30,7 +30,7 @@ log4j = "log4j:log4j:1.2.17"
 mockito4 = { module = "org.mockito:mockito-core", version.ref = "mockito4" }
 mockito4inline = { module = "org.mockito:mockito-inline", version.ref = "mockito4" }
 mockito5 = { module = "org.mockito:mockito-core", version.ref = "mockito5" }
-objenesis = "org.objenesis:objenesis:3.4"
+objenesis = "org.objenesis:objenesis:3.5"
 # This needs a classifier, but it has to be specified on the usage end https://melix.github.io/blog/2021/03/version-catalogs-faq.html#_why_can_t_i_use_excludes_or_classifiers
 jacoco-agent = { module = "org.jacoco:org.jacoco.agent", version.ref = "jacoco" }
 junit5-bom =  { module = "org.junit:junit-bom",  version.ref = "junit5" }

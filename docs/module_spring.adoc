@@ -131,3 +131,23 @@ You can limit the scanning to certain scopes by using the `value` property of `@
 
 Due to certain limitations, injection into shared fields is not enabled by default but can be opted-in to.
 Refer to javadoc of `org.spockframework.spring.EnableSharedInjection` for further information.
+
+=== JUnit Platform Extension Compatibility
+
+Spock runs on the JUnit Platform but does not automatically
+execute arbitrary JUnit Platform (Jupiter) extensions.
+
+With Spring Boot 4 and other libraries that integrate via
+the JUnit Platform extension mechanism, certain features
+may not behave as expected when used in Spock specifications.
+
+If a library relies on the Jupiter extension lifecycle,
+you can bridge this behavior into Spock by adding:
+
+[source,groovy]
+----
+testImplementation 'ru.vyarus:spock-junit6'
+----
+
+This enables execution of Jupiter extensions within Spock
+and restores expected integration behavior.

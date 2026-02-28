@@ -98,10 +98,9 @@ scale 2
 <style>
 wbsDiagram {
 
-  BackgroundColor #88CCEE
-  RoundCorner 10
-
   node {
+    BackgroundColor #88CCEE
+    RoundCorner 10
     :depth(0) {
       BackgroundColor #DDCC77
       RoundCorner 0
@@ -168,7 +167,9 @@ skinparam shadowing false
 @startwbs
 <style>
 wbsDiagram {
-  BackgroundColor #DDCC77
+  node {
+    BackgroundColor #DDCC77
+  }
 }
 </style>
 skinparam shadowing false
@@ -193,8 +194,8 @@ skinparam shadowing false
 @startwbs
 <style>
 wbsDiagram {
-  BackgroundColor #DDCC77
   node {
+    BackgroundColor #DDCC77
     :depth(1) {
       BackgroundColor #88CCEE
       RoundCorner 10
@@ -225,8 +226,8 @@ skinparam shadowing false
 @startwbs
 <style>
 wbsDiagram {
-  BackgroundColor #DDCC77
   node {
+    BackgroundColor #DDCC77
     :depth(2) {
       BackgroundColor #88CCEE
       RoundCorner 10
@@ -262,8 +263,8 @@ The features inside a specification will run concurrently.
 @startwbs
 <style>
 wbsDiagram {
-  BackgroundColor #DDCC77
   node {
+    BackgroundColor #DDCC77
     :depth(1) {
       BackgroundColor #88CCEE
       RoundCorner 10
@@ -311,7 +312,9 @@ If you invert the values `SAME_THREAD` and `CONCURRENT` in these examples you wi
 @startwbs
 <style>
 wbsDiagram {
-  BackgroundColor #DDCC77
+  node {
+    BackgroundColor #DDCC77
+  }
   .concurrent * {
       BackgroundColor #88CCEE
       RoundCorner 10
@@ -340,7 +343,9 @@ In <<figure-execution-hierarchy-inheritance-feature-execution>> `@Execution` is 
 @startwbs
 <style>
 wbsDiagram {
-  BackgroundColor #DDCC77
+  node {
+    BackgroundColor #DDCC77
+  }
   .concurrent * {
       BackgroundColor #88CCEE
       RoundCorner 10
@@ -370,7 +375,9 @@ The features execute concurrently since they inherit the explicit execution mode
 @startwbs
 <style>
 wbsDiagram {
-  BackgroundColor #DDCC77
+  node {
+    BackgroundColor #DDCC77
+  }
   .concurrent * {
       BackgroundColor #88CCEE
       RoundCorner 10
@@ -426,9 +433,9 @@ Certain <<extensions.adoc#extensions, extensions>> also set implicit locks when 
 @startwbs
 <style>
 wbsDiagram {
-  BackgroundColor #88CCEE
-  RoundCorner 10
   node {
+    BackgroundColor #88CCEE
+    RoundCorner 10
     :depth(0) {
       BackgroundColor #DDCC77
       RoundCorner 0
@@ -469,9 +476,9 @@ However, if the parent node has only `READ` locks, then it allows parallel execu
 @startwbs
 <style>
 wbsDiagram {
-  BackgroundColor #88CCEE
-  RoundCorner 10
   node {
+    BackgroundColor #88CCEE
+    RoundCorner 10
     :depth(0) {
       BackgroundColor #DDCC77
       RoundCorner 0
@@ -519,9 +526,9 @@ skinparam shadowing false
 @startwbs
 <style>
 wbsDiagram {
-  BackgroundColor #88CCEE
-  RoundCorner 10
   node {
+    BackgroundColor #88CCEE
+    RoundCorner 10
     :depth(0) {
       BackgroundColor #DDCC77
       RoundCorner 0
@@ -577,9 +584,9 @@ If the features both had `READ_WRITE` and `READ` locks for the same resource, th
 @startwbs
 <style>
 wbsDiagram {
-  BackgroundColor #88CCEE
-  RoundCorner 10
   node {
+    BackgroundColor #88CCEE
+    RoundCorner 10
     :depth(0) {
       BackgroundColor #DDCC77
       RoundCorner 0
@@ -614,9 +621,9 @@ skinparam shadowing false
 @startwbs
 <style>
 wbsDiagram {
-  BackgroundColor #88CCEE
-  RoundCorner 10
   node {
+    BackgroundColor #88CCEE
+    RoundCorner 10
     :depth(0) {
       BackgroundColor #DDCC77
       RoundCorner 0
@@ -662,9 +669,9 @@ you might want to consider splitting the spec into `@Isolated` and non isolated.
 @startwbs
 <style>
 wbsDiagram {
-  BackgroundColor #88CCEE
-  RoundCorner 10
   node {
+    BackgroundColor #88CCEE
+    RoundCorner 10
     :depth(0) {
       BackgroundColor #DDCC77
       RoundCorner 0

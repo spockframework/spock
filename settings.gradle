@@ -103,6 +103,7 @@ if (variant == 2.5) {
 } else {
   // require Java 17 which isn't supported by Groovy 2.5
   include "spock-spring:boot3-test"
+  include "spock-spring:boot4-test"
   include "spock-spring:spring6-test"
 }
 

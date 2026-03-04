@@ -265,7 +265,7 @@ class ParallelSpec extends EmbeddedSpecification {
         @ResourceLock(value = "a", mode = ResourceAccessMode.READ)
         def writeA() {
           when:
-          incrementAndBlock(atomicInteger, latch)
+          incrementAndBlock(atomicInteger, latch, 10000)
 
           then:
           atomicInteger.get() == 3
@@ -519,7 +519,7 @@ class ParallelSpec extends EmbeddedSpecification {
     throws InterruptedException {
     int value = sharedResource.incrementAndGet()
     countDownLatch.countDown()
-    countDownLatch.await(timeout, MILLISECONDS)
+    assert countDownLatch.await(timeout, MILLISECONDS) : 'Timeout expired'
     return value
   }
 
@@ -527,7 +527,7 @@ class ParallelSpec extends EmbeddedSpecification {
     throws InterruptedException {
     int value = sharedResource.get()
     countDownLatch.countDown()
-    countDownLatch.await(timeout, MILLISECONDS)
+    assert countDownLatch.await(timeout, MILLISECONDS) : 'Timeout expired'
     assert value == sharedResource.get()
   }
 }

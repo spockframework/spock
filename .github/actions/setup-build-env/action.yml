@@ -17,6 +17,9 @@ runs:
       uses: gradle/actions/setup-gradle@v5
       with:
         cache-read-only: ${{ github.ref != 'refs/heads/master' }}
+    - name: 'Set up TestLens'
+      if: ${{ github.event_name == 'pull_request' }}
+      uses: testlens-app/setup-testlens@7f83d4feb810f54f9a4ccc1df7cbc79ee3cd836b # v1.7.1
     - name: 'Gradle javaToolchains'
       run: ./gradlew --show-version javaToolchains
       shell: bash

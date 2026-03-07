@@ -62,6 +62,11 @@ public class MockController implements IMockController, IThreadAwareMockControll
       try {
         return resultSupplier.get();
       } catch (InteractionNotSatisfiedError e) {
+        if (e instanceof TooManyInvocationsError) {
+          synchronized (this) {
+            scopes.getFirst().enrichError((TooManyInvocationsError) e);
+          }
+        }
         errors.add(e);
         throw e;
       }

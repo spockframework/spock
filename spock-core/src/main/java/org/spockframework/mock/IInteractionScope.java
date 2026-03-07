@@ -32,4 +32,6 @@ public interface IInteractionScope {
   IMockInteraction match(IMockInvocation invocation);
 
   void verifyInteractions();
+
+  void enrichError(TooManyInvocationsError error);
 }

@@ -6,8 +6,13 @@ include::include.adoc[]
 
 == 2.5 (tbd)
 
+=== Enhancements
+
+* `TooManyInvocationsError` now reports unsatisfied interactions with argument mismatch details, making it easier to diagnose why invocations didn't match expected interactions
+
 === Misc
 
+* Fix argument mismatch description for varargs methods now correctly expanding varargs instead of reporting `<too few arguments>`
 * Fix Pattern flags being dropped when `java.util.regex.Pattern` instances are used in Spock regex conditions spockIssue:2298[]
 
 == 2.4 (2025-12-11)

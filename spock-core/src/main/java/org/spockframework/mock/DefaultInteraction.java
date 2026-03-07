@@ -57,4 +57,9 @@ abstract class DefaultInteraction implements IMockInteraction {
   public boolean isRequired() {
     return false;
   }
+
+  @Override
+  public boolean matchesTargetAndMethod(IMockInvocation invocation) {
+    return matches(invocation);
+  }
 }

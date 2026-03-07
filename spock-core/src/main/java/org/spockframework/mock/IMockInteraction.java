@@ -48,4 +48,6 @@ public interface IMockInteraction {
   boolean isExhausted();
 
   boolean isRequired();
+
+  boolean matchesTargetAndMethod(IMockInvocation invocation);
 }

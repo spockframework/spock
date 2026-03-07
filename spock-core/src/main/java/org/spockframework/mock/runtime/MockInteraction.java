@@ -17,6 +17,8 @@
 package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
+import org.spockframework.mock.constraint.NamedArgumentListConstraint;
+import org.spockframework.mock.constraint.PositionalArgumentListConstraint;
 import org.spockframework.util.NotThreadSafe;
 import org.spockframework.util.TextUtil;
 
@@ -142,6 +144,18 @@ public class MockInteraction implements IMockInteraction {
   @Override
   public boolean isExhausted() {
     return acceptedInvocations.size() >= maxCount;
+  }
+
+  @Override
+  public boolean matchesTargetAndMethod(IMockInvocation invocation) {
+    for (IInvocationConstraint constraint : constraints) {
+      if (constraint instanceof PositionalArgumentListConstraint
+        || constraint instanceof NamedArgumentListConstraint) {
+        continue;
+      }
+      if (!constraint.isSatisfiedBy(invocation)) return false;
+    }
+    return true;
   }
 
   @Override

@@ -82,6 +82,11 @@ public abstract class MockInteractionDecorator implements IMockInteraction {
   }
 
   @Override
+  public boolean matchesTargetAndMethod(IMockInvocation invocation) {
+    return decorated.matchesTargetAndMethod(invocation);
+  }
+
+  @Override
   public String toString() {
     return decorated.toString();
   }

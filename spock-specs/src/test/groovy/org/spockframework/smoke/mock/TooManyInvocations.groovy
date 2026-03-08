@@ -52,7 +52,7 @@ Matching invocations (ordered by last occurrence):
 2 * list.add(2)   <-- this triggered the error
 1 * list.add(4)
 1 * list.add(1)
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -80,7 +80,7 @@ Too many invocations for:
 Matching invocations (ordered by last occurrence):
 
 1 * list.add(1)   <-- this triggered the error
-    '''.trim())
+    ''')
     exceptionMessage == expected
   }
 
@@ -109,7 +109,7 @@ Too many invocations for:
 Matching invocations (ordered by last occurrence):
 
 1 * list.add(1)   <-- this triggered the error
-    '''.trim())
+    ''')
     exceptionMessage == expected
   }
 
@@ -146,7 +146,7 @@ One or more arguments(s) didn't match:
    |        |  |
    99       |  42
             false
-    '''.trim())
+    ''')
     exceptionMessage == expected
   }
 
@@ -190,7 +190,7 @@ One or more arguments(s) didn't match:
    |        |  |
    99       |  2
             false
-    '''.trim())
+    ''')
     exceptionMessage == expected
   }
 
@@ -219,7 +219,7 @@ Too many invocations for:
 Matching invocations (ordered by last occurrence):
 
 1 * list.add(1)   <-- this triggered the error
-    '''.trim())
+    ''')
     exceptionMessage == expected
   }
 
@@ -247,7 +247,7 @@ Too many invocations for:
 Matching invocations (ordered by last occurrence):
 
 1 * list.add(1)   <-- this triggered the error
-    '''.trim())
+    ''')
     exceptionMessage == expected
   }
 
@@ -286,7 +286,7 @@ One or more arguments(s) didn't match:
    |        |  |
    99       |  42
             false
-    '''.trim())
+    ''')
     exceptionMessage == expected
   }
 
@@ -324,7 +324,7 @@ One or more arguments(s) didn't match:
    |        |  |
    1        |  42
             false
-    '''.trim())
+    ''')
     exceptionMessage == expected
   }
 
@@ -351,7 +351,7 @@ Too many invocations for:
 Matching invocations (ordered by last occurrence):
 
 1 * list.add(1)   <-- this triggered the error
-    '''.trim())
+    ''')
     exceptionMessage == expected
   }
 
@@ -411,7 +411,7 @@ One or more arguments(s) didn't match:
    |        |  |
    99       |  42
             false
-    '''.trim())
+    ''')
     exceptionMessage == expected
   }
 
@@ -440,7 +440,7 @@ Too many invocations for:
 Matching invocations (ordered by last occurrence):
 
 1 * list.add(2)   <-- this triggered the error
-    '''.trim())
+    ''')
     exceptionMessage == expected
   }
 
@@ -477,7 +477,7 @@ One or more arguments(s) didn't match:
    |        |  |
    0        |  1
             false
-    '''.trim())
+    ''')
     exceptionMessage == expected
   }
 
@@ -514,7 +514,7 @@ One or more arguments(s) didn't match:
    |        |  |
    2        |  1
             false
-    '''.trim())
+    ''')
     exceptionMessage == expected
   }
 
@@ -551,7 +551,7 @@ One or more arguments(s) didn't match:
    |        |  |
    2        |  1
             false
-    '''.trim())
+    ''')
     exceptionMessage == expected
   }
 
@@ -592,7 +592,7 @@ One or more arguments(s) didn't match:
             1 difference (0% similarity)
             (a)
             (b)
-    '''.trim())
+    ''')
     exceptionMessage == expected
   }
 
@@ -636,7 +636,7 @@ One or more arguments(s) didn't match:
             1 difference (0% similarity)
             (b)
             (c)
-    '''.trim())
+    ''')
     exceptionMessage == expected
   }
 

@@ -83,6 +83,8 @@ class InteractionDiagnostics {
     for (ScoredInvocation si : scored) {
       if (idx++ < MAX_MISMATCH_DESCRIPTIONS) {
         appendMismatchDescription(builder, interaction, si.invocation);
+      } else {
+        break;
       }
     }
   }
@@ -110,7 +112,7 @@ class InteractionDiagnostics {
 
     @Override
     public int compareTo(ScoredInvocation other) {
-      int result = score - other.score;
+      int result = Integer.compare(score, other.score);
       if (result != 0) return result;
       return invocation.toString().compareTo(other.invocation.toString());
     }

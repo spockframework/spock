@@ -21,8 +21,6 @@ import org.spockframework.util.*;
 import java.io.IOException;
 import java.util.*;
 
-import static java.util.Collections.sort;
-
 /**
  * Thrown to indicate that one or more mandatory interactions matched too few invocations.
  *
@@ -54,26 +52,12 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
       builder.append("Too few invocations for:\n\n");
       builder.append(interaction);
       builder.append("\n\n");
-      List<ScoredInvocation> scoredInvocations = scoreInvocations(interaction, unmatchedMultiInvocations);
+      List<InteractionDiagnostics.ScoredInvocation> scoredInvocations = InteractionDiagnostics.scoreInvocations(interaction, unmatchedMultiInvocations);
       builder.append("Unmatched invocations (ordered by similarity):\n\n");
       if (scoredInvocations.isEmpty()) {
         builder.append("None\n");
       } else {
-        int idx = 0;
-        for (ScoredInvocation scoredInvocation : scoredInvocations) {
-          builder.append(scoredInvocation.count);
-          builder.append(" * ");
-          builder.append(scoredInvocation.invocation);
-          builder.append('\n');
-          if (idx++ < 5) {
-            try {
-              builder.append(interaction.describeMismatch(scoredInvocation.invocation));
-            } catch (AssertionError | Exception e) {
-              builder.append("<Renderer threw Exception>: ").append(e.getMessage());
-            }
-            builder.append('\n');
-          }
-        }
+        InteractionDiagnostics.appendScoredInvocations(builder, interaction, scoredInvocations);
       }
       builder.append('\n');
     }
@@ -86,31 +70,5 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
     // create the message so that it is available for serialization
     getMessage();
     out.defaultWriteObject();
-  }
-
-  private List<ScoredInvocation> scoreInvocations(IMockInteraction interaction, IMultiset<IMockInvocation> invocations) {
-    List<ScoredInvocation> result = new ArrayList<>();
-    for (Map.Entry<IMockInvocation, Integer> entry : invocations.entrySet()) {
-      result.add(new ScoredInvocation(entry.getKey(), entry.getValue(), interaction.computeSimilarityScore(entry.getKey())));
-    }
-    sort(result);
-    return result;
-  }
-
-  private static class ScoredInvocation implements Comparable<ScoredInvocation> {
-    final IMockInvocation invocation;
-    final int count;
-    final int score;
-
-    private ScoredInvocation(IMockInvocation invocation, int count, int score) {
-      this.invocation = invocation;
-      this.count = count;
-      this.score = score;
-    }
-
-    @Override
-    public int compareTo(ScoredInvocation other) {
-      return score - other.score;
-    }
   }
 }

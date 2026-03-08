@@ -100,15 +100,21 @@ public class InteractionScope implements IInteractionScope {
   }
 
   @Override
-  public void enrichError(TooManyInvocationsError error) {
-    error.enrichWithScopeContext(getUnsatisfiedInteractions());
-  }
-
-  @Override
   public void verifyInteractions() {
     List<IMockInteraction> unsatisfiedInteractions = getUnsatisfiedInteractions();
     if (!unsatisfiedInteractions.isEmpty())
       throw new TooFewInvocationsError(unsatisfiedInteractions, unmatchedInvocations);
+  }
+
+  @Override
+  public List<IMockInteraction> getNonExhaustedInteractions() {
+    List<IMockInteraction> result = new ArrayList<>();
+    for (IMockInteraction interaction : interactions) {
+      if (!interaction.isExhausted()) {
+        result.add(interaction);
+      }
+    }
+    return result;
   }
 
   private List<IMockInteraction> getUnsatisfiedInteractions() {

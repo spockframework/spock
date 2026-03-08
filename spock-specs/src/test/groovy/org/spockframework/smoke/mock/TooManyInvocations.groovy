@@ -415,7 +415,7 @@ One or more arguments(s) didn't match:
     exceptionMessage == expected
   }
 
-  def "satisfied wildcard-count interaction is not shown"() {
+  def "non-exhausted wildcard-count interaction is shown"() {
     when:
     runner.runFeatureBody("""
 def list = Mock(List)
@@ -440,6 +440,15 @@ Too many invocations for:
 Matching invocations (ordered by last occurrence):
 
 1 * list.add(2)   <-- this triggered the error
+
+Unmatched invocations (ordered by similarity):
+
+_ * list.add(1)   (1 invocation)
+One or more arguments(s) didn't match:
+0: argument == expected
+   |        |  |
+   2        |  1
+            false
     ''')
     exceptionMessage == expected
   }
@@ -637,6 +646,86 @@ One or more arguments(s) didn't match:
             (b)
             (c)
     ''')
+    exceptionMessage == expected
+  }
+
+  def "non-exhausted interaction in-order is shown"() {
+    when:
+    runner.runFeatureBody("""
+def list = Mock(List)
+
+when:
+list.add(1)
+
+then:
+_ * list.add(42)
+
+then:
+0 * _
+    """)
+
+    then:
+    TooManyInvocationsError e = thrown()
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize('''
+Too many invocations for:
+
+0 * _   (1 invocation)
+
+Matching invocations (ordered by last occurrence):
+
+1 * list.add(1)   <-- this triggered the error
+
+Unmatched invocations (ordered by similarity):
+
+_ * list.add(42)   (0 invocations)
+One or more arguments(s) didn't match:
+0: argument == expected
+   |        |  |
+   1        |  42
+            false
+    '''.trim())
+    exceptionMessage == expected
+  }
+
+  def "non-exhausted interaction in other scope is shown"() {
+    when:
+    runner.runFeatureBody("""
+given: 'a list'
+def list = Mock(List)
+
+and: 'an exhausted interaction in the base scope'
+0 * _
+
+// a when-then block adds a new scope to in the front of the base scope
+when: 'a unmatched interaction is executed in the when-then scope'
+list.add(1)
+
+then: 'it bypasses the matcher due to an argument mismatch, but it does not trigger TooFewInvocationsError because it has no required count'
+_ * list.add(42)
+    """)
+
+    then:
+    TooManyInvocationsError e = thrown()
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize('''
+Too many invocations for:
+
+0 * _   (1 invocation)
+
+Matching invocations (ordered by last occurrence):
+
+1 * list.add(1)   <-- this triggered the error
+
+Unmatched invocations (ordered by similarity):
+
+_ * list.add(42)   (0 invocations)
+One or more arguments(s) didn't match:
+0: argument == expected
+   |        |  |
+   1        |  42
+            false
+    '''.trim())
     exceptionMessage == expected
   }
 

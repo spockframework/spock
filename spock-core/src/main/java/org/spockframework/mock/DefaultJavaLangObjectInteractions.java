@@ -59,9 +59,4 @@ public class DefaultJavaLangObjectInteractions implements IInteractionScope {
   public void verifyInteractions() {
     throw new UnreachableCodeError("verifyInteractions");
   }
-
-  @Override
-  public void enrichError(TooManyInvocationsError error) {
-    // nothing to enrich from default interactions
-  }
 }

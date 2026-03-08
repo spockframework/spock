@@ -16,6 +16,9 @@
 
 package org.spockframework.mock;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * An interaction scope holds a group of interactions that will be verified,
  * and thereafter removed, at the same time.
@@ -33,5 +36,13 @@ public interface IInteractionScope {
 
   void verifyInteractions();
 
-  void enrichError(TooManyInvocationsError error);
+  /**
+   * Returns interactions that could still accept more invocations ({@code !isExhausted()}).
+   * Used to provide diagnostic context in {@link TooManyInvocationsError}.
+   *
+   * @since 2.5
+   */
+  default List<IMockInteraction> getNonExhaustedInteractions() {
+    return  Collections.emptyList();
+  }
 }

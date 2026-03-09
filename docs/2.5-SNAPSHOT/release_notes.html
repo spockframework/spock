@@ -30,9 +30,22 @@
 <h2 id="_2_5_tbd"><a class="anchor" href="#_2_5_tbd"></a><a class="link" href="#_2_5_tbd">2.5 (tbd)</a></h2>
 <div class="sectionbody">
 <div class="sect2">
+<h3 id="_enhancements"><a class="anchor" href="#_enhancements"></a><a class="link" href="#_enhancements">Enhancements</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Improve <code>TooManyInvocationsError</code> now reports unsatisfied interactions with argument mismatch details, making it easier to diagnose why invocations didn&#8217;t match expected interactions <a href="https://github.com/spockframework/spock/pull/2315">#2315</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_misc"><a class="anchor" href="#_misc"></a><a class="link" href="#_misc">Misc</a></h3>
 <div class="ulist">
 <ul>
+<li>
+<p>Fix argument mismatch descriptions for varargs methods by expanding varargs instead of reporting <code>&lt;too few arguments&gt;</code> <a href="https://github.com/spockframework/spock/pull/2315">#2315</a></p>
+</li>
 <li>
 <p>Fix Pattern flags being dropped when <code>java.util.regex.Pattern</code> instances are used in Spock regex conditions <a href="https://github.com/spockframework/spock/issues/2298">#2298</a></p>
 </li>
@@ -3446,7 +3459,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.5-SNAPSHOT<br>
-Last updated 2026-03-08 08:18:51 UTC
+Last updated 2026-03-09 18:14:57 UTC
 </div>
 </div>
 </body>

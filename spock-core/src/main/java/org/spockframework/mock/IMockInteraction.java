@@ -16,8 +16,6 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.util.Nullable;
-
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -48,4 +46,11 @@ public interface IMockInteraction {
   boolean isExhausted();
 
   boolean isRequired();
+
+  /**
+   * @since 2.5
+   */
+  default boolean matchesTargetAndMethod(IMockInvocation invocation) {
+    return matches(invocation);
+  }
 }

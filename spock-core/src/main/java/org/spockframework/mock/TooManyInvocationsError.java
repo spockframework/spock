@@ -31,9 +31,11 @@ public class TooManyInvocationsError extends InteractionNotSatisfiedError {
 
   private final transient IMockInteraction interaction;
   private final transient List<IMockInvocation> acceptedInvocations;
+  private transient List<IMockInteraction> unsatisfiedInteractions;
   private String message;
 
   public TooManyInvocationsError(IMockInteraction interaction, List<IMockInvocation> acceptedInvocations) {
+    Assert.notNull(interaction);
     this.interaction = interaction;
     this.acceptedInvocations = acceptedInvocations;
   }
@@ -44,6 +46,11 @@ public class TooManyInvocationsError extends InteractionNotSatisfiedError {
 
   public List<IMockInvocation> getAcceptedInvocations() {
     return acceptedInvocations;
+  }
+
+  public void enrichWithScopeContext(List<IMockInteraction> unsatisfiedInteractions) {
+    this.unsatisfiedInteractions = unsatisfiedInteractions;
+    this.message = null;
   }
 
   @Override
@@ -73,9 +80,44 @@ public class TooManyInvocationsError extends InteractionNotSatisfiedError {
     }
     builder.append("\n");
 
+    if (unsatisfiedInteractions != null && !unsatisfiedInteractions.isEmpty()) {
+      appendUnmatchedInteractions(builder);
+    }
+
     message = builder.toString();
     return message;
   }
+
+  private void appendUnmatchedInteractions(StringBuilder builder) {
+    Set<IMockInvocation> acceptedPool = new LinkedHashSet<>(acceptedInvocations);
+
+    // Filter to unsatisfied interactions where at least one accepted invocation matches target+method
+    List<IMockInteraction> relevantUnsatisfied = new ArrayList<>();
+    for (IMockInteraction unsatisfied : unsatisfiedInteractions) {
+      for (IMockInvocation invocation : acceptedPool) {
+        if (unsatisfied.matchesTargetAndMethod(invocation)) {
+          relevantUnsatisfied.add(unsatisfied);
+          break;
+        }
+      }
+    }
+
+    if (relevantUnsatisfied.isEmpty()) {
+      return;
+    }
+
+    builder.append("Unmatched invocations (ordered by similarity):\n\n");
+
+    for (IMockInteraction unsatisfied : relevantUnsatisfied) {
+      builder.append(unsatisfied);
+      builder.append('\n');
+      List<InteractionDiagnostics.ScoredInvocation> scored = InteractionDiagnostics.scoreMatchingInvocations(unsatisfied, acceptedPool);
+      InteractionDiagnostics.appendMismatchDescriptions(builder, unsatisfied, scored);
+    }
+
+    builder.append('\n');
+  }
+
   private void writeObject(java.io.ObjectOutputStream out) throws IOException {
     // create the message so that it is available for serialization
     getMessage();

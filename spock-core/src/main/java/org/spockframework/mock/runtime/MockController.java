@@ -42,8 +42,10 @@ public class MockController implements IMockController, IThreadAwareMockControll
   @Override
   public Object handle(IMockInvocation invocation) {
     Supplier<Object> resultSupplier = null;
+    List<IInteractionScope> activeScopes =  new ArrayList<>();
     synchronized (this) {
       for (IInteractionScope scope : scopes) {
+        activeScopes.add(scope);
         IMockInteraction interaction = scope.match(invocation);
         if (interaction != null) {
           resultSupplier = requireNonNull(interaction.accept(invocation), "interaction must not return null");
@@ -62,9 +64,22 @@ public class MockController implements IMockController, IThreadAwareMockControll
       try {
         return resultSupplier.get();
       } catch (InteractionNotSatisfiedError e) {
+        maybeEnrichTooManyInvocationsError(e, activeScopes);
         errors.add(e);
         throw e;
       }
+    }
+  }
+
+  private void maybeEnrichTooManyInvocationsError(InteractionNotSatisfiedError e, List<IInteractionScope> activeScopes) {
+    if (e instanceof TooManyInvocationsError) {
+      List<IMockInteraction> allUnsatisfied = new ArrayList<>();
+      synchronized(this) {
+        for (IInteractionScope scope : activeScopes) {
+          allUnsatisfied.addAll(scope.getNonExhaustedInteractions());
+        }
+      }
+      ((TooManyInvocationsError) e).enrichWithScopeContext(allUnsatisfied);
     }
   }
 

@@ -50,6 +50,10 @@ public class PositionalArgumentListConstraint implements IInvocationConstraint {
   public String describeMismatch(IMockInvocation invocation) {
     List<Object> args = invocation.getArguments();
 
+    if (argConstraints.size() != args.size() && hasExpandableVarArgs(invocation.getMethod(), args)) {
+      args = expandVarArgs(args);
+    }
+
     if (argConstraints.isEmpty()) return "<no args expected>";
     int constraintsToArgs = argConstraints.size() - args.size();
     if (constraintsToArgs > 0) return "<too few arguments>";

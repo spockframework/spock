@@ -95,7 +95,7 @@ size       false
            (add-)
 
 <too few arguments>
-    '''.trim())
+    ''')
     exceptionMessage == expected
   }
 
@@ -122,7 +122,7 @@ Too few invocations for:
 Unmatched invocations (ordered by similarity):
 
 None
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -195,7 +195,7 @@ One or more arguments(s) didn't match:
    |        |  |
    2        |  1
             false
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -279,7 +279,7 @@ One or more arguments(s) didn't match:
             6 differences (14% similarity)
             (Qua)r(ry-)
             (Bed)r(ock)
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -316,7 +316,7 @@ One or more arguments(s) didn't match:
    |  |
    30 false
 3: <matches>
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -355,7 +355,7 @@ One or more arguments(s) didn't match:
    |  |
    30 false
 3: <matches>
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -394,7 +394,7 @@ One or more arguments(s) didn't match:
    |  |
    30 false
 3: <matches>
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -435,7 +435,7 @@ One or more arguments(s) didn't match:
    |    null
    [10, 20, 40]
 3: <matches>
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -474,7 +474,7 @@ One or more arguments(s) didn't match:
    |    null
    [10, 20, 40]
 3: <matches>
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -511,7 +511,7 @@ One or more arguments(s) didn't match:
    |  |
    30 false
 3: <matches>
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -555,7 +555,7 @@ One or more arguments(s) didn't match:
    |  |   |
    |  45  false
    Person
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -611,7 +611,7 @@ One or more arguments(s) didn't match:
    age == 35
    |   |
    45  false
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -646,7 +646,7 @@ One or more arguments(s) didn't match:
 2: Expected: <20>
         but: was <30>
 3: <matches>
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -682,7 +682,7 @@ One or more arguments(s) didn't match:
    |        false      class java.lang.String
    30 (java.lang.Integer)
 3: <matches>
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -711,7 +711,7 @@ Unmatched invocations (ordered by similarity):
 
 1 * fred.wife('Wilma', 'Flintstone', 30, 'Bedrock')
 <too few arguments>
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -740,7 +740,7 @@ Unmatched invocations (ordered by similarity):
 
 1 * fred.wife('Wilma', 'Flintstone', 30, 'Bedrock')
 <too many arguments>
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -771,7 +771,7 @@ Unmatched invocations (ordered by similarity):
 methodName ==~ /kids?/
 |          |
 wife       false
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -802,7 +802,7 @@ Unmatched invocations (ordered by similarity):
 propertyName ==~ /name?/
 |            |
 age          false
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -837,7 +837,7 @@ age          false
              2 differences (50% similarity)
              (-)a(g)e
              (n)a(m)e
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -874,7 +874,7 @@ instance == target
 |        Mock for type 'Person' named '(f-)r(-)e(d)'
 |        Mock for type 'Person' named '(ba)r(n)e(y)'
 Mock for type 'Person' named 'fred'
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -904,7 +904,7 @@ Unmatched invocations (ordered by similarity):
 1 * fred.family(null)
 One or more arguments(s) didn't match:
 0: <not> EqualArgument (matched)
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -945,7 +945,7 @@ Unmatched invocations (ordered by similarity):
 1 * fred.family([:])
 One or more arguments(s) didn't match:
 0: <not> TypeArgument (matched)
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -974,7 +974,7 @@ Unmatched invocations (ordered by similarity):
 
 1 * fred.wife('Wilma', 'Flintstone', 30, 'Bedrock')
 <named arguments expected>
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -1014,7 +1014,7 @@ One or more arguments(s) didn't match:
                     6 differences (14% similarity)
                     (Qua)r(ry-)
                     (Bed)r(ock)
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -1069,7 +1069,7 @@ Unmatched invocations (ordered by similarity):
 One or more arguments(s) didn't match:
 [address]: <missing>
 [firstName]: <unexpected argument>
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -1114,7 +1114,7 @@ One or more arguments(s) didn't match:
             (Wi--)l(ma)
             (Pebb)l(es)
 2: <matches>
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 
@@ -1188,7 +1188,7 @@ One or more arguments(s) didn't match:
    |        |  bar
    |        false
    [[1, 2], [2, 5]]
-    """.trim())
+    """)
     exceptionMessage == expected
   }
 

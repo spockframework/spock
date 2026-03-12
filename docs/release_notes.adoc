@@ -151,8 +151,8 @@ Thanks to all the contributors to this release: Andreas Turban, Björn Kautler, 
 * Add new <<extensions.adoc#default-value-provider,`IDefaultValueProviderExtension`>> extension point to add support for special classes in the Stub's default `EmptyOrDummyResponse` spockPull:1994[]
 * Add support for Groovy-4-style range expressions spockIssue:1956[]
 * Add `IStatelessAnnotationDrivenExtension` to allow a single extension instance to be reused across all specifications spockPull:2055[]
-* Add new well-known versions to `Jvm` helper to support versions up to `29` spockPull:2057[]
 ** Built-in extensions have been updated to use this new interface where applicable
+* Add new well-known versions to `Jvm` helper to support versions up to `29` spockPull:2057[]
 * Add best-effort error reporting for interactions on final methods when using the `byte-buddy` mock maker spockIssue:2039[]
 * Add support for `@FailsWith` to assert an exception message spockIssue:2039[]
 * Add support for accessing the `IStore` via `ISpecificationContext` spockPull:2064[]
@@ -202,7 +202,7 @@ Thanks to all the contributors to this release: Björn Kautler,
 * Improve Spock's documentation by automatically linking source snippets in the docs to the code spockPull:1904[]
 * Improve `@Retry` extension parallel-safeness spockPull:1701[]
 * Improve `@RepeatUntilFailure` by allowing multiple annotations in the same specification spockPull:1912[]
-* [.line-through]#Improve collection matchers by supporting them in nested in complex assertions spockPull:1921[]#
+* Improve collection matchers by supporting them in nested complex assertions spockPull:1921[]
 * Improve stacktrace filtering by also handling suppressed exceptions spockPull:1923[]
 * Fix possible deadlock when blocking in mock response generators spockPull:1910[]
 ** Fix fallout of spockPull:1885[] introduced in M2

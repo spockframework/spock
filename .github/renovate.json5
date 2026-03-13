@@ -42,18 +42,7 @@
     },
     {
       matchPackageNames: ["/^org.spockframework:spock-/"],
-      matchCurrentVersion: "/-groovy-3\\.0$/",
-      allowedVersions: "/-groovy-3\\.0$/"
-    },
-    {
-      matchPackageNames: ["/^org.spockframework:spock-/"],
-      matchCurrentVersion: "/-groovy-4\\.0$/",
-      allowedVersions: "/-groovy-4\\.0$/"
-    },
-    {
-      matchPackageNames: ["/^org.spockframework:spock-/"],
-      matchCurrentVersion: "/-groovy-5\\.0$/",
-      allowedVersions: "/-groovy-5\\.0$/"
+      versionCompatibility: "^(?<version>.*)-(?<compatibility>groovy-.*)$"
     }
   ]
 }

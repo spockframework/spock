@@ -186,7 +186,7 @@ public class SpockMockPostprocessor extends BackwardsCompatibleInstantiationAwar
     Set<String> existingBeans = getExistingBeans(beanFactory, definition.getTypeToSpy());
     if (ObjectUtils.isEmpty(existingBeans)) {
       FieldInfo fieldInfo = definition.getFieldInfo();
-      throw new SpringExtensionException(String.format("No matching bean found! " +
+      throw new SpringExtensionException(String.format(Locale.ROOT, "No matching bean found! " +
         "@SpringSpy requires an existing spring bean to wrap, to create a standalone spy use @SpringBean.%n" +
         "Offending Field: '%s.%s:%d'", fieldInfo.getParent().getName(), fieldInfo.getName(), fieldInfo.getLine()));
     } else {

@@ -14,6 +14,8 @@
 
 package spock.config;
 
+import java.util.Locale;
+
 /**
  * Thrown to indicate that there is a problem with Spock's configuration (file).
  *
@@ -21,9 +23,9 @@ package spock.config;
  */
 public class ConfigurationException extends RuntimeException {
   public ConfigurationException(String msg, Object... args) {
-    super(String.format(msg, args));
+    super(String.format(Locale.ROOT, msg, args));
   }
   public ConfigurationException(String msg, Throwable t, Object... args) {
-    super(String.format(msg, args), t);
+    super(String.format(Locale.ROOT, msg, args), t);
   }
 }

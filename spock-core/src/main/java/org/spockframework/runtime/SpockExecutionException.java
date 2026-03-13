@@ -16,6 +16,8 @@
 
 package org.spockframework.runtime;
 
+import java.util.Locale;
+
 /**
  * Indicates that a problem occurred during Spec execution.
  *
@@ -34,7 +36,7 @@ public class SpockExecutionException extends SpockException {
   }
 
   public SpockExecutionException withArgs(Object... args) {
-    msg = String.format(msg, args);
+    msg = String.format(Locale.ROOT, msg, args);
     return this;
   }
 

@@ -16,6 +16,8 @@
 
 package org.spockframework.runtime;
 
+import java.util.Locale;
+
 /**
  * Indicates that a Spec has done something it is not supposed to do. It is up
  * to the Spec author to correct the problem.
@@ -35,7 +37,7 @@ public class InvalidSpecException extends SpockException {
   }
 
   public InvalidSpecException withArgs(Object... args) {
-    msg = String.format(msg, args);
+    msg = String.format(Locale.ROOT, msg, args);
     return this;
   }
 

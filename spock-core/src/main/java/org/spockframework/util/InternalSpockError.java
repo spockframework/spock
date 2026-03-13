@@ -16,6 +16,8 @@
 
 package org.spockframework.util;
 
+import java.util.Locale;
+
 /**
  *
  * @author Peter Niederwieser
@@ -46,6 +48,6 @@ public class InternalSpockError extends Error {
 
   @Override
   public String getMessage() {
-    return String.format(super.getMessage(), msgArgs);
+    return String.format(Locale.ROOT, super.getMessage(), msgArgs);
   }
 }

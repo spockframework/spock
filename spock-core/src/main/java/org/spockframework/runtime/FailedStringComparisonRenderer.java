@@ -5,6 +5,8 @@ import org.spockframework.runtime.model.ExpressionInfo;
 
 import groovy.lang.GString;
 
+import java.util.Locale;
+
 public class FailedStringComparisonRenderer implements ExpressionComparisonRenderer {
   public static final long MAX_EDIT_DISTANCE_MEMORY = 50 * 1024;
   @Override
@@ -56,7 +58,7 @@ public class FailedStringComparisonRenderer implements ExpressionComparisonRende
 
   private String createAndRenderEditDistance(String str1, String str2) {
     EditDistance dist = new EditDistance(str1, str2);
-    return String.format("false\n%d difference%s (%d%% similarity)\n%s",
+    return String.format(Locale.ROOT, "false\n%d difference%s (%d%% similarity)\n%s",
       dist.getDistance(), dist.getDistance() == 1 ? "" : "s", dist.getSimilarityInPercent(),
       new EditPathRenderer().render(str1, str2, dist.calculatePath()));
   }
@@ -65,7 +67,7 @@ public class FailedStringComparisonRenderer implements ExpressionComparisonRende
     String sub1 = str1.substring(commonStart, end1);
     String sub2 = str2.substring(commonStart, end2);
     EditDistance dist = new EditDistance(sub1, sub2);
-    return String.format("false\n%d difference%s (%d%% similarity) (comparing subset start: %d, end1: %d, end2: %d)\n%s",
+    return String.format(Locale.ROOT, "false\n%d difference%s (%d%% similarity) (comparing subset start: %d, end1: %d, end2: %d)\n%s",
       dist.getDistance(), dist.getDistance() == 1 ? "" : "s", dist.getSimilarityInPercent(),
       commonStart, end1, end2,
       new EditPathRenderer().render(sub1, sub2, dist.calculatePath()));

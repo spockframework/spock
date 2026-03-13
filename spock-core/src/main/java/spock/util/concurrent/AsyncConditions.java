@@ -18,6 +18,7 @@ import org.spockframework.lang.ConditionBlock;
 import org.spockframework.runtime.SpockTimeoutError;
 import org.spockframework.util.*;
 
+import java.util.Locale;
 import java.util.concurrent.*;
 
 /**
@@ -137,7 +138,7 @@ public class AsyncConditions {
 
     long pendingEvalBlocks = latch.getCount();
     if (pendingEvalBlocks > 0) {
-      String msg = String.format("Async conditions timed out " +
+      String msg = String.format(Locale.ROOT, "Async conditions timed out " +
           "after %1.2f seconds; %d out of %d evaluate blocks did not complete in time",
           seconds, pendingEvalBlocks, numEvalBlocks);
       throw new SpockTimeoutError(seconds, msg);

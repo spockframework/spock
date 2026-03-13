@@ -17,6 +17,7 @@
 package org.spockframework.runtime.model;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.syntax.Token;
@@ -79,7 +80,7 @@ public class TextPosition implements Comparable<TextPosition>, Serializable {
   }
 
   public String toString() {
-    return String.format("(%d,%d)", line, column);
+    return String.format(Locale.ROOT, "(%d,%d)", line, column);
   }
 
   @Override

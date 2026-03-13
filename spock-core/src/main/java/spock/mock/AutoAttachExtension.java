@@ -19,6 +19,8 @@ import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.*;
 import spock.lang.Specification;
 
+import java.util.Locale;
+
 public class AutoAttachExtension implements IStatelessAnnotationDrivenExtension<AutoAttach> {
   private static final MockUtil MOCK_UTIL = new MockUtil();
 
@@ -44,11 +46,11 @@ public class AutoAttachExtension implements IStatelessAnnotationDrivenExtension<
     public void intercept(IMethodInvocation invocation) throws Throwable {
       Object mock = field.readValue(invocation.getInstance());
       if (mock == null) {
-        throw new SpockException(String.format("Cannot AutoAttach 'null' for field %s:%s",
+        throw new SpockException(String.format(Locale.ROOT, "Cannot AutoAttach 'null' for field %s:%d",
           field.getName(), field.getLine()));
       }
       if (!MOCK_UTIL.isMock(mock)) {
-        throw new SpockException(String.format("AutoAttach failed '%s' is not a mock for field %s:%s",
+        throw new SpockException(String.format(Locale.ROOT, "AutoAttach failed '%s' is not a mock for field %s:%d",
           mock, field.getName(), field.getLine()));
       }
       MOCK_UTIL.attachMock(mock, (Specification) invocation.getInstance());

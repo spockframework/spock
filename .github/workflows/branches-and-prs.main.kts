@@ -29,7 +29,7 @@
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.actions.actions.Checkout.FetchDepth
-import io.github.typesafegithub.workflows.actions.codecov.CodecovAction_Untyped
+import io.github.typesafegithub.workflows.actions.codecov.CodecovAction
 import io.github.typesafegithub.workflows.actions.testlensapp.SetupTestlens
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType
@@ -134,8 +134,8 @@ workflow(
         )
         uses(
             name = "Upload to Codecov.io",
-            action = CodecovAction_Untyped(
-                failCiIfError_Untyped = "true"
+            action = CodecovAction(
+                failCiIfError = true
             )
         )
     }

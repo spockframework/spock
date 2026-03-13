@@ -576,7 +576,7 @@ public class WhereBlockRewriter {
       // and the row to be added does not have the same size as previous rows
       // => compile error
       if (rows.size() > 0 && rows.getLast().size() != row.size())
-        throw new InvalidSpecCompileException(row.get(0), String.format("Row in data table has wrong number of elements (%s instead of %s)", row.size(), rows.getLast().size()));
+        throw new InvalidSpecCompileException(row.get(0), String.format(Locale.ROOT, "Row in data table has wrong number of elements (%d instead of %d)", row.size(), rows.getLast().size()));
 
       // add the new row
       rows.add(row);

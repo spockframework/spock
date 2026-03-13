@@ -19,6 +19,8 @@ package org.spockframework.compiler;
 import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.syntax.SyntaxException;
 
+import java.util.Locale;
+
 /**
  * Indicates that a spec was found to contain a (syntactic or semantic)
  * error during compilation. As such, this is the compile-time equivalent
@@ -33,7 +35,7 @@ import org.codehaus.groovy.syntax.SyntaxException;
  */
 public class InvalidSpecCompileException extends SyntaxException {
   public InvalidSpecCompileException(int line, int column, String msg, Object... args) {
-    super(String.format(msg, args), line, column);
+    super(String.format(Locale.ROOT, msg, args), line, column);
   }
 
   public InvalidSpecCompileException(ASTNode node, String msg, Object... args) {

@@ -14,6 +14,7 @@
 
 package spock.util.concurrent;
 
+import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -109,7 +110,7 @@ public class BlockingVariable<T> {
    */
   public T get() throws InterruptedException {
     if (!valueReady.await((long) (timeout * 1000), TimeUnit.MILLISECONDS)) {
-      String msg = String.format("BlockingVariable.get() timed out after %1.2f seconds", timeout);
+      String msg = String.format(Locale.ROOT, "BlockingVariable.get() timed out after %1.2f seconds", timeout);
       throw new SpockTimeoutError(timeout, msg);
     }
     return value;

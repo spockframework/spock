@@ -340,7 +340,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   private String createInternalName(FeatureMethod feature) {
-    return String.format("$spock_feature_%d_%d", specDepth, feature.getOrdinal());
+    return String.format(Locale.ROOT, "$spock_feature_%d_%d", specDepth, feature.getOrdinal());
   }
 
   private MethodNode copyMethod(MethodNode method, String newName) {

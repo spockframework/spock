@@ -45,6 +45,7 @@ import org.spockframework.util.ReflectionUtil;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -125,7 +126,7 @@ class ByteBuddyMockFactory {
           targetClass = CODEGEN_TARGET_CLASS;
         }
         int randomNumber = Math.abs(ThreadLocalRandom.current().nextInt());
-        String name = String.format("%s$%s$%d", typeName, "SpockMock", randomNumber);
+        String name = String.format(Locale.ROOT, "%s$%s$%d", typeName, "SpockMock", randomNumber);
         ClassLoadingStrategy<ClassLoader> strategy = determineBestClassLoadingStrategy(targetClass, settings);
         //noinspection resource
         return new ByteBuddy()

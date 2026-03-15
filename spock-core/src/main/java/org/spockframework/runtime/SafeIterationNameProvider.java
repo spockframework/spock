@@ -16,6 +16,8 @@ package org.spockframework.runtime;
 
 import org.spockframework.runtime.model.*;
 
+import java.util.Locale;
+
 import static java.lang.String.format;
 
 public class SafeIterationNameProvider implements NameProvider<IterationInfo> {
@@ -40,7 +42,7 @@ public class SafeIterationNameProvider implements NameProvider<IterationInfo> {
 
   private String getFallbackName(IterationInfo iteration) {
     return iteration.getFeature().isReportIterations()
-      ? format("%s [#%d]", iteration.getFeature().getName(), iteration.getIterationIndex())
+      ? format(Locale.ROOT, "%s [#%d]", iteration.getFeature().getName(), iteration.getIterationIndex())
       : iteration.getFeature().getName();
   }
 }

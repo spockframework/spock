@@ -20,7 +20,7 @@ See <<extensions.adoc#spock-configuration-file, Spock Configuration File>> for g
 include::{sourcedir}/parallel/ParallelConfigDoc.groovy[tag=enable]
 ----
 
-NOTE: JUnit Jupiter also supports  https://junit.org/junit5/docs/5.7.0/user-guide/#writing-tests-parallel-execution[parallel execution], both rely on the JUnit Platform implementation, but function independently of each other.
+NOTE: JUnit Jupiter also supports https://junit.org/junit5/docs/5.7.0/user-guide/#writing-tests-parallel-execution[parallel execution], both rely on the JUnit Platform implementation, but function independently of each other.
       If you enable parallel execution in Spock it won't affect Jupiter and vice versa.
       The JUnit Platform executes the test engines (Spock, Jupiter) sequentially, so there should not be any interference between engines.
 

@@ -787,25 +787,21 @@ tasks.named("test", Test) {
 == Third-Party Extensions
 
 You can find a list with some third-party extensions in the https://github.com/spockframework/spock/wiki/Third-Party-Extensions[Spock Wiki].
-This list is neither maintained nor curated by the Spock maintainers. It is also not necessarily complete, so you might
-find further Spock extensions through web searches or other means. It is a community-driven page where
-anyone can list Spock extensions they wrote or found.
+This list is neither maintained nor curated by the Spock maintainers.
+It is also not necessarily complete, so you might find further Spock extensions through web searches or other means.
+It is a community-driven page where anyone can list Spock extensions they wrote or found.
 
 [NOTE]
 --
 JUnit Jupiter is a separate test engine also running on JUnit Platform and thus is a sibling of the Spock engine.
-Extensions written for JUnit Jupiter do _not_ work in Spock specifications out of the box. Often terms are mixed up and
-some extension says it is for JUnit 5+, actually meaning it is for JUnit Jupiter, as there are no generic JUnit Platform
-extensions. If you want to use an extension written for JUnit Jupiter, you can check whether the project also provides
-a Spock extension, if not ask them to also provide a Spock extension, search for an alternative extension that supports
-Spock, or port the Jupiter extension to being a Spock extension yourself.
+Extensions written for JUnit Jupiter do _not_ work in Spock specifications out of the box.
+Often terms are mixed up and some extension says it is for JUnit 5+, actually meaning it is for JUnit Jupiter, as there are no generic JUnit Platform extensions.
+If you want to use an extension written for JUnit Jupiter, you can check whether the project also provides a Spock extension, if not ask them to also provide a Spock extension, search for an alternative extension that supports Spock, or port the Jupiter extension to being a Spock extension yourself.
 
-There is also at least one 3rd party extension that as of this writing provides a partly functioning integration of
-JUnit Jupiter extensions within Spock specifications. This extension though is neither maintained, nor recommended,
-nor discouraged by the Spock maintainers. It can eventually make some JUnit Jupiter extensions work within Spock specifications,
-but it is always preferable to instead use a native Spock extension. Often porting a JUnit Jupiter extension to also support
-Spock is not a big effort, so you might strongly consider to request a port by the extension maintainer or contribute
-a port to its project.
+There is also at least one 3rd party extension that as of this writing provides a partly functioning integration of JUnit Jupiter extensions within Spock specifications.
+This extension though is neither maintained, nor recommended, nor discouraged by the Spock maintainers.
+It can eventually make some JUnit Jupiter extensions work within Spock specifications, but it is always preferable to instead use a native Spock extension.
+Often porting a JUnit Jupiter extension to also support Spock is not a big effort, so you might strongly consider to request a port by the extension maintainer or contribute a port to its project.
 --
 
 

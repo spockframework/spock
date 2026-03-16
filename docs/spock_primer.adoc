@@ -854,24 +854,19 @@ activated by annotations called _directives_. Currently, Spock ships - among oth
 be resolved immediately. Second, to replace exception conditions in certain corner cases where the latter cannot be
 used (like specifying the behavior of exception conditions). In all other cases, exception conditions are preferable.
 
-Go to the <<extensions.adoc#extensions,Extensions>> chapter to learn how to implement your own directives and extensions,
-to learn where to find some of the 3rd party extensions, and to learn about all built-in extensions and directives.
+Go to the <<extensions.adoc#extensions,Extensions>> chapter to learn how to implement your own directives and extensions, to learn where to find some of the 3rd party extensions, and to learn about all built-in extensions and directives.
 
 [NOTE]
 --
 JUnit Jupiter is a separate test engine also running on JUnit Platform and thus is a sibling of the Spock engine.
-Extensions written for JUnit Jupiter do _not_ work in Spock specifications out of the box. Often terms are mixed up and
-some extension says it is for JUnit 5+, actually meaning it is for JUnit Jupiter, as there are no generic JUnit Platform
-extensions. If you want to use an extension written for JUnit Jupiter, you can check whether the project also provides
-a Spock extension, if not ask them to also provide a Spock extension, search for an alternative extension that supports
-Spock, or port the Jupiter extension to being a Spock extension yourself.
+Extensions written for JUnit Jupiter do _not_ work in Spock specifications out of the box.
+Often terms are mixed up and some extension says it is for JUnit 5+, actually meaning it is for JUnit Jupiter, as there are no generic JUnit Platform extensions.
+If you want to use an extension written for JUnit Jupiter, you can check whether the project also provides a Spock extension, if not ask them to also provide a Spock extension, search for an alternative extension that supports Spock, or port the Jupiter extension to being a Spock extension yourself.
 
-There is also at least one 3rd party extension that as of this writing provides a partly functioning integration of
-JUnit Jupiter extensions within Spock specifications. This extension though is neither maintained, nor recommended,
-nor discouraged by the Spock maintainers. It can eventually make some JUnit Jupiter extensions work within Spock specifications,
-but it is always preferable to instead use a native Spock extension. Often porting a JUnit Jupiter extension to also support
-Spock is not a big effort, so you might strongly consider to request a port by the extension maintainer or contribute
-a port to its project.
+There is also at least one 3rd party extension that as of this writing provides a partly functioning integration of JUnit Jupiter extensions within Spock specifications.
+This extension though is neither maintained, nor recommended, nor discouraged by the Spock maintainers.
+It can eventually make some JUnit Jupiter extensions work within Spock specifications, but it is always preferable to instead use a native Spock extension.
+Often porting a JUnit Jupiter extension to also support Spock is not a big effort, so you might strongly consider to request a port by the extension maintainer or contribute a port to its project.
 --
 
 == Comparison to JUnit

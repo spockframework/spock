@@ -115,11 +115,15 @@ jobs:
       with:
         additional-java-version: '${{ matrix.java }}'
     - id: 'step-2'
+      name: 'Set up TestLens'
+      uses: 'testlens-app/setup-testlens@v1'
+      if: 'github.event_name == ''pull_request'''
+    - id: 'step-3'
       name: 'Build Spock'
       env:
         DEVELOCITY_ACCESS_KEY: '${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}'
       run: './gradlew --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}"'
-    - id: 'step-3'
+    - id: 'step-4'
       name: 'Upload to Codecov.io'
       uses: 'codecov/codecov-action@v5'
       with:

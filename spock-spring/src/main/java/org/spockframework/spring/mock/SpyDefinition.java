@@ -24,6 +24,8 @@ import spock.mock.DetachedMockFactory;
 import org.springframework.core.ResolvableType;
 import org.springframework.util.ObjectUtils;
 
+import java.util.Locale;
+
 class SpyDefinition extends FieldDefinition {
 
   private final SpringSpy annotation;
@@ -40,11 +42,11 @@ class SpyDefinition extends FieldDefinition {
       "SpringBean annotation is required for this field: '%s.%s:%d' ",
       fieldInfo.getParent().getName(), fieldInfo.getName(), fieldInfo.getLine());
     if (fieldInfo.hasInitializer()) {
-      throw new SpringExtensionException(String.format("Field '%s.%s:%d' may not have an initializer.",
+      throw new SpringExtensionException(String.format(Locale.ROOT, "Field '%s.%s:%d' may not have an initializer.",
         fieldInfo.getParent().getName(), fieldInfo.getName(), fieldInfo.getLine()));
     }
     if (Object.class.equals(fieldInfo.getType())) {
-      throw new SpringExtensionException(String.format("Field '%s.%s:%d' must use a concrete type, not def or Object.",
+      throw new SpringExtensionException(String.format(Locale.ROOT, "Field '%s.%s:%d' must use a concrete type, not def or Object.",
         fieldInfo.getParent().getName(), fieldInfo.getName(), fieldInfo.getLine()));
     }
   }

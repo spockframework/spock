@@ -24,6 +24,7 @@ import java.io.PrintStream;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
@@ -122,7 +123,7 @@ public class TimeoutInterceptor implements IMethodInterceptor {
       // act accordingly. We gloss over the fact that some other thread might also have tried to
       // interrupt this thread. This shouldn't be a problem in practice, in particular because
       // throwing an InterruptedException wouldn't abort the whole test run anyway.
-      String msg = String.format("Method timed out after %1.2f seconds", timeoutSeconds);
+      String msg = String.format(Locale.ROOT, "Method timed out after %1.2f seconds", timeoutSeconds);
       SpockTimeoutError error = new SpockTimeoutError(timeoutSeconds, msg);
       error.setStackTrace(stackTrace);
       throw error;
@@ -134,6 +135,7 @@ public class TimeoutInterceptor implements IMethodInterceptor {
 
   private void logUnsuccessfulInterrupt(String methodName, long now, long timeoutAt, long waitMillis, int unsuccessfulAttempts) {
     System.err.printf(
+      Locale.ROOT,
       "[spock.lang.Timeout] Method '%s' has not stopped after timing out %1.2f seconds ago - interrupting. Next try in %1.2f seconds.\n%n",
       methodName,
       TimeUtil.toSeconds(Duration.ofNanos(now - timeoutAt)),
@@ -152,6 +154,7 @@ public class TimeoutInterceptor implements IMethodInterceptor {
 
   private void logMethodTimeout(String methodName, double timeoutSeconds) {
     System.err.printf(
+      Locale.ROOT,
       "[spock.lang.Timeout] Method '%s' timed out after %1.2f seconds.%n",
       methodName,
       timeoutSeconds
@@ -206,7 +209,7 @@ public class TimeoutInterceptor implements IMethodInterceptor {
     String lineFormat = "\"%s\" #%d";
     int threadSectionStart = -1;
     for (int i = 0; i < lines.size(); ++i) {
-      if (lines.get(i).startsWith(String.format(lineFormat, threadName, threadId))) {
+      if (lines.get(i).startsWith(String.format(Locale.ROOT, lineFormat, threadName, threadId))) {
         threadSectionStart = i;
       } else if (threadSectionStart > 0 && lines.get(i).isEmpty()) {
         return Pair.of(threadSectionStart, i);

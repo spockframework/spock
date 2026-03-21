@@ -198,9 +198,9 @@ public class PollingConditions {
       }
     }
 
-    String msg = String.format(Locale.ENGLISH, "Condition not satisfied after %1.2f seconds and %d attempts", elapsedTime / 1000d, attempts);
+    String msg = String.format(Locale.ROOT, "Condition not satisfied after %1.2f seconds and %d attempts", elapsedTime / 1000d, attempts);
     if (timeoutMessage != null) {
-      msg = String.format(Locale.ENGLISH, "%s: %s", msg, GroovyRuntimeUtil.invokeClosure(timeoutMessage, testException));
+      msg = String.format("%s: %s", msg, GroovyRuntimeUtil.invokeClosure(timeoutMessage, testException));
     }
     throw new SpockTimeoutError(seconds, msg, testException);
   }

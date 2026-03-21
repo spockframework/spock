@@ -59,7 +59,7 @@ public class DataVariablesIterationNameProvider implements NameProvider<Iteratio
       });
     }
     if (includeIterationIndex) {
-      nameJoiner.add(format("#%d", iteration.getIterationIndex()));
+      nameJoiner.add(format(Locale.ROOT, "#%d", iteration.getIterationIndex()));
     }
     return includeFeatureNameForIterations ? format("%s [%s]", feature.getName(), nameJoiner) : nameJoiner.toString();
   }

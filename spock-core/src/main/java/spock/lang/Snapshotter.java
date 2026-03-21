@@ -285,7 +285,7 @@ public class Snapshotter {
 
     private static String calculateSafeUniqueName(String extension, IterationInfo iterationInfo, String snapshotId) {
       Checks.checkArgument(snapshotId.length() <= 100,
-        () -> String.format("'snapshotId' is too long, only 100 characters are allowed, but was %d: %s", snapshotId.length(), snapshotId));
+        () -> String.format(Locale.ROOT, "'snapshotId' is too long, only 100 characters are allowed, but was %d: %s", snapshotId.length(), snapshotId));
 
       FeatureInfo feature = iterationInfo.getFeature();
       String safeName = sanitize(feature.getName());
@@ -296,9 +296,9 @@ public class Snapshotter {
       int uniqueSuffixLength = 1 + featureId.length() + 1 + extension.length() + iterationIndex.length() + snapshotIdSuffix.length();
       if (safeName.length() + uniqueSuffixLength > 250) {
         safeName = safeName.substring(0, 250 - uniqueSuffixLength);
-        return String.format(Locale.ROOT, "%s%s-%s%s.%s", safeName, snapshotIdSuffix, featureId, iterationIndex, extension);
+        return String.format("%s%s-%s%s.%s", safeName, snapshotIdSuffix, featureId, iterationIndex, extension);
       }
-      return String.format(Locale.ROOT, "%s%s%s.%s", safeName, snapshotIdSuffix, iterationIndex, extension);
+      return String.format("%s%s%s.%s", safeName, snapshotIdSuffix, iterationIndex, extension);
     }
 
     private static String sanitize(String snapshotId) {

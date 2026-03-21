@@ -7,7 +7,7 @@ dependencies {
   testImplementation projects.spockSpring
   testImplementation libs.junit4
   testImplementation "org.springframework:spring-context"
-  testImplementation ("org.springframework:spring-test")
+  testImplementation "org.springframework:spring-test"
 
 }
 

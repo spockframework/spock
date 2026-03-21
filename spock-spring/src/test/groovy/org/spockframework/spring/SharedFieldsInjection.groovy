@@ -5,7 +5,7 @@ import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 import spock.util.EmbeddedSpecRunner
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD
@@ -45,7 +45,9 @@ class SharedFieldsInjection extends Specification {
     ann << [
       "org.springframework.beans.factory.annotation.Autowired",
       "javax.annotation.Resource",
-      "javax.inject.Inject"
+      "jakarta.annotation.Resource",
+      "javax.inject.Inject",
+      "jakarta.inject.Inject"
     ].findAll(ReflectionUtil.&isClassAvailable)
   }
 
@@ -55,6 +57,7 @@ class SharedFieldsInjection extends Specification {
       @ContextConfiguration(locations = "/org/spockframework/spring/InjectionExamples-context.xml")
       @EnableSharedInjection
       class Foo extends Specification {
+        @javax.inject.Inject
         @Inject
         @Shared
         IService1 sharedService
@@ -79,6 +82,7 @@ class SharedFieldsInjection extends Specification {
     def result = runner.runWithImports '''
       @EnableSharedInjection
       abstract class AbstractSharedInjectionSpec extends Specification {
+        @javax.inject.Inject
         @Inject
         @Shared
         IService1 sharedService
@@ -109,6 +113,7 @@ class SharedFieldsInjection extends Specification {
       @ContextConfiguration
       @EnableSharedInjection
       class Foo extends Specification {
+        @javax.inject.Inject
         @Inject
         @Shared
         IService1 sharedService
@@ -198,6 +203,7 @@ class SharedFieldsInjection extends Specification {
       @EnableSharedInjection
       @DirtiesContext
       class Foo extends Specification {
+        @javax.inject.Inject
         @Inject
         @Shared
         IService1 sharedService

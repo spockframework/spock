@@ -5,7 +5,7 @@ dependencies {
 
   testImplementation projects.spockCore
   testImplementation "org.springframework:spring-context"
-  testImplementation ("org.springframework:spring-test")
+  testImplementation "org.springframework:spring-test"
 
   testRuntimeOnly projects.spockSpring
 }

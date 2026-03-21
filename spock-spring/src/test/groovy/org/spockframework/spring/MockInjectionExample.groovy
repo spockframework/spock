@@ -22,7 +22,8 @@ import org.springframework.test.context.ContextConfiguration
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 
-import javax.inject.Named
+import javax.inject.Named as JavaxNamed
+import jakarta.inject.Named
 
 @IgnoreIf(
   value = { jvm.java17Compatible },
@@ -32,23 +33,28 @@ import javax.inject.Named
 class MockInjectionExample extends Specification {
 
   @Autowired
+  @JavaxNamed('serviceMock')
   @Named('serviceMock')
   IService1 serviceMock
 
 
   @Autowired
+  @JavaxNamed('serviceStub')
   @Named('serviceStub')
   IService1 serviceStub
 
   @Autowired
+  @JavaxNamed('serviceSpy')
   @Named('serviceSpy')
   IService2 serviceSpy
 
   @Autowired
+  @JavaxNamed('service2')
   @Named('service2')
   IService2 service2
 
   @Autowired
+  @JavaxNamed('nonMock')
   @Named('nonMock')
   ArrayList concreteSpy;
 

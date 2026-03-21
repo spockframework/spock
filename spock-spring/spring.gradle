@@ -13,7 +13,8 @@ def springVersion = "4.3.5.RELEASE"
 def testSpringVersions = [
   (springVersion): (8..11),
   "5.0.2.RELEASE": (8..11),
-  "6.0.0"        : (17..17)
+  "6.0.0"        : (17..21),
+  "7.0.6"        : (17..javaVersions.max())
 ].findAll { javaVersion in it.value }.keySet()
 
 dependencies {
@@ -29,6 +30,7 @@ testing {
       useJUnitJupiter()
       dependencies {
         implementation "javax.inject:javax.inject:1"
+        implementation "jakarta.inject:jakarta.inject-api:2.0.1"
         implementation groovylibs.groovySql // for groovy.sql.Sql
         implementation libs.junit.platform.testkit
         runtimeOnly libs.h2database
@@ -95,8 +97,13 @@ testing {
 
 ["compileTestJava", "compileTestGroovy"].each { taskName ->
   tasks.named(taskName).configure {
-    onlyIf { false } //skip normal test task
+    enabled = false //skip normal test task
   }
+}
+
+tasks.withType(GroovyCompile).configureEach {
+  // this is needed for Spring 7 bean names from parameter names
+  groovyOptions.parameters = true
 }
 
 tasks.named("jar", Jar) {

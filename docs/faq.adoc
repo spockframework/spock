@@ -22,3 +22,8 @@ CGLIB is in legacy support mode, we will support it as long as the maintenance e
 So you may continue to use CGLIB for now if e.g. your tests use it in another context already.
 If you have no compelling reasons to avoid ByteBuddy, you can just switch from CGLIB to ByteBuddy in an existing project.
 Your tests should continue to run like before.
+
+== Can Spock tests be compiled and run with GraalVM native-image?
+
+Spock tests require dynamic Groovy language (and JVM) features and are not compatible with GraalVM `native-image`.
+For details see https://github.com/spockframework/spock/issues/2169[Issue #2169].

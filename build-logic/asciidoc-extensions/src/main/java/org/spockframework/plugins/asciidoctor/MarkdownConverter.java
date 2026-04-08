@@ -45,6 +45,9 @@ public class MarkdownConverter extends StringConverter {
       case "inline_anchor"   -> convertInlineAnchor((PhraseNode) node);
       case "inline_image"    -> convertInlineImage((PhraseNode) node);
       case "inline_footnote" -> convertInlineFootnote((PhraseNode) node);
+      case "inline_break"    -> "\n";
+      case "colist"          -> convertOrderedList((List) node);
+      case "quote"           -> convertQuote((StructuralNode) node);
       default -> {
         log(new LogRecord(Severity.WARN, "Unsupported node: " + name));
         yield "";
@@ -242,7 +245,7 @@ public class MarkdownConverter extends StringConverter {
       ListItem listItem = (ListItem) item;
       sb.append(indent).append("- ");
       if (listItem.hasText()) {
-        sb.append(decodeEntities(listItem.getText()));
+        sb.append(decodeEntities(listItemText(listItem)));
       }
       sb.append("\n");
       for (StructuralNode block : listItem.getBlocks()) {
@@ -278,7 +281,7 @@ public class MarkdownConverter extends StringConverter {
       ListItem listItem = (ListItem) item;
       sb.append(indent).append(number).append(". ");
       if (listItem.hasText()) {
-        sb.append(decodeEntities(listItem.getText()));
+        sb.append(decodeEntities(listItemText(listItem)));
       }
       sb.append("\n");
       for (StructuralNode block : listItem.getBlocks()) {
@@ -310,12 +313,12 @@ public class MarkdownConverter extends StringConverter {
     }
     for (DescriptionListEntry entry : node.getItems()) {
       for (ListItem term : entry.getTerms()) {
-        sb.append("**").append(decodeEntities(term.getText())).append("**\n");
+        sb.append("**").append(decodeEntities(listItemText(term))).append("**\n");
       }
       ListItem description = entry.getDescription();
       if (description != null) {
         if (description.hasText()) {
-          sb.append(": ").append(decodeEntities(description.getText())).append("\n");
+          sb.append(": ").append(decodeEntities(listItemText(description))).append("\n");
         }
         for (StructuralNode block : description.getBlocks()) {
           String converted = block.convert();
@@ -449,6 +452,27 @@ public class MarkdownConverter extends StringConverter {
     return sb.toString();
   }
 
+  private String convertQuote(StructuralNode node) {
+    var sb = new StringBuilder();
+    String blockTitle = node.getTitle();
+    if (blockTitle != null) {
+      sb.append("**").append(blockTitle).append("**\n\n");
+    }
+    Object content = node.getContent();
+    if (content != null) {
+      for (String line : content.toString().split("\n", -1)) {
+        sb.append("> ").append(line).append("\n");
+      }
+    }
+    // Attribution
+    Object attribution = node.getAttribute("attribution");
+    if (attribution != null) {
+      sb.append(">\n> — ").append(attribution).append("\n");
+    }
+    sb.append("\n");
+    return sb.toString();
+  }
+
   private String convertExample(StructuralNode node) {
     var sb = new StringBuilder();
     String blockTitle = node.getTitle();
@@ -463,6 +487,28 @@ public class MarkdownConverter extends StringConverter {
   }
 
   // --- Utility methods ---
+
+  private static final Pattern LINE_CONTINUATION_PATTERN = Pattern.compile("\\s*\\+\\s*$", Pattern.MULTILINE);
+
+  private static String listItemText(ListItem item) {
+    String text = item.getText();
+    // getText() applies inline substitutions which can lose leading emphasis content
+    // when followed by a + line continuation. Recover the lost content from getSource().
+    if (text == null || !text.startsWith("\n")) {
+      return text;
+    }
+    String source = item.getSource();
+    if (source == null) return text;
+    // Extract the part before the first + line continuation from the raw source
+    Matcher m = LINE_CONTINUATION_PATTERN.matcher(source);
+    if (m.find()) {
+      String leadingContent = source.substring(0, m.start());
+      // Combine: raw leading content (AsciiDoc emphasis is valid markdown italic)
+      // + the getText() result which has inline macros properly expanded
+      return leadingContent + text;
+    }
+    return text;
+  }
 
   private static String decodeEntities(String text) {
     if (text == null) return null;

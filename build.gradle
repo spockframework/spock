@@ -289,8 +289,8 @@ tasks.register("publishDocs", Exec) {
   git switch gh-pages
   rm -rf docs/$variantLessVersion
   mkdir -p docs/$variantLessVersion
-  cp -r build/docs/asciidoc/* docs/$variantLessVersion
-  cp -r build/docs/asciidocMarkdown/* docs/$variantLessVersion
+  cp -r build/docs/asciidoc/html5/* docs/$variantLessVersion
+  cp -r build/docs/asciidoc/markdown/* docs/$variantLessVersion
   git add docs
   git commit -qm "Publish docs/$variantLessVersion"
   git push "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" gh-pages 2>&1 | sed "s/\$GITHUB_TOKEN/xxx/g"
@@ -356,7 +356,9 @@ tasks.named("asciidoctor") {
   configurations 'asciidoctorExtensions'
   sourceDir = "docs"
   baseDirFollowsSourceDir()
-  backends 'html5', 'markdown'
+  outputOptions {
+    backends 'html5', 'markdown'
+  }
   logDocuments = true
   attributes "source-highlighter": "coderay", "linkcss": true, "sectanchors": true, "revnumber": variantLessVersion, "commit-ish": System.getenv("GITHUB_SHA") ?: "master"
   // also treats the included specs as inputs

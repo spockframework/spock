@@ -7,9 +7,15 @@ import org.asciidoctor.log.LogRecord;
 import org.asciidoctor.log.Severity;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @ConverterFor(value = "markdown", suffix = ".md")
 public class MarkdownConverter extends StringConverter {
+
+  private static final Pattern HTML_ENTITY_PATTERN = Pattern.compile("&#(\\d+);");
+  private static final Pattern NAMED_ENTITY_PATTERN = Pattern.compile("&(lt|gt|amp|quot|apos);");
+  private static final Pattern ZERO_WIDTH_SPACE_PATTERN = Pattern.compile("\u200B");
 
   public MarkdownConverter(String backend, Map<String, Object> opts) {
     super(backend, opts);
@@ -65,7 +71,7 @@ public class MarkdownConverter extends StringConverter {
     int headingLevel = node.getLevel() + 1;
     sb.append("#".repeat(Math.min(headingLevel, 6)))
       .append(" ")
-      .append(node.getTitle())
+      .append(decodeEntities(node.getTitle()))
       .append("\n\n");
     Object content = node.getContent();
     if (content != null) {
@@ -77,7 +83,7 @@ public class MarkdownConverter extends StringConverter {
   private String convertParagraph(StructuralNode node) {
     Object content = node.getContent();
     if (content == null) return "";
-    return content.toString() + "\n\n";
+    return decodeEntities(content.toString()) + "\n\n";
   }
 
   private String convertPreamble(StructuralNode node) {
@@ -88,7 +94,7 @@ public class MarkdownConverter extends StringConverter {
   // --- Inline converters ---
 
   private String convertInlineQuoted(PhraseNode node) {
-    String text = node.getText();
+    String text = decodeEntities(node.getText());
     if (text == null) return "";
     return switch (node.getType()) {
       case "strong"      -> "**" + text + "**";
@@ -107,15 +113,20 @@ public class MarkdownConverter extends StringConverter {
     String type = node.getType();
     return switch (type) {
       case "link" -> {
-        String text = node.getText();
+        String text = decodeEntities(node.getText());
         String target = node.getTarget();
         if (text == null || text.isEmpty()) {
           yield "[" + target + "](" + target + ")";
         }
+        // When text equals target (auto-linked URL), output just the URL
+        // to avoid double-wrapping when the framework creates a nested link node
+        if (text.equals(target)) {
+          yield target;
+        }
         yield "[" + text + "](" + target + ")";
       }
       case "xref" -> {
-        String text = node.getText();
+        String text = decodeEntities(node.getText());
         String refid = node.getAttribute("refid", "").toString();
         String path = node.getAttribute("path", "").toString();
         String fragment = node.getAttribute("fragment", "").toString();
@@ -152,7 +163,7 @@ public class MarkdownConverter extends StringConverter {
   }
 
   private String convertInlineFootnote(PhraseNode node) {
-    String text = node.getText();
+    String text = decodeEntities(node.getText());
     if (text == null || text.isEmpty()) return "";
     return " (Note: " + text + ")";
   }
@@ -225,7 +236,7 @@ public class MarkdownConverter extends StringConverter {
       ListItem listItem = (ListItem) item;
       sb.append(indent).append("- ");
       if (listItem.hasText()) {
-        sb.append(listItem.getText());
+        sb.append(decodeEntities(listItem.getText()));
       }
       sb.append("\n");
       for (StructuralNode block : listItem.getBlocks()) {
@@ -261,7 +272,7 @@ public class MarkdownConverter extends StringConverter {
       ListItem listItem = (ListItem) item;
       sb.append(indent).append(number).append(". ");
       if (listItem.hasText()) {
-        sb.append(listItem.getText());
+        sb.append(decodeEntities(listItem.getText()));
       }
       sb.append("\n");
       for (StructuralNode block : listItem.getBlocks()) {
@@ -293,12 +304,12 @@ public class MarkdownConverter extends StringConverter {
     }
     for (DescriptionListEntry entry : node.getItems()) {
       for (ListItem term : entry.getTerms()) {
-        sb.append("**").append(term.getText()).append("**\n");
+        sb.append("**").append(decodeEntities(term.getText())).append("**\n");
       }
       ListItem description = entry.getDescription();
       if (description != null) {
         if (description.hasText()) {
-          sb.append(": ").append(description.getText()).append("\n");
+          sb.append(": ").append(decodeEntities(description.getText())).append("\n");
         }
         for (StructuralNode block : description.getBlocks()) {
           String converted = block.convert();
@@ -362,12 +373,12 @@ public class MarkdownConverter extends StringConverter {
       Document innerDoc = cell.getInnerDocument();
       if (innerDoc != null) {
         String content = innerDoc.getContent() != null ? innerDoc.getContent().toString() : "";
-        return content.strip().replaceAll("\n+", " ");
+        return decodeEntities(content.strip().replaceAll("\n+", " "));
       }
     }
     String text = cell.getText();
     if (text == null) return "";
-    return text.strip().replaceAll("\n+", " ");
+    return decodeEntities(text.strip().replaceAll("\n+", " "));
   }
 
   private String convertAdmonition(StructuralNode node) {
@@ -384,7 +395,7 @@ public class MarkdownConverter extends StringConverter {
     sb.append("> [!").append(alertType).append("]\n");
     Object content = node.getContent();
     if (content != null) {
-      for (String line : content.toString().split("\n", -1)) {
+      for (String line : decodeEntities(content.toString()).split("\n", -1)) {
         sb.append("> ").append(line).append("\n");
       }
     }
@@ -444,4 +455,28 @@ public class MarkdownConverter extends StringConverter {
     }
     return sb.toString();
   }
+
+  // --- Utility methods ---
+
+  private static String decodeEntities(String text) {
+    if (text == null) return null;
+    // Decode numeric HTML entities (&#8217; etc.)
+    text = HTML_ENTITY_PATTERN.matcher(text).replaceAll(mr -> {
+      int codePoint = Integer.parseInt(mr.group(1));
+      return Matcher.quoteReplacement(new String(Character.toChars(codePoint)));
+    });
+    // Decode named HTML entities
+    text = NAMED_ENTITY_PATTERN.matcher(text).replaceAll(mr -> switch (mr.group(1)) {
+      case "lt"   -> "<";
+      case "gt"   -> ">";
+      case "amp"  -> "&";
+      case "quot" -> Matcher.quoteReplacement("\"");
+      case "apos" -> "'";
+      default     -> mr.group(0);
+    });
+    // Remove zero-width spaces
+    text = ZERO_WIDTH_SPACE_PATTERN.matcher(text).replaceAll("");
+    return text;
+  }
+
 }

@@ -84,6 +84,7 @@ workflow(
                 "./gradlew",
                 "--stacktrace",
                 "asciidoctor",
+                "asciidoctorMarkdown",
                 "javadoc",
                 """"-Dvariant=${Matrix.axes.variants.last()}"""",
                 """"-DjavaVersion=${Matrix.axes.javaVersions.last()}""""

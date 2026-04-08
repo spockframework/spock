@@ -205,7 +205,13 @@ public class MarkdownConverter extends StringConverter {
     if (blockTitle != null) {
       sb.append("**").append(blockTitle).append("**\n\n");
     }
-    sb.append("```\n");
+    sb.append("```");
+    String style = node.getStyle();
+    if (style != null && !"literal".equals(style)) {
+      // Diagram block (plantuml, ditaa, etc.) — use style as language
+      sb.append(style);
+    }
+    sb.append("\n");
     String source = node.getSource();
     if (source != null) {
       sb.append(source);

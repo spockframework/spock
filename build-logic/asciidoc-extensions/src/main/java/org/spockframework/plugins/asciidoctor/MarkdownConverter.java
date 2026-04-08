@@ -45,7 +45,7 @@ public class MarkdownConverter extends StringConverter {
       case "inline_anchor"   -> convertInlineAnchor((PhraseNode) node);
       case "inline_image"    -> convertInlineImage((PhraseNode) node);
       case "inline_footnote" -> convertInlineFootnote((PhraseNode) node);
-      case "inline_break"    -> "\n";
+      case "inline_break"    -> convertInlineBreak((PhraseNode) node);
       case "colist"          -> convertOrderedList((List) node);
       case "quote"           -> convertQuote((StructuralNode) node);
       default -> {
@@ -165,6 +165,12 @@ public class MarkdownConverter extends StringConverter {
     return "![" + alt + "](" + target + ")";
   }
 
+  private String convertInlineBreak(PhraseNode node) {
+    String text = decodeEntities(node.getText());
+    if (text == null || text.isEmpty()) return "\n";
+    return text + "\n";
+  }
+
   private String convertInlineFootnote(PhraseNode node) {
     String text = decodeEntities(node.getText());
     if (text == null || text.isEmpty()) return "";
@@ -245,7 +251,8 @@ public class MarkdownConverter extends StringConverter {
       ListItem listItem = (ListItem) item;
       sb.append(indent).append("- ");
       if (listItem.hasText()) {
-        sb.append(decodeEntities(listItemText(listItem)));
+        // Collapse double newlines from inline_break to keep list item together
+        sb.append(decodeEntities(listItem.getText()).replace("\n\n", "\n"));
       }
       sb.append("\n");
       for (StructuralNode block : listItem.getBlocks()) {
@@ -281,7 +288,7 @@ public class MarkdownConverter extends StringConverter {
       ListItem listItem = (ListItem) item;
       sb.append(indent).append(number).append(". ");
       if (listItem.hasText()) {
-        sb.append(decodeEntities(listItemText(listItem)));
+        sb.append(decodeEntities(listItem.getText()).replace("\n\n", "\n"));
       }
       sb.append("\n");
       for (StructuralNode block : listItem.getBlocks()) {
@@ -313,12 +320,12 @@ public class MarkdownConverter extends StringConverter {
     }
     for (DescriptionListEntry entry : node.getItems()) {
       for (ListItem term : entry.getTerms()) {
-        sb.append("**").append(decodeEntities(listItemText(term))).append("**\n");
+        sb.append("**").append(decodeEntities(term.getText())).append("**\n");
       }
       ListItem description = entry.getDescription();
       if (description != null) {
         if (description.hasText()) {
-          sb.append(": ").append(decodeEntities(listItemText(description))).append("\n");
+          sb.append(": ").append(decodeEntities(description.getText())).append("\n");
         }
         for (StructuralNode block : description.getBlocks()) {
           String converted = block.convert();
@@ -487,28 +494,6 @@ public class MarkdownConverter extends StringConverter {
   }
 
   // --- Utility methods ---
-
-  private static final Pattern LINE_CONTINUATION_PATTERN = Pattern.compile("\\s*\\+\\s*$", Pattern.MULTILINE);
-
-  private static String listItemText(ListItem item) {
-    String text = item.getText();
-    // getText() applies inline substitutions which can lose leading emphasis content
-    // when followed by a + line continuation. Recover the lost content from getSource().
-    if (text == null || !text.startsWith("\n")) {
-      return text;
-    }
-    String source = item.getSource();
-    if (source == null) return text;
-    // Extract the part before the first + line continuation from the raw source
-    Matcher m = LINE_CONTINUATION_PATTERN.matcher(source);
-    if (m.find()) {
-      String leadingContent = source.substring(0, m.start());
-      // Combine: raw leading content (AsciiDoc emphasis is valid markdown italic)
-      // + the getText() result which has inline macros properly expanded
-      return leadingContent + text;
-    }
-    return text;
-  }
 
   private static String decodeEntities(String text) {
     if (text == null) return null;

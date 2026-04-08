@@ -37,9 +37,8 @@ public class MarkdownConverter extends StringConverter {
       case "table"           -> convertTable((Table) node);
       case "admonition"      -> convertAdmonition((StructuralNode) node);
       case "image"           -> convertImage((StructuralNode) node);
-      case "open"            -> convertOpen((StructuralNode) node);
-      case "sidebar"         -> convertSidebar((StructuralNode) node);
-      case "example"         -> convertExample((StructuralNode) node);
+      case "open", "sidebar", "example"
+                             -> convertContentBlock((StructuralNode) node);
       case "thematic_break"  -> "---\n\n";
       case "inline_quoted"   -> convertInlineQuoted((PhraseNode) node);
       case "inline_anchor"   -> convertInlineAnchor((PhraseNode) node);
@@ -61,25 +60,18 @@ public class MarkdownConverter extends StringConverter {
     if (title != null) {
       sb.append("# ").append(title).append("\n\n");
     }
-    Object content = node.getContent();
-    if (content != null) {
-      sb.append(content);
-    }
+    appendContent(sb, node);
     return sb.toString();
   }
 
   private String convertSection(Section node) {
     var sb = new StringBuilder();
-    // Section level 0 = top-level section = ##, level 1 = ###, etc.
     int headingLevel = node.getLevel() + 1;
     sb.append("#".repeat(Math.min(headingLevel, 6)))
       .append(" ")
       .append(decodeEntities(node.getTitle()))
       .append("\n\n");
-    Object content = node.getContent();
-    if (content != null) {
-      sb.append(content);
-    }
+    appendContent(sb, node);
     return sb.toString();
   }
 
@@ -113,8 +105,7 @@ public class MarkdownConverter extends StringConverter {
   }
 
   private String convertInlineAnchor(PhraseNode node) {
-    String type = node.getType();
-    return switch (type) {
+    return switch (node.getType()) {
       case "link" -> {
         String text = decodeEntities(node.getText());
         String target = node.getTarget();
@@ -160,9 +151,7 @@ public class MarkdownConverter extends StringConverter {
   }
 
   private String convertInlineImage(PhraseNode node) {
-    String target = node.getTarget();
-    String alt = node.getAttribute("alt", "").toString();
-    return "![" + alt + "](" + target + ")";
+    return "![" + node.getAttribute("alt", "") + "](" + node.getTarget() + ")";
   }
 
   private String convertInlineBreak(PhraseNode node) {
@@ -180,66 +169,28 @@ public class MarkdownConverter extends StringConverter {
   // --- Code block converters ---
 
   private String convertListing(Block node) {
-    var sb = new StringBuilder();
-    String blockTitle = node.getTitle();
-    if (blockTitle != null) {
-      sb.append("**").append(blockTitle).append("**\n\n");
-    }
-    sb.append("```");
     String style = node.getStyle();
+    String lang = null;
     if ("source".equals(style)) {
-      Object lang = node.getAttribute("language");
-      if (lang != null) {
-        sb.append(lang);
-      }
+      Object langAttr = node.getAttribute("language");
+      if (langAttr != null) lang = langAttr.toString();
     } else if (style != null && !"listing".equals(style)) {
-      // Diagram block (plantuml, ditaa, etc.) — use style as language
-      sb.append(style);
+      lang = style; // diagram block (plantuml, ditaa, etc.)
     }
-    sb.append("\n");
-    String source = node.getSource();
-    if (source != null) {
-      sb.append(source);
-      if (!source.endsWith("\n")) {
-        sb.append("\n");
-      }
-    }
-    sb.append("```\n\n");
-    return sb.toString();
+    return fencedCodeBlock(node, lang);
   }
 
   private String convertLiteral(Block node) {
-    var sb = new StringBuilder();
-    String blockTitle = node.getTitle();
-    if (blockTitle != null) {
-      sb.append("**").append(blockTitle).append("**\n\n");
-    }
-    sb.append("```");
     String style = node.getStyle();
-    if (style != null && !"literal".equals(style)) {
-      // Diagram block (plantuml, ditaa, etc.) — use style as language
-      sb.append(style);
-    }
-    sb.append("\n");
-    String source = node.getSource();
-    if (source != null) {
-      sb.append(source);
-      if (!source.endsWith("\n")) {
-        sb.append("\n");
-      }
-    }
-    sb.append("```\n\n");
-    return sb.toString();
+    String lang = (style != null && !"literal".equals(style)) ? style : null;
+    return fencedCodeBlock(node, lang);
   }
 
   // --- List converters ---
 
   private String convertUnorderedList(List node) {
     var sb = new StringBuilder();
-    String blockTitle = node.getTitle();
-    if (blockTitle != null) {
-      sb.append("**").append(blockTitle).append("**\n\n");
-    }
+    appendBlockTitle(sb, node);
     appendUnorderedItems(sb, node, 0);
     sb.append("\n");
     return sb.toString();
@@ -250,32 +201,15 @@ public class MarkdownConverter extends StringConverter {
     for (StructuralNode item : node.getItems()) {
       ListItem listItem = (ListItem) item;
       sb.append(indent).append("- ");
-      if (listItem.hasText()) {
-        // Collapse double newlines from inline_break to keep list item together
-        sb.append(decodeEntities(listItem.getText()).replace("\n\n", "\n"));
-      }
+      appendListItemText(sb, listItem);
       sb.append("\n");
-      for (StructuralNode block : listItem.getBlocks()) {
-        if (block instanceof List nestedList) {
-          appendUnorderedItems(sb, nestedList, depth + 1);
-        } else {
-          String converted = block.convert();
-          if (converted != null && !converted.isEmpty()) {
-            for (String line : converted.split("\n", -1)) {
-              sb.append(indent).append("  ").append(line).append("\n");
-            }
-          }
-        }
-      }
+      appendListItemBlocks(sb, listItem, indent + "  ", depth);
     }
   }
 
   private String convertOrderedList(List node) {
     var sb = new StringBuilder();
-    String blockTitle = node.getTitle();
-    if (blockTitle != null) {
-      sb.append("**").append(blockTitle).append("**\n\n");
-    }
+    appendBlockTitle(sb, node);
     appendOrderedItems(sb, node, 0);
     sb.append("\n");
     return sb.toString();
@@ -287,37 +221,16 @@ public class MarkdownConverter extends StringConverter {
     for (StructuralNode item : node.getItems()) {
       ListItem listItem = (ListItem) item;
       sb.append(indent).append(number).append(". ");
-      if (listItem.hasText()) {
-        sb.append(decodeEntities(listItem.getText()).replace("\n\n", "\n"));
-      }
+      appendListItemText(sb, listItem);
       sb.append("\n");
-      for (StructuralNode block : listItem.getBlocks()) {
-        if (block instanceof List nestedList) {
-          if ("olist".equals(nestedList.getContext())) {
-            appendOrderedItems(sb, nestedList, depth + 1);
-          } else {
-            appendUnorderedItems(sb, nestedList, depth + 1);
-          }
-        } else {
-          String converted = block.convert();
-          if (converted != null && !converted.isEmpty()) {
-            String padding = indent + "   ";
-            for (String line : converted.split("\n", -1)) {
-              sb.append(padding).append(line).append("\n");
-            }
-          }
-        }
-      }
+      appendListItemBlocks(sb, listItem, indent + "   ", depth);
       number++;
     }
   }
 
   private String convertDescriptionList(DescriptionList node) {
     var sb = new StringBuilder();
-    String blockTitle = node.getTitle();
-    if (blockTitle != null) {
-      sb.append("**").append(blockTitle).append("**\n\n");
-    }
+    appendBlockTitle(sb, node);
     for (DescriptionListEntry entry : node.getItems()) {
       for (ListItem term : entry.getTerms()) {
         sb.append("**").append(decodeEntities(term.getText())).append("**\n");
@@ -343,21 +256,13 @@ public class MarkdownConverter extends StringConverter {
 
   private String convertTable(Table node) {
     var sb = new StringBuilder();
-    String blockTitle = node.getTitle();
-    if (blockTitle != null) {
-      sb.append("**").append(blockTitle).append("**\n\n");
-    }
+    appendBlockTitle(sb, node);
     java.util.List<Row> headerRows = node.getHeader();
     java.util.List<Row> bodyRows = node.getBody();
     int colCount = node.getColumns().size();
 
     if (!headerRows.isEmpty()) {
-      Row headerRow = headerRows.get(0);
-      sb.append("|");
-      for (Cell cell : headerRow.getCells()) {
-        sb.append(" ").append(cellText(cell)).append(" |");
-      }
-      sb.append("\n");
+      appendTableRow(sb, headerRows.get(0));
     } else if (!bodyRows.isEmpty()) {
       sb.append("|");
       for (int i = 0; i < colCount; i++) {
@@ -373,27 +278,21 @@ public class MarkdownConverter extends StringConverter {
     sb.append("\n");
 
     for (Row row : bodyRows) {
-      sb.append("|");
-      for (Cell cell : row.getCells()) {
-        sb.append(" ").append(cellText(cell)).append(" |");
-      }
-      sb.append("\n");
+      appendTableRow(sb, row);
     }
     sb.append("\n");
     return sb.toString();
   }
 
   private String cellText(Cell cell) {
-    String style = cell.getStyle();
-    if ("asciidoc".equals(style)) {
+    String text;
+    if ("asciidoc".equals(cell.getStyle())) {
       Document innerDoc = cell.getInnerDocument();
-      if (innerDoc != null) {
-        String content = innerDoc.getContent() != null ? innerDoc.getContent().toString() : "";
-        return decodeEntities(content.strip().replaceAll("\n+", " "));
-      }
+      text = (innerDoc != null && innerDoc.getContent() != null) ? innerDoc.getContent().toString() : "";
+    } else {
+      text = cell.getText();
+      if (text == null) return "";
     }
-    String text = cell.getText();
-    if (text == null) return "";
     return decodeEntities(text.strip().replaceAll("\n+", " "));
   }
 
@@ -409,69 +308,32 @@ public class MarkdownConverter extends StringConverter {
     };
     var sb = new StringBuilder();
     sb.append("> [!").append(alertType).append("]\n");
-    Object content = node.getContent();
-    if (content != null) {
-      for (String line : decodeEntities(content.toString()).split("\n", -1)) {
-        sb.append("> ").append(line).append("\n");
-      }
-    }
+    appendPrefixedContent(sb, node, "> ");
     sb.append("\n");
     return sb.toString();
   }
 
   private String convertImage(StructuralNode node) {
-    String target = (String) node.getAttribute("target");
-    String alt = node.getAttribute("alt", "").toString();
     var sb = new StringBuilder();
-    String blockTitle = node.getTitle();
-    if (blockTitle != null) {
-      sb.append("**").append(blockTitle).append("**\n\n");
-    }
-    sb.append("![").append(alt).append("](").append(target).append(")\n\n");
+    appendBlockTitle(sb, node);
+    sb.append("![").append(node.getAttribute("alt", "")).append("](")
+      .append(node.getAttribute("target")).append(")\n\n");
     return sb.toString();
   }
 
   // --- Container block converters ---
 
-  private String convertOpen(StructuralNode node) {
+  private String convertContentBlock(StructuralNode node) {
     var sb = new StringBuilder();
-    String blockTitle = node.getTitle();
-    if (blockTitle != null) {
-      sb.append("**").append(blockTitle).append("**\n\n");
-    }
-    Object content = node.getContent();
-    if (content != null) {
-      sb.append(content);
-    }
-    return sb.toString();
-  }
-
-  private String convertSidebar(StructuralNode node) {
-    var sb = new StringBuilder();
-    String blockTitle = node.getTitle();
-    if (blockTitle != null) {
-      sb.append("**").append(blockTitle).append("**\n\n");
-    }
-    Object content = node.getContent();
-    if (content != null) {
-      sb.append(content);
-    }
+    appendBlockTitle(sb, node);
+    appendContent(sb, node);
     return sb.toString();
   }
 
   private String convertQuote(StructuralNode node) {
     var sb = new StringBuilder();
-    String blockTitle = node.getTitle();
-    if (blockTitle != null) {
-      sb.append("**").append(blockTitle).append("**\n\n");
-    }
-    Object content = node.getContent();
-    if (content != null) {
-      for (String line : content.toString().split("\n", -1)) {
-        sb.append("> ").append(line).append("\n");
-      }
-    }
-    // Attribution
+    appendBlockTitle(sb, node);
+    appendPrefixedContent(sb, node, "> ");
     Object attribution = node.getAttribute("attribution");
     if (attribution != null) {
       sb.append(">\n> — ").append(attribution).append("\n");
@@ -480,20 +342,78 @@ public class MarkdownConverter extends StringConverter {
     return sb.toString();
   }
 
-  private String convertExample(StructuralNode node) {
-    var sb = new StringBuilder();
-    String blockTitle = node.getTitle();
-    if (blockTitle != null) {
-      sb.append("**").append(blockTitle).append("**\n\n");
+  // --- Helpers ---
+
+  private static void appendBlockTitle(StringBuilder sb, StructuralNode node) {
+    String title = node.getTitle();
+    if (title != null) {
+      sb.append("**").append(title).append("**\n\n");
     }
+  }
+
+  private static void appendContent(StringBuilder sb, StructuralNode node) {
     Object content = node.getContent();
     if (content != null) {
       sb.append(content);
     }
+  }
+
+  private void appendPrefixedContent(StringBuilder sb, StructuralNode node, String prefix) {
+    Object content = node.getContent();
+    if (content != null) {
+      for (String line : decodeEntities(content.toString()).split("\n", -1)) {
+        sb.append(prefix).append(line).append("\n");
+      }
+    }
+  }
+
+  private String fencedCodeBlock(Block node, String lang) {
+    var sb = new StringBuilder();
+    appendBlockTitle(sb, node);
+    sb.append("```");
+    if (lang != null) sb.append(lang);
+    sb.append("\n");
+    String source = node.getSource();
+    if (source != null) {
+      sb.append(source);
+      if (!source.endsWith("\n")) sb.append("\n");
+    }
+    sb.append("```\n\n");
     return sb.toString();
   }
 
-  // --- Utility methods ---
+  private void appendListItemText(StringBuilder sb, ListItem item) {
+    if (item.hasText()) {
+      sb.append(decodeEntities(item.getText()).replace("\n\n", "\n"));
+    }
+  }
+
+  private void appendListItemBlocks(StringBuilder sb, ListItem item, String padding, int depth) {
+    for (StructuralNode block : item.getBlocks()) {
+      if (block instanceof List nestedList) {
+        if ("olist".equals(nestedList.getContext())) {
+          appendOrderedItems(sb, nestedList, depth + 1);
+        } else {
+          appendUnorderedItems(sb, nestedList, depth + 1);
+        }
+      } else {
+        String converted = block.convert();
+        if (converted != null && !converted.isEmpty()) {
+          for (String line : converted.split("\n", -1)) {
+            sb.append(padding).append(line).append("\n");
+          }
+        }
+      }
+    }
+  }
+
+  private void appendTableRow(StringBuilder sb, Row row) {
+    sb.append("|");
+    for (Cell cell : row.getCells()) {
+      sb.append(" ").append(cellText(cell)).append(" |");
+    }
+    sb.append("\n");
+  }
 
   private static String decodeEntities(String text) {
     if (text == null) return null;

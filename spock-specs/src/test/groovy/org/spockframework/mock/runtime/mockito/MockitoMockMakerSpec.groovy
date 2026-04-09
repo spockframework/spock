@@ -45,6 +45,14 @@ class MockitoMockMakerSpec extends Specification {
     mockito.toString() == "$ID default mock maker settings"
   }
 
+  def "MockitoMockMaker.asMockOrNull() on null returns null"() {
+    given:
+    def maker = new MockitoMockMaker()
+
+    expect:
+    maker.asMockOrNull(null) == null
+  }
+
   def "Verify ID and IMockMakerSettings with Mockito settings"() {
     when:
     def set = mockito {}
@@ -506,6 +514,19 @@ Can not mock final classes with the following settings :
     m instanceof Runnable
     additionalInterfaceClass.isInstance(m)
     mockUtil.isMock(m)
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/2337")
+  def "NPE when stubbing method on null object"() {
+    given:
+    Object nullObj = null
+
+    when:
+    //Issue #2337: MockitoMockMaker passes null to Mockito's getHandler() throws NPE
+    nullObj.toString() >> ""
+
+    then:
+    noExceptionThrown()
   }
 }
 

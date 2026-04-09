@@ -14,6 +14,7 @@ include::include.adoc[]
 
 * Fix argument mismatch descriptions for varargs methods by expanding varargs instead of reporting `<too few arguments>` spockPull:2315[]
 * Fix Pattern flags being dropped when `java.util.regex.Pattern` instances are used in Spock regex conditions spockIssue:2298[]
+* Fix `MockitoMockMaker` throws NPE on null object spockIssue:2337[]
 
 == 2.4 (2025-12-11)
 

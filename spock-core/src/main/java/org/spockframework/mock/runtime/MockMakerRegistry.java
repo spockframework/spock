@@ -22,7 +22,6 @@ import org.spockframework.mock.IMockObject;
 import org.spockframework.mock.ISpockMockObject;
 import org.spockframework.mock.runtime.IMockMaker.IStaticMock;
 import org.spockframework.mock.runtime.IMockMaker.MockMakerCapability;
-import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.Nullable;
 import org.spockframework.util.ThreadSafe;
@@ -182,7 +181,11 @@ public final class MockMakerRegistry {
    * @param object a mock object
    * @return information about the mock object
    */
-  public IMockObject asMockOrNull(Object object) {
+  @Nullable
+  public IMockObject asMockOrNull(@Nullable Object object) {
+    if (object == null) {
+      return null;
+    }
     if (object instanceof ISpockMockObject) {
       return ((ISpockMockObject) object).$spock_get();
     }

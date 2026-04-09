@@ -104,7 +104,7 @@ jobs:
       run: './gradlew --stop'
     - id: 'step-4'
       name: 'Upload to Codecov.io'
-      uses: 'codecov/codecov-action@v5'
+      uses: 'codecov/codecov-action@v6'
       with:
         fail_ci_if_error: 'true'
   release-spock:

@@ -43,6 +43,34 @@
     {
       matchPackageNames: ["/^org.spockframework:spock-/"],
       versionCompatibility: "^(?<version>.*)-(?<compatibility>groovy-.*)$"
+    },
+    {
+      groupName: "actions-checkout",
+      matchPackageNames: [
+        "actions/checkout",
+        "/^actions:checkout(__.*)?$/"
+      ]
+    },
+    {
+      groupName: "actions-upload-artifact",
+      matchPackageNames: [
+        "actions/upload-artifact",
+        "/^actions:upload-artifact(__.*)?$/"
+      ]
+    },
+    {
+      groupName: "codecov-codecov-action",
+      matchPackageNames: [
+        "codecov/codecov-action",
+        "/^codecov:codecov-action(__.*)?$/"
+      ]
+    },
+    {
+      groupName: "github-codeql-action",
+      matchPackageNames: [
+        "github/codeql-action",
+        "/^github:codeql-action(__.*)?$/"
+      ]
     }
   ]
 }

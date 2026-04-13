@@ -604,6 +604,11 @@ public class IncludedSourceLinker {
               lines.removeIf(line -> line.trim().startsWith(includeSourceMarker) && line.endsWith(includeSourceMarker));
               block.setLines(lines);
 
+              // For markdown backend, skip the table wrapping — just keep the plain code block
+              if ("markdown".equals(document.getAttribute("backend"))) {
+                return;
+              }
+
               // construct an AsciiDoc table programmatically that wraps
               // the current block and in AsciiDoc would be looking like
               //

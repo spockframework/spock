@@ -24,7 +24,7 @@
 
 @file:Repository("https://bindings.krzeminski.it/")
 @file:DependsOn("actions:checkout___major:[v6,v7-alpha)")
-@file:DependsOn("codecov:codecov-action___major:[v5,v6-alpha)")
+@file:DependsOn("codecov:codecov-action___major:[v5,v7.0)")
 @file:DependsOn("testlens-app:setup-testlens___major:[v1,v2-alpha)")
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout

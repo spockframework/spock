@@ -24,7 +24,7 @@
 
 @file:Repository("https://bindings.krzeminski.it/")
 @file:DependsOn("actions:checkout___major:[v6,v7-alpha)")
-@file:DependsOn("codecov:codecov-action___major:[v5,v6-alpha)")
+@file:DependsOn("codecov:codecov-action___major:[v5,v7.0)")
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.actions.actions.Checkout.FetchDepth

@@ -35,6 +35,8 @@ import io.github.typesafegithub.workflows.dsl.expressions.Contexts.github
 import io.github.typesafegithub.workflows.dsl.expressions.Contexts.secrets
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
+import io.github.typesafegithub.workflows.yaml.CheckoutActionVersionSource.InferFromClasspath
+import io.github.typesafegithub.workflows.yaml.DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG
 
 workflow(
     name = "Build and Release Spock",
@@ -44,7 +46,10 @@ workflow(
             tags = listOf("spock-*")
         )
     ),
-    sourceFile = __FILE__
+    sourceFile = __FILE__,
+    consistencyCheckJobConfig = DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG.copy(
+        checkoutActionVersion = InferFromClasspath()
+    )
 ) {
     val GITHUB_TOKEN by secrets
     val SONATYPE_OSS_USER by secrets

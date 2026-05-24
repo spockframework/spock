@@ -18,7 +18,8 @@ package org.spockframework.spring
 
 import spock.lang.Specification
 
-import javax.inject.Inject
+import javax.inject.Inject as JavaxInject
+import jakarta.inject.Inject
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.*
@@ -28,6 +29,7 @@ class ContextHierarchyExample extends Specification {
   @Autowired
   Service1 service1
 
+  @JavaxInject
   @Inject
   Service2 service2
 

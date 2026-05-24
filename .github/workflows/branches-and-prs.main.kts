@@ -24,11 +24,13 @@
 
 @file:Repository("https://bindings.krzeminski.it/")
 @file:DependsOn("actions:checkout___major:[v6,v7-alpha)")
-@file:DependsOn("codecov:codecov-action___major:[v5,v6-alpha)")
+@file:DependsOn("codecov:codecov-action___major:[v6,v7-alpha)")
+@file:DependsOn("testlens-app:setup-testlens___major:[v1,v2-alpha)")
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.actions.actions.Checkout.FetchDepth
 import io.github.typesafegithub.workflows.actions.codecov.CodecovAction_Untyped
+import io.github.typesafegithub.workflows.actions.testlensapp.SetupTestlens
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
@@ -38,6 +40,8 @@ import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.dsl.expressions.Contexts.github
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
+import io.github.typesafegithub.workflows.yaml.CheckoutActionVersionSource.InferFromClasspath
+import io.github.typesafegithub.workflows.yaml.DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG
 
 workflow(
     name = "Verify Branches and PRs",
@@ -56,6 +60,9 @@ workflow(
     concurrency = Concurrency(
         group = "${expr { github.workflow }}-${expr("${github.eventPullRequest.pull_request.number} || ${github.ref}")}",
         cancelInProgress = true
+    ),
+    consistencyCheckJobConfig = DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG.copy(
+        checkoutActionVersion = InferFromClasspath()
     )
 ) {
     job(
@@ -112,6 +119,11 @@ workflow(
             action = SetupBuildEnv(
                 additionalJavaVersion = expr(Matrix.javaVersion)
             )
+        )
+        uses(
+            name = "Set up TestLens",
+            action = SetupTestlens(),
+            condition = "${github.event_name} == 'pull_request'"
         )
         run(
             name = "Build Spock",

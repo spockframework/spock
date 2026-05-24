@@ -38,7 +38,7 @@ class InjectionExamples extends Specification {
   }
 
   @Requires({ReflectionUtil.isClassAvailable("javax.annotation.Resource")})
-  def "injecting a field by name"() {
+  def "injecting a field by name with javax"() {
     def runner = new EmbeddedSpecRunner()
 
     when:
@@ -46,6 +46,35 @@ class InjectionExamples extends Specification {
 package org.spockframework.spring
 
 import javax.annotation.Resource
+import org.spockframework.spring.IService1
+import org.springframework.test.context.ContextConfiguration
+import spock.lang.*
+
+@ContextConfiguration(locations = "InjectionExamples-context.xml")
+class Foo extends Specification {
+  @Resource
+  IService1 myService1
+
+  def foo() {
+    expect:
+    myService1 instanceof IService1
+  }
+}
+    """
+
+    then:
+    noExceptionThrown()
+  }
+
+  @Requires({ReflectionUtil.isClassAvailable("jakarta.annotation.Resource")})
+  def "injecting a field by name with jakarta"() {
+    def runner = new EmbeddedSpecRunner()
+
+    when:
+    runner.run """
+package org.spockframework.spring
+
+import jakarta.annotation.Resource
 import org.spockframework.spring.IService1
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.*

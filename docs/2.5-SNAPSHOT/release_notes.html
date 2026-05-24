@@ -55,6 +55,16 @@
 </ul>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Mock/Stub checks on <code>Comparable&lt;T&gt;</code> with <code>T</code> being something other than <code>Object</code> now compare using the java identity hash code instead of always being equal <a href="https://github.com/spockframework/spock/issues/2352">#2352</a></p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -146,7 +156,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_2"><a class="anchor" href="#_breaking_changes_2"></a><a class="link" href="#_breaking_changes_2">Breaking Changes</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -300,7 +310,7 @@ will now require that the spec is annotated with <a href="parallel_execution.htm
 </div>
 </div>
 <div class="sect2">
-<h3 id="_breaking_changes_2"><a class="anchor" href="#_breaking_changes_2"></a><a class="link" href="#_breaking_changes_2">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_3"><a class="anchor" href="#_breaking_changes_3"></a><a class="link" href="#_breaking_changes_3">Breaking Changes</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -507,7 +517,7 @@ will now require that the spec is annotated with <a href="parallel_execution.htm
 <h2 id="_2_4_m3_2024_03_21"><a class="anchor" href="#_2_4_m3_2024_03_21"></a><a class="link" href="#_2_4_m3_2024_03_21">2.4-M3 (2024-03-21)</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_breaking_changes_3"><a class="anchor" href="#_breaking_changes_3"></a><a class="link" href="#_breaking_changes_3">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_4"><a class="anchor" href="#_breaking_changes_4"></a><a class="link" href="#_breaking_changes_4">Breaking Changes</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -648,7 +658,7 @@ When subclassing <code>SingleResponseGenerator</code> it does not make sense to 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_breaking_changes_4"><a class="anchor" href="#_breaking_changes_4"></a><a class="link" href="#_breaking_changes_4">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_5"><a class="anchor" href="#_breaking_changes_5"></a><a class="link" href="#_breaking_changes_5">Breaking Changes</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -1089,7 +1099,7 @@ Many thanks to Ayşe Altınsoy (@AltinsoyAyse) for creating the logo through man
 </div>
 </div>
 <div class="sect2">
-<h3 id="_breaking_changes_5"><a class="anchor" href="#_breaking_changes_5"></a><a class="link" href="#_breaking_changes_5">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_6"><a class="anchor" href="#_breaking_changes_6"></a><a class="link" href="#_breaking_changes_6">Breaking Changes</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -1251,7 +1261,7 @@ If you are one of the few that have already used <code>@ResourceLockChildren</co
 <h2 id="_2_0_m5_2021_03_23"><a class="anchor" href="#_2_0_m5_2021_03_23"></a><a class="link" href="#_2_0_m5_2021_03_23">2.0-M5 (2021-03-23)</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_breaking_changes_6"><a class="anchor" href="#_breaking_changes_6"></a><a class="link" href="#_breaking_changes_6">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_7"><a class="anchor" href="#_breaking_changes_7"></a><a class="link" href="#_breaking_changes_7">Breaking Changes</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -1421,7 +1431,7 @@ by using the <code>instance.</code> qualifier inside the condition closure.</p>
 <h2 id="_2_0_m3_2020_06_11"><a class="anchor" href="#_2_0_m3_2020_06_11"></a><a class="link" href="#_2_0_m3_2020_06_11">2.0-M3 (2020-06-11)</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_breaking_changes_7"><a class="anchor" href="#_breaking_changes_7"></a><a class="link" href="#_breaking_changes_7">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_8"><a class="anchor" href="#_breaking_changes_8"></a><a class="link" href="#_breaking_changes_8">Breaking Changes</a></h3>
 <div class="sect3">
 <h4 id="_sputnik_runner_removed_an_alternative"><a class="anchor" href="#_sputnik_runner_removed_an_alternative"></a><a class="link" href="#_sputnik_runner_removed_an_alternative">Sputnik Runner removed (an alternative)</a></h4>
 <div class="paragraph">
@@ -1820,7 +1830,7 @@ As Groovy 3 is not backward compatible with Groovy 2, there is a layer of abstra
 </div>
 </div>
 <div class="sect2">
-<h3 id="_breaking_changes_8"><a class="anchor" href="#_breaking_changes_8"></a><a class="link" href="#_breaking_changes_8">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_9"><a class="anchor" href="#_breaking_changes_9"></a><a class="link" href="#_breaking_changes_9">Breaking Changes</a></h3>
 <div class="sect3">
 <h4 id="_sputnik_runner_removed"><a class="anchor" href="#_sputnik_runner_removed"></a><a class="link" href="#_sputnik_runner_removed">Sputnik Runner removed</a></h4>
 <div class="paragraph">
@@ -1877,7 +1887,7 @@ requested parallel execution support.</p>
 <p>Please try it out and report any new bugs so that we can fix them for the final 2.0 release.</p>
 </div>
 <div class="sect2">
-<h3 id="_breaking_changes_9"><a class="anchor" href="#_breaking_changes_9"></a><a class="link" href="#_breaking_changes_9">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_10"><a class="anchor" href="#_breaking_changes_10"></a><a class="link" href="#_breaking_changes_10">Breaking Changes</a></h3>
 <div class="sect3">
 <h4 id="_new_junit_platform"><a class="anchor" href="#_new_junit_platform"></a><a class="link" href="#_new_junit_platform">New JUnit Platform</a></h4>
 <div class="paragraph">
@@ -3462,7 +3472,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.5-SNAPSHOT<br>
-Last updated 2026-05-24 20:26:23 UTC
+Last updated 2026-05-24 21:07:58 UTC
 </div>
 </div>
 </body>

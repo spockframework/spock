@@ -415,4 +415,22 @@ class ReflectionUtilSpec extends Specification {
     this.class | new URLClassLoader([] as URL[], null as ClassLoader)    | false
     this.class | ByteBuddyTestClassLoader.withInterface(this.class.name) | false
   }
+
+  def "getInterfacesForClass finds interfaces from extending other interfaces"() {
+    when:
+    Set<Class<?>> results = ReflectionUtil.getInterfacesFromClass(List)
+
+    then:
+    results.size() == 3
+    results.containsAll([List, Collection, Iterable])
+  }
+
+  def "getInterfacesForClass finds interfaces from a class"() {
+    when:
+    Set<Class<?>> results = ReflectionUtil.getInterfacesFromClass(ArrayList)
+
+    then:
+    results.size() == 6
+    results.containsAll([List, RandomAccess, Cloneable, Serializable, Collection, Iterable])
+  }
 }

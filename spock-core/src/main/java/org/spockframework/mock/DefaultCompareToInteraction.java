@@ -31,5 +31,4 @@ public class DefaultCompareToInteraction extends DefaultInteraction {
   public Supplier<Object> accept(IMockInvocation invocation) {
     return () -> Integer.compare(System.identityHashCode(invocation.getMockObject().getInstance()), System.identityHashCode(invocation.getArguments().get(0)));
   }
-
 }

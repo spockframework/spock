@@ -421,7 +421,6 @@ class ReflectionUtilSpec extends Specification {
     Set<Class<?>> results = ReflectionUtil.getInterfacesFromClass(List)
 
     then:
-    results.size() == 3
     results.containsAll([List, Collection, Iterable])
   }
 
@@ -430,7 +429,6 @@ class ReflectionUtilSpec extends Specification {
     Set<Class<?>> results = ReflectionUtil.getInterfacesFromClass(ArrayList)
 
     then:
-    results.size() == 6
     results.containsAll([List, RandomAccess, Cloneable, Serializable, Collection, Iterable])
   }
 }

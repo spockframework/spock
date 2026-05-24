@@ -413,4 +413,24 @@ public abstract class ReflectionUtil {
     }
     return false;
   }
+
+  /**
+   * Gets all interfaces implemented by the given class, including parents
+   *
+   * @param clazz the class to retrieve interfaces for
+   * @return a set of interfaces implemented by the class
+   */
+  public static Set<Class<?>> getInterfacesFromClass(Class<?> clazz) {
+    Set<Class<?>> interfaces = new HashSet<>();
+    if (clazz.isInterface()) {
+      interfaces.add(clazz);
+    }
+    for (Class<?> iface : clazz.getInterfaces()) {
+      interfaces.addAll(getInterfacesFromClass(iface));
+    }
+    if (clazz.getSuperclass() != null) {
+      interfaces.addAll(getInterfacesFromClass(clazz.getSuperclass()));
+    }
+    return interfaces;
+  }
 }

@@ -65,11 +65,20 @@ Your tests should continue to run like before.</p>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_can_spock_tests_be_compiled_and_run_with_graalvm_native_image"><a class="anchor" href="#_can_spock_tests_be_compiled_and_run_with_graalvm_native_image"></a><a class="link" href="#_can_spock_tests_be_compiled_and_run_with_graalvm_native_image">Can Spock tests be compiled and run with GraalVM native-image?</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Spock tests require dynamic Groovy language (and JVM) features and are not compatible with GraalVM <code>native-image</code>.
+For details see <a href="https://github.com/spockframework/spock/issues/2169">Issue #2169</a>.</p>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 2.5-SNAPSHOT<br>
-Last updated 2026-05-24 20:20:28 UTC
+Last updated 2026-05-24 20:26:23 UTC
 </div>
 </div>
 </body>

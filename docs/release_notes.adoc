@@ -16,6 +16,10 @@ include::include.adoc[]
 * Fix Pattern flags being dropped when `java.util.regex.Pattern` instances are used in Spock regex conditions spockIssue:2298[]
 * Fix `MockitoMockMaker` throws NPE on null object spockIssue:2337[]
 
+=== Breaking Changes
+
+* Mock/Stub checks on `Comparable<T>` with `T` being something other than `Object` now compare using the java identity hash code instead of always being equal spockIssue:2352[]
+
 == 2.4 (2025-12-11)
 
 _This is a summary of the highlights of the milestone releases_

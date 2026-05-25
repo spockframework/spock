@@ -48,7 +48,10 @@ ext {
     minGroovyVersion = "5.0.0"
     maxGroovyVersion = "5.9.99"
     if (javaVersion < 11) {
-      throw new InvalidUserDataException("Groovy $variant is not compatible with Java $javaVersion")
+      if (System.getProperty("javaVersion") != null) {
+        throw new InvalidUserDataException("Groovy $variant is not compatible with Java $javaVersion")
+      }
+      javaVersion = 11
     }
   } else {
     throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")

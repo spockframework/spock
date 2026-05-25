@@ -7,23 +7,11 @@
   // we want to keep low versions for baseline compatibility
   ignorePaths: ["spock-*/**"],
   packageRules: [
-    // Disable major version upgrades for Groovy versions
-    // as we want to keep one for each major version.
-    // The same applies for mockito as we test with both 4 and 5
+    // Keep one pin per Groovy major.minor series (e.g. 4.0.x stays in 4.0, 5.0.x stays in 5.0).
+    // The same applies for mockito as we test with both 4 and 5.
     {
-      matchPackageNames: ["/^org.codehaus.groovy:/"],
-      matchCurrentValue: "/^2\\./",
-      allowedVersions: "(,3.0)"
-    },
-    {
-      matchPackageNames: ["/^org.apache.groovy:/"],
-      matchCurrentValue: "/^4\\./",
-      allowedVersions: "(,5.0)"
-    },
-    {
-      matchPackageNames: ["/^org.apache.groovy:/"],
-      matchCurrentValue: "/^5\\./",
-      allowedVersions: "(,6.0)"
+      matchPackageNames: ["/^org.codehaus.groovy:/", "/^org.apache.groovy:/"],
+      versionCompatibility: "^(?<compatibility>\\d+\\.\\d+)\\..*$"
     },
     {
       matchPackageNames: ["/^org.junit:/"],

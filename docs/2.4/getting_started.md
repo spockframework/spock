@@ -1,0 +1,18 @@
+# Getting Started
+
+It’s really easy to get started with Spock. This section shows you how.
+
+
+## Groovy Web Console
+
+[Groovy Web Console](https://groovyconsole.dev/) is a website that allows you to instantly view, edit, run, and
+even publish Spock specifications. It is the perfect place to toy around with Spock without making any commitments.
+So why not run [Hello, Spock!](https://groovyconsole.dev/?g=groovy_4_0&codez=eNpdizEKg0AQRfs9xU81hgTsBUuDTSpPYMYRBhc3ZEc0BO-ejbGy-5_3Xp6jVgNVi_BkQniID7Nj38aI-_umr2jNUxiymIxdxO9or9yahhEfB3TSg2rxPlwTDTycKDtvBKlKuhXb_juEC2jXUJbHMpmrW90Xc9sttg) right away?
+
+
+## Spock Example Project
+
+To try Spock in your local environment, clone or download/unzip the [Spock Example Project](https://github.com/spockframework/spock-example).
+It comes with fully working Ant, Gradle, and Maven builds that require no further setup. The Gradle build even bootstraps
+Gradle itself and gets you up and running in Eclipse or IDEA with a single command. See the README for detailed instructions.
+

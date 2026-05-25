@@ -4,6 +4,7 @@ groovy2 = '2.5.23'
 groovy3 = '3.0.25'
 groovy4 = '4.0.32'
 groovy5 = '5.0.6'
+groovy6 = '6.0.0-alpha-1'
 jacoco = '0.8.15'
 junit5 = '5.14.4'
 junit6 = '6.1.0'
@@ -50,3 +51,4 @@ groovy-v2 = { module = "org.codehaus.groovy:groovy", version.ref="groovy2" }
 groovy-v3 = { module = "org.codehaus.groovy:groovy", version.ref="groovy3" }
 groovy-v4 = { module = "org.apache.groovy:groovy", version.ref="groovy4" }
 groovy-v5 = { module = "org.apache.groovy:groovy", version.ref="groovy5" }
+groovy-v6 = { module = "org.apache.groovy:groovy", version.ref="groovy6" }

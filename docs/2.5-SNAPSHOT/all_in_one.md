@@ -6,8 +6,8 @@
 
 
 Spock is a testing and specification framework for Java and Groovy applications. What makes it stand out from the crowd
-is its beautiful and highly expressive specification language. Thanks to its JUnit runner, Spock is compatible with most
-IDEs, build tools, and continuous integration servers. Spock is inspired from [JUnit](https://junit.org/),
+is its beautiful and highly expressive specification language. Thanks to being a JUnit Platform engine, Spock is compatible
+with most IDEs, build tools, and continuous integration servers. Spock is inspired from [JUnit](https://junit.org/),
 [jMock](https://www.jmock.org/), [RSpec](https://rspec.info/), [Groovy](https://groovy-lang.org/), [Scala](https://scala-lang.org/),
 [Vulcans](https://en.wikipedia.org/wiki/Vulcan_(Star_Trek)), and other fascinating life forms.
 
@@ -53,7 +53,7 @@ To learn more about unit testing, go to https://en.wikipedia.org/wiki/Unit_testi
 
 Let’s start with a few definitions: Spock lets you write [*specifications*](https://en.wikipedia.org/wiki/Specification_by_example)
 that describe expected *features* (properties, aspects) exhibited by a system of interest. The system of interest could be
-anything between a single class and a whole application, and is also called the *system under specification or SUS*.
+anything between a single class and a whole application, and is also called the *system under specification* or *SUS*.
 The description of a feature starts from a specific snapshot of the SUS and its collaborators; this snapshot is called the feature’s *fixture*.
 
 
@@ -88,9 +88,9 @@ usually relates to the system or system operation described by the specification
 `H264VideoPlayback`, and `ASpaceshipAttackedFromTwoSides` are all reasonable names for a specification.
 
 
-Class `Specification` contains a number of useful methods for writing specifications. Furthermore it instructs JUnit to
-run specification with `Sputnik`, Spock’s JUnit runner. Thanks to Sputnik, Spock specifications can be run by most modern
-Java IDEs and build tools.
+Class `Specification` contains a number of useful methods for writing specifications. Furthermore it marks the specification
+as `@Testable`, which instructs tools that only look at the source code - like typically IDEs and similar - that this
+class is something that executes tests via a JUnit Platform engine.
 
 
 ### Fields
@@ -1104,7 +1104,7 @@ block descriptions are enhanced diagnostic messages, and textual reports that ar
 
 As we have seen, Spock offers lots of functionality for writing specifications. However, there always comes a time
 when something else is needed. Therefore, Spock provides an interception-based extension mechanism. Extensions are
-activated by annotations called *directives*. Currently, Spock ships with the following directives:
+activated by annotations called *directives*. Currently, Spock ships - among others - with the following directives:
 
 
 **`@Timeout`**
@@ -1114,7 +1114,7 @@ activated by annotations called *directives*. Currently, Spock ships with the fo
 : Ignores any feature method carrying this annotation.
 
 **`@IgnoreRest`**
-: Any feature method carrying this annotation will be executed, all others will be ignored. Useful for quickly running just a single method.
+: Any feature method carrying this annotation will be executed, all others will be ignored. Useful for quickly running just a few features.
 
 **`@FailsWith`**
 : Expects a feature method to complete abruptly. `@FailsWith` has two use cases: First, to document known bugs that cannot
@@ -1122,7 +1122,22 @@ be resolved immediately. Second, to replace exception conditions in certain corn
 used (like specifying the behavior of exception conditions). In all other cases, exception conditions are preferable.
 
 
-Go to the [Extensions](#extensions) chapter to learn how to implement your own directives and extensions.
+Go to the [Extensions](#extensions) chapter to learn how to implement your own directives and extensions, to learn where to find some of the 3rd party extensions, and to learn about all built-in extensions and directives.
+
+
+> [!NOTE]
+> JUnit Jupiter is a separate test engine also running on JUnit Platform and thus is a sibling of the Spock engine.
+> Extensions written for JUnit Jupiter do *not* work in Spock specifications out of the box.
+> Often terms are mixed up and some extension says it is for JUnit 5+, actually meaning it is for JUnit Jupiter, as there are no generic JUnit Platform extensions.
+> If you want to use an extension written for JUnit Jupiter, you can check whether the project also provides a Spock extension, if not ask them to also provide a Spock extension, search for an alternative extension that supports Spock, or port the Jupiter extension to being a Spock extension yourself.
+> 
+> 
+> There is also at least one 3rd party extension that as of this writing provides a partly functioning integration of JUnit Jupiter extensions within Spock specifications.
+> This extension though is neither maintained, nor recommended, nor discouraged by the Spock maintainers.
+> It can eventually make some JUnit Jupiter extensions work within Spock specifications, but it is always preferable to instead use a native Spock extension.
+> Often porting a JUnit Jupiter extension to also support Spock is not a big effort, so you might strongly consider to request a port by the extension maintainer or contribute a port to its project.
+> 
+> 
 
 
 ### Comparison to JUnit
@@ -1133,10 +1148,10 @@ Although Spock uses a different terminology, many of its concepts and features a
 | Spock | JUnit |
 | --- | --- |
 | Specification | Test class |
-| `setup()` | `@Before` |
-| `cleanup()` | `@After` |
-| `setupSpec()` | `@BeforeClass` |
-| `cleanupSpec()` | `@AfterClass` |
+| `setup()` | `@Before` / `@BeforeEach` |
+| `cleanup()` | `@After` / `@AfterEach` |
+| `setupSpec()` | `@BeforeClass` / `@BeforeAll` |
+| `cleanupSpec()` | `@AfterClass` / `@AfterAll` |
 | Feature | Test |
 | Feature method | Test method |
 | Data-driven feature | Theory |
@@ -5180,7 +5195,25 @@ tasks.named("test", Test) {
 
 ### Third-Party Extensions
 
-You can find a list of third-party extensions in the [Spock Wiki](https://github.com/spockframework/spock/wiki/Third-Party-Extensions).
+You can find a list with some third-party extensions in the [Spock Wiki](https://github.com/spockframework/spock/wiki/Third-Party-Extensions).
+This list is neither maintained nor curated by the Spock maintainers.
+It is also not necessarily complete, so you might find further Spock extensions through web searches or other means.
+It is a community-driven page where anyone can list Spock extensions they wrote or found.
+
+
+> [!NOTE]
+> JUnit Jupiter is a separate test engine also running on JUnit Platform and thus is a sibling of the Spock engine.
+> Extensions written for JUnit Jupiter do *not* work in Spock specifications out of the box.
+> Often terms are mixed up and some extension says it is for JUnit 5+, actually meaning it is for JUnit Jupiter, as there are no generic JUnit Platform extensions.
+> If you want to use an extension written for JUnit Jupiter, you can check whether the project also provides a Spock extension, if not ask them to also provide a Spock extension, search for an alternative extension that supports Spock, or port the Jupiter extension to being a Spock extension yourself.
+> 
+> 
+> There is also at least one 3rd party extension that as of this writing provides a partly functioning integration of JUnit Jupiter extensions within Spock specifications.
+> This extension though is neither maintained, nor recommended, nor discouraged by the Spock maintainers.
+> It can eventually make some JUnit Jupiter extensions work within Spock specifications, but it is always preferable to instead use a native Spock extension.
+> Often porting a JUnit Jupiter extension to also support Spock is not a big effort, so you might strongly consider to request a port by the extension maintainer or contribute a port to its project.
+> 
+> 
 
 
 ### Writing Custom Extensions
@@ -6324,7 +6357,7 @@ runner {
 
 
 > [!NOTE]
-> JUnit Jupiter also supports  [parallel execution](https://junit.org/junit5/docs/5.7.0/user-guide/#writing-tests-parallel-execution), both rely on the JUnit Platform implementation, but function independently of each other.
+> JUnit Jupiter also supports [parallel execution](https://junit.org/junit5/docs/5.7.0/user-guide/#writing-tests-parallel-execution), both rely on the JUnit Platform implementation, but function independently of each other.
 >       If you enable parallel execution in Spock it won’t affect Jupiter and vice versa.
 >       The JUnit Platform executes the test engines (Spock, Jupiter) sequentially, so there should not be any interference between engines.
 

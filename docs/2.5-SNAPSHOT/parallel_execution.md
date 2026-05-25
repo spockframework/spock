@@ -26,7 +26,7 @@ runner {
 
 
 > [!NOTE]
-> JUnit Jupiter also supports  [parallel execution](https://junit.org/junit5/docs/5.7.0/user-guide/#writing-tests-parallel-execution), both rely on the JUnit Platform implementation, but function independently of each other.
+> JUnit Jupiter also supports [parallel execution](https://junit.org/junit5/docs/5.7.0/user-guide/#writing-tests-parallel-execution), both rely on the JUnit Platform implementation, but function independently of each other.
 >       If you enable parallel execution in Spock it won’t affect Jupiter and vice versa.
 >       The JUnit Platform executes the test engines (Spock, Jupiter) sequentially, so there should not be any interference between engines.
 

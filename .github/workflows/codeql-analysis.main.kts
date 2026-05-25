@@ -24,18 +24,20 @@
 
 @file:Repository("https://bindings.krzeminski.it/")
 @file:DependsOn("actions:checkout___major:[v6,v7-alpha)")
-@file:DependsOn("github:codeql-action__analyze___major:[v4.32.4,v5-alpha)")
-@file:DependsOn("github:codeql-action__init___major:[v4.32.4,v5-alpha)")
+@file:DependsOn("github:codeql-action__analyze___major:[v4,v5-alpha)")
+@file:DependsOn("github:codeql-action__init___major:[v4,v5-alpha)")
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout
-import io.github.typesafegithub.workflows.actions.github.CodeqlActionAnalyze_Untyped
-import io.github.typesafegithub.workflows.actions.github.CodeqlActionInit_Untyped
+import io.github.typesafegithub.workflows.actions.github.CodeqlActionAnalyze
+import io.github.typesafegithub.workflows.actions.github.CodeqlActionInit
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
 import io.github.typesafegithub.workflows.domain.triggers.*
 import io.github.typesafegithub.workflows.dsl.expressions.Contexts.github
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
+import io.github.typesafegithub.workflows.yaml.CheckoutActionVersionSource.InferFromClasspath
+import io.github.typesafegithub.workflows.yaml.DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG
 
 workflow(
     name = "Code scanning - action",
@@ -60,6 +62,9 @@ workflow(
     concurrency = Concurrency(
         group = "${expr { github.workflow }}-${expr("${github.eventPullRequest.pull_request.number} || ${github.ref}")}",
         cancelInProgress = true
+    ),
+    consistencyCheckJobConfig = DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG.copy(
+        checkoutActionVersion = InferFromClasspath()
     )
 ) {
     job(
@@ -85,7 +90,7 @@ workflow(
         // Initializes the CodeQL tools for scanning
         uses(
             name = "Initialize CodeQL",
-            action = CodeqlActionInit_Untyped(
+            action = CodeqlActionInit(
                 // Override language selection by uncommenting this and choosing your languages
                 // languages = listOf("go", "javascript", "csharp", "python", "cpp", "java"),
             )
@@ -127,7 +132,7 @@ workflow(
         )
         uses(
             name = "Perform CodeQL Analysis",
-            action = CodeqlActionAnalyze_Untyped()
+            action = CodeqlActionAnalyze()
         )
     }
 }

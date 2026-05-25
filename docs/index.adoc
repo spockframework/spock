@@ -1,18 +1,18 @@
 = Spock Framework Reference Documentation
 include::include.adoc[]
 
-. <<introduction.adoc#,Introduction>>
-. <<getting_started.adoc#,Getting Started>>
-. <<spock_primer.adoc#,Spock Primer>>
-. <<data_driven_testing.adoc#,Data Driven Testing>>
-. <<interaction_based_testing.adoc#,Interaction Based Testing>>
-. <<extensions.adoc#,Extensions>>
-. <<utilities.adoc#,Utilities>>
-. <<parallel_execution.adoc#,Parallel Execution>>
-. <<modules.adoc#,Modules>>
-. <<release_notes.adoc#,Release Notes>>
-. <<migration_guide.adoc#,Migration Guide>>
-. <<faq.adoc#,Frequently Asked Questions (FAQ)>>
-. <<known_issues.adoc#,Known Issues>>
+. <<introduction.adoc#,Introduction>>: A brief overview of Spock, its goals, and what sets it apart from other testing frameworks.
+. <<getting_started.adoc#,Getting Started>>: Quickest paths to try Spock: the Groovy Web Console and the Spock Example Project for Ant, Gradle, and Maven.
+. <<spock_primer.adoc#,Spock Primer>>: Core concepts and building blocks of a specification: fields, fixture methods, feature methods, and blocks.
+. <<data_driven_testing.adoc#,Data Driven Testing>>: Running the same feature method against multiple inputs using data tables, data pipes, and data providers.
+. <<interaction_based_testing.adoc#,Interaction Based Testing>>: Creating and verifying mocks, stubs, and spies to test how objects collaborate.
+. <<extensions.adoc#,Extensions>>: Built-in extension annotations, the Spock configuration file, and the API for writing your own extensions.
+. <<utilities.adoc#,Utilities>>: Helper classes shipped with Spock, including utilities for time-dependent code and collection-matching conditions.
+. <<parallel_execution.adoc#,Parallel Execution>>: Configuration and execution modes for running specifications and features concurrently.
+. <<modules.adoc#,Modules>>: Optional integrations with Spring, JUnit 4, Guice, Tapestry, and Unitils.
+. <<release_notes.adoc#,Release Notes>>: Version-by-version summary of new features, enhancements, fixes, and breaking changes.
+. <<migration_guide.adoc#,Migration Guide>>: Notes on incompatible changes between versions and guidance for upgrading existing specifications.
+. <<faq.adoc#,Frequently Asked Questions (FAQ)>>: Answers to common questions about optional dependencies, mocking choices, and platform support.
+. <<known_issues.adoc#,Known Issues>>: Documented limitations and workarounds.
 
 <<all_in_one.adoc#,Single Page Documentation>>

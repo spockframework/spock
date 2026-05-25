@@ -132,7 +132,9 @@ public class SpringExtension implements IGlobalExtension {
         && (field.getReflection().isAnnotationPresent(Autowired.class)
         // avoid compile-time dependency on optional classes
         || ReflectionUtil.isAnnotationPresent(field.getReflection(), "javax.annotation.Resource")
-        || ReflectionUtil.isAnnotationPresent(field.getReflection(), "javax.inject.Inject"))) {
+        || ReflectionUtil.isAnnotationPresent(field.getReflection(), "jakarta.annotation.Resource")
+        || ReflectionUtil.isAnnotationPresent(field.getReflection(), "javax.inject.Inject")
+        || ReflectionUtil.isAnnotationPresent(field.getReflection(), "jakarta.inject.Inject"))) {
         throw new SpringExtensionException(
           "@Shared field injection is not enabled by default therefore '%s' field cannot be injected. Refer to " +
             "javadoc of %s for information on how to opt-in for @Shared field injection.")

@@ -19,23 +19,34 @@ package org.spockframework.spring.docs
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 
-import javax.inject.Named
+import javax.inject.Named as JavaxNamed
+import jakarta.inject.Named
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 
 abstract class MockExampleBase extends Specification {
 
+  @JavaxNamed('serviceMock')
 //tag::example[]
   @Autowired @Named('serviceMock')
   GreeterService serviceMock
 
+//end::example[]
+  @JavaxNamed('serviceStub')
+//tag::example[]
   @Autowired @Named('serviceStub')
   GreeterService serviceStub
 
+//end::example[]
+  @JavaxNamed('serviceSpy')
+//tag::example[]
   @Autowired @Named('serviceSpy')
   GreeterService serviceSpy
 
+//end::example[]
+  @JavaxNamed('alternativeMock')
+//tag::example[]
   @Autowired @Named('alternativeMock')
   GreeterService alternativeMock
 

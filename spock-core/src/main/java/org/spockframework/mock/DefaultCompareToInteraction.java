@@ -1,5 +1,7 @@
 package org.spockframework.mock;
 
+import org.spockframework.util.ReflectionUtil;
+
 import java.util.function.Supplier;
 
 public class DefaultCompareToInteraction extends DefaultInteraction {
@@ -18,8 +20,11 @@ public class DefaultCompareToInteraction extends DefaultInteraction {
 
     return "compareTo".equals(method.getName())
       && method.getParameterTypes().size() == 1
-      && method.getParameterTypes().get(0) == Object.class
-      && invocation.getMockObject().getInstance() instanceof Comparable;
+      && (
+        // either this is the base compareTo(object) method or it is a genericized Comparable
+        method.getParameterTypes().get(0) == Object.class
+        || ReflectionUtil.getInterfacesFromClass(method.getParameterTypes().get(0)).contains(Comparable.class)
+      ) && invocation.getMockObject().getInstance() instanceof Comparable;
   }
 
   @Override

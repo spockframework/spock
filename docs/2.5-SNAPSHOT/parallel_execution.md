@@ -1,0 +1,758 @@
+# Parallel Execution
+
+> [!WARNING]
+> This is an experimental feature for Spock, which is based on the experimental implementation of parallel execution in the JUnit Platform.
+
+
+Parallel execution has the potential to reduce the overall test execution time.
+The actual achievable reduction will heavily depend on the respective codebase and can vary wildly.
+
+
+By default, Spock runs tests sequentially with a single thread.
+As of version 2.0, Spock supports parallel execution based on the JUnit Platform.
+To enable parallel execution set the `runner.parallel.enabled` configuration to `true`.
+See [Spock Configuration File](extensions.md#spock-configuration-file) for general information about this file.
+
+
+**SpockConfig.groovy**
+
+```groovy
+runner {
+  parallel {
+    enabled true
+  }
+}
+```
+
+
+> [!NOTE]
+> JUnit Jupiter also supports  [parallel execution](https://junit.org/junit5/docs/5.7.0/user-guide/#writing-tests-parallel-execution), both rely on the JUnit Platform implementation, but function independently of each other.
+>       If you enable parallel execution in Spock it won’t affect Jupiter and vice versa.
+>       The JUnit Platform executes the test engines (Spock, Jupiter) sequentially, so there should not be any interference between engines.
+
+
+## Execution modes
+
+Spock supports two execution modes `SAME_THREAD` and `CONCURRENT`.
+You can define the execution mode explicitly for a specification or feature via the `@Execution` annotation.
+Otherwise, Spock will use the value of `defaultSpecificationExecutionMode` and `defaultExecutionMode` respectively, both have `CONCURRENT` as default value.
+Certain [extensions](extensions.md#extensions) also set execution modes when they are applied.
+
+
+- `defaultSpecificationExecutionMode` controls what execution mode a specification will use by default.
+- `defaultExecutionMode` controls what execution mode a feature and its iterations (if data driven) will use by default.
+
+
+**Sequential Execution, either `runner.parallel.enabled=false` or `SAME_THREAD` Specifications, `SAME_THREAD` Features**
+
+```plantuml
+@startgantt
+scale 2
+[A.test1()] lasts 4 days
+then [A.test2()] lasts 8 days
+then [B.test1()] lasts 6 days
+then [B.test2()] lasts 4 days
+@endgantt
+```
+
+
+**`CONCURRENT` Specifications, `CONCURRENT` Features**
+
+```plantuml
+@startgantt
+scale 2
+[A.test1()] lasts 4 days
+[A.test2()] lasts 8 days
+[B.test1()] lasts 6 days
+[B.test2()] lasts 4 days
+@endgantt
+```
+
+
+**`CONCURRENT` Specifications, `SAME_THREAD` Features**
+
+```plantuml
+@startgantt
+scale 2
+[A.test1()] lasts 4 days
+then [A.test2()] lasts 8 days
+[B.test1()] lasts 6 days
+then [B.test2()] lasts 4 days
+@endgantt
+```
+
+
+**`SAME_THREAD` Specifications, `CONCURRENT` Features**
+
+```plantuml
+@startgantt
+scale 2
+[A.test1()] lasts 4 days
+[A.test2()] lasts 8 days
+[B.test1()] lasts 6 days and starts at [A.test2()]'s end
+[B.test2()] lasts 4 days and starts at [A.test2()]'s end
+@endgantt
+```
+
+
+### Execution Hierarchy
+
+**Legend for the following figures**
+
+```plantuml
+@startwbs
+<style>
+wbsDiagram {
+
+  node {
+    BackgroundColor #88CCEE
+    RoundCorner 10
+    :depth(0) {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+    }
+  }
+
+  .concurrent * {
+      BackgroundColor #88CCEE
+      RoundCorner 10
+  }
+
+  .samethread * {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+  }
+
+  .write_lock * {
+      LineStyle 4
+      LineThickness 2.5
+      LineColor #117733
+  }
+
+  .read_lock * {
+      LineStyle 2
+      LineThickness 2.5
+      LineColor #117733
+  }
+
+  .isolated * {
+      BackgroundColor #CC6677
+      RoundCorner 0
+      LineStyle 8
+      LineThickness 2.5
+      LineColor #117733
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** Same Thread <<samethread>>
+** Concurrent <<concurrent>>
+** ResourceLock(READ) <<read_lock>>
+** ResourceLock(READ_WRITE) <<write_lock>>
+*** Same Thread with Lock <<samethread>>
+** Data Driven Feature
+*** Data Driven Feature[1]
+*** Data Driven Feature[2]
+** Isolated <<isolated>>
+@endwbs
+```
+
+
+- The node `Same Thread` will run in the same thread as its parent.
+- The node `Concurrent` will be executed in another thread, all concurrent nodes can execute in different threads from each other.
+- The node `ResourceLock(READ)` will be executed in another thread, but will also acquire a `READ`-lock for a resource.
+- The node `ResourceLock(READ_WRITE)` will be executed in another thread, but will also acquire a `READ_WRITE`-lock for a resource.
+- The node `Same Thread with Lock` will run in the same thread as its parent thus inheriting the lock.
+- The node `Data Driven Feature` represents a data driven feature with `Data Driven Feature[1]` and `Data Driven Feature[2]` being the iterations.
+- The node `Isolated` will run exclusively, no other specifications or features will run at the same time.
+
+
+**Single threaded execution**
+
+```plantuml
+@startwbs
+<style>
+wbsDiagram {
+  node {
+    BackgroundColor #DDCC77
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** testA1
+*** testA2
+** SpecB
+*** testB1
+*** testB2
+**** testB2[1]
+**** testB2[2]
+@endwbs
+```
+
+
+[figure-execution-hierarchy-same-thread](#figure-execution-hierarchy-same-thread) shows the default case when parallel execution is disabled (`runner.parallel.enabled=false`) or when both specifications (`defaultSpecificationExecutionMode`) and features (`defaultExecutionMode`) are set to `SAME_THREAD`.
+
+
+**Execution with `CONCURRENT` Specifications, `SAME_THREAD`**
+
+```plantuml
+@startwbs
+<style>
+wbsDiagram {
+  node {
+    BackgroundColor #DDCC77
+    :depth(1) {
+      BackgroundColor #88CCEE
+      RoundCorner 10
+    }
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** testA1
+*** testA2
+** SpecB
+*** testB1
+*** testB2
+**** testB2[1]
+**** testB2[2]
+@endwbs
+```
+
+
+[figure-execution-hierarchy-concurrent-sequential-execution](#figure-execution-hierarchy-concurrent-sequential-execution) shows the result of setting `defaultSpecificationExecutionMode=CONCURRENT` and `defaultExecutionMode=SAME_THREAD`, the specifications will run concurrently but all features will run in the same thread as their specification.
+
+
+**Execution with `SAME_THREAD` Specifications, `CONCURRENT` Features**
+
+```plantuml
+
+@startwbs
+<style>
+wbsDiagram {
+  node {
+    BackgroundColor #DDCC77
+    :depth(2) {
+      BackgroundColor #88CCEE
+      RoundCorner 10
+    }
+    :depth(3) {
+      BackgroundColor #88CCEE
+      RoundCorner 10
+    }
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** testA1
+*** testA2
+** SpecB
+*** testB1
+*** testB2
+**** testB2[1]
+**** testB2[2]
+@endwbs
+```
+
+
+[figure-execution-hierarchy-sequential-concurrent-execution](#figure-execution-hierarchy-sequential-concurrent-execution) shows the result of setting `defaultSpecificationExecutionMode=SAME_THREAD` and `defaultExecutionMode=CONCURRENT`, the specifications will run in the same thread, causing them to run one after the other.
+The features inside a specification will run concurrently.
+
+
+**Execution with `CONCURRENT` Specifications, `CONCURRENT` Features**
+
+```plantuml
+
+@startwbs
+<style>
+wbsDiagram {
+  node {
+    BackgroundColor #DDCC77
+    :depth(1) {
+      BackgroundColor #88CCEE
+      RoundCorner 10
+    }
+    :depth(2) {
+      BackgroundColor #88CCEE
+      RoundCorner 10
+    }
+    :depth(3) {
+      BackgroundColor #88CCEE
+      RoundCorner 10
+    }
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** testA1
+*** testA2
+** SpecB
+*** testB1
+*** testB2
+**** testB2[1]
+**** testB2[2]
+@endwbs
+```
+
+
+[figure-execution-hierarchy-concurrent-concurrent-execution](#figure-execution-hierarchy-concurrent-concurrent-execution) shows the result of setting `defaultSpecificationExecutionMode=CONCURRENT` and `defaultExecutionMode=CONCURRENT`, both specifications and features will run concurrently.
+
+
+#### Execution Mode Inheritance
+
+If nothing else is explicit configured, specifications will use `defaultSpecificationExecutionMode` and features use `defaultExecutionMode`.
+However, this changes when you set the execution mode explicitly via `@Execution`.
+Each node (specification, feature) checks first if it has an explicit execution mode set,
+otherwise it will check its parents for an explicit setting and fall back to the respective defaults otherwise.
+
+
+The following examples have `defaultSpecificationExecutionMode=SAME_THREAD` and `defaultExecutionMode=SAME_THREAD`.
+If you invert the values `SAME_THREAD` and `CONCURRENT` in these examples you will get the inverse result.
+
+
+**Execution with `SAME_THREAD` Specifications, `SAME_THREAD` Features and explicit `@Execution` on Features**
+
+```plantuml
+@startwbs
+<style>
+wbsDiagram {
+  node {
+    BackgroundColor #DDCC77
+  }
+  .concurrent * {
+      BackgroundColor #88CCEE
+      RoundCorner 10
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** testA1
+*** @Execution(CONCURRENT)\ntestA2 <<concurrent>>
+** SpecB
+*** testB1
+*** @Execution(CONCURRENT)\ntestB2 <<concurrent>>
+**** testB2[1]
+**** testB2[2]
+@endwbs
+```
+
+
+In [figure-execution-hierarchy-inheritance-feature-execution](#figure-execution-hierarchy-inheritance-feature-execution) `@Execution` is applied on the features and those features and iterations will execute concurrently while the rest will execute in the same thread.
+
+
+**Execution with `SAME_THREAD` Specifications, `SAME_THREAD` Features and explicit `@Execution` on a Specification**
+
+```plantuml
+@startwbs
+<style>
+wbsDiagram {
+  node {
+    BackgroundColor #DDCC77
+  }
+  .concurrent * {
+      BackgroundColor #88CCEE
+      RoundCorner 10
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** testA1
+*** testA2
+** @Execution(CONCURRENT)\nSpecB  <<concurrent>>
+*** testB1
+*** testB2
+**** testB2[1]
+**** testB2[2]
+@endwbs
+```
+
+
+In [figure-execution-hierarchy-inheritance-spec-execution](#figure-execution-hierarchy-inheritance-spec-execution) `@Execution` is applied on one specification causing the specification and all its features to run concurrently.
+The features execute concurrently since they inherit the explicit execution mode from the specification.
+
+
+**Execution with `SAME_THREAD` Specifications, `SAME_THREAD` Features and explicit `@Execution` on Features and Specifications**
+
+```plantuml
+@startwbs
+<style>
+wbsDiagram {
+  node {
+    BackgroundColor #DDCC77
+  }
+  .concurrent * {
+      BackgroundColor #88CCEE
+      RoundCorner 10
+  }
+  .samethread * {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** testA1
+*** testA2
+** @Execution(CONCURRENT)\nSpecB  <<concurrent>>
+*** @Execution(SAME_THREAD)\ntestB1 <<samethread>>
+*** testB2
+**** testB2[1]
+**** testB2[2]
+@endwbs
+```
+
+
+[figure-execution-hierarchy-inheritance-spec-feature-execution](#figure-execution-hierarchy-inheritance-spec-feature-execution) showcases the combined application of `@Execution` on a specification and some of its features.
+As in the previous example the specification and its features will execute concurrently except `testB1` since it has its own explicit execution mode set.
+
+
+## Resource Locks
+
+With parallel execution comes a new set of challenges for testing, as shared state can be modified and consumed by multiple tests at the same time.
+
+
+A simple example would be two features that test the use a system property, both setting it to a specific value in the respective `given` block and then executing the code to test the expected behavior.
+If they run sequentially then both complete without issue. However, if the run at the same time both `given` blocks will run before the `when` blocks and one feature will fail since the system property did not contain the expected value.
+
+
+The above example could simply be fixed if both features are part of the same specification by setting them to run in the same thread with `@Execution(SAME_THREAD)`.
+However, this is not really practicable when the features are in separate specifications.
+To solve this issue Spock has support to coordinate access to shared resources via `@ResourceLock`.
+
+
+With `@ResourceLock` you can define both a `key` and a `mode`. By default, `@ResourceLock` assumes `ResourceAccessMode.READ_WRITE`, but you can weaken it to `ResourceAccessMode.READ`.
+
+
+- `ResourceAccessMode.READ_WRITE` will enforce exclusive access to the resource.
+- `ResourceAccessMode.READ` will prevent any `READ_WRITE` locks, but will allow other `READ` locks.
+
+
+`READ`-only locks will isolate tests from others that modify the shared resource, while at the same time allowing tests that also only read the resource to execute.
+You should not modify the shared resource when you only hold a `READ` lock, otherwise the assurances don’t hold.
+
+
+Certain [extensions](extensions.md#extensions) also set implicit locks when they are applied.
+
+
+**Two features with `@ResourceLock`**
+
+```plantuml
+@startwbs
+<style>
+wbsDiagram {
+  node {
+    BackgroundColor #88CCEE
+    RoundCorner 10
+    :depth(0) {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+    }
+  }
+
+  .write_lock * {
+      LineStyle 4
+      LineThickness 2.5
+      LineColor #117733
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** testA1
+*** @ResourceLock("R")\ntestA2 <<write_lock>>
+** SpecB
+*** @ResourceLock("R")\ntestB1 <<write_lock>>
+*** testB2
+**** testB2[1]
+**** testB2[2]
+@endwbs
+```
+
+
+### Lock inheritance
+
+If a parent node has a `READ_WRITE` lock, it forces its children to run in the same thread.
+As `READ_WRITE` locks cause serialized execution anyway, this is effectively not different from what would happen if the lock would be applied to every child directly.
+However, if the parent node has only `READ` locks, then it allows parallel execution of its children.
+
+
+**Locks on data driven features**
+
+```plantuml
+@startwbs
+<style>
+wbsDiagram {
+  node {
+    BackgroundColor #88CCEE
+    RoundCorner 10
+    :depth(0) {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+    }
+  }
+
+  .samethread * {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+  }
+
+  .write_lock * {
+      LineStyle 4
+      LineThickness 2.5
+      LineColor #117733
+  }
+
+  .read_lock * {
+      LineStyle 2
+      LineThickness 2.5
+      LineColor #117733
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** testA1
+*** @ResourceLock("R")\ntestA2 <<write_lock>>
+**** testA2[1] <<samethread>>
+**** testA2[2] <<samethread>>
+** SpecB
+*** testB1
+*** @ResourceLock(value="R", mode=READ)\nStestB2 <<read_lock>>
+**** testB2[1] <<read_lock>>
+**** testB2[2] <<read_lock>>
+@endwbs
+```
+
+
+**Locks on spec inherited by features**
+
+```plantuml
+@startwbs
+<style>
+wbsDiagram {
+  node {
+    BackgroundColor #88CCEE
+    RoundCorner 10
+    :depth(0) {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+    }
+  }
+
+  .samethread * {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+  }
+
+  .write_lock * {
+      LineStyle 4
+      LineThickness 2.5
+      LineColor #117733
+  }
+
+  .read_lock * {
+      LineStyle 2
+      LineThickness 2.5
+      LineColor #117733
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** testA1
+*** testA2
+** @ResourceLock("R")\nSpecB <<write_lock>>
+*** testB1 <<samethread>>
+*** testB2 <<samethread>>
+**** testB2[1] <<samethread>>
+**** testB2[2] <<samethread>>
+** @ResourceLock(value="R", mode=READ)\nSpecC <<read_lock>>
+*** testC1 <<read_lock>>
+*** testC2 <<read_lock>>
+**** testC2[1] <<read_lock>>
+**** testC2[2] <<read_lock>>
+@endwbs
+```
+
+
+### Lock coarsening
+
+To avoid deadlocks, Spock pulls up locks to the specification, when locks are defined on both the specification and features.
+The Specification will then contain all defined locks.
+If the features both had `READ_WRITE` and `READ` locks for the same resource, then the `READ` will be merged into the `READ_WRITE`.
+
+
+**Lock coarsening - before**
+
+```plantuml
+@startwbs
+<style>
+wbsDiagram {
+  node {
+    BackgroundColor #88CCEE
+    RoundCorner 10
+    :depth(0) {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+    }
+  }
+
+  .samethread * {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+  }
+
+  .write_lock * {
+      LineStyle 4
+      LineThickness 2.5
+      LineColor #117733
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** @ResourceLock("S")\nSpecA <<write_lock>>
+*** @ResourceLock("A")\ntestA1 <<write_lock>>
+*** @ResourceLock("B")\ntestA2 <<write_lock>>
+@endwbs
+```
+
+
+**Lock coarsening - after**
+
+```plantuml
+@startwbs
+<style>
+wbsDiagram {
+  node {
+    BackgroundColor #88CCEE
+    RoundCorner 10
+    :depth(0) {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+    }
+  }
+
+  .samethread * {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+  }
+
+  .write_lock * {
+      LineStyle 4
+      LineThickness 2.5
+      LineColor #117733
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** @ResourceLock("A")\n@ResourceLock("B")\n@ResourceLock("S")\nSpecA <<write_lock>>
+*** testA1 <<samethread>>
+*** testA2 <<samethread>>
+@endwbs
+```
+
+
+### Isolated Execution
+
+Sometimes, you want to modify and test something that affects every other feature, you could put a `READ` `@ResourceLock` on *every* feature, but that is impractical.
+The `@Isolated` extension enforces, that only this feature runs without any other features running at the same time.
+You can think of this as an implicit global lock.
+
+
+As with other locks, the features in an `@Isolated` specification will run in `SAME_THREAD` mode.
+`@Isolated` can only be applied at the specification level so if you have a large specification and only need it for a few features,
+you might want to consider splitting the spec into `@Isolated` and non isolated.
+
+
+**`@Isolated` execution**
+
+```plantuml
+@startwbs
+<style>
+wbsDiagram {
+  node {
+    BackgroundColor #88CCEE
+    RoundCorner 10
+    :depth(0) {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+    }
+  }
+
+  .isolated * {
+      BackgroundColor #CC6677
+      RoundCorner 0
+      LineStyle 8
+      LineThickness 2.5
+      LineColor #117733
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** @Isolated\nSpecA  <<isolated>>
+*** testA1
+*** testA2
+** SpecB
+*** testB1
+*** testB2
+**** testB2[1]
+**** testB2[2]
+@endwbs
+```
+
+
+## Parallel Thread Pool
+
+With parallel execution enabled, specifications and features can execute concurrently.
+You can control the size of the thread pool that executes the features.
+Spock uses `Runtime.getRuntime().availableProcessors()` to determine the available processors.
+
+
+- `dynamic(BigDecimal factor)` - Computes the desired parallelism based on the number of available processors multiplied by the `factor` and rounded down to the nearest integer.
+For example a factor of `0.5` will use half your processors.
+- `dynamicWithReservedProcessors(BigDecimal factor, int reservedProcessors)` - Same as `dynamic` but ensures that the given amount of `reservedProcessors` is not used.
+The `reservedProcessors` are counted against the available cores not the result of the factor.
+- `fixed(int parallelism)` - Uses the given amount of threads.
+- `custom(int parallelism, int minimumRunnable, int maxPoolSize, int corePoolSize, int keepAliveSeconds)` - Allows complete control over the threadpool.
+However, it should only be used when the other options are insufficient, and you need that extra bit of control.
+Check the Javadoc of `spock.config.ParallelConfiguration` for a detailed description the parameters.
+
+
+By default, Spock uses `dynamicWithReservedProcessors(1.0, 2)` that is all your logical processors minus `2`.
+
+
+If the calculated parallelism is less than `2`, then Spock will execute single threaded, basically the same as `runner.parallel.enabled=false`.
+
+
+**Example SpockConfig.groovy with `fixed` setting**
+
+```groovy
+runner {
+  parallel {
+    enabled true
+    fixed(4)
+  }
+}
+```
+

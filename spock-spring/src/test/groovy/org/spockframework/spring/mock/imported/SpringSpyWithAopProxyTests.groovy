@@ -20,7 +20,8 @@ import org.spockframework.spring.*
 import org.springframework.core.SpringVersion
 import spock.lang.*
 
-import javax.inject.Inject
+import javax.inject.Inject as JavaxInject
+import jakarta.inject.Inject
 
 import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.*
@@ -44,6 +45,7 @@ class SpringSpyWithAopProxyTests extends Specification {
   @UnwrapAopProxy
   private DateService spyService
 
+  @JavaxInject
   @Inject
   private DateService dateService
 

@@ -5,13 +5,13 @@ pluginManagement {
   }
 
   plugins {
-    id "com.gradle.develocity" version "4.3.2"
-    id "com.gradle.common-custom-user-data-gradle-plugin" version "2.4.0"
+    id "com.gradle.develocity" version "4.4.1"
+    id "com.gradle.common-custom-user-data-gradle-plugin" version "2.6.0"
     id "org.asciidoctor.jvm.convert" version "4.0.5"
-    id "net.nemerosa.versioning" version "3.1.0"
+    id "net.nemerosa.versioning" version "4.0.1"
     id "io.github.gradle-nexus.publish-plugin" version "2.0.0"
-    id "com.github.ben-manes.versions" version "0.53.0"
-    id "biz.aQute.bnd.builder" version "7.2.1"
+    id "com.github.ben-manes.versions" version "0.54.0"
+    id "biz.aQute.bnd.builder" version "7.2.3"
     id "io.spring.nohttp" version "0.0.11"
   }
 }
@@ -104,6 +104,7 @@ if (variant == 2.5) {
   // require Java 17 which isn't supported by Groovy 2.5
   include "spock-spring:boot3-test"
   include "spock-spring:spring6-test"
+  include "spock-spring:spring7-test"
 }
 
 // https://issues.apache.org/jira/projects/TAP5/issues/TAP5-2588

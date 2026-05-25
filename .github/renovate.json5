@@ -43,6 +43,24 @@
     {
       matchPackageNames: ["/^org.spockframework:spock-/"],
       versionCompatibility: "^(?<version>.*)-(?<compatibility>groovy-.*)$"
+    },
+    // GitHub Actions are referenced from both the generated workflow YAML
+    // (github-actions manager) and the .main.kts sources (kotlin-script
+    // manager via typesafegithub workflows-kt). The two managers see them as
+    // separate packages, so updates land in two PRs that each fail because
+    // only one half is bumped. Normalize both to a shared group key derived
+    // from the action's `owner/name[/sub]` slug:
+    //   kotlin-script: `owner:name[__sub]___major` -> strip `___major`,
+    //                  replace `__` with `/`, replace `:` with `/`
+    //   github-actions: already `owner/name[/sub]`
+    {
+      matchManagers: ["kotlin-script"],
+      matchDepNames: ["/___major$/"],
+      groupName: "gh-action {{ replace ':' '/' (replace '__' '/' (replace '___major' '' depName)) }}"
+    },
+    {
+      matchManagers: ["github-actions"],
+      groupName: "gh-action {{depName}}"
     }
   ]
 }

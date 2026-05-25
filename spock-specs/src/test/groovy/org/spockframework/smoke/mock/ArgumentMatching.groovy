@@ -326,6 +326,19 @@ class ArgumentMatching extends Specification {
     1 * bar.foo(qux)
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/2352")
+  def "expect non-matching generic Comparables to be unequal"() {
+    given: "two stubs of the same comparable class"
+    // Mocks have the same issue but one had to be picked here
+    GenericComparable baz = Stub()
+    GenericComparable qux = Stub()
+
+    when: "they are checked for equality"
+    def result = baz != qux
+    then: "they are not equal"
+    result
+  }
+
   interface Overloads {
     void m()
     void m(String one)

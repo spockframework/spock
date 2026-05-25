@@ -125,6 +125,7 @@ public interface IMockMaker {
    * @param object a potential mock object
    * @return information about the mock object or {@code null}
    */
+  @Nullable
   default IMockObject asMockOrNull(Object object) {
     return null;
   }

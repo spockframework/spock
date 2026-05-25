@@ -21,7 +21,6 @@ import org.spockframework.util.VersionNumber
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 
-import javax.inject.Named
 import java.lang.annotation.*
 
 import org.springframework.beans.factory.annotation.*

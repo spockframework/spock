@@ -19,6 +19,7 @@ package org.spockframework.mock.runtime.mockito;
 import org.spockframework.mock.CannotCreateMockException;
 import org.spockframework.mock.IMockObject;
 import org.spockframework.mock.runtime.IMockMaker;
+import org.spockframework.util.Nullable;
 import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.ThreadSafe;
 import spock.mock.MockMakerId;
@@ -69,8 +70,9 @@ public class MockitoMockMaker implements IMockMaker {
   }
 
   @Override
-  public IMockObject asMockOrNull(Object object) {
-    if (impl == null) {
+  @Nullable
+  public IMockObject asMockOrNull(@Nullable Object object) {
+    if (impl == null || object == null) {
       return null;
     }
     return impl.asMockOrNull(object);

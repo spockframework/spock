@@ -38,6 +38,14 @@ $ ./release.main.kts
 $ path/to/kotlin release.main.kts
 ----
 
+* If Kotlin is installed somewhere you can call the compiler with the `*.main.kts` script
+  as argument:
++
+[source,bash]
+----
+$ path/to/kotlinc -script release.main.kts
+----
+
 * From the IDE you can create a run configuration that executes the `*.main.kts` script.
 
 * There is a Gradle task `preprocessWorkflows` that generates all YAML files from the
@@ -54,7 +62,7 @@ $ ./gradlew preprocessWorkflows
 
 == Caveats
 
-There are currently three known caveats with the approach we follow.
+There are currently two known caveats with the approach we follow.
 
 === https://youtrack.jetbrains.com/issue/KTIJ-16532
 
@@ -64,18 +72,6 @@ even though the source JAR would be available. Also the quick documentation is m
 This can easily by mitigated by attaching the library to the normal project
 dependencies while having the need to navigate the source files or while editing them,
 which makes them properly viewable and documentation displayable in the editor.
-
-=== https://youtrack.jetbrains.com/issue/KTIJ-14580
-
-We use `@file:Import` to reduce code duplication by having common code in a common file.
-Unfortunately, this triggers a Kotlin IntelliJ plugin bug where the imported file cannot
-be loaded properly and so the things supplied by it like dependencies or common functions
-are not available. This makes most of the workflow `*.main.kts` files red as hell in the
-IDE currently.
-
-To reduce risk for eye-cancer while reading the `*.main.kts` scripts or to be able to
-sanely edit them, temporarily add the `@file:DependsOn` from the imported file to the
-importing file and wait a second, then remove the line again once you are done.
 
 === https://youtrack.jetbrains.com/issue/KT-42101
 

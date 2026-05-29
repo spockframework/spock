@@ -61,10 +61,14 @@ class SpockBasePlugin implements Plugin<Project> {
   private static void compileTasks(Project project) {
     project.with {
       def javaToolchains = extensions.getByType(JavaToolchainService)
+      def variant = rootProject.extensions.getByType(ExtraPropertiesExtension).get("variant") as BigDecimal
+      // Groovy 6+ is compiled for Java 17 bytecode, so the Java compiler used to read the Groovy
+      // classes during `compileJava` must be at least Java 17. Older variants keep the Java 11 compiler.
+      def compilerVersion = variant >= 6.0g ? JavaLanguageVersion.of(17) : COMPILER_VERSION
       tasks.withType(JavaCompile).configureEach { comp ->
         if (comp.name == JavaPlugin.COMPILE_JAVA_TASK_NAME) {
           comp.javaCompiler.set(javaToolchains.compilerFor {
-            it.languageVersion.set(COMPILER_VERSION)
+            it.languageVersion.set(compilerVersion)
           })
           comp.options.release.set(COMPILER_RELEASE_VERSION)
         }

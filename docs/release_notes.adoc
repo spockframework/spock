@@ -9,6 +9,7 @@ include::include.adoc[]
 === Enhancements
 
 * Improve `TooManyInvocationsError` now reports unsatisfied interactions with argument mismatch details, making it easier to diagnose why invocations didn't match expected interactions spockPull:2315[]
+* Add an early _canary_ `groovy-6.0` variant built against `org.apache.groovy:groovy:6.0.0-alpha-1` (requires Java 17+)
 
 === Misc
 

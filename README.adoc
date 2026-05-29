@@ -30,7 +30,9 @@ https://groovyconsole.dev/[Groovy Web Console].
 {spock-release-version}-groovy-3.0, {spock-release-version}-groovy-4.0, {spock-release-version}-groovy-5.0), released on {spock-release-date}.
 * The current development version is *{spock-snapshot-version}-SNAPSHOT*
 ({spock-snapshot-version}-groovy-2.5-SNAPSHOT, {spock-snapshot-version}-groovy-3.0-SNAPSHOT,
-{spock-snapshot-version}-groovy-4.0-SNAPSHOT), {spock-snapshot-version}-groovy-5.0-SNAPSHOT).
+{spock-snapshot-version}-groovy-4.0-SNAPSHOT, {spock-snapshot-version}-groovy-5.0-SNAPSHOT,
+{spock-snapshot-version}-groovy-6.0-SNAPSHOT).
+* The Groovy 6.0 variant is an early _canary_ build against `org.apache.groovy:groovy:6.0.0-alpha-1` and requires Java 17+.
 
 *NOTE:* Spock 2.x is based on the JUnit Platform and requires Java
 8+/groovy-2.5+ (Groovy 3.0 or newer is recommended, especially in projects using
@@ -116,13 +118,15 @@ variable if they are not in standard places recognized by Gradle, e.g. `JDK11=/p
 Spock is supported for Java version 8+.
 
 Spock is supported for Groovy versions 2.5, 3.0, 4.0, and 5.0.
+Groovy 6.0 is additionally available as an early _canary_ variant (built against `6.0.0-alpha-1`).
 
 The tests are testing Spock with the specific versions (variants) of
 Groovy and Java. Default Groovy version is 2.5.
 
 The Groovy 3.0 and 4.0 variant should pass on all supported JDK versions,
 Groovy 2.5 does not work with Java 17+:
-Groovy 5.0 and newer does not work with Java <11:
+Groovy 5.0 does not work with Java <11:
+Groovy 6.0 does not work with Java <17:
 
 ....
 ./gradlew build

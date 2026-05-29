@@ -122,12 +122,17 @@ workflow(
             "strategy" to Strategy(
                 matrix = Matrix(
                     operatingSystems = listOf("ubuntu-latest"),
-                    variants = Matrix.axes.variants.filter { it != "5.0" },
+                    variants = Matrix.axes.variants.filter { it != "5.0" && it != "6.0" },
                     javaVersions = Matrix.axes.javaVersions.take(1),
                     includes = listOf(
                         Matrix.Element(
                             variant = "5.0",
                             javaVersion = "11",
+                            operatingSystem = "ubuntu-latest"
+                        ),
+                        Matrix.Element(
+                            variant = "6.0",
+                            javaVersion = "17",
                             operatingSystem = "ubuntu-latest"
                         )
                     )

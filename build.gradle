@@ -53,6 +53,17 @@ ext {
       }
       javaVersion = 11
     }
+  } else if (variant == 6.0) {
+    groovyGroup = "org.apache.groovy"
+    groovyVersion = libs.versions.groovy6.get()
+    minGroovyVersion = "6.0.0"
+    maxGroovyVersion = "6.9.99"
+    if (javaVersion < 17) {
+      if (System.getProperty("javaVersion") != null) {
+        throw new InvalidUserDataException("Groovy $variant is not compatible with Java $javaVersion")
+      }
+      javaVersion = 17
+    }
   } else {
     throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")
   }

@@ -141,7 +141,8 @@ val Matrix.Companion.full
         javaVersions = axes.javaVersions + axes.additionalJavaTestVersions,
         exclude = {
             ((variant == "2.5") && (javaVersion!!.toInt() >= 17)) ||
-                ((variant == "5.0") && (javaVersion!!.toInt() < 11))
+                ((variant == "5.0") && (javaVersion!!.toInt() < 11)) ||
+                ((variant == "6.0") && (javaVersion!!.toInt() < 17))
         },
         includes = listOf("windows-latest", "macos-latest")
             .map { Matrix.Element(operatingSystem = it) }
@@ -149,7 +150,11 @@ val Matrix.Companion.full
                 axes.variants.map {
                     element.copy(
                         variant = it,
-                        javaVersion = if (it == "5.0") "11" else axes.javaVersions.first()
+                        javaVersion = when (it) {
+                            "5.0" -> "11"
+                            "6.0" -> "17"
+                            else -> axes.javaVersions.first()
+                        }
                     )
                 }
             }

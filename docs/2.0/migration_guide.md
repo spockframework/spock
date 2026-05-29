@@ -1,0 +1,301 @@
+# Migration Guide
+
+This page explains incompatible changes between successive versions and provides suggestions on how to deal with them.
+
+
+## 2.0
+
+> [!NOTE]
+> This section only touches on the breaking changes, see the [Release Notes](release_nodes.md#_release_notes) for a full list of changes and new features.
+
+
+Spock 2.0 aims to be as compatible as possible for existing code bases, while making the necessary changes to stay a modern test framework.
+
+
+The biggest change is the switch from being a JUnit 4 Runner to a full-fledged JUnit Platform `TestEngine`.
+That means, that you’ll have to configure your build to use the JUnit Platform to execute tests.
+
+
+See the [JUnit Platform Guide](https://junit.org/junit5/docs/current/user-guide/#running-tests-build) on how to configure your build to use the JUnit Platform.
+
+
+### JUnit 4 support
+
+Support for JUnit 4 has been removed from `spock-core`, you can use the new `spock-junit4` module if you still need JUnit 4 features, such as `@Rule`.
+
+
+You can replace the `TemporaryFolder` rule with the new built-in `@TempDir` [extension](extensions.md#_temp_dir).
+
+
+Spock 2.0 also removed the `Sputnik` runner, so if you have used `PowerMockRunnerDelegate` or other things that relied on the runner, you’ll have to find other solutions.
+Take a look at [Third-Party-Extensions](https://github.com/spockframework/spock/wiki/Third-Party-Extensions) for solutions.
+
+
+### Reduce spock-core direct groovy dependencies
+
+`spock-core` now only depends on `groovy.jar`. All other Groovy dependencies have been removed,
+this should make dependency management a bit easier.
+If you relied on other groovy dependencies transitively, you will need to add them directly.
+
+
+### Unroll changes
+
+- Data driven features are now unrolled by default. `@Unroll` can still be used to specify a custom naming pattern.
+A simple `@Unroll` without argument is not needed anymore except when undoing a spec-level `@Rollup` annotation
+or if unrolling by default is disabled, so any simple `@Unroll` annotations can be removed from existing code. You
+can verify this by looking at the test count which should not have been changed after you removed the simple
+`@Unroll` annotations.
+- `@Rollup` can now be used on feature and spec level to explicitly roll up any feature where the reporting of single
+iterations is not wanted.
+- The setting `unroll { unrollByDefault false }` in the Spock configuration file can be set to roll up all
+features by default if not overwritten by explicit `@Unroll` annotations and thus reinstate the pre
+Spock 2.0 behaviour.
+
+
+- The default unroll pattern changed from the rather generic `#featureName[#iterationIndex]` to a more fancy
+version that lists all data variables and their values additionally to the feature name and iteration index.
+If you prefer to retain the old behaviour, you can set the setting
+`unroll { defaultPattern '#featureName[#iterationIndex]' }` in the Spock configuration file
+and you will get the same result as previously.
+
+
+### Assert unroll expressions by default
+
+The system property `spock.assertUnrollExpressions` is not supported anymore.
+Instead the new default behavior is equal to having this property set to `true`.
+This means tests that were successful but had an `#Error:` name rendering will now fail.
+It can be set back to the old pre Spock 2.0 behaviour by setting
+`unroll { validateExpressions false }` in the Spock configuration file.
+
+
+### Renamed iterationCount token
+
+The token `#iterationCount` in unroll patterns was renamed to `#iterationIndex`.
+If you use it somewhere, you have to manually change it to the new name
+or the test will fail unless you disabled expression asserting,
+then you will get an `#Error:iterationCount` rendering instead.
+
+
+### New meaning of `>> _`
+
+The meaning of `>> _` has changed from "use the default response" to "return a stubbed value" ([Docs](interaction_based_testing.md#_returning_a_default_response)).
+The original behavior was only ever documented in the Javadocs and was basically the same to just omitting it.
+The only use-case was chained responses `>> "a" >> _ >> "b"`,
+but even here it is clearer to just use `null` or `{ callRealMethod() }` explicitly.
+With the new behavior, you can have a `Mock` or `Spy` return the same value as a `Stub` would.
+
+
+### No access to data variables in data pipes anymore
+
+It is not possible anymore to access any data variable from a data pipe or anything else but a previous data table
+column in a data table cell. This access was partly possible, but could easily prematurely drain iterators, access
+data providers sooner as expected, behaved differently depending on the concrete code construct used. All these
+points are more confusing than necessary. If you want to calculate a data variable from others, you can always use
+a derived data variable that has full access to all previous data variables and can also call helper methods for
+more complex logic.
+
+
+If you switch your tests that are fully green to use Spock 2.0 and get any `MissingPropertyException`s, you are probably hitting this change, you should then change to a derived data variable there instead of a data pipe.
+
+
+If you for example had:
+
+
+```groovy
+where:
+a << [1, 2]
+b << a
+```
+
+
+what you want instead is:
+
+
+```groovy
+where:
+a << [1, 2]
+b = a
+```
+
+
+### Ant support removed
+
+`SpecClassFileSelector` was removed, which was the only class that required `ant`.
+If you are still using spock with `ant`, then you can just copy the class from the spock source code into your build.
+
+
+### Other Breaking changes
+
+- Add new `displayName` via `INameable` for `SpecInfo`, `FeatureInfo`, and `IterationInfo`.
+This field can be set via extensions to change the reported name.
+The existing iteration `NameProvider` now also sets the `displayName` instead of the `name`.
+Modifying the `name` instead of `displayName` is now considered `deprecated` for extensions.
+[#1236](https://github.com/spockframework/spock/issues/1236)
+- Spock now requires at least Java 8
+- `@Retry.Mode.FEATURE` didn’t work anymore and has been removed
+- `spock-report` module has been removed, it was never officially released
+:leveloffset: -1
+- The `ReportLogExtension` vestiges were removed. As this extension was mostly used for an unreleased Spock module, this won’t affect many users.
+If you are using a [Spock Configuration File](extensions.md#spock-configuration-file) with a `report` section,
+then you must delete everything from this section except for `issueNamePrefix` and `issueUrlPrefix`.
+These two properties are still supported and used by the `@Issue` extension.
+
+
+## 1.0
+
+Specs, Spec base classes and third-party extensions may have be recompiled in order to work with Spock 1.0.
+
+
+JRE 1.5 and Groovy versions below 2.0 are no longer supported.
+
+
+Make sure to pick the right binaries for your Groovy version of choice: `groovy-2.0` for Groovy 2.0/2.1/2.2,
+`groovy-2.3` for Groovy 2.3, and `groovy-2.4` for Groovy 2.4 and higher. Spock won’t let you run with a "wrong" version.
+
+
+No known source incompatible changes.
+
+
+## 0.7
+
+Client code must be recompiled in order to work with Spock 0.7. This includes third-party Spock extensions and base classes.
+
+
+No known source incompatible changes.
+
+
+## 0.6
+
+### Class initialization order
+
+> [!NOTE]
+> This only affects cases where one specification class inherits from another one.
+
+
+Given these specifications:
+
+
+```groovy
+class Base extends Specification {
+    def base1 = "base1"
+    def base2
+
+    def setup() { base2 = "base2" }
+}
+
+class Derived extends Base {
+    def derived1 = "derived1"
+    def derived2
+
+    def setup() { derived2 = "derived2" }
+}
+```
+
+
+In 0.5, above assignments happened in the order `base1`, `base2`, `derived1`, `derived2`. In other words, field
+initializers were executed right before the setup method in the same class. In 0.6, assignments happen in the order
+`base1`, `derived1`, `base2`, `derived2`. This is a more conventional order that solves a few problems that users
+faced with the previous behavior, and also allows us to support JUnit’s new `TestRule`. As a result of this change,
+the following will no longer work:
+
+
+```groovy
+class Base extends Specification {
+    def base
+
+    def setup() { base = "base" }
+}
+
+class Derived extends Base {
+    def derived = base + "derived" // base is not yet set
+}
+```
+
+
+To overcome this problem, you can either use a field initializer for `base`, or move the assignment of `derived` into
+a setup method.
+
+
+### `@Unroll` naming pattern syntax
+
+> [!NOTE]
+> This is not a change from 0.5, but a change compared to 0.6-SNAPSHOT.
+
+
+> [!NOTE]
+> This only affects the Groovy 1.8 and 2.0 variants.
+
+
+In 0.5, the naming pattern was string based:
+
+
+```groovy
+@Unroll("maximum of #a and #b is #c")
+def "maximum of two numbers"() {
+    expect:
+    Math.max(a, b) == c
+
+    where:
+    a | b | c
+    1 | 2 | 2
+}
+```
+
+
+In 0.6-SNAPSHOT, this was changed to a closure returning a `GString`:
+
+
+```groovy
+@Unroll({"maximum of $a and $b is $c"})
+def "maximum of two numbers"() { ... }
+```
+
+
+For various reasons, the new syntax didn’t work out as we had hoped, and eventually we decided to go back to the string
+based syntax. See [Improved `@Unroll`](release_notes.md#improved-unroll-0.6) for recent improvements to that syntax.
+
+
+### Hamcrest matcher syntax
+
+> [!NOTE]
+> This only affects users moving from the Groovy 1.7 to the 1.8 or 2.0 variant.
+
+
+Spock offers a very neat syntax for using [Hamcrest](http://code.google.com/p/hamcrest/) matchers:
+
+
+```groovy
+import static spock.util.matcher.HamcrestMatchers.closeTo
+
+...
+
+expect:
+answer closeTo(42, 0.001)
+```
+
+
+Due to changes made between Groovy 1.7 and 1.8, this syntax no longer works in as many cases as it did before.
+For example, the following will no longer work:
+
+
+```groovy
+expect:
+object.getAnswer() closeTo(42, 0.001)
+```
+
+
+To avoid such problems, use `HamcrestSupport.that`:
+
+
+```groovy
+import static spock.util.matcher.HamcrestSupport.that
+
+...
+
+expect:
+that answer, closeTo(42, 0.001)
+```
+
+
+A future version of Spock will likely remove the former syntax and strengthen the latter one.
+

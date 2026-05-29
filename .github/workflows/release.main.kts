@@ -188,10 +188,6 @@ workflow(
             )
         )
         run(
-            name = "Create Temporary Branch",
-            command = "git checkout -b \"docs-\$GITHUB_SHA\""
-        )
-        run(
             name = "Install GraphViz",
             command = "sudo apt update && sudo apt install --yes graphviz"
         )

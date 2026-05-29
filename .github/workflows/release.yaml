@@ -170,12 +170,9 @@ jobs:
       with:
         additional-java-version: '${{ matrix.java }}'
     - id: 'step-2'
-      name: 'Create Temporary Branch'
-      run: 'git checkout -b "docs-$GITHUB_SHA"'
-    - id: 'step-3'
       name: 'Install GraphViz'
       run: 'sudo apt update && sudo apt install --yes graphviz'
-    - id: 'step-4'
+    - id: 'step-3'
       name: 'Publish Docs'
       env:
         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'

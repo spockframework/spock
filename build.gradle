@@ -265,41 +265,96 @@ if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParam
   }
 }
 
-tasks.register("publishJavadoc", Exec) {
+// Publishing to gh-pages uses a detached worktree under build/ (gitignored) instead of
+// switching the main checkout. This keeps the main checkout on the release commit, needs no
+// throwaway branch to switch back to, and writes nothing to the local .git/config (the bot
+// commit identity is passed per command via `git -c`).
+
+tasks.register("prepareJavadocWorktree", Exec) {
   dependsOn "javadoc"
   commandLine "sh", "-c",
     """
-  git config user.email "dev@forum.spockframework.org"
-  git config user.name "Spock Framework Robot"
+  set -e
+  git worktree remove --force build/gh-pages-javadoc 2>/dev/null || true
+  git worktree prune
   git fetch origin +gh-pages:gh-pages
-  git switch gh-pages
-  rm -rf javadoc/$variantLessVersion
-  mkdir -p javadoc/$variantLessVersion
-  cp -r build/javadoc/$variantLessVersion javadoc/
-  git add javadoc
-  git commit -qm "Publish javadoc/$variantLessVersion"
-  git push "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" gh-pages 2>&1 | sed "s/\$GITHUB_TOKEN/xxx/g"
-  git switch -
+  git worktree add --force build/gh-pages-javadoc gh-pages
+  rm -rf build/gh-pages-javadoc/javadoc/$variantLessVersion
+  mkdir -p build/gh-pages-javadoc/javadoc/$variantLessVersion
+  cp -r build/javadoc/$variantLessVersion build/gh-pages-javadoc/javadoc/
 """
 }
-tasks.register("publishDocs", Exec) {
+
+tasks.register("commitJavadoc", Exec) {
+  dependsOn "prepareJavadocWorktree"
+  // bash + pipefail so a failed push (piped through sed for token redaction) fails the task;
+  // with sh's default the pipeline would report sed's exit code (always 0) and mask the failure.
+  commandLine "bash", "-c",
+    """
+  set -eo pipefail
+  git -C build/gh-pages-javadoc add javadoc
+  git -C build/gh-pages-javadoc -c user.name="Spock Framework Robot" -c user.email="dev@forum.spockframework.org" commit -qm "Publish javadoc/$variantLessVersion"
+  git -C build/gh-pages-javadoc push "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" gh-pages 2>&1 | sed "s/\$GITHUB_TOKEN/xxx/g"
+  git worktree remove --force build/gh-pages-javadoc
+"""
+}
+
+tasks.register("publishJavadoc") {
+  dependsOn "commitJavadoc"
+}
+
+tasks.register("prepareDocsWorktree", Exec) {
   dependsOn "asciidoctor", "asciidoctorMarkdown"
+  // when a release publishes both (ghActionsDocs), fetch gh-pages only after the javadoc push
+  // has landed, so the docs push fast-forwards instead of being rejected as non-fast-forward
+  mustRunAfter "commitJavadoc"
   commandLine "sh", "-c",
     """
-  git config user.email "dev@forum.spockframework.org"
-  git config user.name "Spock Framework Robot"
+  set -e
+  git worktree remove --force build/gh-pages 2>/dev/null || true
+  git worktree prune
   git fetch origin +gh-pages:gh-pages
-  git switch gh-pages
-  rm -rf docs/$variantLessVersion
-  mkdir -p docs/$variantLessVersion
-  cp -r build/docs/asciidoc/* docs/$variantLessVersion
-  cp -r build/docs/asciidocMarkdown/* docs/$variantLessVersion
-  git add docs
-  git commit -qm "Publish docs/$variantLessVersion"
-  git push "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" gh-pages 2>&1 | sed "s/\$GITHUB_TOKEN/xxx/g"
-  git switch -
+  git worktree add --force build/gh-pages gh-pages
+  rm -rf build/gh-pages/docs/$variantLessVersion
+  mkdir -p build/gh-pages/docs/$variantLessVersion
+  cp -r build/docs/asciidoc/* build/gh-pages/docs/$variantLessVersion
+  cp -r build/docs/asciidocMarkdown/* build/gh-pages/docs/$variantLessVersion
 """
 }
+
+tasks.register("generateLlmsTxt", org.spockframework.gradle.GenerateLlmsTxt) {
+  dependsOn "prepareDocsWorktree"
+  docsDir = file("build/gh-pages/docs")
+  baseUrl = "https://spockframework.org/spock/docs/"
+  outputFile = file("build/gh-pages/docs/llms.txt")
+  // reads a tree materialised by prepareDocsWorktree in the same build
+  outputs.upToDateWhen { false }
+}
+
+tasks.register("generateDocsRedirects", org.spockframework.gradle.GenerateDocsRedirects) {
+  dependsOn "prepareDocsWorktree"
+  docsDir = file("build/gh-pages/docs")
+  outputs.upToDateWhen { false }
+}
+
+tasks.register("commitDocs", Exec) {
+  dependsOn "generateLlmsTxt", "generateDocsRedirects"
+  // bash + pipefail so a failed push (piped through sed for token redaction) fails the task;
+  // with sh's default the pipeline would report sed's exit code (always 0) and mask the failure.
+  commandLine "bash", "-c",
+    """
+  set -eo pipefail
+  git -C build/gh-pages add .
+  git -C build/gh-pages -c user.name="Spock Framework Robot" -c user.email="dev@forum.spockframework.org" commit -qm "Publish docs/$variantLessVersion"
+  git -C build/gh-pages push "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" gh-pages 2>&1 | sed "s/\$GITHUB_TOKEN/xxx/g"
+  git worktree remove --force build/gh-pages
+"""
+}
+
+tasks.register("publishDocs") {
+  dependsOn "commitDocs"
+}
+
 tasks.register("tagRelease", Exec) {
   commandLine "sh", "-c",
     """

@@ -84,7 +84,7 @@ class SpockBasePluginSpec extends Specification {
     testTask.reports.html.outputLocation.get().asFile == project.file("build/reports/tests/test/Test-4.0")
 
     and:
-    testTask.testFramework.getClass() == JUnitPlatformTestFramework
+    testTask.testFramework instanceof JUnitPlatformTestFramework
   }
 
   private Project createProject() {

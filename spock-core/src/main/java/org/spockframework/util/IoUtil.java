@@ -150,6 +150,7 @@ public class IoUtil {
 
     if (fromSize != toSize)
       throw new IOException(String.format(
+        Locale.ROOT,
         "Error copying file %s to %s; source file size is %d, but target file size is %d",
         source, target, fromSize, toSize));
   }

@@ -17,6 +17,7 @@ package org.spockframework.util;
 
 import org.jetbrains.annotations.Contract;
 
+import java.util.Locale;
 import java.util.function.Supplier;
 
 /**
@@ -33,7 +34,7 @@ public abstract class Assert {
 
   @Contract("null, _, _ -> fail")
   public static <T> T notNull(T obj, String msg, Object... values) {
-    if (obj == null) throw new InternalSpockError(String.format(msg, values));
+    if (obj == null) throw new InternalSpockError(String.format(Locale.ROOT, msg, values));
     return obj;
   }
 
@@ -44,7 +45,7 @@ public abstract class Assert {
 
   @Contract("false, _, _ -> fail")
   public static void that(boolean condition, String msg, Object... values) {
-    if (!condition) throw new InternalSpockError(String.format(msg, values));
+    if (!condition) throw new InternalSpockError(String.format(Locale.ROOT, msg, values));
   }
 
   public static void that(boolean condition, Supplier<String> msgSupplier) {

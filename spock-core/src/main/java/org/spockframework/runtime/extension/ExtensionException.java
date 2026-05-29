@@ -18,6 +18,8 @@ package org.spockframework.runtime.extension;
 
 import org.spockframework.runtime.SpockException;
 
+import java.util.Locale;
+
 public class ExtensionException extends SpockException {
   private String message;
 
@@ -31,7 +33,7 @@ public class ExtensionException extends SpockException {
   }
 
   public ExtensionException withArgs(Object... args) {
-    message = String.format(message, args);
+    message = String.format(Locale.ROOT, message, args);
     return this;
   }
 

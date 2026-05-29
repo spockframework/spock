@@ -31,14 +31,14 @@ public class FailedSetEqualityComparisonRenderer implements ExpressionComparison
     int differences = missingSize + extraSize;
 
     if (editDistance < 11)
-      return String.format("false%n%d difference%s (%d%% similarity, %d missing, %d extra)%nmissing: %s%nextra: %s",
+      return String.format(Locale.ROOT, "false%n%d difference%s (%d%% similarity, %d missing, %d extra)%nmissing: %s%nextra: %s",
         differences,
         differences == 1 ? "" : "s",
         similarityInPercent,
         missingSize, extraSize,
         missing, extra);
 
-    return String.format("false%n%d differences (%d%% similarity, %d missing, %d extra)%nmissing/extra: too many to render",
+    return String.format(Locale.ROOT, "false%n%d differences (%d%% similarity, %d missing, %d extra)%nmissing/extra: too many to render",
       differences,
       similarityInPercent,
       missingSize, extraSize);

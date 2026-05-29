@@ -44,11 +44,11 @@ class SpockDefinition extends FieldDefinition implements MockDefinition {
       "SpringBean annotation is required for this field: '%s.%s:%d' ",
       fieldInfo.getParent().getName(), fieldInfo.getName(), fieldInfo.getLine());
     if (!fieldInfo.hasInitializer()) {
-      throw new SpringExtensionException(String.format("Field '%s.%s:%d' needs to have an initializer, e.g. List l = Mock()",
+      throw new SpringExtensionException(String.format(Locale.ROOT, "Field '%s.%s:%d' needs to have an initializer, e.g. List l = Mock()",
         fieldInfo.getParent().getName(), fieldInfo.getName(), fieldInfo.getLine()));
     }
     if (Object.class.equals(fieldInfo.getType())) {
-      throw new SpringExtensionException(String.format("Field '%s.%s:%d' must use a concrete type, not def or Object.",
+      throw new SpringExtensionException(String.format(Locale.ROOT, "Field '%s.%s:%d' must use a concrete type, not def or Object.",
         fieldInfo.getParent().getName(), fieldInfo.getName(), fieldInfo.getLine()));
     }
   }

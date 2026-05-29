@@ -179,6 +179,6 @@ public class MockInteraction implements IMockInteraction {
   }
 
   public String toString() {
-    return String.format("%s   (%d %s)", text, acceptedInvocations.size(), acceptedInvocations.size() == 1 ? "invocation" : "invocations");
+    return String.format(Locale.ROOT, "%s   (%d %s)", text, acceptedInvocations.size(), acceptedInvocations.size() == 1 ? "invocation" : "invocations");
   }
 }

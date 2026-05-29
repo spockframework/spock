@@ -14,6 +14,7 @@
 
 package org.spockframework.util;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -96,7 +97,7 @@ public final class VersionNumber implements Comparable<VersionNumber> {
   }
 
   public String toString() {
-    return String.format(versionTemplate, major, minor, micro, (qualifier == null ? "" : "-" + getQualifier()) + (isSnapshot ? "-SNAPSHOT" : ""));
+    return String.format(Locale.ROOT, versionTemplate, major, minor, micro, (qualifier == null ? "" : "-" + getQualifier()) + (isSnapshot ? "-SNAPSHOT" : ""));
   }
 
   public String toOriginalString() {

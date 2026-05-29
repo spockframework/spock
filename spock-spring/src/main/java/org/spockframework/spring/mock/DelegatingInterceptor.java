@@ -24,6 +24,7 @@ import org.spockframework.util.*;
 import spock.lang.Specification;
 
 import java.lang.reflect.*;
+import java.util.Locale;
 
 public class DelegatingInterceptor implements IProxyBasedMockInterceptor {
   private final FieldInfo fieldInfo;
@@ -41,7 +42,7 @@ public class DelegatingInterceptor implements IProxyBasedMockInterceptor {
 
     if (delegate == null) {
       if ("toString".equals(method.getName())) {
-        return String.format("Mock for '%s.%s:%d'", fieldInfo.getParent().getName(), fieldInfo.getName(), fieldInfo.getLine());
+        return String.format(Locale.ROOT, "Mock for '%s.%s:%d'", fieldInfo.getParent().getName(), fieldInfo.getName(), fieldInfo.getLine());
       } else if ("equals".equals(method.getName())){
         return fieldInfo.equals(arguments[0]);
       } else if ("hashCode".equals(method.getName())) {

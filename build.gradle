@@ -293,8 +293,12 @@ tasks.register("commitJavadoc", Exec) {
     """
   set -eo pipefail
   git -C build/gh-pages-javadoc add javadoc
-  git -C build/gh-pages-javadoc -c user.name="Spock Framework Robot" -c user.email="dev@forum.spockframework.org" commit -qm "Publish javadoc/$variantLessVersion"
-  git -C build/gh-pages-javadoc push "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" gh-pages 2>&1 | sed "s/\$GITHUB_TOKEN/xxx/g"
+  if git -C build/gh-pages-javadoc diff --cached --quiet; then
+    echo "No javadoc changes to publish for $variantLessVersion"
+  else
+    git -C build/gh-pages-javadoc -c user.name="Spock Framework Robot" -c user.email="dev@forum.spockframework.org" commit -qm "Publish javadoc/$variantLessVersion"
+    git -C build/gh-pages-javadoc push "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" gh-pages 2>&1 | sed "s/\$GITHUB_TOKEN/xxx/g"
+  fi
   git worktree remove --force build/gh-pages-javadoc
 """
 }
@@ -345,8 +349,12 @@ tasks.register("commitDocs", Exec) {
     """
   set -eo pipefail
   git -C build/gh-pages add .
-  git -C build/gh-pages -c user.name="Spock Framework Robot" -c user.email="dev@forum.spockframework.org" commit -qm "Publish docs/$variantLessVersion"
-  git -C build/gh-pages push "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" gh-pages 2>&1 | sed "s/\$GITHUB_TOKEN/xxx/g"
+  if git -C build/gh-pages diff --cached --quiet; then
+    echo "No docs changes to publish for $variantLessVersion"
+  else
+    git -C build/gh-pages -c user.name="Spock Framework Robot" -c user.email="dev@forum.spockframework.org" commit -qm "Publish docs/$variantLessVersion"
+    git -C build/gh-pages push "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" gh-pages 2>&1 | sed "s/\$GITHUB_TOKEN/xxx/g"
+  fi
   git worktree remove --force build/gh-pages
 """
 }

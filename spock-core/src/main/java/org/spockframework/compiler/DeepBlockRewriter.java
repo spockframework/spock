@@ -26,7 +26,6 @@ import org.spockframework.util.Nullable;
 
 import java.util.List;
 
-import static org.codehaus.groovy.ast.expr.MethodCallExpression.NO_ARGUMENTS;
 import static org.spockframework.compiler.condition.ImplicitConditionsUtils.checkIsValidImplicitCondition;
 import static org.spockframework.compiler.condition.ImplicitConditionsUtils.isImplicitCondition;
 
@@ -242,16 +241,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     MethodCallExpression methodCall = AstUtil.getExpression(stat, MethodCallExpression.class);
     if (methodCall == null) return;
 
-    MethodCallExpression target = referenceToCurrentClosure();
-    methodCall.setObjectExpression(target);
-  }
-
-  private MethodCallExpression referenceToCurrentClosure() {
-    return new MethodCallExpression(
-      new VariableExpression("this"),
-      new ConstantExpression("find"),
-      NO_ARGUMENTS
-    );
+    methodCall.setObjectExpression(new CurrentClosureExpression());
   }
 
   private boolean handleMockCall(MethodCallExpression expr) {

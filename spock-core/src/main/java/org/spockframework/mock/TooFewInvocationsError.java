@@ -37,7 +37,7 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
     Assert.notNull(interactions);
     Assert.that(interactions.size() > 0);
     this.interactions = interactions;
-    this.unmatchedInvocations = unmatchedInvocations;
+    this.unmatchedInvocations = new ArrayList<>(unmatchedInvocations);
   }
 
   @Override

@@ -9,7 +9,7 @@ public void $spock_feature_0_0() {
     org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 0)
     java.lang.Object nothing = null
     org.spockframework.runtime.SpockRuntime.callBlockExited(this, 0)
-    this.getSpecificationContext().getMockController().leaveScope()
+    this.getSpecificationContext().getMockController().verifyLastScope()
 }
 /*--------- end::snapshot[] ---------*/
   }

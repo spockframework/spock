@@ -208,7 +208,7 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
       "()", 
       0
     ]
-    INVOKEVIRTUAL org/spockframework/mock/runtime/MockController.leaveScope ()V
+    INVOKEVIRTUAL org/spockframework/mock/runtime/MockController.verifyLastScope ()V
     ACONST_NULL
     POP
    L18

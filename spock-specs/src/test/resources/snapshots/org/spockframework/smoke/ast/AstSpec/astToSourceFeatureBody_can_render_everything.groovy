@@ -10,7 +10,7 @@ public class apackage.ASpec extends spock.lang.Specification {
         org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 0)
         java.lang.Object nothing = null
         org.spockframework.runtime.SpockRuntime.callBlockExited(this, 0)
-        this.getSpecificationContext().getMockController().leaveScope()
+        this.getSpecificationContext().getMockController().verifyLastScope()
     }
 
 }

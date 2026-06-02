@@ -17,7 +17,7 @@ public void $spock_feature_0_0(java.lang.Object a, java.lang.Object b) {
     finally {
     }
     org.spockframework.runtime.SpockRuntime.callBlockExited(this, 0)
-    this.getSpecificationContext().getMockController().leaveScope()
+    this.getSpecificationContext().getMockController().verifyLastScope()
 }
 
 @org.spockframework.runtime.model.DataProviderMetadata(line = 3, dataVariables = ['a', 'b'])

@@ -53,6 +53,17 @@ ext {
       }
       javaVersion = 11
     }
+  } else if (variant == 6.0) {
+    groovyGroup = "org.apache.groovy"
+    groovyVersion = libs.versions.groovy6.get()
+    minGroovyVersion = "6.0.0"
+    maxGroovyVersion = "6.9.99"
+    if (javaVersion < 17) {
+      if (System.getProperty("javaVersion") != null) {
+        throw new InvalidUserDataException("Groovy $variant is not compatible with Java $javaVersion")
+      }
+      javaVersion = 17
+    }
   } else {
     throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")
   }
@@ -238,8 +249,8 @@ if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParam
   }
 
   if (originalStartParameterTaskNames == ["ghActionsPublish"]) {
-    if ((javaVersion != javaVersions.min()) && ((variant != 5.0) || (javaVersion != 11))) {
-      throw new IllegalArgumentException("ghActionsPublish can only be run on Java ${javaVersions.min()} (or 11 for variant 5.0) but was run on $javaVersion")
+    if ((javaVersion != javaVersions.min()) && ((variant != 5.0) || (javaVersion != 11)) && ((variant != 6.0) || (javaVersion != 17))) {
+      throw new IllegalArgumentException("ghActionsPublish can only be run on Java ${javaVersions.min()} (or 11 for variant 5.0, 17 for variant 6.0) but was run on $javaVersion")
     }
     /*
       We want to release only snapshots directly from master, final releases will be tagged and then published from that tag.

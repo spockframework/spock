@@ -72,4 +72,39 @@ greeting = prefix + name
     then:
     noExceptionThrown()
   }
+
+  def "where-block variable is not visible in the feature body"() {
+    when:
+    runner.runFeatureBody '''
+expect:
+sep == "/"          // `sep` is a where-block local, unbound here
+
+where:
+final sep = "/"
+x << [1, 2]
+'''
+
+    then:
+    thrown(Throwable)
+  }
+
+  def "where-block variable initializer can read a @Shared field"() {
+    when:
+    runner.runSpecBody '''
+@Shared
+String base = "abc"
+
+def feature() {
+  expect:
+  value == "abc/x"
+
+  where:
+  final sep = "/"
+  value = base + sep + "x"
+}
+'''
+
+    then:
+    noExceptionThrown()
+  }
 }

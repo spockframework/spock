@@ -814,6 +814,12 @@ public class WhereBlockRewriter {
   private void verifyDataProcessorVariable(VariableExpression varExpr) {
     Variable accessedVar = varExpr.getAccessedVariable();
 
+    if (whereBlockVariableNames.contains(varExpr.getName())) {
+      resources.getErrorReporter().error(varExpr,
+        "Data variable '%s' collides with a where-block variable of the same name", varExpr.getName());
+      return;
+    }
+
     if (accessedVar instanceof VariableExpression) { // local variable
       resources.getErrorReporter().error(varExpr, "A variable named '%s' already exists in this scope", varExpr.getName());
       return;

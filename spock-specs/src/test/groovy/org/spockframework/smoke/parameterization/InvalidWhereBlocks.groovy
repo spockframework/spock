@@ -954,4 +954,40 @@ final sep = "/"
 x << [1, 2]
     """
   }
+
+  def "data variable cannot reuse a where-block variable name"() {
+    when:
+    compiler.compileFeatureBody """
+expect:
+sep == sep
+
+where:
+final sep = "/"
+sep << ["a", "b"]
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.contains("where-block variable")
+  }
+
+  def "where-block variable initializer cannot read an instance field"() {
+    when:
+    compiler.compileSpecBody """
+String base = "abc"
+
+def feature() {
+  expect:
+  value == "abc/x"
+
+  where:
+  final sep = "/"
+  value = base + sep + "x"
+}
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.contains("Only @Shared and static fields may be accessed")
+  }
 }

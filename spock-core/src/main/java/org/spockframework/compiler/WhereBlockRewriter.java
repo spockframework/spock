@@ -1002,10 +1002,12 @@ public class WhereBlockRewriter {
       InternalIdentifiers.getFilterName(filterBlock.getParent().getAst().getName()),
       Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
       ClassHelper.VOID_TYPE,
-      dataProcessorVars
-        .stream()
-        .map(variable -> new Parameter(ClassHelper.OBJECT_TYPE, variable.getName()))
-        .toArray(Parameter[]::new),
+      concatParameters(
+        dataProcessorVars
+          .stream()
+          .map(variable -> new Parameter(ClassHelper.OBJECT_TYPE, variable.getName()))
+          .toArray(Parameter[]::new),
+        createWhereVariableParameters()),
       ClassNode.EMPTY_ARRAY,
       blockStat);
 

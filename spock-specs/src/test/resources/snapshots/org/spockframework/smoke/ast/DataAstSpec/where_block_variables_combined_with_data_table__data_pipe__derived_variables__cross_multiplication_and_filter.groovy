@@ -50,7 +50,7 @@ public static org.spockframework.runtime.model.DataVariableMultiplication[] $spo
     return new org.spockframework.runtime.model.DataVariableMultiplication[]{new org.spockframework.runtime.model.DataVariableMultiplication(new java.lang.String[]{'x', 'y', 'z'}, new org.spockframework.runtime.model.DataVariableMultiplicationFactor(new java.lang.String[]{'x', 'y'}), new org.spockframework.runtime.model.DataVariableMultiplicationFactor(new java.lang.String[]{'z'}))}
 }
 
-public void $spock_feature_0_0filter(java.lang.Object x, java.lang.Object y, java.lang.Object z, java.lang.Object label, java.lang.Object total) {
+public void $spock_feature_0_0filter(java.lang.Object x, java.lang.Object y, java.lang.Object z, java.lang.Object label, java.lang.Object total, java.lang.Object base, java.lang.Object sep) {
     org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
     try {

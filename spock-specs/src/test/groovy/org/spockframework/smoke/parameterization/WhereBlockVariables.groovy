@@ -125,4 +125,27 @@ b << [1, 2]
     then:
     noExceptionThrown()
   }
+
+  def "filter-block can reference a where-block variable"() {
+    when:
+    def result = runner.runFeatureBody '''
+expect:
+true
+
+where:
+final threshold = 2
+x << [1, 2, 3]
+
+filter:
+x >= threshold
+'''
+
+    then:
+    // only x == 2 and x == 3 survive the filter; counts include the feature container
+    result.testsAbortedCount == 0
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsStartedCount == 3
+    result.testsSucceededCount == 3
+  }
 }

@@ -248,6 +248,11 @@ public class DataIteratorFactory {
     }
 
     @Override
+    public Object[] getWhereVariableValues() {
+      return delegate.getWhereVariableValues();
+    }
+
+    @Override
     public void close() throws Exception {
       delegate.close();
     }
@@ -274,7 +279,7 @@ public class DataIteratorFactory {
 
         try {
           // do not use invokeRaw here, as that would report Assertion Error to the supervisor
-          filterMethod.invoke(context.getSharedInstance(), next);
+          filterMethod.invoke(context.getSharedInstance(), appendArgs(next, delegate.getWhereVariableValues()));
           return next;
         } catch (AssertionError ae) {
           if (logFilteredIterations) {
@@ -324,6 +329,11 @@ public class DataIteratorFactory {
     @Override
     public List<String> getDataVariableNames() {
       return dataVariableNames;
+    }
+
+    @Override
+    public Object[] getWhereVariableValues() {
+      return delegate.getWhereVariableValues();
     }
 
     @Override

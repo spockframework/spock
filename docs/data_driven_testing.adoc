@@ -442,8 +442,8 @@ Such variables:
 * must come *before* any data variable, data table or data pipe;
 * are evaluated *once per feature* and reused everywhere they are referenced in the `where:` block, so
   `final fixture = new Fixture()` is a single shared instance;
-* are visible only inside the `where:` block (data tables, data pipes and derived data variables) -- they are *not*
-  method parameters and are *not* visible in the rest of the feature method;
+* are visible only inside the `where:` block (data tables, data pipes, derived data variables and the `filter:` block)
+  -- they are *not* method parameters and are *not* visible in the rest of the feature method;
 * follow the same access rules as data providers: they may read `@Shared` and `static` fields but not plain instance
   fields.
 

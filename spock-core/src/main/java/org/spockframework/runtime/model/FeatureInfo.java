@@ -55,6 +55,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
   private MethodInfo dataProcessorMethod;
   @Nullable
   private MethodInfo dataVariableMultiplicationsMethod;
+  @Nullable
   private MethodInfo whereVariablesMethod;
   @Nullable
   private MethodInfo filterMethod;

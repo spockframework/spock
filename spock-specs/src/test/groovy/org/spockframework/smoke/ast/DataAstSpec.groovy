@@ -52,4 +52,21 @@ class DataAstSpec extends EmbeddedSpecification {
     then:
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
+
+  def "where-block variables"() {
+    given:
+    snapshotter.featureBody()
+
+    when:
+    def result = compiler.transpileFeatureBody('''
+    expect: greeting == "Hello, world"
+    where:
+    final prefix = "Hello, "
+    name << ["world"]
+    greeting = prefix + name
+  ''')
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
 }

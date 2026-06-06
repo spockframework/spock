@@ -24,4 +24,12 @@ public interface IDataIterator extends Iterator<Object[]>, AutoCloseable {
    * @return the names of the data variables in the order they are present in the array
    */
   List<String> getDataVariableNames();
+
+  /**
+   * @return the values of the where-block variables, computed once per feature, in
+   * declaration order; empty if the feature declares none
+   */
+  default Object[] getWhereVariableValues() {
+    return new Object[0];
+  }
 }

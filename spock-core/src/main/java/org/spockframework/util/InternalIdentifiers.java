@@ -47,6 +47,10 @@ public class InternalIdentifiers {
     return featureName + "prods";
   }
 
+  public static String getWhereVariablesName(String featureName) {
+    return featureName + "wherevars";
+  }
+
   public static String getFilterName(String featureName) {
     return featureName + "filter";
   }

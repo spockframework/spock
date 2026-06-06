@@ -152,6 +152,7 @@ public class WhereBlockRewriter {
     whereBlock.getAst().clear();
     handleFeatureParameters();
     createDataProcessorMethod();
+    createWhereVariablesMethod();
     createDataVariableMultiplicationsMethod();
     createFilterMethod();
   }
@@ -414,8 +415,11 @@ public class WhereBlockRewriter {
         InternalIdentifiers.getDataProviderName(whereBlock.getParent().getAst().getName(), dataProviderCount++),
         Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
         ClassHelper.OBJECT_TYPE,
-        // only add parameters when generating a provider method for a data table column
-        addDataTableParameters ? createPreviousDataTableParameters(nextDataVariableIndex) : Parameter.EMPTY_ARRAY,
+        // previous-data-table parameters (data tables only) followed by the where-block
+        // variable parameters that are passed to every provider
+        concatParameters(
+          addDataTableParameters ? createPreviousDataTableParameters(nextDataVariableIndex) : Parameter.EMPTY_ARRAY,
+          createWhereVariableParameters()),
         ClassNode.EMPTY_ARRAY,
         new BlockStatement(dataProviderStats, null));
 
@@ -897,6 +901,43 @@ public class WhereBlockRewriter {
           ListExpression::new))
       );
     return ann;
+  }
+
+  private void createWhereVariablesMethod() {
+    if (whereBlockVariables.isEmpty()) return;
+
+    instanceFieldAccessChecker.check(whereBlockVariables);
+
+    List<Statement> stats = new ArrayList<>(whereBlockVariables);
+    List<Expression> values = whereBlockVariableNames.stream()
+      .map(VariableExpression::new)
+      .collect(toList());
+    stats.add(new ReturnStatement(new ArrayExpression(ClassHelper.OBJECT_TYPE, values)));
+
+    MethodNode method = new MethodNode(
+      InternalIdentifiers.getWhereVariablesName(whereBlock.getParent().getAst().getName()),
+      Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
+      ClassHelper.OBJECT_TYPE.makeArray(),
+      Parameter.EMPTY_ARRAY,
+      ClassNode.EMPTY_ARRAY,
+      new BlockStatement(stats, null));
+
+    whereBlock.getParent().getParent().getAst().addMethod(method);
+  }
+
+  // trailing parameters appended to every provider/processor method, named after the
+  // where-block variables so existing where-block expressions resolve to them directly
+  private Parameter[] createWhereVariableParameters() {
+    return whereBlockVariableNames.stream()
+      .map(name -> new Parameter(ClassHelper.OBJECT_TYPE, name))
+      .toArray(Parameter[]::new);
+  }
+
+  private static Parameter[] concatParameters(Parameter[] a, Parameter[] b) {
+    if (b.length == 0) return a;
+    Parameter[] result = Arrays.copyOf(a, a.length + b.length);
+    System.arraycopy(b, 0, result, a.length, b.length);
+    return result;
   }
 
   private void createDataVariableMultiplicationsMethod() {

@@ -55,6 +55,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
   private MethodInfo dataProcessorMethod;
   @Nullable
   private MethodInfo dataVariableMultiplicationsMethod;
+  private MethodInfo whereVariablesMethod;
   @Nullable
   private MethodInfo filterMethod;
   private NameProvider<IterationInfo> iterationNameProvider;
@@ -274,6 +275,15 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
   }
 
   @Nullable
+  public MethodInfo getWhereVariablesMethod() {
+    return whereVariablesMethod;
+  }
+
+  public void setWhereVariablesMethod(@Nullable MethodInfo method) {
+    this.whereVariablesMethod = method;
+  }
+
+  @Nullable
   public MethodInfo getFilterMethod() {
     return filterMethod;
   }
@@ -428,6 +438,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
     for (DataProviderInfo provider : dataProviders)
       if (provider.getDataProviderMethod().hasBytecodeName(name)) return true;
     if (dataVariableMultiplicationsMethod != null && dataVariableMultiplicationsMethod.hasBytecodeName(name)) return true;
+    if (whereVariablesMethod != null && whereVariablesMethod.hasBytecodeName(name)) return true;
     if (filterMethod != null && filterMethod.hasBytecodeName(name)) return true;
     return false;
   }

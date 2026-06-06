@@ -151,6 +151,12 @@ public class SpecInfoBuilder {
         providerMethod = createMethod(providerMethodName, MethodKind.DATA_PROVIDER);
       }
 
+      String whereVariablesMethodName = InternalIdentifiers.getWhereVariablesName(method.getName());
+      MethodInfo whereVariablesMethod = createMethod(whereVariablesMethodName, MethodKind.WHERE_VARIABLES);
+      if (whereVariablesMethod != null) {
+        feature.setWhereVariablesMethod(whereVariablesMethod);
+      }
+
       if (providerCount > 1) {
         String variableMultiplicationsMethodName = InternalIdentifiers.getDataVariableMultiplicationsName(method.getName());
         MethodInfo dataVariableMultiplicationsMethod = createMethod(variableMultiplicationsMethodName, MethodKind.DATA_VARIABLE_MULTIPLICATIONS);

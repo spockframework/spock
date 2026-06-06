@@ -981,8 +981,8 @@ def feature() {
   value == "abc/x"
 
   where:
-  final sep = "/"
-  value = base + sep + "x"
+  final sep = base + "/"
+  value = sep + "x"
 }
     """
 

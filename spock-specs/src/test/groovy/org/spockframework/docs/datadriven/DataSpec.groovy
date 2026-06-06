@@ -47,6 +47,20 @@ class DataSpec extends EmbeddedSpecification {
 // end::single-column[]
   }
 
+  def "where-block variable"() {
+    expect:
+    input == expected
+
+// tag::where-block-variable[]
+    where:
+    final sep = "/"
+
+    input              | expected
+    "a${sep}b"         | "a/b"
+    "x${sep}y${sep}z"  | "x/y/z"
+// end::where-block-variable[]
+  }
+
   def "multiple tables"() {
     expect:
     a >= 0

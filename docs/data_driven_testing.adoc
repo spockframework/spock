@@ -424,6 +424,29 @@ This also includes columns in previous data tables in the same `where` block:
 include::{sourcedir}/datadriven/DataSpec.groovy[tag=previous-column-access-multi-table]
 ----
 
+== Local Variables in the where-block
+
+Sometimes you need a helper value to build your data, but you do not want it to become a data variable (and therefore a
+method parameter) or a field on the whole specification. You can declare a `final` local variable at the *start* of the
+`where:` block:
+
+[source,groovy,indent=0]
+----
+    ...
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=where-block-variable]
+----
+
+Such variables:
+
+* must be declared `final` -- a bare `x = ...` declares a <<Data Variable Assignment,derived data variable>> instead;
+* must come *before* any data variable, data table or data pipe;
+* are evaluated *once per feature* and reused everywhere they are referenced in the `where:` block, so
+  `final fixture = new Fixture()` is a single shared instance;
+* are visible only inside the `where:` block (data tables, data pipes and derived data variables) -- they are *not*
+  method parameters and are *not* visible in the rest of the feature method;
+* follow the same access rules as data providers: they may read `@Shared` and `static` fields but not plain instance
+  fields.
+
 == Multi-Variable Assignment
 
 Like with data pipes, you can also assign to multiple variables in one expression, if you have some object Groovy

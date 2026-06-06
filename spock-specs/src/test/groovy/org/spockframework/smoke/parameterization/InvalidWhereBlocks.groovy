@@ -894,4 +894,64 @@ b | _
     SpockExecutionException e = thrown()
     e.message == "Data provider for variable 'b' has more values than previous data provider(s)"
   }
+
+  def "where-block variable must be declared final, not def"() {
+    when:
+    compiler.compileFeatureBody """
+expect:
+x == 1
+
+where:
+def sep = "/"
+x << [1, 2]
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("where-block variables must be declared 'final'")
+  }
+
+  def "where-block variable must be declared before any data variable"() {
+    when:
+    compiler.compileFeatureBody """
+expect:
+x == 1
+
+where:
+x << [1, 2]
+final sep = "/"
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("where-block variables must be declared at the beginning of the where-block")
+  }
+
+  def "where-block variable does not support multiple assignment"() {
+    when:
+    compiler.compileFeatureBody """
+expect:
+x == 1
+
+where:
+def (a, b) = [1, 2]
+x << [1, 2]
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("where-block variables do not support multiple assignment")
+  }
+
+  def "an unused final where-block variable compiles"() {
+    expect:
+    compiler.compileFeatureBody """
+expect:
+x == x
+
+where:
+final sep = "/"
+x << [1, 2]
+    """
+  }
 }

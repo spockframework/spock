@@ -65,6 +65,11 @@ public class WhereBlockRewriter {
   private final List<String> multiplicationFactorDataVariables = new ArrayList<>();
   private final List<Expression> dataVariableMultiplications = new ArrayList<>();
   private int localVariableCount = 0;
+  // leading `final foo = ...` declarations of the where-block (in declaration order);
+  // evaluated once by the generated where-variables method and passed into every
+  // provider/processor method as trailing parameters named after these variables
+  private final List<Statement> whereBlockVariables = new ArrayList<>();
+  private final List<String> whereBlockVariableNames = new ArrayList<>();
 
   private WhereBlockRewriter(WhereBlock whereBlock, FilterBlock filterBlock, IRewriteResources resources, boolean defineErrorRethrower) {
     this.whereBlock = whereBlock;
@@ -81,6 +86,7 @@ public class WhereBlockRewriter {
 
   private void rewrite() {
     ListIterator<Statement> stats = whereBlock.getAst().listIterator();
+    collectWhereBlockVariables(stats);
     ConstructorCallExpression multiplier = null;
     List<String> multiplicationDataVariables = new ArrayList<>();
     while (stats.hasNext()) {
@@ -181,13 +187,46 @@ public class WhereBlockRewriter {
         multiplier, multiplicand));
   }
 
+  private void collectWhereBlockVariables(ListIterator<Statement> stats) {
+    while (stats.hasNext()) {
+      Statement stat = stats.next();
+      DeclarationExpression declExpr = AstUtil.getExpression(stat, DeclarationExpression.class);
+      if (declExpr == null) {
+        // first non-declaration statement => end of the where-block variable section
+        stats.previous();
+        return;
+      }
+      try {
+        if (declExpr.isMultipleAssignmentDeclaration()) {
+          throw whereBlockVariableNoMultipleAssignment(stat);
+        }
+        if (!isFinalLocal(declExpr)) {
+          throw whereBlockVariableMustBeFinal(stat, declExpr.getVariableExpression().getName());
+        }
+        whereBlockVariables.add(stat);
+        whereBlockVariableNames.add(declExpr.getVariableExpression().getName());
+      } catch (InvalidSpecCompileException e) {
+        resources.getErrorReporter().error(e);
+      }
+    }
+  }
+
+  private static boolean isFinalLocal(DeclarationExpression declExpr) {
+    return (declExpr.getVariableExpression().getModifiers() & Opcodes.ACC_FINAL) != 0;
+  }
+
   private void rewriteWhereStat(ListIterator<Statement> stats) throws InvalidSpecCompileException {
     Statement stat = stats.next();
 
     // binary expressions are potentially parameterizations
     BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
     if (binExpr != null) {
-      // don't allow subclasses like DeclarationExpression
+      // a DeclarationExpression here is a misplaced where-block variable
+      // (leading ones were already consumed by collectWhereBlockVariables)
+      if (binExpr instanceof DeclarationExpression) {
+        throw whereBlockVariableMustBeAtStart(stat);
+      }
+      // don't allow other subclasses (e.g. ElvisOperatorExpression)
       if (binExpr.getClass() != BinaryExpression.class) {
         throw notAParameterization(stat);
       }
@@ -920,6 +959,22 @@ public class WhereBlockRewriter {
   private static InvalidSpecCompileException notAParameterization(ASTNode stat) {
     return new InvalidSpecCompileException(stat,
 "where-blocks may only contain parameterizations (e.g. 'salary << [1000, 5000, 9000]; salaryk = salary / 1000')");
+  }
+
+  private static InvalidSpecCompileException whereBlockVariableMustBeFinal(ASTNode stat, String name) {
+    return new InvalidSpecCompileException(stat, String.format(Locale.ROOT,
+      "where-block variables must be declared 'final' (e.g. 'final %s = ...'); a bare assignment ('%s = ...') declares a derived data variable",
+      name, name));
+  }
+
+  private static InvalidSpecCompileException whereBlockVariableMustBeAtStart(ASTNode stat) {
+    return new InvalidSpecCompileException(stat,
+      "where-block variables must be declared at the beginning of the where-block, before any data variable");
+  }
+
+  private static InvalidSpecCompileException whereBlockVariableNoMultipleAssignment(ASTNode stat) {
+    return new InvalidSpecCompileException(stat,
+      "where-block variables do not support multiple assignment (e.g. 'final (a, b) = [1, 2]')");
   }
 
   private static InvalidSpecCompileException columnsInDataTableMustNotBeLabeled(ASTNode stat) {

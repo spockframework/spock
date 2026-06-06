@@ -880,7 +880,7 @@ public class WhereBlockRewriter {
       InternalIdentifiers.getDataProcessorName(whereBlock.getParent().getAst().getName()),
       Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
       ClassHelper.OBJECT_TYPE,
-      dataProcessorParams.toArray(Parameter.EMPTY_ARRAY),
+      concatParameters(dataProcessorParams.toArray(Parameter.EMPTY_ARRAY), createWhereVariableParameters()),
       ClassNode.EMPTY_ARRAY,
       blockStat);
     dataProcessorMethod.addAnnotation(createDataProcessorAnnotation());

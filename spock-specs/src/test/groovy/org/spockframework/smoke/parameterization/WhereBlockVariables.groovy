@@ -53,4 +53,23 @@ b << [marker, marker]
     then:
     noExceptionThrown()
   }
+
+  def "final where-block variable can be used in a derived data variable"() {
+    when:
+    runner.runFeatureBody '''
+expect:
+greeting == expected
+
+where:
+final prefix = "Hello, "
+name     | expected
+"world"  | "Hello, world"
+"spock"  | "Hello, spock"
+
+greeting = prefix + name
+'''
+
+    then:
+    noExceptionThrown()
+  }
 }

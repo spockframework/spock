@@ -346,7 +346,8 @@ public class DataIteratorFactory {
       }
 
       try {
-        return (Object[]) invokeRaw(context.getSharedInstance(), context.getCurrentFeature().getDataProcessorMethod(), next);
+        return (Object[]) invokeRaw(context.getSharedInstance(), context.getCurrentFeature().getDataProcessorMethod(),
+          appendArgs(next, delegate.getWhereVariableValues()));
       } catch (Throwable t) {
         supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProcessorMethod(), t, getErrorContext()));
         return null;

@@ -201,11 +201,15 @@ public class WhereBlockRewriter {
         if (declExpr.isMultipleAssignmentDeclaration()) {
           throw whereBlockVariableNoMultipleAssignment(stat);
         }
+        String name = declExpr.getVariableExpression().getName();
+        if (InternalIdentifiers.isInternalName(name)) {
+          throw reservedVariableNamePrefix(stat, name);
+        }
         if (!isFinalLocal(declExpr)) {
-          throw whereBlockVariableMustBeFinal(stat, declExpr.getVariableExpression().getName());
+          throw whereBlockVariableMustBeFinal(stat, name);
         }
         whereBlockVariables.add(stat);
-        whereBlockVariableNames.add(declExpr.getVariableExpression().getName());
+        whereBlockVariableNames.add(name);
       } catch (InvalidSpecCompileException e) {
         resources.getErrorReporter().error(e);
       }
@@ -814,6 +818,11 @@ public class WhereBlockRewriter {
   private void verifyDataProcessorVariable(VariableExpression varExpr) {
     Variable accessedVar = varExpr.getAccessedVariable();
 
+    if (InternalIdentifiers.isInternalName(varExpr.getName())) {
+      resources.getErrorReporter().error(reservedVariableNamePrefix(varExpr, varExpr.getName()));
+      return;
+    }
+
     if (whereBlockVariableNames.contains(varExpr.getName())) {
       resources.getErrorReporter().error(varExpr,
         "Data variable '%s' collides with a where-block variable of the same name", varExpr.getName());
@@ -1022,6 +1031,11 @@ public class WhereBlockRewriter {
   private static InvalidSpecCompileException whereBlockVariableNoMultipleAssignment(ASTNode stat) {
     return new InvalidSpecCompileException(stat,
       "where-block variables do not support multiple assignment (e.g. 'final (a, b) = [1, 2]')");
+  }
+
+  private static InvalidSpecCompileException reservedVariableNamePrefix(ASTNode stat, String name) {
+    return new InvalidSpecCompileException(stat, String.format(Locale.ROOT,
+      "Variable name '%s' is invalid: the '$spock_' prefix is reserved for Spock's internal use", name));
   }
 
   private static InvalidSpecCompileException columnsInDataTableMustNotBeLabeled(ASTNode stat) {

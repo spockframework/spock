@@ -990,4 +990,35 @@ def feature() {
     InvalidSpecCompileException e = thrown()
     e.message.contains("Only @Shared and static fields may be accessed")
   }
+
+  def "where-block variable name must not use the reserved internal prefix"() {
+    when:
+    compiler.compileFeatureBody '''
+expect:
+x == 1
+
+where:
+final $spock_reserved = 1
+x << [1, 2]
+    '''
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("Variable name '\$spock_reserved' is invalid: the '\$spock_' prefix is reserved for Spock's internal use")
+  }
+
+  def "data variable name must not use the reserved internal prefix"() {
+    when:
+    compiler.compileFeatureBody '''
+expect:
+true
+
+where:
+$spock_reserved << [1, 2]
+    '''
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("Variable name '\$spock_reserved' is invalid: the '\$spock_' prefix is reserved for Spock's internal use")
+  }
 }

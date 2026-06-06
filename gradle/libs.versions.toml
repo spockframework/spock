@@ -4,7 +4,7 @@ groovy2 = '2.5.23'
 groovy3 = '3.0.25'
 groovy4 = '4.0.32'
 groovy5 = '5.0.6'
-jacoco = '0.8.14'
+jacoco = '0.8.15'
 junit5 = '5.14.4'
 junit6 = '6.1.0'
 # The VersionRange used by OSGi to check compatibility with JUnit Platform.

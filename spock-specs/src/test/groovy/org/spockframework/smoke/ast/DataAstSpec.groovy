@@ -18,6 +18,7 @@ package org.spockframework.smoke.ast
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.specs.extension.SpockSnapshotter
 import spock.lang.Snapshot
+import spock.util.Show
 
 class DataAstSpec extends EmbeddedSpecification {
   @Snapshot(extension = 'groovy')
@@ -65,6 +66,38 @@ class DataAstSpec extends EmbeddedSpecification {
     name << ["world"]
     greeting = prefix + name
   ''')
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
+  def "where-block variables combined with data table, data pipe, derived variables, cross-multiplication and filter"() {
+    given:
+    snapshotter.featureBody()
+
+    when:
+    def result = compiler.transpileFeatureBody('''
+    expect:
+    true
+
+    where:
+    final base = 10
+    final sep = "-"
+
+    x | y
+    1 | 2
+    3 | 4
+
+    combined:
+
+    z << [100, 200]
+
+    label = "${x}${sep}${y}"
+    total = x + y + base
+
+    filter:
+    total > 0
+  ''', EnumSet.of(Show.METHODS))
 
     then:
     snapshotter.assertThat(result.source).matchesSnapshot()

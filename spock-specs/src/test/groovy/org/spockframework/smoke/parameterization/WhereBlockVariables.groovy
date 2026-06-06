@@ -107,4 +107,22 @@ def feature() {
     then:
     noExceptionThrown()
   }
+
+  def "final where-block variable works with combined data providers"() {
+    when:
+    runner.runFeatureBody '''
+expect:
+a.endsWith("-")
+b in [1, 2]
+
+where:
+final sep = "-"
+a << ["x${sep}", "y${sep}"]
+combined:
+b << [1, 2]
+'''
+
+    then:
+    noExceptionThrown()
+  }
 }

@@ -242,4 +242,118 @@ x >= threshold
     result.testsStartedCount == 3
     result.testsSucceededCount == 3
   }
+
+  def "an AutoCloseable where-block variable is closed once after the feature completes"() {
+    given:
+    runner.addClassImport(RecordingCloseable)
+
+    when:
+    def result = runner.runFeatureBody '''
+expect:
+name == "closed-once"
+
+where:
+final resource = new RecordingCloseable("closed-once")
+value << [1, 2, 3]
+name = resource.name
+'''
+
+    then:
+    result.testsFailedCount == 0
+    // closed exactly once, after all iterations, not once per iteration
+    RecordingCloseable.closed.findAll { it == "closed-once" } == ["closed-once"]
+  }
+
+  def "AutoCloseable where-block variables are closed in reverse declaration order"() {
+    given:
+    runner.addClassImport(RecordingCloseable)
+
+    when:
+    runner.runFeatureBody '''
+expect:
+names == "lifo-first,lifo-second"
+
+where:
+final first = new RecordingCloseable("lifo-first")
+final second = new RecordingCloseable("lifo-second")
+value << [1, 2]
+names = "${first.name},${second.name}"
+'''
+
+    then:
+    RecordingCloseable.closed.findAll { it in ["lifo-first", "lifo-second"] } == ["lifo-second", "lifo-first"]
+  }
+
+  def "a failure while closing a where-block variable is swallowed"() {
+    given:
+    runner.addClassImport(RecordingCloseable)
+    runner.addClassImport(ThrowingCloseable)
+
+    when:
+    def result = runner.runFeatureBody '''
+expect:
+value != null
+
+where:
+final bad = new ThrowingCloseable()
+final ok = new RecordingCloseable("swallow-ok")
+value << [1, 2]
+marker = bad.hashCode() + ok.name
+'''
+
+    then:
+    result.testsFailedCount == 0
+    // 'ok' is declared last, so it is closed first and recorded even though 'bad' throws afterwards
+    RecordingCloseable.closed.findAll { it == "swallow-ok" } == ["swallow-ok"]
+  }
+
+  def "a where-block variable that is not AutoCloseable is left untouched"() {
+    given:
+    PlainResource.closeCalled = false
+    runner.addClassImport(PlainResource)
+
+    when:
+    runner.runFeatureBody '''
+expect:
+tag != null
+
+where:
+final resource = new PlainResource()
+value << [1, 2]
+tag = resource.toString()
+'''
+
+    then:
+    !PlainResource.closeCalled
+  }
+}
+
+class RecordingCloseable implements AutoCloseable {
+  static final List<String> closed = [].asSynchronized()
+  final String name
+
+  RecordingCloseable(String name) {
+    this.name = name
+  }
+
+  @Override
+  void close() {
+    closed << name
+  }
+}
+
+class ThrowingCloseable implements AutoCloseable {
+  @Override
+  void close() {
+    throw new IllegalStateException("close failed")
+  }
+}
+
+class PlainResource {
+  static boolean closeCalled = false
+
+  // has a close() method but does not implement AutoCloseable, so it must not be auto-closed
+  void close() {
+    closeCalled = true
+  }
 }

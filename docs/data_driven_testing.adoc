@@ -445,7 +445,12 @@ Such variables:
 * are visible only inside the `where:` block (data tables, data pipes, derived data variables and the `filter:` block);
   they are *not* method parameters and are *not* visible in the rest of the feature method;
 * follow the same access rules as data providers: they may read `@Shared` and `static` fields but not plain instance
-  fields.
+  fields;
+* are automatically closed after the feature has finished if they implement `AutoCloseable`, in reverse declaration
+  order; any error thrown while closing is ignored.
+
+NOTE: In short, a where-block variable behaves like a feature-local `@Shared @AutoCleanup(quiet = true)` field: it is
+created once, shared across all iterations of the feature, and closed when the feature finishes.
 
 The initializer may also use Groovy's multiple-assignment syntax to declare several locals at once. The same rules
 apply to every target, and each name becomes its own where-block variable:

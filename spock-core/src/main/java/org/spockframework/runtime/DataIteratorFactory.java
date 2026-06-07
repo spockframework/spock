@@ -390,6 +390,18 @@ public class DataIteratorFactory {
     public void close() {
       closeQuietly(dataProviders);
       closeQuietly((Object[]) dataProviderIterators);
+      closeWhereVariables();
+    }
+
+    // close AutoCloseable where-block variables once the feature is done, in reverse declaration
+    // order (a later variable may depend on an earlier one); close failures are ignored
+    private void closeWhereVariables() {
+      for (int i = whereVariableValues.length - 1; i >= 0; i--) {
+        Object value = whereVariableValues[i];
+        if (value instanceof AutoCloseable) {
+          closeQuietly(value);
+        }
+      }
     }
 
     @Override

@@ -51,6 +51,25 @@ Don't be intimidated by these words.
 Pull requests that satisfy Spock's overall direction and goals (see above), are crafted carefully, and aren't aiming too high, have a good chance of getting accepted.
 Before doing so, we may ask for some concrete improvements to be made, in which case we hope for your cooperation.
 
+=== Avoiding AI Slop
+
+AI tools are welcome (see our link:AI_POLICY.md[AI policy]), but please review their output carefully before submitting it.
+"AI slop" is text or code that looks polished but adds noise, hides a lack of understanding, or simply doesn't match how Spock is written.
+It is easy to spot, and it slows down review for everyone.
+
+Please trim the following before you open a pull request or issue:
+
+* Typographic tells such as em-dashes (`--`).
+  Use plain punctuation, like the rest of this repository.
+* Generic filler and marketing tone ("This elegant solution leverages...", "In today's fast-paced world...").
+  Be direct and factual.
+* Over-explaining the obvious in comments, commit messages, or descriptions.
+  Comment the why, not the what.
+* Emoji and decorative headings in code, comments, commit messages, or descriptions.
+
+The simplest rule: every line you submit should be one you understand and would have been comfortable writing yourself.
+If a sentence or a piece of code doesn't earn its place, remove it.
+
 === Guiding Principles
 
 ==== Try to avoid breaking stuff

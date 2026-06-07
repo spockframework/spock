@@ -20,8 +20,10 @@ import org.codehaus.groovy.syntax.SyntaxException
 import org.opentest4j.MultipleFailuresError
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
+import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.runtime.SpockExecutionException
 import spock.lang.Issue
+import spock.lang.Requires
 import spock.lang.Snapshot
 import spock.lang.Snapshotter
 
@@ -941,6 +943,40 @@ x << [1, 2]
     then:
     InvalidSpecCompileException e = thrown()
     e.message.startsWith("where-block variables must be declared 'final'")
+  }
+
+  @Requires(value = { GroovyRuntimeUtil.MAJOR_VERSION >= 3 }, reason = "'final (a, b) = ...' is only parseable by the Parrot parser (Groovy 3.0+)")
+  def "multiple-assignment where-block variables do not support the '_' wildcard"() {
+    when:
+    compiler.compileFeatureBody """
+expect:
+x == 1
+
+where:
+final (_, b) = [1, 2]
+x << [1, 2]
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("where-block variables do not support the '_' wildcard in a multiple assignment")
+  }
+
+  @Requires(value = { GroovyRuntimeUtil.MAJOR_VERSION >= 3 }, reason = "'final (a, b) = ...' is only parseable by the Parrot parser (Groovy 3.0+)")
+  def "a failing multiple-assignment target does not expose earlier targets"() {
+    when:
+    compiler.compileFeatureBody '''
+expect:
+x == 1
+
+where:
+final (ok, $spock_reserved) = [1, 2]
+x << [1, 2]
+    '''
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("Variable name '\$spock_reserved' is invalid: the '\$spock_' prefix is reserved for Spock's internal use")
   }
 
   def "an unused final where-block variable compiles"() {

@@ -17,6 +17,9 @@ import java.util.List;
 public interface IDataIterator extends Iterator<Object[]>, AutoCloseable {
   /**
    * Shared empty result for {@link #getWhereVariableValues()} when a feature declares no where-block variables.
+   * <p>
+   * This array is shared across all callers and must never be mutated. It is safe to share precisely because a
+   * zero-length array has no elements to write.
    */
   Object[] NO_WHERE_VARIABLE_VALUES = new Object[0];
 

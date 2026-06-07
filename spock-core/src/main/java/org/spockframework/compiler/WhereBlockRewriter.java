@@ -18,6 +18,7 @@ package org.spockframework.compiler;
 
 import org.spockframework.compiler.model.FilterBlock;
 import org.spockframework.compiler.model.WhereBlock;
+import org.spockframework.lang.Wildcard;
 import org.spockframework.runtime.model.DataProcessorMetadata;
 import org.spockframework.runtime.model.DataProviderMetadata;
 import org.spockframework.util.*;
@@ -222,7 +223,7 @@ public class WhereBlockRewriter {
     whereBlockVariableNames.add(name);
   }
 
-  // handles 'final (a, b) = [1, 2]'; '_' targets are accepted but not exposed as where-block variables
+  // handles 'final (a, b) = [1, 2]'; the '_' wildcard is not (yet) supported as a target
   private void collectMultipleAssignmentWhereBlockVariables(Statement stat, DeclarationExpression declExpr)
       throws InvalidSpecCompileException {
     List<Expression> targets = declExpr.getTupleExpression().getExpressions();
@@ -233,17 +234,24 @@ public class WhereBlockRewriter {
       }
       names.add(((VariableExpression) target).getName());
     }
+    // validate every target before exposing any name, so a failure mid-loop cannot leave
+    // whereBlockVariableNames and whereBlockVariables in an inconsistent state
     for (Expression target : targets) {
       VariableExpression varExpr = (VariableExpression) target;
       String name = varExpr.getName();
+      // a tuple target named '_' is a declaration, not a reference to Specification's '_' field,
+      // so AstUtil.isWildcardRef would not detect it; match the name directly
+      if (Wildcard.INSTANCE.toString().equals(name)) {
+        throw whereBlockVariableNoWildcardInMultipleAssignment(stat);
+      }
       if (InternalIdentifiers.isInternalName(name)) {
         throw reservedVariableNamePrefix(stat, name);
       }
       if (!isFinalLocal(varExpr)) {
         throw whereBlockVariableMustBeFinal(stat, multipleAssignmentTarget(names));
       }
-      whereBlockVariableNames.add(name);
     }
+    whereBlockVariableNames.addAll(names);
     whereBlockVariables.add(stat);
   }
 
@@ -1068,6 +1076,11 @@ public class WhereBlockRewriter {
   private static InvalidSpecCompileException whereBlockVariableUnsupportedMultipleAssignmentTarget(ASTNode stat) {
     return new InvalidSpecCompileException(stat,
       "where-block variables only support simple names in a multiple assignment (e.g. 'final (a, b) = [1, 2]')");
+  }
+
+  private static InvalidSpecCompileException whereBlockVariableNoWildcardInMultipleAssignment(ASTNode stat) {
+    return new InvalidSpecCompileException(stat,
+      "where-block variables do not support the '_' wildcard in a multiple assignment; give every target a name (e.g. 'final (a, b) = [1, 2]')");
   }
 
   private static InvalidSpecCompileException reservedVariableNamePrefix(ASTNode stat, String name) {

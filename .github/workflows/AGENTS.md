@@ -1,0 +1,2 @@
+- The `*.yaml` workflow files are generated from the `*.main.kts` Kotlin DSL files, **never** edit the YAML directly.
+- After changing a `*.main.kts` file, regenerate the YAML with `./gradlew preprocessWorkflows`, then commit both; CI fails if the committed YAML is out of sync. See `README.adoc` for details.

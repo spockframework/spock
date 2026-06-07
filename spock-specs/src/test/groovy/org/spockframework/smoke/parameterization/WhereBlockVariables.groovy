@@ -17,7 +17,9 @@
 package org.spockframework.smoke.parameterization
 
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.GroovyRuntimeUtil
 import spock.lang.Issue
+import spock.lang.Requires
 
 @Issue("https://github.com/spockframework/spock/issues/138")
 class WhereBlockVariables extends EmbeddedSpecification {
@@ -120,6 +122,98 @@ final sep = "-"
 a << ["x${sep}", "y${sep}"]
 combined:
 b << [1, 2]
+'''
+
+    then:
+    noExceptionThrown()
+  }
+
+  @Requires(value = { GroovyRuntimeUtil.MAJOR_VERSION >= 3 }, reason = "'final (a, b) = ...' is only parseable by the Parrot parser (Groovy 3.0+)")
+  def "final multiple-assignment where-block variables can be used"() {
+    when:
+    runner.runFeatureBody '''
+expect:
+value == expected
+
+where:
+final (lo, hi) = [1, 10]
+value | expected
+lo    | 1
+hi    | 10
+'''
+
+    then:
+    noExceptionThrown()
+  }
+
+  @Requires(value = { GroovyRuntimeUtil.MAJOR_VERSION >= 3 }, reason = "'final (a, b) = ...' is only parseable by the Parrot parser (Groovy 3.0+)")
+  def "final multiple-assignment where-block variables are evaluated once and reused across providers"() {
+    when:
+    runner.runFeatureBody '''
+expect:
+a.is(b)            // both providers see the same instances => single evaluation
+
+where:
+final (first, second) = [new Object(), new Object()]
+a << [first, second]
+b << [first, second]
+'''
+
+    then:
+    noExceptionThrown()
+  }
+
+  def "a where-block variable can reference an earlier where-block variable"() {
+    when:
+    runner.runFeatureBody '''
+expect:
+value == "Hello, World!"
+
+where:
+final greeting = "Hello"
+final subject = "World"
+final message = "${greeting}, ${subject}!"
+
+value << [message, message]
+'''
+
+    then:
+    noExceptionThrown()
+  }
+
+  def "a where-block variable closure can capture another where-block variable"() {
+    when:
+    runner.runFeatureBody '''
+expect:
+result == 15
+
+where:
+final base = 5
+final adder = { it + base }
+
+value << [10, 10]
+result = adder(value)
+'''
+
+    then:
+    noExceptionThrown()
+  }
+
+  def "a where-block variable can be the source of data pipes"() {
+    when:
+    runner.runFeatureBody '''
+expect:
+user in ["alice", "bob"]
+password in ["secret", "hunter2"]
+
+where:
+final factory = new Object() {
+  List<String> users() { ["alice", "bob"] }
+  List<String> passwords() { ["secret", "hunter2"] }
+}
+
+user << factory.users()
+password << factory.passwords()
 '''
 
     then:

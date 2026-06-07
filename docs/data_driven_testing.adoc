@@ -438,14 +438,26 @@ include::{sourcedir}/datadriven/DataSpec.groovy[tag=where-block-variable]
 
 Such variables:
 
-* must be declared `final` -- a bare `x = ...` declares a <<Data Variable Assignment,derived data variable>> instead;
+* must be declared `final` (a bare `x = ...` declares a <<Data Variable Assignment,derived data variable>> instead);
 * must come *before* any data variable, data table or data pipe;
 * are evaluated *once per feature* and reused everywhere they are referenced in the `where:` block, so
   `final fixture = new Fixture()` is a single shared instance;
-* are visible only inside the `where:` block (data tables, data pipes, derived data variables and the `filter:` block)
-  -- they are *not* method parameters and are *not* visible in the rest of the feature method;
+* are visible only inside the `where:` block (data tables, data pipes, derived data variables and the `filter:` block);
+  they are *not* method parameters and are *not* visible in the rest of the feature method;
 * follow the same access rules as data providers: they may read `@Shared` and `static` fields but not plain instance
   fields.
+
+The initializer may also use Groovy's multiple-assignment syntax to declare several locals at once. The same rules
+apply to every target, and each name becomes its own where-block variable:
+
+[source,groovy,indent=0]
+----
+    ...
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=where-block-variable-multi-assignment]
+----
+
+NOTE: The `final (a, b) = ...` is only supported for Groovy 3.0 or newer. On Groovy 2.5 declare
+one `final` local per line instead.
 
 == Multi-Variable Assignment
 

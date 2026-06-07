@@ -199,25 +199,60 @@ public class WhereBlockRewriter {
       }
       try {
         if (declExpr.isMultipleAssignmentDeclaration()) {
-          throw whereBlockVariableNoMultipleAssignment(stat);
+          collectMultipleAssignmentWhereBlockVariables(stat, declExpr);
+        } else {
+          collectSingleWhereBlockVariable(stat, declExpr);
         }
-        String name = declExpr.getVariableExpression().getName();
-        if (InternalIdentifiers.isInternalName(name)) {
-          throw reservedVariableNamePrefix(stat, name);
-        }
-        if (!isFinalLocal(declExpr)) {
-          throw whereBlockVariableMustBeFinal(stat, name);
-        }
-        whereBlockVariables.add(stat);
-        whereBlockVariableNames.add(name);
       } catch (InvalidSpecCompileException e) {
         resources.getErrorReporter().error(e);
       }
     }
   }
 
-  private static boolean isFinalLocal(DeclarationExpression declExpr) {
-    return (declExpr.getVariableExpression().getModifiers() & Opcodes.ACC_FINAL) != 0;
+  private void collectSingleWhereBlockVariable(Statement stat, DeclarationExpression declExpr)
+      throws InvalidSpecCompileException {
+    String name = declExpr.getVariableExpression().getName();
+    if (InternalIdentifiers.isInternalName(name)) {
+      throw reservedVariableNamePrefix(stat, name);
+    }
+    if (!isFinalLocal(declExpr.getVariableExpression())) {
+      throw whereBlockVariableMustBeFinal(stat, name);
+    }
+    whereBlockVariables.add(stat);
+    whereBlockVariableNames.add(name);
+  }
+
+  // handles 'final (a, b) = [1, 2]'; '_' targets are accepted but not exposed as where-block variables
+  private void collectMultipleAssignmentWhereBlockVariables(Statement stat, DeclarationExpression declExpr)
+      throws InvalidSpecCompileException {
+    List<Expression> targets = declExpr.getTupleExpression().getExpressions();
+    List<String> names = new ArrayList<>(targets.size());
+    for (Expression target : targets) {
+      if (!(target instanceof VariableExpression)) {
+        throw whereBlockVariableUnsupportedMultipleAssignmentTarget(stat);
+      }
+      names.add(((VariableExpression) target).getName());
+    }
+    for (Expression target : targets) {
+      VariableExpression varExpr = (VariableExpression) target;
+      String name = varExpr.getName();
+      if (InternalIdentifiers.isInternalName(name)) {
+        throw reservedVariableNamePrefix(stat, name);
+      }
+      if (!isFinalLocal(varExpr)) {
+        throw whereBlockVariableMustBeFinal(stat, multipleAssignmentTarget(names));
+      }
+      whereBlockVariableNames.add(name);
+    }
+    whereBlockVariables.add(stat);
+  }
+
+  private static boolean isFinalLocal(VariableExpression varExpr) {
+    return (varExpr.getModifiers() & Opcodes.ACC_FINAL) != 0;
+  }
+
+  private static String multipleAssignmentTarget(List<String> names) {
+    return "(" + String.join(", ", names) + ")";
   }
 
   private void rewriteWhereStat(ListIterator<Statement> stats) throws InvalidSpecCompileException {
@@ -1030,9 +1065,9 @@ public class WhereBlockRewriter {
       "where-block variables must be declared at the beginning of the where-block, before any data variable");
   }
 
-  private static InvalidSpecCompileException whereBlockVariableNoMultipleAssignment(ASTNode stat) {
+  private static InvalidSpecCompileException whereBlockVariableUnsupportedMultipleAssignmentTarget(ASTNode stat) {
     return new InvalidSpecCompileException(stat,
-      "where-block variables do not support multiple assignment (e.g. 'final (a, b) = [1, 2]')");
+      "where-block variables only support simple names in a multiple assignment (e.g. 'final (a, b) = [1, 2]')");
   }
 
   private static InvalidSpecCompileException reservedVariableNamePrefix(ASTNode stat, String name) {

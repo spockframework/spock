@@ -927,7 +927,7 @@ final sep = "/"
     e.message.startsWith("where-block variables must be declared at the beginning of the where-block")
   }
 
-  def "where-block variable does not support multiple assignment"() {
+  def "multiple-assignment where-block variables must be declared final"() {
     when:
     compiler.compileFeatureBody """
 expect:
@@ -940,7 +940,7 @@ x << [1, 2]
 
     then:
     InvalidSpecCompileException e = thrown()
-    e.message.startsWith("where-block variables do not support multiple assignment")
+    e.message.startsWith("where-block variables must be declared 'final'")
   }
 
   def "an unused final where-block variable compiles"() {
@@ -968,7 +968,7 @@ sep << ["a", "b"]
 
     then:
     InvalidSpecCompileException e = thrown()
-    e.message.contains("where-block variable")
+    e.message.startsWith("Data variable 'sep' collides with a where-block variable of the same name")
   }
 
   def "where-block variable initializer cannot read an instance field"() {

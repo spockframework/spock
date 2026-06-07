@@ -16,7 +16,9 @@
 package org.spockframework.smoke.ast
 
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.specs.extension.SpockSnapshotter
+import spock.lang.Requires
 import spock.lang.Snapshot
 import spock.util.Show
 
@@ -69,6 +71,25 @@ class DataAstSpec extends EmbeddedSpecification {
 
     then:
     snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
+  @Requires(value = { GroovyRuntimeUtil.MAJOR_VERSION >= 3 }, reason = "'final (a, b) = ...' is only parseable by the Parrot parser (Groovy 3.0+)")
+  def "where-block variables with multiple assignment"() {
+    given:
+    snapshotter.featureBody()
+
+    when:
+    def result = compiler.transpileFeatureBody('''
+    expect: greeting == "Hello, world!"
+    where:
+    final (prefix, suffix) = ["Hello, ", "!"]
+    name << ["world"]
+    greeting = prefix + name + suffix
+  ''')
+
+    then:
+    // Groovy 3.0 and 4.0 render the tuple declaration identically; Groovy 5.0 differs, so it gets its own snapshot
+    snapshotter.assertThat(result.source).matchesSnapshot(GroovyRuntimeUtil.MAJOR_VERSION >= 5 ? "groovy5" : "groovy3-4")
   }
 
   def "where-block variables combined with data table, data pipe, derived variables, cross-multiplication and filter"() {

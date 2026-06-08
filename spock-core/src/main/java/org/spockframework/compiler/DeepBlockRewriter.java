@@ -252,7 +252,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
       // expand nevertheless so that inner scope (if any) won't trip over this again
     }
 
-    currSpecialMethodCall.expand();
+    currSpecialMethodCall.expand(resources.getSpecificationReference());
     return true;
   }
 
@@ -274,7 +274,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
 
     foundExceptionCondition = expr;
     if (currSpecialMethodCall.isThrownCall()) {
-      currSpecialMethodCall.expand();
+      currSpecialMethodCall.expand(resources.getSpecificationReference());
     }
     return true;
   }

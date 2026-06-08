@@ -41,7 +41,7 @@ import org.spockframework.util.ExceptionUtil;
  */
 @Testable
 @SuppressWarnings("UnusedDeclaration")
-public abstract class Specification extends MockingApi {
+public abstract class Specification implements MockingApi {
   /**
    * The wildcard symbol. Used in several places as a <em>don't care</em> value:
    * <ul>

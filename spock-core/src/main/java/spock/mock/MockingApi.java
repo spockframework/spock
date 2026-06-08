@@ -80,7 +80,7 @@ import org.spockframework.util.ObjectUtil;
  * </pre>
  */
 @SuppressWarnings({"unused", "SameReturnValue"})
-public class MockingApi implements MockFactory {
+public interface MockingApi extends MockFactory {
   /**
    * Encloses one or more interaction definitions in a <tt>then</tt> block.
    * Required when an interaction definition uses a statement that doesn't
@@ -136,7 +136,7 @@ public class MockingApi implements MockFactory {
    *
    * @param block a block of code containing one or more interaction definitions
    */
-  public void interaction(Closure block) {
+  default void interaction(Closure block) {
     GroovyRuntimeUtil.invokeClosure(block);
   }
 
@@ -151,7 +151,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a mock whose type and name are inferred from the left-hand side of the enclosing variable assignment
    */
-  public <T> T Mock() {
+  default <T> T Mock() {
     throw invalidMockCreation();
   }
 
@@ -170,7 +170,7 @@ public class MockingApi implements MockFactory {
    * @return a mock with the specified options whose type and name are inferred from the left-hand side of the
    * enclosing variable assignment
    */
-  public <T> T Mock(
+  default <T> T Mock(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -199,7 +199,7 @@ public class MockingApi implements MockFactory {
    * @return a mock with the specified type
    */
   @Override
-  public <T> T Mock(Class<T> type) {
+  default <T> T Mock(Class<T> type) {
     throw invalidMockCreation();
   }
 
@@ -220,7 +220,7 @@ public class MockingApi implements MockFactory {
    * @return a mock with the specified options and type
    */
   @Override
-  public <T> T Mock(
+  default <T> T Mock(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -252,7 +252,7 @@ public class MockingApi implements MockFactory {
    * @return a mock with the specified interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  public <T> T Mock(
+  default <T> T Mock(
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
       Closure interactions) {
     throw invalidMockCreation();
@@ -278,7 +278,7 @@ public class MockingApi implements MockFactory {
    * @return a mock with the specified options and interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  public <T> T Mock(
+  default <T> T Mock(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -313,7 +313,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a mock with the specified type and interactions
    */
-  public <T> T Mock(
+  default <T> T Mock(
     @DelegatesTo.Target
       Class<T> type,
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
@@ -343,7 +343,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a mock with the specified options, type, and interactions
    */
-  public <T> T Mock(
+  default <T> T Mock(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -372,7 +372,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a stub whose type and name are inferred from the left-hand side of the enclosing variable assignment
    */
-  public <T> T Stub() {
+  default <T> T Stub() {
     throw invalidMockCreation();
   }
 
@@ -391,7 +391,7 @@ public class MockingApi implements MockFactory {
    * @return a stub with the specified options whose type and name are inferred from the left-hand side of the
    * enclosing variable assignment
    */
-  public <T> T Stub(
+  default <T> T Stub(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -420,7 +420,7 @@ public class MockingApi implements MockFactory {
    * @return a stub with the specified type
    */
   @Override
-  public <T> T Stub(Class<T> type) {
+  default <T> T Stub(Class<T> type) {
     throw invalidMockCreation();
   }
 
@@ -441,7 +441,7 @@ public class MockingApi implements MockFactory {
    * @return a stub with the specified options and type
    */
   @Override
-  public <T> T Stub(
+  default <T> T Stub(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -473,7 +473,7 @@ public class MockingApi implements MockFactory {
    * @return a stub with the specified interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  public <T> T Stub(
+  default <T> T Stub(
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
       Closure interactions) {
     throw invalidMockCreation();
@@ -499,7 +499,7 @@ public class MockingApi implements MockFactory {
    * @return a stub with the specified options and interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  public <T> T Stub(
+  default <T> T Stub(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -534,7 +534,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a stub with the specified type and interactions
    */
-  public <T> T Stub(
+  default <T> T Stub(
     @DelegatesTo.Target
       Class<T> type,
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
@@ -564,7 +564,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a stub with the specified options, type, and interactions
    */
-  public <T> T Stub(
+  default <T> T Stub(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -593,7 +593,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a spy whose type and name are inferred from the left-hand side of the enclosing variable assignment
    */
-  public <T> T Spy() {
+  default <T> T Spy() {
     throw invalidMockCreation();
   }
 
@@ -612,7 +612,7 @@ public class MockingApi implements MockFactory {
    * @return a spy with the specified options whose type and name are inferred from the left-hand side of the
    * enclosing variable assignment
    */
-  public <T> T Spy(
+  default <T> T Spy(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -641,7 +641,7 @@ public class MockingApi implements MockFactory {
    * @return a spy with the specified type
    */
   @Override
-  public <T> T Spy(Class<T> type) {
+  default <T> T Spy(Class<T> type) {
     throw invalidMockCreation();
   }
 
@@ -665,7 +665,7 @@ public class MockingApi implements MockFactory {
    * @return a spy wrapping the provided instance
    */
   @Override
-  public <T> T Spy(T obj) {
+  default <T> T Spy(T obj) {
     throw invalidMockCreation();
   }
 
@@ -691,7 +691,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a spy with the specified interactions wrapping the provided instance
    */
-  public <T> T Spy(
+  default <T> T Spy(
     @DelegatesTo.Target
       T obj,
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST)
@@ -717,7 +717,7 @@ public class MockingApi implements MockFactory {
    * @return a spy with the specified options and type
    */
   @Override
-  public <T> T Spy(
+  default <T> T Spy(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -748,7 +748,7 @@ public class MockingApi implements MockFactory {
    * @return a spy with the specified interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  public <T> T Spy(
+  default <T> T Spy(
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
       Closure interactions) {
     throw invalidMockCreation();
@@ -773,7 +773,7 @@ public class MockingApi implements MockFactory {
    * @return a spy with the specified options and interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  public <T> T Spy(
+  default <T> T Spy(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -808,7 +808,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a spy with the specified type and interactions
    */
-  public <T> T Spy(
+  default <T> T Spy(
     @DelegatesTo.Target
       Class<T> type,
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
@@ -837,7 +837,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a spy with the specified options, type, and interactions
    */
-  public <T> T Spy(
+  default <T> T Spy(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -866,7 +866,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a Groovy mock whose type and name are inferred from the left-hand side of the enclosing variable assignment
    */
-  public <T> T GroovyMock() {
+  default <T> T GroovyMock() {
     throw invalidMockCreation();
   }
 
@@ -885,7 +885,7 @@ public class MockingApi implements MockFactory {
    * @return a Groovy mock with the specified options whose type and name are inferred from the left-hand side of the
    * enclosing variable assignment
    */
-  public <T> T GroovyMock(
+  default <T> T GroovyMock(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -914,7 +914,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a Groovy mock with the specified type
    */
-  public <T> T GroovyMock(Class<T> type) {
+  default <T> T GroovyMock(Class<T> type) {
     throw invalidMockCreation();
   }
 
@@ -934,7 +934,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a Groovy mock with the specified options and type
    */
-  public <T> T GroovyMock(
+  default <T> T GroovyMock(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -967,7 +967,7 @@ public class MockingApi implements MockFactory {
    * @return a Groovy mock with the specified interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  public <T> T GroovyMock(
+  default <T> T GroovyMock(
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
       Closure interactions) {
     throw invalidMockCreation();
@@ -993,7 +993,7 @@ public class MockingApi implements MockFactory {
    * @return a Groovy mock with the specified options and interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  public <T> T GroovyMock(
+  default <T> T GroovyMock(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -1029,7 +1029,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a Groovy mock with the specified type and interactions
    */
-  public <T> T GroovyMock(
+  default <T> T GroovyMock(
     @DelegatesTo.Target
       Class<T> type,
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
@@ -1059,7 +1059,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a Groovy mock with the specified options, type, and interactions
    */
-  public <T> T GroovyMock(
+  default <T> T GroovyMock(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -1089,7 +1089,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a Groovy stub whose type and name are inferred from the left-hand side of the enclosing variable assignment
    */
-  public <T> T GroovyStub() {
+  default <T> T GroovyStub() {
     throw invalidMockCreation();
   }
 
@@ -1108,7 +1108,7 @@ public class MockingApi implements MockFactory {
    * @return a Groovy stub with the specified options whose type and name are inferred from the left-hand side of the
    * enclosing variable assignment
    */
-  public <T> T GroovyStub(
+  default <T> T GroovyStub(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -1137,7 +1137,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a Groovy stub with the specified type
    */
-  public <T> T GroovyStub(Class<T> type) {
+  default <T> T GroovyStub(Class<T> type) {
     throw invalidMockCreation();
   }
 
@@ -1157,7 +1157,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a Groovy stub with the specified options and type
    */
-  public <T> T GroovyStub(
+  default <T> T GroovyStub(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -1190,7 +1190,7 @@ public class MockingApi implements MockFactory {
    * @return a Groovy stub with the specified interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  public <T> T GroovyStub(
+  default <T> T GroovyStub(
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
       Closure interactions) {
     throw invalidMockCreation();
@@ -1216,7 +1216,7 @@ public class MockingApi implements MockFactory {
    * @return a Groovy stub with the specified options and interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  public <T> T GroovyStub(
+  default <T> T GroovyStub(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -1252,7 +1252,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a Groovy stub with the specified type and interactions
    */
-  public <T> T GroovyStub(
+  default <T> T GroovyStub(
     @DelegatesTo.Target
       Class<T> type,
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
@@ -1282,7 +1282,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a Groovy stub with the specified options, type, and interactions
    */
-  public <T> T GroovyStub(
+  default <T> T GroovyStub(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -1312,7 +1312,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a Groovy spy whose type and name are inferred from the left-hand side of the enclosing variable assignment
    */
-  public <T> T GroovySpy() {
+  default <T> T GroovySpy() {
     throw invalidMockCreation();
   }
 
@@ -1331,7 +1331,7 @@ public class MockingApi implements MockFactory {
    * @return a Groovy spy with the specified options whose type and name are inferred from the left-hand side of the
    * enclosing variable assignment
    */
-  public <T> T GroovySpy(
+  default <T> T GroovySpy(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -1361,7 +1361,7 @@ public class MockingApi implements MockFactory {
    * @return a Groovy spy with the specified type
    */
   @Beta
-  public <T> T GroovySpy(Class<T> type) {
+  default <T> T GroovySpy(Class<T> type) {
     throw invalidMockCreation();
   }
 
@@ -1385,7 +1385,7 @@ public class MockingApi implements MockFactory {
    * @return a spy wrapping the provided instance
    */
   @Beta
-  public <T> T GroovySpy(T obj) {
+  default <T> T GroovySpy(T obj) {
     invalidMockCreation();
     return null;
   }
@@ -1413,7 +1413,7 @@ public class MockingApi implements MockFactory {
    * @return a spy with the specified interactions wrapping the provided instance
    */
   @Beta
-  public <T> T GroovySpy(
+  default <T> T GroovySpy(
     @DelegatesTo.Target
     T obj,
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST)
@@ -1439,7 +1439,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a Groovy spy with the specified options and type
    */
-  public <T> T GroovySpy(
+  default <T> T GroovySpy(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -1471,7 +1471,7 @@ public class MockingApi implements MockFactory {
    * @return a Groovy spy with the specified interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  public <T> T GroovySpy(
+  default <T> T GroovySpy(
     @ClosureParams(ClosureParameterTypeFromVariableType.class)
       Closure interactions) {
     throw invalidMockCreation();
@@ -1496,7 +1496,7 @@ public class MockingApi implements MockFactory {
    * @return a Groovy spy with the specified options and interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  public <T> T GroovySpy(
+  default <T> T GroovySpy(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -1532,7 +1532,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a Groovy spy with the specified type and interactions
    */
-  public <T> T GroovySpy(
+  default <T> T GroovySpy(
     @DelegatesTo.Target
       Class<T> type,
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
@@ -1561,7 +1561,7 @@ public class MockingApi implements MockFactory {
    *
    * @return a Groovy spy with the specified options, type, and interactions
    */
-  public <T> T GroovySpy(
+  default <T> T GroovySpy(
     @NamedParams({
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
@@ -1595,7 +1595,7 @@ public class MockingApi implements MockFactory {
    * @param type the type of which the static methods shall be spied
    */
   @Beta
-  public <T> void SpyStatic(Class<T> type) {
+  default <T> void SpyStatic(Class<T> type) {
     throw invalidMockCreation();
   }
 
@@ -1615,7 +1615,7 @@ public class MockingApi implements MockFactory {
    * @param mockMakerSettings the mock maker settings to apply to the static spy
    */
   @Beta
-  public <T> void SpyStatic(Class<T> type, IMockMakerSettings mockMakerSettings) {
+  default <T> void SpyStatic(Class<T> type, IMockMakerSettings mockMakerSettings) {
     throw invalidMockCreation();
   }
 
@@ -1629,7 +1629,7 @@ public class MockingApi implements MockFactory {
    * @param code the code to execute
    */
   @Beta
-  public void runWithThreadAwareMocks(Runnable code) {
+  default void runWithThreadAwareMocks(Runnable code) {
     ObjectUtil.<Specification>uncheckedCast(this).getSpecificationContext().getThreadAwareMockController().runWithThreadAwareMocks(code);
   }
 
@@ -1644,11 +1644,11 @@ public class MockingApi implements MockFactory {
    * @return the return value of the executed code
    */
   @Beta
-  public <R> R withActiveThreadAwareMocks(Callable<R> code) {
+  default <R> R withActiveThreadAwareMocks(Callable<R> code) {
     return ObjectUtil.<Specification>uncheckedCast(this).getSpecificationContext().getThreadAwareMockController().withActiveThreadAwareMocks(code);
   }
 
-  private InvalidSpecException invalidMockCreation() {
+  static InvalidSpecException invalidMockCreation() {
     return new InvalidSpecException("Mock objects can only be created inside a spec, and only during the lifetime of a feature (iteration)");
   }
 }

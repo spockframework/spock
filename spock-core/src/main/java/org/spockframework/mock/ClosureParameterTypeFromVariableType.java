@@ -31,6 +31,7 @@ import java.util.*;
 
 public class ClosureParameterTypeFromVariableType extends SingleSignatureClosureHint {
   private final static ClassNode MOCKING_API = new ClassNode(MockingApi.class);
+  private final static String MOCKING_API_NAME = MockingApi.class.getName();
   private final static ClassNode OBJECT = new ClassNode(Object.class);
   private final static Set<String> MOCK_METHODS = new HashSet<>();
 
@@ -50,7 +51,7 @@ public class ClosureParameterTypeFromVariableType extends SingleSignatureClosure
       .getAST()
       .getClasses()
       .stream()
-      .filter(cn -> cn.isDerivedFrom(MOCKING_API))
+      .filter(ClosureParameterTypeFromVariableType::extendsOrImplementsMockingApi)
       .map(ClassNode::getMethods)
       .flatMap(Collection::stream)
       .map(MethodNode::getCode)
@@ -84,5 +85,30 @@ public class ClosureParameterTypeFromVariableType extends SingleSignatureClosure
         }
       }));
     return new ClassNode[]{result[0]};
+  }
+
+  /**
+   * Whether {@code cn} is a {@code MockingApi}, either by extending it (the
+   * historical case, when {@code MockingApi} was a class) or by implementing it
+   * (the current case, since {@code Specification implements MockingApi}). The
+   * check walks the superclass chain and compares interfaces by name so it works
+   * regardless of how the {@link ClassNode}s were created.
+   */
+  static boolean extendsOrImplementsMockingApi(ClassNode cn) {
+    for (ClassNode current = cn; current != null; current = current.getSuperClass()) {
+      if (MOCKING_API_NAME.equals(current.getName())) return true;
+      for (ClassNode iface : current.getInterfaces()) {
+        if (declaresInterfaceByName(iface, MOCKING_API_NAME)) return true;
+      }
+    }
+    return false;
+  }
+
+  private static boolean declaresInterfaceByName(ClassNode iface, String name) {
+    if (name.equals(iface.getName())) return true;
+    for (ClassNode superIface : iface.getInterfaces()) {
+      if (declaresInterfaceByName(superIface, name)) return true;
+    }
+    return false;
   }
 }

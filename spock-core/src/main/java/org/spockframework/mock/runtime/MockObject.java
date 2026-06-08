@@ -20,6 +20,7 @@ import org.spockframework.mock.*;
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.util.Nullable;
 import spock.lang.Specification;
+import spock.mock.SpecificationAttachable;
 
 import java.lang.reflect.Type;
 

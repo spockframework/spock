@@ -17,6 +17,7 @@ package org.spockframework.mock.runtime;
 import java.lang.reflect.Method;
 
 import org.spockframework.mock.IResponseGenerator;
+import spock.mock.SpecificationAttachable;
 
 public interface IProxyBasedMockInterceptor extends SpecificationAttachable {
   Object intercept(Object target, Method method, Object[] arguments, IResponseGenerator realMethodInvoker);

@@ -14,7 +14,7 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.mock.runtime.SpecificationAttachable;
+import spock.mock.SpecificationAttachable;
 import org.spockframework.util.Beta;
 import org.spockframework.util.Nullable;
 import spock.lang.Specification;

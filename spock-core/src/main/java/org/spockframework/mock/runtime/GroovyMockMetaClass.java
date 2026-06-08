@@ -18,6 +18,7 @@ import org.spockframework.mock.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.ReflectionUtil;
 import spock.lang.Specification;
+import spock.mock.SpecificationAttachable;
 
 import java.lang.reflect.*;
 import java.util.*;

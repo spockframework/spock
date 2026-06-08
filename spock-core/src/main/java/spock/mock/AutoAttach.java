@@ -21,7 +21,9 @@ import java.lang.annotation.Target;
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 
 /**
- * Automatically attaches detached mocks {@link DetachedMockFactory} to a Specification.
+ * Automatically attaches detached mocks {@link DetachedMockFactory} and
+ * {@link SpecificationAttachable} fixtures to a Specification. The field value
+ * is attached during {@code setup} and detached during {@code cleanup}.
  *
  * This can be used if there is no explicit framework support for attaching detached mocks.
  * It does not work for {@code static} or {@code @Shared} fields.

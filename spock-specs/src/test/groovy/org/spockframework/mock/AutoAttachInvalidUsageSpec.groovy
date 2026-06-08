@@ -74,6 +74,6 @@ class AutoAttachInvalidUsageSpec extends EmbeddedSpecification {
     """)
     then:
     SpockException ex = thrown()
-    ex.message == "AutoAttach failed 'Value' is not a mock for field field:3"
+    ex.message == "AutoAttach failed 'Value' is neither a mock nor a SpecificationAttachable for field field:3"
   }
 }

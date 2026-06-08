@@ -15,6 +15,7 @@
 
 package org.spockframework.compiler;
 
+import org.codehaus.groovy.ast.ClassNode;
 import org.codehaus.groovy.ast.Parameter;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.AssertStatement;
@@ -151,12 +152,22 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   protected void doVisitMethodCallExpression(MethodCallExpression expr) {
     super.doVisitMethodCallExpression(expr);
 
-    boolean handled = handleMockCall(expr)
+    boolean handled = handleInteractionsCall(expr)
+        || handleMockCall(expr)
         || handleThrownCall(expr)
         || handleOldCall(expr)
         || handleInteractionBlockCall(expr)
         || handleImplicitCallOnMethodParam(expr)
         || forbidUseOfSuperInFixtureMethod(expr);
+  }
+
+  private boolean handleInteractionsCall(MethodCallExpression expr) {
+    return InteractionsCallDetector.rewriteToCompanionCall(
+        expr, resources::getSpecificationReference, resources.getAstNodeCache(), enclosingType());
+  }
+
+  private ClassNode enclosingType() {
+    return resources.getCurrentMethod().getAst().getDeclaringClass();
   }
 
   private boolean handleImplicitCallOnMethodParam(MethodCallExpression expr) {
@@ -177,6 +188,11 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   }
 
   private boolean handleInteraction(InteractionRewriter rewriter, ExpressionStatement stat) {
+    if (isRelocatableInteractionsAnnotatedCall(stat)) {
+      interactionFound = true;
+      return true;
+    }
+
     ExpressionStatement interaction = rewriter.rewrite(stat);
     if (interaction == null) return false;
 
@@ -197,6 +213,17 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     replaceVisitedStatementWith(interaction);
     interactionFound = true;
     return true;
+  }
+
+  /**
+   * Checks if stat is a bare top-level call to an {@code @Interactions} helper in a then-block, eligible to be moved
+   * before the preceding when-block.
+   */
+  private boolean isRelocatableInteractionsAnnotatedCall(ExpressionStatement stat) {
+    return block instanceof ThenBlock
+        && stat == currTopLevelStat
+        && stat.getExpression() instanceof MethodCallExpression
+        && InteractionsCallDetector.isInteractionsCall((MethodCallExpression) stat.getExpression(), enclosingType());
   }
 
   private boolean handleImplicitCondition(ExpressionStatement stat) {

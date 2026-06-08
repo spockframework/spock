@@ -49,4 +49,82 @@ class OrderFixtures implements MockInteractionSupport {
     then:
     snapshotter.assertThat(result.source).matchesSnapshot(SNAPSHOT_ID)
   }
+
+  def "@Interactions synthesizes a companion overload and replaces the original body with a throw"() {
+    when:
+    def result = compiler.transpile('''
+import spock.lang.Interactions
+
+class OrderFixtures {
+  @Interactions
+  void stubHappyPath(List<String> gateway) {
+    gateway.add("x") >> true
+    1 * gateway.add("y")
+  }
+}
+''')
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot(SNAPSHOT_ID)
+  }
+
+  def "@Interactions call from a spec with a typed receiver is rewritten to pass the spec"() {
+    given:
+    snapshotter.specBody()
+
+    when:
+    def result = compiler.transpileSpecBody('''
+static class OrderFixtures {
+  @spock.lang.Interactions
+  void stubHappyPath(List<String> gateway) {
+    1 * gateway.add("y")
+  }
+}
+
+def "a feature"() {
+  given:
+  List<String> gateway = Mock()
+  OrderFixtures fixtures = new OrderFixtures()
+
+  when:
+  fixtures.stubHappyPath(gateway)
+
+  then:
+  true
+}
+''')
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot(SNAPSHOT_ID)
+  }
+
+  def "an @Interactions call in a then-block is relocated before the preceding when-block"() {
+    given:
+    snapshotter.specBody()
+
+    when:
+    def result = compiler.transpileSpecBody('''
+static class OrderFixtures {
+  @spock.lang.Interactions
+  void expectCharge(List<String> gateway) {
+    1 * gateway.add("charge")
+  }
+}
+
+def "a feature"() {
+  given:
+  List<String> gateway = Mock()
+  OrderFixtures fixtures = new OrderFixtures()
+
+  when:
+  gateway.add("charge")
+
+  then:
+  fixtures.expectCharge(gateway)
+}
+''')
+
+    then: "the companion call is moved out of the then-block to before the when-block, like an inline interaction"
+    snapshotter.assertThat(result.source).matchesSnapshot(SNAPSHOT_ID)
+  }
 }

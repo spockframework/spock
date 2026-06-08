@@ -37,6 +37,19 @@ public interface IRewriteResources {
    */
   Expression getSpecificationReference();
 
+  /**
+   * Whether interactions may be declared in a {@code static} method here. The
+   * default is {@code false}: the spec reference normally depends on {@code this}
+   * (a real spec, or {@code this.getSpecification()} for a
+   * {@code MockInteractionSupport}), which is unavailable in static scope. It is
+   * {@code true} only when the spec reference is instance-independent, i.e. an
+   * injected parameter such as a {@code @Interactions} companion's
+   * {@code $spec}.
+   */
+  default boolean isStaticInteractionScopeAllowed() {
+    return false;
+  }
+
   Method getCurrentMethod();
 
   Block getCurrentBlock();

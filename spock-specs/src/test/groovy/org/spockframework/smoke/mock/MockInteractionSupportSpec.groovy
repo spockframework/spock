@@ -129,6 +129,19 @@ class MockInteractionSupportSpec extends EmbeddedSpecification {
     e.message.contains("Mocks cannot be created in static scope")
   }
 
+  def "interactions declared in a MockInteractionSupport fixture are NOT relocated out of a then-block"() {
+    given: "unlike @Interactions helpers, fixture methods are not moved before the when-block"
+    def collaborator = Mock(List)
+    def fixtures = new StubbingFixture(this)
+
+    when:
+    def result = collaborator.contains("x")
+
+    then: "the fixture runs in place (after the action), so the stub did not apply"
+    fixtures.stubContains(collaborator)
+    result == false
+  }
+
   static class UnattachedFixture implements MockInteractionSupport {
     Specification getSpecification() { null } // never attached
 

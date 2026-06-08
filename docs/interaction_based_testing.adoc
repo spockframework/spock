@@ -1263,8 +1263,8 @@ include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=use-cust
 === Declaring Interactions Outside Specifications
 
 `DetachedMockFactory` lets you create a mock outside a `Specification`, but the mock's interactions still have to be declared inside the spec.
-`MockInteractionSupport` lets you encapsulate interactions (and mock creation) in a reusable fixture.
-It routes everything through the owning spec's mock controller, so the interactions behave exactly like interactions declared in a `setup:` block: the spec must be live (called from within a feature's lifecycle), and cardinality interactions are verified when the spec's controller scope leaves.
+Two mechanisms let you encapsulate interactions (and, for the first one, mock creation) in reusable fixtures.
+Both route everything through the owning spec's mock controller, so the interactions behave exactly like interactions declared in a `setup:` block: the spec must be live (called from within a feature's lifecycle), and cardinality interactions are verified when the spec's controller scope leaves.
 
 [[MockInteractionSupport]]
 ==== MockInteractionSupport
@@ -1287,6 +1287,42 @@ include::{sourcedir}/interaction/ExternalMockInteractionsDocSpec.groovy[tags=sup
 A class cannot be both a `Specification` and a `MockInteractionSupport`, because a spec already has the full capability.
 
 If you forget to attach the fixture, using it fails fast with a clear error that tells you the spec is missing.
+
+[[Interactions]]
+==== @Interactions
+
+Annotate a helper method with `spock.lang.Interactions` to declare interactions on mocks that are passed in as parameters.
+The method is written naturally, with no spec parameter.
+Mock creation is not allowed in such a method (pass the mocks in, or use `MockInteractionSupport`).
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/ExternalMockInteractionsDocSpec.groovy[tags=interactions-helper]
+----
+
+When the helper is called from a spec on a strongly-typed receiver, its interactions are routed through the spec:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/ExternalMockInteractionsDocSpec.groovy[tags=interactions-usage]
+----
+
+The receiver must be strongly typed (not `def`), otherwise the call fails with an error explaining what went wrong.
+An overload that takes the `Specification` as an explicit first argument is also available, so you can call the helper with the spec directly where needed.
+
+`@Interactions` helpers compose: an `@Interactions` method (or a `MockInteractionSupport` method) may call another `@Interactions` helper on a strongly-typed receiver, and the spec is passed along automatically.
+
+A few constraints apply, each enforced with a compile error:
+the method must have a body (it cannot be abstract or declared in a trait),
+it must not declare a leading `Specification` parameter (the compiler adds that parameter to the synthesized overload),
+and if one overload of a method name is annotated, all overloads of that name must be annotated, because calls to `@Interactions` helpers are matched by method name.
+
+An `@Interactions` method may be `static` (the spec is passed in as a parameter, so no instance is required), as long as you call it class-qualified (`Fixtures.stub(mock)`).
+A `static` import (`import static ...stub`) does not work; call it class-qualified instead.
+This differs from interactions inside a `Specification` or a `MockInteractionSupport` class, which rely on an implicit spec instance and therefore remain forbidden in `static` scope.
+
+Like an inline interaction, a call to an `@Interactions` helper in a `then:` block is recognized as an interaction declaration and scoped to the preceding `when:` block (see <<Scope of Interactions>>).
+This is specific to `@Interactions` helpers: a call to a `MockInteractionSupport` method is an ordinary method call whose interactions are active from the point it is called, exactly as if they were declared there.
 
 == Further Reading
 

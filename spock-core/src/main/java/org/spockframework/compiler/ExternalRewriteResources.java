@@ -47,25 +47,34 @@ public class ExternalRewriteResources implements IRewriteResources {
   private final AstNodeCache nodeCache;
   private final SourceLookup sourceLookup;
   private final ErrorReporter errorReporter;
+  private final boolean staticInteractionScopeAllowed;
 
   /**
    * @param specificationReferenceFactory produces a fresh spec-reference
    *        expression on each call; a fresh node is required because the
    *        reference is embedded into a new AST location for every interaction
    *        or creation it locates.
+   * @param staticInteractionScopeAllowed see {@link IRewriteResources#isStaticInteractionScopeAllowed()}.
    */
   public ExternalRewriteResources(Supplier<Expression> specificationReferenceFactory, Method currentMethod,
-      AstNodeCache nodeCache, SourceLookup sourceLookup, ErrorReporter errorReporter) {
+      AstNodeCache nodeCache, SourceLookup sourceLookup, ErrorReporter errorReporter,
+      boolean staticInteractionScopeAllowed) {
     this.specificationReferenceFactory = specificationReferenceFactory;
     this.currentMethod = currentMethod;
     this.nodeCache = nodeCache;
     this.sourceLookup = sourceLookup;
     this.errorReporter = errorReporter;
+    this.staticInteractionScopeAllowed = staticInteractionScopeAllowed;
   }
 
   @Override
   public Expression getSpecificationReference() {
     return specificationReferenceFactory.get();
+  }
+
+  @Override
+  public boolean isStaticInteractionScopeAllowed() {
+    return staticInteractionScopeAllowed;
   }
 
   @Override

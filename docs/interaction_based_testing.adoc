@@ -1263,8 +1263,8 @@ include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=use-cust
 === Declaring Interactions Outside Specifications
 
 `DetachedMockFactory` lets you create a mock outside a `Specification`, but the mock's interactions still have to be declared inside the spec.
-Two mechanisms let you encapsulate interactions (and, for the first one, mock creation) in reusable fixtures.
-Both route everything through the owning spec's mock controller, so the interactions behave exactly like interactions declared in a `setup:` block: the spec must be live (called from within a feature's lifecycle), and cardinality interactions are verified when the spec's controller scope leaves.
+Three mechanisms let you encapsulate interactions (and, for some of them, mock creation) in reusable fixtures.
+All of them route their interactions through the owning spec, so they behave exactly like interactions declared in a `setup:` block: the spec must be live (running inside a feature's lifecycle), and cardinality interactions are verified when the feature method ends.
 
 [[MockInteractionSupport]]
 ==== MockInteractionSupport
@@ -1310,7 +1310,7 @@ include::{sourcedir}/interaction/ExternalMockInteractionsDocSpec.groovy[tags=int
 The receiver must be strongly typed (not `def`), otherwise the call fails with an error explaining what went wrong.
 An overload that takes the `Specification` as an explicit first argument is also available, so you can call the helper with the spec directly where needed.
 
-`@Interactions` helpers compose: an `@Interactions` method (or a `MockInteractionSupport` method) may call another `@Interactions` helper on a strongly-typed receiver, and the spec is passed along automatically.
+`@Interactions` helpers compose: an `@Interactions` method (or a `MockInteractionSupport` method, or a `@SelfType(Specification)` trait method) may call another `@Interactions` helper on a strongly-typed receiver, and the spec is passed along automatically.
 
 A few constraints apply, each enforced with a compile error:
 the method must have a body (it cannot be abstract or declared in a trait),
@@ -1322,7 +1322,27 @@ A `static` import (`import static ...stub`) does not work; call it class-qualifi
 This differs from interactions inside a `Specification` or a `MockInteractionSupport` class, which rely on an implicit spec instance and therefore remain forbidden in `static` scope.
 
 Like an inline interaction, a call to an `@Interactions` helper in a `then:` block is recognized as an interaction declaration and scoped to the preceding `when:` block (see <<Scope of Interactions>>).
-This is specific to `@Interactions` helpers: a call to a `MockInteractionSupport` method is an ordinary method call whose interactions are active from the point it is called, exactly as if they were declared there.
+This is specific to `@Interactions` helpers: a call to a `@SelfType(Specification)` trait helper or a `MockInteractionSupport` method is an ordinary method call whose interactions are active from the point it is called, exactly as if they were declared there.
+
+[[SpecificationTrait]]
+==== @SelfType(Specification) traits
+
+A Groovy trait annotated with `@groovy.transform.SelfType(Specification)` is, by construction, a fragment of a `Specification`: `this` is guaranteed to be a spec wherever the trait is mixed in.
+Such a trait may therefore declare interactions and create mocks directly, exactly as if the code were written inside the spec.
+The methods become reusable helpers that any spec can inherit by implementing the trait.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/ExternalMockInteractionsDocSpec.groovy[tags=trait-fixture]
+----
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/ExternalMockInteractionsDocSpec.groovy[tags=trait-usage]
+----
+
+The self-type may also be a subclass of `Specification`.
+Because a trait method is ultimately invoked on a real spec instance, interactions and mock creation are forbidden in `static` trait methods (a static method has no such instance).
 
 == Further Reading
 

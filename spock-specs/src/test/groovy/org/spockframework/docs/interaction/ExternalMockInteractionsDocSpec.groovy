@@ -1,5 +1,6 @@
 package org.spockframework.docs.interaction
 
+import groovy.transform.SelfType
 import spock.lang.Specification
 import spock.mock.MockInteractionSupport
 import spock.lang.Interactions
@@ -69,3 +70,32 @@ class ExternalMockInteractionsDocSpec extends Specification {
     void audit(String message)
   }
 }
+
+interface GreetingService {
+  String greet(String name)
+}
+
+// tag::trait-fixture[]
+@SelfType(Specification)                       // guarantees `this` is a Specification
+trait GreetingInteractions {
+  void expectHello(GreetingService service) {
+    1 * service.greet("world") >> "hello"
+  }
+}
+// end::trait-fixture[]
+
+// tag::trait-usage[]
+class GreetingSpec extends Specification implements GreetingInteractions {
+  def "a @SelfType(Specification) trait mixes interaction helpers into the spec"() {
+    given:
+    GreetingService service = Mock()
+
+    when:
+    expectHello(service)                       // trait method, inherited by the spec
+    def reply = service.greet("world")
+
+    then:
+    reply == "hello"
+  }
+}
+// end::trait-usage[]

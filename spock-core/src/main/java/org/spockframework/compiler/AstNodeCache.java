@@ -46,6 +46,7 @@ public class AstNodeCache {
   public final ClassNode MockController = ClassHelper.makeWithoutCaching(MockController.class);
   public final ClassNode SpecificationContext = ClassHelper.makeWithoutCaching(SpecificationContext.class);
   public final ClassNode MockInteractionSupport = ClassHelper.makeWithoutCaching(spock.mock.MockInteractionSupport.class);
+  public final ClassNode SelfType = ClassHelper.makeWithoutCaching(groovy.transform.SelfType.class);
   public final ClassNode InvalidSpecException = ClassHelper.makeWithoutCaching(InvalidSpecException.class);
   public final ClassNode Checks = ClassHelper.makeWithoutCaching(org.spockframework.util.Checks.class);
   public final ClassNode DataVariableMultiplication = ClassHelper.makeWithoutCaching(DataVariableMultiplication.class);

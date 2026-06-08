@@ -77,9 +77,10 @@ public class SpockTransform implements ASTTransformation {
         for (ClassNode clazz : classes)
           processInteractionsMethods(clazz, errorReporter, sourceLookup);
 
-        // Pass 2: process specs and MockInteractionSupport classes.
+        // Pass 2: process specs, @SelfType(Specification) traits and MockInteractionSupport classes.
         for (ClassNode clazz : classes) {
           boolean spec = isSpec(clazz);
+          boolean trait = isSpecificationTrait(clazz);
           boolean support = isMockInteractionSupport(clazz);
 
           if (spec && support) {
@@ -91,6 +92,8 @@ public class SpockTransform implements ASTTransformation {
 
           if (spec) {
             processSpec(sourceUnit, clazz, errorReporter, sourceLookup);
+          } else if (trait) {
+            processSpecificationTrait(sourceUnit, clazz, errorReporter, sourceLookup);
           } else if (support) {
             processMockInteractionSupport(sourceUnit, clazz, errorReporter, sourceLookup);
           }
@@ -126,7 +129,8 @@ public class SpockTransform implements ASTTransformation {
         }
         if (onTrait) {
           errorReporter.error(
-              "Method '%s' is annotated with @Interactions but declared in a trait, which is not supported.",
+              "Method '%s' is annotated with @Interactions but declared in a trait, which is not supported; "
+                  + "a @SelfType(Specification) trait can declare interactions without the annotation.",
               method.getName());
           continue;
         }
@@ -233,6 +237,40 @@ public class SpockTransform implements ASTTransformation {
       return clazz.implementsInterface(nodeCache.MockInteractionSupport);
     }
 
+    /**
+     * A trait whose {@code @SelfType} constraint guarantees that {@code this} is a
+     * {@code Specification}. SpockTransform (a global transform) runs before
+     * Groovy's trait transform, so the trait is still a plain class with
+     * instance-method bodies here; rewriting them against {@code this} lets the
+     * trait transform relocate the bodies into the {@code $Trait$Helper} and
+     * rewrite {@code this} to the {@code $self} parameter (the real spec instance).
+     */
+    boolean isSpecificationTrait(ClassNode clazz) {
+      return Traits.isTrait(clazz) && selfTypeIsSpecification(clazz);
+    }
+
+    boolean selfTypeIsSpecification(ClassNode clazz) {
+      for (AnnotationNode annotation : clazz.getAnnotations(nodeCache.SelfType)) {
+        Expression value = annotation.getMember("value");
+        for (ClassNode selfType : selfTypes(value)) {
+          if (selfType.isDerivedFrom(nodeCache.Specification) || selfType.equals(nodeCache.Specification))
+            return true;
+        }
+      }
+      return false;
+    }
+
+    List<ClassNode> selfTypes(Expression value) {
+      List<ClassNode> types = new ArrayList<>();
+      if (value instanceof ClassExpression) {
+        types.add(value.getType());
+      } else if (value instanceof ListExpression) {
+        for (Expression element : ((ListExpression) value).getExpressions())
+          if (element instanceof ClassExpression) types.add(element.getType());
+      }
+      return types;
+    }
+
     void processMockInteractionSupport(SourceUnit sourceUnit, ClassNode clazz, ErrorReporter errorReporter, SourceLookup sourceLookup) {
       Supplier<Expression> specRef = () -> AstUtil.createDirectMethodCall(
           VariableExpression.THIS_EXPRESSION, nodeCache.MockInteractionSupport_GetSpecification,
@@ -257,6 +295,21 @@ public class SpockTransform implements ASTTransformation {
         if (method.isAbstract() || method.getDeclaringClass() != clazz) continue;
         rewriter.rewriteInPlace(method, specRef);
       }
+    }
+
+    void processSpecificationTrait(SourceUnit sourceUnit, ClassNode clazz, ErrorReporter errorReporter, SourceLookup sourceLookup) {
+      // The spec is `this` (guaranteed a Specification by @SelfType); Groovy's
+      // trait transform later relocates the body and rewrites `this` to `$self`.
+      Supplier<Expression> specRef = () -> new VariableExpression("this");
+      // allowCreation=true (`this` is the spec, so Mock() can route through it);
+      // allowStaticScope=false (a static trait method's `$static$self` is a Class,
+      // not a spec instance, so it cannot reach the controller);
+      // specNullMessage=null skips the guard (`this`/`$self` is non-null by construction).
+      ExternalInteractionRewriter rewriter =
+          new ExternalInteractionRewriter(nodeCache, errorReporter, sourceLookup, true, false, null);
+      rewriteDeclaredMethods(clazz, rewriter, specRef);
+      // No VariableScopeVisitor here: Groovy's trait transform reshapes the bodies
+      // (this -> $self) afterwards and runs its own scope handling.
     }
 
     void processSpec(SourceUnit sourceUnit, ClassNode clazz, ErrorReporter errorReporter, SourceLookup sourceLookup) {

@@ -127,4 +127,25 @@ def "a feature"() {
     then: "the companion call is moved out of the then-block to before the when-block, like an inline interaction"
     snapshotter.assertThat(result.source).matchesSnapshot(SNAPSHOT_ID)
   }
+
+  def "a @SelfType(Specification) trait has its creation and interactions rewritten, then relocated to the helper against \$self"() {
+    when:
+    def result = compiler.transpile('''
+import groovy.transform.SelfType
+import spock.lang.Specification
+
+@SelfType(Specification)
+trait OrderInteractions {
+  def createAndStub() {
+    def gateway = Mock(List)
+    gateway.add("x") >> true
+    1 * gateway.add("y")
+    return gateway
+  }
+}
+''')
+
+    then: "SpockTransform rewrote against `this` (pre-relocation); the trait transform moved the body into the helper and rewrote `this` to `\$self`"
+    snapshotter.assertThat(result.source).matchesSnapshot(SNAPSHOT_ID)
+  }
 }

@@ -471,12 +471,12 @@ public class DataIteratorFactory {
     private Object[] createWhereVariableValues() {
       MethodInfo method = context.getCurrentFeature().getWhereVariablesMethod();
       if (method == null) {
-        return new Object[0];
+        return NO_WHERE_VARIABLE_VALUES;
       }
       Object values = invokeRaw(context.getCurrentInstance(), method);
       // invokeRaw records the error and returns null on failure; the empty array keeps us
       // safe until the constructor's createDataProviders() short-circuits on hasErrors()
-      return (values == null) ? new Object[0] : (Object[]) values;
+      return (values == null) ? NO_WHERE_VARIABLE_VALUES : (Object[]) values;
     }
 
     private Object[] createDataProviders() {

@@ -151,6 +151,14 @@ public class WhereBlockRewriter {
     }
 
     whereBlock.getAst().clear();
+
+    // without a data variable no synthetic method that receives the where-block variables is
+    // ever generated or invoked, so the declarations would silently never be evaluated
+    if (!whereBlockVariables.isEmpty() && dataProcessorVars.isEmpty()) {
+      resources.getErrorReporter().error(
+        whereBlockVariablesRequireDataVariable(whereBlockVariables.get(0)));
+    }
+
     handleFeatureParameters();
     createDataProcessorMethod();
     createWhereVariablesMethod();
@@ -1076,6 +1084,11 @@ public class WhereBlockRewriter {
   private static InvalidSpecCompileException whereBlockVariableUnsupportedMultipleAssignmentTarget(ASTNode stat) {
     return new InvalidSpecCompileException(stat,
       "where-block variables only support simple names in a multiple assignment (e.g. 'final (a, b) = [1, 2]')");
+  }
+
+  private static InvalidSpecCompileException whereBlockVariablesRequireDataVariable(ASTNode stat) {
+    return new InvalidSpecCompileException(stat,
+      "where-block variables require at least one data variable (e.g. 'x << [1, 2]')");
   }
 
   private static InvalidSpecCompileException whereBlockVariableNoWildcardInMultipleAssignment(ASTNode stat) {

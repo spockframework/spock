@@ -243,6 +243,22 @@ x >= threshold
     result.testsSucceededCount == 3
   }
 
+  def "a failing where-block variable initializer fails the feature with the original exception"() {
+    when:
+    runner.runFeatureBody '''
+expect:
+true
+
+where:
+final boom = { throw new IllegalStateException("initializer failed") }()
+x << [1, 2]
+'''
+
+    then:
+    IllegalStateException e = thrown()
+    e.message == "initializer failed"
+  }
+
   def "an AutoCloseable where-block variable is closed once after the feature completes"() {
     given:
     runner.addClassImport(RecordingCloseable)

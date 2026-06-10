@@ -1057,4 +1057,53 @@ $spock_reserved << [1, 2]
     InvalidSpecCompileException e = thrown()
     e.message.startsWith("Variable name '\$spock_reserved' is invalid: the '\$spock_' prefix is reserved for Spock's internal use")
   }
+
+  def "where-block variables require at least one data variable"() {
+    when:
+    compiler.compileFeatureBody """
+expect:
+true
+
+where:
+final sep = "/"
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("where-block variables require at least one data variable")
+  }
+
+  def "duplicate where-block variable names are rejected by Groovy's scope check"() {
+    when:
+    compiler.compileFeatureBody """
+expect:
+true
+
+where:
+final a = 1
+final a = 2
+x << [1, 2]
+    """
+
+    then:
+    SyntaxException e = thrown()
+    e.message.contains("The current scope already contains a variable of the name a")
+  }
+
+  @Requires(value = { GroovyRuntimeUtil.MAJOR_VERSION >= 3 }, reason = "'final (a, b) = ...' is only parseable by the Parrot parser (Groovy 3.0+)")
+  def "duplicate multiple-assignment where-block variable names are rejected by Groovy's scope check"() {
+    when:
+    compiler.compileFeatureBody """
+expect:
+true
+
+where:
+final (a, a) = [1, 2]
+x << [1, 2]
+    """
+
+    then:
+    SyntaxException e = thrown()
+    e.message.contains("The current scope already contains a variable of the name a")
+  }
 }

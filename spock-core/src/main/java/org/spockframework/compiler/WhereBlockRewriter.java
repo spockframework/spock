@@ -1018,11 +1018,29 @@ public class WhereBlockRewriter {
   private void createWhereVariablesMethod() {
     if (whereBlockVariables.isEmpty()) return;
 
-    List<Statement> declarations = whereBlockVariables.stream()
-      .map(var -> var.statement)
-      .collect(toList());
-    instanceFieldAccessChecker.check(declarations);
+    instanceFieldAccessChecker.check(getWhereBlockVariableStatements());
 
+    MethodNode method = new MethodNode(
+      InternalIdentifiers.getWhereVariablesName(whereBlock.getParent().getAst().getName()),
+      Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
+      ClassHelper.OBJECT_TYPE.makeArray(),
+      Parameter.EMPTY_ARRAY,
+      ClassNode.EMPTY_ARRAY,
+      new BlockStatement(createWhereVariableValueStatements(), null));
+
+    whereBlock.getParent().getParent().getAst().addMethod(method);
+  }
+
+  /**
+   * Builds the statements that evaluate every where-block variable initializer and return their
+   * values as an {@code Object[]}, ordered by declaration. Each slot is filled as soon as its
+   * initializer runs, and the whole sequence is wrapped in a try/catch that closes the
+   * {@link AutoCloseable} values created so far when a later initializer throws (slots whose
+   * initializer never ran stay {@code null} and are skipped by the close helper), so a partial
+   * failure never leaks a resource. Shared by the feature where-variables method and the
+   * standalone {@code @DataProvider} where-variables closure so both get the same safety.
+   */
+  public List<Statement> createWhereVariableValueStatements() {
     int variableCount = (int) whereBlockVariableNames().count();
     Statement valuesDecl = new ExpressionStatement(
       new DeclarationExpression(
@@ -1031,9 +1049,6 @@ public class WhereBlockRewriter {
         new ArrayExpression(ClassHelper.OBJECT_TYPE, null,
           singletonList(new ConstantExpression(variableCount)))));
 
-    // each declaration fills its slot(s) right away, so that when a later initializer throws,
-    // the catch block can close the values that already exist; slots whose initializer never
-    // ran are still null and are skipped by the close helper
     List<Statement> tryStats = new ArrayList<>();
     int slot = 0;
     for (WhereBlockVariable variable : whereBlockVariables) {
@@ -1063,15 +1078,7 @@ public class WhereBlockRewriter {
             new VariableExpression(failure)))),
       new ThrowStatement(new VariableExpression(failure))), null)));
 
-    MethodNode method = new MethodNode(
-      InternalIdentifiers.getWhereVariablesName(whereBlock.getParent().getAst().getName()),
-      Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
-      ClassHelper.OBJECT_TYPE.makeArray(),
-      Parameter.EMPTY_ARRAY,
-      ClassNode.EMPTY_ARRAY,
-      new BlockStatement(Arrays.asList(valuesDecl, tryCatch), null));
-
-    whereBlock.getParent().getParent().getAst().addMethod(method);
+    return Arrays.asList(valuesDecl, tryCatch);
   }
 
   /**

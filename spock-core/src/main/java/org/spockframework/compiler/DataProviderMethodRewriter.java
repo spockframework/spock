@@ -295,13 +295,9 @@ class DataProviderMethodRewriter {
       instanceFieldAccessChecker.check(parsed.getWhereBlockVariableStatements());
     }
 
-    List<Statement> stats = new ArrayList<>(parsed.getWhereBlockVariableStatements());
-    List<Expression> values = parsed.getWhereBlockVariableNames().stream()
-      .map(VariableExpression::new)
-      .collect(toList());
-    stats.add(new ReturnStatement(new ArrayExpression(ClassHelper.OBJECT_TYPE, values)));
-
-    return createClosure(Parameter.EMPTY_ARRAY, stats);
+    // reuse the feature path's value-array construction so a where-block variable initializer that
+    // throws still closes the AutoCloseable values created before it, instead of leaking them
+    return createClosure(Parameter.EMPTY_ARRAY, parsed.createWhereVariableValueStatements());
   }
 
   private List<Expression> createDataProviderDescriptors(WhereBlockRewriter parsed) {

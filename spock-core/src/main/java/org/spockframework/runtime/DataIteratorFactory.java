@@ -339,24 +339,32 @@ public class DataIteratorFactory {
   }
 
   private static class DataProviderIterators extends BaseDataIterator {
-    private final Object[] dataProviders;
-    private final IDataIterator[] dataProviderIterators;
-    private final int estimatedNumIterations;
-    private final List<String> dataVariableNames;
-    private final Object[] whereVariableValues;
+    private Object[] dataProviders;
+    private IDataIterator[] dataProviderIterators;
+    private int estimatedNumIterations;
+    private List<String> dataVariableNames;
+    private Object[] whereVariableValues;
     private boolean firstIteration = true;
 
     public DataProviderIterators(IDataIterationContext context) {
       super(context);
-      // order is important as they rely on each other
-      whereVariableValues = createWhereVariableValues();
-      dataVariableNames = dataVariableNames();
-      dataProviders = createDataProviders();
-      dataProviderIterators = createDataProviderIterators();
-      if ((dataProviderIterators != null) && (dataProviders != null)) {
-        Assert.that(dataProviderIterators.length == dataProviders.length);
+      try {
+        // order is important as they rely on each other
+        whereVariableValues = createWhereVariableValues();
+        dataVariableNames = dataVariableNames();
+        dataProviders = createDataProviders();
+        dataProviderIterators = createDataProviderIterators();
+        if ((dataProviderIterators != null) && (dataProviders != null)) {
+          Assert.that(dataProviderIterators.length == dataProviders.length);
+        }
+        estimatedNumIterations = estimateNumIterations(dataProviderIterators);
+      } catch (Throwable t) {
+        // a standalone context rethrows errors instead of recording them, so release
+        // everything created so far, in particular AutoCloseable where-block variables
+        // (a feature context records errors and never throws here)
+        close();
+        throw t;
       }
-      estimatedNumIterations = estimateNumIterations(dataProviderIterators);
     }
 
     @Override
@@ -369,6 +377,9 @@ public class DataIteratorFactory {
     // close AutoCloseable where-block variables once the feature is done, in reverse declaration
     // order (a later variable may depend on an earlier one); close failures are ignored
     private void closeWhereVariables() {
+      if (whereVariableValues == null) {
+        return;
+      }
       for (int i = whereVariableValues.length - 1; i >= 0; i--) {
         Object value = whereVariableValues[i];
         if (value instanceof AutoCloseable) {
@@ -463,6 +474,9 @@ public class DataIteratorFactory {
       }
 
       Object[] dataProviders = new Object[dataProviderInfos.size()];
+      // expose the partially filled array so that close() can release already created
+      // providers when a standalone context rethrows an error from a later provider
+      this.dataProviders = dataProviders;
 
       for (int i = 0, size = dataProviderInfos.size(); i < size; i++) {
         DataProviderInfo dataProviderInfo = dataProviderInfos.get(i);

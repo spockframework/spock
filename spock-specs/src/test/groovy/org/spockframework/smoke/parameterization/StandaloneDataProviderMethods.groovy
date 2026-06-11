@@ -512,6 +512,68 @@ class Res implements AutoCloseable {
     clazz.closed == ["res"]
   }
 
+  def "AutoCloseable where-block variables are closed when a data provider fails"() {
+    given:
+    def clazz = compilePlainClass '''
+class Providers {
+  static List closed = []
+
+  @DataProvider
+  def items() {
+    final res = new Res(name: "res")
+    a << broken()
+  }
+
+  static List broken() { throw new IllegalStateException("boom") }
+}
+
+class Res implements AutoCloseable {
+  String name
+  void close() { Providers.closed << name }
+}
+'''
+
+    when:
+    clazz.newInstance().items()
+
+    then:
+    IllegalStateException e = thrown()
+    e.message == "boom"
+    clazz.closed == ["res"]
+  }
+
+  def "already-created where-block variables are closed in reverse declaration order when a later initializer throws"() {
+    given:
+    def clazz = compilePlainClass '''
+class Providers {
+  static List closed = []
+
+  @DataProvider
+  def items() {
+    final first = new Res(name: "first")
+    final second = new Res(name: "second")
+    final boom = broken()
+    a << [1, 2]
+  }
+
+  static def broken() { throw new IllegalStateException("boom") }
+}
+
+class Res implements AutoCloseable {
+  String name
+  void close() { Providers.closed << name }
+}
+'''
+
+    when:
+    instantiate(clazz).items()
+
+    then:
+    IllegalStateException e = thrown()
+    e.message == "boom"
+    clazz.closed == ["second", "first"]
+  }
+
   def "close is idempotent"() {
     given:
     def clazz = compilePlainClass '''

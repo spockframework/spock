@@ -16,20 +16,24 @@
 
 package org.spockframework.smoke.parameterization
 
-import groovy.lang.Tuple1
-import groovy.lang.Tuple2
+
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
+import org.codehaus.groovy.syntax.SyntaxException
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
 import org.spockframework.runtime.GroovyRuntimeUtil
+import org.spockframework.runtime.model.StandaloneDataProviderMetadata
 import spock.lang.Requires
 
 import java.lang.reflect.ParameterizedType
 
 class StandaloneDataProviderMethods extends EmbeddedSpecification {
 
+  // EmbeddedSpecCompiler.compile() filters its result to specifications, so plain
+  // classes must be parsed directly; reuse the per-test loader so the parsed classes
+  // share the embedded compiler's lifecycle
   private Class compilePlainClass(String source) {
-    new GroovyClassLoader(getClass().classLoader).parseClass("import spock.lang.DataProvider\n\n" + source)
+    compiler.loader.parseClass("import spock.lang.DataProvider\n\n" + source)
   }
 
   def "data table provider in a spec is consumed via multi-variable data pipe"() {
@@ -88,10 +92,10 @@ def pairs() {
 '''
 
     when:
-    def rows = clazz.newInstance().pairs().collect()
+    def rows = instantiate(clazz).pairs().collect()
 
     then:
-    rows.every { it instanceof Tuple2 }
+    verifyEach(rows) { it instanceof Tuple2 }
     rows*.toList() == [[1, 2], [2, 3]]
   }
 
@@ -107,10 +111,12 @@ class Providers {
 '''
 
     when:
-    def rows = clazz.newInstance().values().collect()
+    def rows = instantiate(clazz).values().collect()
 
     then:
-    rows.every { it instanceof Tuple1 }
+    verifyEach(rows) {
+      it instanceof Tuple1
+    }
     rows*.toList() == [[1], [2]]
   }
 
@@ -134,7 +140,7 @@ class Providers {
 '''
 
     when:
-    def rows = clazz.newInstance().rich().collect()
+    def rows = instantiate(clazz).rich().collect()
 
     then:
     rows*.toList() == [[1, 10, 11], [2, 20, 22]]
@@ -154,7 +160,7 @@ class Providers {
 '''
 
     expect:
-    clazz.newInstance().table().collect { it.toList() } == [[1, 2], [2, 4]]
+    instantiate(clazz).table().collect { it.toList() } == [[1, 2], [2, 4]]
   }
 
   def "combined data providers yield the cross product"() {
@@ -171,7 +177,7 @@ class Providers {
 '''
 
     when:
-    def rows = clazz.newInstance().matrix().collect()
+    def rows = instantiate(clazz).matrix().collect()
 
     then:
     rows*.toList() == [[1, 'a'], [1, 'b'], [2, 'a'], [2, 'b']]
@@ -230,7 +236,7 @@ class Providers {
 '''
 
     expect:
-    clazz.newInstance().items().collect { it.toList() } == [[1], [2], [3]]
+    instantiate(clazz).items().collect { it.toList() } == [[1], [2], [3]]
   }
 
   def "provider in a spec can access @Shared and static fields"() {
@@ -283,7 +289,7 @@ class Providers {
   }
 }
 '''
-    def instance = clazz.newInstance()
+    def instance = instantiate(clazz)
 
     expect:
     instance.values().collect { it.toList() } == [[1], [2]]
@@ -346,7 +352,7 @@ class Providers {
   }
 }
 '''
-    def instance = clazz.newInstance()
+    def instance = instantiate(clazz)
 
     expect:
     instance.known().getEstimatedNumIterations() == 3
@@ -415,7 +421,7 @@ class Providers {
 '''
 
     expect:
-    clazz.newInstance().items().collect { it.toList() } == [[2], [3]]
+    instantiate(clazz).items().collect { it.toList() } == [[2], [3]]
   }
 
   def "the returned iterator exposes the data variable names"() {
@@ -431,7 +437,7 @@ class Providers {
 '''
 
     expect:
-    clazz.newInstance().pairs().getDataVariableNames() == ["a", "b"]
+    instantiate(clazz).pairs().getDataVariableNames() == ["a", "b"]
   }
 
   def "where-block variables are evaluated once and are not columns"() {
@@ -448,11 +454,13 @@ class Providers {
 '''
 
     when:
-    def rows = clazz.newInstance().items().collect()
+    def rows = instantiate(clazz).items().collect()
 
     then:
     rows.size() == 2
-    rows.every { it.size() == 2 }
+    verifyEach(rows) {
+      it.size() == 2
+    }
     rows[0][1].is(rows[1][1])  // single evaluation
   }
 
@@ -477,7 +485,7 @@ class Res implements AutoCloseable {
 '''
 
     when:
-    def iterator = clazz.newInstance().items()
+    def iterator = instantiate(clazz).items()
     iterator.next()
     iterator.close()
 
@@ -505,7 +513,7 @@ class Res implements AutoCloseable {
 '''
 
     when: "the iterator is exhausted and discarded without an explicit close()"
-    def values = clazz.newInstance().items().collect { it[0] }
+    def values = instantiate(clazz).items().collect { it[0] }
 
     then:
     values == [1, 2]
@@ -534,7 +542,7 @@ class Res implements AutoCloseable {
 '''
 
     when:
-    clazz.newInstance().items()
+    instantiate(clazz).items()
 
     then:
     IllegalStateException e = thrown()
@@ -594,7 +602,7 @@ class Res implements AutoCloseable {
 '''
 
     when:
-    def iterator = clazz.newInstance().items()
+    def iterator = instantiate(clazz).items()
     iterator.collect()
     iterator.close()
     iterator.close()
@@ -617,7 +625,7 @@ class Providers {
 '''
 
     expect:
-    clazz.newInstance().items().collect { it.toList() } == [[1], [2], [3]]
+    instantiate(clazz).items().collect { it.toList() } == [[1], [2], [3]]
   }
 
   def "a def provider gets a synthesized Iterator return type"() {
@@ -753,7 +761,7 @@ def upTo(int n) {
 '''
 
     then: "Groovy itself already rejects a local variable shadowing a parameter"
-    org.codehaus.groovy.syntax.SyntaxException e = thrown()
+    SyntaxException e = thrown()
     e.message.contains("variable") && e.message.contains("n")
   }
 
@@ -810,7 +818,7 @@ class Providers {
 '''
 
     when:
-    def rows = clazz.newInstance().wide().collect()
+    def rows = instantiate(clazz).wide().collect()
 
     then:
     rows*.toList() == [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]
@@ -832,7 +840,7 @@ class Providers {
 
     when:
     def method = clazz.declaredMethods.find { it.name == "pairs" }
-    def metadata = method.getAnnotation(org.spockframework.runtime.model.StandaloneDataProviderMetadata)
+    def metadata = method.getAnnotation(StandaloneDataProviderMetadata)
 
     then:
     metadata != null
@@ -861,5 +869,9 @@ def feature() {
 
     then:
     result.testsSucceededCount == 3
+  }
+
+  private static <T> T instantiate(Class<T> clazz) {
+    clazz.getDeclaredConstructor().newInstance()
   }
 }

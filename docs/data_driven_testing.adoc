@@ -541,6 +541,44 @@ include::{sourcedir}/datadriven/DataSpec.groovy[tag=excluding-iterations]
 After all iterations have completed, the zero-argument `close` method is called on all data providers that have
 such a method.
 
+== Standalone Data Provider Methods
+
+Sometimes the same data should drive several features, possibly even across specifications.
+A method annotated with `@DataProvider` makes the `where:` block grammar reusable:
+its body is written exactly like the content of a `where:` block, and calling the method returns a fresh, lazy `Iterator` over the resulting rows.
+Each row is an arity-specific Groovy tuple (`Tuple1`, `Tuple2`, ...), so the method can feed any feature through the existing <<Multi-Variable Data Pipes,multi-variable data pipe>>:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=standalone-data-provider]
+----
+
+The body accepts the full `where:` block grammar: <<Local Variables in the where-block,local variables>>, data tables, data pipes, derived data variables, `combined:` multiplications, and a trailing `filter:` block.
+All resulting data variables become the tuple columns, in declaration order; where-block local variables do not.
+A single column yields `Tuple1` rows, so it is consumed as `[a] << provider()`, not as `a << provider()`.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=standalone-data-provider-parameters]
+----
+
+A `@DataProvider` method:
+
+* may be declared on any class, not only on specifications, and may be `static` or an instance method;
+* inside a specification may read `@Shared` and `static` fields but not plain instance fields, exactly like a `where:` block; on any other class instance fields are accessible as usual;
+* may declare method parameters; like where-block local variables they are in scope for the whole body without becoming tuple columns, and a name collision between a parameter and a data variable or where-block local variable is a compile error.
+  Unlike where-block local variables, parameters are owned by the caller and are never closed automatically;
+* may be declared `def`, in which case the return type is replaced by `Iterator<TupleN>` matching the column count; an explicitly declared return type must be `java.util.Iterator` and is validated at compile time;
+* does not support `@CompileStatic`, since the `where:` block grammar is inherently dynamic.
+
+The returned iterator implements `AutoCloseable`.
+Closing it closes any `AutoCloseable` where-block local variables in reverse declaration order, and the iterator also closes itself once it is exhausted, so the variables are released even if the iterator is consumed indirectly, for example via `provider().collect { ... }`.
+A feature consuming the provider through a data pipe closes the iterator automatically when the feature finishes, as described in <<Closing of Data Providers>>.
+The iterator also reports the expected number of rows, so the consuming feature gets an accurate <<Number of Iterations,iteration count>> where it is known.
+
+NOTE: The arity-specific tuple classes are version-dependent: Groovy 2.5 only ships `Tuple1` through `Tuple9`, Groovy 3.0 and newer add `Tuple10` through `Tuple16`.
+For arities the current Groovy version does not ship, the rows fall back to the generic `groovy.lang.Tuple`.
+
 == Unrolled Iteration Names
 
 By default, the names of unrolled iterations are the name of the feature, plus the data variables and the iteration

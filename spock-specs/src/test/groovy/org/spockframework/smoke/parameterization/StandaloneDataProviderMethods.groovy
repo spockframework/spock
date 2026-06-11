@@ -81,9 +81,9 @@ def feature() {
     def clazz = compiler.compileSpecBody '''
 @DataProvider
 def pairs() {
-  a | b
-  1 | 2
-  2 | 3
+  a || b
+  1 || 2
+  2 || 3
 }
 '''
 
@@ -351,6 +351,71 @@ class Providers {
     expect:
     instance.known().getEstimatedNumIterations() == 3
     instance.unknown().getEstimatedNumIterations() == -1
+  }
+
+  def "a consuming feature picks up the estimated iteration count"() {
+    when:
+    def result = runner.runSpecBody '''
+@DataProvider
+def pairs() {
+  a | b
+  1 | 2
+  2 | 3
+  3 | 4
+}
+
+def feature() {
+  expect:
+  specificationContext.currentIteration.estimatedNumIterations == 3
+
+  where:
+  [a, b] << pairs()
+}
+'''
+
+    then:
+    result.testsSucceededCount == 4
+  }
+
+  def "a consuming feature reports an unknown iteration count for a lazy data pipe"() {
+    when:
+    def result = runner.runSpecBody '''
+@DataProvider
+def lazy() {
+  a << [1, 2, 3].iterator()
+}
+
+def feature() {
+  expect:
+  specificationContext.currentIteration.estimatedNumIterations == -1
+
+  where:
+  [a] << lazy()
+}
+'''
+
+    then:
+    result.testsSucceededCount == 4
+  }
+
+  def "where-block variables are visible to pipes and the filter block"() {
+    given:
+    def clazz = compilePlainClass '''
+class Providers {
+  @DataProvider
+  def items() {
+    final limit = 3
+    final threshold = 2
+    a << (1..limit)
+
+    filter:
+    a >= threshold
+  }
+}
+'''
+
+    expect:
+    clazz.newInstance().items().collect { it.toList() } == [[2], [3]]
   }
 
   def "the returned iterator exposes the data variable names"() {

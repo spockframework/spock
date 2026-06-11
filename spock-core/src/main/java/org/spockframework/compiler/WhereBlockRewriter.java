@@ -101,9 +101,9 @@ public class WhereBlockRewriter {
    * @param checkInstanceFieldAccess whether referenced fields must be {@code @Shared} or static
    *   (required inside a {@code Specification}, not on a plain class)
    */
-  public static WhereBlockRewriter parse(WhereBlock block, FilterBlock filterBlock, IRewriteResources resources,
+  public static WhereBlockRewriter parse(WhereBlock block, IRewriteResources resources,
                                          boolean checkInstanceFieldAccess) {
-    WhereBlockRewriter rewriter = new WhereBlockRewriter(block, filterBlock, resources, false, checkInstanceFieldAccess);
+    WhereBlockRewriter rewriter = new WhereBlockRewriter(block, null, resources, false, checkInstanceFieldAccess);
     rewriter.parse();
     return rewriter;
   }
@@ -551,7 +551,7 @@ public class WhereBlockRewriter {
     return results;
   }
 
-  private String getDataTableParameterName(String dataTableVariable) {
+  static String getDataTableParameterName(String dataTableVariable) {
     return "$spock_p_" + dataTableVariable;
   }
 

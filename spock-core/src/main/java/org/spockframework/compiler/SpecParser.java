@@ -17,6 +17,7 @@
 package org.spockframework.compiler;
 
 import org.spockframework.compiler.model.*;
+import spock.lang.DataProvider;
 import spock.lang.Shared;
 
 import java.util.List;
@@ -101,7 +102,11 @@ public class SpecParser implements GroovyClassVisitor {
   }
 
   private boolean isIgnoredMethod(MethodNode method) {
-    return AstUtil.isSynthetic(method);
+    // @DataProvider methods are owned by their own local transform; they must be skipped
+    // here because their where-block grammar would otherwise classify them as feature
+    // methods (any statement label triggers isFeatureMethod) or relocate their body as
+    // a helper method, before the local transform ever sees them
+    return AstUtil.isSynthetic(method) || AstUtil.hasAnnotation(method, DataProvider.class);
   }
 
   // IDEA: check for misspellings other than wrong capitalization

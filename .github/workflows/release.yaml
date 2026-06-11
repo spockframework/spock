@@ -18,9 +18,12 @@ jobs:
       name: 'Check out'
       uses: 'actions/checkout@v6'
     - id: 'step-1'
+      name: 'Install pinned Kotlin (work-around for KT-86352)'
+      uses: './.github/actions/install-pinned-kotlin'
+    - id: 'step-2'
       name: 'Execute script'
       run: 'rm ''.github/workflows/release.yaml'' && ''.github/workflows/release.main.kts'''
-    - id: 'step-2'
+    - id: 'step-3'
       name: 'Consistency check'
       run: 'git diff --exit-code ''.github/workflows/release.yaml'''
   build-and-verify:

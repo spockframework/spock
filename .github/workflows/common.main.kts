@@ -28,12 +28,34 @@ import io.github.typesafegithub.workflows.dsl.JobBuilder
 import io.github.typesafegithub.workflows.dsl.WorkflowBuilder
 import io.github.typesafegithub.workflows.dsl.expressions.Contexts.secrets
 import io.github.typesafegithub.workflows.dsl.expressions.expr
+import io.github.typesafegithub.workflows.yaml.CheckoutActionVersionSource.InferFromClasspath
+import io.github.typesafegithub.workflows.yaml.DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG
 import java.util.Properties
 
 val GRADLE_ENTERPRISE_ACCESS_KEY by secrets
 
 val commonCredentials = mapOf(
     "DEVELOCITY_ACCESS_KEY" to expr(GRADLE_ENTERPRISE_ACCESS_KEY)
+)
+
+// Work-around for https://youtrack.jetbrains.com/issue/KT-86352,
+// see the action definition for details.
+object InstallPinnedKotlin : LocalAction<Outputs>("./.github/actions/install-pinned-kotlin") {
+    override fun toYamlArguments() = linkedMapOf<String, String>()
+
+    override fun buildOutputObject(stepId: String): Outputs = Outputs(stepId)
+}
+
+fun JobBuilder<*>.installPinnedKotlin() {
+    uses(
+        name = "Install pinned Kotlin (work-around for KT-86352)",
+        action = InstallPinnedKotlin
+    )
+}
+
+val commonConsistencyCheckJobConfig = DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG.copy(
+    checkoutActionVersion = InferFromClasspath(),
+    additionalSteps = { installPinnedKotlin() }
 )
 
 data class Strategy(

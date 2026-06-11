@@ -73,6 +73,20 @@ public class JavaMockInterceptor extends BaseMockInterceptor {
           return GroovyRuntimeUtil.invokeMethod(target, methodName);
         }
       }
+      if (isMethod(method, "invokeMethod", String.class, Object.class)) {
+        // GROOVY-12046: Groovy 6 dispatches an unresolved method call through GroovyObject.invokeMethod
+        // (the receiver being the mock proxy, whose metaclass theClass is the mocked supertype). For a
+        // method that does not exist on the mocked type this must still surface as a MissingMethodException
+        // ("dynamic methods are considered to not exist"), matching Groovy <= 5 where the runtime threw
+        // before reaching the mock. Otherwise the call would be silently recorded as an `invokeMethod`
+        // interaction. Methods that do exist (e.g. an argument-type mismatch on an overload) are left to
+        // the normal mock dispatch below.
+        String invokedName = (String) args[0];
+        if (getMockMetaClass().respondsTo(target, invokedName).isEmpty()) {
+          throw new MissingMethodException(invokedName, mockConfiguration.getType(),
+            GroovyRuntimeUtil.asArgumentArray(args[1]), false);
+        }
+      }
     }
 
     IMockMethod mockMethod = new StaticMockMethod(method, mockConfiguration.getExactType());

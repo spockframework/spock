@@ -23,8 +23,18 @@ import spock.lang.Specification
 
 import java.util.function.Function
 
+abstract class GlobalInteractionsInCleanupSuperSpec extends Specification {
+  def cleanup() {
+    verifyAll {
+      mock.apply("a") == "b"
+      mock2.apply("a") == "c"
+      mock3.apply("a") == "d"
+    }
+  }
+}
+
 @Issue("https://github.com/spockframework/spock/issues/616")
-class GlobalInteractionsInCleanup extends Specification {
+class GlobalInteractionsInCleanup extends GlobalInteractionsInCleanupSuperSpec {
   def mock = Mock(Function)
   def mock2 = Mock(Function) {
     apply("a") >> { "c" }

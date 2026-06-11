@@ -40,8 +40,6 @@ import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.dsl.expressions.Contexts.github
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
-import io.github.typesafegithub.workflows.yaml.CheckoutActionVersionSource.InferFromClasspath
-import io.github.typesafegithub.workflows.yaml.DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG
 
 workflow(
     name = "Verify Branches and PRs",
@@ -61,9 +59,7 @@ workflow(
         group = "${expr { github.workflow }}-${expr("${github.eventPullRequest.pull_request.number} || ${github.ref}")}",
         cancelInProgress = true
     ),
-    consistencyCheckJobConfig = DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG.copy(
-        checkoutActionVersion = InferFromClasspath()
-    )
+    consistencyCheckJobConfig = commonConsistencyCheckJobConfig
 ) {
     job(
         id = "check_all_workflow_yaml_consistency",
@@ -74,6 +70,7 @@ workflow(
             name = "Checkout Repository",
             action = Checkout()
         )
+        installPinnedKotlin()
         run(
             name = "Regenerate all Workflow YAMLs",
             command = """find .github/workflows -mindepth 1 -maxdepth 1 -name '*.main.kts' -exec {} \;"""

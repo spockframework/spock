@@ -1,0 +1,19 @@
+name: Install pinned Kotlin
+description: >
+  Installs a pinned Kotlin version and prepends it to the PATH.
+  Kotlin 2.3.20 and newer cannot execute the workflow scripts with the `kotlin` CLI,
+  because resolving extension functions from imported scripts is broken there,
+  see https://youtrack.jetbrains.com/issue/KT-86352.
+  As the GitHub runner images ship an affected version, this action puts an
+  unaffected version on the PATH before any workflow script is executed on a runner.
+
+runs:
+  using: "composite"
+  steps:
+    - name: 'Install Kotlin 2.3.10 (work-around for KT-86352)'
+      run: |
+        curl --fail --silent --show-error --location --output "$RUNNER_TEMP/kotlin-compiler.zip" "https://github.com/JetBrains/kotlin/releases/download/v2.3.10/kotlin-compiler-2.3.10.zip"
+        echo "c8d546f9ff433b529fb0ad43feceb39831040cae2ca8d17e7df46364368c9a9e  $RUNNER_TEMP/kotlin-compiler.zip" | sha256sum --check
+        unzip -q "$RUNNER_TEMP/kotlin-compiler.zip" -d "$RUNNER_TEMP/pinned-kotlin"
+        echo "$RUNNER_TEMP/pinned-kotlin/kotlinc/bin" >> "$GITHUB_PATH"
+      shell: bash

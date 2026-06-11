@@ -20,6 +20,7 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.GroovyRuntimeUtil
 import spock.lang.Issue
 import spock.lang.Requires
+import spock.lang.ResourceLock
 
 @Issue("https://github.com/spockframework/spock/issues/138")
 class WhereBlockVariables extends EmbeddedSpecification {
@@ -259,6 +260,7 @@ x << [1, 2]
     e.message == "initializer failed"
   }
 
+  @ResourceLock("RecordingCloseable.closed")
   def "an AutoCloseable where-block variable is closed once after the feature completes"() {
     given:
     runner.addClassImport(RecordingCloseable)
@@ -280,6 +282,7 @@ name = resource.name
     RecordingCloseable.closed.findAll { it == "closed-once" } == ["closed-once"]
   }
 
+  @ResourceLock("RecordingCloseable.closed")
   def "AutoCloseable where-block variables are closed in reverse declaration order"() {
     given:
     runner.addClassImport(RecordingCloseable)
@@ -300,6 +303,7 @@ names = "${first.name},${second.name}"
     RecordingCloseable.closed.findAll { it in ["lifo-first", "lifo-second"] } == ["lifo-second", "lifo-first"]
   }
 
+  @ResourceLock("RecordingCloseable.closed")
   def "a failure while closing a where-block variable is swallowed"() {
     given:
     runner.addClassImport(RecordingCloseable)
@@ -344,6 +348,8 @@ tag = resource.toString()
   }
 }
 
+// features touching the shared 'closed' list must declare
+// @ResourceLock("RecordingCloseable.closed"), spock-specs runs with parallel execution
 class RecordingCloseable implements AutoCloseable {
   static final List<String> closed = [].asSynchronized()
   final String name

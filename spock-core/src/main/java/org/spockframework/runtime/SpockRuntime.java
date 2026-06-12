@@ -247,6 +247,27 @@ public abstract class SpockRuntime {
     blockListeners.forEach(consumer);
   }
 
+  public static final String CLOSE_WHERE_BLOCK_VARIABLES_AFTER_FAILURE = "closeWhereBlockVariablesAfterFailure";
+
+  /**
+   * Closes {@code AutoCloseable} where-block variables after a later initializer threw, in
+   * reverse declaration order; slots whose initializer never ran are {@code null} and are
+   * skipped, close failures are attached to the original failure as suppressed exceptions.
+   */
+  public static void closeWhereBlockVariablesAfterFailure(Object[] values, Throwable failure) {
+    for (int i = values.length - 1; i >= 0; i--) {
+      if (values[i] instanceof AutoCloseable) {
+        try {
+          ((AutoCloseable) values[i]).close();
+        } catch (Throwable suppressed) {
+          if (suppressed != failure) {
+            failure.addSuppressed(suppressed);
+          }
+        }
+      }
+    }
+  }
+
   public static final String CALL_BLOCK_EXITED = "callBlockExited";
 
   public static void callBlockExited(Specification specification, int blockInfoIndex) {

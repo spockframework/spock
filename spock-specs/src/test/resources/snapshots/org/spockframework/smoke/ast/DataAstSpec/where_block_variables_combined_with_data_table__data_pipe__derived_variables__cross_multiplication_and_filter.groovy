@@ -41,9 +41,20 @@ public java.lang.Object $spock_feature_0_0proc(java.lang.Object $spock_p0, java.
 }
 
 public java.lang.Object[] $spock_feature_0_0wherevars() {
-    java.lang.Object base = 10
-    java.lang.Object sep = '-'
-    return new java.lang.Object[]{ base , sep }
+    java.lang.Object[] $spock_whereVariableValues = new java.lang.Object[2]{}
+    try {
+        java.lang.Object base = 10
+        $spock_whereVariableValues [ 0] = base
+        java.lang.Object sep = '-'
+        $spock_whereVariableValues [ 1] = sep
+        return $spock_whereVariableValues
+    }
+    catch (java.lang.Throwable $spock_tmp_throwable) {
+        org.spockframework.runtime.SpockRuntime.closeWhereBlockVariablesAfterFailure($spock_whereVariableValues, $spock_tmp_throwable)
+        throw $spock_tmp_throwable
+    }
+    finally {
+    }
 }
 
 public static org.spockframework.runtime.model.DataVariableMultiplication[] $spock_feature_0_0prods() {

@@ -11,6 +11,7 @@ public class SpockNames {
   public static final String SPOCK_TMP_THROWABLE = "$spock_tmp_throwable";
   public static final String SPOCK_VALUE = "$spock_value";
   public static final String VALUE_RECORDER = "$spock_valueRecorder";
+  public static final String WHERE_VARIABLE_VALUES = "$spock_whereVariableValues";
   /**
    * Name of the method {@link ISpockMockObject#$spock_get()}.
    */

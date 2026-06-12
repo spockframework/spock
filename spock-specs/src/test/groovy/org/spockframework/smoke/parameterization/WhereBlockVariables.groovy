@@ -330,6 +330,75 @@ marker = bad.hashCode() + ok.name
     RecordingCloseable.closed == ["swallow-ok"]
   }
 
+  @ResourceLock("RecordingCloseable.closed")
+  def "already-created where-block variables are closed in reverse order when a later initializer throws"() {
+    given:
+    RecordingCloseable.closed.clear()
+    runner.addClassImport(RecordingCloseable)
+
+    when:
+    runner.runFeatureBody '''
+expect:
+true
+
+where:
+final first = new RecordingCloseable("partial-first")
+final second = new RecordingCloseable("partial-second")
+final boom = { throw new IllegalStateException("initializer failed") }()
+x << [1, 2]
+'''
+
+    then:
+    IllegalStateException e = thrown()
+    e.message == "initializer failed"
+    RecordingCloseable.closed == ["partial-second", "partial-first"]
+  }
+
+  @Requires(value = { GroovyRuntimeUtil.MAJOR_VERSION >= 3 }, reason = "'final (a, b) = ...' is only parseable by the Parrot parser (Groovy 3.0+)")
+  @ResourceLock("RecordingCloseable.closed")
+  def "already-created destructured where-block variables are closed when a later initializer throws"() {
+    given:
+    RecordingCloseable.closed.clear()
+    runner.addClassImport(RecordingCloseable)
+
+    when:
+    runner.runFeatureBody '''
+expect:
+true
+
+where:
+final (a, b) = [new RecordingCloseable("destructured-a"), new RecordingCloseable("destructured-b")]
+final boom = { throw new IllegalStateException("initializer failed") }()
+x << [1, 2]
+'''
+
+    then:
+    IllegalStateException e = thrown()
+    e.message == "initializer failed"
+    RecordingCloseable.closed == ["destructured-b", "destructured-a"]
+  }
+
+  def "a close failure while cleaning up after a failed initializer is attached as suppressed"() {
+    given:
+    runner.addClassImport(ThrowingCloseable)
+
+    when:
+    runner.runFeatureBody '''
+expect:
+true
+
+where:
+final bad = new ThrowingCloseable()
+final boom = { throw new IllegalStateException("initializer failed") }()
+x << [1, 2]
+'''
+
+    then:
+    IllegalStateException e = thrown()
+    e.message == "initializer failed"
+    e.suppressed*.message == ["close failed"]
+  }
+
   def "a where-block variable that is not AutoCloseable is left untouched"() {
     given:
     PlainResource.closeCalled = false

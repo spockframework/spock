@@ -973,15 +973,50 @@ public class WhereBlockRewriter {
   private void createWhereVariablesMethod() {
     if (whereBlockVariables.isEmpty()) return;
 
-    List<Statement> stats = whereBlockVariables.stream()
+    List<Statement> declarations = whereBlockVariables.stream()
       .map(var -> var.statement)
-      .collect(toCollection(ArrayList::new));
-    instanceFieldAccessChecker.check(stats);
-
-    List<Expression> values = whereBlockVariableNames()
-      .map(VariableExpression::new)
       .collect(toList());
-    stats.add(new ReturnStatement(new ArrayExpression(ClassHelper.OBJECT_TYPE, values)));
+    instanceFieldAccessChecker.check(declarations);
+
+    int variableCount = (int) whereBlockVariableNames().count();
+    Statement valuesDecl = new ExpressionStatement(
+      new DeclarationExpression(
+        new VariableExpression(SpockNames.WHERE_VARIABLE_VALUES, ClassHelper.OBJECT_TYPE.makeArray()),
+        Token.newSymbol(Types.ASSIGN, -1, -1),
+        new ArrayExpression(ClassHelper.OBJECT_TYPE, null,
+          singletonList(new ConstantExpression(variableCount)))));
+
+    // each declaration fills its slot(s) right away, so that when a later initializer throws,
+    // the catch block can close the values that already exist; slots whose initializer never
+    // ran are still null and are skipped by the close helper
+    List<Statement> tryStats = new ArrayList<>();
+    int slot = 0;
+    for (WhereBlockVariable variable : whereBlockVariables) {
+      tryStats.add(variable.statement);
+      for (String name : variable.names) {
+        tryStats.add(new ExpressionStatement(
+          new BinaryExpression(
+            new BinaryExpression(
+              new VariableExpression(SpockNames.WHERE_VARIABLE_VALUES),
+              Token.newSymbol(Types.LEFT_SQUARE_BRACKET, -1, -1),
+              new ConstantExpression(slot++)),
+            Token.newSymbol(Types.ASSIGN, -1, -1),
+            new VariableExpression(name))));
+      }
+    }
+    tryStats.add(new ReturnStatement(new VariableExpression(SpockNames.WHERE_VARIABLE_VALUES)));
+
+    Parameter failure = new Parameter(resources.getAstNodeCache().Throwable, SpockNames.SPOCK_TMP_THROWABLE);
+    TryCatchStatement tryCatch = new TryCatchStatement(new BlockStatement(tryStats, null), EmptyStatement.INSTANCE);
+    tryCatch.addCatch(new CatchStatement(failure, new BlockStatement(Arrays.asList(
+      new ExpressionStatement(
+        createDirectMethodCall(
+          new ClassExpression(resources.getAstNodeCache().SpockRuntime),
+          resources.getAstNodeCache().SpockRuntime_CloseWhereBlockVariablesAfterFailure,
+          new ArgumentListExpression(
+            new VariableExpression(SpockNames.WHERE_VARIABLE_VALUES),
+            new VariableExpression(failure)))),
+      new ThrowStatement(new VariableExpression(failure))), null)));
 
     MethodNode method = new MethodNode(
       InternalIdentifiers.getWhereVariablesName(whereBlock.getParent().getAst().getName()),
@@ -989,7 +1024,7 @@ public class WhereBlockRewriter {
       ClassHelper.OBJECT_TYPE.makeArray(),
       Parameter.EMPTY_ARRAY,
       ClassNode.EMPTY_ARRAY,
-      new BlockStatement(stats, null));
+      new BlockStatement(Arrays.asList(valuesDecl, tryCatch), null));
 
     whereBlock.getParent().getParent().getAst().addMethod(method);
   }

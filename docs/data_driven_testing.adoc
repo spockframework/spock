@@ -447,8 +447,10 @@ Such variables:
 
 NOTE: In short, a where-block variable behaves like a feature-local `@Shared @AutoCleanup(quiet = true)` field: it is created once, shared across all iterations of the feature, and closed when the feature finishes.
 
-The automatic close is best-effort and has two known limitations.
-If one initializer throws after an earlier variable was already created, that earlier resource is *not* closed, because the where-block variables are computed together as a single unit and a failed computation produces no values to close.
+The automatic close also covers a failed setup: if one initializer throws after earlier variables were already created, the already-created resources are closed in reverse declaration order, and any error thrown while closing them is attached to the original failure as a suppressed exception.
+Only values that never made it into a variable are out of reach, for example a resource created inside the failing initializer expression itself.
+
+The automatic close is best-effort and has one known limitation.
 If a where-block variable is also consumed directly as a data provider (for example `x << resource` where `resource` is a where-block variable), it can be closed twice, so give such a value an idempotent `close()` if double-closing would be a problem.
 
 The initializer may also use Groovy's multiple-assignment syntax to declare several locals at once.

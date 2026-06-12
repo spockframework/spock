@@ -33,8 +33,19 @@ public java.lang.Object $spock_feature_0_0proc(java.lang.Object $spock_p0, java.
 }
 
 public java.lang.Object[] $spock_feature_0_0wherevars() {
-    def (java.lang.Object prefix, java.lang.Object suffix) = ['Hello, ', '!']
-    return new java.lang.Object[]{ prefix , suffix }
+    java.lang.Object[] $spock_whereVariableValues = new java.lang.Object[2]{}
+    try {
+        def (java.lang.Object prefix, java.lang.Object suffix) = ['Hello, ', '!']
+        $spock_whereVariableValues [ 0] = prefix
+        $spock_whereVariableValues [ 1] = suffix
+        return $spock_whereVariableValues
+    }
+    catch (java.lang.Throwable $spock_tmp_throwable) {
+        org.spockframework.runtime.SpockRuntime.closeWhereBlockVariablesAfterFailure($spock_whereVariableValues, $spock_tmp_throwable)
+        throw $spock_tmp_throwable
+    }
+    finally {
+    }
 }
 /*--------- end::snapshot[] ---------*/
   }

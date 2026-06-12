@@ -959,7 +959,23 @@ x << [1, 2]
 
     then:
     InvalidSpecCompileException e = thrown()
-    e.message.startsWith("where-block variables do not support the '_' wildcard in a multiple assignment")
+    e.message.startsWith("where-block variables do not support the '_' wildcard")
+  }
+
+  def "single where-block variables do not support the '_' wildcard"() {
+    when:
+    compiler.compileFeatureBody """
+expect:
+x == 1
+
+where:
+final _ = "unused"
+x << [1, 2]
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("where-block variables do not support the '_' wildcard")
   }
 
   @Requires(value = { GroovyRuntimeUtil.MAJOR_VERSION >= 3 }, reason = "'final (a, b) = ...' is only parseable by the Parrot parser (Groovy 3.0+)")

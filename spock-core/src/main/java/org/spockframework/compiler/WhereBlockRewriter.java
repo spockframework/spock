@@ -26,6 +26,7 @@ import org.spockframework.util.*;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
@@ -36,6 +37,7 @@ import org.objectweb.asm.Opcodes;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+import static java.util.Collections.singletonList;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 import static org.spockframework.compiler.AstUtil.*;
@@ -69,8 +71,7 @@ public class WhereBlockRewriter {
   // leading `final foo = ...` declarations of the where-block (in declaration order);
   // evaluated once by the generated where-variables method and passed into every
   // provider/processor method as trailing parameters named after these variables
-  private final List<Statement> whereBlockVariables = new ArrayList<>();
-  private final List<String> whereBlockVariableNames = new ArrayList<>();
+  private final List<WhereBlockVariable> whereBlockVariables = new ArrayList<>();
 
   private WhereBlockRewriter(WhereBlock whereBlock, FilterBlock filterBlock, IRewriteResources resources, boolean defineErrorRethrower) {
     this.whereBlock = whereBlock;
@@ -156,7 +157,7 @@ public class WhereBlockRewriter {
     // ever generated or invoked, so the declarations would silently never be evaluated
     if (!whereBlockVariables.isEmpty() && dataProcessorVars.isEmpty()) {
       resources.getErrorReporter().error(
-        whereBlockVariablesRequireDataVariable(whereBlockVariables.get(0)));
+        whereBlockVariablesRequireDataVariable(whereBlockVariables.get(0).statement));
     }
 
     handleFeatureParameters();
@@ -220,18 +221,14 @@ public class WhereBlockRewriter {
 
   private void collectSingleWhereBlockVariable(Statement stat, DeclarationExpression declExpr)
       throws InvalidSpecCompileException {
-    String name = declExpr.getVariableExpression().getName();
-    if (InternalIdentifiers.isInternalName(name)) {
-      throw reservedVariableNamePrefix(stat, name);
-    }
-    if (!isFinalLocal(declExpr.getVariableExpression())) {
-      throw whereBlockVariableMustBeFinal(stat, name);
-    }
-    whereBlockVariables.add(stat);
-    whereBlockVariableNames.add(name);
+    VariableExpression varExpr = declExpr.getVariableExpression();
+    validateWhereBlockVariableTarget(stat, varExpr, varExpr.getName());
+    whereBlockVariables.add(new WhereBlockVariable(stat, singletonList(varExpr.getName())));
   }
 
-  // handles 'final (a, b) = [1, 2]'; the '_' wildcard is not (yet) supported as a target
+  /**
+   * Handles {@code final (a, b) = [1, 2]}.
+   */
   private void collectMultipleAssignmentWhereBlockVariables(Statement stat, DeclarationExpression declExpr)
       throws InvalidSpecCompileException {
     List<Expression> targets = declExpr.getTupleExpression().getExpressions();
@@ -243,28 +240,32 @@ public class WhereBlockRewriter {
       names.add(((VariableExpression) target).getName());
     }
     // validate every target before exposing any name, so a failure mid-loop cannot leave
-    // whereBlockVariableNames and whereBlockVariables in an inconsistent state
+    // whereBlockVariables in an inconsistent state
     for (Expression target : targets) {
-      VariableExpression varExpr = (VariableExpression) target;
-      String name = varExpr.getName();
-      // a tuple target named '_' is a declaration, not a reference to Specification's '_' field,
-      // so AstUtil.isWildcardRef would not detect it; match the name directly
-      if (Wildcard.INSTANCE.toString().equals(name)) {
-        throw whereBlockVariableNoWildcardInMultipleAssignment(stat);
-      }
-      if (InternalIdentifiers.isInternalName(name)) {
-        throw reservedVariableNamePrefix(stat, name);
-      }
-      if (!isFinalLocal(varExpr)) {
-        throw whereBlockVariableMustBeFinal(stat, multipleAssignmentTarget(names));
-      }
+      validateWhereBlockVariableTarget(stat, (VariableExpression) target, multipleAssignmentTarget(names));
     }
-    whereBlockVariableNames.addAll(names);
-    whereBlockVariables.add(stat);
+    whereBlockVariables.add(new WhereBlockVariable(stat, names));
   }
 
-  private static boolean isFinalLocal(VariableExpression varExpr) {
-    return (varExpr.getModifiers() & Opcodes.ACC_FINAL) != 0;
+  /**
+   * Checks shared by single and multiple-assignment declarations.
+   *
+   * @param finalErrorLabel the variable name or the {@code (a, b)}-style target list shown in the must-be-final error
+   */
+  private static void validateWhereBlockVariableTarget(Statement stat, VariableExpression varExpr, String finalErrorLabel)
+      throws InvalidSpecCompileException {
+    String name = varExpr.getName();
+    // a declared variable named '_' is a declaration, not a reference to Specification's '_' field,
+    // so AstUtil.isWildcardRef would not detect it; match the name directly
+    if (Wildcard.INSTANCE.toString().equals(name)) {
+      throw whereBlockVariableNoWildcard(stat);
+    }
+    if (InternalIdentifiers.isInternalName(name)) {
+      throw reservedVariableNamePrefix(stat, name);
+    }
+    if (!isFinal(varExpr)) {
+      throw whereBlockVariableMustBeFinal(stat, finalErrorLabel);
+    }
   }
 
   private static String multipleAssignmentTarget(List<String> names) {
@@ -874,7 +875,7 @@ public class WhereBlockRewriter {
       return;
     }
 
-    if (whereBlockVariableNames.contains(varExpr.getName())) {
+    if (whereBlockVariableNames().anyMatch(varExpr.getName()::equals)) {
       resources.getErrorReporter().error(varExpr,
         "Data variable '%s' collides with a where-block variable of the same name", varExpr.getName());
       return;
@@ -972,10 +973,12 @@ public class WhereBlockRewriter {
   private void createWhereVariablesMethod() {
     if (whereBlockVariables.isEmpty()) return;
 
-    instanceFieldAccessChecker.check(whereBlockVariables);
+    List<Statement> stats = whereBlockVariables.stream()
+      .map(var -> var.statement)
+      .collect(toCollection(ArrayList::new));
+    instanceFieldAccessChecker.check(stats);
 
-    List<Statement> stats = new ArrayList<>(whereBlockVariables);
-    List<Expression> values = whereBlockVariableNames.stream()
+    List<Expression> values = whereBlockVariableNames()
       .map(VariableExpression::new)
       .collect(toList());
     stats.add(new ReturnStatement(new ArrayExpression(ClassHelper.OBJECT_TYPE, values)));
@@ -991,12 +994,22 @@ public class WhereBlockRewriter {
     whereBlock.getParent().getParent().getAst().addMethod(method);
   }
 
-  // trailing parameters appended to every provider/processor method, named after the
-  // where-block variables so existing where-block expressions resolve to them directly
+  /**
+   * Trailing parameters appended to every provider/processor method, named after the
+   * where-block variables so existing where-block expressions resolve to them directly.
+   */
   private Parameter[] createWhereVariableParameters() {
-    return whereBlockVariableNames.stream()
+    return whereBlockVariableNames()
       .map(name -> new Parameter(ClassHelper.OBJECT_TYPE, name))
       .toArray(Parameter[]::new);
+  }
+
+  /**
+   * All declared names in declaration order; a multiple assignment contributes several
+   * names from a single declaration statement.
+   */
+  private Stream<String> whereBlockVariableNames() {
+    return whereBlockVariables.stream().flatMap(var -> var.names.stream());
   }
 
   private static Parameter[] concatParameters(Parameter[] a, Parameter[] b) {
@@ -1091,9 +1104,9 @@ public class WhereBlockRewriter {
       "where-block variables require at least one data variable (e.g. 'x << [1, 2]')");
   }
 
-  private static InvalidSpecCompileException whereBlockVariableNoWildcardInMultipleAssignment(ASTNode stat) {
+  private static InvalidSpecCompileException whereBlockVariableNoWildcard(ASTNode stat) {
     return new InvalidSpecCompileException(stat,
-      "where-block variables do not support the '_' wildcard in a multiple assignment; give every target a name (e.g. 'final (a, b) = [1, 2]')");
+      "where-block variables do not support the '_' wildcard; give every variable a name");
   }
 
   private static InvalidSpecCompileException reservedVariableNamePrefix(ASTNode stat, String name) {
@@ -1111,6 +1124,20 @@ public class WhereBlockRewriter {
 
   private static InvalidSpecCompileException dataTableHeaderMayOnlyContainVariableNames(ASTNode stat) {
     return new InvalidSpecCompileException(stat, "Header of data table may only contain variable names");
+  }
+
+  /**
+   * A leading {@code final} declaration of the where-block; a single declaration introduces
+   * one name, a multiple assignment introduces several names from one statement.
+   */
+  private static class WhereBlockVariable {
+    final Statement statement;
+    final List<String> names;
+
+    WhereBlockVariable(Statement statement, List<String> names) {
+      this.statement = statement;
+      this.names = names;
+    }
   }
 
   private static class DataProviderInternalsVerifier extends ClassCodeVisitorSupport {

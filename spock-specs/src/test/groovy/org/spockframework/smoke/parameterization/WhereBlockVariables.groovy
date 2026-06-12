@@ -263,6 +263,7 @@ x << [1, 2]
   @ResourceLock("RecordingCloseable.closed")
   def "an AutoCloseable where-block variable is closed once after the feature completes"() {
     given:
+    RecordingCloseable.closed.clear()
     runner.addClassImport(RecordingCloseable)
 
     when:
@@ -279,12 +280,13 @@ name = resource.name
     then:
     result.testsFailedCount == 0
     // closed exactly once, after all iterations, not once per iteration
-    RecordingCloseable.closed.findAll { it == "closed-once" } == ["closed-once"]
+    RecordingCloseable.closed == ["closed-once"]
   }
 
   @ResourceLock("RecordingCloseable.closed")
   def "AutoCloseable where-block variables are closed in reverse declaration order"() {
     given:
+    RecordingCloseable.closed.clear()
     runner.addClassImport(RecordingCloseable)
 
     when:
@@ -300,12 +302,13 @@ names = "${first.name},${second.name}"
 '''
 
     then:
-    RecordingCloseable.closed.findAll { it in ["lifo-first", "lifo-second"] } == ["lifo-second", "lifo-first"]
+    RecordingCloseable.closed == ["lifo-second", "lifo-first"]
   }
 
   @ResourceLock("RecordingCloseable.closed")
   def "a failure while closing a where-block variable is swallowed"() {
     given:
+    RecordingCloseable.closed.clear()
     runner.addClassImport(RecordingCloseable)
     runner.addClassImport(ThrowingCloseable)
 
@@ -324,7 +327,7 @@ marker = bad.hashCode() + ok.name
     then:
     result.testsFailedCount == 0
     // 'ok' is declared last, so it is closed first and recorded even though 'bad' throws afterwards
-    RecordingCloseable.closed.findAll { it == "swallow-ok" } == ["swallow-ok"]
+    RecordingCloseable.closed == ["swallow-ok"]
   }
 
   def "a where-block variable that is not AutoCloseable is left untouched"() {

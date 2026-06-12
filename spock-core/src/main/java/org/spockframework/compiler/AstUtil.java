@@ -314,6 +314,10 @@ public abstract class AstUtil {
     field.setModifiers(modifiers);
   }
 
+  public static boolean isFinal(VariableExpression varExpr) {
+    return (varExpr.getModifiers() & Opcodes.ACC_FINAL) != 0;
+  }
+
   public static boolean isJointCompiled(ClassNode clazz) {
     return clazz.getModule().getUnit().getConfig().getJointCompilationOptions() != null;
   }

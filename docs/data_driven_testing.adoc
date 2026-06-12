@@ -426,7 +426,7 @@ include::{sourcedir}/datadriven/DataSpec.groovy[tag=previous-column-access-multi
 
 == Local Variables in the where-block
 
-Sometimes you need a helper value to build your data, but you do not want it to become a data variable (and therefore a method parameter) or a field on the whole specification.
+Sometimes you need a helper value to build your data, but it should be neither a data variable (and thus a method parameter) nor a field on the whole specification.
 You can declare a `final` local variable at the *start* of the `where:` block:
 
 [source,groovy,indent=0]

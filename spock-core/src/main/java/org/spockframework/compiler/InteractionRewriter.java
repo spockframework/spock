@@ -92,7 +92,7 @@ public class InteractionRewriter {
 
     Expression expr = parseCount(parseResults(stat.getExpression()));
     boolean interaction = (count != null || !responses.isEmpty()) && parseCall(expr);
-    if (interaction && resources.getCurrentMethod().getAst().isStatic()) {
+    if (interaction && resources.getCurrentMethod().getAst().isStatic() && !resources.isStaticInteractionScopeAllowed()) {
       throw new InvalidSpecCompileException(stat, "Interactions cannot be declared in static scope");
     }
 

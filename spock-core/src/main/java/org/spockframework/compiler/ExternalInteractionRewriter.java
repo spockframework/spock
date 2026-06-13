@@ -16,6 +16,7 @@
 
 package org.spockframework.compiler;
 
+import org.codehaus.groovy.ast.CodeVisitorSupport;
 import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.ast.expr.ArgumentListExpression;
 import org.codehaus.groovy.ast.expr.BinaryExpression;
@@ -41,7 +42,9 @@ import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
  * the registration call ({@code mockController.addInteraction(...)}). Built-in
  * creation calls ({@code Mock()}/{@code Stub()}/{@code Spy()} ...) are either
  * expanded (interface mechanism) or rejected as a compile error (annotation
- * mechanism), controlled by {@code allowCreation}.
+ * mechanism), controlled by {@code allowCreation}. Calls to other
+ * {@code @Interactions} helpers anywhere in the body are rewritten to pass the
+ * located spec along, so helpers compose.
  *
  * <p>Only top-level statements are rewritten; closure-nested interaction forms
  * ({@code with(mock) { ... }}) are not handled here.
@@ -51,18 +54,27 @@ public class ExternalInteractionRewriter {
   private final ErrorReporter errorReporter;
   private final SourceLookup sourceLookup;
   private final boolean allowCreation;
+  private final boolean allowStaticScope;
+  private final String specNullMessage;
 
   /**
-   * @param allowCreation whether built-in creation calls may be expanded
-   *                      (interface mechanism) or are rejected (annotation
-   *                      mechanism).
+   * @param allowCreation    whether built-in creation calls may be expanded
+   *                         (interface mechanism) or are rejected (annotation
+   *                         mechanism).
+   * @param allowStaticScope see {@link IRewriteResources#isStaticInteractionScopeAllowed()}.
+   * @param specNullMessage  the message of the {@code Checks.notNull} guard that
+   *                         is prepended to every rewritten method, protecting
+   *                         against a {@code null} located spec; mechanism-specific
+   *                         so the failure tells the user what to fix.
    */
   public ExternalInteractionRewriter(AstNodeCache nodeCache, ErrorReporter errorReporter,
-      SourceLookup sourceLookup, boolean allowCreation) {
+      SourceLookup sourceLookup, boolean allowCreation, boolean allowStaticScope, String specNullMessage) {
     this.nodeCache = nodeCache;
     this.errorReporter = errorReporter;
     this.sourceLookup = sourceLookup;
     this.allowCreation = allowCreation;
+    this.allowStaticScope = allowStaticScope;
+    this.specNullMessage = specNullMessage;
   }
 
   /**
@@ -74,11 +86,10 @@ public class ExternalInteractionRewriter {
     if (!(method.getCode() instanceof BlockStatement)) return;
 
     ExternalRewriteResources resources = new ExternalRewriteResources(
-        specificationReferenceFactory, new ExternalInteractionMethod(method), nodeCache, sourceLookup, errorReporter);
+        specificationReferenceFactory, new ExternalInteractionMethod(method), nodeCache, sourceLookup, errorReporter,
+        allowStaticScope);
 
-    // the spec is located through `this`, which is unavailable in static scope;
-    // interactions in static methods are rejected by InteractionRewriter itself
-    boolean staticScopeViolation = method.isStatic();
+    boolean staticScopeViolation = method.isStatic() && !allowStaticScope;
 
     BlockStatement body = (BlockStatement) method.getCode();
     List<Statement> statements = body.getStatements();
@@ -97,6 +108,10 @@ public class ExternalInteractionRewriter {
         rewrote = true;
       }
     }
+
+    // route calls to other @Interactions helpers through the located spec, so
+    // helpers compose (the helper's $spec parameter has no user-visible name)
+    rewrote |= rewriteNestedInteractionsCalls(method, body, specificationReferenceFactory);
 
     // guard the located spec: anything we rewrote depends on it being non-null
     if (rewrote) {
@@ -130,19 +145,35 @@ public class ExternalInteractionRewriter {
   }
 
   /**
+   * Rewrites every call to an {@code @Interactions} helper anywhere in
+   * {@code body} (including nested statements and closures) to pass the located
+   * spec as the leading argument, selecting the helper's companion overload.
+   */
+  private boolean rewriteNestedInteractionsCalls(MethodNode method, BlockStatement body,
+      Supplier<Expression> specificationReferenceFactory) {
+    boolean[] rewrote = {false};
+    new CodeVisitorSupport() {
+      @Override
+      public void visitMethodCallExpression(MethodCallExpression call) {
+        super.visitMethodCallExpression(call);
+        rewrote[0] |= InteractionsCallDetector.rewriteToCompanionCall(
+            call, specificationReferenceFactory, nodeCache, method.getDeclaringClass());
+      }
+    }.visitBlockStatement(body);
+    return rewrote[0];
+  }
+
+  /**
    * Builds {@code Checks.notNull(<specRef>, "...")}, guarding against a missing
    * owning spec (e.g. a {@code MockInteractionSupport} whose
-   * {@code getSpecification()} was never attached).
+   * {@code getSpecification()} was never attached, or a {@code null} passed for
+   * the companion's {@code $spec} parameter).
    */
   private Statement createSpecificationNotNullCheck(Expression specificationReference) {
     MethodCallExpression check = createDirectMethodCall(
         new ClassExpression(nodeCache.Checks),
         nodeCache.Checks_NotNull,
-        new ArgumentListExpression(specificationReference, new ConstantExpression(SPEC_NULL_MESSAGE)));
+        new ArgumentListExpression(specificationReference, new ConstantExpression(specNullMessage)));
     return new ExpressionStatement(check);
   }
-
-  private static final String SPEC_NULL_MESSAGE =
-      "Cannot declare mock interactions: the owning Specification is null. Attach the MockInteractionSupport to a "
-          + "running Specification through a constructor field.";
 }

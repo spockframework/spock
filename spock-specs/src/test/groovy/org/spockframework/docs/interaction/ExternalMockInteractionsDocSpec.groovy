@@ -2,6 +2,7 @@ package org.spockframework.docs.interaction
 
 import spock.lang.Specification
 import spock.mock.MockInteractionSupport
+import spock.lang.Interactions
 
 class ExternalMockInteractionsDocSpec extends Specification {
 
@@ -35,6 +36,32 @@ class ExternalMockInteractionsDocSpec extends Specification {
     charged
   }
   // end::support-usage[]
+
+  // tag::interactions-helper[]
+  static class GatewayInteractions {
+    @Interactions
+    void expectCharged(PaymentGateway gateway) {
+      gateway.charge(42) >> true
+      1 * gateway.audit("processed")
+    }
+  }
+  // end::interactions-helper[]
+
+  // tag::interactions-usage[]
+  def "an @Interactions helper declares interactions on a passed-in mock"() {
+    given:
+    PaymentGateway gateway = Mock()
+    GatewayInteractions interactions = new GatewayInteractions()
+
+    when:
+    interactions.expectCharged(gateway)    // strongly-typed receiver: rewritten to pass the spec
+    boolean charged = gateway.charge(42)
+    gateway.audit("processed")
+
+    then:
+    charged
+  }
+  // end::interactions-usage[]
 
   interface PaymentGateway {
     boolean charge(int amount)

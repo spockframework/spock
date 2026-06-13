@@ -39,7 +39,7 @@ abstract class JacocoJavaagentProvider implements CommandLineArgumentProvider, N
   @Override
   Iterable<String> asArguments() {
     [
-      "-javaagent:${jacocoAgent.get().asFile}=destfile=${execResultFile.get().asFile},dumponexit=false,append=false,jmx=true,includes=org.spockframework.*".toString(),
+      "-javaagent:${jacocoAgent.get().asFile}=destfile=${execResultFile.get().asFile},dumponexit=false,append=false,jmx=true,includes=org.spockframework.*:spock.*".toString(),
       "-DJacocoAstDumpTrigger=true"
     ]
   }

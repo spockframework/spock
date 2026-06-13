@@ -715,6 +715,100 @@ def onlyLocals() {
     e.message.startsWith("where-block variables require at least one data variable")
   }
 
+  def "the body may open with an optional where: label"() {
+    when:
+    def result = runner.runSpecBody '''
+@DataProvider
+def pairs() {
+  where:
+  a | b
+  1 | 2
+  2 | 3
+}
+
+def feature() {
+  expect:
+  b == a + 1
+
+  where:
+  [a, b] << pairs()
+}
+'''
+
+    then:
+    result.testsSucceededCount == 3
+  }
+
+  def "the opening where: label may carry a description"() {
+    when:
+    def result = runner.runSpecBody '''
+@DataProvider
+def pairs() {
+  where: "the input pairs"
+  a | b
+  1 | 2
+  2 | 3
+}
+
+def feature() {
+  expect:
+  b == a + 1
+
+  where:
+  [a, b] << pairs()
+}
+'''
+
+    then:
+    result.testsSucceededCount == 3
+  }
+
+  def "an invalid or misplaced label in the body is a compile error"() {
+    when:
+    compiler.compileSpecBody """
+@DataProvider
+def items() {
+$body
+}
+"""
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.contains(expectedMessagePart)
+
+    where:
+    body                        | expectedMessagePart
+    'expect:\na << [1]'         | "'expect:' blocks are not valid in a @DataProvider method"  // feature-method opener
+    'given:\na << [1]'          | "blocks are not valid in a @DataProvider method"            // feature-method opener (given -> setup)
+    'wheer:\na << [1]'          | "Unrecognized block label: wheer"                           // typo
+    'combined:\na << [1]'       | "'combined' is not allowed here"                            // combined cannot open a body
+    'filter:\na << [1]'         | "'filter' is not allowed here"                              // filter cannot open a body
+    'a << [1]\nwhere:\nb = a'   | "'where' is not allowed here"                               // where: only as the opener
+  }
+
+  def "the body still accepts where-block continuation labels"() {
+    when:
+    def result = runner.runSpecBody '''
+@DataProvider
+def data() {
+  a << [1, 2]
+  and:
+  b << [10, 20]
+}
+
+def feature() {
+  expect:
+  b == a * 10
+
+  where:
+  [a, b] << data()
+}
+'''
+
+    then:
+    result.testsSucceededCount == 3
+  }
+
   def "where-block variable rules are inherited"() {
     when:
     compiler.compileSpecBody """

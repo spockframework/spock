@@ -556,6 +556,7 @@ include::{sourcedir}/datadriven/DataSpec.groovy[tag=standalone-data-provider]
 The body accepts the full `where:` block grammar: <<Local Variables in the where-block,local variables>>, data tables, data pipes, derived data variables, `combined:` multiplications, and a trailing `filter:` block.
 All resulting data variables become the tuple columns, in declaration order; where-block local variables do not.
 A single column yields `Tuple1` rows, so it is consumed as `[a] << provider()`, not as `a << provider()`.
+The body may optionally open with a `where:` label, mirroring a feature method's where-block; any other label (a feature-method label such as `expect:`, or a misplaced `where:`) is a compile error.
 
 [source,groovy,indent=0]
 ----

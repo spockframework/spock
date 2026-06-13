@@ -35,6 +35,7 @@ import org.spockframework.compiler.condition.DefaultConditionErrorRecorders;
 import org.spockframework.compiler.condition.IConditionErrorRecorders;
 import org.spockframework.compiler.model.*;
 import org.spockframework.runtime.model.StandaloneDataProviderMetadata;
+import org.spockframework.util.Identifiers;
 import org.spockframework.util.Nullable;
 
 import java.util.ArrayList;
@@ -100,9 +101,11 @@ class DataProviderMethodRewriter {
 
     inSpec = methodNode.getDeclaringClass().isDerivedFrom(nodeCache.Specification);
 
-    buildBlocks(bodyStats);
+    if (!buildBlocks(bodyStats)) {
+      return;
+    }
 
-    resources = new DataProviderMethodRewriteResources(whereBlock.getParent(), nodeCache, sourceLookup, errorReporter,
+    resources = new DataProviderMethodRewriteResources(whereBlock, nodeCache, sourceLookup, errorReporter,
       new DefaultConditionErrorRecorders(nodeCache));
     instanceFieldAccessChecker = new InstanceFieldAccessChecker(resources);
     errorRethrowerUsageDetector = new ErrorRethrowerUsageDetector();
@@ -126,27 +129,44 @@ class DataProviderMethodRewriter {
     new VariableScopeVisitor(sourceUnit).visitClass(methodNode.getDeclaringClass());
   }
 
-  // splits the method body into where-block content and the optional trailing filter-block
-  // content, mirroring how SpecParser separates the blocks of a feature method
-  private void buildBlocks(List<Statement> bodyStats) {
-    Spec spec = new Spec(methodNode.getDeclaringClass());
-    HelperMethod method = new HelperMethod(spec, methodNode);
-    whereBlock = (WhereBlock) method.addBlock(new WhereBlock(method));
-
-    List<Statement> currentBlockStats = whereBlock.getAst();
-    for (Statement stat : bodyStats) {
-      if (filterBlock == null && isFilterLabeled(stat)) {
-        filterBlock = (FilterBlock) method.addBlock(new FilterBlock(method));
-        currentBlockStats = filterBlock.getAst();
-      }
-      currentBlockStats.add(stat);
+  // A @DataProvider body is where-block content. We open it with a `where:` label (unless the
+  // author already labeled the first statement) and then reuse the shared BlockParser, so the
+  // body is split into blocks and validated against the where-block grammar exactly like a feature
+  // method's where-block. Only where and filter blocks are valid here, so a feature-method block
+  // such as an `expect:` opener is rejected; the parser itself rejects unknown labels and illegal
+  // transitions (a misplaced `where:`, a `combined:`/`filter:` opener, ...).
+  private boolean buildBlocks(List<Statement> bodyStats) {
+    Statement first = bodyStats.get(0);
+    if ((first.getStatementLabels() == null) || first.getStatementLabels().isEmpty()) {
+      first.addStatementLabel(Identifiers.WHERE);
     }
-    bodyStats.clear();
+
+    HelperMethod method = new HelperMethod(new Spec(methodNode.getDeclaringClass()), methodNode);
+    try {
+      BlockParser.parseBlocks(method);
+    } catch (InvalidSpecCompileException e) {
+      errorReporter.error(e);
+      return false;
+    }
+
+    for (Block block : method.getBlocks()) {
+      if (block instanceof WhereBlock) {
+        whereBlock = (WhereBlock) block;
+      } else if (block instanceof FilterBlock) {
+        filterBlock = (FilterBlock) block;
+      } else if (!(block instanceof AnonymousBlock)) {
+        errorReporter.error(blockPosition(block),
+          "'%s:' blocks are not valid in a @DataProvider method; its body uses the where-block grammar, so it may open with an optional 'where:' label and otherwise only use 'and:', 'combined:' and 'filter:'",
+          block.getParseInfo());
+        return false;
+      }
+    }
+    return whereBlock != null;
   }
 
-  private static boolean isFilterLabeled(Statement stat) {
-    List<String> labels = stat.getStatementLabels();
-    return labels != null && labels.contains(BlockParseInfo.FILTER.toString());
+  private ASTNode blockPosition(Block block) {
+    List<Statement> stats = block.getAst();
+    return stats.isEmpty() ? methodNode : stats.get(0);
   }
 
   private void validate(WhereBlockRewriter parsed) {
@@ -457,15 +477,15 @@ class DataProviderMethodRewriter {
   }
 
   private static class DataProviderMethodRewriteResources implements IRewriteResources {
-    private final Method method;
+    private final WhereBlock whereBlock;
     private final AstNodeCache nodeCache;
     private final SourceLookup lookup;
     private final ErrorReporter errorReporter;
     private final IConditionErrorRecorders errorRecorders;
 
-    DataProviderMethodRewriteResources(Method method, AstNodeCache nodeCache, SourceLookup lookup,
+    DataProviderMethodRewriteResources(WhereBlock whereBlock, AstNodeCache nodeCache, SourceLookup lookup,
                                        ErrorReporter errorReporter, IConditionErrorRecorders errorRecorders) {
-      this.method = method;
+      this.whereBlock = whereBlock;
       this.nodeCache = nodeCache;
       this.lookup = lookup;
       this.errorReporter = errorReporter;
@@ -474,12 +494,14 @@ class DataProviderMethodRewriter {
 
     @Override
     public Method getCurrentMethod() {
-      return method;
+      return whereBlock.getParent();
     }
 
     @Override
     public Block getCurrentBlock() {
-      return method.getFirstBlock();
+      // the shared BlockParser prepends an empty AnonymousBlock, so the where block is not
+      // method.getFirstBlock(); deep rewriting operates on the where block itself
+      return whereBlock;
     }
 
     @Override

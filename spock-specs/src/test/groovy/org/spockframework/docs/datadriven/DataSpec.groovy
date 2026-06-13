@@ -4,6 +4,7 @@ import groovy.sql.Sql
 import groovy.transform.ToString
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.GroovyRuntimeUtil
+import spock.lang.Requires
 import spock.lang.Shared
 
 import static org.junit.platform.engine.TestDescriptor.Type.TEST
@@ -45,6 +46,41 @@ class DataSpec extends EmbeddedSpecification {
     7 | _
     0 | _
 // end::single-column[]
+  }
+
+  def "where-block variable"() {
+    expect:
+    input == expected
+
+// tag::where-block-variable[]
+    where:
+    final sep = "/"
+
+    input              | expected
+    "a${sep}b"         | "a/b"
+    "x${sep}y${sep}z"  | "x/y/z"
+// end::where-block-variable[]
+  }
+
+  @Requires(value = { GroovyRuntimeUtil.MAJOR_VERSION >= 3 }, reason = "'final (a, b) = ...' is only parseable by the Parrot parser (Groovy 3.0+)")
+  def "where-block variable multiple assignment"() {
+    when:
+    def result = runner.runFeatureBody '''
+      expect:
+      value in 0..100
+
+// tag::where-block-variable-multi-assignment[]
+      where:
+      final (lower, upper) = [0, 100]
+
+      value << [lower, 50, upper]
+// end::where-block-variable-multi-assignment[]
+    '''
+
+    then:
+    // 3 iterations plus the feature container
+    result.testsSucceededCount == 4
+    result.testsFailedCount == 0
   }
 
   def "multiple tables"() {

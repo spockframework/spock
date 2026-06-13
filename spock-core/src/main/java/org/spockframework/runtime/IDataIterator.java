@@ -16,6 +16,16 @@ import java.util.List;
  */
 public interface IDataIterator extends Iterator<Object[]>, AutoCloseable {
   /**
+   * Shared empty result for {@link #getWhereVariableValues()} when a feature declares no where-block variables.
+   * <p>
+   * This array is shared across all callers and must never be mutated. It is safe to share precisely because a
+   * zero-length array has no elements to write.
+   *
+   * @since 2.5
+   */
+  Object[] NO_WHERE_VARIABLE_VALUES = new Object[0];
+
+  /**
    * @return the number of data sets that are provided by this iterator. This will be {@code -1} if it cannot be determined.
    */
   int getEstimatedNumIterations();
@@ -24,4 +34,13 @@ public interface IDataIterator extends Iterator<Object[]>, AutoCloseable {
    * @return the names of the data variables in the order they are present in the array
    */
   List<String> getDataVariableNames();
+
+  /**
+   * @return the values of the where-block variables, computed once per feature, in
+   * declaration order; empty if the feature declares none
+   * @since 2.5
+   */
+  default Object[] getWhereVariableValues() {
+    return NO_WHERE_VARIABLE_VALUES;
+  }
 }

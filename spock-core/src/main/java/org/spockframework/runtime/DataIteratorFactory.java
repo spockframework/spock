@@ -52,6 +52,13 @@ public class DataIteratorFactory {
       }
     }
 
+    protected static Object[] appendArgs(Object[] head, Object[] tail) {
+      if (tail.length == 0) return head;
+      Object[] result = Arrays.copyOf(head, head.length + tail.length);
+      System.arraycopy(tail, 0, result, head.length, tail.length);
+      return result;
+    }
+
     protected IErrorContext getErrorContext() {
       return ErrorContext.from((SpecificationContext) context.getCurrentInstance().getSpecificationContext());
     }
@@ -241,6 +248,11 @@ public class DataIteratorFactory {
     }
 
     @Override
+    public Object[] getWhereVariableValues() {
+      return delegate.getWhereVariableValues();
+    }
+
+    @Override
     public void close() throws Exception {
       delegate.close();
     }
@@ -267,7 +279,7 @@ public class DataIteratorFactory {
 
         try {
           // do not use invokeRaw here, as that would report Assertion Error to the supervisor
-          filterMethod.invoke(context.getSharedInstance(), next);
+          filterMethod.invoke(context.getSharedInstance(), appendArgs(next, delegate.getWhereVariableValues()));
           return next;
         } catch (AssertionError ae) {
           if (logFilteredIterations) {
@@ -320,6 +332,11 @@ public class DataIteratorFactory {
     }
 
     @Override
+    public Object[] getWhereVariableValues() {
+      return delegate.getWhereVariableValues();
+    }
+
+    @Override
     public void close() throws Exception {
       delegate.close();
     }
@@ -339,7 +356,8 @@ public class DataIteratorFactory {
       }
 
       try {
-        return (Object[]) invokeRaw(context.getSharedInstance(), context.getCurrentFeature().getDataProcessorMethod(), next);
+        return (Object[]) invokeRaw(context.getSharedInstance(), context.getCurrentFeature().getDataProcessorMethod(),
+          appendArgs(next, delegate.getWhereVariableValues()));
       } catch (Throwable t) {
         supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProcessorMethod(), t, getErrorContext()));
         return null;
@@ -352,11 +370,13 @@ public class DataIteratorFactory {
     private final IDataIterator[] dataProviderIterators;
     private final int estimatedNumIterations;
     private final List<String> dataVariableNames;
+    private final Object[] whereVariableValues;
     private boolean firstIteration = true;
 
     public FeatureDataProviderIterator(IRunSupervisor supervisor, SpockExecutionContext context) {
       super(supervisor, context);
       // order is important as they rely on each other
+      whereVariableValues = createWhereVariableValues();
       dataVariableNames = dataVariableNames();
       dataProviders = createDataProviders();
       dataProviderIterators = createDataProviderIterators();
@@ -370,6 +390,18 @@ public class DataIteratorFactory {
     public void close() {
       closeQuietly(dataProviders);
       closeQuietly((Object[]) dataProviderIterators);
+      closeWhereVariables();
+    }
+
+    // close AutoCloseable where-block variables once the feature is done, in reverse declaration
+    // order (a later variable may depend on an earlier one); close failures are ignored
+    private void closeWhereVariables() {
+      for (int i = whereVariableValues.length - 1; i >= 0; i--) {
+        Object value = whereVariableValues[i];
+        if (value instanceof AutoCloseable) {
+          closeQuietly(value);
+        }
+      }
     }
 
     @Override
@@ -431,6 +463,22 @@ public class DataIteratorFactory {
       return dataVariableNames;
     }
 
+    @Override
+    public Object[] getWhereVariableValues() {
+      return whereVariableValues;
+    }
+
+    private Object[] createWhereVariableValues() {
+      MethodInfo method = context.getCurrentFeature().getWhereVariablesMethod();
+      if (method == null) {
+        return NO_WHERE_VARIABLE_VALUES;
+      }
+      Object values = invokeRaw(context.getCurrentInstance(), method);
+      // invokeRaw records the error and returns null on failure; the empty array keeps us
+      // safe until the constructor's createDataProviders() short-circuits on hasErrors()
+      return (values == null) ? NO_WHERE_VARIABLE_VALUES : (Object[]) values;
+    }
+
     private Object[] createDataProviders() {
       if (context.getErrorInfoCollector().hasErrors()) {
         return null;
@@ -449,7 +497,9 @@ public class DataIteratorFactory {
 
         Object provider = invokeRaw(
           context.getCurrentInstance(), method,
-          getPreviousDataTableProviders(dataVariableNames, dataProviders, dataProviderInfo));
+          appendArgs(
+            getPreviousDataTableProviders(dataVariableNames, dataProviders, dataProviderInfo),
+            whereVariableValues));
 
         if (context.getErrorInfoCollector().hasErrors()) {
           if (provider != null) {

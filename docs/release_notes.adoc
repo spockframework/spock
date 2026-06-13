@@ -8,6 +8,7 @@ include::include.adoc[]
 
 === Enhancements
 
+* Add support for `final` local variables in `where:` blocks, declared at their beginning and evaluated once per feature, scoped to the where-block spockIssue:138[]
 * Improve `TooManyInvocationsError` now reports unsatisfied interactions with argument mismatch details, making it easier to diagnose why invocations didn't match expected interactions spockPull:2315[]
 
 === Misc

@@ -20,8 +20,10 @@ import org.codehaus.groovy.syntax.SyntaxException
 import org.opentest4j.MultipleFailuresError
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
+import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.runtime.SpockExecutionException
 import spock.lang.Issue
+import spock.lang.Requires
 import spock.lang.Snapshot
 import spock.lang.Snapshotter
 
@@ -893,5 +895,231 @@ b | _
     then:
     SpockExecutionException e = thrown()
     e.message == "Data provider for variable 'b' has more values than previous data provider(s)"
+  }
+
+  def "where-block variable must be declared final, not def"() {
+    when:
+    compiler.compileFeatureBody """
+expect:
+x == 1
+
+where:
+def sep = "/"
+x << [1, 2]
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("where-block variables must be declared 'final'")
+  }
+
+  def "where-block variable must be declared before any data variable"() {
+    when:
+    compiler.compileFeatureBody """
+expect:
+x == 1
+
+where:
+x << [1, 2]
+final sep = "/"
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("where-block variables must be declared at the beginning of the where-block")
+  }
+
+  def "multiple-assignment where-block variables must be declared final"() {
+    when:
+    compiler.compileFeatureBody """
+expect:
+x == 1
+
+where:
+def (a, b) = [1, 2]
+x << [1, 2]
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("where-block variables must be declared 'final'")
+  }
+
+  @Requires(value = { GroovyRuntimeUtil.MAJOR_VERSION >= 3 }, reason = "'final (a, b) = ...' is only parseable by the Parrot parser (Groovy 3.0+)")
+  def "multiple-assignment where-block variables do not support the '_' wildcard"() {
+    when:
+    compiler.compileFeatureBody """
+expect:
+x == 1
+
+where:
+final (_, b) = [1, 2]
+x << [1, 2]
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("where-block variables do not support the '_' wildcard")
+  }
+
+  def "single where-block variables do not support the '_' wildcard"() {
+    when:
+    compiler.compileFeatureBody """
+expect:
+x == 1
+
+where:
+final _ = "unused"
+x << [1, 2]
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("where-block variables do not support the '_' wildcard")
+  }
+
+  @Requires(value = { GroovyRuntimeUtil.MAJOR_VERSION >= 3 }, reason = "'final (a, b) = ...' is only parseable by the Parrot parser (Groovy 3.0+)")
+  def "a failing multiple-assignment target does not expose earlier targets"() {
+    when:
+    compiler.compileFeatureBody '''
+expect:
+x == 1
+
+where:
+final (ok, $spock_reserved) = [1, 2]
+x << [1, 2]
+    '''
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("Variable name '\$spock_reserved' is invalid: the '\$spock_' prefix is reserved for Spock's internal use")
+  }
+
+  def "an unused final where-block variable compiles"() {
+    expect:
+    compiler.compileFeatureBody """
+expect:
+x == x
+
+where:
+final sep = "/"
+x << [1, 2]
+    """
+  }
+
+  def "data variable cannot reuse a where-block variable name"() {
+    when:
+    compiler.compileFeatureBody """
+expect:
+sep == sep
+
+where:
+final sep = "/"
+sep << ["a", "b"]
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("Data variable 'sep' collides with a where-block variable of the same name")
+  }
+
+  def "where-block variable initializer cannot read an instance field"() {
+    when:
+    compiler.compileSpecBody """
+String base = "abc"
+
+def feature() {
+  expect:
+  value == "abc/x"
+
+  where:
+  final sep = base + "/"
+  value = sep + "x"
+}
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.contains("Only @Shared and static fields may be accessed")
+  }
+
+  def "where-block variable name must not use the reserved internal prefix"() {
+    when:
+    compiler.compileFeatureBody '''
+expect:
+x == 1
+
+where:
+final $spock_reserved = 1
+x << [1, 2]
+    '''
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("Variable name '\$spock_reserved' is invalid: the '\$spock_' prefix is reserved for Spock's internal use")
+  }
+
+  def "data variable name must not use the reserved internal prefix"() {
+    when:
+    compiler.compileFeatureBody '''
+expect:
+true
+
+where:
+$spock_reserved << [1, 2]
+    '''
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("Variable name '\$spock_reserved' is invalid: the '\$spock_' prefix is reserved for Spock's internal use")
+  }
+
+  def "where-block variables require at least one data variable"() {
+    when:
+    compiler.compileFeatureBody """
+expect:
+true
+
+where:
+final sep = "/"
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("where-block variables require at least one data variable")
+  }
+
+  def "duplicate where-block variable names are rejected by Groovy's scope check"() {
+    when:
+    compiler.compileFeatureBody """
+expect:
+true
+
+where:
+final a = 1
+final a = 2
+x << [1, 2]
+    """
+
+    then:
+    SyntaxException e = thrown()
+    e.message.contains("The current scope already contains a variable of the name a")
+  }
+
+  @Requires(value = { GroovyRuntimeUtil.MAJOR_VERSION >= 3 }, reason = "'final (a, b) = ...' is only parseable by the Parrot parser (Groovy 3.0+)")
+  def "duplicate multiple-assignment where-block variable names are rejected by Groovy's scope check"() {
+    when:
+    compiler.compileFeatureBody """
+expect:
+true
+
+where:
+final (a, a) = [1, 2]
+x << [1, 2]
+    """
+
+    then:
+    SyntaxException e = thrown()
+    e.message.contains("The current scope already contains a variable of the name a")
   }
 }

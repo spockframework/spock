@@ -80,6 +80,9 @@ public class AstNodeCache {
   public final MethodNode SpockRuntime_CallBlockExited =
       SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.CALL_BLOCK_EXITED).get(0);
 
+  public final MethodNode SpockRuntime_CloseWhereBlockVariablesAfterFailure =
+      SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.CLOSE_WHERE_BLOCK_VARIABLES_AFTER_FAILURE).get(0);
+
   public final MethodNode ValueRecorder_Reset =
       ValueRecorder.getDeclaredMethods(org.spockframework.runtime.ValueRecorder.RESET).get(0);
 

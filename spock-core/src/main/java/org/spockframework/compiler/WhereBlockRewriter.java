@@ -18,6 +18,7 @@ package org.spockframework.compiler;
 
 import org.spockframework.compiler.model.FilterBlock;
 import org.spockframework.compiler.model.WhereBlock;
+import org.spockframework.lang.Wildcard;
 import org.spockframework.runtime.model.DataProcessorMetadata;
 import org.spockframework.runtime.model.DataProviderMetadata;
 import org.spockframework.util.*;
@@ -25,6 +26,7 @@ import org.spockframework.util.*;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
@@ -35,6 +37,7 @@ import org.objectweb.asm.Opcodes;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+import static java.util.Collections.singletonList;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 import static org.spockframework.compiler.AstUtil.*;
@@ -65,6 +68,10 @@ public class WhereBlockRewriter {
   private final List<String> multiplicationFactorDataVariables = new ArrayList<>();
   private final List<Expression> dataVariableMultiplications = new ArrayList<>();
   private int localVariableCount = 0;
+  // leading `final foo = ...` declarations of the where-block (in declaration order);
+  // evaluated once by the generated where-variables method and passed into every
+  // provider/processor method as trailing parameters named after these variables
+  private final List<WhereBlockVariable> whereBlockVariables = new ArrayList<>();
 
   private WhereBlockRewriter(WhereBlock whereBlock, FilterBlock filterBlock, IRewriteResources resources, boolean defineErrorRethrower) {
     this.whereBlock = whereBlock;
@@ -81,6 +88,7 @@ public class WhereBlockRewriter {
 
   private void rewrite() {
     ListIterator<Statement> stats = whereBlock.getAst().listIterator();
+    collectWhereBlockVariables(stats);
     ConstructorCallExpression multiplier = null;
     List<String> multiplicationDataVariables = new ArrayList<>();
     while (stats.hasNext()) {
@@ -144,8 +152,17 @@ public class WhereBlockRewriter {
     }
 
     whereBlock.getAst().clear();
+
+    // without a data variable no synthetic method that receives the where-block variables is
+    // ever generated or invoked, so the declarations would silently never be evaluated
+    if (!whereBlockVariables.isEmpty() && dataProcessorVars.isEmpty()) {
+      resources.getErrorReporter().error(
+        whereBlockVariablesRequireDataVariable(whereBlockVariables.get(0).statement));
+    }
+
     handleFeatureParameters();
     createDataProcessorMethod();
+    createWhereVariablesMethod();
     createDataVariableMultiplicationsMethod();
     createFilterMethod();
   }
@@ -181,13 +198,92 @@ public class WhereBlockRewriter {
         multiplier, multiplicand));
   }
 
+  private void collectWhereBlockVariables(ListIterator<Statement> stats) {
+    while (stats.hasNext()) {
+      Statement stat = stats.next();
+      DeclarationExpression declExpr = AstUtil.getExpression(stat, DeclarationExpression.class);
+      if (declExpr == null) {
+        // first non-declaration statement => end of the where-block variable section
+        stats.previous();
+        return;
+      }
+      try {
+        if (declExpr.isMultipleAssignmentDeclaration()) {
+          collectMultipleAssignmentWhereBlockVariables(stat, declExpr);
+        } else {
+          collectSingleWhereBlockVariable(stat, declExpr);
+        }
+      } catch (InvalidSpecCompileException e) {
+        resources.getErrorReporter().error(e);
+      }
+    }
+  }
+
+  private void collectSingleWhereBlockVariable(Statement stat, DeclarationExpression declExpr)
+      throws InvalidSpecCompileException {
+    VariableExpression varExpr = declExpr.getVariableExpression();
+    validateWhereBlockVariableTarget(stat, varExpr, varExpr.getName());
+    whereBlockVariables.add(new WhereBlockVariable(stat, singletonList(varExpr.getName())));
+  }
+
+  /**
+   * Handles {@code final (a, b) = [1, 2]}.
+   */
+  private void collectMultipleAssignmentWhereBlockVariables(Statement stat, DeclarationExpression declExpr)
+      throws InvalidSpecCompileException {
+    List<Expression> targets = declExpr.getTupleExpression().getExpressions();
+    List<String> names = new ArrayList<>(targets.size());
+    for (Expression target : targets) {
+      if (!(target instanceof VariableExpression)) {
+        throw whereBlockVariableUnsupportedMultipleAssignmentTarget(stat);
+      }
+      names.add(((VariableExpression) target).getName());
+    }
+    // validate every target before exposing any name, so a failure mid-loop cannot leave
+    // whereBlockVariables in an inconsistent state
+    for (Expression target : targets) {
+      validateWhereBlockVariableTarget(stat, (VariableExpression) target, multipleAssignmentTarget(names));
+    }
+    whereBlockVariables.add(new WhereBlockVariable(stat, names));
+  }
+
+  /**
+   * Checks shared by single and multiple-assignment declarations.
+   *
+   * @param finalErrorLabel the variable name or the {@code (a, b)}-style target list shown in the must-be-final error
+   */
+  private static void validateWhereBlockVariableTarget(Statement stat, VariableExpression varExpr, String finalErrorLabel)
+      throws InvalidSpecCompileException {
+    String name = varExpr.getName();
+    // a declared variable named '_' is a declaration, not a reference to Specification's '_' field,
+    // so AstUtil.isWildcardRef would not detect it; match the name directly
+    if (Wildcard.INSTANCE.toString().equals(name)) {
+      throw whereBlockVariableNoWildcard(stat);
+    }
+    if (InternalIdentifiers.isInternalName(name)) {
+      throw reservedVariableNamePrefix(stat, name);
+    }
+    if (!isFinal(varExpr)) {
+      throw whereBlockVariableMustBeFinal(stat, finalErrorLabel);
+    }
+  }
+
+  private static String multipleAssignmentTarget(List<String> names) {
+    return "(" + String.join(", ", names) + ")";
+  }
+
   private void rewriteWhereStat(ListIterator<Statement> stats) throws InvalidSpecCompileException {
     Statement stat = stats.next();
 
     // binary expressions are potentially parameterizations
     BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
     if (binExpr != null) {
-      // don't allow subclasses like DeclarationExpression
+      // a DeclarationExpression here is a misplaced where-block variable
+      // (leading ones were already consumed by collectWhereBlockVariables)
+      if (binExpr instanceof DeclarationExpression) {
+        throw whereBlockVariableMustBeAtStart(stat);
+      }
+      // don't allow other subclasses (e.g. ElvisOperatorExpression)
       if (binExpr.getClass() != BinaryExpression.class) {
         throw notAParameterization(stat);
       }
@@ -375,8 +471,11 @@ public class WhereBlockRewriter {
         InternalIdentifiers.getDataProviderName(whereBlock.getParent().getAst().getName(), dataProviderCount++),
         Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
         ClassHelper.OBJECT_TYPE,
-        // only add parameters when generating a provider method for a data table column
-        addDataTableParameters ? createPreviousDataTableParameters(nextDataVariableIndex) : Parameter.EMPTY_ARRAY,
+        // previous-data-table parameters (data tables only) followed by the where-block
+        // variable parameters that are passed to every provider
+        concatParameters(
+          addDataTableParameters ? createPreviousDataTableParameters(nextDataVariableIndex) : Parameter.EMPTY_ARRAY,
+          createWhereVariableParameters()),
         ClassNode.EMPTY_ARRAY,
         new BlockStatement(dataProviderStats, null));
 
@@ -771,6 +870,17 @@ public class WhereBlockRewriter {
   private void verifyDataProcessorVariable(VariableExpression varExpr) {
     Variable accessedVar = varExpr.getAccessedVariable();
 
+    if (InternalIdentifiers.isInternalName(varExpr.getName())) {
+      resources.getErrorReporter().error(reservedVariableNamePrefix(varExpr, varExpr.getName()));
+      return;
+    }
+
+    if (whereBlockVariableNames().anyMatch(varExpr.getName()::equals)) {
+      resources.getErrorReporter().error(varExpr,
+        "Data variable '%s' collides with a where-block variable of the same name", varExpr.getName());
+      return;
+    }
+
     if (accessedVar instanceof VariableExpression) { // local variable
       resources.getErrorReporter().error(varExpr, "A variable named '%s' already exists in this scope", varExpr.getName());
       return;
@@ -837,7 +947,7 @@ public class WhereBlockRewriter {
       InternalIdentifiers.getDataProcessorName(whereBlock.getParent().getAst().getName()),
       Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
       ClassHelper.OBJECT_TYPE,
-      dataProcessorParams.toArray(Parameter.EMPTY_ARRAY),
+      concatParameters(dataProcessorParams.toArray(Parameter.EMPTY_ARRAY), createWhereVariableParameters()),
       ClassNode.EMPTY_ARRAY,
       blockStat);
     dataProcessorMethod.addAnnotation(createDataProcessorAnnotation());
@@ -858,6 +968,90 @@ public class WhereBlockRewriter {
           ListExpression::new))
       );
     return ann;
+  }
+
+  private void createWhereVariablesMethod() {
+    if (whereBlockVariables.isEmpty()) return;
+
+    List<Statement> declarations = whereBlockVariables.stream()
+      .map(var -> var.statement)
+      .collect(toList());
+    instanceFieldAccessChecker.check(declarations);
+
+    int variableCount = (int) whereBlockVariableNames().count();
+    Statement valuesDecl = new ExpressionStatement(
+      new DeclarationExpression(
+        new VariableExpression(SpockNames.WHERE_VARIABLE_VALUES, ClassHelper.OBJECT_TYPE.makeArray()),
+        Token.newSymbol(Types.ASSIGN, -1, -1),
+        new ArrayExpression(ClassHelper.OBJECT_TYPE, null,
+          singletonList(new ConstantExpression(variableCount)))));
+
+    // each declaration fills its slot(s) right away, so that when a later initializer throws,
+    // the catch block can close the values that already exist; slots whose initializer never
+    // ran are still null and are skipped by the close helper
+    List<Statement> tryStats = new ArrayList<>();
+    int slot = 0;
+    for (WhereBlockVariable variable : whereBlockVariables) {
+      tryStats.add(variable.statement);
+      for (String name : variable.names) {
+        tryStats.add(new ExpressionStatement(
+          new BinaryExpression(
+            new BinaryExpression(
+              new VariableExpression(SpockNames.WHERE_VARIABLE_VALUES),
+              Token.newSymbol(Types.LEFT_SQUARE_BRACKET, -1, -1),
+              new ConstantExpression(slot++)),
+            Token.newSymbol(Types.ASSIGN, -1, -1),
+            new VariableExpression(name))));
+      }
+    }
+    tryStats.add(new ReturnStatement(new VariableExpression(SpockNames.WHERE_VARIABLE_VALUES)));
+
+    Parameter failure = new Parameter(resources.getAstNodeCache().Throwable, SpockNames.SPOCK_TMP_THROWABLE);
+    TryCatchStatement tryCatch = new TryCatchStatement(new BlockStatement(tryStats, null), EmptyStatement.INSTANCE);
+    tryCatch.addCatch(new CatchStatement(failure, new BlockStatement(Arrays.asList(
+      new ExpressionStatement(
+        createDirectMethodCall(
+          new ClassExpression(resources.getAstNodeCache().SpockRuntime),
+          resources.getAstNodeCache().SpockRuntime_CloseWhereBlockVariablesAfterFailure,
+          new ArgumentListExpression(
+            new VariableExpression(SpockNames.WHERE_VARIABLE_VALUES),
+            new VariableExpression(failure)))),
+      new ThrowStatement(new VariableExpression(failure))), null)));
+
+    MethodNode method = new MethodNode(
+      InternalIdentifiers.getWhereVariablesName(whereBlock.getParent().getAst().getName()),
+      Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
+      ClassHelper.OBJECT_TYPE.makeArray(),
+      Parameter.EMPTY_ARRAY,
+      ClassNode.EMPTY_ARRAY,
+      new BlockStatement(Arrays.asList(valuesDecl, tryCatch), null));
+
+    whereBlock.getParent().getParent().getAst().addMethod(method);
+  }
+
+  /**
+   * Trailing parameters appended to every provider/processor method, named after the
+   * where-block variables so existing where-block expressions resolve to them directly.
+   */
+  private Parameter[] createWhereVariableParameters() {
+    return whereBlockVariableNames()
+      .map(name -> new Parameter(ClassHelper.OBJECT_TYPE, name))
+      .toArray(Parameter[]::new);
+  }
+
+  /**
+   * All declared names in declaration order; a multiple assignment contributes several
+   * names from a single declaration statement.
+   */
+  private Stream<String> whereBlockVariableNames() {
+    return whereBlockVariables.stream().flatMap(var -> var.names.stream());
+  }
+
+  private static Parameter[] concatParameters(Parameter[] a, Parameter[] b) {
+    if (b.length == 0) return a;
+    Parameter[] result = Arrays.copyOf(a, a.length + b.length);
+    System.arraycopy(b, 0, result, a.length, b.length);
+    return result;
   }
 
   private void createDataVariableMultiplicationsMethod() {
@@ -907,10 +1101,12 @@ public class WhereBlockRewriter {
       InternalIdentifiers.getFilterName(filterBlock.getParent().getAst().getName()),
       Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
       ClassHelper.VOID_TYPE,
-      dataProcessorVars
-        .stream()
-        .map(variable -> new Parameter(ClassHelper.OBJECT_TYPE, variable.getName()))
-        .toArray(Parameter[]::new),
+      concatParameters(
+        dataProcessorVars
+          .stream()
+          .map(variable -> new Parameter(ClassHelper.OBJECT_TYPE, variable.getName()))
+          .toArray(Parameter[]::new),
+        createWhereVariableParameters()),
       ClassNode.EMPTY_ARRAY,
       blockStat);
 
@@ -920,6 +1116,37 @@ public class WhereBlockRewriter {
   private static InvalidSpecCompileException notAParameterization(ASTNode stat) {
     return new InvalidSpecCompileException(stat,
 "where-blocks may only contain parameterizations (e.g. 'salary << [1000, 5000, 9000]; salaryk = salary / 1000')");
+  }
+
+  private static InvalidSpecCompileException whereBlockVariableMustBeFinal(ASTNode stat, String name) {
+    return new InvalidSpecCompileException(stat, String.format(Locale.ROOT,
+      "where-block variables must be declared 'final' (e.g. 'final %s = ...'); a bare assignment ('%s = ...') declares a derived data variable",
+      name, name));
+  }
+
+  private static InvalidSpecCompileException whereBlockVariableMustBeAtStart(ASTNode stat) {
+    return new InvalidSpecCompileException(stat,
+      "where-block variables must be declared at the beginning of the where-block, before any data variable");
+  }
+
+  private static InvalidSpecCompileException whereBlockVariableUnsupportedMultipleAssignmentTarget(ASTNode stat) {
+    return new InvalidSpecCompileException(stat,
+      "where-block variables only support simple names in a multiple assignment (e.g. 'final (a, b) = [1, 2]')");
+  }
+
+  private static InvalidSpecCompileException whereBlockVariablesRequireDataVariable(ASTNode stat) {
+    return new InvalidSpecCompileException(stat,
+      "where-block variables require at least one data variable (e.g. 'x << [1, 2]')");
+  }
+
+  private static InvalidSpecCompileException whereBlockVariableNoWildcard(ASTNode stat) {
+    return new InvalidSpecCompileException(stat,
+      "where-block variables do not support the '_' wildcard; give every variable a name");
+  }
+
+  private static InvalidSpecCompileException reservedVariableNamePrefix(ASTNode stat, String name) {
+    return new InvalidSpecCompileException(stat, String.format(Locale.ROOT,
+      "Variable name '%s' is invalid: the '$spock_' prefix is reserved for Spock's internal use", name));
   }
 
   private static InvalidSpecCompileException columnsInDataTableMustNotBeLabeled(ASTNode stat) {
@@ -932,6 +1159,20 @@ public class WhereBlockRewriter {
 
   private static InvalidSpecCompileException dataTableHeaderMayOnlyContainVariableNames(ASTNode stat) {
     return new InvalidSpecCompileException(stat, "Header of data table may only contain variable names");
+  }
+
+  /**
+   * A leading {@code final} declaration of the where-block; a single declaration introduces
+   * one name, a multiple assignment introduces several names from one statement.
+   */
+  private static class WhereBlockVariable {
+    final Statement statement;
+    final List<String> names;
+
+    WhereBlockVariable(Statement statement, List<String> names) {
+      this.statement = statement;
+      this.names = names;
+    }
   }
 
   private static class DataProviderInternalsVerifier extends ClassCodeVisitorSupport {

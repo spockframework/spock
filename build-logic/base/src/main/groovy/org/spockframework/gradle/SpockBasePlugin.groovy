@@ -31,6 +31,7 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
+import org.gradle.testing.jacoco.plugins.JacocoTaskExtension
 import org.jetbrains.annotations.VisibleForTesting
 
 import java.time.Duration
@@ -130,6 +131,11 @@ class SpockBasePlugin implements Plugin<Project> {
         .flatMap { it.findVersion("jacoco") }
         .orElseThrow { new IllegalStateException("Jacoco version not found") }
     project.extensions.getByType(JacocoPluginExtension).toolVersion = jacocoVersion.requiredVersion
+
+    // Only instrument Spock's own packages, not the libraries under test.
+    project.tasks.withType(Test).configureEach { task ->
+      task.extensions.getByType(JacocoTaskExtension).includes = ['spock.*', 'org.spockframework.*']
+    }
   }
 
   private static void dependencyInsight(Project project) {

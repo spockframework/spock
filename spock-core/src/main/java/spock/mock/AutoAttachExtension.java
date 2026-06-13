@@ -44,16 +44,23 @@ public class AutoAttachExtension implements IStatelessAnnotationDrivenExtension<
 
     @Override
     public void intercept(IMethodInvocation invocation) throws Throwable {
-      Object mock = field.readValue(invocation.getInstance());
-      if (mock == null) {
+      Object value = field.readValue(invocation.getInstance());
+      if (value == null) {
         throw new SpockException(String.format(Locale.ROOT, "Cannot AutoAttach 'null' for field %s:%d",
           field.getName(), field.getLine()));
       }
-      if (!MOCK_UTIL.isMock(mock)) {
-        throw new SpockException(String.format(Locale.ROOT, "AutoAttach failed '%s' is not a mock for field %s:%d",
-          mock, field.getName(), field.getLine()));
+      Specification specification = (Specification) invocation.getInstance();
+      // check for a mock first: a mock of a type that implements
+      // SpecificationAttachable must be attached as a mock, not have the
+      // attach() call swallowed by its own interceptor
+      if (MOCK_UTIL.isMock(value)) {
+        MOCK_UTIL.attachMock(value, specification);
+      } else if (value instanceof SpecificationAttachable) {
+        ((SpecificationAttachable) value).attach(specification);
+      } else {
+        throw new SpockException(String.format(Locale.ROOT, "AutoAttach failed '%s' is neither a mock nor a SpecificationAttachable for field %s:%d",
+          value, field.getName(), field.getLine()));
       }
-      MOCK_UTIL.attachMock(mock, (Specification) invocation.getInstance());
       invocation.proceed();
     }
   }
@@ -67,8 +74,14 @@ public class AutoAttachExtension implements IStatelessAnnotationDrivenExtension<
 
     @Override
     public void intercept(IMethodInvocation invocation) throws Throwable {
-      Object mock = field.readValue(invocation.getInstance());
-      MOCK_UTIL.detachMock(mock);
+      Object value = field.readValue(invocation.getInstance());
+      if (MOCK_UTIL.isMock(value)) {
+        MOCK_UTIL.detachMock(value);
+      } else if (value instanceof SpecificationAttachable) {
+        ((SpecificationAttachable) value).detach();
+      }
+      // a value that is neither already failed the attach interceptor with a
+      // clear error; nothing to detach then
       invocation.proceed();
     }
   }

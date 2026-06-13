@@ -1286,6 +1286,19 @@ include::{sourcedir}/interaction/ExternalMockInteractionsDocSpec.groovy[tags=sup
 
 A class cannot be both a `Specification` and a `MockInteractionSupport`, because a spec already has the full capability.
 
+Instead of passing the spec through a constructor, a fixture can implement `SpecificationAttachable` and be wired up with `@AutoAttach`.
+The extension injects the running spec into the fixture during `setup` and detaches it during `cleanup`:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/ExternalMockInteractionsDocSpec.groovy[tags=autoattach-fixture]
+----
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/ExternalMockInteractionsDocSpec.groovy[tags=autoattach-usage]
+----
+
 If you forget to attach the fixture, using it fails fast with a clear error that tells you the spec is missing.
 
 [[Interactions]]

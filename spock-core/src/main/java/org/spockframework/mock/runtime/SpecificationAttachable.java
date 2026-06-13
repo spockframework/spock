@@ -1,25 +1,13 @@
 package org.spockframework.mock.runtime;
 
-import spock.lang.Specification;
-
 /**
  * The Object implementing this interface can be attached to and
- * detached from a {@link Specification}.
+ * detached from a {@link spock.lang.Specification}.
  *
  * @author Leonard Bruenings
+ * @deprecated implement {@link spock.mock.SpecificationAttachable} instead;
+ *             this internal alias remains only for binary compatibility.
  */
-public interface SpecificationAttachable {
-
-  /**
-   * Attaches the mock to a specification.
-   *
-   * @param specification specification that this mock object should attached to
-   */
-  void attach(Specification specification);
-
-  /**
-   * Detaches the mock from its current specification.
-   */
-  void detach();
-
+@Deprecated
+public interface SpecificationAttachable extends spock.mock.SpecificationAttachable {
 }

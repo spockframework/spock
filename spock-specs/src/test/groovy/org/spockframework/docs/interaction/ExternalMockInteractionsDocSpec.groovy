@@ -1,11 +1,30 @@
 package org.spockframework.docs.interaction
 
 import groovy.transform.SelfType
+import spock.mock.SpecificationAttachable
 import spock.lang.Specification
+import spock.mock.AutoAttach
 import spock.mock.MockInteractionSupport
 import spock.lang.Interactions
 
 class ExternalMockInteractionsDocSpec extends Specification {
+
+  // tag::autoattach-usage[]
+  @AutoAttach
+  AttachableOrderFixtures orderFixtures = new AttachableOrderFixtures()
+
+  def "@AutoAttach injects the running spec into a SpecificationAttachable fixture"() {
+    given:
+    PaymentGateway gateway = orderFixtures.happyGateway()
+
+    when:
+    boolean charged = gateway.charge(42)
+    gateway.audit("processed")
+
+    then:
+    charged
+  }
+  // end::autoattach-usage[]
 
   // tag::support-fixture[]
   static class OrderFixtures implements MockInteractionSupport {
@@ -63,6 +82,28 @@ class ExternalMockInteractionsDocSpec extends Specification {
     charged
   }
   // end::interactions-usage[]
+
+  // tag::autoattach-fixture[]
+  static class AttachableOrderFixtures implements MockInteractionSupport, SpecificationAttachable {
+    private Specification specification
+
+    @Override
+    void attach(Specification specification) { this.specification = specification }
+
+    @Override
+    void detach() { this.specification = null }
+
+    @Override
+    Specification getSpecification() { specification }
+
+    PaymentGateway happyGateway() {
+      PaymentGateway gateway = Mock()
+      gateway.charge(42) >> true
+      1 * gateway.audit("processed")
+      return gateway
+    }
+  }
+  // end::autoattach-fixture[]
 
   interface PaymentGateway {
     boolean charge(int amount)

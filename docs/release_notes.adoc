@@ -10,7 +10,7 @@ include::include.adoc[]
 
 * Add support for `final` local variables in `where:` blocks, declared at their beginning and evaluated once per feature, scoped to the where-block spockIssue:138[]
 * Improve `TooManyInvocationsError` now reports unsatisfied interactions with argument mismatch details, making it easier to diagnose why invocations didn't match expected interactions spockPull:2315[]
-* Allow declaring mock interactions outside a `Specification` via the `MockInteractionSupport` interface (which also supports mock creation) and the `@Interactions` method annotation, see <<interaction_based_testing.adoc#external-interactions,Declaring Interactions Outside Specifications>>
+* Allow declaring mock interactions outside a `Specification` via the `MockInteractionSupport` interface, the `@Interactions` method annotation, and `@SelfType(Specification)` traits, see <<interaction_based_testing.adoc#external-interactions,Declaring Interactions Outside Specifications>>
 
 === Misc
 

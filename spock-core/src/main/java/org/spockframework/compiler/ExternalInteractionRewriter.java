@@ -28,6 +28,7 @@ import org.codehaus.groovy.ast.stmt.BlockStatement;
 import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.ast.stmt.Statement;
 import org.spockframework.compiler.model.ExternalInteractionMethod;
+import org.spockframework.util.Nullable;
 import org.spockframework.util.ObjectUtil;
 
 import java.util.List;
@@ -41,8 +42,9 @@ import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
  * offered to {@link InteractionRewriter}; matched statements are replaced with
  * the registration call ({@code mockController.addInteraction(...)}). Built-in
  * creation calls ({@code Mock()}/{@code Stub()}/{@code Spy()} ...) are either
- * expanded (interface mechanism) or rejected as a compile error (annotation
- * mechanism), controlled by {@code allowCreation}. Calls to other
+ * expanded ({@code MockInteractionSupport} classes and
+ * {@code @SelfType(Specification)} traits) or rejected as a compile error
+ * ({@code @Interactions} methods), controlled by {@code allowCreation}. Calls to other
  * {@code @Interactions} helpers anywhere in the body are rewritten to pass the
  * located spec along, so helpers compose.
  *
@@ -59,16 +61,19 @@ public class ExternalInteractionRewriter {
 
   /**
    * @param allowCreation    whether built-in creation calls may be expanded
-   *                         (interface mechanism) or are rejected (annotation
-   *                         mechanism).
+   *                         (support classes and spec traits) or are rejected
+   *                         ({@code @Interactions} methods).
    * @param allowStaticScope see {@link IRewriteResources#isStaticInteractionScopeAllowed()}.
    * @param specNullMessage  the message of the {@code Checks.notNull} guard that
    *                         is prepended to every rewritten method, protecting
    *                         against a {@code null} located spec; mechanism-specific
-   *                         so the failure tells the user what to fix.
+   *                         so the failure tells the user what to fix. May be
+   *                         {@code null} to skip the guard when the reference is
+   *                         non-null by construction (a
+   *                         {@code @SelfType(Specification)} trait's {@code this}).
    */
   public ExternalInteractionRewriter(AstNodeCache nodeCache, ErrorReporter errorReporter,
-      SourceLookup sourceLookup, boolean allowCreation, boolean allowStaticScope, String specNullMessage) {
+      SourceLookup sourceLookup, boolean allowCreation, boolean allowStaticScope, @Nullable String specNullMessage) {
     this.nodeCache = nodeCache;
     this.errorReporter = errorReporter;
     this.sourceLookup = sourceLookup;
@@ -114,7 +119,7 @@ public class ExternalInteractionRewriter {
     rewrote |= rewriteNestedInteractionsCalls(method, body, specificationReferenceFactory);
 
     // guard the located spec: anything we rewrote depends on it being non-null
-    if (rewrote) {
+    if (rewrote && specNullMessage != null) {
       statements.add(0, createSpecificationNotNullCheck(specificationReferenceFactory.get()));
     }
   }

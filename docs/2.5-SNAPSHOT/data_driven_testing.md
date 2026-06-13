@@ -689,6 +689,65 @@ a * 4 | b * 4
 ```
 
 
+## Local Variables in the where-block
+
+Sometimes you need a helper value to build your data, but it should be neither a data variable (and thus a method parameter) nor a field on the whole specification.
+You can declare a `final` local variable at the **start** of the `where:` block:
+
+
+```groovy
+...
+where:
+final sep = "/"
+
+input              | expected
+"a${sep}b"         | "a/b"
+"x${sep}y${sep}z"  | "x/y/z"
+```
+
+
+Such variables:
+
+
+- must be declared `final` (a bare `x = …` declares a [derived data variable](#_data_variable_assignment) instead);
+- must come **before** any data variable, data table or data pipe;
+- require at least one data variable in the same `where:` block, otherwise they would never be evaluated;
+- are evaluated **once per feature** and reused everywhere they are referenced in the `where:` block, so `final fixture = new Fixture()` is a single shared instance;
+- are visible only inside the `where:` block (data tables, data pipes, derived data variables and the `filter:` block); they are **not** method parameters and are **not** visible in the rest of the feature method;
+- follow the same access rules as data providers: they may read `@Shared` and `static` fields but not plain instance fields;
+- are automatically closed after the feature has finished if they implement `AutoCloseable`, in reverse declaration order; any error thrown while closing is ignored.
+
+
+> [!NOTE]
+> In short, a where-block variable behaves like a feature-local `@Shared @AutoCleanup(quiet = true)` field: it is created once, shared across all iterations of the feature, and closed when the feature finishes.
+
+
+The automatic close also covers a failed setup: if one initializer throws after earlier variables were already created, the already-created resources are closed in reverse declaration order, and any error thrown while closing them is attached to the original failure as a suppressed exception.
+Only values that never made it into a variable are out of reach, for example a resource created inside the failing initializer expression itself.
+
+
+The automatic close is best-effort and has one known limitation.
+If a where-block variable is also consumed directly as a data provider (for example `x << resource` where `resource` is a where-block variable), it can be closed twice, so give such a value an idempotent `close()` if double-closing would be a problem.
+
+
+The initializer may also use Groovy’s multiple-assignment syntax to declare several locals at once.
+The same rules apply to every target, and each name becomes its own where-block variable:
+
+
+```groovy
+...
+  where:
+  final (lower, upper) = [0, 100]
+
+  value << [lower, 50, upper]
+```
+
+
+> [!NOTE]
+> The `final (a, b) = …` syntax is only supported on Groovy 3.0 or newer.
+> On Groovy 2.5 declare one `final` local per line instead.
+
+
 ## Multi-Variable Assignment
 
 Like with data pipes, you can also assign to multiple variables in one expression, if you have some object Groovy

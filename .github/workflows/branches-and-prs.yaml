@@ -127,7 +127,7 @@ jobs:
     - id: 'step-3'
       name: 'Build Spock'
       env:
-        DEVELOCITY_ACCESS_KEY: '${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}'
+        DEVELOCITY_ACCESS_KEY: '${{ secrets.DEVELOCITY_ACCESS_KEY }}'
       run: './gradlew --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}"'
     - id: 'step-4'
       name: 'Upload to Codecov.io'

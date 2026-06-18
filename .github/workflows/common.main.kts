@@ -32,10 +32,10 @@ import io.github.typesafegithub.workflows.yaml.CheckoutActionVersionSource.Infer
 import io.github.typesafegithub.workflows.yaml.DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG
 import java.util.Properties
 
-val GRADLE_ENTERPRISE_ACCESS_KEY by secrets
+val DEVELOCITY_ACCESS_KEY by secrets
 
 val commonCredentials = mapOf(
-    "DEVELOCITY_ACCESS_KEY" to expr(GRADLE_ENTERPRISE_ACCESS_KEY)
+    "DEVELOCITY_ACCESS_KEY" to expr(DEVELOCITY_ACCESS_KEY)
 )
 
 // Work-around for https://youtrack.jetbrains.com/issue/KT-86352,

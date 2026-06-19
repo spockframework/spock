@@ -125,6 +125,14 @@ public class AstNodeCache {
   public final MethodNode SpecificationContext_SetCurrentBlock =
       SpecificationContext.getDeclaredMethods(org.spockframework.runtime.SpecificationContext.SET_CURRENT_BLOCK).get(0);
 
+  // standalone @DataProvider support; intentionally contains no Tuple1..Tuple16 entries,
+  // those classes are version-dependent and resolved dynamically where needed
+  public final ClassNode StandaloneDataProviders = ClassHelper.makeWithoutCaching(org.spockframework.runtime.StandaloneDataProviders.class);
+  public final ClassNode StandaloneDataProviderDescriptor = ClassHelper.makeWithoutCaching(org.spockframework.runtime.StandaloneDataProviderDescriptor.class);
+
+  public final MethodNode StandaloneDataProviders_DataIterator =
+      StandaloneDataProviders.getDeclaredMethods("dataIterator").get(0);
+
   public final MethodNode List_Get =
       ClassHelper.LIST_TYPE.getDeclaredMethods("get").get(0);
 
@@ -140,6 +148,7 @@ public class AstNodeCache {
   public final ClassNode FieldMetadata = ClassHelper.makeWithoutCaching(FieldMetadata.class);
   public final ClassNode FeatureMetadata = ClassHelper.makeWithoutCaching(FeatureMetadata.class);
   public final ClassNode DataProviderMetadata = ClassHelper.makeWithoutCaching(DataProviderMetadata.class);
+  public final ClassNode StandaloneDataProviderMetadata = ClassHelper.makeWithoutCaching(StandaloneDataProviderMetadata.class);
   public final ClassNode DataProcessorMetadata = ClassHelper.makeWithoutCaching(DataProcessorMetadata.class);
   public final ClassNode BlockMetadata = ClassHelper.makeWithoutCaching(BlockMetadata.class);
   public final ClassNode BlockKind = ClassHelper.makeWithoutCaching(BlockKind.class);

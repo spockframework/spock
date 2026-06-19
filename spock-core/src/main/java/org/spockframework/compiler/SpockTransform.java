@@ -21,8 +21,10 @@ import org.spockframework.compiler.model.Spec;
 import org.spockframework.util.VersionChecker;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.codehaus.groovy.ast.*;
+import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.control.*;
 import org.codehaus.groovy.transform.*;
 
@@ -58,13 +60,57 @@ public class SpockTransform implements ASTTransformation {
       try (SourceLookup sourceLookup = new SourceLookup(sourceUnit)) {
         List<ClassNode> classes = sourceUnit.getAST().getClasses();
 
-        for (ClassNode clazz : classes)
-          if (isSpec(clazz)) processSpec(sourceUnit, clazz, errorReporter, sourceLookup);
+        for (ClassNode clazz : classes) {
+          boolean spec = isSpec(clazz);
+          boolean support = isMockInteractionSupport(clazz);
+
+          if (spec && support) {
+            errorReporter.error(
+                "Class '%s' must not be both a Specification and a MockInteractionSupport; a spec already supports interactions directly.",
+                clazz.getName());
+            continue;
+          }
+
+          if (spec) {
+            processSpec(sourceUnit, clazz, errorReporter, sourceLookup);
+          } else if (support) {
+            processMockInteractionSupport(sourceUnit, clazz, errorReporter, sourceLookup);
+          }
+        }
       }
     }
 
     boolean isSpec(ClassNode clazz) {
       return clazz.isDerivedFrom(nodeCache.Specification);
+    }
+
+    boolean isMockInteractionSupport(ClassNode clazz) {
+      return clazz.implementsInterface(nodeCache.MockInteractionSupport);
+    }
+
+    void processMockInteractionSupport(SourceUnit sourceUnit, ClassNode clazz, ErrorReporter errorReporter, SourceLookup sourceLookup) {
+      Supplier<Expression> specRef = () -> AstUtil.createDirectMethodCall(
+          VariableExpression.THIS_EXPRESSION, nodeCache.MockInteractionSupport_GetSpecification,
+          ArgumentListExpression.EMPTY_ARGUMENTS);
+      // allowCreation=true (mocks can be created here). The spec is reached via
+      // this.getSpecification(), so static methods that declare interactions or
+      // create mocks get a clear "static scope" compile error. The located spec is
+      // always guarded with Checks.notNull, since getSpecification() may be null
+      // if the fixture was never attached.
+      ExternalInteractionRewriter rewriter =
+          new ExternalInteractionRewriter(nodeCache, errorReporter, sourceLookup, true);
+      rewriteDeclaredMethods(clazz, rewriter, specRef);
+      if (!sourceUnit.getErrorCollector().hasErrors()) {
+        new VariableScopeVisitor(sourceUnit).visitClass(clazz);
+      }
+    }
+
+    /** Rewrites every concrete method declared directly on {@code clazz} in place. */
+    void rewriteDeclaredMethods(ClassNode clazz, ExternalInteractionRewriter rewriter, Supplier<Expression> specRef) {
+      for (MethodNode method : clazz.getMethods()) {
+        if (method.isAbstract() || method.getDeclaringClass() != clazz) continue;
+        rewriter.rewriteInPlace(method, specRef);
+      }
     }
 
     void processSpec(SourceUnit sourceUnit, ClassNode clazz, ErrorReporter errorReporter, SourceLookup sourceLookup) {

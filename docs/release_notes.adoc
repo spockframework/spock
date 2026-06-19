@@ -10,6 +10,7 @@ include::include.adoc[]
 
 * Add support for `final` local variables in `where:` blocks, declared at their beginning and evaluated once per feature, scoped to the where-block spockIssue:138[]
 * Improve `TooManyInvocationsError` now reports unsatisfied interactions with argument mismatch details, making it easier to diagnose why invocations didn't match expected interactions spockPull:2315[]
+* Allow declaring mock interactions and creating mocks outside a `Specification` via the `MockInteractionSupport` interface, see <<interaction_based_testing.adoc#external-interactions,Declaring Interactions Outside Specifications>>
 
 === Misc
 
@@ -20,6 +21,7 @@ include::include.adoc[]
 === Breaking Changes
 
 * Mock/Stub checks on `Comparable<T>` with `T` being something other than `Object` now compare using the java identity hash code instead of always being equal spockIssue:2352[]
+* `spock.mock.MockingApi` changed from a class to an interface to support `MockInteractionSupport`. This only affects code that violated the documented contract by extending `MockingApi` directly instead of `Specification`. `instanceof` checks, casts, and type references keep working. However, already compiled code (Java, Kotlin, or `@CompileStatic` Groovy) that invokes a mock factory method on a receiver whose static type is `MockingApi` was compiled as a virtual call and now requires interface dispatch; such code fails with an `IncompatibleClassChangeError` until it is recompiled.
 
 == 2.4 (2025-12-11)
 

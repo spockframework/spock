@@ -692,8 +692,13 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     return var;
   }
 
+  @Override
+  public Expression getSpecificationReference() {
+    return VariableExpression.THIS_EXPRESSION;
+  }
+
   public MethodCallExpression getSpecificationContext() {
-    return createDirectMethodCall(VariableExpression.THIS_EXPRESSION,
+    return createDirectMethodCall(getSpecificationReference(),
         nodeCache.Specification_GetSpecificationContext, ArgumentListExpression.EMPTY_ARGUMENTS);
   }
 

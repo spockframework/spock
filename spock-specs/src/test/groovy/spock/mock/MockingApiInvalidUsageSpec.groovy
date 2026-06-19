@@ -30,8 +30,9 @@ class MockingApiInvalidUsageSpec extends Specification {
 
   def "Invalid usage check"() {
     when:
-    def api = new MockingApi()
+    def api = new MockingApi() {}
     InvokerHelper.invokeMethod(api, methodName, args.toArray())
+
     then:
     InvalidSpecException ex = thrown()
     ex.message == "Mock objects can only be created inside a spec, and only during the lifetime of a feature (iteration)"
@@ -95,6 +96,6 @@ class MockingApiInvalidUsageSpec extends Specification {
     "GroovySpy"  | [CLOSURE]
 
     "SpyStatic"  | [Runnable]
-    "SpyStatic" | [Runnable, MockMakers.mockito]
+    "SpyStatic"  | [Runnable, MockMakers.mockito]
   }
 }

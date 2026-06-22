@@ -80,9 +80,15 @@ public void $spock_feature_0_0() {
     finally {
     }
     if (true) {
-        [true, false].any({ ->
-            it
-        })
+        try {
+            org.spockframework.runtime.SpockRuntime.verifyMethodCondition($spock_errorCollector, $spock_valueRecorder.reset(), '[true, false].any { it }', 5, 9, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), [$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), true), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), false)]), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(3), 'any'), new java.lang.Object[]{$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(4), { ->
+                it
+            })}, $spock_valueRecorder.realizeNas(7, false), false, 6)
+        }
+        catch (java.lang.Throwable $spock_condition_throwable) {
+            org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, '[true, false].any { it }', 5, 9, null, $spock_condition_throwable)}
+        finally {
+        }
     }
     this.with({ ->
         org.spockframework.runtime.ValueRecorder $spock_valueRecorder1 = new org.spockframework.runtime.ValueRecorder()

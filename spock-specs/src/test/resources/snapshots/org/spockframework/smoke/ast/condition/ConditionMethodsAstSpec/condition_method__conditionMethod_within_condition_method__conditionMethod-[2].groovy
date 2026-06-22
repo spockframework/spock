@@ -22,5 +22,5 @@ public void $spock_feature_0_0() {
         }
     })
     org.spockframework.runtime.SpockRuntime.callBlockExited(this, 0)
-    this.getSpecificationContext().getMockController().leaveScope()
+    this.getSpecificationContext().getMockController().verifyLastScope()
 }

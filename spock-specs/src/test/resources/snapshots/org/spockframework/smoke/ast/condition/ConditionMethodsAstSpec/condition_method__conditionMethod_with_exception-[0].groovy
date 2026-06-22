@@ -14,5 +14,5 @@ public void $spock_feature_0_0() {
         throw new java.lang.Exception('foo')
     })
     org.spockframework.runtime.SpockRuntime.callBlockExited(this, 0)
-    this.getSpecificationContext().getMockController().leaveScope()
+    this.getSpecificationContext().getMockController().verifyLastScope()
 }

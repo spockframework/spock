@@ -264,9 +264,15 @@ class GroovySpiesThatAreGlobal extends Specification {
     then:
     def ex = thrown(MissingPropertyException)
     ex.message.contains(" NON_EXISTING_FIELD ")
-    def suppressed = ex.getSuppressed()[0].cause
-    suppressed instanceof MissingMethodException
-    suppressed.message.contains("getNON_EXISTING_FIELD")
+    // Groovy 6 reconstructs the MissingPropertyException at the call site (ScriptBytecodeAdapter.unwrap
+    // rebuilds the internal MissingPropertyExceptionNoStack from name+type), discarding the suppressed
+    // getter MissingMethodException that Spock attaches. The suppressed chain is therefore only present
+    // on Groovy < 6.
+    if (GroovyRuntimeUtil.MAJOR_VERSION < 6) {
+      def suppressed = ex.getSuppressed()[0].cause
+      assert suppressed instanceof MissingMethodException
+      assert suppressed.message.contains("getNON_EXISTING_FIELD")
+    }
   }
 
   def "Accessing non-existing property setter throws MissingPropertyException"() {
@@ -285,9 +291,12 @@ class GroovySpiesThatAreGlobal extends Specification {
     then:
     def ex = thrown(MissingPropertyException)
     ex.message.contains(" NON_EXISTING_FIELD ")
-    def suppressed = ex.getSuppressed()[0].cause
-    suppressed instanceof MissingMethodException
-    suppressed.message.contains("setNON_EXISTING_FIELD")
+    // See the getter case above: Groovy 6 discards the suppressed exception during call-site unwrap.
+    if (GroovyRuntimeUtil.MAJOR_VERSION < 6) {
+      def suppressed = ex.getSuppressed()[0].cause
+      assert suppressed instanceof MissingMethodException
+      assert suppressed.message.contains("setNON_EXISTING_FIELD")
+    }
   }
 
   def "Accessing static field through global spy shall only log single invocation"() {

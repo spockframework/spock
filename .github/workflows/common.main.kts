@@ -17,7 +17,7 @@
  */
 
 @file:Repository("https://repo.maven.apache.org/maven2/")
-@file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.7.0")
+@file:DependsOn("io.github.typesafegithub:github-workflows-kt:4.0.0")
 
 import io.github.typesafegithub.workflows.domain.Job
 import io.github.typesafegithub.workflows.domain.JobOutputs.EMPTY
@@ -54,7 +54,6 @@ fun JobBuilder<*>.installPinnedKotlin() {
 }
 
 val commonConsistencyCheckJobConfig = DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG.copy(
-    checkoutActionVersion = InferFromClasspath(),
     additionalSteps = { installPinnedKotlin() }
 )
 

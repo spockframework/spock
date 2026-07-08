@@ -15,7 +15,6 @@
  */
 package org.spockframework.smoke
 
-import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.runtime.SpockAssertionError
 import spock.lang.*
 
@@ -132,11 +131,6 @@ class WithBlocks extends Specification {
   }
 
   @Issue('https://github.com/spockframework/spock/issues/886')
-  // The 'with' target (delegate) here is the static nested class 'Person', and 'checkCondition()' is an
-  // instance method of the spec (the closure owner). On Groovy 6, resolving an owner instance method via a
-  // static-nested-class delegate throws IllegalArgumentException instead of falling through to the owner.
-  // This is an upstream Groovy regression (see GROOVY-12045), unrelated to Spock's condition rewriting.
-  @IgnoreIf(value = { GroovyRuntimeUtil.MAJOR_VERSION >= 6 }, reason = "GROOVY-12045: static-nested-class delegate breaks owner method resolution")
   def "with works with void methods"() {
     given:
     Person person = new Person()

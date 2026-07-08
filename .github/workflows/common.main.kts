@@ -54,7 +54,6 @@ fun JobBuilder<*>.installPinnedKotlin() {
 }
 
 val commonConsistencyCheckJobConfig = DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG.copy(
-    checkoutActionVersion = InferFromClasspath(),
     additionalSteps = { installPinnedKotlin() }
 )
 

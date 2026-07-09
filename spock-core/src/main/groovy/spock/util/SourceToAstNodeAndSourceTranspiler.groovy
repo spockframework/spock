@@ -1231,7 +1231,10 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
 
   @Override
   void visitShortTernaryExpression(ElvisOperatorExpression expression) {
-    visitTernaryExpression(expression)
+    // render the elvis form instead of the equivalent ternary, which would duplicate the condition expression
+    expression?.booleanExpression?.visit this
+    print ' ?: '
+    expression?.falseExpression?.visit this
   }
 
   @Override

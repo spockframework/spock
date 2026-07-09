@@ -140,7 +140,7 @@ public class apackage.another.Bar extends apackage.another.Foo implements apacka
         java.lang.Integer i = 2
         def (java.lang.Object j, java.lang.Object k) = x
         java.lang.Object l = b ? c : d
-        java.lang.Object m = c ? c : d
+        java.lang.Object m = c ?: d
         java.lang.Object n = this.&'convert'
         java.lang.Object o = this.order
         java.lang.Object p = (1..5)

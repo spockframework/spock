@@ -150,6 +150,21 @@ class Foo {
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
+  def "elvis operator is rendered in short form"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  def m(c, d) {
+    def a = c ?: d
+    def b = c.count('x') ?: d
+  }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
   def "enums"() {
     given:
     // groovy 4 renders differently

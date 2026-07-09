@@ -200,6 +200,23 @@ class Foo {
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION >= 3 })
+  def "safe index accesses are rendered with the closing bracket"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  def m(List l, Map mp) {
+    def a = l?[0]
+    def b = mp?['key']
+    l?[1] = 42
+  }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
   def "enums"() {
     given:
     // groovy 4 renders differently

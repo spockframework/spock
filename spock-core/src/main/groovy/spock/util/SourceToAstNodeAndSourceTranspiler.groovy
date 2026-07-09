@@ -878,13 +878,25 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
   void visitBinaryExpression(BinaryExpression expression) {
     expression?.leftExpression?.visit this
     if (!(expression.rightExpression instanceof EmptyExpression) || expression.operation.type != Types.ASSIGN) {
-      print " $expression.operation.text "
+      String operation = expression.operation.text
+      // Groovy 3 represents a safe index access as a plain '[' token with the safe flag set,
+      // while Groovy 4+ uses a dedicated '?[' token
+      if (operation == '[' && isSafeIndexAccess(expression)) {
+        operation = '?['
+      }
+      print " $operation "
       expression.rightExpression.visit this
 
-      if (expression?.operation?.text == '[') {
+      if (operation in ['[', '?[']) {
         print ']'
       }
     }
+  }
+
+  // BinaryExpression.isSafe() only exists in Groovy 3+, which introduced safe index access
+  @CompileDynamic
+  private static boolean isSafeIndexAccess(BinaryExpression expression) {
+    expression.respondsTo('isSafe') ? expression.isSafe() : false
   }
 
   @Override

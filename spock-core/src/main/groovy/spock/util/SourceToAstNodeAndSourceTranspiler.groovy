@@ -66,12 +66,14 @@ class SourceToAstNodeAndSourceTranspiler {
 
     def writer = new StringBuilderWriter()
 
-    GroovyClassLoader ownClassLoader = classLoader == null ? new GroovyClassLoader(getClass().classLoader) : null
-    classLoader = classLoader ?: ownClassLoader
+    // wrap any non-Groovy classloader (or the default) instead of blindly casting it below
+    GroovyClassLoader ownClassLoader = classLoader instanceof GroovyClassLoader ? null
+      : new GroovyClassLoader(classLoader ?: getClass().classLoader)
+    GroovyClassLoader groovyClassLoader = ownClassLoader ?: (GroovyClassLoader) classLoader
 
     def scriptName = 'script.groovy'
     GroovyCodeSource codeSource = new GroovyCodeSource(script, scriptName, '/groovy/script')
-    CompilationUnit cu = new CompilationUnit((CompilerConfiguration)(config ?: CompilerConfiguration.DEFAULT), (CodeSource)codeSource.codeSource, (GroovyClassLoader)classLoader)
+    CompilationUnit cu = new CompilationUnit((CompilerConfiguration)(config ?: CompilerConfiguration.DEFAULT), (CodeSource)codeSource.codeSource, groovyClassLoader)
     def captureVisitor = new AstNodeCaptureVisitor()
     cu.addPhaseOperation(captureVisitor, compilePhase)
     cu.addSource(codeSource.name, script)

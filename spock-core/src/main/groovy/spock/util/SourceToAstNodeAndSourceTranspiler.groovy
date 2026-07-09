@@ -1020,6 +1020,16 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     } else {
       //noinspection GroovyPointlessBoolean
       print escapeChars == true ? escapeCharacters(expression.value as String) : expression.value
+      // without the type suffix, re-parsing the rendered value would produce an Integer or BigDecimal
+      if (expression.value instanceof Long) {
+        print 'L'
+      } else if (expression.value instanceof Float) {
+        print 'F'
+      } else if (expression.value instanceof Double) {
+        print 'D'
+      } else if (expression.value instanceof BigInteger) {
+        print 'G'
+      }
     }
   }
 

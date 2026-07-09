@@ -217,6 +217,25 @@ class Foo {
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
+  def "numeric literals keep their type suffix"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  def m() {
+    def integer = 42
+    def longValue = 42L
+    def floatValue = 2.5f
+    def doubleValue = 3.5d
+    def bigInteger = 10G
+    def bigDecimal = 1.5
+  }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
   def "enums"() {
     given:
     // groovy 4 renders differently

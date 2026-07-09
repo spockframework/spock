@@ -136,6 +136,20 @@ class Foo {
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
+  def "nested generic type arguments are rendered faithfully"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  Map<String, List<Integer>> nested() { null }
+  List<? extends Number> upperBounded() { null }
+  def <T extends CharSequence> List<T> methodTypeParameter() { null }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
   def "enums"() {
     given:
     // groovy 4 renders differently

@@ -542,6 +542,11 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
         }
         first = false
         print it.name
+        // a concrete type argument may carry its own nested type arguments (e.g. Tuple2<Integer, Integer>);
+        // recurse so they are not dropped. Placeholders (T) and wildcards (?) never carry them.
+        if (!it.placeholder && !it.wildcard) {
+          visitGenerics it.type?.genericsTypes
+        }
         if (it.upperBounds) {
           print ' extends '
           boolean innerFirst = true

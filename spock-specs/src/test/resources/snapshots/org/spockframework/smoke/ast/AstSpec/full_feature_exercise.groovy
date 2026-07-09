@@ -142,7 +142,7 @@ public class apackage.another.Bar extends apackage.another.Foo implements apacka
         java.lang.Object l = b ? c : d
         java.lang.Object m = c ?: d
         java.lang.Object n = this.&'convert'
-        java.lang.Object o = this.order
+        java.lang.Object o = this.@order
         java.lang.Object p = (1..5)
         java.lang.Object q = (1..<5)
         java.lang.Object r = x*.size()?.intersect([1])

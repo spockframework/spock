@@ -165,6 +165,25 @@ class Foo {
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
+  def "attribute access is rendered with the at sign"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  int order
+
+  def m(Foo other, List<Foo> foos) {
+    def a = other.@order
+    def b = other?.@order
+    def c = foos*.@order
+    this.@order = a
+  }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
   def "enums"() {
     given:
     // groovy 4 renders differently

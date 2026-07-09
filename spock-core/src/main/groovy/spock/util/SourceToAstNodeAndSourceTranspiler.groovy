@@ -960,7 +960,8 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     } else if (expression?.safe) {
       print '?'
     }
-    print '.'
+    // an AttributeExpression accesses the field directly, bypassing the property accessor
+    print expression instanceof AttributeExpression ? '.@' : '.'
     if (expression?.property instanceof ConstantExpression) {
       visitConstantExpression((ConstantExpression)expression?.property, true)
     } else {

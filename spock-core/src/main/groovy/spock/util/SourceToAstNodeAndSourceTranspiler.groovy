@@ -66,7 +66,8 @@ class SourceToAstNodeAndSourceTranspiler {
 
     def writer = new StringBuilderWriter()
 
-    classLoader = classLoader ?: new GroovyClassLoader(getClass().classLoader)
+    GroovyClassLoader ownClassLoader = classLoader == null ? new GroovyClassLoader(getClass().classLoader) : null
+    classLoader = classLoader ?: ownClassLoader
 
     def scriptName = 'script.groovy'
     GroovyCodeSource codeSource = new GroovyCodeSource(script, scriptName, '/groovy/script')
@@ -94,6 +95,9 @@ class SourceToAstNodeAndSourceTranspiler {
       cfe.message.eachLine {
         writer.println it
       }
+    } finally {
+      // only close the classloader we created ourselves; a passed-in one may still be used by the caller
+      ownClassLoader?.close()
     }
 
     return new TranspileResult(writer.toString(), captureVisitor.nodeCaptures)

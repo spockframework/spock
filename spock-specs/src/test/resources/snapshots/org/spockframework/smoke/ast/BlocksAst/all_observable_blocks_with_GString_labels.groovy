@@ -18,8 +18,6 @@ public void $spock_feature_0_0() {
     }
     catch (java.lang.Throwable $spock_condition_throwable) {
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, '\"expect \${idx++}\"', 3, 13, null, $spock_condition_throwable)}
-    finally {
-    }
     org.spockframework.runtime.SpockRuntime.callBlockExited(this, 1)
     org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 2)
     "when ${( idx )++}"
@@ -30,8 +28,6 @@ public void $spock_feature_0_0() {
     }
     catch (java.lang.Throwable $spock_condition_throwable) {
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, '\"then \${idx++}\"', 5, 11, null, $spock_condition_throwable)}
-    finally {
-    }
     org.spockframework.runtime.SpockRuntime.callBlockExited(this, 3)
     this.getSpecificationContext().getMockController().leaveScope()
 }

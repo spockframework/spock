@@ -11,8 +11,6 @@ public void $spock_feature_0_0() {
         }
         catch (java.lang.Throwable $spock_condition_throwable) {
             org.spockframework.runtime.SpockRuntime.groupConditionFailedWithException($spock_errorCollector, $spock_condition_throwable)}
-        finally {
-        }
     })
     org.spockframework.runtime.SpockRuntime.callBlockExited(this, 0)
     this.getSpecificationContext().getMockController().leaveScope()

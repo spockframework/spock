@@ -16,8 +16,6 @@ public java.lang.Object $spock_feature_0_0prov0() {
         }
         catch (java.lang.Throwable $spock_condition_throwable) {
             org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder1, 'true', 2, 29, null, $spock_condition_throwable)}
-        finally {
-        }
     }]
 }
 

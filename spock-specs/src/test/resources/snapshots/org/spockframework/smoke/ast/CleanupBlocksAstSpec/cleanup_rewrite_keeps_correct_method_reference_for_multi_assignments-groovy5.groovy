@@ -22,8 +22,6 @@ public void $spock_feature_0_0() {
         }
         catch (java.lang.Throwable $spock_condition_throwable) {
             org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'println(foobar)', 6, 3, null, $spock_condition_throwable)}
-        finally {
-        }
         org.spockframework.runtime.SpockRuntime.callBlockExited(this, 1)
     }
     catch (java.lang.Throwable $spock_tmp_throwable) {

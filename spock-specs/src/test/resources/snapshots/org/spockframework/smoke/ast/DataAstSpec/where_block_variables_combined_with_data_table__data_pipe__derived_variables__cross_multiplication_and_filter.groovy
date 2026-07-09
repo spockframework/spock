@@ -13,8 +13,6 @@ public void $spock_feature_0_0(java.lang.Object x, java.lang.Object y, java.lang
     }
     catch (java.lang.Throwable $spock_condition_throwable) {
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'true', 2, 5, null, $spock_condition_throwable)}
-    finally {
-    }
     org.spockframework.runtime.SpockRuntime.callBlockExited(this, 0)
     this.getSpecificationContext().getMockController().leaveScope()
 }
@@ -53,8 +51,6 @@ public java.lang.Object[] $spock_feature_0_0wherevars() {
         org.spockframework.runtime.SpockRuntime.closeWhereBlockVariablesAfterFailure($spock_whereVariableValues, $spock_tmp_throwable)
         throw $spock_tmp_throwable
     }
-    finally {
-    }
 }
 
 public static org.spockframework.runtime.model.DataVariableMultiplication[] $spock_feature_0_0prods() {
@@ -69,8 +65,6 @@ public void $spock_feature_0_0filter(java.lang.Object x, java.lang.Object y, jav
     }
     catch (java.lang.Throwable $spock_condition_throwable) {
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'total > 0', 20, 5, null, $spock_condition_throwable)}
-    finally {
-    }
 }
 /*--------- end::snapshot[] ---------*/
   }

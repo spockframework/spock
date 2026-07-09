@@ -1230,13 +1230,16 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     statement?.catchStatements?.each { CatchStatement catchStatement ->
       visitCatchStatement(catchStatement)
     }
-    print 'finally {'
-    printLineBreak()
-    indented {
-      statement?.finallyStatement?.visit this
+    // a try without a finally block carries an EmptyStatement
+    if (statement?.finallyStatement && !(statement.finallyStatement instanceof EmptyStatement)) {
+      print 'finally {'
+      printLineBreak()
+      indented {
+        statement.finallyStatement.visit this
+      }
+      print '}'
+      printLineBreak()
     }
-    print '}'
-    printLineBreak()
   }
 
   @Override

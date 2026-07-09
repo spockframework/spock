@@ -14,8 +14,6 @@ public void $spock_feature_0_0(java.lang.Object name, java.lang.Object greeting)
     }
     catch (java.lang.Throwable $spock_condition_throwable) {
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'greeting == \"Hello, world\"', 1, 83, null, $spock_condition_throwable)}
-    finally {
-    }
     org.spockframework.runtime.SpockRuntime.callBlockExited(this, 0)
     this.getSpecificationContext().getMockController().leaveScope()
 }
@@ -42,8 +40,6 @@ public java.lang.Object[] $spock_feature_0_0wherevars() {
     catch (java.lang.Throwable $spock_tmp_throwable) {
         org.spockframework.runtime.SpockRuntime.closeWhereBlockVariablesAfterFailure($spock_whereVariableValues, $spock_tmp_throwable)
         throw $spock_tmp_throwable
-    }
-    finally {
     }
 }
 /*--------- end::snapshot[] ---------*/

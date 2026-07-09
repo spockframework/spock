@@ -21,8 +21,6 @@ public java.lang.Object $spock_feature_0_0proc(java.lang.Object $spock_p0) {
         }
         catch (java.lang.Throwable $spock_condition_throwable) {
             org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder1, 'true', 3, 31, null, $spock_condition_throwable)}
-        finally {
-        }
     }) as java.lang.Object)
     return new java.lang.Object[]{ dataPipe , dataVariable }
 }

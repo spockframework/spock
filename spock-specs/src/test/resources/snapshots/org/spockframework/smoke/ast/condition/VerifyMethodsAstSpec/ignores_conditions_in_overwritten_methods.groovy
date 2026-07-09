@@ -9,8 +9,6 @@ public class BaseAssertions extends java.lang.Object {
         }
         catch (java.lang.Throwable $spock_condition_throwable) {
             org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'a >= 0', 5, 9, null, $spock_condition_throwable)}
-        finally {
-        }
     }
 
 }

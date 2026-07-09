@@ -294,6 +294,29 @@ class Foo {
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
+  def "try without a finally block is rendered without an empty one"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  def m() {
+    try {
+      println 'x'
+    } catch (RuntimeException e) {
+      println e
+    }
+    try {
+      println 'y'
+    } finally {
+      println 'done'
+    }
+  }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
   def "enums"() {
     given:
     // groovy 4 renders differently

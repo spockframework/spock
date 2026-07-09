@@ -10,8 +10,6 @@ public void $spock_feature_0_0() {
             }
             catch (java.lang.Throwable $spock_condition_throwable) {
                 org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector1, $spock_valueRecorder1, 'false', 3, 3, null, $spock_condition_throwable)}
-            finally {
-            }
         }
         finally {
             $spock_errorCollector1.validateCollectedErrors()}

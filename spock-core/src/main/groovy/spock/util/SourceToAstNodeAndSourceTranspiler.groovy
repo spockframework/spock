@@ -730,6 +730,11 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     printStatementLabels(statement)
     print 'for ('
     if (statement?.variable != ForStatement.FOR_LOOP_DUMMY) {
+      Parameter indexVariable = forLoopIndexVariable(statement)
+      if (indexVariable) {
+        visitParameters([indexVariable])
+        print ', '
+      }
       visitParameters([statement.variable])
       print ' : '
     }
@@ -742,6 +747,12 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     }
     print '}'
     printLineBreak()
+  }
+
+  // ForStatement.getIndexVariable() only exists in Groovy 5+, which introduced for (index, value in iterable) loops
+  @CompileDynamic
+  private static Parameter forLoopIndexVariable(ForStatement statement) {
+    statement.respondsTo('getIndexVariable') ? statement.indexVariable : null
   }
 
   @Override

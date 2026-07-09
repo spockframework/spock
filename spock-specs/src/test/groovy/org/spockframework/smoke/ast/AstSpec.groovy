@@ -317,6 +317,26 @@ class Foo {
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION >= 5 })
+  def "for-in loops with an index variable render both variables"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  def m(List l) {
+    for (item in l) {
+      println item
+    }
+    for (i, item in l) {
+      println item
+    }
+  }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
   def "enums"() {
     given:
     // groovy 4 renders differently

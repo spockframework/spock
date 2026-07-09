@@ -756,9 +756,8 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
   }
 
   // ForStatement.getIndexVariable() only exists in Groovy 5+, which introduced for (index, value in iterable) loops
-  @CompileDynamic
   private static Parameter forLoopIndexVariable(ForStatement statement) {
-    statement.respondsTo('getIndexVariable') ? statement.indexVariable : null
+    (Parameter) invokeIfSupported(statement, 'getIndexVariable', null)
   }
 
   @Override
@@ -772,7 +771,7 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
       ifElse?.ifBlock?.visit this
     }
     printLineBreak()
-    if (ifElse?.elseBlock && !(ifElse.elseBlock instanceof EmptyStatement)) {
+    if (isPresent(ifElse?.elseBlock)) {
       print '} else {'
       printLineBreak()
       indented {
@@ -809,7 +808,7 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
         visitCaseStatement it
       }
       // a switch without a default case carries an EmptyStatement
-      if (statement?.defaultStatement && !(statement.defaultStatement instanceof EmptyStatement)) {
+      if (isPresent(statement?.defaultStatement)) {
         print 'default: '
         printLineBreak()
         statement?.defaultStatement?.visit this
@@ -915,9 +914,8 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
   }
 
   // BinaryExpression.isSafe() only exists in Groovy 3+, which introduced safe index access
-  @CompileDynamic
   private static boolean isSafeIndexAccess(BinaryExpression expression) {
-    expression.respondsTo('isSafe') ? expression.isSafe() : false
+    invokeIfSupported(expression, 'isSafe', false)
   }
 
   @Override
@@ -1000,9 +998,8 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
   }
 
   // RangeExpression.isExclusiveLeft() only exists in Groovy 4+, which introduced left-open ranges
-  @CompileDynamic
   private static boolean isExclusiveLeft(RangeExpression expression) {
-    expression.respondsTo('isExclusiveLeft') ? expression.isExclusiveLeft() : false
+    invokeIfSupported(expression, 'isExclusiveLeft', false)
   }
 
   @Override
@@ -1263,7 +1260,7 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
       visitCatchStatement(catchStatement)
     }
     // a try without a finally block carries an EmptyStatement
-    if (statement?.finallyStatement && !(statement.finallyStatement instanceof EmptyStatement)) {
+    if (isPresent(statement?.finallyStatement)) {
       print 'finally {'
       printLineBreak()
       indented {
@@ -1442,6 +1439,17 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
       first = false
       printExpression it
     }
+  }
+
+  // an absent optional statement (e.g. a finally block) is represented by an EmptyStatement
+  private static boolean isPresent(Statement statement) {
+    statement != null && !(statement instanceof EmptyStatement)
+  }
+
+  // probes AST APIs that only exist in Groovy versions newer than the 2.5 baseline this class compiles against
+  @CompileDynamic
+  private static Object invokeIfSupported(Object receiver, String methodName, Object fallbackValue) {
+    receiver.respondsTo(methodName) ? receiver."$methodName"() : fallbackValue
   }
 
   @Override

@@ -17,6 +17,7 @@ include::include.adoc[]
 * Fix Pattern flags being dropped when `java.util.regex.Pattern` instances are used in Spock regex conditions spockIssue:2298[]
 * Fix `MockitoMockMaker` throws NPE on null object spockIssue:2337[]
 * Fix `SourceToAstNodeAndSourceTranspiler` dropping nested generic type arguments, so signatures like `Iterator<Tuple2<Integer, Integer>>` are now rendered faithfully instead of `Iterator<Tuple2>` spockPull:2393[]
+* Fix `SourceToAstNodeAndSourceTranspiler` rendering of several other constructs: the elvis operator, attribute access (`.@`), implicit-`it` closures, safe index access (`?[]`), numeric literal type suffixes (`L`, `F`, `D`, `G`), left-open ranges (`<..`), and explicit type arguments of method calls spockPull:2393[]
 
 === Breaking Changes
 

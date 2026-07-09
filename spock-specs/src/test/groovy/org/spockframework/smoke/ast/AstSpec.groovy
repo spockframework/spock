@@ -184,6 +184,22 @@ class Foo {
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
+  def "closure parameter lists are rendered faithfully"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  def m() {
+    def implicitIt = { it * 2 }
+    def noArgs = { -> 'x' }
+    def oneArg = { int x -> x }
+  }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
   def "enums"() {
     given:
     // groovy 4 renders differently

@@ -9,7 +9,7 @@ public void $spock_feature_0_0(java.lang.Object dataPipe, java.lang.Object dataV
 
 public java.lang.Object $spock_feature_0_0prov0() {
     org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
-    return [{ ->
+    return [{
         org.spockframework.runtime.ValueRecorder $spock_valueRecorder1 = new org.spockframework.runtime.ValueRecorder()
         try {
             org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder1.reset(), 'true', 2, 29, null, $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(0), true))

@@ -15,7 +15,7 @@ private void isPositive(int a) {
     finally {
     }
     try {
-        org.spockframework.runtime.SpockRuntime.verifyMethodCondition($spock_errorCollector, $spock_valueRecorder.reset(), '[true, false].any { it }', 18, 5, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), [$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), true), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), false)]), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(3), 'any'), new java.lang.Object[]{$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(4), { ->
+        org.spockframework.runtime.SpockRuntime.verifyMethodCondition($spock_errorCollector, $spock_valueRecorder.reset(), '[true, false].any { it }', 18, 5, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), [$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), true), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), false)]), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(3), 'any'), new java.lang.Object[]{$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(4), {
             it
         })}, $spock_valueRecorder.realizeNas(7, false), false, 6)
     }
@@ -25,7 +25,7 @@ private void isPositive(int a) {
     }
     if (true) {
         try {
-            org.spockframework.runtime.SpockRuntime.verifyMethodCondition($spock_errorCollector, $spock_valueRecorder.reset(), '[true, false].any { it }', 20, 9, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), [$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), true), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), false)]), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(3), 'any'), new java.lang.Object[]{$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(4), { ->
+            org.spockframework.runtime.SpockRuntime.verifyMethodCondition($spock_errorCollector, $spock_valueRecorder.reset(), '[true, false].any { it }', 20, 9, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), [$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), true), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), false)]), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(3), 'any'), new java.lang.Object[]{$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(4), {
                 it
             })}, $spock_valueRecorder.realizeNas(7, false), false, 6)
         }
@@ -35,10 +35,10 @@ private void isPositive(int a) {
         }
     }
     try {
-        this.with({ ->
+        this.with({
             org.spockframework.runtime.ValueRecorder $spock_valueRecorder1 = new org.spockframework.runtime.ValueRecorder()
             try {
-                org.spockframework.runtime.SpockRuntime.verifyMethodCondition($spock_errorCollector, $spock_valueRecorder1.reset(), '[true, false].any { it }', 23, 9, null, $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(2), [$spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(0), true), $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(1), false)]), $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(3), 'any'), new java.lang.Object[]{$spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(4), { ->
+                org.spockframework.runtime.SpockRuntime.verifyMethodCondition($spock_errorCollector, $spock_valueRecorder1.reset(), '[true, false].any { it }', 23, 9, null, $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(2), [$spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(0), true), $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(1), false)]), $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(3), 'any'), new java.lang.Object[]{$spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(4), {
                     it
                 })}, $spock_valueRecorder1.realizeNas(7, false), false, 6)
             }
@@ -48,7 +48,7 @@ private void isPositive(int a) {
             }
             if (true) {
                 try {
-                    org.spockframework.runtime.SpockRuntime.verifyMethodCondition($spock_errorCollector, $spock_valueRecorder1.reset(), '[true, false].any { it }', 25, 13, null, $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(2), [$spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(0), true), $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(1), false)]), $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(3), 'any'), new java.lang.Object[]{$spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(4), { ->
+                    org.spockframework.runtime.SpockRuntime.verifyMethodCondition($spock_errorCollector, $spock_valueRecorder1.reset(), '[true, false].any { it }', 25, 13, null, $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(2), [$spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(0), true), $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(1), false)]), $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(3), 'any'), new java.lang.Object[]{$spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(4), {
                         it
                     })}, $spock_valueRecorder1.realizeNas(7, false), false, 6)
                 }
@@ -71,7 +71,7 @@ public void $spock_feature_0_0() {
     org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 0)
     try {
-        org.spockframework.runtime.SpockRuntime.verifyMethodCondition($spock_errorCollector, $spock_valueRecorder.reset(), '[true, false].any { it }', 3, 5, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), [$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), true), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), false)]), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(3), 'any'), new java.lang.Object[]{$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(4), { ->
+        org.spockframework.runtime.SpockRuntime.verifyMethodCondition($spock_errorCollector, $spock_valueRecorder.reset(), '[true, false].any { it }', 3, 5, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), [$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), true), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), false)]), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(3), 'any'), new java.lang.Object[]{$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(4), {
             it
         })}, $spock_valueRecorder.realizeNas(7, false), false, 6)
     }
@@ -80,14 +80,14 @@ public void $spock_feature_0_0() {
     finally {
     }
     if (true) {
-        [true, false].any({ ->
+        [true, false].any({
             it
         })
     }
-    this.with({ ->
+    this.with({
         org.spockframework.runtime.ValueRecorder $spock_valueRecorder1 = new org.spockframework.runtime.ValueRecorder()
         try {
-            org.spockframework.runtime.SpockRuntime.verifyMethodCondition($spock_errorCollector, $spock_valueRecorder1.reset(), '[true, false].any { it }', 8, 9, null, $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(2), [$spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(0), true), $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(1), false)]), $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(3), 'any'), new java.lang.Object[]{$spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(4), { ->
+            org.spockframework.runtime.SpockRuntime.verifyMethodCondition($spock_errorCollector, $spock_valueRecorder1.reset(), '[true, false].any { it }', 8, 9, null, $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(2), [$spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(0), true), $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(1), false)]), $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(3), 'any'), new java.lang.Object[]{$spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(4), {
                 it
             })}, $spock_valueRecorder1.realizeNas(7, false), false, 6)
         }
@@ -97,7 +97,7 @@ public void $spock_feature_0_0() {
         }
         if (true) {
             try {
-                org.spockframework.runtime.SpockRuntime.verifyMethodCondition($spock_errorCollector, $spock_valueRecorder1.reset(), '[true, false].any { it }', 10, 13, null, $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(2), [$spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(0), true), $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(1), false)]), $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(3), 'any'), new java.lang.Object[]{$spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(4), { ->
+                org.spockframework.runtime.SpockRuntime.verifyMethodCondition($spock_errorCollector, $spock_valueRecorder1.reset(), '[true, false].any { it }', 10, 13, null, $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(2), [$spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(0), true), $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(1), false)]), $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(3), 'any'), new java.lang.Object[]{$spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(4), {
                     it
                 })}, $spock_valueRecorder1.realizeNas(7, false), false, 6)
             }

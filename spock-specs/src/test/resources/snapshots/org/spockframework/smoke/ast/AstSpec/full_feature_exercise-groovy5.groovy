@@ -152,7 +152,7 @@ public class apackage.another.Bar extends apackage.another.Foo implements apacka
         java.lang.Object t = [:]
         java.lang.Object u = ++( c )
         java.lang.Object v = this."${STR}"(a)
-        java.lang.Object w = { ->
+        java.lang.Object w = {
             this.println(g)
         }
         java.lang.Object x = (( c ) as long)

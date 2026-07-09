@@ -2,7 +2,7 @@
 public void $spock_feature_0_0() {
     org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 0)
-    this.with([''], { ->
+    this.with([''], {
         org.spockframework.runtime.ValueRecorder $spock_valueRecorder1 = new org.spockframework.runtime.ValueRecorder()
         try {
             org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder1.reset(), 'true', 3, 3, null, $spock_valueRecorder1.record($spock_valueRecorder1.startRecordingValue(0), true))

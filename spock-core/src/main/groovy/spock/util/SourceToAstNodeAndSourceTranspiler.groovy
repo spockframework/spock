@@ -908,9 +908,13 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
   void visitClosureExpression(ClosureExpression expression) {
     print '{ '
     if (expression?.parameters) {
-      visitParameters(expression?.parameters)
+      visitParameters(expression.parameters)
+      print ' ->'
+    } else if (expression?.parameters == null) {
+      // null parameters denote an explicit zero-arg closure { -> }, while an empty array denotes the
+      // implicit `it` (see ClosureWriter); rendering an arrow for the latter would drop `it`
+      print ' ->'
     }
-    print ' ->'
     printLineBreak()
     indented {
       expression?.code?.visit this

@@ -28,11 +28,11 @@ public java.lang.Object $spock_feature_0_0prov1(java.util.List $spock_p_a) {
 }
 
 public java.lang.Object $spock_feature_0_0prov2(java.util.List $spock_p_a, java.util.List $spock_p_b) {
-    return [{ ->
+    return [{
         java.lang.Object a = $spock_p_a.get(0)
         java.lang.Object b = $spock_p_b.get(0)
         return a + b
-    }.call(), { ->
+    }.call(), {
         java.lang.Object a = $spock_p_a.get(1)
         return a + a
     }.call()]

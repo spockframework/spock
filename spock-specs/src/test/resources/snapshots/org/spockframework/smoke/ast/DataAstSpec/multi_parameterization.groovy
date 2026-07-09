@@ -25,9 +25,9 @@ public java.lang.Object $spock_feature_0_0prov0() {
 
 @org.spockframework.runtime.model.DataProcessorMetadata(dataVariables = ['a', 'b'])
 public java.lang.Object $spock_feature_0_0proc(java.lang.Object $spock_p0) {
-    java.lang.Object a = (( $spock_p0 instanceof java.util.Map ? $spock_p0.getAt('a') : $spock_p0.getAt(0)) as java.lang.Object)
-    java.lang.Object b = (( $spock_p0 instanceof java.util.Map ? $spock_p0.getAt('b') : $spock_p0.getAt(1)) as java.lang.Object)
-    return new java.lang.Object[]{ a , b }
+    java.lang.Object a = (($spock_p0 instanceof java.util.Map ? $spock_p0.getAt('a') : $spock_p0.getAt(0)) as java.lang.Object)
+    java.lang.Object b = (($spock_p0 instanceof java.util.Map ? $spock_p0.getAt('b') : $spock_p0.getAt(1)) as java.lang.Object)
+    return new java.lang.Object[]{a, b}
 }
 /*--------- end::snapshot[] ---------*/
   }

@@ -37,10 +37,10 @@ public java.lang.Object $spock_feature_0_0prov2(java.util.List $spock_p_a, java.
 }
 
 public java.lang.Object $spock_feature_0_0proc(java.lang.Object $spock_p0, java.lang.Object $spock_p1, java.lang.Object $spock_p2) {
-    java.lang.Object a = (( $spock_p0 ) as java.lang.Object)
-    java.lang.Object b = (( $spock_p1 ) as java.lang.Object)
-    java.lang.Object result = (( $spock_p2 ) as java.lang.Object)
-    return new java.lang.Object[]{ a , b , result }
+    java.lang.Object a = ($spock_p0 as java.lang.Object)
+    java.lang.Object b = ($spock_p1 as java.lang.Object)
+    java.lang.Object result = ($spock_p2 as java.lang.Object)
+    return new java.lang.Object[]{a, b, result}
 }
 /*--------- end::snapshot[] ---------*/
   }

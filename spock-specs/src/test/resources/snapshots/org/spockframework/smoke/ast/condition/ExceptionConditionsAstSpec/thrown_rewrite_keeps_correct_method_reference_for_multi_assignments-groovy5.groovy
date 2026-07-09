@@ -8,7 +8,7 @@ public java.lang.Object foobar() {
 }
 
 public void $spock_feature_0_0() {
-    java.lang.Object( foobar , b ) = [null, null]
+    def (java.lang.Object foobar, java.lang.Object b) = [null, null]
     org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 0)
     this.getSpecificationContext().setThrownException(null)
     try {

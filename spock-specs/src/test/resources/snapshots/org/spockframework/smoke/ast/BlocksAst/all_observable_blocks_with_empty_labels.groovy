@@ -24,21 +24,21 @@ public void $spock_feature_0_0() {
     finally {
         org.spockframework.runtime.model.BlockInfo $spock_failedBlock = null
         try {
-            if ( $spock_feature_throwable != null) {
+            if ($spock_feature_throwable != null) {
                 $spock_failedBlock = this.getSpecificationContext().getCurrentBlock()
             }
             org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 4)
             org.spockframework.runtime.SpockRuntime.callBlockExited(this, 4)
         }
         catch (java.lang.Throwable $spock_tmp_throwable) {
-            if ( $spock_feature_throwable != null) {
+            if ($spock_feature_throwable != null) {
                 $spock_feature_throwable.addSuppressed($spock_tmp_throwable)
             } else {
                 throw $spock_tmp_throwable
             }
         }
         finally {
-            if ( $spock_feature_throwable != null) {
+            if ($spock_feature_throwable != null) {
                 ((org.spockframework.runtime.SpecificationContext) this.getSpecificationContext()).setCurrentBlock($spock_failedBlock)
             }
         }

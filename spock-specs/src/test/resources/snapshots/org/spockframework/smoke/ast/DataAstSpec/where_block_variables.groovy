@@ -25,16 +25,16 @@ public java.lang.Object $spock_feature_0_0prov0(java.lang.Object prefix) {
 
 @org.spockframework.runtime.model.DataProcessorMetadata(dataVariables = ['name', 'greeting'])
 public java.lang.Object $spock_feature_0_0proc(java.lang.Object $spock_p0, java.lang.Object prefix) {
-    java.lang.Object name = (( $spock_p0 ) as java.lang.Object)
-    java.lang.Object greeting = (( prefix + name ) as java.lang.Object)
-    return new java.lang.Object[]{ name , greeting }
+    java.lang.Object name = ($spock_p0 as java.lang.Object)
+    java.lang.Object greeting = ((prefix + name ) as java.lang.Object)
+    return new java.lang.Object[]{name, greeting}
 }
 
 public java.lang.Object[] $spock_feature_0_0wherevars() {
     java.lang.Object[] $spock_whereVariableValues = new java.lang.Object[1]{}
     try {
         java.lang.Object prefix = 'Hello, '
-        $spock_whereVariableValues [ 0] = prefix
+        $spock_whereVariableValues[0] = prefix
         return $spock_whereVariableValues
     }
     catch (java.lang.Throwable $spock_tmp_throwable) {

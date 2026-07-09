@@ -20,9 +20,9 @@ public java.lang.Object $spock_feature_0_0prov0() {
 }
 
 public java.lang.Object $spock_feature_0_0proc(java.lang.Object $spock_p0) {
-    java.lang.Object dataPipe = (( $spock_p0 ) as java.lang.Object)
+    java.lang.Object dataPipe = ($spock_p0 as java.lang.Object)
     java.lang.Object dataVariable = ((null) as java.lang.Object)
-    return new java.lang.Object[]{ dataPipe , dataVariable }
+    return new java.lang.Object[]{dataPipe, dataVariable}
 }
 /*--------- end::snapshot[] ---------*/
 }

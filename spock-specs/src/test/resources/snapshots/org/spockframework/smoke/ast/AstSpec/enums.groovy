@@ -13,18 +13,18 @@ public final class Alpha extends java.lang.Enum<Alpha> {
 
     public Alpha next() {
         java.lang.Object ordinal = this.ordinal().next()
-        if ( ordinal >= $VALUES.size()) {
+        if (ordinal >= $VALUES.size()) {
             ordinal = 0
         }
-        return $VALUES.getAt( ordinal )
+        return $VALUES.getAt(ordinal)
     }
 
     public Alpha previous() {
         java.lang.Object ordinal = this.ordinal().previous()
-        if ( ordinal < 0) {
+        if (ordinal < 0) {
             ordinal = $VALUES.size().minus(1)
         }
-        return $VALUES.getAt( ordinal )
+        return $VALUES.getAt(ordinal)
     }
 
     public static Alpha valueOf(java.lang.String name) {

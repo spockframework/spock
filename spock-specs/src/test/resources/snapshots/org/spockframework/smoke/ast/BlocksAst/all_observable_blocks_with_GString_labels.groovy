@@ -10,21 +10,21 @@ public void $spock_feature_0_0() {
     org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
     java.lang.Integer idx = 0
     org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 0)
-    "given ${( idx )++}"
+    "given ${idx++}"
     org.spockframework.runtime.SpockRuntime.callBlockExited(this, 0)
     org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 1)
     try {
-        org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), '\"expect \${idx++}\"', 3, 13, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), "${$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), ( idx )++)}expect "))
+        org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), '\"expect \${idx++}\"', 3, 13, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), "${$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), idx++)}expect "))
     }
     catch (java.lang.Throwable $spock_condition_throwable) {
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, '\"expect \${idx++}\"', 3, 13, null, $spock_condition_throwable)}
     org.spockframework.runtime.SpockRuntime.callBlockExited(this, 1)
     org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 2)
-    "when ${( idx )++}"
+    "when ${idx++}"
     org.spockframework.runtime.SpockRuntime.callBlockExited(this, 2)
     org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 3)
     try {
-        org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), '\"then \${idx++}\"', 5, 11, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), "${$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), ( idx )++)}then "))
+        org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), '\"then \${idx++}\"', 5, 11, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), "${$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), idx++)}then "))
     }
     catch (java.lang.Throwable $spock_condition_throwable) {
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, '\"then \${idx++}\"', 5, 11, null, $spock_condition_throwable)}

@@ -846,6 +846,8 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
       print '?'
     }
     print '.'
+    // explicit type arguments, e.g. Collections.<String>emptyList()
+    visitGenerics expression.genericsTypes
     Expression method = expression.method
     if (method instanceof ConstantExpression) {
       visitConstantExpression(method, true)

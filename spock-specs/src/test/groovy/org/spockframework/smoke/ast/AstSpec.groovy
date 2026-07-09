@@ -254,6 +254,23 @@ class Foo {
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
+  def "explicit type arguments of method calls are rendered"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  def m() {
+    def a = Collections.<String>emptyList()
+    def b = this.<Integer>identity(1)
+  }
+
+  def <T> T identity(T t) { t }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
   def "enums"() {
     given:
     // groovy 4 renders differently

@@ -236,6 +236,24 @@ class Foo {
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION >= 4 })
+  def "range boundary exclusions are rendered on both sides"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  def m() {
+    def a = 1..5
+    def b = 1..<5
+    def c = 1<..5
+    def d = 1<..<5
+  }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
   def "enums"() {
     given:
     // groovy 4 renders differently

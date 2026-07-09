@@ -959,12 +959,21 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
   void visitRangeExpression(RangeExpression expression) {
     print '('
     expression?.from?.visit this
+    if (isExclusiveLeft(expression)) {
+      print '<'
+    }
     print '..'
     if (!expression?.inclusive) {
       print '<'
     }
     expression?.to?.visit this
     print ')'
+  }
+
+  // RangeExpression.isExclusiveLeft() only exists in Groovy 4+, which introduced left-open ranges
+  @CompileDynamic
+  private static boolean isExclusiveLeft(RangeExpression expression) {
+    expression.respondsTo('isExclusiveLeft') ? expression.isExclusiveLeft() : false
   }
 
   @Override

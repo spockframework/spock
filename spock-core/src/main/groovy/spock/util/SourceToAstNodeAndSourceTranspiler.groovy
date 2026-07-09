@@ -791,7 +791,8 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
       statement?.caseStatements?.each {
         visitCaseStatement it
       }
-      if (statement?.defaultStatement) {
+      // a switch without a default case carries an EmptyStatement
+      if (statement?.defaultStatement && !(statement.defaultStatement instanceof EmptyStatement)) {
         print 'default: '
         printLineBreak()
         statement?.defaultStatement?.visit this

@@ -271,6 +271,29 @@ class Foo {
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
+  def "switch without a default case is rendered without a default label"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  def m(i) {
+    switch (i) {
+      case 1:
+        return 'one'
+    }
+    switch (i) {
+      case 2:
+        return 'two'
+      default:
+        return 'many'
+    }
+  }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
   def "enums"() {
     given:
     // groovy 4 renders differently

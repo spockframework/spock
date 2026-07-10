@@ -55,6 +55,12 @@
 <li>
 <p>Fix <code>MockitoMockMaker</code> throws NPE on null object <a href="https://github.com/spockframework/spock/issues/2337">#2337</a></p>
 </li>
+<li>
+<p>Fix <code>SourceToAstNodeAndSourceTranspiler</code> dropping nested generic type arguments, so signatures like <code>Iterator&lt;Tuple2&lt;Integer, Integer&gt;&gt;</code> are now rendered faithfully instead of <code>Iterator&lt;Tuple2&gt;</code> <a href="https://github.com/spockframework/spock/pull/2393">#2393</a></p>
+</li>
+<li>
+<p>Fix <code>SourceToAstNodeAndSourceTranspiler</code> rendering of several other constructs: the elvis operator, attribute access (<code>.@</code>), implicit-<code>it</code> closures, safe index access (<code>?[]</code>), numeric literal type suffixes (<code>L</code>, <code>F</code>, <code>D</code>, <code>G</code>), left-open ranges (<code>&lt;..</code>), explicit type arguments of method calls, <code>for (index, value in iterable)</code> loops, multiple-assignment declarations on Groovy 5, and spurious empty <code>finally</code> blocks and <code>default</code> labels <a href="https://github.com/spockframework/spock/pull/2393">#2393</a></p>
+</li>
 </ul>
 </div>
 </div>
@@ -3475,7 +3481,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.5-SNAPSHOT<br>
-Last updated 2026-07-08 08:52:10 UTC
+Last updated 2026-07-10 09:21:34 UTC
 </div>
 </div>
 </body>

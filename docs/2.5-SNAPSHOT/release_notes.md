@@ -13,6 +13,8 @@
 - Fix argument mismatch descriptions for varargs methods by expanding varargs instead of reporting `<too few arguments>` [#2315](https://github.com/spockframework/spock/pull/2315)
 - Fix Pattern flags being dropped when `java.util.regex.Pattern` instances are used in Spock regex conditions [#2298](https://github.com/spockframework/spock/issues/2298)
 - Fix `MockitoMockMaker` throws NPE on null object [#2337](https://github.com/spockframework/spock/issues/2337)
+- Fix `SourceToAstNodeAndSourceTranspiler` dropping nested generic type arguments, so signatures like `Iterator<Tuple2<Integer, Integer>>` are now rendered faithfully instead of `Iterator<Tuple2>` [#2393](https://github.com/spockframework/spock/pull/2393)
+- Fix `SourceToAstNodeAndSourceTranspiler` rendering of several other constructs: the elvis operator, attribute access (`.@`), implicit-`it` closures, safe index access (`?[]`), numeric literal type suffixes (`L`, `F`, `D`, `G`), left-open ranges (`<..`), explicit type arguments of method calls, `for (index, value in iterable)` loops, multiple-assignment declarations on Groovy 5, and spurious empty `finally` blocks and `default` labels [#2393](https://github.com/spockframework/spock/pull/2393)
 
 
 ### Breaking Changes

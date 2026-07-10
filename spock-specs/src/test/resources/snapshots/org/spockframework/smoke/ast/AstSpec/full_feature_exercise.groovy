@@ -82,8 +82,8 @@ public class apackage.another.Bar extends apackage.another.Foo implements apacka
 
     public void loops() {
         outer:
-        for (java.lang.Integer i = 0; i < INT ;( i )++) {
-            if ( i % 2 == 0) {
+        for (java.lang.Integer i = 0; i < INT ; i++) {
+            if (i % 2 == 0) {
                 this.print('even')
                 continue outer
             } else {
@@ -130,19 +130,19 @@ public class apackage.another.Bar extends apackage.another.Foo implements apacka
 
     public void operators() {
         java.lang.Integer a = ~( INT )
-        java.lang.Boolean b = !( a )
-        java.lang.Integer c = -( a )
-        java.lang.Integer d = +( c )
+        java.lang.Boolean b = !a
+        java.lang.Integer c = -a
+        java.lang.Integer d = +c
         java.lang.Object e = ['a': b , STR : c ]
         java.lang.Object f = [*: e , 'foo': 'bar']
-        java.lang.Object g = "a: ${a} and b: ${ e.a.compareTo(c)}"
+        java.lang.Object g = "a: ${a} and b: ${e.a.compareTo(c)}"
         java.lang.Integer h = 1
         java.lang.Integer i = 2
         def (java.lang.Object j, java.lang.Object k) = x
         java.lang.Object l = b ? c : d
-        java.lang.Object m = c ? c : d
+        java.lang.Object m = c ?: d
         java.lang.Object n = this.&'convert'
-        java.lang.Object o = this.order
+        java.lang.Object o = this.@order
         java.lang.Object p = (1..5)
         java.lang.Object q = (1..<5)
         java.lang.Object r = x*.size()?.intersect([1])
@@ -150,14 +150,14 @@ public class apackage.another.Bar extends apackage.another.Foo implements apacka
             x * x
         }
         java.lang.Object t = [:]
-        java.lang.Object u = ++( c )
+        java.lang.Object u = ++c
         java.lang.Object v = this."${STR}"(a)
-        java.lang.Object w = { ->
+        java.lang.Object w = {
             this.println(g)
         }
-        java.lang.Object x = (( c ) as long)
-        java.lang.Object y = ((long) c )
-        java.lang.Object z = [1, 2, 3] [ 0]
+        java.lang.Object x = (c as long)
+        java.lang.Object y = ((long) c)
+        java.lang.Object z = [1, 2, 3][0]
         assert c == d : null
     }
 
@@ -188,7 +188,7 @@ public class apackage.another.Bar extends apackage.another.Foo implements apacka
     @java.lang.Override
     public int compareTo(java.lang.Object o) {
         synchronized ( o ) {
-            return order <=> (( o ) as apackage.another.Bar).order
+            return order <=> (o as apackage.another.Bar).order
         }
     }
 

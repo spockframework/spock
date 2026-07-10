@@ -9,11 +9,11 @@ public void methodRef() {
 }
 
 public void lambdas() {
-    java.lang.Object lambda = ( java.lang.Object x) -> {
+    java.lang.Object lambda = (java.lang.Object x) -> {
         x * x }
-    java.lang.Object lambdaMultiArg = ( int a, int b) -> {
+    java.lang.Object lambdaMultiArg = (int a, int b) -> {
         a <=> b }
-    java.lang.Object lambdaNoArg = ( ) -> {
+    java.lang.Object lambdaNoArg = () -> {
         throw new java.lang.RuntimeException('bam')
     }
 }

@@ -1,7 +1,7 @@
 @org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 1, blocks = [@org.spockframework.runtime.model.BlockMetadata(kind = org.spockframework.runtime.model.BlockKind.EXPECT, texts = [])], parameterNames = [])
 public void $spock_feature_0_0() {
     org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 0)
-    this.verifyAll([''], { ->
+    this.verifyAll([''], {
         org.spockframework.runtime.ValueRecorder $spock_valueRecorder1 = new org.spockframework.runtime.ValueRecorder()
         org.spockframework.runtime.ErrorCollector $spock_errorCollector1 = new org.spockframework.runtime.ErrorCollector()
         try {
@@ -10,8 +10,6 @@ public void $spock_feature_0_0() {
             }
             catch (java.lang.Throwable $spock_condition_throwable) {
                 org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector1, $spock_valueRecorder1, 'false', 3, 3, null, $spock_condition_throwable)}
-            finally {
-            }
         }
         finally {
             $spock_errorCollector1.validateCollectedErrors()}

@@ -66,11 +66,14 @@ class SourceToAstNodeAndSourceTranspiler {
 
     def writer = new StringBuilderWriter()
 
-    classLoader = classLoader ?: new GroovyClassLoader(getClass().classLoader)
+    // wrap any non-Groovy classloader (or the default) instead of blindly casting it below
+    GroovyClassLoader ownClassLoader = classLoader instanceof GroovyClassLoader ? null
+      : new GroovyClassLoader(classLoader ?: getClass().classLoader)
+    GroovyClassLoader groovyClassLoader = ownClassLoader ?: (GroovyClassLoader) classLoader
 
     def scriptName = 'script.groovy'
     GroovyCodeSource codeSource = new GroovyCodeSource(script, scriptName, '/groovy/script')
-    CompilationUnit cu = new CompilationUnit((CompilerConfiguration)(config ?: CompilerConfiguration.DEFAULT), (CodeSource)codeSource.codeSource, (GroovyClassLoader)classLoader)
+    CompilationUnit cu = new CompilationUnit((CompilerConfiguration)(config ?: CompilerConfiguration.DEFAULT), (CodeSource)codeSource.codeSource, groovyClassLoader)
     def captureVisitor = new AstNodeCaptureVisitor()
     cu.addPhaseOperation(captureVisitor, compilePhase)
     cu.addSource(codeSource.name, script)
@@ -94,6 +97,9 @@ class SourceToAstNodeAndSourceTranspiler {
       cfe.message.eachLine {
         writer.println it
       }
+    } finally {
+      // only close the classloader we created ourselves; a passed-in one may still be used by the caller
+      ownClassLoader?.close()
     }
 
     return new TranspileResult(writer.toString(), captureVisitor.nodeCaptures)
@@ -542,6 +548,11 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
         }
         first = false
         print it.name
+        // a concrete type argument may carry its own nested type arguments (e.g. Tuple2<Integer, Integer>);
+        // recurse so they are not dropped. Placeholders (T) and wildcards (?) never carry them.
+        if (!it.placeholder && !it.wildcard) {
+          visitGenerics it.type?.genericsTypes
+        }
         if (it.upperBounds) {
           print ' extends '
           boolean innerFirst = true
@@ -725,6 +736,11 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     printStatementLabels(statement)
     print 'for ('
     if (statement?.variable != ForStatement.FOR_LOOP_DUMMY) {
+      Parameter indexVariable = forLoopIndexVariable(statement)
+      if (indexVariable) {
+        visitParameters([indexVariable])
+        print ', '
+      }
       visitParameters([statement.variable])
       print ' : '
     }
@@ -739,6 +755,11 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     printLineBreak()
   }
 
+  // ForStatement.getIndexVariable() only exists in Groovy 5+, which introduced for (index, value in iterable) loops
+  private static Parameter forLoopIndexVariable(ForStatement statement) {
+    (Parameter) invokeIfSupported(statement, 'getIndexVariable', null)
+  }
+
   @Override
   void visitIfElse(IfStatement ifElse) {
     printStatementLabels(ifElse)
@@ -750,7 +771,7 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
       ifElse?.ifBlock?.visit this
     }
     printLineBreak()
-    if (ifElse?.elseBlock && !(ifElse.elseBlock instanceof EmptyStatement)) {
+    if (isPresent(ifElse?.elseBlock)) {
       print '} else {'
       printLineBreak()
       indented {
@@ -786,7 +807,8 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
       statement?.caseStatements?.each {
         visitCaseStatement it
       }
-      if (statement?.defaultStatement) {
+      // a switch without a default case carries an EmptyStatement
+      if (isPresent(statement?.defaultStatement)) {
         print 'default: '
         printLineBreak()
         statement?.defaultStatement?.visit this
@@ -828,12 +850,7 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
   @Override
   void visitMethodCallExpression(MethodCallExpression expression) {
 
-    Expression objectExp = expression.objectExpression
-    if (objectExp instanceof VariableExpression) {
-      visitVariableExpression(objectExp, false)
-    } else {
-      objectExp.visit(this)
-    }
+    printExpression expression.objectExpression
     if (expression.spreadSafe) {
       print '*'
     }
@@ -841,6 +858,8 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
       print '?'
     }
     print '.'
+    // explicit type arguments, e.g. Collections.<String>emptyList()
+    visitGenerics expression.genericsTypes
     Expression method = expression.method
     if (method instanceof ConstantExpression) {
       visitConstantExpression(method, true)
@@ -871,31 +890,56 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
 
   @Override
   void visitBinaryExpression(BinaryExpression expression) {
-    expression?.leftExpression?.visit this
+    // a declaration needs the padding after the already printed type; see visitDeclarationExpression
+    if (!(expression instanceof DeclarationExpression) && expression.leftExpression instanceof VariableExpression) {
+      visitVariableExpression((VariableExpression) expression.leftExpression, false)
+    } else {
+      expression?.leftExpression?.visit this
+    }
     if (!(expression.rightExpression instanceof EmptyExpression) || expression.operation.type != Types.ASSIGN) {
-      print " $expression.operation.text "
+      boolean isAccess = expression.operation.type == Types.LEFT_SQUARE_BRACKET
+      if (isAccess) {
+        // Groovy 3 represents a safe index access as a plain '[' token with the safe flag set,
+        // while Groovy 4+ uses a dedicated '?[' token
+        print isSafeIndexAccess(expression) ? '?[' : '['
+      } else {
+        print " $expression.operation.text "
+      }
       expression.rightExpression.visit this
 
-      if (expression?.operation?.text == '[') {
+      if (isAccess) {
         print ']'
       }
     }
   }
 
+  // BinaryExpression.isSafe() only exists in Groovy 3+, which introduced safe index access
+  private static boolean isSafeIndexAccess(BinaryExpression expression) {
+    invokeIfSupported(expression, 'isSafe', false)
+  }
+
   @Override
   void visitPostfixExpression(PostfixExpression expression) {
-    print '('
-    expression?.expression?.visit this
-    print ')'
+    if (expression?.expression instanceof VariableExpression) {
+      visitVariableExpression((VariableExpression) expression.expression, false)
+    } else {
+      print '('
+      expression?.expression?.visit this
+      print ')'
+    }
     print expression?.operation?.text
   }
 
   @Override
   void visitPrefixExpression(PrefixExpression expression) {
     print expression?.operation?.text
-    print '('
-    expression?.expression?.visit this
-    print ')'
+    if (expression?.expression instanceof VariableExpression) {
+      visitVariableExpression((VariableExpression) expression.expression, false)
+    } else {
+      print '('
+      expression?.expression?.visit this
+      print ')'
+    }
   }
 
 
@@ -903,9 +947,13 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
   void visitClosureExpression(ClosureExpression expression) {
     print '{ '
     if (expression?.parameters) {
-      visitParameters(expression?.parameters)
+      visitParameters(expression.parameters)
+      print ' ->'
+    } else if (expression?.parameters == null) {
+      // null parameters denote an explicit zero-arg closure { -> }, while an empty array denotes the
+      // implicit `it` (see ClosureWriter); rendering an arrow for the latter would drop `it`
+      print ' ->'
     }
-    print ' ->'
     printLineBreak()
     indented {
       expression?.code?.visit this
@@ -915,7 +963,7 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
 
   @Override
   void visitLambdaExpression(LambdaExpression expression) {
-    print '( '
+    print '('
     if (expression?.parameters) {
       visitParameters(expression?.parameters)
     }
@@ -930,7 +978,7 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
   @Override
   void visitTupleExpression(TupleExpression expression) {
     print '('
-    visitExpressionsAndCommaSeparate(expression?.expressions)
+    printExpressions(expression?.expressions)
     print ')'
   }
 
@@ -938,6 +986,9 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
   void visitRangeExpression(RangeExpression expression) {
     print '('
     expression?.from?.visit this
+    if (isExclusiveLeft(expression)) {
+      print '<'
+    }
     print '..'
     if (!expression?.inclusive) {
       print '<'
@@ -946,16 +997,22 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     print ')'
   }
 
+  // RangeExpression.isExclusiveLeft() only exists in Groovy 4+, which introduced left-open ranges
+  private static boolean isExclusiveLeft(RangeExpression expression) {
+    invokeIfSupported(expression, 'isExclusiveLeft', false)
+  }
+
   @Override
   void visitPropertyExpression(PropertyExpression expression) {
-    expression?.objectExpression?.visit this
+    printExpression expression?.objectExpression
     trimSpaceRight() // remove space inserted by previous expression
     if (expression?.spreadSafe) {
       print '*'
     } else if (expression?.safe) {
       print '?'
     }
-    print '.'
+    // an AttributeExpression accesses the field directly, bypassing the property accessor
+    print expression instanceof AttributeExpression ? '.@' : '.'
     if (expression?.property instanceof ConstantExpression) {
       visitConstantExpression((ConstantExpression)expression?.property, true)
     } else {
@@ -998,6 +1055,16 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     } else {
       //noinspection GroovyPointlessBoolean
       print escapeChars == true ? escapeCharacters(expression.value as String) : expression.value
+      // without the type suffix, re-parsing the rendered value would produce an Integer or BigDecimal
+      if (expression.value instanceof Long) {
+        print 'L'
+      } else if (expression.value instanceof Float) {
+        print 'F'
+      } else if (expression.value instanceof Double) {
+        print 'D'
+      } else if (expression.value instanceof BigInteger) {
+        print 'G'
+      }
     }
   }
 
@@ -1017,16 +1084,25 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
 
   @Override
   void visitDeclarationExpression(DeclarationExpression expression) {
-    // handle multiple assignment expressions
-    if (expression?.leftExpression instanceof ArgumentListExpression) {
-      print 'def '
-      visitArgumentlistExpression((ArgumentListExpression)expression?.leftExpression, true)
-      print " $expression.operation.text "
-      expression.rightExpression.visit this
-    } else {
+    if (!expression.isMultipleAssignmentDeclaration()) {
       visitType expression?.leftExpression?.type
       visitBinaryExpression expression // is a BinaryExpression
+      return
     }
+
+    print 'def ('
+    boolean first = true
+    expression.tupleExpression.expressions.each { Expression e ->
+      if (!first) {
+        print ', '
+      }
+      first = false
+      visitType e.type
+      print ' '
+      printExpression e
+    }
+    print ') = '
+    expression.rightExpression.visit this
   }
 
   @Override
@@ -1064,42 +1140,55 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     expression?.expression?.visit this
   }
 
+  private void printUnaryExpression(String opText, Expression inner) {
+    print opText
+    if (inner instanceof VariableExpression) {
+      visitVariableExpression(inner, false)
+    } else if (inner instanceof PropertyExpression) {
+      inner.visit this
+    } else {
+      print '('
+      inner?.visit this
+      print ')'
+    }
+  }
+
   @Override
   void visitNotExpression(NotExpression expression) {
-    print '!('
-    expression?.expression?.visit this
-    print ')'
+    printUnaryExpression('!', expression?.expression)
   }
 
   @Override
   void visitUnaryMinusExpression(UnaryMinusExpression expression) {
-    print '-('
-    expression?.expression?.visit this
-    print ')'
+    printUnaryExpression('-', expression?.expression)
   }
 
   @Override
   void visitUnaryPlusExpression(UnaryPlusExpression expression) {
-    print '+('
-    expression?.expression?.visit this
-    print ')'
+    printUnaryExpression('+', expression?.expression)
   }
 
   @Override
   void visitCastExpression(CastExpression expression) {
+    print '('
     if (expression.coerce) {
-      print '(('
-      expression?.expression?.visit this
-      print ') as '
+      boolean needsParens = !(expression.expression instanceof VariableExpression || expression.expression instanceof PropertyExpression)
+      if (needsParens) {
+        print '('
+      }
+      printExpression(expression.expression)
+      if (needsParens) {
+        print ')'
+      }
+      print ' as '
       visitType(expression?.type)
-      print ')'
     } else {
-      print '(('
+      print '('
       visitType(expression?.type)
       print ') '
-      expression?.expression?.visit this
-      print ')'
+      printExpression(expression?.expression)
     }
+    print ')'
   }
 
   /**
@@ -1115,25 +1204,9 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     }
   }
 
-  void visitArgumentlistExpression(ArgumentListExpression expression, boolean showTypes = false) {
-    print '('
-    int count = expression?.expressions?.size()
-    expression.expressions.each {
-      if (showTypes) {
-        visitType it.type
-        print ' '
-      }
-      if (it instanceof VariableExpression) {
-        visitVariableExpression it, false
-      } else if (it instanceof ConstantExpression) {
-        visitConstantExpression it, false
-      } else {
-        it.visit this
-      }
-      count--
-      if (count) print ', '
-    }
-    print ')'
+  @Override
+  void visitArgumentlistExpression(ArgumentListExpression expression) {
+    visitTupleExpression expression
   }
 
   @Override
@@ -1149,7 +1222,7 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     if (expression?.mapEntryExpressions?.size() == 0) {
       print ':'
     } else {
-      visitExpressionsAndCommaSeparate((List)expression?.mapEntryExpressions)
+      printExpressions(expression?.mapEntryExpressions)
     }
     print ']'
   }
@@ -1168,7 +1241,7 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
   @Override
   void visitListExpression(ListExpression expression) {
     print '['
-    visitExpressionsAndCommaSeparate(expression?.expressions)
+    printExpressions(expression?.expressions)
     print ']'
   }
 
@@ -1186,13 +1259,16 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     statement?.catchStatements?.each { CatchStatement catchStatement ->
       visitCatchStatement(catchStatement)
     }
-    print 'finally {'
-    printLineBreak()
-    indented {
-      statement?.finallyStatement?.visit this
+    // a try without a finally block carries an EmptyStatement
+    if (isPresent(statement?.finallyStatement)) {
+      print 'finally {'
+      printLineBreak()
+      indented {
+        statement.finallyStatement.visit this
+      }
+      print '}'
+      printLineBreak()
     }
-    print '}'
-    printLineBreak()
   }
 
   @Override
@@ -1226,12 +1302,15 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
 
   @Override
   void visitShortTernaryExpression(ElvisOperatorExpression expression) {
-    visitTernaryExpression(expression)
+    // render the elvis form instead of the equivalent ternary, which would duplicate the condition expression
+    expression?.booleanExpression?.visit this
+    print ' ?: '
+    expression?.falseExpression?.visit this
   }
 
   @Override
   void visitBooleanExpression(BooleanExpression expression) {
-    expression?.expression?.visit this
+    printExpression expression?.expression
   }
 
   @Override
@@ -1297,6 +1376,9 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     expression?.expressions?.each {
       if (!first) {
         print ';'
+        if (!(it instanceof EmptyExpression)) {
+          print ' '
+        }
       }
       first = false
       it.visit this
@@ -1323,34 +1405,51 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     print 'new '
     visitType expression?.elementType
     print '['
-    visitExpressionsAndCommaSeparate(expression?.sizeExpression)
+    printExpressions(expression?.sizeExpression)
     print ']'
     if (expression?.expressions != null) { // print array initializer
       print '{'
-      visitExpressionsAndCommaSeparate(expression?.expressions)
+      printExpressions(expression?.expressions)
       print '}'
     }
   }
 
-  private void visitExpressionsAndCommaSeparate(List<? super Expression> expressions) {
-    boolean first = true
-    expressions?.each {
-      if (!first) {
-        print ', '
-      }
-      first = false
+  private void printExpression(Expression expression) {
+    if (expression instanceof VariableExpression) {
+      visitVariableExpression(expression, false)
+    } else if (expression instanceof AnnotationConstantExpression) {
       /*
       I have no idea why the AnnotationConstantExpression does it,
       but it first visits the values of the members before it visits itself.
       That's why you got org.spockframework.runtime.model.BlockKind.SETUP followed by [] followed by the actual correct representation.
       https://issues.apache.org/jira/browse/GROOVY-9980
        */
-      if (it instanceof AnnotationConstantExpression) {
-        visitConstantExpression(it)
-      } else {
-        (it as ASTNode).visit this
-      }
+      visitConstantExpression(expression)
+    } else {
+      expression?.visit this
     }
+  }
+
+  private void printExpressions(List<? extends Expression> expressions) {
+    boolean first = true
+    expressions?.each {
+      if (!first) {
+        print ', '
+      }
+      first = false
+      printExpression it
+    }
+  }
+
+  // an absent optional statement (e.g. a finally block) is represented by an EmptyStatement
+  private static boolean isPresent(Statement statement) {
+    statement != null && !(statement instanceof EmptyStatement)
+  }
+
+  // probes AST APIs that only exist in Groovy versions newer than the 2.5 baseline this class compiles against
+  @CompileDynamic
+  private static Object invokeIfSupported(Object receiver, String methodName, Object fallbackValue) {
+    receiver.respondsTo(methodName) ? receiver."$methodName"() : fallbackValue
   }
 
   @Override

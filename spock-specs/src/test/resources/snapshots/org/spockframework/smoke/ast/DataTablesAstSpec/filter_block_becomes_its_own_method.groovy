@@ -13,8 +13,6 @@ public void $spock_feature_0_0(java.lang.Object a, java.lang.Object b) {
     }
     catch (java.lang.Throwable $spock_condition_throwable) {
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'true', 2, 7, null, $spock_condition_throwable)}
-    finally {
-    }
     org.spockframework.runtime.SpockRuntime.callBlockExited(this, 0)
     this.getSpecificationContext().getMockController().leaveScope()
 }
@@ -28,9 +26,9 @@ public java.lang.Object $spock_feature_0_0prov1(java.util.List $spock_p_a) {
 }
 
 public java.lang.Object $spock_feature_0_0proc(java.lang.Object $spock_p0, java.lang.Object $spock_p1) {
-    java.lang.Object a = (( $spock_p0 ) as java.lang.Object)
-    java.lang.Object b = (( $spock_p1 ) as java.lang.Object)
-    return new java.lang.Object[]{ a , b }
+    java.lang.Object a = ($spock_p0 as java.lang.Object)
+    java.lang.Object b = ($spock_p1 as java.lang.Object)
+    return new java.lang.Object[]{a, b}
 }
 
 public static org.spockframework.runtime.model.DataVariableMultiplication[] $spock_feature_0_0prods() {
@@ -45,15 +43,11 @@ public void $spock_feature_0_0filter(java.lang.Object a, java.lang.Object b) {
     }
     catch (java.lang.Throwable $spock_condition_throwable) {
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'a == 1', 15, 7, null, $spock_condition_throwable)}
-    finally {
-    }
     try {
         org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), 'b == 2', 16, 7, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), b) == $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), 2)))
     }
     catch (java.lang.Throwable $spock_condition_throwable) {
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'b == 2', 16, 7, null, $spock_condition_throwable)}
-    finally {
-    }
 }
 /*--------- end::snapshot[] ---------*/
   }

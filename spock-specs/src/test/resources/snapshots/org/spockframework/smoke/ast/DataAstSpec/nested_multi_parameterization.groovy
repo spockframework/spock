@@ -14,8 +14,6 @@ public void $spock_feature_0_0(java.lang.Object a, java.lang.Object b) {
     }
     catch (java.lang.Throwable $spock_condition_throwable) {
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'a == b', 1, 83, null, $spock_condition_throwable)}
-    finally {
-    }
     org.spockframework.runtime.SpockRuntime.callBlockExited(this, 0)
     this.getSpecificationContext().getMockController().leaveScope()
 }
@@ -27,10 +25,10 @@ public java.lang.Object $spock_feature_0_0prov0() {
 
 @org.spockframework.runtime.model.DataProcessorMetadata(dataVariables = ['a', 'b'])
 public java.lang.Object $spock_feature_0_0proc(java.lang.Object $spock_p0) {
-    java.lang.Object a = (( $spock_p0 instanceof java.util.Map ? $spock_p0.getAt('a') : $spock_p0.getAt(0)) as java.lang.Object)
+    java.lang.Object a = (($spock_p0 instanceof java.util.Map ? $spock_p0.getAt('a') : $spock_p0.getAt(0)) as java.lang.Object)
     java.lang.Object $spock_l0 = (($spock_p0.getAt(1)) as java.lang.Object)
-    java.lang.Object b = (( $spock_l0 instanceof java.util.Map ? $spock_l0.getAt('b') : $spock_l0.getAt(1)) as java.lang.Object)
-    return new java.lang.Object[]{ a , b }
+    java.lang.Object b = (($spock_l0 instanceof java.util.Map ? $spock_l0.getAt('b') : $spock_l0.getAt(1)) as java.lang.Object)
+    return new java.lang.Object[]{a, b}
 }
 /*--------- end::snapshot[] ---------*/
   }

@@ -136,6 +136,207 @@ class Foo {
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
+  def "nested generic type arguments are rendered faithfully"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  Map<String, List<Integer>> nested() { null }
+  List<? extends Number> upperBounded() { null }
+  def <T extends CharSequence> List<T> methodTypeParameter() { null }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
+  def "elvis operator is rendered in short form"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  def m(c, d) {
+    def a = c ?: d
+    def b = c.count('x') ?: d
+  }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
+  def "attribute access is rendered with the at sign"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  int order
+
+  def m(Foo other, List<Foo> foos) {
+    def a = other.@order
+    def b = other?.@order
+    def c = foos*.@order
+    this.@order = a
+  }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
+  def "closure parameter lists are rendered faithfully"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  def m() {
+    def implicitIt = { it * 2 }
+    def noArgs = { -> 'x' }
+    def oneArg = { int x -> x }
+  }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION >= 3 })
+  def "safe index accesses are rendered with the closing bracket"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  def m(List l, Map mp) {
+    def a = l?[0]
+    def b = mp?['key']
+    l?[1] = 42
+  }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
+  def "numeric literals keep their type suffix"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  def m() {
+    def integer = 42
+    def longValue = 42L
+    def floatValue = 2.5f
+    def doubleValue = 3.5d
+    def bigInteger = 10G
+    def bigDecimal = 1.5
+  }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION >= 4 })
+  def "range boundary exclusions are rendered on both sides"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  def m() {
+    def a = 1..5
+    def b = 1..<5
+    def c = 1<..5
+    def d = 1<..<5
+  }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
+  def "explicit type arguments of method calls are rendered"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  def m() {
+    def a = Collections.<String>emptyList()
+    def b = this.<Integer>identity(1)
+  }
+
+  def <T> T identity(T t) { t }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
+  def "switch without a default case is rendered without a default label"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  def m(i) {
+    switch (i) {
+      case 1:
+        return 'one'
+    }
+    switch (i) {
+      case 2:
+        return 'two'
+      default:
+        return 'many'
+    }
+  }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
+  def "try without a finally block is rendered without an empty one"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  def m() {
+    try {
+      println 'x'
+    } catch (RuntimeException e) {
+      println e
+    }
+    try {
+      println 'y'
+    } finally {
+      println 'done'
+    }
+  }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
+  @Requires({ GroovyRuntimeUtil.MAJOR_VERSION >= 5 })
+  def "for-in loops with an index variable render both variables"() {
+    when:
+    def result = compiler.transpile('''
+class Foo {
+  def m(List l) {
+    for (item in l) {
+      println item
+    }
+    for (i, item in l) {
+      println item
+    }
+  }
+}
+''', EnumSet.of(Show.METHODS))
+
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
   def "enums"() {
     given:
     // groovy 4 renders differently

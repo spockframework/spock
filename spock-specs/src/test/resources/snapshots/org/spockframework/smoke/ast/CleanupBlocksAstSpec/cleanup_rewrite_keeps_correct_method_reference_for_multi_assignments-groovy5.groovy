@@ -10,7 +10,7 @@ public java.lang.Object foobar() {
 public void $spock_feature_0_0() {
     org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
     org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
-    java.lang.Object( foobar , b ) = [null, null]
+    def (java.lang.Object foobar, java.lang.Object b) = [null, null]
     java.lang.Throwable $spock_feature_throwable
     try {
         org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 0)
@@ -22,8 +22,6 @@ public void $spock_feature_0_0() {
         }
         catch (java.lang.Throwable $spock_condition_throwable) {
             org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'println(foobar)', 6, 3, null, $spock_condition_throwable)}
-        finally {
-        }
         org.spockframework.runtime.SpockRuntime.callBlockExited(this, 1)
     }
     catch (java.lang.Throwable $spock_tmp_throwable) {
@@ -33,7 +31,7 @@ public void $spock_feature_0_0() {
     finally {
         org.spockframework.runtime.model.BlockInfo $spock_failedBlock = null
         try {
-            if ( $spock_feature_throwable != null) {
+            if ($spock_feature_throwable != null) {
                 $spock_failedBlock = this.getSpecificationContext().getCurrentBlock()
             }
             org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 2)
@@ -41,14 +39,14 @@ public void $spock_feature_0_0() {
             org.spockframework.runtime.SpockRuntime.callBlockExited(this, 2)
         }
         catch (java.lang.Throwable $spock_tmp_throwable) {
-            if ( $spock_feature_throwable != null) {
+            if ($spock_feature_throwable != null) {
                 $spock_feature_throwable.addSuppressed($spock_tmp_throwable)
             } else {
                 throw $spock_tmp_throwable
             }
         }
         finally {
-            if ( $spock_feature_throwable != null) {
+            if ($spock_feature_throwable != null) {
                 ((org.spockframework.runtime.SpecificationContext) this.getSpecificationContext()).setCurrentBlock($spock_failedBlock)
             }
         }

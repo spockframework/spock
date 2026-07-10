@@ -17,8 +17,6 @@ public void $spock_feature_0_0() {
     }
     catch (java.lang.Throwable $spock_condition_throwable) {
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'x ==~ /a\\db/', 4, 9, null, $spock_condition_throwable)}
-    finally {
-    }
     org.spockframework.runtime.SpockRuntime.callBlockExited(this, 1)
     this.getSpecificationContext().getMockController().leaveScope()
 }

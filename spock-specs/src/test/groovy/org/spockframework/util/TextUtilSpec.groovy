@@ -34,4 +34,18 @@ class TextUtilSpec extends Specification {
     "useTCPStacK"  | "USE_TCP_STAC_K"
     "fred123Usage" | "FRED123_USAGE"
   }
+
+  def "escapeGroovyDoubleQuotedString"() {
+    expect:
+    TextUtil.escapeGroovyDoubleQuotedString(input) == escaped
+
+    where:
+    input        | escaped
+    ""           | ""
+    "foo"        | "foo"
+    'compareTo$' | 'compareTo\\$'
+    'a"b'        | 'a\\"b'
+    'a\\b'       | 'a\\\\b'
+    'a\nb'       | 'a\\nb'
+  }
 }

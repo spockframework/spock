@@ -128,6 +128,24 @@ public abstract class TextUtil {
     return builder.toString();
   }
 
+  /**
+   * Escapes {@code seq} for embedding in a Groovy double-quoted (GString) literal.
+   * On top of {@link #escape(char)}, this also escapes {@code "} and {@code $}, which
+   * would otherwise close the string or start an interpolation.
+   */
+  public static String escapeGroovyDoubleQuotedString(CharSequence seq) {
+    StringBuilder builder = new StringBuilder(seq.length() * 3 / 2);
+    for (int i = 0; i < seq.length(); i++) {
+      char ch = seq.charAt(i);
+      if (ch == '"' || ch == '$') {
+        builder.append('\\').append(ch);
+      } else {
+        builder.append(escape(ch));
+      }
+    }
+    return builder.toString();
+  }
+
   public static String printStackTrace(Throwable throwable) {
     StringWriter writer = new StringWriter();
     throwable.printStackTrace(new PrintWriter(writer));

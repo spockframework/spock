@@ -19,6 +19,7 @@ package org.spockframework.smoke.mock
 import org.hamcrest.CoreMatchers
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.mock.TooFewInvocationsError
+import spock.lang.Issue
 
 import java.util.regex.Pattern
 
@@ -744,6 +745,76 @@ Unmatched invocations (ordered by similarity):
     exceptionMessage == expected
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/2364")
+  def "can describe method name mismatch when the method name contains a dollar sign"() {
+    when:
+    runner.addClassImport(WithDollar)
+    runner.runFeatureBody("""
+def mock = Mock(WithDollar)
+
+when:
+mock.compareTo('a')
+
+then:
+1 * mock.compareTo\$(_)
+    """)
+
+    then:
+    TooFewInvocationsError e = thrown()
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize('''
+Too few invocations for:
+
+1 * mock.compareTo$(_)   (0 invocations)
+
+Unmatched invocations (ordered by similarity):
+
+1 * mock.compareTo('a')
+methodName == "compareTo\\$"
+|          |
+compareTo  false
+           1 difference (90% similarity)
+           compareTo(-)
+           compareTo($)
+    ''')
+    exceptionMessage == expected
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/2364")
+  def "can describe property name mismatch when the property name contains a dollar sign"() {
+    when:
+    runner.addClassImport(WithDollar)
+    runner.runFeatureBody("""
+def mock = Mock(WithDollar)
+
+when:
+mock.foo
+
+then:
+1 * mock.bar\$
+    """)
+
+    then:
+    TooFewInvocationsError e = thrown()
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize('''
+Too few invocations for:
+
+1 * mock.bar$   (0 invocations)
+
+Unmatched invocations (ordered by similarity):
+
+1 * mock.getFoo()
+propertyName == "bar\\$"
+|            |
+foo          false
+             4 differences (0% similarity)
+             (foo-)
+             (bar$)
+    ''')
+    exceptionMessage == expected
+  }
+
   def "can describe regex method name mismatch"() {
     when:
     runner.addClassImport(Person)
@@ -1194,6 +1265,13 @@ One or more arguments(s) didn't match:
 
   String normalize(String str) {
     EMPTY_LINE.matcher(str.normalize().trim()).replaceAll('')
+  }
+
+  interface WithDollar {
+    int compareTo(Object o)
+    int compareTo$(Object o)
+    String getFoo()
+    String getBar$()
   }
 
   static class Person {

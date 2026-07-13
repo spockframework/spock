@@ -17,6 +17,7 @@ package org.spockframework.mock.constraint;
 import org.spockframework.mock.IMockInvocation;
 import org.spockframework.runtime.Condition;
 import org.spockframework.util.CollectionUtil;
+import org.spockframework.util.TextUtil;
 
 /**
  *
@@ -41,7 +42,7 @@ public class EqualPropertyNameConstraint extends PropertyNameConstraint {
   @Override
   public String describeMismatch(IMockInvocation invocation) {
     Condition condition = new Condition(CollectionUtil.listOf(getPropertyName(invocation), propertyName, false),
-      String.format("propertyName == \"%s\"", propertyName), null, null,
+      String.format("propertyName == \"%s\"", TextUtil.escapeGroovyDoubleQuotedString(propertyName)), null, null,
       null, null);
     return condition.getRendering();
   }

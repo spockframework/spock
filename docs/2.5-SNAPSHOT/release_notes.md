@@ -15,6 +15,7 @@
 - Fix `MockitoMockMaker` throws NPE on null object [#2337](https://github.com/spockframework/spock/issues/2337)
 - Fix `SourceToAstNodeAndSourceTranspiler` dropping nested generic type arguments, so signatures like `Iterator<Tuple2<Integer, Integer>>` are now rendered faithfully instead of `Iterator<Tuple2>` [#2393](https://github.com/spockframework/spock/pull/2393)
 - Fix `SourceToAstNodeAndSourceTranspiler` rendering of several other constructs: the elvis operator, attribute access (`.@`), implicit-`it` closures, safe index access (`?[]`), numeric literal type suffixes (`L`, `F`, `D`, `G`), left-open ranges (`<..`), explicit type arguments of method calls, `for (index, value in iterable)` loops, multiple-assignment declarations on Groovy 5, and spurious empty `finally` blocks and `default` labels [#2393](https://github.com/spockframework/spock/pull/2393)
+- Fix interaction mismatch rendering failing with a lexer error and dropping the similarity report when a mocked method or property name contains a `$` [#2364](https://github.com/spockframework/spock/issues/2364)
 
 
 ### Breaking Changes

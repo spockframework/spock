@@ -61,6 +61,9 @@
 <li>
 <p>Fix <code>SourceToAstNodeAndSourceTranspiler</code> rendering of several other constructs: the elvis operator, attribute access (<code>.@</code>), implicit-<code>it</code> closures, safe index access (<code>?[]</code>), numeric literal type suffixes (<code>L</code>, <code>F</code>, <code>D</code>, <code>G</code>), left-open ranges (<code>&lt;..</code>), explicit type arguments of method calls, <code>for (index, value in iterable)</code> loops, multiple-assignment declarations on Groovy 5, and spurious empty <code>finally</code> blocks and <code>default</code> labels <a href="https://github.com/spockframework/spock/pull/2393">#2393</a></p>
 </li>
+<li>
+<p>Fix interaction mismatch rendering failing with a lexer error and dropping the similarity report when a mocked method or property name contains a <code>$</code> <a href="https://github.com/spockframework/spock/issues/2364">#2364</a></p>
+</li>
 </ul>
 </div>
 </div>
@@ -3481,7 +3484,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.5-SNAPSHOT<br>
-Last updated 2026-07-11 16:48:32 UTC
+Last updated 2026-07-13 06:44:35 UTC
 </div>
 </div>
 </body>

@@ -134,6 +134,30 @@ class ASpec extends Specification {
     noExceptionThrown()
   }
 
+  def "data table cells referencing previous columns compile"() {
+    when:
+    runner.runWithImports """
+@groovy.transform.CompileStatic
+class ASpec extends Specification {
+  def "previous column reference"(int a, int b) {
+    when:
+    int expected = a + 1
+
+    then:
+    b == expected
+
+    where:
+    a | b
+    1 | a + 1
+    5 | a + 1
+  }
+}
+"""
+
+    then:
+    noExceptionThrown()
+  }
+
   def "failed comparison condition renders recorded values"() {
     when:
     runner.runWithImports """

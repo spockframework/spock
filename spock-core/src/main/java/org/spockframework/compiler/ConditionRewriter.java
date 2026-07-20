@@ -116,14 +116,19 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
         && (!AstUtil.hasPlausibleSourcePosition(expr.getMethod()) // before GROOVY-4344 fix
             || (expr.getMethod().getColumnNumber() == expr.getObjectExpression().getColumnNumber())); // after GROOVY-4344 fix
 
+    // method names without a plausible source position were synthesized by an
+    // earlier rewrite step (e.g. old() -> oldImpl()); wrapping them in record()
+    // would turn the call into a dynamic method name call, which does not pass
+    // static type checking, so only allocate their slot
+    Expression method = expr.getMethod();
     MethodCallExpression conversion =
         new MethodCallExpression(
             expr.isImplicitThis() ?
                 expr.getObjectExpression() :
                 convert(expr.getObjectExpression()),
             objectExprSeenAsMethodNameAtRuntime ?
-                expr.getMethod() :
-                convert(expr.getMethod()),
+                method :
+                AstUtil.hasPlausibleSourcePosition(method) ? convert(method) : recordNa(method),
             convert(expr.getArguments()));
 
     conversion.setSafe(expr.isSafe());

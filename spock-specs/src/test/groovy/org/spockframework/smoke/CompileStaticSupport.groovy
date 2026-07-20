@@ -110,6 +110,30 @@ class ASpec extends Specification {
     noExceptionThrown()
   }
 
+  def "old() compiles and evaluates"() {
+    when:
+    runner.runWithImports """
+@groovy.transform.CompileStatic
+class ASpec extends Specification {
+  def "old"() {
+    given:
+    List<String> list = ['a']
+    int before = list.size()
+
+    when:
+    list.add('b')
+    int after = list.size()
+
+    then:
+    after == old(before) + 1
+  }
+}
+"""
+
+    then:
+    noExceptionThrown()
+  }
+
   def "failed comparison condition renders recorded values"() {
     when:
     runner.runWithImports """

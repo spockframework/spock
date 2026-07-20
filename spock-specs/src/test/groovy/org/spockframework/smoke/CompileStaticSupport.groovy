@@ -158,6 +158,54 @@ class ASpec extends Specification {
     noExceptionThrown()
   }
 
+  def "interactions in mock init closures work"() {
+    when:
+    runner.runWithImports """
+@groovy.transform.CompileStatic
+class ASpec extends Specification {
+  def "mock init closure"() {
+    given:
+    List<String> list = Mock(List) {
+      size() >> 3
+    }
+
+    when:
+    int size = list.size()
+
+    then:
+    size == 3
+  }
+}
+"""
+
+    then:
+    noExceptionThrown()
+  }
+
+  def "interactions in interaction blocks work"() {
+    when:
+    runner.runWithImports """
+@groovy.transform.CompileStatic
+class ASpec extends Specification {
+  def "interaction block"() {
+    given:
+    List<String> list = Mock()
+
+    when:
+    list.add("x")
+
+    then:
+    interaction {
+      1 * list.add(_)
+    }
+  }
+}
+"""
+
+    then:
+    noExceptionThrown()
+  }
+
   def "failed comparison condition renders recorded values"() {
     when:
     runner.runWithImports """

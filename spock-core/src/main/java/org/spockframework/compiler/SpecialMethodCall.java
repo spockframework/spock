@@ -174,7 +174,7 @@ public class SpecialMethodCall implements ISpecialMethodCall {
   @Override
   public void expand() {
     List<Expression> args = new ArrayList<>();
-    args.add(VariableExpression.THIS_EXPRESSION);
+    args.add(AstUtil.createThisExpression());
     args.add(inferredName);
     args.add(inferredType);
     args.addAll(AstUtil.getArgumentList(methodCallExpr));

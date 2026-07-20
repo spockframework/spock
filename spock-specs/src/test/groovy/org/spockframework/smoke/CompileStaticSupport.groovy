@@ -16,6 +16,7 @@
 
 package org.spockframework.smoke
 
+import groovy.transform.CompileStatic
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.SpockComparisonFailure
@@ -27,10 +28,15 @@ import org.spockframework.runtime.SpockComparisonFailure
  */
 class CompileStaticSupport extends EmbeddedSpecification {
 
+  def setup() {
+    compiler.addClassImport(CompileStatic)
+    runner.addClassImport(CompileStatic)
+  }
+
   def "comparison conditions on typed variables compile"() {
     when:
     compiler.compileWithImports """
-@groovy.transform.CompileStatic
+@CompileStatic
 class ASpec extends Specification {
   def "comparisons"() {
     given:
@@ -52,7 +58,7 @@ class ASpec extends Specification {
   def "property access in conditions compiles"() {
     when:
     compiler.compileWithImports """
-@groovy.transform.CompileStatic
+@CompileStatic
 class ASpec extends Specification {
   def "property access"() {
     given:
@@ -63,7 +69,7 @@ class ASpec extends Specification {
   }
 }
 
-@groovy.transform.CompileStatic
+@CompileStatic
 class Pogo {
   String name
 }
@@ -76,7 +82,7 @@ class Pogo {
   def "indexing in conditions compiles"() {
     when:
     compiler.compileWithImports """
-@groovy.transform.CompileStatic
+@CompileStatic
 class ASpec extends Specification {
   def "indexing"() {
     given:
@@ -95,7 +101,7 @@ class ASpec extends Specification {
   def "top-level method call conditions compile"() {
     when:
     compiler.compileWithImports """
-@groovy.transform.CompileStatic
+@CompileStatic
 class ASpec extends Specification {
   def "method call condition"() {
     given:
@@ -114,7 +120,7 @@ class ASpec extends Specification {
   def "old() compiles and evaluates"() {
     when:
     runner.runWithImports """
-@groovy.transform.CompileStatic
+@CompileStatic
 class ASpec extends Specification {
   def "old"() {
     given:
@@ -138,7 +144,7 @@ class ASpec extends Specification {
   def "data table cells referencing previous columns compile"() {
     when:
     runner.runWithImports """
-@groovy.transform.CompileStatic
+@CompileStatic
 class ASpec extends Specification {
   def "previous column reference"(int a, int b) {
     when:
@@ -162,7 +168,7 @@ class ASpec extends Specification {
   def "interactions in mock init closures work"() {
     when:
     runner.runWithImports """
-@groovy.transform.CompileStatic
+@CompileStatic
 class ASpec extends Specification {
   def "mock init closure"() {
     given:
@@ -186,7 +192,7 @@ class ASpec extends Specification {
   def "interactions in interaction blocks work"() {
     when:
     runner.runWithImports """
-@groovy.transform.CompileStatic
+@CompileStatic
 class ASpec extends Specification {
   def "interaction block"() {
     given:
@@ -210,7 +216,7 @@ class ASpec extends Specification {
   def "method calls in conditions compile"() {
     when:
     compiler.compileWithImports """
-@groovy.transform.CompileStatic
+@CompileStatic
 class ASpec extends Specification {
   def "method call conditions"() {
     given:
@@ -238,7 +244,7 @@ class ASpec extends Specification {
     when:
     runner.runWithImports """
 class ASpec extends Specification {
-  @groovy.transform.CompileStatic
+  @CompileStatic
   def "statically checked feature"() {
     given:
     List<String> list = ['a']
@@ -256,7 +262,7 @@ class ASpec extends Specification {
   def "exception property access in conditions compiles"() {
     when:
     runner.runWithImports """
-@groovy.transform.CompileStatic
+@CompileStatic
 class ASpec extends Specification {
   def "thrown message"() {
     when:
@@ -276,7 +282,7 @@ class ASpec extends Specification {
   def "method calls on the delegate of with blocks compile"() {
     when:
     runner.runWithImports """
-@groovy.transform.CompileStatic
+@CompileStatic
 class ASpec extends Specification {
   def "with block"() {
     given:
@@ -298,7 +304,7 @@ class ASpec extends Specification {
   def "failed method call condition renders recorded values"() {
     when:
     runner.runWithImports """
-@groovy.transform.CompileStatic
+@CompileStatic
 class ASpec extends Specification {
   def "method call"() {
     given:
@@ -322,7 +328,7 @@ list.size() == 2
   def "failed comparison condition renders recorded values"() {
     when:
     runner.runWithImports """
-@groovy.transform.CompileStatic
+@CompileStatic
 class ASpec extends Specification {
   def "comparison"() {
     given:

@@ -813,6 +813,9 @@ Some limitations remain:
   statically compiled Groovy code.
 * Spock detects static compilation via the annotations. If static compilation is instead applied globally through
   a compiler configuration script, Spock does not see it and conditions will fail to compile.
+* Condition rendering can differ in minor ways. For example, the target class of a static method call like
+  `Math.max(a, b)` is not rendered, because statically compiled code never evaluates the receiver of a static
+  method call, so there is no value to record.
 
 [[specifications-as-documentation]]
 == Specifications as Documentation

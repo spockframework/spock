@@ -18,6 +18,7 @@ package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
+import org.spockframework.runtime.SpockComparisonFailure
 
 /**
  * Specs annotated with {@code @CompileStatic} must compile even though
@@ -204,6 +205,118 @@ class ASpec extends Specification {
 
     then:
     noExceptionThrown()
+  }
+
+  def "method calls in conditions compile"() {
+    when:
+    compiler.compileWithImports """
+@groovy.transform.CompileStatic
+class ASpec extends Specification {
+  def "method call conditions"() {
+    given:
+    List<String> list = ['a', 'b']
+
+    expect:
+    list.size() == 2
+    !list.isEmpty()
+    list.first().toUpperCase() == 'A'
+    this.helper(1) == 2
+    helper(1) == 2
+  }
+
+  int helper(int i) {
+    i + 1
+  }
+}
+"""
+
+    then:
+    noExceptionThrown()
+  }
+
+  def "method-level CompileStatic annotation is honored"() {
+    when:
+    runner.runWithImports """
+class ASpec extends Specification {
+  @groovy.transform.CompileStatic
+  def "statically checked feature"() {
+    given:
+    List<String> list = ['a']
+
+    expect:
+    list.size() == 1
+  }
+}
+"""
+
+    then:
+    noExceptionThrown()
+  }
+
+  def "exception property access in conditions compiles"() {
+    when:
+    runner.runWithImports """
+@groovy.transform.CompileStatic
+class ASpec extends Specification {
+  def "thrown message"() {
+    when:
+    throw new IllegalStateException("bam")
+
+    then:
+    IllegalStateException e = thrown()
+    e.message == "bam"
+  }
+}
+"""
+
+    then:
+    noExceptionThrown()
+  }
+
+  def "method calls on the delegate of with blocks compile"() {
+    when:
+    runner.runWithImports """
+@groovy.transform.CompileStatic
+class ASpec extends Specification {
+  def "with block"() {
+    given:
+    List<String> list = ['a', 'b']
+
+    expect:
+    with(list) {
+      size() == 2
+      first() == 'a'
+    }
+  }
+}
+"""
+
+    then:
+    noExceptionThrown()
+  }
+
+  def "failed method call condition renders recorded values"() {
+    when:
+    runner.runWithImports """
+@groovy.transform.CompileStatic
+class ASpec extends Specification {
+  def "method call"() {
+    given:
+    List<String> list = ['a']
+
+    expect:
+    list.size() == 2
+  }
+}
+"""
+
+    then:
+    SpockComparisonFailure e = thrown()
+    e.condition.rendering.trim() == """
+list.size() == 2
+|    |      |
+[a]  1      false
+""".trim()
   }
 
   def "failed comparison condition renders recorded values"() {

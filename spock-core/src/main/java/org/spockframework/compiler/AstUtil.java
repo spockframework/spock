@@ -323,6 +323,35 @@ public abstract class AstUtil {
   }
 
   /**
+   * Tells whether the given method is subject to static type checking, i.e. it is
+   * annotated with {@code @CompileStatic} or {@code @TypeChecked}, or declared in a
+   * class that is. {@code @CompileDynamic} and {@code TypeCheckingMode.SKIP} opt
+   * out again. Static type checking applied by other means, e.g. a compiler
+   * configuration script, is not detected.
+   */
+  public static boolean isStaticallyTypeChecked(MethodNode method) {
+    Boolean methodLevel = staticTypeCheckingState(method.getAnnotations());
+    if (methodLevel != null) return methodLevel;
+    for (ClassNode clazz = method.getDeclaringClass(); clazz != null; clazz = clazz.getOuterClass()) {
+      Boolean classLevel = staticTypeCheckingState(clazz.getAnnotations());
+      if (classLevel != null) return classLevel;
+    }
+    return false;
+  }
+
+  private static Boolean staticTypeCheckingState(List<AnnotationNode> annotations) {
+    for (AnnotationNode annotation : annotations) {
+      String name = annotation.getClassNode().getName();
+      if ("groovy.transform.CompileDynamic".equals(name)) return false;
+      if ("groovy.transform.CompileStatic".equals(name) || "groovy.transform.TypeChecked".equals(name)) {
+        Expression typeCheckingMode = annotation.getMember("value");
+        return typeCheckingMode == null || !typeCheckingMode.getText().endsWith("SKIP");
+      }
+    }
+    return null;
+  }
+
+  /**
    * Creates a fresh expression referencing {@code this}. Generated code must not share
    * {@link VariableExpression#THIS_EXPRESSION} between use sites, because the static type
    * checker stores inferred types as per-node metadata; a singleton node used both inside

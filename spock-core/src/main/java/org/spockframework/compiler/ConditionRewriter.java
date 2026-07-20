@@ -73,12 +73,16 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
 
   private final String errorCollectorName;
 
+  private final boolean staticallyTypeChecked;
+
   private int recordCount = 0;
 
   private ConditionRewriter(IRewriteResources resources, String valueRecorderSuffix, String errorCollectorSuffix) {
     this.resources = resources;
     valueRecorderName = SpockNames.VALUE_RECORDER + valueRecorderSuffix;
     errorCollectorName = SpockNames.ERROR_COLLECTOR + errorCollectorSuffix;
+    org.spockframework.compiler.model.Method currentMethod = resources.getCurrentMethod();
+    staticallyTypeChecked = currentMethod != null && AstUtil.isStaticallyTypeChecked(currentMethod.getAst());
   }
 
   public static Statement rewriteExplicitCondition(AssertStatement stat, IRewriteResources resources) {
@@ -116,10 +120,6 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
         && (!AstUtil.hasPlausibleSourcePosition(expr.getMethod()) // before GROOVY-4344 fix
             || (expr.getMethod().getColumnNumber() == expr.getObjectExpression().getColumnNumber())); // after GROOVY-4344 fix
 
-    // method names without a plausible source position were synthesized by an
-    // earlier rewrite step (e.g. old() -> oldImpl()); wrapping them in record()
-    // would turn the call into a dynamic method name call, which does not pass
-    // static type checking, so only allocate their slot
     Expression method = expr.getMethod();
     MethodCallExpression conversion =
         new MethodCallExpression(
@@ -128,13 +128,37 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
                 convert(expr.getObjectExpression()),
             objectExprSeenAsMethodNameAtRuntime ?
                 method :
-                AstUtil.hasPlausibleSourcePosition(method) ? convert(method) : recordNa(method),
+                convertMethodName(method),
             convert(expr.getArguments()));
 
     conversion.setSafe(expr.isSafe());
     conversion.setSpreadSafe(expr.isSpreadSafe());
+    if (staticallyTypeChecked) {
+      // must be kept in sync, otherwise a qualified call with a constant method
+      // name would be dispatched as an implicit-this call, e.g. to a local
+      // closure variable of the same name; only done for statically checked code
+      // to keep the dispatch of dynamic code untouched
+      conversion.setImplicitThis(expr.isImplicitThis());
+    }
     conversion.setSourcePosition(expr);
     result = record(conversion);
+  }
+
+  /**
+   * Wrapping a method name in record() turns the call into a dynamic method name
+   * call, which does not pass static type checking. Method names synthesized by an
+   * earlier rewrite step (e.g. old() -> oldImpl()) and, in statically type checked
+   * code, all constant method names therefore stay as they are; their value slot is
+   * still allocated to keep the numbering intact, it just stays N/A, which the
+   * renderer never displays for method names anyway. Dynamic code keeps the recorded
+   * method name to leave its dispatch semantics untouched.
+   */
+  private Expression convertMethodName(Expression method) {
+    if (method instanceof ConstantExpression
+        && (staticallyTypeChecked || !AstUtil.hasPlausibleSourcePosition(method))) {
+      return recordNa(method);
+    }
+    return convert(method);
   }
 
   // only used for statically imported methods called by their simple name

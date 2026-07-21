@@ -107,7 +107,8 @@ data class Matrix(
     data class Axes(
         val javaVersions: List<String>,
         val additionalJavaTestVersions: List<String>,
-        val variants: List<String>
+        val variants: List<String>,
+        val additionalVariants: List<String>
     )
 
     data class Element(
@@ -158,19 +159,27 @@ fun WorkflowBuilder.job(
 val Matrix.Companion.full
     get() = Matrix(
         operatingSystems = listOf("ubuntu-latest"),
-        variants = axes.variants,
+        variants = axes.variants + axes.additionalVariants,
         javaVersions = axes.javaVersions + axes.additionalJavaTestVersions,
         exclude = {
-            ((variant == "2.5") && (javaVersion!!.toInt() >= 17)) ||
-                ((variant == "5.0") && (javaVersion!!.toInt() < 11))
+            when (variant) {
+                "2.5" -> javaVersion!!.toInt() >= 17
+                "5.0" -> javaVersion!!.toInt() < 11
+                "6.0" -> javaVersion!!.toInt() < 17
+                else -> false
+            }
         },
         includes = listOf("windows-latest", "macos-latest")
             .map { Matrix.Element(operatingSystem = it) }
             .flatMap { element ->
-                axes.variants.map {
+                (axes.variants + axes.additionalVariants).map {
                     element.copy(
                         variant = it,
-                        javaVersion = if (it == "5.0") "11" else axes.javaVersions.first()
+                        javaVersion = when (it) {
+                            "5.0" -> "11"
+                            "6.0" -> "17"
+                            else -> axes.javaVersions.first()
+                        }
                     )
                 }
             }
@@ -187,7 +196,8 @@ val Matrix.Companion.axes by lazy {
         Matrix.Axes(
             properties.getList("javaVersionsList"),
             properties.getList("additionalJavaTestVersionsList"),
-            properties.getList("variantsList")
+            properties.getList("variantsList"),
+            properties.getList("additionalVariantsList")
         )
     }
 }

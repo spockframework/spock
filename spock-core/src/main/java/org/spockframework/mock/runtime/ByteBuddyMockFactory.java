@@ -29,7 +29,6 @@ import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.Transformer;
 import net.bytebuddy.dynamic.loading.ClassInjector;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
-import net.bytebuddy.dynamic.loading.MultipleParentClassLoader;
 import net.bytebuddy.dynamic.scaffold.TypeValidation;
 import net.bytebuddy.implementation.FieldAccessor;
 import net.bytebuddy.implementation.FixedValue;
@@ -96,19 +95,36 @@ class ByteBuddyMockFactory {
    * A mock is considered local, if all additional interfaces of the mock (including {@link ISpockMockObject}) are
    * loadable by the target class' classloader.
    *
-   * @param targetClass The to-be-mocked class
+   * @param targetClass          The to-be-mocked class
    * @param additionalInterfaces Additional interfaces of the to-be-mocked type
    * @return true, if this is a local mock. Otherwise false
    */
   @VisibleForTesting
   static boolean isLocalMock(Class<?> targetClass, Collection<Class<?>> additionalInterfaces) {
-    // Inspired by https://github.com/mockito/mockito/blob/99426415c0ceb30e55216c3934854528c83f410e/mockito-core/src/main/java/org/mockito/internal/creation/bytebuddy/SubclassBytecodeGenerator.java#L165-L166
-    ClassLoader cl = new MultipleParentClassLoader.Builder()
-      .appendMostSpecific(targetClass)
-      .appendMostSpecific(additionalInterfaces)
-      .appendMostSpecific(ISpockMockObject.class)
-      .build();
-    return cl == targetClass.getClassLoader();
+    ClassLoader targetLoader = targetClass.getClassLoader();
+    if (targetLoader == null) {
+      targetLoader = ClassLoader.getSystemClassLoader();
+    }
+    Class<?> spockMockClass = loadClassIfAvailableInClassLoader(targetLoader, ISpockMockObject.class);
+    if (spockMockClass != ISpockMockObject.class) {
+      //The ISpockMockObject is not visible to the targetLoader, so we can't be local.
+      return false;
+    }
+    for (Class<?> ifClass : additionalInterfaces) {
+      Class<?> ifClassOfTarget = loadClassIfAvailableInClassLoader(targetLoader, ifClass);
+      if (ifClassOfTarget != ifClass) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private static Class<?> loadClassIfAvailableInClassLoader(ClassLoader loader, Class<?> clazz) {
+    try {
+      return loader.loadClass(clazz.getName());
+    } catch (ClassNotFoundException e) {
+      return null;
+    }
   }
 
   Object createMock(IMockMaker.IMockCreationSettings settings) {

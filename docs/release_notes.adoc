@@ -19,6 +19,8 @@ include::include.adoc[]
 * Fix `SourceToAstNodeAndSourceTranspiler` dropping nested generic type arguments, so signatures like `Iterator<Tuple2<Integer, Integer>>` are now rendered faithfully instead of `Iterator<Tuple2>` spockPull:2393[]
 * Fix `SourceToAstNodeAndSourceTranspiler` rendering of several other constructs: the elvis operator, attribute access (`.@`), implicit-`it` closures, safe index access (`?[]`), numeric literal type suffixes (`L`, `F`, `D`, `G`), left-open ranges (`<..`), explicit type arguments of method calls, `for (index, value in iterable)` loops, multiple-assignment declarations on Groovy 5, and spurious empty `finally` blocks and `default` labels spockPull:2393[]
 * Fix interaction mismatch rendering failing with a lexer error and dropping the similarity report when a mocked method or property name contains a `$` spockIssue:2364[]
+* Fix Mock does not intercept package-private methods in OSGi correctly spockIssue:2384[]
+** This only works for Java > 9, due to missing `MethodHandles.Lookup` API in Java 8
 
 === Breaking Changes
 

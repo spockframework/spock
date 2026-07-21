@@ -17,7 +17,7 @@
 package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
-import org.spockframework.util.Checks;
+import org.spockframework.util.Assert;
 import org.spockframework.util.ExceptionUtil;
 
 import java.util.*;
@@ -108,6 +108,14 @@ public class MockController implements IMockController, IThreadAwareMockControll
     throwAnyPreviousError();
     IInteractionScope scope = scopes.removeFirst();
     scope.verifyInteractions();
+  }
+
+  public static final String VERIFY_LAST_SCOPE = "verifyLastScope";
+
+  public synchronized void verifyLastScope() {
+    throwAnyPreviousError();
+    Assert.that(scopes.size() == 1, () -> "There should be exactly one scope left, but there were " + scopes.size());
+    scopes.getFirst().verifyInteractions();
   }
 
   private void throwAnyPreviousError() {

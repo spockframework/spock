@@ -56,6 +56,22 @@ public abstract class Checks {
   }
 
   /**
+   * Assert that the supplied {@link Object} is not {@code null}.
+   *
+   * @param object  the object to check
+   * @param message violation message
+   * @return the supplied object as a convenience
+   * @throws IllegalArgumentException if the supplied object is {@code null}
+   */
+  @Contract("null, _ -> fail")
+  public static <T> T notNull(T object, String message) {
+    if (object == null) {
+      throw new IllegalArgumentException(message);
+    }
+    return object;
+  }
+
+  /**
    * Assert that the supplied array is neither {@code null} nor <em>empty</em>.
    * <p>
    * This method does NOT check if the supplied

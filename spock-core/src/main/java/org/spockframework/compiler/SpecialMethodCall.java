@@ -172,9 +172,9 @@ public class SpecialMethodCall implements ISpecialMethodCall {
   }
 
   @Override
-  public void expand() {
+  public void expand(Expression specificationReference) {
     List<Expression> args = new ArrayList<>();
-    args.add(VariableExpression.THIS_EXPRESSION);
+    args.add(specificationReference);
     args.add(inferredName);
     args.add(inferredType);
     args.addAll(AstUtil.getArgumentList(methodCallExpr));
@@ -184,6 +184,10 @@ public class SpecialMethodCall implements ISpecialMethodCall {
     methodCallExpr.setArguments(argsExpr);
     methodCallExpr.setObjectExpression(new ClassExpression(nodeCache.SpecInternals));
     methodCallExpr.setMethod(new ConstantExpression(methodName + "Impl"));
+    // the receiver is now an explicit class reference, not the (possibly implicit)
+    // original `this`; clear the flag so Groovy's trait transform does not later
+    // rewrite the SpecInternals receiver to the trait's $self parameter
+    methodCallExpr.setImplicitThis(false);
   }
 
   public static SpecialMethodCall parse(MethodCallExpression methodCallExpr, @Nullable BinaryExpression binaryExpr,

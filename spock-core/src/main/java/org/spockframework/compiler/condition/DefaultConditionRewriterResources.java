@@ -49,6 +49,16 @@ class DefaultConditionRewriterResources implements IRewriteResources {
   }
 
   @Override
+  public Expression getSpecificationReference() {
+    // Preserves the historical behavior: SpecialMethodCall.expand() used to
+    // hardcode `this` as the spec argument. A verification helper method that
+    // contains a mock-creation call (e.g. the illegal `1 * Mock(Object)...`)
+    // reaches expand() before the "interactions are not allowed" error aborts,
+    // so this must yield `this` rather than throw.
+    return VariableExpression.THIS_EXPRESSION;
+  }
+
+  @Override
   public Method getCurrentMethod() {
     return method;
   }

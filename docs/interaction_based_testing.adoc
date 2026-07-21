@@ -1259,6 +1259,35 @@ is attached to a spec before usage:
 include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=use-custom-mock-creator-attach]
 ----
 
+[[external-interactions]]
+=== Declaring Interactions Outside Specifications
+
+`DetachedMockFactory` lets you create a mock outside a `Specification`, but the mock's interactions still have to be declared inside the spec.
+`MockInteractionSupport` lets you encapsulate interactions (and mock creation) in a reusable fixture.
+It routes everything through the owning spec's mock controller, so the interactions behave exactly like interactions declared in a `setup:` block: the spec must be live (called from within a feature's lifecycle), and cardinality interactions are verified when the spec's controller scope leaves.
+
+[[MockInteractionSupport]]
+==== MockInteractionSupport
+
+Implement `spock.mock.MockInteractionSupport` to build a reusable fixture object that both creates mocks and declares interactions.
+The fixture supplies the owning spec through `getSpecification()` (typically stored in a constructor field), and the `Mock()`/`Stub()`/`Spy()` factory methods work just as they do inside a spec.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/ExternalMockInteractionsDocSpec.groovy[tags=support-fixture]
+----
+
+A spec can then delegate creation and configuration to the fixture:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/ExternalMockInteractionsDocSpec.groovy[tags=support-usage]
+----
+
+A class cannot be both a `Specification` and a `MockInteractionSupport`, because a spec already has the full capability.
+
+If you forget to attach the fixture, using it fails fast with a clear error that tells you the spec is missing.
+
 == Further Reading
 
 If you would like to dive deeper into interaction-based testing, we recommend the following resources:

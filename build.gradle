@@ -63,7 +63,7 @@ ext {
   groovyConsoleExtraDependencies = [
     dependencyFactory.create(groovyGroup, "groovy-console", groovyVersion),
     dependencyFactory.create(groovyGroup, "groovy-test-junit5", groovyVersion), // for executing specs
-    dependencyFactory.create("org.apache.ivy", "ivy", "2.5.3"), // For @Grab support
+    dependencyFactory.create("org.apache.ivy", "ivy", "2.6.0"), // For @Grab support
   ]
   maxGroovyVersion = snapshotVersion ? "9.9.99" : maxGroovyVersion
   if (System.getProperty("groovyVersion")) {

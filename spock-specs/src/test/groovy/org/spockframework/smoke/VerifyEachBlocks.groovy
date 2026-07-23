@@ -209,6 +209,87 @@ class VerifyEachBlocks extends EmbeddedSpecification {
     e.message == "Target of 'verifyEach' block must not be null"
   }
 
+  def "verifyEach supports maps with a key and value parameter"() {
+    given:
+    def map = [a: 1, b: 2, c: 3]
+
+    expect:
+    verifyEach(map) { key, value ->
+      key instanceof String
+      value > 0
+    }
+  }
+
+  def "verifyEach supports maps with a single entry parameter"() {
+    given:
+    def map = [a: 1, b: 2, c: 3]
+
+    expect:
+    verifyEach(map) { entry ->
+      entry.value > 0
+    }
+  }
+
+  def "verifyEach on a map delegates to the entry so key and value can be used directly"() {
+    given:
+    def map = [a: 1, b: 2, c: 3]
+
+    expect:
+    verifyEach(map) {
+      value > 0
+      key instanceof String
+    }
+  }
+
+  def "verifyEach on a map can have an optional index parameter"() {
+    given:
+    def map = [a: 1, b: 2, c: 3]
+
+    expect:
+    verifyEach(map) { key, value, index ->
+      value == index + 1
+    }
+  }
+
+  def "verifyEach on a map handles a failed element verification"() {
+    given:
+    def map = [a: 1, b: 2, c: 3]
+
+    when:
+    verifyEach(map) { key, value ->
+      value < 3
+    }
+
+    then:
+    SpockAssertionError e = thrown()
+    e.message.contains('item[2] c=3')
+  }
+
+  def "verifyEach on a map supports the namer"() {
+    given:
+    def map = [a: 1, b: 2, c: 3]
+
+    when:
+    verifyEach(map, { "entry($it.key)" }) { key, value ->
+      value < 3
+    }
+
+    then:
+    SpockAssertionError e = thrown()
+    e.message.contains('entry(c)')
+  }
+
+  def "verifyEach on a null map fails with a clear message"() {
+    when:
+    verifyEach((Map) null) {
+      value > 0
+    }
+
+    then:
+    SpockAssertionError e = thrown()
+    e.message == "Target of 'verifyEach' block must not be null"
+  }
+
   void checks(int x) {
     doCheck(x, this.&nestedException)
     doCheck(x, this.&nestedAssertion)

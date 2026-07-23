@@ -108,4 +108,15 @@ list.every { it == 2 }
     MultipleFailuresError e = thrown()
     snap.assertThat(e.message).matchesSnapshot()
   }
+
+  def "verifyEach with map method"(@Snapshot Snapshotter snap) {
+    when:
+    // tag::verify-each-map[]
+    def map = [a: 1, b: 2, c: 3]
+    verifyEach(map) { key, value -> value == 2 }
+    // end::verify-each-map[]
+    then:
+    MultipleFailuresError e = thrown()
+    snap.assertThat(e.message).matchesSnapshot()
+  }
 }

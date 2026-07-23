@@ -25,6 +25,7 @@ import org.junit.platform.commons.annotation.Testable;
 import spock.mock.MockingApi;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -421,5 +422,67 @@ public abstract class Specification extends MockingApi {
       throw new SpockAssertionError("Target of 'verifyEach' block must not be null");
     }
     verifyEach(Arrays.asList(things), namer, closure);
+  }
+
+  /**
+   * Performs assertions on each entry of a map, collecting up failures instead of stopping at first.
+   * <p>
+   * Exception messages will contain a toString() of the entry ({@code key=value}) to identify it.
+   * <p>
+   * The closure can use zero to three parameters, mirroring Groovy's {@code Map.each} idiom.
+   * With no parameters, the delegate is the current {@link java.util.Map.Entry}, so {@code key}
+   * and {@code value} can be referenced directly.
+   * A single parameter is the entry, two parameters are the key and the value, and a third
+   * optional parameter is the iteration index of the entry.
+   *
+   * @param things the map to inspect
+   * @param closure a code block containing top-level conditions
+   * @param <K> type of keys in things
+   * @param <V> type of values in things
+   * @since 2.5
+   */
+  @Beta
+  public <K, V> void verifyEach(
+    Map<K, V> things,
+    @ClosureParams(value = FromString.class, options = {"", "java.util.Map.Entry<K, V>", "K, V", "K, V, int"})
+    @DelegatesTo(type = "java.util.Map.Entry<K, V>", strategy = Closure.DELEGATE_FIRST)
+    Closure<?> closure
+  ) {
+    verifyEach(things, Objects::toString, closure);
+  }
+
+  /**
+   * Performs assertions on each entry of a map, collecting up failures instead of stopping at first.
+   * <p>
+   * Exception messages will contain the result of calling the namer for an entry to identify it.
+   * <p>
+   * The closure can use zero to three parameters, mirroring Groovy's {@code Map.each} idiom.
+   * With no parameters, the delegate is the current {@link java.util.Map.Entry}, so {@code key}
+   * and {@code value} can be referenced directly.
+   * A single parameter is the entry, two parameters are the key and the value, and a third
+   * optional parameter is the iteration index of the entry.
+   *
+   * @param things the map to inspect
+   * @param namer the namer function to use when rendering the exception
+   * @param closure a code block containing top-level conditions
+   * @param <K> type of keys in things
+   * @param <V> type of values in things
+   * @since 2.5
+   */
+  @Beta
+  public <K, V> void verifyEach(
+    Map<K, V> things,
+    Function<? super Map.Entry<K, V>, ?> namer,
+    @ClosureParams(value = FromString.class, options = {"", "java.util.Map.Entry<K, V>", "K, V", "K, V, int"})
+    @DelegatesTo(type = "java.util.Map.Entry<K, V>", strategy = Closure.DELEGATE_FIRST)
+    Closure<?> closure
+  ) {
+    if (things == null) {
+      throw new SpockAssertionError("Target of 'verifyEach' block must not be null");
+    }
+    if (namer == null) {
+      throw new SpockAssertionError("Namer for a 'verifyEach' block must not be null");
+    }
+    SpockRuntime.verifyEach(things, namer, closure);
   }
 }

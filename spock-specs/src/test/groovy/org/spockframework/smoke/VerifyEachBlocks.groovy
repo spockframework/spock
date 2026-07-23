@@ -145,6 +145,70 @@ class VerifyEachBlocks extends EmbeddedSpecification {
     }
   }
 
+  def "verifyEach supports object arrays"() {
+    given:
+    Integer[] array = [1, 2, 3]
+
+    expect:
+    verifyEach(array) {
+      it > 0
+    }
+
+    and: 'parameter is the same as the delegate'
+    verifyEach(array) {
+      it == delegate
+    }
+  }
+
+  def "verifyEach on an array handles a failed element verification"() {
+    given:
+    Integer[] array = [1, 2, 3]
+
+    when:
+    verifyEach(array) {
+      it < 3
+    }
+
+    then:
+    SpockAssertionError e = thrown()
+    e.message.contains('item[2] 3')
+  }
+
+  def "verifyEach on an array supports the namer"() {
+    given:
+    Integer[] array = [1, 2, 3]
+
+    when:
+    verifyEach(array, { "int($it)" }) {
+      it < 3
+    }
+
+    then:
+    SpockAssertionError e = thrown()
+    e.message.contains('int(3)')
+  }
+
+  def "verifyEach on an array can have an optional index parameter"() {
+    given:
+    Integer[] array = [1, 2, 3]
+
+    expect:
+    verifyEach(array) { it, index ->
+      it == index + 1
+    }
+  }
+
+  def "verifyEach on a null array fails with a clear message"() {
+    when:
+    verifyEach((Integer[]) null) {
+      it > 0
+    }
+
+    then:
+    SpockAssertionError e = thrown()
+    e.message == "Target of 'verifyEach' block must not be null"
+  }
+
   void checks(int x) {
     doCheck(x, this.&nestedException)
     doCheck(x, this.&nestedAssertion)

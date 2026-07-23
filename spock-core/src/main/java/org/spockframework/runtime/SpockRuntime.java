@@ -181,18 +181,31 @@ public abstract class SpockRuntime {
     @DelegatesTo(type = "T", strategy = Closure.DELEGATE_FIRST)
     Closure<?> closure
   ) {
+    int parameterCount = closure.getMaximumNumberOfParameters();
+    // validate up front so the error is reported once instead of being collected per item
+    if (parameterCount > 2) {
+      throw new InvalidSpecException(
+        "verifyEach supports closures with 0 to 2 parameters (the item, optionally followed by the index), but got %d")
+        .withArgs(parameterCount);
+    }
+
     List<InternalItemFailure<T>> failures = new ArrayList<>();
     int index = -1;
     // use plain loop here, so we don't generate an extra stack element on failure
     for (T thing : things) {
       index++;
       try {
-        closure.setDelegate(thing); // for conditions
+        closure.setDelegate(thing); // for conditions, so the item can be used directly
         closure.setResolveStrategy(Closure.DELEGATE_FIRST);
-        if (closure.getMaximumNumberOfParameters() == 1) {
-          GroovyRuntimeUtil.invokeClosure(closure, thing);
-        } else {
-          GroovyRuntimeUtil.invokeClosure(closure, thing, index);
+        switch (parameterCount) {
+          case 0:
+            GroovyRuntimeUtil.invokeClosure(closure);
+            break;
+          case 1:
+            GroovyRuntimeUtil.invokeClosure(closure, thing);
+            break;
+          default:
+            GroovyRuntimeUtil.invokeClosure(closure, thing, index);
         }
       } catch (Throwable throwable) {
         failures.add(new InternalItemFailure<>(thing, index, throwable));
@@ -209,6 +222,14 @@ public abstract class SpockRuntime {
     @DelegatesTo(type = "java.util.Map.Entry<K, V>", strategy = Closure.DELEGATE_FIRST)
     Closure<?> closure
   ) {
+    int parameterCount = closure.getMaximumNumberOfParameters();
+    // validate up front so the error is reported once instead of being collected per entry
+    if (parameterCount > 3) {
+      throw new InvalidSpecException(
+        "verifyEach on a map supports closures with 0 to 3 parameters (the entry, or the key and value, optionally followed by the index), but got %d")
+        .withArgs(parameterCount);
+    }
+
     List<InternalItemFailure<Map.Entry<K, V>>> failures = new ArrayList<>();
     int index = -1;
     // use plain loop here, so we don't generate an extra stack element on failure
@@ -217,7 +238,7 @@ public abstract class SpockRuntime {
       try {
         closure.setDelegate(entry); // for conditions, so key and value can be used directly
         closure.setResolveStrategy(Closure.DELEGATE_FIRST);
-        switch (closure.getMaximumNumberOfParameters()) {
+        switch (parameterCount) {
           case 0:
             GroovyRuntimeUtil.invokeClosure(closure);
             break;

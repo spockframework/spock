@@ -18,6 +18,7 @@ package org.spockframework.smoke
 
 import org.opentest4j.MultipleFailuresError
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.InvalidSpecException
 import org.spockframework.runtime.SpockAssertionError
 import spock.lang.Snapshot
 import spock.lang.Snapshotter
@@ -288,6 +289,53 @@ class VerifyEachBlocks extends EmbeddedSpecification {
     then:
     SpockAssertionError e = thrown()
     e.message == "Target of 'verifyEach' block must not be null"
+  }
+
+  def "verifyEach on a map supports a closure with no parameters using the delegate"() {
+    given:
+    def map = [a: 1, b: 2, c: 3]
+
+    expect:
+    verifyEach(map) { ->
+      value > 0
+    }
+  }
+
+  def "verifyEach rejects a closure with too many parameters for an iterable"() {
+    when:
+    verifyEach([1, 2, 3]) { a, b, c -> }
+
+    then:
+    InvalidSpecException e = thrown()
+    e.message == "verifyEach supports closures with 0 to 2 parameters (the item, optionally followed by the index), but got 3"
+  }
+
+  def "verifyEach on an iterable supports a closure with no parameters using the delegate"() {
+    given:
+    def list = ['abc', 'defg']
+
+    expect:
+    verifyEach(list) { ->
+      length() > 2
+    }
+  }
+
+  def "verifyEach rejects a closure with too many parameters for an array"() {
+    when:
+    verifyEach([1, 2, 3] as Integer[]) { a, b, c -> }
+
+    then:
+    InvalidSpecException e = thrown()
+    e.message == "verifyEach supports closures with 0 to 2 parameters (the item, optionally followed by the index), but got 3"
+  }
+
+  def "verifyEach rejects a closure with too many parameters for a map"() {
+    when:
+    verifyEach([a: 1, b: 2, c: 3]) { a, b, c, d -> }
+
+    then:
+    InvalidSpecException e = thrown()
+    e.message == "verifyEach on a map supports closures with 0 to 3 parameters (the entry, or the key and value, optionally followed by the index), but got 4"
   }
 
   void checks(int x) {

@@ -26,6 +26,7 @@ include::include.adoc[]
 
 === Breaking Changes
 
+* `verifyEach` now validates the closure parameter count up front and throws an `InvalidSpecException` for an unsupported number of parameters (0 to 2 for iterables and arrays), instead of failing with a less clear error while iterating
 * Mock/Stub checks on `Comparable<T>` with `T` being something other than `Object` now compare using the java identity hash code instead of always being equal spockIssue:2352[]
 
 == 2.4 (2025-12-11)

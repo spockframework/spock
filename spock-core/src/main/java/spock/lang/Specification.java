@@ -24,8 +24,11 @@ import groovy.transform.stc.SecondParam;
 import org.junit.platform.commons.annotation.Testable;
 import spock.mock.MockingApi;
 
+import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.spockframework.lang.ISpecificationContext;
 import org.spockframework.lang.Wildcard;
@@ -358,6 +361,175 @@ public abstract class Specification extends MockingApi {
     Function<? super U, ?> namer,
     @ClosureParams(value = FromString.class, options = {"U", "U, int"})
     @DelegatesTo(type = "U", strategy = Closure.DELEGATE_FIRST)
+    Closure<?> closure
+  ) {
+    if (things == null) {
+      throw new SpockAssertionError("Target of 'verifyEach' block must not be null");
+    }
+    if (namer == null) {
+      throw new SpockAssertionError("Namer for a 'verifyEach' block must not be null");
+    }
+    SpockRuntime.verifyEach(things, namer, closure);
+  }
+
+  /**
+   * Performs assertions on each item, collecting up failures instead of stopping at first.
+   * <p>
+   * Exception messages will contain a toString() of the item to identify it.
+   * <p>
+   * The closure can either use one or two parameters.
+   * The first parameter will always be the item.
+   * The second optional parameter will be the iteration index of the item.
+   *
+   * @param things the array to inspect
+   * @param closure a code block containing top-level conditions
+   * @param <U> type of items in things
+   * @since 2.5
+   */
+  @Beta
+  public <U> void verifyEach(
+    U[] things,
+    @ClosureParams(value = FromString.class, options = {"U", "U, int"})
+    @DelegatesTo(type = "U", strategy = Closure.DELEGATE_FIRST)
+    Closure<?> closure
+  ) {
+    verifyEach(things, Objects::toString, closure);
+  }
+
+  /**
+   * Performs assertions on each item, collecting up failures instead of stopping at first.
+   * <p>
+   * Exception messages will contain the result of calling the namer for an item to identify it.
+   * <p>
+   * The closure can either use one or two parameters.
+   * The first parameter will always be the item.
+   * The second optional parameter will be the iteration index of the item.
+   *
+   * @param things the array to inspect
+   * @param namer the namer function to use when rendering the exception
+   * @param closure a code block containing top-level conditions
+   * @param <U> type of items in things
+   * @since 2.5
+   */
+  @Beta
+  public <U> void verifyEach(
+    U[] things,
+    Function<? super U, ?> namer,
+    @ClosureParams(value = FromString.class, options = {"U", "U, int"})
+    @DelegatesTo(type = "U", strategy = Closure.DELEGATE_FIRST)
+    Closure<?> closure
+  ) {
+    if (things == null) {
+      throw new SpockAssertionError("Target of 'verifyEach' block must not be null");
+    }
+    verifyEach(Arrays.asList(things), namer, closure);
+  }
+
+  /**
+   * Performs assertions on each element of a stream, collecting up failures instead of stopping at first.
+   * <p>
+   * Exception messages will contain a toString() of the element to identify it.
+   * <p>
+   * The closure can either use one or two parameters.
+   * The first parameter will always be the element.
+   * The second optional parameter will be the iteration index of the element.
+   *
+   * @param things the stream to inspect
+   * @param closure a code block containing top-level conditions
+   * @param <U> type of elements in things
+   * @since 2.5
+   */
+  @Beta
+  public <U> void verifyEach(
+    Stream<U> things,
+    @ClosureParams(value = FromString.class, options = {"U", "U, int"})
+    @DelegatesTo(type = "U", strategy = Closure.DELEGATE_FIRST)
+    Closure<?> closure
+  ) {
+    verifyEach(things, Objects::toString, closure);
+  }
+
+  /**
+   * Performs assertions on each element of a stream, collecting up failures instead of stopping at first.
+   * <p>
+   * Exception messages will contain the result of calling the namer for an element to identify it.
+   * <p>
+   * The closure can either use one or two parameters.
+   * The first parameter will always be the element.
+   * The second optional parameter will be the iteration index of the element.
+   *
+   * @param things the stream to inspect
+   * @param namer the namer function to use when rendering the exception
+   * @param closure a code block containing top-level conditions
+   * @param <U> type of elements in things
+   * @since 2.5
+   */
+  @Beta
+  public <U> void verifyEach(
+    Stream<U> things,
+    Function<? super U, ?> namer,
+    @ClosureParams(value = FromString.class, options = {"U", "U, int"})
+    @DelegatesTo(type = "U", strategy = Closure.DELEGATE_FIRST)
+    Closure<?> closure
+  ) {
+    if (things == null) {
+      throw new SpockAssertionError("Target of 'verifyEach' block must not be null");
+    }
+    // a Stream is single-use, so adapt it to an Iterable that iterates it exactly once
+    verifyEach((Iterable<U>) things::iterator, namer, closure);
+  }
+
+  /**
+   * Performs assertions on each entry of a map, collecting up failures instead of stopping at first.
+   * <p>
+   * Exception messages will contain a toString() of the entry ({@code key=value}) to identify it.
+   * <p>
+   * The closure can use zero to three parameters, mirroring Groovy's {@code Map.each} idiom.
+   * With no parameters, the delegate is the current {@link java.util.Map.Entry}, so {@code key}
+   * and {@code value} can be referenced directly.
+   * A single parameter is the entry, two parameters are the key and the value, and a third
+   * optional parameter is the iteration index of the entry.
+   *
+   * @param things the map to inspect
+   * @param closure a code block containing top-level conditions
+   * @param <K> type of keys in things
+   * @param <V> type of values in things
+   * @since 2.5
+   */
+  @Beta
+  public <K, V> void verifyEach(
+    Map<K, V> things,
+    @ClosureParams(value = FromString.class, options = {"", "java.util.Map.Entry<K, V>", "K, V", "K, V, int"})
+    @DelegatesTo(type = "java.util.Map.Entry<K, V>", strategy = Closure.DELEGATE_FIRST)
+    Closure<?> closure
+  ) {
+    verifyEach(things, Objects::toString, closure);
+  }
+
+  /**
+   * Performs assertions on each entry of a map, collecting up failures instead of stopping at first.
+   * <p>
+   * Exception messages will contain the result of calling the namer for an entry to identify it.
+   * <p>
+   * The closure can use zero to three parameters, mirroring Groovy's {@code Map.each} idiom.
+   * With no parameters, the delegate is the current {@link java.util.Map.Entry}, so {@code key}
+   * and {@code value} can be referenced directly.
+   * A single parameter is the entry, two parameters are the key and the value, and a third
+   * optional parameter is the iteration index of the entry.
+   *
+   * @param things the map to inspect
+   * @param namer the namer function to use when rendering the exception
+   * @param closure a code block containing top-level conditions
+   * @param <K> type of keys in things
+   * @param <V> type of values in things
+   * @since 2.5
+   */
+  @Beta
+  public <K, V> void verifyEach(
+    Map<K, V> things,
+    Function<? super Map.Entry<K, V>, ?> namer,
+    @ClosureParams(value = FromString.class, options = {"", "java.util.Map.Entry<K, V>", "K, V", "K, V, int"})
+    @DelegatesTo(type = "java.util.Map.Entry<K, V>", strategy = Closure.DELEGATE_FIRST)
     Closure<?> closure
   ) {
     if (things == null) {

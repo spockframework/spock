@@ -210,6 +210,65 @@ class VerifyEachBlocks extends EmbeddedSpecification {
     e.message == "Target of 'verifyEach' block must not be null"
   }
 
+  def "verifyEach supports streams"() {
+    given:
+    def stream = [1, 2, 3].stream()
+
+    expect:
+    verifyEach(stream) {
+      it > 0
+    }
+  }
+
+  def "verifyEach on a stream handles a failed element verification"() {
+    given:
+    def stream = [1, 2, 3].stream()
+
+    when:
+    verifyEach(stream) {
+      it < 3
+    }
+
+    then:
+    SpockAssertionError e = thrown()
+    e.message.contains('item[2] 3')
+  }
+
+  def "verifyEach on a stream supports the namer"() {
+    given:
+    def stream = [1, 2, 3].stream()
+
+    when:
+    verifyEach(stream, { "int($it)" }) {
+      it < 3
+    }
+
+    then:
+    SpockAssertionError e = thrown()
+    e.message.contains('int(3)')
+  }
+
+  def "verifyEach on a stream can have an optional index parameter"() {
+    given:
+    def stream = [1, 2, 3].stream()
+
+    expect:
+    verifyEach(stream) { it, index ->
+      it == index + 1
+    }
+  }
+
+  def "verifyEach on a null stream fails with a clear message"() {
+    when:
+    verifyEach((java.util.stream.Stream) null) {
+      it > 0
+    }
+
+    then:
+    SpockAssertionError e = thrown()
+    e.message == "Target of 'verifyEach' block must not be null"
+  }
+
   def "verifyEach supports maps with a key and value parameter"() {
     given:
     def map = [a: 1, b: 2, c: 3]

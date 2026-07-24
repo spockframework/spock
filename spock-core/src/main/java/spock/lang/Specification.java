@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.spockframework.lang.ISpecificationContext;
 import org.spockframework.lang.Wildcard;
@@ -422,6 +423,60 @@ public abstract class Specification extends MockingApi {
       throw new SpockAssertionError("Target of 'verifyEach' block must not be null");
     }
     verifyEach(Arrays.asList(things), namer, closure);
+  }
+
+  /**
+   * Performs assertions on each element of a stream, collecting up failures instead of stopping at first.
+   * <p>
+   * Exception messages will contain a toString() of the element to identify it.
+   * <p>
+   * The closure can either use one or two parameters.
+   * The first parameter will always be the element.
+   * The second optional parameter will be the iteration index of the element.
+   *
+   * @param things the stream to inspect
+   * @param closure a code block containing top-level conditions
+   * @param <U> type of elements in things
+   * @since 2.5
+   */
+  @Beta
+  public <U> void verifyEach(
+    Stream<U> things,
+    @ClosureParams(value = FromString.class, options = {"U", "U, int"})
+    @DelegatesTo(type = "U", strategy = Closure.DELEGATE_FIRST)
+    Closure<?> closure
+  ) {
+    verifyEach(things, Objects::toString, closure);
+  }
+
+  /**
+   * Performs assertions on each element of a stream, collecting up failures instead of stopping at first.
+   * <p>
+   * Exception messages will contain the result of calling the namer for an element to identify it.
+   * <p>
+   * The closure can either use one or two parameters.
+   * The first parameter will always be the element.
+   * The second optional parameter will be the iteration index of the element.
+   *
+   * @param things the stream to inspect
+   * @param namer the namer function to use when rendering the exception
+   * @param closure a code block containing top-level conditions
+   * @param <U> type of elements in things
+   * @since 2.5
+   */
+  @Beta
+  public <U> void verifyEach(
+    Stream<U> things,
+    Function<? super U, ?> namer,
+    @ClosureParams(value = FromString.class, options = {"U", "U, int"})
+    @DelegatesTo(type = "U", strategy = Closure.DELEGATE_FIRST)
+    Closure<?> closure
+  ) {
+    if (things == null) {
+      throw new SpockAssertionError("Target of 'verifyEach' block must not be null");
+    }
+    // a Stream is single-use, so adapt it to an Iterable that iterates it exactly once
+    verifyEach((Iterable<U>) things::iterator, namer, closure);
   }
 
   /**

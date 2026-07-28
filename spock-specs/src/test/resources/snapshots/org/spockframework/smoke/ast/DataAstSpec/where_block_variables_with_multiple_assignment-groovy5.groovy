@@ -15,7 +15,7 @@ public void $spock_feature_0_0(java.lang.Object name, java.lang.Object greeting)
     catch (java.lang.Throwable $spock_condition_throwable) {
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'greeting == \"Hello, world!\"', 1, 83, null, $spock_condition_throwable)}
     org.spockframework.runtime.SpockRuntime.callBlockExited(this, 0)
-    this.getSpecificationContext().getMockController().leaveScope()
+    this.getSpecificationContext().getMockController().verifyLastScope()
 }
 
 @org.spockframework.runtime.model.DataProviderMetadata(line = 4, dataVariables = ['name'])

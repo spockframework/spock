@@ -410,7 +410,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     // for global required interactions
     if (method instanceof FeatureMethod) {
-      method.getStatements().add(createMockControllerCall(nodeCache.MockController_LeaveScope));
+      method.getStatements().add(createMockControllerCall(nodeCache.MockController_VerifyLastScope));
     }
 
     if (method instanceof VerifyAllMethod) {

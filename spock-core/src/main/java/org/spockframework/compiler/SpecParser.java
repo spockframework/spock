@@ -17,12 +17,12 @@
 package org.spockframework.compiler;
 
 import org.spockframework.compiler.model.*;
+import spock.lang.DataProvider;
 import spock.lang.Shared;
 
 import java.util.List;
 
 import org.codehaus.groovy.ast.*;
-import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.stmt.Statement;
 import spock.lang.Verify;
 import spock.lang.VerifyAll;
@@ -101,7 +101,11 @@ public class SpecParser implements GroovyClassVisitor {
   }
 
   private boolean isIgnoredMethod(MethodNode method) {
-    return AstUtil.isSynthetic(method);
+    // @DataProvider methods are owned by their own local transform; they must be skipped
+    // here because their where-block grammar would otherwise classify them as feature
+    // methods (any statement label triggers isFeatureMethod) or relocate their body as
+    // a helper method, before the local transform ever sees them
+    return AstUtil.isSynthetic(method) || AstUtil.hasAnnotation(method, DataProvider.class);
   }
 
   // IDEA: check for misspellings other than wrong capitalization
@@ -175,7 +179,7 @@ public class SpecParser implements GroovyClassVisitor {
   private void buildFeatureMethod(MethodNode method) {
     Method feature = new FeatureMethod(spec, method, featureMethodCount++);
     try {
-      buildBlocks(feature);
+      BlockParser.parseBlocks(feature);
     } catch (InvalidSpecCompileException e) {
       errorReporter.error(e);
       return;
@@ -216,84 +220,4 @@ public class SpecParser implements GroovyClassVisitor {
     stats.clear();
   }
 
-  private void buildBlocks(Method method) throws InvalidSpecCompileException {
-    List<Statement> stats = AstUtil.getStatements(method.getAst());
-    Block currBlock = method.addBlock(new AnonymousBlock(method));
-
-    String statementLabelToTransplant = null;
-    for (Statement stat : stats) {
-      if (stat.getStatementLabel() == null) {
-        if (statementLabelToTransplant != null) {
-          stat.setStatementLabel(statementLabelToTransplant);
-        }
-        currBlock.getAst().add(stat);
-      } else {
-        currBlock = addBlock(method, stat);
-      }
-      // Usually, you have a label on a statement like
-      //
-      // combined:
-      //   x << [1]
-      //
-      // and the label stays on that statement and could be used in later stages of the AST processing.
-      // Especially for "combined" this is essential for proper operation.
-      //
-      // But if the label has a description like
-      //
-      // combined: 'combined with x'
-      //   x << [1]
-      //
-      // then the description is added as "text" to the current block and the whole statement is swallowed.
-      // If the label is needed for further processing like for "combined", this is then missing,
-      // so transplant the label to the following statement which it actually affects.
-      statementLabelToTransplant = (getDescription(stat) == null) ? null : stat.getStatementLabel();
-    }
-
-    checkIsValidSuccessor(method, BlockParseInfo.METHOD_END,
-        method.getAst().getLastLineNumber(), method.getAst().getLastColumnNumber());
-
-    // set the block metadata index for each block this must be equal to the index of the block in the @BlockMetadata annotation
-    int i = -1;
-    for (Block block : method.getBlocks()) {
-      if(!block.hasBlockMetadata()) continue;
-      block.setBlockMetaDataIndex(++i);
-    }
-    // now that statements have been copied to blocks, the original statement
-    // list is cleared; statements will be copied back after rewriting is done
-    stats.clear();
-  }
-
-  private Block addBlock(Method method, Statement stat) throws InvalidSpecCompileException {
-    String label = stat.getStatementLabel();
-
-    for (BlockParseInfo blockInfo: BlockParseInfo.values()) {
-      if (!label.equals(blockInfo.toString())) continue;
-
-      checkIsValidSuccessor(method, blockInfo, stat.getLineNumber(), stat.getColumnNumber());
-      Block block = blockInfo.addNewBlock(method);
-      String description = getDescription(stat);
-      if (description == null)
-        block.getAst().add(stat);
-      else
-        block.getDescriptions().add(description);
-
-      return block;
-    }
-
-    throw new InvalidSpecCompileException(stat, "Unrecognized block label: " + label);
-  }
-
-  private String getDescription(Statement stat) {
-    ConstantExpression constExpr = AstUtil.getExpression(stat, ConstantExpression.class);
-    return constExpr == null || !(constExpr.getValue() instanceof String) ?
-        null : (String)constExpr.getValue();
-  }
-
-  private void checkIsValidSuccessor(Method method, BlockParseInfo blockInfo, int line, int column)
-      throws InvalidSpecCompileException {
-    BlockParseInfo oldBlockInfo = method.getLastBlock().getParseInfo();
-    if (!oldBlockInfo.getSuccessors(method).contains(blockInfo))
-      throw new InvalidSpecCompileException(line, column, "'%s' is not allowed here; instead, use one of: %s",
-          blockInfo, oldBlockInfo.getSuccessors(method), method.getName(), oldBlockInfo, blockInfo);
-  }
 }

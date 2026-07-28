@@ -470,7 +470,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       new ClassExpression(nodeCache.SpockRuntime),
       blockListenerMethod,
       new ArgumentListExpression(
-        VariableExpression.THIS_EXPRESSION,
+        AstUtil.createThisExpression(),
         new ConstantExpression(block.getBlockMetaDataIndex(), true)
       ));
   }
@@ -693,7 +693,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   public MethodCallExpression getSpecificationContext() {
-    return createDirectMethodCall(VariableExpression.THIS_EXPRESSION,
+    return createDirectMethodCall(AstUtil.createThisExpression(),
         nodeCache.Specification_GetSpecificationContext, ArgumentListExpression.EMPTY_ARGUMENTS);
   }
 

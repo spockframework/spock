@@ -804,16 +804,34 @@ public class WhereBlockRewriter {
   private void generatePreviousColumnExtractorStatements(Set<String> referencedPreviousVariables, int row,
                                                          List<Statement> statements) {
     for (String referencedPreviousVariable : referencedPreviousVariables) {
+      ClassNode declaredType = getDeclaredDataVariableType(referencedPreviousVariable);
+      Expression rowValue = createDirectMethodCall(
+        new VariableExpression(getDataTableParameterName(referencedPreviousVariable)),
+        resources.getAstNodeCache().List_Get,
+        new ConstantExpression(row));
+      if (declaredType != null) {
+        // use the declared feature parameter type, so that cell expressions
+        // referencing previous columns pass static type checking
+        CastExpression coercedRowValue = new CastExpression(declaredType, rowValue);
+        coercedRowValue.setCoerce(true);
+        rowValue = coercedRowValue;
+      }
       statements.add(new ExpressionStatement(
+        // Type x = $spock_p_x.get(row) as Type
+        // or, without a declared parameter type
         // def x = $spock_p_x.get(row)
         new DeclarationExpression(
-          new VariableExpression(referencedPreviousVariable),
+          new VariableExpression(referencedPreviousVariable, declaredType == null ? ClassHelper.DYNAMIC_TYPE : declaredType),
           Token.newSymbol(Types.ASSIGN, -1, -1),
-          createDirectMethodCall(
-            new VariableExpression(getDataTableParameterName(referencedPreviousVariable)),
-            resources.getAstNodeCache().List_Get,
-            new ConstantExpression(row)))));
+          rowValue)));
     }
+  }
+
+  private ClassNode getDeclaredDataVariableType(String name) {
+    for (Parameter parameter : whereBlock.getParent().getAst().getParameters()) {
+      if (parameter.getName().equals(name) && !parameter.isDynamicTyped()) return parameter.getType();
+    }
+    return null;
   }
 
   private List<VariableExpression> getReferencedPreviousVariables(List<String> previousVariables, Expression providerExpression) {

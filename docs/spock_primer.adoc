@@ -788,6 +788,35 @@ will be rendered as
 include::{snapshotdir}/primer/VerifyEachDocSpec/verifyEach_with_index_method.txt[]
 ----
 
+[[statically-compiled-specifications]]
+== Statically Compiled Specifications
+
+Specifications can be compiled with Groovy's static compilation by annotating the specification class or individual
+feature methods with `@CompileStatic` or `@TypeChecked`. All major features work under static compilation: conditions
+including their failure rendering, exception conditions, interactions and stubbing, `old()`, `with`, `verifyAll`, and
+data driven features.
+
+Since the static type checker analyzes the code after Spock has rewritten it, a few rules apply:
+
+* Mock creation must use a typed variable declaration, e.g. `List list = Mock()` or `List list = Mock(List)`.
+  With `def list = Mock(List)` the variable is typed as `Object`, so calls on it will not pass type checking.
+* Data variables in `where:` blocks default to `Object`. Declare typed feature method parameters to use them
+  with methods or operators, e.g. `def "maximum of two numbers"(int a, int b, int c)`.
+* Precondition closures of `@IgnoreIf` and `@Requires` need an explicitly typed parameter, e.g.
+  `@IgnoreIf({ PreconditionContext it -> it.os.windows })`.
+
+Some limitations remain:
+
+* Global Groovy mocks (e.g. `GroovySpy(Foo, global: true)`) rely on Groovy's meta-object protocol and therefore
+  cannot intercept calls made from statically compiled code. The real method is called instead.
+* Dynamic language features, like dynamic method names or `methodMissing`, are not available, as in any
+  statically compiled Groovy code.
+* Spock detects static compilation via the annotations. If static compilation is instead applied globally through
+  a compiler configuration script, Spock does not see it and conditions will fail to compile.
+* Condition rendering can differ in minor ways. For example, the target class of a static method call like
+  `Math.max(a, b)` is not rendered, because statically compiled code never evaluates the receiver of a static
+  method call, so there is no value to record.
+
 [[specifications-as-documentation]]
 == Specifications as Documentation
 

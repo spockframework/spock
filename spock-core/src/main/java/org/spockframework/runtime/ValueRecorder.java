@@ -41,8 +41,10 @@ public class ValueRecorder {
   /**
    * Records and returns the specified value. Hence an expression can be replaced
    * with record(expression) without impacting evaluation of the expression.
+   * The generic return type preserves the static type of the wrapped expression,
+   * allowing conditions to pass static type checking (e.g. under {@code @CompileStatic}).
    */
-  public Object record(int index, Object value) {
+  public <T> T record(int index, T value) {
     realizeNas(index + 1, null);
     values.set(index, value);
 
@@ -72,8 +74,9 @@ public class ValueRecorder {
 
   /**
    * Materializes N/A values without recording a new value.
+   * Generic for the same reason as {@link #record(int, Object)}.
    */
-  public Object realizeNas(int index, Object value) {
+  public <T> T realizeNas(int index, T value) {
     for (int i = values.size(); i < index; i++)
       values.add(ExpressionInfo.VALUE_NOT_AVAILABLE);
     return value;

@@ -16,6 +16,7 @@
 package org.spockframework.compiler;
 
 import org.codehaus.groovy.ast.expr.ClosureExpression;
+import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.stmt.Statement;
 
@@ -61,5 +62,5 @@ public interface ISpecialMethodCall {
 
   ClosureExpression getClosureExpr();
 
-  void expand();
+  void expand(Expression specificationReference);
 }

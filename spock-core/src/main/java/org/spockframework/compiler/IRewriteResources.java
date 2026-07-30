@@ -30,6 +30,13 @@ import org.spockframework.compiler.model.Method;
  * @author Peter Niederwieser
  */
 public interface IRewriteResources {
+  /**
+   * The AST expression that yields the {@code Specification} instance at this
+   * rewrite site (the "spec reference"). Real specs return {@code this};
+   * external mechanisms return an expression that locates the owning spec.
+   */
+  Expression getSpecificationReference();
+
   Method getCurrentMethod();
 
   Block getCurrentBlock();

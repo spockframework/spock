@@ -45,6 +45,8 @@ public class AstNodeCache {
   public final ClassNode SpecInternals = ClassHelper.makeWithoutCaching(SpecInternals.class);
   public final ClassNode MockController = ClassHelper.makeWithoutCaching(MockController.class);
   public final ClassNode SpecificationContext = ClassHelper.makeWithoutCaching(SpecificationContext.class);
+  public final ClassNode MockInteractionSupport = ClassHelper.makeWithoutCaching(spock.mock.MockInteractionSupport.class);
+  public final ClassNode Checks = ClassHelper.makeWithoutCaching(org.spockframework.util.Checks.class);
   public final ClassNode DataVariableMultiplication = ClassHelper.makeWithoutCaching(DataVariableMultiplication.class);
   public final ClassNode DataVariableMultiplicationFactor = ClassHelper.makeWithoutCaching(DataVariableMultiplicationFactor.class);
   public final ClassNode BlockInfo = ClassHelper.makeWithoutCaching(BlockInfo.class);
@@ -52,6 +54,15 @@ public class AstNodeCache {
 
   public final MethodNode Specification_GetSpecificationContext =
     Specification.getDeclaredMethods(Identifiers.GET_SPECIFICATION_CONTEXT).get(0);
+
+  public final MethodNode MockInteractionSupport_GetSpecification =
+    MockInteractionSupport.getDeclaredMethods("getSpecification").get(0);
+
+  public final MethodNode Checks_NotNull =
+    Checks.getDeclaredMethods("notNull").stream()
+      .filter(method -> method.getParameters()[1].getType().equals(ClassHelper.STRING_TYPE))
+      .findFirst()
+      .orElseThrow(IllegalStateException::new);
 
   public final MethodNode SpockRuntime_VerifyCondition =
       SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.VERIFY_CONDITION).get(0);

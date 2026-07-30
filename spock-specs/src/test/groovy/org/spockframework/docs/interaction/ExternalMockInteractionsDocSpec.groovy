@@ -1,0 +1,44 @@
+package org.spockframework.docs.interaction
+
+import spock.lang.Specification
+import spock.mock.MockInteractionSupport
+
+class ExternalMockInteractionsDocSpec extends Specification {
+
+  // tag::support-fixture[]
+  static class OrderFixtures implements MockInteractionSupport {
+    final Specification specification
+
+    OrderFixtures(Specification specification) {
+      this.specification = specification
+    }
+
+    PaymentGateway happyGateway() {
+      PaymentGateway gateway = Mock()      // created and auto-attached to the spec
+      gateway.charge(42) >> true           // stubbing
+      1 * gateway.audit("processed")       // required interaction
+      return gateway
+    }
+  }
+  // end::support-fixture[]
+
+  // tag::support-usage[]
+  def "a MockInteractionSupport fixture creates and configures mocks"() {
+    given:
+    PaymentGateway gateway = new OrderFixtures(this).happyGateway()
+
+    when:
+    boolean charged = gateway.charge(42)
+    gateway.audit("processed")
+
+    then:
+    charged
+  }
+  // end::support-usage[]
+
+  interface PaymentGateway {
+    boolean charge(int amount)
+
+    void audit(String message)
+  }
+}

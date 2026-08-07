@@ -7,7 +7,7 @@ groovy5 = '5.0.6'
 groovy6 = '6.0.0-alpha-2'
 jacoco = '0.8.15'
 junit5 = '5.14.4'
-junit6 = '6.1.2'
+junit6 = '6.1.3'
 # The VersionRange used by OSGi to check compatibility with JUnit Platform.
 junitPlatformVersionRange = "[1.12,7)"
 asm = '9.10.1'

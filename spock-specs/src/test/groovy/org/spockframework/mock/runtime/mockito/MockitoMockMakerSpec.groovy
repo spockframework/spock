@@ -32,6 +32,7 @@ import org.spockframework.mock.CannotCreateMockException
 import org.spockframework.mock.MockUtil
 import org.spockframework.mock.runtime.ByteBuddyTestClassLoader
 import org.spockframework.runtime.GroovyRuntimeUtil
+import org.spockframework.runtime.InvalidSpecException
 
 import static spock.mock.MockMakers.mockito
 
@@ -516,17 +517,19 @@ Can not mock final classes with the following settings :
     mockUtil.isMock(m)
   }
 
-  @Issue("https://github.com/spockframework/spock/issues/2337")
-  def "NPE when stubbing method on null object"() {
+  @Issue(["https://github.com/spockframework/spock/issues/2337", "https://github.com/spockframework/spock/issues/2339"])
+  def "stubbing method on null object does not NPE and reports InvalidSpecException"() {
     given:
     Object nullObj = null
 
     when:
-    //Issue #2337: MockitoMockMaker passes null to Mockito's getHandler() throws NPE
+    // #2337: MockitoMockMaker must not pass null to Mockito's getHandler()
+    // #2339: null target interactions are rejected with a clear error
     nullObj.toString() >> ""
 
     then:
-    noExceptionThrown()
+    def ex = thrown(InvalidSpecException)
+    ex.message == "Interaction on a null object is invalid"
   }
 }
 

@@ -69,7 +69,11 @@ public class EditDistance {
   }
 
   public List<EditOperation> calculatePath() {
-    return path;
+    List<EditOperation> result = new ArrayList<>(path.size());
+    for (EditOperation operation : path) {
+      result.add(new EditOperation(operation.getKind(), operation.getLength()));
+    }
+    return result;
   }
 
   /**

@@ -87,6 +87,19 @@ class EditDistanceSpec extends Specification {
     str2 = editedString(str1)
   }
 
+  def "calculated paths can be modified independently"() {
+    given:
+    def dist = new EditDistance("sitting", "kitten")
+    def expected = dist.calculatePath()
+
+    when:
+    dist.calculatePath().clear()
+    dist.calculatePath().first().incLength(1)
+
+    then:
+    dist.calculatePath() == expected
+  }
+
   def computeDistance(List operations) {
     operations.sum 0, { it.getKind() == EditOperation.Kind.SKIP ? 0 : it.getLength() }
   }

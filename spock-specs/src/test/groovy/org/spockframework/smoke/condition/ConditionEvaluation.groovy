@@ -323,13 +323,12 @@ class ConditionEvaluation extends EmbeddedSpecification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/2410")
-  def "as boolean coercion on null is preserved in assertion block"() {
-    given:
-    def result = [error: true]
-
+  def "as boolean coercion is preserved in assertion block"() {
     expect:
-    (result.success as boolean) == false
     (null as boolean) == false
+    ("text" as boolean) == true
+    ([] as boolean) == false
+    ([1] as boolean) == true
   }
 
   def "ArgumentListExpression"() {

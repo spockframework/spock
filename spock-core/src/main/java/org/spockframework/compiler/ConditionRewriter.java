@@ -554,7 +554,9 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
     // maintain type casts to preserve method disambiguation
     // for example when giving a casted null as argument
     if (expr instanceof CastExpression) {
-      return new CastExpression(expr.getType(), result);
+      CastExpression cast = new CastExpression(expr.getType(), result);
+      cast.setCoerce(((CastExpression) expr).isCoerce());
+      return cast;
     } else {
       return result;
     }

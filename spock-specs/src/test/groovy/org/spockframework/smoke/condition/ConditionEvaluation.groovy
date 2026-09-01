@@ -322,6 +322,16 @@ class ConditionEvaluation extends EmbeddedSpecification {
     ([1, 2, 3] as int[]).getClass().isArray()
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/2410")
+  def "as boolean coercion on null is preserved in assertion block"() {
+    given:
+    def result = [error: true]
+
+    expect:
+    (result.success as boolean) == false
+    (null as boolean) == false
+  }
+
   def "ArgumentListExpression"() {
     expect:
     3.toString() == "3"

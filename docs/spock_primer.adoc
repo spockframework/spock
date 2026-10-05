@@ -788,6 +788,20 @@ will be rendered as
 include::{snapshotdir}/primer/VerifyEachDocSpec/verifyEach_with_index_method.txt[]
 ----
 
+Since 2.5, `verifyEach` can also assert on the entries of a `Map`, mirroring Groovy's `Map.each` idiom.
+The closure can use zero to three parameters: with no parameters the current `Map.Entry` is set as the delegate, so `key` and `value` can be referenced directly; a single parameter is the entry; two parameters are the key and the value; and a third optional parameter is the iteration index.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/primer/VerifyEachDocSpec.groovy[tag=verify-each-map]
+----
+
+will be rendered as
+
+----
+include::{snapshotdir}/primer/VerifyEachDocSpec/verifyEach_with_map_method.txt[]
+----
+
 [[specifications-as-documentation]]
 == Specifications as Documentation
 

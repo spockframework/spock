@@ -18,6 +18,7 @@ package org.spockframework.smoke
 
 import org.opentest4j.MultipleFailuresError
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.InvalidSpecException
 import org.spockframework.runtime.SpockAssertionError
 import spock.lang.Snapshot
 import spock.lang.Snapshotter
@@ -143,6 +144,257 @@ class VerifyEachBlocks extends EmbeddedSpecification {
     verifyEach(range) { it, index ->
       it  == index + 1
     }
+  }
+
+  def "verifyEach supports object arrays"() {
+    given:
+    Integer[] array = [1, 2, 3]
+
+    expect:
+    verifyEach(array) {
+      it > 0
+    }
+
+    and: 'parameter is the same as the delegate'
+    verifyEach(array) {
+      it == delegate
+    }
+  }
+
+  def "verifyEach on an array handles a failed element verification"() {
+    given:
+    Integer[] array = [1, 2, 3]
+
+    when:
+    verifyEach(array) {
+      it < 3
+    }
+
+    then:
+    SpockAssertionError e = thrown()
+    e.message.contains('item[2] 3')
+  }
+
+  def "verifyEach on an array supports the namer"() {
+    given:
+    Integer[] array = [1, 2, 3]
+
+    when:
+    verifyEach(array, { "int($it)" }) {
+      it < 3
+    }
+
+    then:
+    SpockAssertionError e = thrown()
+    e.message.contains('int(3)')
+  }
+
+  def "verifyEach on an array can have an optional index parameter"() {
+    given:
+    Integer[] array = [1, 2, 3]
+
+    expect:
+    verifyEach(array) { it, index ->
+      it == index + 1
+    }
+  }
+
+  def "verifyEach on a null array fails with a clear message"() {
+    when:
+    verifyEach((Integer[]) null) {
+      it > 0
+    }
+
+    then:
+    SpockAssertionError e = thrown()
+    e.message == "Target of 'verifyEach' block must not be null"
+  }
+
+  def "verifyEach supports streams"() {
+    given:
+    def stream = [1, 2, 3].stream()
+
+    expect:
+    verifyEach(stream) {
+      it > 0
+    }
+  }
+
+  def "verifyEach on a stream handles a failed element verification"() {
+    given:
+    def stream = [1, 2, 3].stream()
+
+    when:
+    verifyEach(stream) {
+      it < 3
+    }
+
+    then:
+    SpockAssertionError e = thrown()
+    e.message.contains('item[2] 3')
+  }
+
+  def "verifyEach on a stream supports the namer"() {
+    given:
+    def stream = [1, 2, 3].stream()
+
+    when:
+    verifyEach(stream, { "int($it)" }) {
+      it < 3
+    }
+
+    then:
+    SpockAssertionError e = thrown()
+    e.message.contains('int(3)')
+  }
+
+  def "verifyEach on a stream can have an optional index parameter"() {
+    given:
+    def stream = [1, 2, 3].stream()
+
+    expect:
+    verifyEach(stream) { it, index ->
+      it == index + 1
+    }
+  }
+
+  def "verifyEach on a null stream fails with a clear message"() {
+    when:
+    verifyEach((java.util.stream.Stream) null) {
+      it > 0
+    }
+
+    then:
+    SpockAssertionError e = thrown()
+    e.message == "Target of 'verifyEach' block must not be null"
+  }
+
+  def "verifyEach supports maps with a key and value parameter"() {
+    given:
+    def map = [a: 1, b: 2, c: 3]
+
+    expect:
+    verifyEach(map) { key, value ->
+      key instanceof String
+      value > 0
+    }
+  }
+
+  def "verifyEach supports maps with a single entry parameter"() {
+    given:
+    def map = [a: 1, b: 2, c: 3]
+
+    expect:
+    verifyEach(map) { entry ->
+      entry.value > 0
+    }
+  }
+
+  def "verifyEach on a map delegates to the entry so key and value can be used directly"() {
+    given:
+    def map = [a: 1, b: 2, c: 3]
+
+    expect:
+    verifyEach(map) {
+      value > 0
+      key instanceof String
+    }
+  }
+
+  def "verifyEach on a map can have an optional index parameter"() {
+    given:
+    def map = [a: 1, b: 2, c: 3]
+
+    expect:
+    verifyEach(map) { key, value, index ->
+      value == index + 1
+    }
+  }
+
+  def "verifyEach on a map handles a failed element verification"() {
+    given:
+    def map = [a: 1, b: 2, c: 3]
+
+    when:
+    verifyEach(map) { key, value ->
+      value < 3
+    }
+
+    then:
+    SpockAssertionError e = thrown()
+    e.message.contains('item[2] c=3')
+  }
+
+  def "verifyEach on a map supports the namer"() {
+    given:
+    def map = [a: 1, b: 2, c: 3]
+
+    when:
+    verifyEach(map, { "entry($it.key)" }) { key, value ->
+      value < 3
+    }
+
+    then:
+    SpockAssertionError e = thrown()
+    e.message.contains('entry(c)')
+  }
+
+  def "verifyEach on a null map fails with a clear message"() {
+    when:
+    verifyEach((Map) null) {
+      value > 0
+    }
+
+    then:
+    SpockAssertionError e = thrown()
+    e.message == "Target of 'verifyEach' block must not be null"
+  }
+
+  def "verifyEach on a map supports a closure with no parameters using the delegate"() {
+    given:
+    def map = [a: 1, b: 2, c: 3]
+
+    expect:
+    verifyEach(map) { ->
+      value > 0
+    }
+  }
+
+  def "verifyEach rejects a closure with too many parameters for an iterable"() {
+    when:
+    verifyEach([1, 2, 3]) { a, b, c -> }
+
+    then:
+    InvalidSpecException e = thrown()
+    e.message == "verifyEach supports closures with 0 to 2 parameters (the item, optionally followed by the index), but got 3"
+  }
+
+  def "verifyEach on an iterable supports a closure with no parameters using the delegate"() {
+    given:
+    def list = ['abc', 'defg']
+
+    expect:
+    verifyEach(list) { ->
+      length() > 2
+    }
+  }
+
+  def "verifyEach rejects a closure with too many parameters for an array"() {
+    when:
+    verifyEach([1, 2, 3] as Integer[]) { a, b, c -> }
+
+    then:
+    InvalidSpecException e = thrown()
+    e.message == "verifyEach supports closures with 0 to 2 parameters (the item, optionally followed by the index), but got 3"
+  }
+
+  def "verifyEach rejects a closure with too many parameters for a map"() {
+    when:
+    verifyEach([a: 1, b: 2, c: 3]) { a, b, c, d -> }
+
+    then:
+    InvalidSpecException e = thrown()
+    e.message == "verifyEach on a map supports closures with 0 to 3 parameters (the entry, or the key and value, optionally followed by the index), but got 4"
   }
 
   void checks(int x) {

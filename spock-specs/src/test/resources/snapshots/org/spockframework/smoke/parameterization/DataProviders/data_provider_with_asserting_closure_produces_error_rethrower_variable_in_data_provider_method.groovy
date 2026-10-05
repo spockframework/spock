@@ -4,7 +4,7 @@ import spock.lang.*
 class ASpec extends Specification {
 /*--------- tag::snapshot[] ---------*/
 public void $spock_feature_0_0(java.lang.Object dataPipe, java.lang.Object dataVariable) {
-    this.getSpecificationContext().getMockController().leaveScope()
+    this.getSpecificationContext().getMockController().verifyLastScope()
 }
 
 public java.lang.Object $spock_feature_0_0prov0() {

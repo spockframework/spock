@@ -31,7 +31,7 @@ class NullTargetInteraction extends Specification {
 
     then:
     def ex = thrown(InvalidSpecException)
-    ex.message == "Interaction on a null object is invalid"
+    ex.message == "Interaction target must not be null, interactions can only be defined on mock objects"
   }
 
   def "required interaction on null target throws InvalidSpecException"() {
@@ -43,7 +43,7 @@ class NullTargetInteraction extends Specification {
 
     then:
     def ex = thrown(InvalidSpecException)
-    ex.message == "Interaction on a null object is invalid"
+    ex.message == "Interaction target must not be null, interactions can only be defined on mock objects"
   }
 
   def "interaction on real mock is still accepted"() {

@@ -529,7 +529,7 @@ Can not mock final classes with the following settings :
 
     then:
     def ex = thrown(InvalidSpecException)
-    ex.message == "Interaction on a null object is invalid"
+    ex.message == "Interaction target must not be null, interactions can only be defined on mock objects"
   }
 }
 

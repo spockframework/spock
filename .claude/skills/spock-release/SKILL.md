@@ -129,7 +129,7 @@ The tag run only closes the staging repository; publishing it is manual.
 
 Then wait for the `spock-core` jars of every variant from `variantsList` in `gradle.properties` to reach Maven Central, running in the background: `.claude/skills/spock-release/check-deploy.sh <version> <variant>...`.
 Syncing to Maven Central can take a while after the publishing, so let the script poll instead of reporting a failure.
-It gives up after `CHECK_DEPLOY_TIMEOUT` seconds (default one hour) with exit code 2, naming the missing variants; then ask the human to check the deployment in the Central Portal.
+It gives up after `CHECK_DEPLOY_TIMEOUT` seconds (default one hour) with exit code 2, naming the missing variant and the ones not checked yet; then ask the human to check the deployment in the Central Portal.
 
 Done when the artifacts of every variant are visible on Maven Central.
 

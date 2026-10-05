@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Waits until the spock-core jar of each given Groovy variant is available on Maven Central.
 # Variants are checked one after another, the next one only once the previous one is available.
-# Gives up after CHECK_DEPLOY_TIMEOUT seconds (default 3600) in total, naming the variants still missing.
+# Gives up after CHECK_DEPLOY_TIMEOUT seconds (default 3600) in total, naming the missing variant and the ones not checked yet.
 # On macOS, plays a sound when done, whether all jars are available or the timeout was reached.
 #
 # Usage: check-deploy.sh <version> <variant>...
@@ -25,20 +25,22 @@ notify() {
 }
 trap notify EXIT
 
-remaining=("$@")
-while [ "${#remaining[@]}" -gt 0 ]; do
-  variant="${remaining[0]}"
+while [ "$#" -gt 0 ]; do
+  variant="$1"
+  shift
   artifact_version="$version-groovy-$variant"
   url="https://repo1.maven.org/maven2/org/spockframework/spock-core/$artifact_version/spock-core-$artifact_version.jar"
   printf 'Waiting for %s ' "$url"
-  until curl --output /dev/null --silent --head --fail "$url"; do
+  until curl --output /dev/null --silent --head --fail --max-time 30 "$url"; do
     if [ "$SECONDS" -ge "$timeout" ]; then
       echo
-      echo "Timed out after ${timeout}s, not available on Maven Central for variants: ${remaining[*]}" >&2
+      echo "Timed out after ${timeout}s, not available on Maven Central for variant: $variant" >&2
+      if [ "$#" -gt 0 ]; then
+        echo "Not checked yet: $*" >&2
+      fi
       exit 2
     fi
     sleep 5
   done
   echo 'available'
-  remaining=("${remaining[@]:1}")
 done

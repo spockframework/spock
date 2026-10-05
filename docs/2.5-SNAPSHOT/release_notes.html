@@ -82,6 +82,9 @@
 <div class="ulist">
 <ul>
 <li>
+<p>Declaring an interaction on a <code>null</code> target now throws <code>InvalidSpecException</code> instead of being silently ignored (or failing with an unrelated NPE for some mock makers) <a href="https://github.com/spockframework/spock/issues/2339">#2339</a></p>
+</li>
+<li>
 <p>Mock/Stub checks on <code>Comparable&lt;T&gt;</code> with <code>T</code> being something other than <code>Object</code> now compare using the java identity hash code instead of always being equal <a href="https://github.com/spockframework/spock/issues/2352">#2352</a></p>
 </li>
 <li>
@@ -3509,7 +3512,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.5-SNAPSHOT<br>
-Last updated 2026-10-05 14:35:11 UTC
+Last updated 2026-10-05 16:25:59 UTC
 </div>
 </div>
 </body>

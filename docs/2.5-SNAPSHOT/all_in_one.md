@@ -7534,6 +7534,7 @@ The Grails plugin has moved to its own [GitHub project](https://github.com/spock
 
 #### Breaking Changes
 
+- Declaring an interaction on a `null` target now throws `InvalidSpecException` instead of being silently ignored (or failing with an unrelated NPE for some mock makers) [#2339](https://github.com/spockframework/spock/issues/2339)
 - Mock/Stub checks on `Comparable<T>` with `T` being something other than `Object` now compare using the java identity hash code instead of always being equal [#2352](https://github.com/spockframework/spock/issues/2352)
 - Interactions outside a `then:` block are now still active in any eventually existing `cleanup` methods.
 If the interaction contains a lower cardinality, this is still checked at the end of the feature method.

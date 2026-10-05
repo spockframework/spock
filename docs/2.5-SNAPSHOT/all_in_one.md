@@ -7528,11 +7528,18 @@ The Grails plugin has moved to its own [GitHub project](https://github.com/spock
 - Fix `SourceToAstNodeAndSourceTranspiler` dropping nested generic type arguments, so signatures like `Iterator<Tuple2<Integer, Integer>>` are now rendered faithfully instead of `Iterator<Tuple2>` [#2393](https://github.com/spockframework/spock/pull/2393)
 - Fix `SourceToAstNodeAndSourceTranspiler` rendering of several other constructs: the elvis operator, attribute access (`.@`), implicit-`it` closures, safe index access (`?[]`), numeric literal type suffixes (`L`, `F`, `D`, `G`), left-open ranges (`<..`), explicit type arguments of method calls, `for (index, value in iterable)` loops, multiple-assignment declarations on Groovy 5, and spurious empty `finally` blocks and `default` labels [#2393](https://github.com/spockframework/spock/pull/2393)
 - Fix interaction mismatch rendering failing with a lexer error and dropping the similarity report when a mocked method or property name contains a `$` [#2364](https://github.com/spockframework/spock/issues/2364)
+- Fix Mock does not intercept package-private methods in OSGi correctly [#2384](https://github.com/spockframework/spock/issues/2384)
+  - This only works for Java > 9, due to missing `MethodHandles.Lookup` API in Java 8
 
 
 #### Breaking Changes
 
 - Mock/Stub checks on `Comparable<T>` with `T` being something other than `Object` now compare using the java identity hash code instead of always being equal [#2352](https://github.com/spockframework/spock/issues/2352)
+- *This affects users upgrading to Groovy 6.*
+Before Groovy 6, a `switch` with arrow-style branches (`case x ->`) was always compiled as an expression, so a top-level arrow `switch` in an `expect:` or `then:` block was an [implicit condition](#implicit-and-explicit-conditions).
+Since Groovy 6 ([GROOVY-12255](https://issues.apache.org/jira/browse/GROOVY-12255)), a `switch` is only an expression where it is used as one, so a top-level arrow `switch` is now a statement and is no longer checked.
+Assign the result to a variable and check that variable instead.
+Using `!!` on a `switch` still [opts out of condition handling](#opt-out-of-condition-handling) as before [#2416](https://github.com/spockframework/spock/pull/2416)
 
 
 ### 2.4 (2025-12-11)

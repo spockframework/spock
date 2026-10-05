@@ -64,6 +64,16 @@
 <li>
 <p>Fix interaction mismatch rendering failing with a lexer error and dropping the similarity report when a mocked method or property name contains a <code>$</code> <a href="https://github.com/spockframework/spock/issues/2364">#2364</a></p>
 </li>
+<li>
+<p>Fix Mock does not intercept package-private methods in OSGi correctly <a href="https://github.com/spockframework/spock/issues/2384">#2384</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>This only works for Java &gt; 9, due to missing <code>MethodHandles.Lookup</code> API in Java 8</p>
+</li>
+</ul>
+</div>
+</li>
 </ul>
 </div>
 </div>
@@ -73,6 +83,13 @@
 <ul>
 <li>
 <p>Mock/Stub checks on <code>Comparable&lt;T&gt;</code> with <code>T</code> being something other than <code>Object</code> now compare using the java identity hash code instead of always being equal <a href="https://github.com/spockframework/spock/issues/2352">#2352</a></p>
+</li>
+<li>
+<p><em>This affects users upgrading to Groovy 6.</em><br>
+Before Groovy 6, a <code>switch</code> with arrow-style branches (<code>case x -&gt;</code>) was always compiled as an expression, so a top-level arrow <code>switch</code> in an <code>expect:</code> or <code>then:</code> block was an <a href="spock_primer.html#implicit-and-explicit-conditions">implicit condition</a>.
+Since Groovy 6 (<a href="https://issues.apache.org/jira/browse/GROOVY-12255">GROOVY-12255</a>), a <code>switch</code> is only an expression where it is used as one, so a top-level arrow <code>switch</code> is now a statement and is no longer checked.
+Assign the result to a variable and check that variable instead.
+Using <code>!!</code> on a <code>switch</code> still <a href="spock_primer.html#opt-out-of-condition-handling">opts out of condition handling</a> as before <a href="https://github.com/spockframework/spock/pull/2416">#2416</a></p>
 </li>
 </ul>
 </div>
@@ -3484,7 +3501,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.5-SNAPSHOT<br>
-Last updated 2026-07-13 06:44:35 UTC
+Last updated 2026-10-05 10:00:21 UTC
 </div>
 </div>
 </body>

@@ -3,6 +3,13 @@
   extends: [
     "config:recommended"
   ],
+  // Run 4x per day (hours 0, 6, 12, 18) and don't touch branches outside of it,
+  // to avoid mass rebases of open PRs that block the GitHub Actions runners
+  schedule: ["* */6 * * *"],
+  updateNotScheduled: false,
+  // Wait 3 days after a release to give scanners time to detect malicious packages,
+  // same as the security:minimumReleaseAge* presets, which exist only for npm, PyPI and crates
+  minimumReleaseAge: "3 days",
   // Don't manage versions in spock modules
   // we want to keep low versions for baseline compatibility
   ignorePaths: ["spock-*/**"],

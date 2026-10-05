@@ -31,6 +31,11 @@ include::include.adoc[]
   This enables `cleanup` methods to get stubbed responses from mock objects which previously was only possible by using a custom default response.
   If an interaction with stubbed response is present, the default response is also no longer used in the `cleanup` method because the interaction's stubbed response is used now, which could also cause existing tests to fail.
   spockIssue:616[]
+* _This affects users upgrading to Groovy 6._ +
+Before Groovy 6, a `switch` with arrow-style branches (`+case x ->+`) was always compiled as an expression, so a top-level arrow `switch` in an `expect:` or `then:` block was an <<spock_primer.adoc#implicit-and-explicit-conditions,implicit condition>>.
+Since Groovy 6 (https://issues.apache.org/jira/browse/GROOVY-12255[GROOVY-12255]), a `switch` is only an expression where it is used as one, so a top-level arrow `switch` is now a statement and is no longer checked.
+Assign the result to a variable and check that variable instead.
+Using `!!` on a `switch` still <<spock_primer.adoc#opt-out-of-condition-handling,opts out of condition handling>> as before spockPull:2416[]
 
 == 2.4 (2025-12-11)
 

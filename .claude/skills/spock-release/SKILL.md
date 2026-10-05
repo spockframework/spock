@@ -10,6 +10,7 @@ allowed-tools:
   - Bash(git show:*)
   - Bash(git diff:*)
   - Bash(git describe:*)
+  - Bash(git remote -v)
   - Bash(git cat-file:*)
   - Bash(git fetch:*)
   - Bash(git add:*)
@@ -73,7 +74,6 @@ Commits by bots (`renovate[bot]` and other `[bot]` authors) get no entry either.
 Account for every remaining commit in `<previous tag>..HEAD`: each has an entry linking its issue or PR, in the right section.
 
 Polish the `(tbd)` section to the conventions in Reference, keeping the meaning of each entry.
-Replace `(tbd)` in the release's heading with today's date.
 
 Build the contributor list from the authors and `Co-authored-by:` trailers of every non-bot commit in the range, infrastructure commits included.
 Name each contributor by their real name, falling back to their GitHub username when no proper name is configured.
@@ -116,7 +116,7 @@ When signing fails (no agent, pinentry prompt), delete the unsigned tag if one w
 
 **Gate**: the human runs `git push spockframework spock-<version>`.
 
-Watch the tag's workflow run the same way as in step 3.
+Watch the tag's workflow run as in step 3, but look it up by tag (`gh run list -R spockframework/spock -w release.yaml -b spock-<version>`): the tag and `master` share the release commit, so a lookup by sha also returns the `master` run.
 Then confirm the docs are live at `https://spockframework.org/spock/docs/<version>/`.
 
 Done when every job of the tag run is green.
@@ -129,6 +129,7 @@ The tag run only closes the staging repository; publishing it is manual.
 
 Then wait for the `spock-core` jars of every variant from `variantsList` in `gradle.properties` to reach Maven Central, running in the background: `.claude/skills/spock-release/check-deploy.sh <version> <variant>...`.
 Syncing to Maven Central can take a while after the publishing, so let the script poll instead of reporting a failure.
+It gives up after `CHECK_DEPLOY_TIMEOUT` seconds (default one hour) with exit code 2, naming the missing variants; then ask the human to check the deployment in the Central Portal.
 
 Done when the artifacts of every variant are visible on Maven Central.
 
@@ -142,7 +143,7 @@ gh release create spock-<version> -R spockframework/spock --verify-tag \
   --notes "<notes url>" [--prerelease]
 ```
 
-The notes url is `https://spockframework.org/spock/docs/<version>/release_notes.html` for a final release, and `https://spockframework.org/spock/docs/<version>/index.html` with `--prerelease` for a milestone.
+The notes url is `https://spockframework.org/spock/docs/<version>/release_notes.html`; add `--prerelease` for a milestone.
 
 **Gate**: the human runs it.
 
@@ -170,7 +171,7 @@ Done when the milestone shows `closed` with the release date as `due_on`, or the
 Edit:
 - `build.gradle`: `snapshotVersion = true`, `milestone = 0`; after a final release also bump `baseVersion` to the next minor (confirm with the human);
 - `README.adoc`: `:spock-snapshot-version:` to the new `baseVersion` (past iterations forgot this, so it is a deliberate addition);
-- `docs/release_notes.adoc`: after a final release, a `== <next version> (tbd)` heading on top; after a milestone, a `== <baseVersion> (tbd)` section for the upcoming final release, so the next PRs have a place for their entries.
+- `docs/release_notes.adoc`: after a final release, a `== <next version> (tbd)` heading on top; after a milestone, a `== <baseVersion> (tbd)` section for the upcoming final release, reusing the one already there, so the next PRs have a place for their entries.
 
 Commit with the message `Prepare next iteration`.
 

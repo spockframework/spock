@@ -36,22 +36,17 @@ import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
 import io.github.typesafegithub.workflows.domain.triggers.MergeGroup
 import io.github.typesafegithub.workflows.domain.triggers.PullRequest
-import io.github.typesafegithub.workflows.domain.triggers.Push
+import io.github.typesafegithub.workflows.domain.triggers.WorkflowDispatch
 import io.github.typesafegithub.workflows.dsl.expressions.Contexts.github
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
 
 workflow(
-    name = "Verify Branches and PRs",
+    name = "Verify PRs",
     on = listOf(
-        Push(
-            branchesIgnore = listOf(
-                "master",
-                "gh-pages"
-            )
-        ),
         PullRequest(),
-        MergeGroup()
+        MergeGroup(),
+        WorkflowDispatch()
     ),
     sourceFile = __FILE__,
     // https://stackoverflow.com/a/72408109/16358266
@@ -92,7 +87,7 @@ workflow(
                 parentFile
                     .resolve("../build/")
                     .apply { mkdirs() }
-                    .resolve("codecov_branches-and-prs.yml")
+                    .resolve("codecov_verify-prs.yml")
                     .writeText(it)
             }
     }

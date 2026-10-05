@@ -507,7 +507,7 @@ def configureGroovydoc(TaskProvider groovydoc) {
   }
 }
 
-def preprocessBranchesAndPrsWorkflowCodecovOutput = layout.buildDirectory.file('codecov_branches-and-prs.yml')
+def preprocessVerifyPrsWorkflowCodecovOutput = layout.buildDirectory.file('codecov_verify-prs.yml')
 def preprocessReleaseWorkflowCodecovOutput = layout.buildDirectory.file('codecov_release.yml')
 
 def copyCodecovConfig = tasks.register('copyCodecovConfig') {
@@ -515,7 +515,7 @@ def copyCodecovConfig = tasks.register('copyCodecovConfig') {
     copy {
       from(
         [
-          preprocessBranchesAndPrsWorkflowCodecovOutput,
+          preprocessVerifyPrsWorkflowCodecovOutput,
           preprocessReleaseWorkflowCodecovOutput
         ].max {it.get().asFile.lastModified() })
       into('.github')
@@ -524,13 +524,13 @@ def copyCodecovConfig = tasks.register('copyCodecovConfig') {
   }
 }
 
-tasks.preprocessBranchesAndPrsWorkflow {
+tasks.preprocessVerifyPrsWorkflow {
   inputs
     .file('.github/codecov.yml')
     .normalizeLineEndings()
     .withPathSensitivity(PathSensitivity.RELATIVE)
     .withPropertyName('codecovConfig')
-  outputs.file(preprocessBranchesAndPrsWorkflowCodecovOutput).withPropertyName('codecovConfig')
+  outputs.file(preprocessVerifyPrsWorkflowCodecovOutput).withPropertyName('codecovConfig')
   finalizedBy(copyCodecovConfig)
 }
 

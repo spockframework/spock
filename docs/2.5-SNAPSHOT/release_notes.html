@@ -85,6 +85,14 @@
 <p>Mock/Stub checks on <code>Comparable&lt;T&gt;</code> with <code>T</code> being something other than <code>Object</code> now compare using the java identity hash code instead of always being equal <a href="https://github.com/spockframework/spock/issues/2352">#2352</a></p>
 </li>
 <li>
+<p>Interactions outside a <code>then:</code> block are now still active in any eventually existing <code>cleanup</code> methods.
+If the interaction contains a lower cardinality, this is still checked at the end of the feature method.
+Upper cardinality is still relevant in the <code>cleanup</code> method, so could cause test failures where previously simply the default response of the mock object was used without cardinality check and could now cause previously working tests to fail.
+This enables <code>cleanup</code> methods to get stubbed responses from mock objects which previously was only possible by using a custom default response.
+If an interaction with stubbed response is present, the default response is also no longer used in the <code>cleanup</code> method because the interaction&#8217;s stubbed response is used now, which could also cause existing tests to fail.
+<a href="https://github.com/spockframework/spock/issues/616">#616</a></p>
+</li>
+<li>
 <p><em>This affects users upgrading to Groovy 6.</em><br>
 Before Groovy 6, a <code>switch</code> with arrow-style branches (<code>case x -&gt;</code>) was always compiled as an expression, so a top-level arrow <code>switch</code> in an <code>expect:</code> or <code>then:</code> block was an <a href="spock_primer.html#implicit-and-explicit-conditions">implicit condition</a>.
 Since Groovy 6 (<a href="https://issues.apache.org/jira/browse/GROOVY-12255">GROOVY-12255</a>), a <code>switch</code> is only an expression where it is used as one, so a top-level arrow <code>switch</code> is now a statement and is no longer checked.
@@ -3501,7 +3509,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.5-SNAPSHOT<br>
-Last updated 2026-10-05 10:16:56 UTC
+Last updated 2026-10-05 12:52:08 UTC
 </div>
 </div>
 </body>

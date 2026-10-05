@@ -571,7 +571,7 @@ and `"message2"` during execution of the second `when:` block.
 
 
 Interactions declared outside a `then:` block are active from their declaration until the end of the
-containing feature method.
+containing feature method, plus any `cleanup` methods.
 
 
 Interactions are always scoped to a particular feature method. Hence they cannot be declared in a static method,

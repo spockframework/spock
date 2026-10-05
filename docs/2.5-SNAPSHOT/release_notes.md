@@ -23,6 +23,12 @@
 ### Breaking Changes
 
 - Mock/Stub checks on `Comparable<T>` with `T` being something other than `Object` now compare using the java identity hash code instead of always being equal [#2352](https://github.com/spockframework/spock/issues/2352)
+- Interactions outside a `then:` block are now still active in any eventually existing `cleanup` methods.
+If the interaction contains a lower cardinality, this is still checked at the end of the feature method.
+Upper cardinality is still relevant in the `cleanup` method, so could cause test failures where previously simply the default response of the mock object was used without cardinality check and could now cause previously working tests to fail.
+This enables `cleanup` methods to get stubbed responses from mock objects which previously was only possible by using a custom default response.
+If an interaction with stubbed response is present, the default response is also no longer used in the `cleanup` method because the interaction’s stubbed response is used now, which could also cause existing tests to fail.
+[#616](https://github.com/spockframework/spock/issues/616)
 - *This affects users upgrading to Groovy 6.*
 Before Groovy 6, a `switch` with arrow-style branches (`case x ->`) was always compiled as an expression, so a top-level arrow `switch` in an `expect:` or `then:` block was an [implicit condition](spock_primer.md#implicit-and-explicit-conditions).
 Since Groovy 6 ([GROOVY-12255](https://issues.apache.org/jira/browse/GROOVY-12255)), a `switch` is only an expression where it is used as one, so a top-level arrow `switch` is now a statement and is no longer checked.

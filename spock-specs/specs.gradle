@@ -92,8 +92,8 @@ pluginManager.withPlugin('eclipse') {
         whenMerged {
           entries
             .find { (it instanceof SourceFolder) && (it.path == "src/test/resources") }
-            .excludes
-            .add("snapshots/")
+            ?.excludes
+            ?.add("snapshots/")
         }
       }
     }

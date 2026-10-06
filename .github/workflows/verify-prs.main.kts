@@ -53,8 +53,7 @@ workflow(
     concurrency = Concurrency(
         group = "${expr { github.workflow }}-${expr("${github.eventPullRequest.pull_request.number} || ${github.ref}")}",
         cancelInProgress = true
-    ),
-    consistencyCheckJobConfig = commonConsistencyCheckJobConfig
+    )
 ) {
     job(
         id = "check_all_workflow_yaml_consistency",
@@ -65,7 +64,6 @@ workflow(
             name = "Checkout Repository",
             action = Checkout()
         )
-        installPinnedKotlin()
         run(
             name = "Regenerate all Workflow YAMLs",
             command = """find .github/workflows -mindepth 1 -maxdepth 1 -name '*.main.kts' -exec {} \;"""

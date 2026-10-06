@@ -60,8 +60,7 @@ workflow(
     concurrency = Concurrency(
         group = "${expr { github.workflow }}-${expr("${github.eventPullRequest.pull_request.number} || ${github.ref}")}",
         cancelInProgress = true
-    ),
-    consistencyCheckJobConfig = commonConsistencyCheckJobConfig
+    )
 ) {
     job(
         id = "codeql-build",

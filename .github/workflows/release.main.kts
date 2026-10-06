@@ -44,8 +44,7 @@ workflow(
             tags = listOf("spock-*")
         )
     ),
-    sourceFile = __FILE__,
-    consistencyCheckJobConfig = commonConsistencyCheckJobConfig
+    sourceFile = __FILE__
 ) {
     val GITHUB_TOKEN by secrets
     val SONATYPE_OSS_USER by secrets

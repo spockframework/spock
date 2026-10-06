@@ -4,6 +4,7 @@ import groovy.sql.Sql
 import groovy.transform.ToString
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.GroovyRuntimeUtil
+import spock.lang.DataProvider
 import spock.lang.Requires
 import spock.lang.Shared
 
@@ -628,6 +629,46 @@ class CoerceBazToBar {
     i != 3
   }
   // end::excluding-iterations[]
+
+  // tag::standalone-data-provider[]
+  @DataProvider
+  def adjacentPairs() {
+    a | b
+    1 | 2
+    2 | 3
+    3 | 4
+  }
+
+  def "consume a standalone data provider"() {
+    expect:
+    b == a + 1
+
+    where:
+    [a, b] << adjacentPairs()
+  }
+  // end::standalone-data-provider[]
+
+  // tag::standalone-data-provider-parameters[]
+  @DataProvider
+  static squaresUpTo(int max) {
+    final label = "square of "
+    number << (1..max)
+    description = label + number
+    square = number * number
+
+    filter:
+    square <= 20
+  }
+  // end::standalone-data-provider-parameters[]
+
+  def "consume a parameterized standalone data provider"() {
+    expect:
+    square == number * number
+    description == "square of $number"
+
+    where:
+    [number, description, square] << squaresUpTo(10)
+  }
 
   @ToString(includes = ['name'], includePackage = false)
   static class Person {

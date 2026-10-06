@@ -53,10 +53,12 @@ public class WhereBlockRewriter {
   private final FilterBlock filterBlock;
   private final IRewriteResources resources;
   private final boolean defineErrorRethrower;
+  private final boolean checkInstanceFieldAccess;
   private final InstanceFieldAccessChecker instanceFieldAccessChecker;
   private final ErrorRethrowerUsageDetector errorRethrowerUsageDetector;
 
-  private int dataProviderCount = 0;
+  // artifacts of the data providers (in declaration order), recorded while parsing
+  private final List<DataProviderArtifact> dataProviders = new ArrayList<>();
   private final List<VariableExpression> dataTableVars = new ArrayList<>();
   // parameters of the data processor method (one for each data provider)
   private final List<Parameter> dataProcessorParams = new ArrayList<>();
@@ -73,20 +75,40 @@ public class WhereBlockRewriter {
   // provider/processor method as trailing parameters named after these variables
   private final List<WhereBlockVariable> whereBlockVariables = new ArrayList<>();
 
-  private WhereBlockRewriter(WhereBlock whereBlock, FilterBlock filterBlock, IRewriteResources resources, boolean defineErrorRethrower) {
+  private WhereBlockRewriter(WhereBlock whereBlock, FilterBlock filterBlock, IRewriteResources resources,
+                             boolean defineErrorRethrower, boolean checkInstanceFieldAccess) {
     this.whereBlock = whereBlock;
     this.filterBlock = filterBlock;
     this.resources = resources;
     this.defineErrorRethrower = defineErrorRethrower;
+    this.checkInstanceFieldAccess = checkInstanceFieldAccess;
     instanceFieldAccessChecker = new InstanceFieldAccessChecker(resources);
     errorRethrowerUsageDetector = defineErrorRethrower ? new ErrorRethrowerUsageDetector() : null;
   }
 
   public static void rewrite(WhereBlock block, FilterBlock filterBlock, IRewriteResources resources, boolean defineErrorRethrower) {
-    new WhereBlockRewriter(block, filterBlock, resources, defineErrorRethrower).rewrite();
+    WhereBlockRewriter rewriter = new WhereBlockRewriter(block, filterBlock, resources, defineErrorRethrower, true);
+    rewriter.parse();
+    rewriter.handleFeatureParameters();
+    rewriter.emitFeatureMethods();
   }
 
-  private void rewrite() {
+  /**
+   * Parses the where-block content into its data-flow artifacts (data providers, data processor,
+   * where-block variables, multiplications) without emitting any methods. Used by the standalone
+   * {@code @DataProvider} path, which emits the artifacts as inline closures instead.
+   *
+   * @param checkInstanceFieldAccess whether referenced fields must be {@code @Shared} or static
+   *   (required inside a {@code Specification}, not on a plain class)
+   */
+  public static WhereBlockRewriter parse(WhereBlock block, IRewriteResources resources,
+                                         boolean checkInstanceFieldAccess) {
+    WhereBlockRewriter rewriter = new WhereBlockRewriter(block, null, resources, false, checkInstanceFieldAccess);
+    rewriter.parse();
+    return rewriter;
+  }
+
+  private void parse() {
     ListIterator<Statement> stats = whereBlock.getAst().listIterator();
     collectWhereBlockVariables(stats);
     ConstructorCallExpression multiplier = null;
@@ -159,8 +181,12 @@ public class WhereBlockRewriter {
       resources.getErrorReporter().error(
         whereBlockVariablesRequireDataVariable(whereBlockVariables.get(0).statement));
     }
+  }
 
-    handleFeatureParameters();
+  private void emitFeatureMethods() {
+    for (int i = 0; i < dataProviders.size(); i++) {
+      createDataProviderMethod(dataProviders.get(i), i);
+    }
     createDataProcessorMethod();
     createWhereVariablesMethod();
     createDataVariableMultiplicationsMethod();
@@ -454,8 +480,26 @@ public class WhereBlockRewriter {
     return result;
   }
 
-  private void createDataProviderMethod(Expression dataProviderExpr, int nextDataVariableIndex, boolean addDataTableParameters) {
-    instanceFieldAccessChecker.check(dataProviderExpr);
+  // records the data provider artifact for later emission; the per-provider state
+  // (data variables, previous data table variables) must be captured eagerly because
+  // it depends on the parse progress at this point
+  private void recordDataProvider(Expression dataProviderExpr, int nextDataVariableIndex, boolean addDataTableParameters) {
+    if (checkInstanceFieldAccess) {
+      instanceFieldAccessChecker.check(dataProviderExpr);
+    }
+
+    List<String> dataVariables = new ArrayList<>();
+    for (int i = nextDataVariableIndex; i < dataProcessorVars.size(); i++) {
+      dataVariables.add(dataProcessorVars.get(i).getName());
+    }
+
+    dataProviders.add(new DataProviderArtifact(dataProviderExpr, dataVariables,
+      addDataTableParameters ? getPreviousDataTableVariables(nextDataVariableIndex) : Collections.emptyList(),
+      addDataTableParameters));
+  }
+
+  private void createDataProviderMethod(DataProviderArtifact dataProvider, int dataProviderIndex) {
+    Expression dataProviderExpr = dataProvider.getExpression();
 
     List<Statement> dataProviderStats = new ArrayList<>();
     if (defineErrorRethrower && errorRethrowerUsageDetector.detectedErrorRethrowerUsage(dataProviderExpr)) {
@@ -468,23 +512,23 @@ public class WhereBlockRewriter {
 
     MethodNode method =
       new MethodNode(
-        InternalIdentifiers.getDataProviderName(whereBlock.getParent().getAst().getName(), dataProviderCount++),
+        InternalIdentifiers.getDataProviderName(whereBlock.getParent().getAst().getName(), dataProviderIndex),
         Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
         ClassHelper.OBJECT_TYPE,
         // previous-data-table parameters (data tables only) followed by the where-block
         // variable parameters that are passed to every provider
         concatParameters(
-          addDataTableParameters ? createPreviousDataTableParameters(nextDataVariableIndex) : Parameter.EMPTY_ARRAY,
+          createPreviousDataTableParameters(dataProvider),
           createWhereVariableParameters()),
         ClassNode.EMPTY_ARRAY,
         new BlockStatement(dataProviderStats, null));
 
-    method.addAnnotation(createDataProviderAnnotation(dataProviderExpr, nextDataVariableIndex, addDataTableParameters));
+    method.addAnnotation(createDataProviderAnnotation(dataProvider));
     whereBlock.getParent().getParent().getAst().addMethod(method);
   }
 
-  private Parameter[] createPreviousDataTableParameters(int nextDataVariableIndex) {
-    return getPreviousDataTableVariables(nextDataVariableIndex)
+  private Parameter[] createPreviousDataTableParameters(DataProviderArtifact dataProvider) {
+    return dataProvider.getPreviousDataTableVariables()
       .stream()
       .map(previousDataTableVariable -> new Parameter(
         ClassHelper.LIST_TYPE.getPlainNodeReference(),
@@ -507,23 +551,24 @@ public class WhereBlockRewriter {
     return results;
   }
 
-  private String getDataTableParameterName(String dataTableVariable) {
+  static String getDataTableParameterName(String dataTableVariable) {
     return "$spock_p_" + dataTableVariable;
   }
 
-  private AnnotationNode createDataProviderAnnotation(Expression dataProviderExpr, int nextDataVariableIndex,
-                                                      boolean addDataTableParameters) {
+  private AnnotationNode createDataProviderAnnotation(DataProviderArtifact dataProvider) {
     AnnotationNode ann = new AnnotationNode(resources.getAstNodeCache().DataProviderMetadata);
 
-    ann.addMember(DataProviderMetadata.LINE, new ConstantExpression(dataProviderExpr.getLineNumber()));
+    ann.addMember(DataProviderMetadata.LINE, new ConstantExpression(dataProvider.getExpression().getLineNumber()));
 
-    List<Expression> dataVariableNames = new ArrayList<>();
-    for (int i = nextDataVariableIndex; i < dataProcessorVars.size(); i++)
-      dataVariableNames.add(new ConstantExpression(dataProcessorVars.get(i).getName()));
-    ann.addMember(DataProviderMetadata.DATA_VARIABLES, new ListExpression(dataVariableNames));
+    ann.addMember(DataProviderMetadata.DATA_VARIABLES, dataProvider.getDataVariables()
+      .stream()
+      .map(ConstantExpression::new)
+      .collect(collectingAndThen(
+        Collectors.<Expression>toList(),
+        ListExpression::new)));
 
-    if (addDataTableParameters) {
-      ListExpression previousDataTableVariables = getPreviousDataTableVariables(nextDataVariableIndex)
+    if (dataProvider.isDataTable()) {
+      ListExpression previousDataTableVariables = dataProvider.getPreviousDataTableVariables()
         .stream()
         .map(ConstantExpression::new)
         .collect(collectingAndThen(
@@ -550,7 +595,7 @@ public class WhereBlockRewriter {
     VariableExpression arg = (VariableExpression) binExpr.getLeftExpression();
     VariableExpression dataVar = createDataProcessorVariable(arg, sourcePos);
     createDataProcessorStatement(dataVar, new VariableExpression(dataProcessorParameter), sourcePos);
-    createDataProviderMethod(binExpr.getRightExpression(), nextDataVariableIndex, addDataTableParameters);
+    recordDataProvider(binExpr.getRightExpression(), nextDataVariableIndex, addDataTableParameters);
   }
 
   // from: [x, y, z] << [[1, 2, 3]]
@@ -563,7 +608,7 @@ public class WhereBlockRewriter {
     Parameter dataProcessorParameter = createDataProcessorParameter();
     ListExpression list = (ListExpression) binExpr.getLeftExpression();
     rewriteMultiParameterization(list, new VariableExpression(dataProcessorParameter), enclosingStat);
-    createDataProviderMethod(binExpr.getRightExpression(), nextDataVariableIndex, false);
+    recordDataProvider(binExpr.getRightExpression(), nextDataVariableIndex, false);
   }
 
   private void rewriteMultiParameterization(ListExpression list, Expression rightBase, Statement enclosingStat)
@@ -973,11 +1018,29 @@ public class WhereBlockRewriter {
   private void createWhereVariablesMethod() {
     if (whereBlockVariables.isEmpty()) return;
 
-    List<Statement> declarations = whereBlockVariables.stream()
-      .map(var -> var.statement)
-      .collect(toList());
-    instanceFieldAccessChecker.check(declarations);
+    instanceFieldAccessChecker.check(getWhereBlockVariableStatements());
 
+    MethodNode method = new MethodNode(
+      InternalIdentifiers.getWhereVariablesName(whereBlock.getParent().getAst().getName()),
+      Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
+      ClassHelper.OBJECT_TYPE.makeArray(),
+      Parameter.EMPTY_ARRAY,
+      ClassNode.EMPTY_ARRAY,
+      new BlockStatement(createWhereVariableValueStatements(), null));
+
+    whereBlock.getParent().getParent().getAst().addMethod(method);
+  }
+
+  /**
+   * Builds the statements that evaluate every where-block variable initializer and return their
+   * values as an {@code Object[]}, ordered by declaration. Each slot is filled as soon as its
+   * initializer runs, and the whole sequence is wrapped in a try/catch that closes the
+   * {@link AutoCloseable} values created so far when a later initializer throws (slots whose
+   * initializer never ran stay {@code null} and are skipped by the close helper), so a partial
+   * failure never leaks a resource. Shared by the feature where-variables method and the
+   * standalone {@code @DataProvider} where-variables closure so both get the same safety.
+   */
+  public List<Statement> createWhereVariableValueStatements() {
     int variableCount = (int) whereBlockVariableNames().count();
     Statement valuesDecl = new ExpressionStatement(
       new DeclarationExpression(
@@ -986,9 +1049,6 @@ public class WhereBlockRewriter {
         new ArrayExpression(ClassHelper.OBJECT_TYPE, null,
           singletonList(new ConstantExpression(variableCount)))));
 
-    // each declaration fills its slot(s) right away, so that when a later initializer throws,
-    // the catch block can close the values that already exist; slots whose initializer never
-    // ran are still null and are skipped by the close helper
     List<Statement> tryStats = new ArrayList<>();
     int slot = 0;
     for (WhereBlockVariable variable : whereBlockVariables) {
@@ -1018,15 +1078,7 @@ public class WhereBlockRewriter {
             new VariableExpression(failure)))),
       new ThrowStatement(new VariableExpression(failure))), null)));
 
-    MethodNode method = new MethodNode(
-      InternalIdentifiers.getWhereVariablesName(whereBlock.getParent().getAst().getName()),
-      Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
-      ClassHelper.OBJECT_TYPE.makeArray(),
-      Parameter.EMPTY_ARRAY,
-      ClassNode.EMPTY_ARRAY,
-      new BlockStatement(Arrays.asList(valuesDecl, tryCatch), null));
-
-    whereBlock.getParent().getParent().getAst().addMethod(method);
+    return Arrays.asList(valuesDecl, tryCatch);
   }
 
   /**
@@ -1111,6 +1163,70 @@ public class WhereBlockRewriter {
       blockStat);
 
     filterBlock.getParent().getParent().getAst().addMethod(filterMethod);
+  }
+
+  public List<DataProviderArtifact> getDataProviders() {
+    return dataProviders;
+  }
+
+  public List<Parameter> getDataProcessorParameters() {
+    return dataProcessorParams;
+  }
+
+  public List<Statement> getDataProcessorStatements() {
+    return dataProcessorStats;
+  }
+
+  public List<VariableExpression> getDataProcessorVariables() {
+    return dataProcessorVars;
+  }
+
+  public List<Statement> getWhereBlockVariableStatements() {
+    return whereBlockVariables.stream().map(var -> var.statement).collect(toList());
+  }
+
+  public List<String> getWhereBlockVariableNames() {
+    return whereBlockVariableNames().collect(toList());
+  }
+
+  public List<Expression> getDataVariableMultiplications() {
+    return dataVariableMultiplications;
+  }
+
+  /**
+   * A data provider parsed from where-block content: the provider expression plus the
+   * per-provider state captured while parsing (the data variables it supplies, and for
+   * data tables the previously seen data table variables its cells may reference).
+   */
+  public static class DataProviderArtifact {
+    private final Expression expression;
+    private final List<String> dataVariables;
+    private final List<String> previousDataTableVariables;
+    private final boolean dataTable;
+
+    DataProviderArtifact(Expression expression, List<String> dataVariables,
+                         List<String> previousDataTableVariables, boolean dataTable) {
+      this.expression = expression;
+      this.dataVariables = dataVariables;
+      this.previousDataTableVariables = previousDataTableVariables;
+      this.dataTable = dataTable;
+    }
+
+    public Expression getExpression() {
+      return expression;
+    }
+
+    public List<String> getDataVariables() {
+      return dataVariables;
+    }
+
+    public List<String> getPreviousDataTableVariables() {
+      return previousDataTableVariables;
+    }
+
+    public boolean isDataTable() {
+      return dataTable;
+    }
   }
 
   private static InvalidSpecCompileException notAParameterization(ASTNode stat) {

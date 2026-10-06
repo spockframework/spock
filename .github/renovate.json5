@@ -35,6 +35,12 @@
       matchCurrentValue: "/^4\\./",
       allowedVersions: "(,5.0)"
     },
+    // Byte Buddy also publishes `-jdk5` variants of each release,
+    // which Maven version ordering considers newer than the plain release
+    {
+      matchPackageNames: ["net.bytebuddy:byte-buddy"],
+      allowedVersions: "!/-jdk\\d+$/"
+    },
     {
       matchPackageNames: ["/^org.spockframework:spock-/"],
       versionCompatibility: "^(?<version>.*)-(?<compatibility>groovy-.*)$"

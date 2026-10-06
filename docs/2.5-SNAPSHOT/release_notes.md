@@ -20,6 +20,7 @@
 - Fix Mock does not intercept package-private methods in OSGi correctly [#2384](https://github.com/spockframework/spock/issues/2384)
   - This only works for Java > 9, due to missing `MethodHandles.Lookup` API in Java 8
 - Fix IntelliJ IDEA type inference in nested mock object initialization closures
+- Bring Groovy Eclipse type inference in mock object initialization closures on par with IntelliJ IDEA type inference
 
 
 ### Breaking Changes

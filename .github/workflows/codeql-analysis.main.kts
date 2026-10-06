@@ -123,7 +123,7 @@ workflow(
                 "--no-build-cache",
                 "testClasses",
                 """"-Dvariant=${expr(Matrix.variant)}"""",
-                """"-DjavaVersion=${expr("${Matrix.variant} == '5.0' && '11' || '${Matrix.axes.javaVersions.first()}'")}""""
+                """"-DjavaVersion=${expr("${Matrix.variant} == '5.0' && '11' || ${Matrix.variant} == '6.0' && '17' || '${Matrix.axes.javaVersions.first()}'")}""""
             ).joinToString(" ")
         )
         uses(

@@ -5,7 +5,7 @@
 # On macOS, plays a sound when done, whether all jars are available or the timeout was reached.
 #
 # Usage: check-deploy.sh <version> <variant>...
-# Example: check-deploy.sh 2.5-M1 2.5 3.0 4.0 5.0
+# Example: check-deploy.sh 2.5-M1 2.5 3.0 4.0 5.0 6.0
 
 set -euo pipefail
 

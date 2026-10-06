@@ -1,0 +1,145 @@
+/*
+ * Copyright 2012 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package dsld
+
+import org.codehaus.groovy.ast.*
+import org.codehaus.groovy.ast.expr.*
+import static org.codehaus.groovy.ast.ClassHelper.getWrapper
+
+assertVersion(groovy: '2.5', groovyEclipse: '2.7.2') // tested against this version
+
+contribute(
+    inClosure() &
+    isThisType() &
+    enclosingCallDeclaringType('spock.mock.MockingApi') &
+    bind(calls: enclosingCall(
+        (name('Mock') |
+         name('Stub') |
+         name('Spy') |
+         name('GroovyMock') |
+         name('GroovyStub') |
+         name('GroovySpy')))) &
+    bind(fieldOrAssignment:
+        enclosingField(name()) |
+        assignedVariable() |
+        (not(enclosingField(name())) &
+         not(assignedVariable())))) {
+
+  if ((currentNode instanceof VariableExpression) && (currentNode.name == '_')) {
+    property name: '_', type: '', readOnly: true
+    return
+  }
+
+  if ((currentNode instanceof VariableExpression) ||
+      ((currentNode instanceof ConstantExpression) && (currentNode.value instanceof String))) {
+    def nearestCall = calls[-1]
+
+    // get the explicit type from the nearest enclosing call arguments
+    def explicitType = nearestCall
+        .arguments
+        .expressions
+        .find { it instanceof ClassExpression }
+
+    // if an explicit type is set, it always wins
+    if (explicitType) {
+      delegatesTo(explicitType)
+      return
+    }
+
+    // get the instance type for a spy
+    if (nearestCall.methodAsString in ['Spy', 'GroovySpy']) {
+      def instanceType = nearestCall
+          .arguments
+          .expressions
+          .find {
+            !(it instanceof MapExpression) &&
+                !(it instanceof ClosureExpression) &&
+                !(it instanceof ClassExpression)
+          }
+          ?.type
+          ?.with { getWrapper(it) }
+
+      // if an instance is set, its type always wins
+      if (instanceType) {
+        delegatesTo(instanceType)
+        return
+      }
+    }
+
+    def fieldOrAssignmentNode = fieldOrAssignment
+        .find {
+          ((it instanceof FieldNode) && (it.initialExpression == nearestCall)) ||
+              ((it instanceof BinaryExpression) && (it.rightExpression == nearestCall))
+        }
+
+    switch (fieldOrAssignmentNode) {
+      case FieldNode:
+        // field declaration like `List foo = Stub { ... }`
+        delegatesTo(getWrapper(fieldOrAssignmentNode.type))
+        break
+
+      case BinaryExpression:
+        // local variable declaration like `List foo = Stub { ... }`
+        // or variable or field assignment like `list = Stub { ... }
+
+        if (fieldOrAssignmentNode.leftExpression instanceof TupleExpression) {
+          // multi-assignment not supported
+          return
+        }
+
+        delegatesTo(getWrapper(fieldOrAssignmentNode.leftExpression.type))
+        break
+    }
+  }
+}
+
+// From https://issues.apache.org/jira/browse/GROOVY-9510
+// Properly resolve the delegatesTo for the closures of these extensions
+def hasPrecondition = {
+  annotatedBy(
+      name('spock.lang.Requires') |
+      name('spock.lang.IgnoreIf') |
+      name('spock.lang.PendingFeatureIf'))
+}
+
+contribute(
+    inClosure() &
+    isThisType() &
+    bind(classes: enclosingClass(subType('spock.lang.Specification'))) &
+    (enclosingClass(conditions: hasPrecondition()) |
+     enclosingMethod(conditions: hasPrecondition()))) {
+  for (AnnotationNode pre : conditions) {
+    def condition = pre.getMember('value')
+    if (condition.getCode().is(currentNode)) {
+      delegateType = resolver.resolve("org.spockframework.runtime.extension.builtin.PreconditionContext<${classes[0].getName()}>")
+      return
+    }
+  }
+}
+
+contribute(
+    inClosure() &
+    isThisType() &
+    bind(classes: enclosingClass(subType('spock.lang.Specification'))) &
+    (enclosingClass(annotations: annotatedBy('spock.lang.Retry')) |
+     enclosingMethod(annotations: annotatedBy('spock.lang.Retry')))) {
+  for (AnnotationNode retry : annotations) {
+    def condition = retry.getMember('condition')
+    if (condition.getCode().is(currentNode)) {
+      delegateType = resolver.resolve("org.spockframework.runtime.extension.builtin.RetryConditionContext<${classes[0].getName()}>")
+      return
+    }
+  }
+}

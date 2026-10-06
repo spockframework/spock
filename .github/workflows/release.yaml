@@ -141,6 +141,9 @@ jobs:
         - variant: '5.0'
           java: '11'
           os: 'ubuntu-latest'
+        - variant: '6.0'
+          java: '17'
+          os: 'ubuntu-latest'
     steps:
     - id: 'step-0'
       name: 'Checkout Repository'
@@ -168,7 +171,7 @@ jobs:
     strategy:
       matrix:
         variant:
-        - '5.0'
+        - '6.0'
         java:
         - '25'
         os:

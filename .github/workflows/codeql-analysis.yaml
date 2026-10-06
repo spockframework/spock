@@ -41,6 +41,7 @@ jobs:
         - '3.0'
         - '4.0'
         - '5.0'
+        - '6.0'
     steps:
     - id: 'step-0'
       name: 'Checkout Repository'
@@ -53,7 +54,7 @@ jobs:
       uses: 'github/codeql-action/init@v4'
     - id: 'step-3'
       name: 'Build Spock Classes'
-      run: './gradlew --stacktrace --no-build-cache testClasses "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.variant == ''5.0'' && ''11'' || ''8'' }}"'
+      run: './gradlew --stacktrace --no-build-cache testClasses "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.variant == ''5.0'' && ''11'' || matrix.variant == ''6.0'' && ''17'' || ''8'' }}"'
     - id: 'step-4'
       name: 'Perform CodeQL Analysis'
       uses: 'github/codeql-action/analyze@v4'

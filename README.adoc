@@ -1,6 +1,6 @@
 :spock-release-version: 2.5
 :spock-release-date: 2026-10-06
-:spock-snapshot-version: 2.4
+:spock-snapshot-version: 2.6
 
 https://github.com/spockframework/spock/blob/master/LICENSE[image:https://img.shields.io/badge/License-Apache%202.0-blue.svg[License]]
 https://search.maven.org/search?q=g:org.spockframework[image:https://img.shields.io/maven-central/v/org.spockframework/spock-core.svg?label=Maven%20Central[Maven

@@ -4,27 +4,27 @@
 > Compose a documentation page URL from the template below using any version and page slug.
 
 Template: https://spockframework.org/spock/docs/{version}/{page}.md
-Example:  https://spockframework.org/spock/docs/2.4/all_in_one.md
+Example:  https://spockframework.org/spock/docs/2.5/all_in_one.md
 
 ## Pages
 
-- `introduction`
-- `getting_started`
-- `spock_primer`
-- `data_driven_testing`
-- `interaction_based_testing`
-- `extensions`
-- `utilities`
-- `parallel_execution`
-- `modules`
-- `release_notes`
-- `migration_guide`
-- `faq`
-- `known_issues`
+- `introduction` — A brief overview of Spock, its goals, and what sets it apart from other testing frameworks.
+- `getting_started` — Quickest paths to try Spock: the Groovy Web Console and the Spock Example Project for Ant, Gradle, and Maven.
+- `spock_primer` — Core concepts and building blocks of a specification: fields, fixture methods, feature methods, and blocks.
+- `data_driven_testing` — Running the same feature method against multiple inputs using data tables, data pipes, and data providers.
+- `interaction_based_testing` — Creating and verifying mocks, stubs, and spies to test how objects collaborate.
+- `extensions` — Built-in extension annotations, the Spock configuration file, and the API for writing your own extensions.
+- `utilities` — Helper classes shipped with Spock, including utilities for time-dependent code and collection-matching conditions.
+- `parallel_execution` — Configuration and execution modes for running specifications and features concurrently.
+- `modules` — Optional integrations with Spring, JUnit 4, Guice, Tapestry, and Unitils.
+- `release_notes` — Version-by-version summary of new features, enhancements, fixes, and breaking changes.
+- `migration_guide` — Notes on incompatible changes between versions and guidance for upgrading existing specifications.
+- `faq` — Answers to common questions about optional dependencies, mocking choices, and platform support.
+- `known_issues` — Documented limitations and workarounds.
 - `all_in_one`
 
 ## Versions
 
-- Latest stable: 2.4
-- Stable: 2.4, 2.3, 2.2, 2.1, 2.0, 1.3, 1.2, 1.1, 1.0
+- Latest stable: 2.5
+- Stable: 2.5, 2.4, 2.3, 2.2, 2.1, 2.0, 1.3, 1.2, 1.1, 1.0
 - Development: 2.5-SNAPSHOT

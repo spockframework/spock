@@ -1,0 +1,24 @@
+Logo Usage Guidelines
+1.	General.  The Spock Framework Project (the “Company”) logo and trademark,
+	a copy of which is attached hereto as Annex A (the “Logo”),
+	shall be used only as set forth and under the terms and conditions and for the purposes described herein.
+	The party receiving these Logo Usage Guidelines (“Guidelines”) or using the Logo shall be referred to as “Licensee.”
+	Licensee may use the Logo as set forth in these Guidelines and agrees that Gradle, Inc.
+	(“Gradle”) and the Company each has the subsequent right to inspect the use of the Logo to ensure that such uses are permitted under these Guidelines.
+	All uses of the Logo shall comply with the following:
+2.	Appearance of Logos.  Licensee shall ensure that the presentation of the Logo shall be consistent with the Company’s use of the Logo in comparable media.
+3.	Appearance.  From time to time, the Company may provide Licensee with guidelines for the size, typeface,
+	colors and other graphic characteristics of the Logo, which upon delivery to Licensee shall be deemed to be incorporated into these Guidelines.
+4.	Restrictions Upon Use.  The Logo shall not be presented or used:
+	a.	in a manner that could be reasonably interpreted to suggest Licensee or third party editorial content has been authored by,
+	or represents the views or opinions of, the Company, Gradle, or each of the Company or Gradle’s personnel;
+	b.	in a manner that is misleading, defamatory, libelous, obscene or otherwise objectionable, in the Company’s or Gradle’s reasonable opinion;
+	c.	in a way that infringes, derogates, dilutes or impairs the rights of the Company or Gradle in the Logo;
+	d.	as part of a name of a product or service of a company other than the Company, except as expressly provided in a written agreement by the Company or Gradle;
+	e.	in an abbreviated form;
+	f.	on commercial merchandise or for commercial purposes or in any manner which allows Licensee to profit from use of the Logo; or
+	g.	in a manner that merges the Logo with other words, symbols, or numbers.
+5.	Attribution.  Licensee must include the following statement in Licensee’s materials that include the Logo:  The Spock Framework Project logo is a trademark of the Spock Framework Project.
+6.	Changes.  Licensee will promptly make any changes to its use of the Logo as requested by the Company or Gradle.
+7.	Goodwill.  Licensee acknowledges that all rights to the Logo are the exclusive property of the Company and of Gradle and all goodwill generated through Licensee’s use of the Logo will inure to the benefit of the Company.
+8.	Revisions. These Logo Usage Guidelines may be modified at any time by the Company upon written notice to Licensee.

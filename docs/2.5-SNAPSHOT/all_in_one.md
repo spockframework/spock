@@ -7516,6 +7516,7 @@ The Grails plugin has moved to its own [GitHub project](https://github.com/spock
 
 #### Enhancements
 
+- Add support for Groovy 6.0 [#2356](https://github.com/spockframework/spock/pull/2356), [#2362](https://github.com/spockframework/spock/pull/2362), [#2416](https://github.com/spockframework/spock/pull/2416), [#2421](https://github.com/spockframework/spock/pull/2421)
 - Add support for `final` local variables in `where:` blocks, declared at their beginning and evaluated once per feature, scoped to the where-block [#138](https://github.com/spockframework/spock/issues/138)
 - Improve `TooManyInvocationsError` now reports unsatisfied interactions with argument mismatch details, making it easier to diagnose why invocations didn’t match expected interactions [#2315](https://github.com/spockframework/spock/pull/2315)
 

@@ -6,24 +6,12 @@ include::include.adoc[]
 
 == 2.5 (tbd)
 
-=== Enhancements
+=== Highlights
 
 * Add support for Groovy 6.0 spockPull:2356[], spockPull:2362[], spockPull:2416[], spockPull:2421[]
+* Add support for Spring 7 spockPull:2262[]
 * Add support for `final` local variables in `where:` blocks, declared at their beginning and evaluated once per feature, scoped to the where-block spockIssue:138[]
-* Improve `TooManyInvocationsError` now reports unsatisfied interactions with argument mismatch details, making it easier to diagnose why invocations didn't match expected interactions spockPull:2315[]
-
-=== Misc
-
-* Fix argument mismatch descriptions for varargs methods by expanding varargs instead of reporting `<too few arguments>` spockPull:2315[]
-* Fix Pattern flags being dropped when `java.util.regex.Pattern` instances are used in Spock regex conditions spockIssue:2298[]
-* Fix `MockitoMockMaker` throws NPE on null object spockIssue:2337[]
-* Fix `SourceToAstNodeAndSourceTranspiler` dropping nested generic type arguments, so signatures like `Iterator<Tuple2<Integer, Integer>>` are now rendered faithfully instead of `Iterator<Tuple2>` spockPull:2393[]
-* Fix `SourceToAstNodeAndSourceTranspiler` rendering of several other constructs: the elvis operator, attribute access (`.@`), implicit-`it` closures, safe index access (`?[]`), numeric literal type suffixes (`L`, `F`, `D`, `G`), left-open ranges (`<..`), explicit type arguments of method calls, `for (index, value in iterable)` loops, multiple-assignment declarations on Groovy 5, and spurious empty `finally` blocks and `default` labels spockPull:2393[]
-* Fix interaction mismatch rendering failing with a lexer error and dropping the similarity report when a mocked method or property name contains a `$` spockIssue:2364[]
-* Fix Mock does not intercept package-private methods in OSGi correctly spockIssue:2384[]
-** This only works for Java > 9, due to missing `MethodHandles.Lookup` API in Java 8
-* Fix IntelliJ IDEA type inference in nested mock object initialization closures
-* Bring Groovy Eclipse type inference in mock object initialization closures on par with IntelliJ IDEA type inference
+* Improve `TooManyInvocationsError` to report unsatisfied interactions with argument mismatch details, making it easier to diagnose why invocations didn't match expected interactions spockPull:2315[]
 
 === Breaking Changes
 
@@ -40,6 +28,24 @@ Before Groovy 6, a `switch` with arrow-style branches (`+case x ->+`) was always
 Since Groovy 6 (https://issues.apache.org/jira/browse/GROOVY-12255[GROOVY-12255]), a `switch` is only an expression where it is used as one, so a top-level arrow `switch` is now a statement and is no longer checked.
 Assign the result to a variable and check that variable instead.
 Using `!!` on a `switch` still <<spock_primer.adoc#opt-out-of-condition-handling,opts out of condition handling>> as before spockPull:2416[]
+
+=== Misc
+
+* Fix argument mismatch descriptions for varargs methods by expanding varargs instead of reporting `<too few arguments>` spockPull:2315[]
+* Fix Pattern flags being dropped when `java.util.regex.Pattern` instances are used in Spock regex conditions spockIssue:2298[]
+* Fix `MockitoMockMaker` throwing an NPE on a `null` object spockIssue:2337[]
+* Fix `SourceToAstNodeAndSourceTranspiler` dropping nested generic type arguments, so signatures like `Iterator<Tuple2<Integer, Integer>>` are now rendered faithfully instead of `Iterator<Tuple2>` spockPull:2393[]
+* Fix `SourceToAstNodeAndSourceTranspiler` rendering of several other constructs: the elvis operator, attribute access (`.@`), implicit-`it` closures, safe index access (`?[]`), numeric literal type suffixes (`L`, `F`, `D`, `G`), left-open ranges (`<..`), explicit type arguments of method calls, `for (index, value in iterable)` loops, multiple-assignment declarations on Groovy 5, and spurious empty `finally` blocks and `default` labels spockPull:2393[]
+* Fix interaction mismatch rendering failing with a lexer error and dropping the similarity report when a mocked method or property name contains a `$` spockIssue:2364[]
+* Fix `Mock` not intercepting package-private methods correctly in OSGi spockIssue:2384[]
+** This only works for Java > 9, due to missing `MethodHandles.Lookup` API in Java 8
+* Fix number formatting in Spock messages (errors, timeouts, iteration and mock names, snapshots) depending on the default locale spockPull:2320[]
+* Fix `SpringExtension` not detecting `@Shared` fields annotated with `jakarta.inject.Inject` or `jakarta.annotation.Resource` spockPull:2262[]
+* Fix IntelliJ IDEA type inference in nested mock object initialization closures spockPull:2422[]
+* Improve Groovy Eclipse type inference in mock object initialization closures to be on par with IntelliJ IDEA spockPull:2423[], spockPull:2425[]
+* Add a Markdown version of the documentation for AI agents spockPull:2340[]
+
+Thanks to all the contributors to this release: Andreas Turban, arimu1, Benedikt Ritter, Björn Kautler, Christoph Loy, Develop-KIM, Gabriel Féo, Leonard Brünings, Mattias Reichel, Sean Gilligan, Stephanie Miller
 
 == 2.4 (2025-12-11)
 

@@ -17,7 +17,7 @@ description = "Spock Framework"
 
 ext {
   baseVersion = "2.5"
-  snapshotVersion = true
+  snapshotVersion = false
   milestone = 0
   javaVersions = javaVersionsList.trim().split(/\s*+,\s*+/).collect { it as int }
   javaVersion = (System.getProperty("javaVersion") ?: 8) as int

@@ -1,5 +1,5 @@
-:spock-release-version: 2.4
-:spock-release-date: 2025-12-11
+:spock-release-version: 2.5
+:spock-release-date: 2026-10-06
 :spock-snapshot-version: 2.4
 
 https://github.com/spockframework/spock/blob/master/LICENSE[image:https://img.shields.io/badge/License-Apache%202.0-blue.svg[License]]
@@ -26,9 +26,9 @@ https://groovyconsole.dev/[Groovy Web Console].
 
 === Latest Versions
 
-// TODO: add {spock-release-version}-groovy-6.0 once a Groovy 6.0 variant has been released
 * The latest 2.x release version is *{spock-release-version}* ({spock-release-version}-groovy-2.5,
-{spock-release-version}-groovy-3.0, {spock-release-version}-groovy-4.0, {spock-release-version}-groovy-5.0), released on {spock-release-date}.
+{spock-release-version}-groovy-3.0, {spock-release-version}-groovy-4.0, {spock-release-version}-groovy-5.0,
+{spock-release-version}-groovy-6.0), released on {spock-release-date}.
 * The current development version is *{spock-snapshot-version}-SNAPSHOT*
 ({spock-snapshot-version}-groovy-2.5-SNAPSHOT, {spock-snapshot-version}-groovy-3.0-SNAPSHOT,
 {spock-snapshot-version}-groovy-4.0-SNAPSHOT, {spock-snapshot-version}-groovy-5.0-SNAPSHOT,

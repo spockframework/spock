@@ -1,3 +1,4 @@
+import org.gradle.plugins.ide.eclipse.model.SourceFolder
 import org.spockframework.gradle.JacocoJavaagentProvider
 
 ext.displayName = "Spock Framework - Specs for Core Module"
@@ -78,6 +79,21 @@ tasks.named("test", Test) {
         filter {
           includeAnnotationClasses.add("spock.lang.Timeout")
           includeAnnotationClasses.add("spock.lang.Isolated")
+        }
+      }
+    }
+  }
+}
+
+pluginManager.withPlugin('eclipse') {
+  eclipse {
+    classpath {
+      file {
+        whenMerged {
+          entries
+            .find { (it instanceof SourceFolder) && (it.path == "src/test/resources") }
+            ?.excludes
+            ?.add("snapshots/")
         }
       }
     }

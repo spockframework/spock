@@ -13,7 +13,7 @@ public void $spock_feature_0_0() {
     org.spockframework.runtime.SpockRuntime.callBlockExited(this, 0)
     org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 1)
     try {
-        org.spockframework.runtime.SpockRuntime.verifyMethodCondition($spock_errorCollector, $spock_valueRecorder.reset(), 'x =~ [1]', 4, 9, null, org.spockframework.runtime.SpockRuntime, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), 'matchCollectionsAsSet'), new java.lang.Object[]{$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), x), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(3), [$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), 1)])}, $spock_valueRecorder.realizeNas(6, false), false, 5)
+        org.spockframework.runtime.SpockRuntime.verifyMethodCondition($spock_errorCollector, $spock_valueRecorder.reset(), 'x =~ [1]', 4, 9, null, org.spockframework.runtime.SpockRuntime, 'matchCollectionsAsSet', new java.lang.Object[]{$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), x), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(3), [$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(2), 1)])}, $spock_valueRecorder.realizeNas(6, false), false, 5)
     }
     catch (java.lang.Throwable $spock_condition_throwable) {
         org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'x =~ [1]', 4, 9, null, $spock_condition_throwable)}

@@ -18,8 +18,8 @@ import org.spockframework.runtime.ConditionNotSatisfiedError
 
 import spock.lang.*
 
-import static HamcrestMatchers.closeTo
-import static HamcrestSupport.that
+import static spock.util.matcher.HamcrestMatchers.closeTo
+import static spock.util.matcher.HamcrestSupport.that
 import static org.hamcrest.CoreMatchers.not
 
 class IsCloseToSpec extends Specification {

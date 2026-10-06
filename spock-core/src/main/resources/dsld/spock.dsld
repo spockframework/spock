@@ -52,10 +52,30 @@ contribute(
         .expressions
         .find { it instanceof ClassExpression }
 
-    // if an explicit type it is set, it always wins
+    // if an explicit type is set, it always wins
     if (explicitType) {
       delegatesTo(explicitType)
       return
+    }
+
+    // get the instance type for a spy
+    if (nearestCall.methodAsString in ['Spy', 'GroovySpy']) {
+      def instanceType = nearestCall
+          .arguments
+          .expressions
+          .find {
+            !(it instanceof MapExpression) &&
+                !(it instanceof ClosureExpression) &&
+                !(it instanceof ClassExpression)
+          }
+          ?.type
+          ?.with { getWrapper(it) }
+
+      // if an instance is set, its type always wins
+      if (instanceType) {
+        delegatesTo(instanceType)
+        return
+      }
     }
 
     def fieldOrAssignmentNode = fieldOrAssignment

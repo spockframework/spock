@@ -1363,27 +1363,27 @@ The Spock Team
 21 burning issues were fixed:
 
 
-- [Create a example which uses ConfineMetaClassChanges](https://code.google.com/archive/p/spock/issues/221)
-- [Mistakes in PollingConditions sphinx docs](https://code.google.com/archive/p/spock/issues/273)
-- [Closure used as data value in where-block can’t be called with method syntax](https://code.google.com/archive/p/spock/issues/274)
-- [old() expression blows up when part of failing condition](https://code.google.com/archive/p/spock/issues/276)
-- [Reflect subsequent filtering/sorting in a spec’s JUnit description](https://code.google.com/archive/p/spock/issues/278)
-- [After/AfterClass/Before/BeforeClass methods from superclass should not be called if they have been overrided in the derived class](https://code.google.com/archive/p/spock/issues/282)
-- [Data values in where-block are not resolved in nested closures](https://code.google.com/archive/p/spock/issues/286)
-- [spock-maven:0.7-groovy-2.0 has an invalid descriptor (and a workaround for this)](https://code.google.com/archive/p/spock/issues/290)
-- [PollingConditions doesn’t report failed assertion](https://code.google.com/archive/p/spock/issues/291)
-- [Provide a Specification.with() overload that states the expected target type](https://code.google.com/archive/p/spock/issues/292)
-- [Problem with array arguments to mock methods](https://code.google.com/archive/p/spock/issues/294)
-- [spock-tapestry should support @javax.inject.Inject and @InjectService](https://code.google.com/archive/p/spock/issues/296)
-- [Compilation error when using multi assignment](https://code.google.com/archive/p/spock/issues/297)
-- [Groovy mocks should allow to mock final classes/methods](https://code.google.com/archive/p/spock/issues/302)
-- [Better generics support for mocks and stubs](https://code.google.com/archive/p/spock/issues/307)
-- [GC calls to finalize() on mocks cause strict interaction specifications (0 * _) to fail intermittently](https://code.google.com/archive/p/spock/issues/338)
-- [Multiple Assignment in when: and anything in cleanup:](https://code.google.com/archive/p/spock/issues/371)
-- [Move OptimizeRunOrderSuite from spock-core to spock-maven to solve a problem with Android’s test runner](https://code.google.com/archive/p/spock/issues/385)
-- [Support running on JDK 8](https://code.google.com/archive/p/spock/issues/391)
-- [Release binary variants for Groovy 2.3 and Groovy 2.4](https://code.google.com/archive/p/spock/issues/392)
-- [Port reference documentation to Asciidoc](https://code.google.com/archive/p/spock/issues/393)
+- [Create a example which uses ConfineMetaClassChanges](https://github.com/spockframework/spock/issues/343)
+- [Mistakes in PollingConditions sphinx docs](https://github.com/spockframework/spock/issues/395)
+- [Closure used as data value in where-block can’t be called with method syntax](https://github.com/spockframework/spock/issues/396)
+- [old() expression blows up when part of failing condition](https://github.com/spockframework/spock/issues/398)
+- [Reflect subsequent filtering/sorting in a spec’s JUnit description](https://github.com/spockframework/spock/issues/400)
+- [After/AfterClass/Before/BeforeClass methods from superclass should not be called if they have been overrided in the derived class](https://github.com/spockframework/spock/issues/404)
+- [Data values in where-block are not resolved in nested closures](https://github.com/spockframework/spock/issues/408)
+- [spock-maven:0.7-groovy-2.0 has an invalid descriptor (and a workaround for this)](https://github.com/spockframework/spock/issues/412)
+- [PollingConditions doesn’t report failed assertion](https://github.com/spockframework/spock/issues/413)
+- [Provide a Specification.with() overload that states the expected target type](https://github.com/spockframework/spock/issues/414)
+- [Problem with array arguments to mock methods](https://github.com/spockframework/spock/issues/416)
+- [spock-tapestry should support @javax.inject.Inject and @InjectService](https://github.com/spockframework/spock/issues/418)
+- [Compilation error when using multi assignment](https://github.com/spockframework/spock/issues/419)
+- [Groovy mocks should allow to mock final classes/methods](https://github.com/spockframework/spock/issues/424)
+- [Better generics support for mocks and stubs](https://github.com/spockframework/spock/issues/429)
+- [GC calls to finalize() on mocks cause strict interaction specifications (0 * _) to fail intermittently](https://github.com/spockframework/spock/issues/460)
+- [Multiple Assignment in when: and anything in cleanup:](https://github.com/spockframework/spock/issues/493)
+- [Move OptimizeRunOrderSuite from spock-core to spock-maven to solve a problem with Android’s test runner](https://github.com/spockframework/spock/issues/507)
+- [Support running on JDK 8](https://github.com/spockframework/spock/issues/513)
+- [Release binary variants for Groovy 2.3 and Groovy 2.4](https://github.com/spockframework/spock/issues/514)
+- [Port reference documentation to Asciidoc](https://github.com/spockframework/spock/issues/515)
 
 
 ### Merged Pull Requests
@@ -1809,7 +1809,7 @@ automatically initialize the rule by calling the default constructor. The `@Test
 honor the `@Unroll` annotation and any defined naming pattern.
 
 
-See [Issue 240](https://code.google.com/archive/p/spock/issues/240) for a known limitation with Spock’s TestRule support.
+See [Issue 240](https://github.com/spockframework/spock/issues/362) for a known limitation with Spock’s TestRule support.
 
 
 ### Condition Rendering Improvements

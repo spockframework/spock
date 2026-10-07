@@ -21,19 +21,22 @@
 
 import io.github.typesafegithub.workflows.domain.Job
 import io.github.typesafegithub.workflows.domain.JobOutputs.EMPTY
+import io.github.typesafegithub.workflows.domain.Mode
+import io.github.typesafegithub.workflows.domain.Permission
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.domain.actions.Action.Outputs
 import io.github.typesafegithub.workflows.domain.actions.LocalAction
 import io.github.typesafegithub.workflows.dsl.JobBuilder
 import io.github.typesafegithub.workflows.dsl.WorkflowBuilder
-import io.github.typesafegithub.workflows.dsl.expressions.Contexts.secrets
-import io.github.typesafegithub.workflows.dsl.expressions.expr
 import java.util.Properties
 
-val DEVELOCITY_ACCESS_KEY by secrets
-
-val commonCredentials = mapOf(
-    "DEVELOCITY_ACCESS_KEY" to expr(DEVELOCITY_ACCESS_KEY)
+/**
+ * Permissions for jobs that build with Gradle.
+ * `id-token: write` lets `SetupBuildEnv` request an OIDC token for Develocity.
+ */
+val develocityPermissions = mapOf(
+    Permission.Contents to Mode.Read,
+    Permission.IdToken to Mode.Write
 )
 
 data class Strategy(
@@ -119,6 +122,7 @@ fun WorkflowBuilder.job(
     condition: String? = null,
     strategy: Strategy? = null,
     simpleStrategy: Map<String, List<String>>? = null,
+    permissions: Map<Permission, Mode>? = null,
     block: JobBuilder<EMPTY>.() -> Unit
 ): Job<EMPTY> = job(
     id = id,
@@ -127,6 +131,7 @@ fun WorkflowBuilder.job(
     needs = needs,
     condition = condition,
     strategyMatrix = simpleStrategy,
+    permissions = permissions,
     _customArguments = mapOf(
         *listOfNotNull(
             strategy?.let { "strategy" to strategy.toCustomArguments() }

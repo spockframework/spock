@@ -26,6 +26,9 @@ jobs:
   build-and-verify:
     name: 'Build and Verify'
     runs-on: '${{ matrix.os }}'
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     needs:
     - 'check_yaml_consistency'
     if: 'github.repository == ''spockframework/spock'''
@@ -109,8 +112,6 @@ jobs:
         additional-java-version: '${{ matrix.java }}'
     - id: 'step-2'
       name: 'Build Spock'
-      env:
-        DEVELOCITY_ACCESS_KEY: '${{ secrets.DEVELOCITY_ACCESS_KEY }}'
       run: './gradlew --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" "-Dscan.tag.main-build"'
     - id: 'step-3'
       name: 'Stop Daemon'
@@ -123,6 +124,9 @@ jobs:
   release-spock:
     name: 'Release Spock'
     runs-on: '${{ matrix.os }}'
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     needs:
     - 'build-and-verify'
     - 'check_yaml_consistency'
@@ -160,11 +164,13 @@ jobs:
         SONATYPE_OSS_USER: '${{ secrets.SONATYPE_OSS_USER }}'
         SONATYPE_OSS_PASSWORD: '${{ secrets.SONATYPE_OSS_PASSWORD }}'
         SIGNING_PASSWORD: '${{ secrets.SIGNING_GPG_PASSWORD }}'
-        DEVELOCITY_ACCESS_KEY: '${{ secrets.DEVELOCITY_ACCESS_KEY }}'
       run: './gradlew --no-parallel --stacktrace ghActionsPublish "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" "-Dscan.tag.main-publish"'
   publish-release-docs:
     name: 'Publish Release Docs'
     runs-on: '${{ matrix.os }}'
+    permissions:
+      contents: 'write'
+      id-token: 'write'
     needs:
     - 'release-spock'
     - 'check_yaml_consistency'
@@ -192,5 +198,4 @@ jobs:
       name: 'Publish Docs'
       env:
         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-        DEVELOCITY_ACCESS_KEY: '${{ secrets.DEVELOCITY_ACCESS_KEY }}'
       run: './gradlew --no-parallel --stacktrace ghActionsDocs "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" "-Dscan.tag.main-docs"'

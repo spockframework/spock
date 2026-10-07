@@ -3690,7 +3690,7 @@ class SeeDocSpec extends Specification {
     expect: true
   }
 
-  @See("http://www.levenshtein.de/")
+  @See("https://example.com/levenshtein/")
   @See(["https://en.wikipedia.org/wiki/Levenshtein_distance", "https://www.levenshtein.net/"])
   def "And even more information is available on the feature"() {
     expect: true

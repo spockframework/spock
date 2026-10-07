@@ -658,7 +658,7 @@ runner {
 [[test-tag-extension]]
 === Tags
 
-Since version 2.2 Spock supports https://junit.org/junit5/docs/current/user-guide/#running-tests-tags[JUnit Platform tags].
+Since version 2.2 Spock supports https://docs.junit.org/5.14.4/running-tests/tags.html[JUnit Platform tags].
 See the platform documentation for more information regarding valid tag values and how to configure your test execution to use them.
 
 The `@Tag` annotation can be used to tag a spec or feature with one or more tags.

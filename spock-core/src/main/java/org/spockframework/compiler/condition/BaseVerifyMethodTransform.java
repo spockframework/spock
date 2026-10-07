@@ -75,7 +75,7 @@ abstract class BaseVerifyMethodTransform implements ASTTransformation {
       rewriter.rewrite();
     } catch (Exception e) {
       errorReporter.error(
-          "Unexpected error during compilation of verification helper method '%s'. Maybe you have used invalid Spock syntax? Anyway, please file a bug report at https://issues.spockframework.org.",
+          "Unexpected error during compilation of verification helper method '%s'. Maybe you have used invalid Spock syntax? Anyway, please file a bug report at https://github.com/spockframework/spock/issues.",
           e, method.getName());
     }
   }

@@ -33,8 +33,8 @@ and https://bytebuddy.net/[Byte Buddy] or https://github.com/cglib/cglib[CGLIB] 
 Compared to implementations based on Groovy meta-programming, this has the advantage that it also works for testing Java code.
 ****
 
-The Java world has no shortage of popular and mature mocking frameworks: https://www.jmock.org/[JMock],
-https://www.easymock.org[EasyMock], https://mockito.org/[Mockito], to name just a few.
+The Java world has no shortage of popular and mature mocking frameworks: https://jmock.org/[JMock],
+https://easymock.org[EasyMock], https://site.mockito.org/[Mockito], to name just a few.
 Although each of these tools can be used together with Spock, we decided to roll our own mocking framework,
 tightly integrated with Spock's specification language. This decision was driven by the desire to leverage all of
 Groovy's capabilities to make interaction-based tests easier to write, more readable, and ultimately more fun.
@@ -1263,14 +1263,14 @@ include::{sourcedir}/interaction/DetachedMockFactoryDocSpec.groovy[tags=use-cust
 
 If you would like to dive deeper into interaction-based testing, we recommend the following resources:
 
-https://www.ccs.neu.edu/research/demeter/related-work/extreme-programming/MockObjectsFinal.PDF[Endo-Testing: Unit Testing with Mock Objects]::
+https://www2.ccs.neu.edu/research/demeter/related-work/extreme-programming/MockObjectsFinal.PDF[Endo-Testing: Unit Testing with Mock Objects]::
   Paper from the XP2000 conference that introduces the concept of mock objects.
 
-https://www.jmock.org/oopsla2004.pdf[Mock Roles, not Objects]::
+https://jmock.org/oopsla2004.pdf[Mock Roles, not Objects]::
   Paper from the OOPSLA2004 conference that explains how to do mocking _right_.
 
 https://martinfowler.com/articles/mocksArentStubs.html[Mocks Aren't Stubs]::
   Martin Fowler's take on mocking.
 
-https://www.growing-object-oriented-software.com[Growing Object-Oriented Software Guided by Tests]::
+https://growing-object-oriented-software.com[Growing Object-Oriented Software Guided by Tests]::
   TDD pioneers Steve Freeman and Nat Pryce explain in detail how test-driven development and mocking work in the real world.

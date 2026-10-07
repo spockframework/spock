@@ -32,7 +32,7 @@ https://github.com/spockframework/spock/tree/master/spock-tapestry/src/test/groo
 
 == Unitils Module
 
-Integration with the https://www.unitils.org/[Unitils] library. Please add dependency https://search.maven.org/artifact/org.spockframework/spock-unitils[`org.spockframework:spock-unitils`] to your project. For examples see the specs in the
+Integration with the https://unitils.sourceforge.net/[Unitils] library. Please add dependency https://search.maven.org/artifact/org.spockframework/spock-unitils[`org.spockframework:spock-unitils`] to your project. For examples see the specs in the
 https://github.com/spockframework/spock/tree/master/spock-unitils/src/test/groovy/org/spockframework/unitils[codebase].
 
 

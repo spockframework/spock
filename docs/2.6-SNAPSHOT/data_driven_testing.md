@@ -32,9 +32,9 @@ Although this approach is fine in simple cases like this one, it has some potent
 - Exercising the same code multiple times does not benefit from the same isolation as executing separate methods does
 
 
-Spock’s data-driven testing support tries to address these concerns. To get started, let’s refactor above code into a
-data-driven feature method. First, we introduce three method parameters (called *data variables*) that replace the
-hard-coded integer values:
+Spock’s data-driven testing support tries to address these concerns.
+To get started, let’s refactor above code into a data-driven feature method.
+First, we introduce three method parameters (called *data variables*) that replace the hard-coded integer values:
 
 
 ```groovy
@@ -48,8 +48,9 @@ class MathSpec extends Specification {
 ```
 
 
-We have finished the test logic, but still need to supply the data values to be used. This is done in a `where:` block,
-which always comes at the end of the method. In the simplest (and most common) case, the `where:` block holds a *data table*.
+We have finished the test logic, but still need to supply the data values to be used.
+This is done in a `where:` block, which always comes at the end of the method.
+In the simplest (and most common) case, the `where:` block holds a *data table*.
 
 
 ## Data Tables
@@ -73,13 +74,15 @@ class MathSpec extends Specification {
 ```
 
 
-The first line of the table, called the *table header*, declares the data variables. The subsequent lines, called
-*table rows*, hold the corresponding values. For each row, the feature method will get executed once; we call this an
-*iteration* of the method. If an iteration fails, the remaining iterations will nevertheless be executed. All
-failures will be reported.
+The first line of the table, called the *table header*, declares the data variables.
+The subsequent lines, called *table rows*, hold the corresponding values.
+For each row, the feature method will get executed once; we call this an *iteration* of the method.
+If an iteration fails, the remaining iterations will nevertheless be executed.
+All failures will be reported.
 
 
-Data tables must have at least two columns. A single-column table can be written as:
+Data tables must have at least two columns.
+A single-column table can be written as:
 
 
 ```groovy
@@ -92,9 +95,7 @@ a | _
 
 
 A sequence of two or more underscores can be used to split one wide data table into multiple narrower ones.
-Without this separator and without any other data variable assignment in between there
-is no way to have multiple data tables in one `where` block, the second table would just
-be further iterations of the first table, including the seemingly header row:
+Without this separator and without any other data variable assignment in between there is no way to have multiple data tables in one `where` block, the second table would just be further iterations of the first table, including the seemingly header row:
 
 
 ```groovy
@@ -125,11 +126,9 @@ a | b | c
 
 
 The sequence of two or more underscores can be used anywhere in the `where` block.
-It will be ignored everywhere, except for in between two data tables, where it is
-used to separate the two data tables. This means that the separator can also be used
-as styling element in different ways. It can be used as separator line like shown in
-the last example or it can for example be used visually as top border of tables
-additionally to its effect of separating them:
+It will be ignored everywhere, except for in between two data tables, where it is used to separate the two data tables.
+This means that the separator can also be used as styling element in different ways.
+It can be used as separator line like shown in the last example or it can for example be used visually as top border of tables additionally to its effect of separating them:
 
 
 ```groovy
@@ -149,9 +148,8 @@ b | c
 
 ## Isolated Execution of Iterations
 
-Iterations are isolated from each other in the same way as separate feature methods. Each iteration gets its own instance
-of the specification class, and the `setup` and `cleanup` methods will be called before and after each iteration,
-respectively.
+Iterations are isolated from each other in the same way as separate feature methods.
+Each iteration gets its own instance of the specification class, and the `setup` and `cleanup` methods will be called before and after each iteration, respectively.
 
 
 ## Sharing of Objects between Iterations
@@ -163,9 +161,10 @@ In order to share an object between iterations, it has to be kept in a `@Shared`
 > Only `@Shared` and static variables can be accessed from within a `where:` block.
 
 
-Note that such objects will also be shared with other methods. There is currently no good way to share an object
-just between iterations of the same method. If you consider this a problem, consider putting each method into a separate
-spec, all of which can be kept in the same file. This achieves better isolation at the cost of some boilerplate code.
+Note that such objects will also be shared with other methods.
+There is currently no good way to share an object just between iterations of the same method.
+If you consider this a problem, consider putting each method into a separate spec, all of which can be kept in the same file.
+This achieves better isolation at the cost of some boilerplate code.
 
 
 ## Syntactic Variations
@@ -173,8 +172,7 @@ spec, all of which can be kept in the same file. This achieves better isolation 
 The previous code can be tweaked in a few ways.
 
 
-First, since the `where:` block already declares all data variables, the method parameters can be
-omitted. (Note: The idea behind allowing method parameters is to enable better IDE support. However, recent versions of IntelliJ IDEA recognize data variables automatically, and even infer their types from the values contained in the data table.)
+First, since the `where:` block already declares all data variables, the method parameters can be omitted. (Note: The idea behind allowing method parameters is to enable better IDE support. However, recent versions of IntelliJ IDEA recognize data variables automatically, and even infer their types from the values contained in the data table.)
 
 
 You can also omit some parameters and specify others, for example to have them typed.
@@ -203,8 +201,7 @@ class MathSpec extends Specification {
 ```
 
 
-Alternatively to using single or double pipes you can also use any amount of semicolons to separate data columns
-from each other:
+Alternatively to using single or double pipes you can also use any amount of semicolons to separate data columns from each other:
 
 
 ```groovy
@@ -270,19 +267,18 @@ maximum of two numbers [a: 0, b: 0, c: 0, #2]   PASSED
 ```
 
 
-The obvious question is: Which iteration failed, and what are its data values? In our example, it isn’t hard to figure
-out that it’s the second iteration (with index 1) that failed even from the rich condition rendering. At other times
-this can be more difficult or even impossible. (Note: For example, a feature method could use data variables in its `given:` block, but not in any conditions.) In any case, Spock makes it loud and clear which iteration failed, rather
-than just reporting the failure. Iterations of a feature method are by default unrolled with a rich naming pattern.
-This pattern can also be configured as documented at [_unrolled_iteration_names](#_unrolled_iteration_names) or the unrolling can be disabled
-like described in the following section.
+The obvious question is: Which iteration failed, and what are its data values?
+In our example, it isn’t hard to figure out that it’s the second iteration (with index 1) that failed even from the rich condition rendering.
+At other times this can be more difficult or even impossible. (Note: For example, a feature method could use data variables in its `given:` block, but not in any conditions.)
+In any case, Spock makes it loud and clear which iteration failed, rather than just reporting the failure.
+Iterations of a feature method are by default unrolled with a rich naming pattern.
+This pattern can also be configured as documented at [_unrolled_iteration_names](#_unrolled_iteration_names) or the unrolling can be disabled like described in the following section.
 
 
 ## Method Uprolling and Unrolling
 
-A method annotated with `@Rollup` will have its iterations not reported independently but only aggregated within the
-feature. This can for example be used if you produce many test cases from calculations or if you use external data
-like the contents of a database as test data and do not want the test count to vary:
+A method annotated with `@Rollup` will have its iterations not reported independently but only aggregated within the feature.
+This can for example be used if you produce many test cases from calculations or if you use external data like the contents of a database as test data and do not want the test count to vary:
 
 
 ```groovy
@@ -310,14 +306,10 @@ class java.lang.Math
 
 
 The `@Rollup` annotation can also be placed on a spec.
-This has the same effect as placing it on each data-driven feature method of the spec that does not have an
-`@Unroll` annotation.
+This has the same effect as placing it on each data-driven feature method of the spec that does not have an `@Unroll` annotation.
 
 
-Alternatively the [configuration file](extensions.md#spock-configuration-file) setting `unrollByDefault`
-in the `unroll` section can be set to `false` to roll up all features automatically unless
-they are annotated with `@Unroll` or are contained in an `@Unroll`ed spec and thus reinstate the pre Spock 2.0
-behavior where this was the default.
+Alternatively the [configuration file](extensions.md#spock-configuration-file) setting `unrollByDefault` in the `unroll` section can be set to `false` to roll up all features automatically unless they are annotated with `@Unroll` or are contained in an `@Unroll`ed spec and thus reinstate the pre Spock 2.0 behavior where this was the default.
 
 
 **Disable Default Unrolling**
@@ -329,8 +321,7 @@ unroll {
 ```
 
 
-It is illegal to annotate a spec or a feature with both the `@Unroll` and the `@Rollup` annotation and if detected
-this will cause an exception to be thrown.
+It is illegal to annotate a spec or a feature with both the `@Unroll` and the `@Rollup` annotation and if detected this will cause an exception to be thrown.
 
 
 ---
@@ -344,8 +335,7 @@ A feature will be uprolled
 
 - if the method is annotated with `@Rollup`
 - if the method is not annotated with `@Unroll` and the spec is annotated with `@Rollup`
-- if neither the method nor the spec is annotated with `@Unroll`
-and the configuration option `unroll { unrollByDefault }` is set to `false`
+- if neither the method nor the spec is annotated with `@Unroll` and the configuration option `unroll { unrollByDefault }` is set to `false`
 
 
 A feature will be unrolled
@@ -353,14 +343,13 @@ A feature will be unrolled
 
 - if the method is annotated with `@Unroll`
 - if the method is not annotated with `@Rollup` and the spec is annotated with `@Unroll`
-- if neither the method nor the spec is annotated with `@Rollup`
-and the configuration option `unroll { unrollByDefault }` is set to its default value `true`
+- if neither the method nor the spec is annotated with `@Rollup` and the configuration option `unroll { unrollByDefault }` is set to its default value `true`
 
 
 ## Data Pipes
 
-Data tables aren’t the only way to supply values to data variables. In fact, a data table is just syntactic sugar for
-one or more *data pipes*:
+Data tables aren’t the only way to supply values to data variables.
+In fact, a data table is just syntactic sugar for one or more *data pipes*:
 
 
 ```groovy
@@ -372,25 +361,22 @@ c << [3, 7, 0]
 ```
 
 
-A data pipe, indicated by the left-shift (`<<`) operator, connects a data variable to a *data provider*. The data
-provider holds all values for the variable, one per iteration. Any object that Groovy knows how to iterate over can be
-used as a data provider. This includes objects of type `Collection`, `String`, `Iterable`, and objects implementing the
-`Iterable` contract. Data providers don’t necessarily have to *be* the data (as in the case of a `Collection`);
-they can fetch data from external sources like text files, databases and spreadsheets, or generate data randomly.
+A data pipe, indicated by the left-shift (`<<`) operator, connects a data variable to a *data provider*.
+The data provider holds all values for the variable, one per iteration.
+Any object that Groovy knows how to iterate over can be used as a data provider.
+This includes objects of type `Collection`, `String`, `Iterable`, and objects implementing the `Iterable` contract.
+Data providers don’t necessarily have to *be* the data (as in the case of a `Collection`); they can fetch data from external sources like text files, databases and spreadsheets, or generate data randomly.
 Data providers are queried for their next value only when needed (before the next iteration).
 
 
 > [!NOTE]
-> Spock uses the `size()` method to calculate the amount of iterations,
->       except for data providers that implement `Iterator`,
->       so make sure `size()` is working efficient, or supply an `Iterator` if that is not possible.
+> Spock uses the `size()` method to calculate the amount of iterations, except for data providers that implement `Iterator`, so make sure `size()` is working efficient, or supply an `Iterator` if that is not possible.
 
 
 ## Multi-Variable Data Pipes
 
-If a data provider returns multiple values per iteration (as an object that Groovy knows how to iterate over),
-it can be connected to multiple data variables simultaneously. The syntax is somewhat similar to Groovy multi-assignment
-but uses brackets instead of parentheses on the left-hand side:
+If a data provider returns multiple values per iteration (as an object that Groovy knows how to iterate over), it can be connected to multiple data variables simultaneously.
+The syntax is somewhat similar to Groovy multi-assignment but uses brackets instead of parentheses on the left-hand side:
 
 
 ```groovy
@@ -416,7 +402,8 @@ where:
 ```
 
 
-The multi-assignments can even be nested. The following example will generate these iterations:
+The multi-assignments can even be nested.
+The following example will generate these iterations:
 
 
 | a | b | c |
@@ -480,9 +467,8 @@ where:
 
 ## Cross-multiplying Data Providers
 
-Two or more consecutive data providers, be it a data table or a data pipe, can also be combined
-using a cartesian product using the `combined:` label between them. The following will result
-in these executed tests:
+Two or more consecutive data providers, be it a data table or a data pipe, can also be combined using a cartesian product using the `combined:` label between them.
+The following will result in these executed tests:
 
 
 - `feature [a: 1, b: 3, c: 5, d: 1, e: 4, #0]`
@@ -533,14 +519,12 @@ e = a + b
 
 
 > [!NOTE]
-> If a data table takes part in a cross-multiplication, accessing columns of previous
->       data tables would not behave in an intuitive way and thus is currently forbidden. Accessing
->       previous columns within one data table even works while taking part in a cross-multiplication.
+> If a data table takes part in a cross-multiplication, accessing columns of previous data tables would not behave in an intuitive way and thus is currently forbidden.
+> Accessing previous columns within one data table even works while taking part in a cross-multiplication.
 
 
 > [!NOTE]
-> Only the data provider right before the `combined:` label is
-> combined with the data provider right after the `combined:` label.
+> Only the data provider right before the `combined:` label is combined with the data provider right after the `combined:` label.
 > 
 > 
 > So if you execute
@@ -618,8 +602,8 @@ c = a > b ? a : b
 ```
 
 
-Assignments are re-evaluated for every iteration. As already shown above, the right-hand side of an assignment may refer
-to other data variables:
+Assignments are re-evaluated for every iteration.
+As already shown above, the right-hand side of an assignment may refer to other data variables:
 
 
 ```groovy
@@ -635,14 +619,11 @@ c = row.c
 
 ## Accessing Other Data Variables
 
-There are only two possibilities to access one data variable from the calculation
-of another data variable.
+There are only two possibilities to access one data variable from the calculation of another data variable.
 
 
 The first possibility are derived data variables like shown in the last section.
-Every data variable that is defined by a direct assignment can access all
-previously defined data variables, including the ones defined through data
-tables or data pipes:
+Every data variable that is defined by a direct assignment can access all previously defined data variables, including the ones defined through data tables or data pipes:
 
 
 ```groovy
@@ -750,8 +731,8 @@ The same rules apply to every target, and each name becomes its own where-block 
 
 ## Multi-Variable Assignment
 
-Like with data pipes, you can also assign to multiple variables in one expression, if you have some object Groovy
-can iterate over. Unlike with data pipes, the syntax here is identical to standard Groovy multi-assignment syntax:
+Like with data pipes, you can also assign to multiple variables in one expression, if you have some object Groovy can iterate over.
+Unlike with data pipes, the syntax here is identical to standard Groovy multi-assignment syntax:
 
 
 ```groovy
@@ -800,11 +781,8 @@ d = a > c ? a : c
 
 ## Type Coercion for Data Variable Values
 
-Data variable values are coerced to the declared parameter type using
-[type coercion](https://groovy-lang.org/operators.html#_coercion_operator). Due to that custom type conversions can be
-provided as [extension module](https://groovy-lang.org/metaprogramming.html#_extension_modules) or with the help of
-the [`@Use`](extensions.md#_use) extension on the specification (as it has no effect to the `where:` block if
-applied to a feature).
+Data variable values are coerced to the declared parameter type using [type coercion](https://groovy-lang.org/operators.html#_coercion_operator).
+Due to that custom type conversions can be provided as [extension module](https://groovy-lang.org/metaprogramming.html#_extension_modules) or with the help of the [`@Use`](extensions.md#_use) extension on the specification (as it has no effect to the `where:` block if applied to a feature).
 
 
 ```groovy
@@ -842,10 +820,11 @@ class CoerceBazToBar {
 
 ## Number of Iterations
 
-The number of iterations depends on how much data is available. Successive executions of the same method can
-yield different numbers of iterations. If a data provider runs out of values sooner than its peers, an exception will occur.
-Variable assignments don’t affect the number of iterations. A `where:` block that only contains assignments yields
-exactly one iteration.
+The number of iterations depends on how much data is available.
+Successive executions of the same method can yield different numbers of iterations.
+If a data provider runs out of values sooner than its peers, an exception will occur.
+Variable assignments don’t affect the number of iterations.
+A `where:` block that only contains assignments yields exactly one iteration.
 
 
 ## Filtering iterations
@@ -858,8 +837,7 @@ If any of the implicit or explicit assertions in the `filter` block fails, the i
 This also means, that if all iterations are filtered out, the test will fail like when giving a data provider without content.
 
 
-In the following example the test is executed with the values `1`, `2`, `4`, and `5` for the variable `i`,
-the iteration where `i` would be `3` is filtered out by the `filter` block:
+In the following example the test is executed with the values `1`, `2`, `4`, and `5` for the variable `i`, the iteration where `i` would be `3` is filtered out by the `filter` block:
 
 
 ```groovy
@@ -878,19 +856,16 @@ def "excluding iterations"() {
 
 ## Closing of Data Providers
 
-After all iterations have completed, the zero-argument `close` method is called on all data providers that have
-such a method.
+After all iterations have completed, the zero-argument `close` method is called on all data providers that have such a method.
 
 
 ## Unrolled Iteration Names
 
-By default, the names of unrolled iterations are the name of the feature, plus the data variables and the iteration
-index. This will always produce unique names and should enable you to identify easily the failing data variable
-combination.
+By default, the names of unrolled iterations are the name of the feature, plus the data variables and the iteration index.
+This will always produce unique names and should enable you to identify easily the failing data variable combination.
 
 
-The example at [_reporting_of_failures](#_reporting_of_failures) for example shows with `maximum of two numbers [a: 7, b: 4, c: 7, #1]`,
-that the second iteration (`#1`) where the data variables have the values `7`, `4` and `7` failed.
+The example at [_reporting_of_failures](#_reporting_of_failures) for example shows with `maximum of two numbers [a: 7, b: 4, c: 7, #1]`, that the second iteration (`#1`) where the data variables have the values `7`, `4` and `7` failed.
 
 
 With a bit of effort, we can do even better:
@@ -930,8 +905,7 @@ An unrolled method name is similar to a Groovy `GString`, except for the followi
 - Expressions only support property access and zero-arg method calls.
 
 
-Given a class `Person` with properties `name` and `age`, and a data variable `person` of type `Person`, the
-following are valid method names:
+Given a class `Person` with properties `name` and `age`, and a data variable `person` of type `Person`, the following are valid method names:
 
 
 ```groovy
@@ -966,8 +940,7 @@ def "#lastName"() {
 
 
 Additionally, to the data variables the tokens `#featureName` and `#iterationIndex` are supported.
-The former does not make much sense inside an actual feature name, but there are two other places
-where an unroll-pattern can be defined, where it is more useful.
+The former does not make much sense inside an actual feature name, but there are two other places where an unroll-pattern can be defined, where it is more useful.
 
 
 ```groovy
@@ -989,8 +962,7 @@ will be reported as
 ```
 
 
-Alternatively, to specifying the unroll-pattern as method name, it can be given as parameter
-to the `@Unroll` annotation which takes precedence over the method name:
+Alternatively, to specifying the unroll-pattern as method name, it can be given as parameter to the `@Unroll` annotation which takes precedence over the method name:
 
 
 ```groovy
@@ -1018,16 +990,14 @@ The advantage is, that you can have a descriptive method name for the whole feat
 Furthermore, the feature method name is not filled with placeholders and thus better readable.
 
 
-If neither a parameter to the annotation is given, nor the method name contains a `#`,
-the [configuration file](extensions.md#spock-configuration-file) setting `defaultPattern`
-in the `unroll` section is inspected. If it is set to a non-`null`
-string, this value is used as unroll-pattern. This could for example be set to
+If neither a parameter to the annotation is given, nor the method name contains a `#`, the [configuration file](extensions.md#spock-configuration-file) setting `defaultPattern` in the `unroll` section is inspected.
+If it is set to a non-`null` string, this value is used as unroll-pattern.
+This could for example be set to
 
 
 - `#featureName` to have all iterations reported with the same name, or
 - `#featureName[#iterationIndex]` to have a simply indexed iteration name, or
-- `#iterationName` if you make sure that in each data-driven feature you also set
-a data variable called `iterationName` that is then used for reporting
+- `#iterationName` if you make sure that in each data-driven feature you also set a data variable called `iterationName` that is then used for reporting
 
 
 ### Special Tokens
@@ -1052,22 +1022,15 @@ unroll {
 ```
 
 
-If none of the three described ways is used to set a custom unroll-pattern, by default
-the feature name is used, suffixed with all data variable names and their values and
-finally the iteration index, so the result will be for example
-`my feature [x: 1, y: 2, z: 3, #0]`.
+If none of the three described ways is used to set a custom unroll-pattern, by default the feature name is used, suffixed with all data variable names and their values and finally the iteration index, so the result will be for example `my feature [x: 1, y: 2, z: 3, #0]`.
 
 
-If there is an error in an unroll expression, for example typo in variable name, exception during
-evaluation of a property or method in the expression and so on, the test will fail. This is not
-true for the automatic fall back rendering of the data variables if there is no unroll-pattern
-set in any way, this will never fail the test, no matter what happens.
+If there is an error in an unroll expression, for example typo in variable name, exception during evaluation of a property or method in the expression and so on, the test will fail.
+This is not true for the automatic fall back rendering of the data variables if there is no unroll-pattern set in any way, this will never fail the test, no matter what happens.
 
 
-The failing of test with errors in the unroll expression can be disabled by setting the
-[configuration file](extensions.md#spock-configuration-file) setting `validateExpressions`
-in the `unroll` section to `false`. If this is done and an error happens, the erroneous expression
-`#foo.bar` will be substituted by `#Error:foo.bar`.
+The failing of test with errors in the unroll expression can be disabled by setting the [configuration file](extensions.md#spock-configuration-file) setting `validateExpressions` in the `unroll` section to `false`.
+If this is done and an error happens, the erroneous expression `#foo.bar` will be substituted by `#Error:foo.bar`.
 
 
 **Disable Unroll-pattern Expression Asserting**

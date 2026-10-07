@@ -67,8 +67,8 @@ See <a href="extensions.html#spock-configuration-file">Spock Configuration File<
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/parallel/ParallelConfigDoc.groovy#L32" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/parallel/ParallelConfigDoc.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/parallel/ParallelConfigDoc.groovy#L32" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/parallel/ParallelConfigDoc.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -80,8 +80,8 @@ See <a href="extensions.html#spock-configuration-file">Spock Configuration File<
 </td>
 <td class="content">
 JUnit Jupiter also supports <a href="https://docs.junit.org/5.7.0/user-guide/#writing-tests-parallel-execution">parallel execution</a>, both rely on the JUnit Platform implementation, but function independently of each other.
-      If you enable parallel execution in Spock it won&#8217;t affect Jupiter and vice versa.
-      The JUnit Platform executes the test engines (Spock, Jupiter) sequentially, so there should not be any interference between engines.
+If you enable parallel execution in Spock it won&#8217;t affect Jupiter and vice versa.
+The JUnit Platform executes the test engines (Spock, Jupiter) sequentially, so there should not be any interference between engines.
 </td>
 </tr>
 </table>
@@ -206,8 +206,7 @@ The features inside a specification will run concurrently.</p>
 <div class="paragraph">
 <p>If nothing else is explicit configured, specifications will use <code>defaultSpecificationExecutionMode</code> and features use <code>defaultExecutionMode</code>.
 However, this changes when you set the execution mode explicitly via <code>@Execution</code>.
-Each node (specification, feature) checks first if it has an explicit execution mode set,
-otherwise it will check its parents for an explicit setting and fall back to the respective defaults otherwise.</p>
+Each node (specification, feature) checks first if it has an explicit execution mode set, otherwise it will check its parents for an explicit setting and fall back to the respective defaults otherwise.</p>
 </div>
 <div class="paragraph">
 <p>The following examples have <code>defaultSpecificationExecutionMode=SAME_THREAD</code> and <code>defaultExecutionMode=SAME_THREAD</code>.
@@ -254,7 +253,8 @@ As in the previous example the specification and its features will execute concu
 </div>
 <div class="paragraph">
 <p>A simple example would be two features that test the use a system property, both setting it to a specific value in the respective <code>given</code> block and then executing the code to test the expected behavior.
-If they run sequentially then both complete without issue. However, if the run at the same time both <code>given</code> blocks will run before the <code>when</code> blocks and one feature will fail since the system property did not contain the expected value.</p>
+If they run sequentially then both complete without issue.
+However, if the run at the same time both <code>given</code> blocks will run before the <code>when</code> blocks and one feature will fail since the system property did not contain the expected value.</p>
 </div>
 <div class="paragraph">
 <p>The above example could simply be fixed if both features are part of the same specification by setting them to run in the same thread with <code>@Execution(SAME_THREAD)</code>.
@@ -262,7 +262,8 @@ However, this is not really practicable when the features are in separate specif
 To solve this issue Spock has support to coordinate access to shared resources via <code>@ResourceLock</code>.</p>
 </div>
 <div class="paragraph">
-<p>With <code>@ResourceLock</code> you can define both a <code>key</code> and a <code>mode</code>. By default, <code>@ResourceLock</code> assumes <code>ResourceAccessMode.READ_WRITE</code>, but you can weaken it to <code>ResourceAccessMode.READ</code>.</p>
+<p>With <code>@ResourceLock</code> you can define both a <code>key</code> and a <code>mode</code>.
+By default, <code>@ResourceLock</code> assumes <code>ResourceAccessMode.READ_WRITE</code>, but you can weaken it to <code>ResourceAccessMode.READ</code>.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -336,8 +337,7 @@ You can think of this as an implicit global lock.</p>
 </div>
 <div class="paragraph">
 <p>As with other locks, the features in an <code>@Isolated</code> specification will run in <code>SAME_THREAD</code> mode.
-<code>@Isolated</code> can only be applied at the specification level so if you have a large specification and only need it for a few features,
-you might want to consider splitting the spec into <code>@Isolated</code> and non isolated.</p>
+<code>@Isolated</code> can only be applied at the specification level so if you have a large specification and only need it for a few features, you might want to consider splitting the spec into <code>@Isolated</code> and non isolated.</p>
 </div>
 <div id="figure-isolated" class="imageblock">
 <div class="content">
@@ -400,8 +400,8 @@ Check the Javadoc of <code>spock.config.ParallelConfiguration</code> for a detai
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/parallel/ParallelConfigDoc.groovy#L50" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/parallel/ParallelConfigDoc.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/parallel/ParallelConfigDoc.groovy#L50" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/parallel/ParallelConfigDoc.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -411,7 +411,7 @@ Check the Javadoc of <code>spock.config.ParallelConfiguration</code> for a detai
 <div id="footer">
 <div id="footer-text">
 Version 2.6-SNAPSHOT<br>
-Last updated 2026-10-07 10:58:34 UTC
+Last updated 2026-10-07 16:23:17 UTC
 </div>
 </div>
 </body>

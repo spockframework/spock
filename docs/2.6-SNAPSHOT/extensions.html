@@ -29,9 +29,8 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Spock comes with a powerful extension mechanism, which allows to hook into a spec&#8217;s lifecycle to enrich or alter its
-behavior. In this chapter, we will first learn about Spock&#8217;s built-in extensions, and then dive into writing custom
-extensions.</p>
+<p>Spock comes with a powerful extension mechanism, which allows to hook into a spec&#8217;s lifecycle to enrich or alter its behavior.
+In this chapter, we will first learn about Spock&#8217;s built-in extensions, and then dive into writing custom extensions.</p>
 </div>
 </div>
 </div>
@@ -39,20 +38,19 @@ extensions.</p>
 <h2 id="spock-configuration-file"><a class="anchor" href="#spock-configuration-file"></a><a class="link" href="#spock-configuration-file">Spock Configuration File</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Some extensions can be configured with options in a Spock configuration file. The description for each extension will
-mention how it can be configured. All those configurations are in a Groovy file that usually is called
-<code>SpockConfig.groovy</code>. Spock first searches for a custom location given in a system property called <code>spock.configuration</code>
-which is then used either as classpath location or if not found as file system location if it can be found there,
-otherwise the default locations are investigated for a configuration file. Next it searches for the <code>SpockConfig.groovy</code>
-in the root of the test execution classpath. If there is also no such file, you can at last have a <code>SpockConfig.groovy</code>
-in your Spock user home. This by default is the directory <code>.spock</code> within your home directory, but can be changed using
-the system property <code>spock.user.home</code> or if not set the environment property <code>SPOCK_USER_HOME</code>.</p>
+<p>Some extensions can be configured with options in a Spock configuration file.
+The description for each extension will mention how it can be configured.
+All those configurations are in a Groovy file that usually is called <code>SpockConfig.groovy</code>.
+Spock first searches for a custom location given in a system property called <code>spock.configuration</code> which is then used either as classpath location or if not found as file system location if it can be found there, otherwise the default locations are investigated for a configuration file.
+Next it searches for the <code>SpockConfig.groovy</code> in the root of the test execution classpath.
+If there is also no such file, you can at last have a <code>SpockConfig.groovy</code> in your Spock user home.
+This by default is the directory <code>.spock</code> within your home directory, but can be changed using the system property <code>spock.user.home</code> or if not set the environment property <code>SPOCK_USER_HOME</code>.</p>
 </div>
 <div class="sect2">
 <h3 id="_stack_trace_filtering"><a class="anchor" href="#_stack_trace_filtering"></a><a class="link" href="#_stack_trace_filtering">Stack Trace Filtering</a></h3>
 <div class="paragraph">
-<p>You can configure Spock whether it should filter stack traces or not by using the configuration file. The default value
-is <code>true</code>.</p>
+<p>You can configure Spock whether it should filter stack traces or not by using the configuration file.
+The default value is <code>true</code>.</p>
 </div>
 <div class="listingblock">
 <div class="title">Stack Trace Filtering Configuration</div>
@@ -84,9 +82,9 @@ is <code>true</code>.</p>
 <h2 id="_built_in_extensions"><a class="anchor" href="#_built_in_extensions"></a><a class="link" href="#_built_in_extensions">Built-In Extensions</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Most of Spock&#8217;s built-in extensions are <em>annotation-driven</em>. In other words, they are triggered by annotating a
-spec class or method with a certain annotation. You can tell such an annotation by its <code>@ExtensionAnnotation</code>
-meta-annotation.</p>
+<p>Most of Spock&#8217;s built-in extensions are <em>annotation-driven</em>.
+In other words, they are triggered by annotating a spec class or method with a certain annotation.
+You can tell such an annotation by its <code>@ExtensionAnnotation</code> meta-annotation.</p>
 </div>
 <div class="sect2">
 <h3 id="_ignore"><a class="anchor" href="#_ignore"></a><a class="link" href="#_ignore">Ignore</a></h3>
@@ -131,8 +129,7 @@ meta-annotation.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Care should be taken when ignoring feature methods in a spec class annotated with <code>spock.lang.Stepwise</code> since
-later feature methods may depend on earlier feature methods having executed.</p>
+<p>Care should be taken when ignoring feature methods in a spec class annotated with <code>spock.lang.Stepwise</code> since later feature methods may depend on earlier feature methods having executed.</p>
 </div>
 </div>
 <div class="sect2">
@@ -154,15 +151,13 @@ later feature methods may depend on earlier feature methods having executed.</p>
 <p><code>@IgnoreRest</code> is especially handy in execution environments that don&#8217;t provide an (easy) way to run a subset of methods.</p>
 </div>
 <div class="paragraph">
-<p>Care should be taken when ignoring feature methods in a spec class annotated with <code>spock.lang.Stepwise</code> since
-later feature methods may depend on earlier feature methods having executed.</p>
+<p>Care should be taken when ignoring feature methods in a spec class annotated with <code>spock.lang.Stepwise</code> since later feature methods may depend on earlier feature methods having executed.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_ignoreif"><a class="anchor" href="#_ignoreif"></a><a class="link" href="#_ignoreif">IgnoreIf</a></h3>
 <div class="paragraph">
-<p>To ignore a feature method or specification under certain conditions, annotate it with <code>spock.lang.IgnoreIf</code>,
-followed by a predicate and an optional reason:</p>
+<p>To ignore a feature method or specification under certain conditions, annotate it with <code>spock.lang.IgnoreIf</code>, followed by a predicate and an optional reason:</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -177,8 +172,8 @@ followed by a predicate and an optional reason:</p>
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll run everywhere but on Windows</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L9" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L9" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -213,9 +208,8 @@ If this property is used, then the whole annotated element cannot be skipped up-
 <dt class="hdlist1"><code>instance</code></dt>
 <dd>
 <p>The specification instance, if instance fields, shared fields, or instance methods are needed.
-If this property is used, the whole annotated element cannot be skipped up-front without executing fixtures,
-data providers and similar. Instead, the whole workflow is followed up to the feature method invocation,
-where then the closure is checked, and it is decided whether to abort the specific iteration or not.</p>
+If this property is used, the whole annotated element cannot be skipped up-front without executing fixtures, data providers and similar.
+Instead, the whole workflow is followed up to the feature method invocation, where then the closure is checked, and it is decided whether to abort the specific iteration or not.</p>
 </dd>
 <dt class="hdlist1"><code>data</code></dt>
 <dd>
@@ -240,8 +234,8 @@ Similar to <code>instance</code> this will run the whole workflow and only skip 
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I will run everywhere but on Windows</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L17" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L17" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -261,8 +255,8 @@ Similar to <code>instance</code> this will run the whole workflow and only skip 
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">For the given reason, I will not run on MacOS</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L58" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L58" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -289,8 +283,8 @@ Similar to <code>instance</code> this will run the whole workflow and only skip 
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L69" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L69" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -312,19 +306,17 @@ The annotated element is skipped if any of the conditions evaluates to <code>tru
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll run everywhere but on Windows or anywhere on Java 8</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L25" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L25" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>Care should be taken when ignoring feature methods in a spec class annotated with <code>spock.lang.Stepwise</code> since
-later feature methods may depend on earlier feature methods having executed.</p>
+<p>Care should be taken when ignoring feature methods in a spec class annotated with <code>spock.lang.Stepwise</code> since later feature methods may depend on earlier feature methods having executed.</p>
 </div>
 <div class="paragraph">
-<p>To use IDE support like code completion, you can also use the argument to the closure and have it typed as
-<code>org.spockframework.runtime.extension.builtin.PreconditionContext</code>. This enables the IDE with type information
-which is not available otherwise:</p>
+<p>To use IDE support like code completion, you can also use the argument to the closure and have it typed as <code>org.spockframework.runtime.extension.builtin.PreconditionContext</code>.
+This enables the IDE with type information which is not available otherwise:</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -339,8 +331,8 @@ which is not available otherwise:</p>
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I will run everywhere but not on Windows</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L34" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L34" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -365,8 +357,8 @@ which is not available otherwise:</p>
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L43" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy#L43" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IgnoreIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -380,8 +372,7 @@ If you need to combine the conditions in a single <code>@IgnoreIf</code> annotat
 <div class="sect2">
 <h3 id="_requires"><a class="anchor" href="#_requires"></a><a class="link" href="#_requires">Requires</a></h3>
 <div class="paragraph">
-<p>To execute a feature method under certain conditions, annotate it with <code>spock.lang.Requires</code>,
-followed by a predicate:</p>
+<p>To execute a feature method under certain conditions, annotate it with <code>spock.lang.Requires</code>, followed by a predicate:</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -396,14 +387,14 @@ followed by a predicate:</p>
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll only run on Windows</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/RequiresDocSpec.groovy#L8" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/RequiresDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/RequiresDocSpec.groovy#L8" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/RequiresDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p><code>Requires</code> works exactly like <code>IgnoreIf</code>, except that the predicate is inverted. In general, it is preferable
-to state the conditions under which a method gets executed, rather than the conditions under which it gets ignored.</p>
+<p><code>Requires</code> works exactly like <code>IgnoreIf</code>, except that the predicate is inverted.
+In general, it is preferable to state the conditions under which a method gets executed, rather than the conditions under which it gets ignored.</p>
 </div>
 <div class="paragraph">
 <p>If multiple <code>@Requires</code> annotations are present, they are effectively combined with a logical "and".
@@ -423,8 +414,8 @@ The annotated element is skipped if any of the conditions evaluates to <code>fal
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll run only on Windows with Java 8</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/RequiresDocSpec.groovy#L16" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/RequiresDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/RequiresDocSpec.groovy#L16" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/RequiresDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -479,22 +470,18 @@ This way the tests will become part of the normal tests instead of being ignored
 <div class="sect2">
 <h3 id="_pendingfeatureif"><a class="anchor" href="#_pendingfeatureif"></a><a class="link" href="#_pendingfeatureif">PendingFeatureIf</a></h3>
 <div class="paragraph">
-<p>To conditionally indicate that a feature is not fully implemented, and should not be reported as an error you can annotate
-it as <code>spock.lang.PendingFeatureIf</code> and include a precondition similar to <code>IgnoreIf</code> or <code>Requires</code></p>
+<p>To conditionally indicate that a feature is not fully implemented, and should not be reported as an error you can annotate it as <code>spock.lang.PendingFeatureIf</code> and include a precondition similar to <code>IgnoreIf</code> or <code>Requires</code></p>
 </div>
 <div class="paragraph">
 <p>If the conditional expression <em>passes</em> it behaves the same way as <code>PendingFeature</code>, otherwise it does nothing.</p>
 </div>
 <div class="paragraph">
-<p>For instance, annotating a feature as <code>@PendingFeatureIf({ false })</code> effectively does nothing, but annotating it as
-<code>@PendingFeatureIf({ true })</code> behaves the same was as if it was marked as <code>@PendingFeature</code></p>
+<p>For instance, annotating a feature as <code>@PendingFeatureIf({ false })</code> effectively does nothing, but annotating it as <code>@PendingFeatureIf({ true })</code> behaves the same was as if it was marked as <code>@PendingFeature</code></p>
 </div>
 <div class="paragraph">
 <p>If applied to a data driven feature, the closure can also access the data variables.
-If the closure does not reference any actual data variables, the whole feature is deemed pending
-and only if all iterations become successful will be marked as failing. But if the closure actually
-does reference valid data variables, the individual iterations where the condition holds are
-deemed pending and each will individually fail as soon as it would be successful without this annotation.</p>
+If the closure does not reference any actual data variables, the whole feature is deemed pending and only if all iterations become successful will be marked as failing.
+But if the closure actually does reference valid data variables, the individual iterations where the condition holds are deemed pending and each will individually fail as soon as it would be successful without this annotation.</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -512,14 +499,13 @@ deemed pending and each will individually fail as soon as it would be successful
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">This feature isn't deployed out to production yet, and isn't expected to pass</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/PendingFeatureIfDocSpec.groovy#L10" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/PendingFeatureIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/PendingFeatureIfDocSpec.groovy#L10" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/PendingFeatureIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>It is also supported to have multiple <code>@PendingFeatureIf</code> annotations or a mixture of <code>@PendingFeatureIf</code> and
-<code>@PendingFeature</code>, for example to ignore certain exceptions only under certain conditions.</p>
+<p>It is also supported to have multiple <code>@PendingFeatureIf</code> annotations or a mixture of <code>@PendingFeatureIf</code> and <code>@PendingFeature</code>, for example to ignore certain exceptions only under certain conditions.</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -542,8 +528,8 @@ deemed pending and each will individually fail as soon as it would be successful
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I have various problems in certain situations</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/PendingFeatureIfDocSpec.groovy#L26" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/PendingFeatureIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/PendingFeatureIfDocSpec.groovy#L26" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/PendingFeatureIfDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -570,18 +556,17 @@ deemed pending and each will individually fail as soon as it would be successful
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/StepwiseDocSpec.groovy#L13" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/StepwiseDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/StepwiseDocSpec.groovy#L13" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/StepwiseDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p><code>Stepwise</code> only affects the class carrying the annotation; not sub or super classes.  Features after the first
-failure are skipped.</p>
+<p><code>Stepwise</code> only affects the class carrying the annotation; not sub or super classes.
+Features after the first failure are skipped.</p>
 </div>
 <div class="paragraph">
-<p><code>Stepwise</code> does not override the behaviour of annotations such as <code>Ignore</code>, <code>IgnoreRest</code>, and <code>IgnoreIf</code>, so care
-should be taken when ignoring feature methods in spec classes annotated with <code>Stepwise</code>.</p>
+<p><code>Stepwise</code> does not override the behaviour of annotations such as <code>Ignore</code>, <code>IgnoreRest</code>, and <code>IgnoreIf</code>, so care should be taken when ignoring feature methods in spec classes annotated with <code>Stepwise</code>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -619,13 +604,14 @@ This will also set the execution mode to <code>SAME_THREAD</code>, see <a href="
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/StepwiseDocSpec.groovy#L33" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/StepwiseDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/StepwiseDocSpec.groovy#L33" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/StepwiseDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>This will pass for the first two iterations, fail on the third and skip the remaining two. Without <code>Stepwise</code> on feature method level, the third iteration would fail and the remaining 4 iterations would pass.</p>
+<p>This will pass for the first two iterations, fail on the third and skip the remaining two.
+Without <code>Stepwise</code> on feature method level, the third iteration would fail and the remaining 4 iterations would pass.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -634,7 +620,9 @@ This will also set the execution mode to <code>SAME_THREAD</code>, see <a href="
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For backward compatibility with Spock versions prior to 2.2, applying the annotation on spec level will <em>not</em> automatically skip subsequent feature method iterations upon failure in a previous iteration. If you want that in addition to (or instead of) step-wise spec mode, you do have to annotate each individual feature method you wish to have that capability. This also conforms to the principle that if you want to skip tests under whatever conditions, you ought to document your intent explicitly.
+For backward compatibility with Spock versions prior to 2.2, applying the annotation on spec level will <em>not</em> automatically skip subsequent feature method iterations upon failure in a previous iteration.
+If you want that in addition to (or instead of) step-wise spec mode, you do have to annotate each individual feature method you wish to have that capability.
+This also conforms to the principle that if you want to skip tests under whatever conditions, you ought to document your intent explicitly.
 </td>
 </tr>
 </table>
@@ -643,8 +631,8 @@ For backward compatibility with Spock versions prior to 2.2, applying the annota
 <div class="sect2">
 <h3 id="timeout-extension"><a class="anchor" href="#timeout-extension"></a><a class="link" href="#timeout-extension">Timeout</a></h3>
 <div class="paragraph">
-<p>To fail a feature method, fixture, or class that exceeds a given execution duration, use <code>spock.lang.Timeout</code>,
-followed by a duration, and optionally a time unit. The default time unit is seconds.</p>
+<p>To fail a feature method, fixture, or class that exceeds a given execution duration, use <code>spock.lang.Timeout</code>, followed by a duration, and optionally a time unit.
+The default time unit is seconds.</p>
 </div>
 <div class="paragraph">
 <p>When applied to a feature method, the timeout is per execution of one iteration, excluding time spent in fixture methods:</p>
@@ -682,8 +670,8 @@ followed by a duration, and optionally a time unit. The default time unit is sec
 <p>When applied to a fixture method, the timeout is per execution of the fixture method.</p>
 </div>
 <div class="paragraph">
-<p>When a timeout is reported to the user, the stack trace shown reflects the execution stack of the test framework when
-the timeout was exceeded. Additionally, thread dumps can be captured and logged on unsuccessful interrupt attempts if configured using the <a href="#spock-configuration-file">Spock Configuration File</a>.</p>
+<p>When a timeout is reported to the user, the stack trace shown reflects the execution stack of the test framework when the timeout was exceeded.
+Additionally, thread dumps can be captured and logged on unsuccessful interrupt attempts if configured using the <a href="#spock-configuration-file">Spock Configuration File</a>.</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -711,8 +699,8 @@ the timeout was exceeded. Additionally, thread dumps can be captured and logged 
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/timeout/TimeoutConfigurationDoc.groovy#L15" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/timeout/TimeoutConfigurationDoc.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/timeout/TimeoutConfigurationDoc.groovy#L15" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/timeout/TimeoutConfigurationDoc.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -729,9 +717,9 @@ With the flag <code>applyGlobalTimeoutToFixtures</code> you can control if the g
 <p>The <code>@Retry</code> extensions can be used for flaky integration tests, where remote systems can fail sometimes.
 By default it retries an iteration <code>3</code> times with <code>0</code> delay if either an <code>Exception</code> or <code>AssertionError</code> has been thrown, all this is configurable.
 In addition, an optional <code>condition</code> closure can be used to determine if a feature should be retried.
-In its standard mode it only retries the feature method execution, but this can be changed using <code>mode</code> to
-also run setup and cleanup on retries. Even in this mode, the retry is only triggered if the feature method is failing
-in the expected way. If the setup or cleanup is failing, the test fails immediately.</p>
+In its standard mode it only retries the feature method execution, but this can be changed using <code>mode</code> to also run setup and cleanup on retries.
+Even in this mode, the retry is only triggered if the feature method is failing in the expected way.
+If the setup or cleanup is failing, the test fails immediately.</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -791,14 +779,13 @@ in the expected way. If the setup or cleanup is failing, the test fails immediat
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/RetryDocSpec.groovy#L10" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/RetryDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/RetryDocSpec.groovy#L10" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/RetryDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>Retries can also be applied to spec classes which has the same effect as applying it to each feature method that isn&#8217;t
-already annotated with <code>@Retry</code>.</p>
+<p>Retries can also be applied to spec classes which has the same effect as applying it to each feature method that isn&#8217;t already annotated with <code>@Retry</code>.</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -822,15 +809,14 @@ already annotated with <code>@Retry</code>.</p>
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/RetryDocSpec.groovy#L67" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/RetryDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/RetryDocSpec.groovy#L67" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/RetryDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>A <code>@Retry</code> annotation that is declared on a spec class is applied to all features in all subclasses as well,
-unless a subclass declares its own annotation. If so, the retries defined in the subclass are applied to all feature
-methods declared in the subclass as well as inherited ones.</p>
+<p>A <code>@Retry</code> annotation that is declared on a spec class is applied to all features in all subclasses as well, unless a subclass declares its own annotation.
+If so, the retries defined in the subclass are applied to all feature methods declared in the subclass as well as inherited ones.</p>
 </div>
 <div class="paragraph">
 <p>Given the following example, running <code>FooIntegrationSpec</code> will execute both <code>inherited</code> and <code>foo</code> with one retry.
@@ -866,8 +852,8 @@ Running <code>BarIntegrationSpec</code> will execute <code>inherited</code> and 
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/RetryDocSpec.groovy#L83" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/RetryDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/RetryDocSpec.groovy#L83" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/RetryDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -902,19 +888,18 @@ Running <code>BarIntegrationSpec</code> will execute <code>inherited</code> and 
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/UseDocSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/UseDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/UseDocSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/UseDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
 <p>This can be useful for stubbing of dynamic methods, which are usually provided by the runtime environment (e.g. Grails).
-It has no effect when applied to a helper method. However, when applied to a spec class, it will also affect its helper
-methods.</p>
+It has no effect when applied to a helper method.
+However, when applied to a spec class, it will also affect its helper methods.</p>
 </div>
 <div class="paragraph">
-<p>To use multiple categories, you can either give multiple categories to the <code>value</code> attribute
-of the annotation or you can apply the annotation multiple times to the same target.</p>
+<p>To use multiple categories, you can either give multiple categories to the <code>value</code> attribute of the annotation or you can apply the annotation multiple times to the same target.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -964,22 +949,19 @@ This will also set the execution mode to <code>SAME_THREAD</code> if applied on 
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/ConfineMetaClassChangesDocSpec.groovy#L8" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/ConfineMetaClassChangesDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ConfineMetaClassChangesDocSpec.groovy#L8" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ConfineMetaClassChangesDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>When applied to a spec class, the meta classes are restored to the state that they were in before <code>setupSpec</code> was executed,
-after <code>cleanupSpec</code> is executed.</p>
+<p>When applied to a spec class, the meta classes are restored to the state that they were in before <code>setupSpec</code> was executed, after <code>cleanupSpec</code> is executed.</p>
 </div>
 <div class="paragraph">
-<p>When applied to a feature method, the meta classes are restored to as they were after <code>setup</code> was executed,
-before <code>cleanup</code> is executed.</p>
+<p>When applied to a feature method, the meta classes are restored to as they were after <code>setup</code> was executed, before <code>cleanup</code> is executed.</p>
 </div>
 <div class="paragraph">
-<p>To confine meta class changes for multiple classes, you can either give multiple classes to the <code>value</code> attribute
-of the annotation or you can apply the annotation multiple times to the same target.</p>
+<p>To confine meta class changes for multiple classes, you can either give multiple classes to the <code>value</code> attribute of the annotation or you can apply the annotation multiple times to the same target.</p>
 </div>
 <div class="admonitionblock caution">
 <table>
@@ -988,9 +970,8 @@ of the annotation or you can apply the annotation multiple times to the same tar
 <i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
-Temporarily changing the meta classes is only safe when specs are
-run in a single thread per JVM. Even though many execution environments do limit themselves to one thread
-per JVM, keep in mind that Spock cannot enforce this.
+Temporarily changing the meta classes is only safe when specs are run in a single thread per JVM.
+Even though many execution environments do limit themselves to one thread per JVM, keep in mind that Spock cannot enforce this.
 </td>
 </tr>
 </table>
@@ -1011,8 +992,7 @@ This will acquire a <code>READ_WRITE</code> lock for <code>Resources.META_CLASS_
 <div class="sect2">
 <h3 id="_restoresystemproperties"><a class="anchor" href="#_restoresystemproperties"></a><a class="link" href="#_restoresystemproperties">RestoreSystemProperties</a></h3>
 <div class="paragraph">
-<p>Saves system properties before the annotated feature method (including any setup and cleanup methods) gets run,
-and restores them afterwards.</p>
+<p>Saves system properties before the annotated feature method (including any setup and cleanup methods) gets run, and restores them afterwards.</p>
 </div>
 <div class="paragraph">
 <p>Applying this annotation to a spec class has the same effect as applying it to all its feature methods.</p>
@@ -1036,9 +1016,8 @@ and restores them afterwards.</p>
 <i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
-Temporarily changing the values of system properties is only safe when specs are
-run in a single thread per JVM. Even though many execution environments do limit themselves to one thread
-per JVM, keep in mind that Spock cannot enforce this.
+Temporarily changing the values of system properties is only safe when specs are run in a single thread per JVM.
+Even though many execution environments do limit themselves to one thread per JVM, keep in mind that Spock cannot enforce this.
 </td>
 </tr>
 </table>
@@ -1065,8 +1044,7 @@ Use this, if there is no direct framework support available.
 To create detached mocks, see <a href="interaction_based_testing.html#DetachedMockFactory">Create Mocks Outside Specifications</a></p>
 </div>
 <div class="paragraph">
-<p>Spring and Guice dependency injection is automatically handled by the
-<a href="module_spring.html#spring-module">Spring Module</a> and <a href="modules.html#_guice_module">Guice Module</a>, respectively.</p>
+<p>Spring and Guice dependency injection is automatically handled by the <a href="module_spring.html#spring-module">Spring Module</a> and <a href="modules.html#_guice_module">Guice Module</a>, respectively.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1075,8 +1053,8 @@ To create detached mocks, see <a href="interaction_based_testing.html#DetachedMo
 <p>Automatically clean up a field or property at the end of its lifetime by using <code>spock.lang.AutoCleanup</code>.</p>
 </div>
 <div class="paragraph">
-<p>By default, an object is cleaned up by invoking its parameterless <code>close()</code> method. If some other
-method should be called instead, override the annotation&#8217;s <code>value</code> attribute:</p>
+<p>By default, an object is cleaned up by invoking its parameterless <code>close()</code> method.
+If some other method should be called instead, override the annotation&#8217;s <code>value</code> attribute:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1086,12 +1064,11 @@ method should be called instead, override the annotation&#8217;s <code>value</co
 </div>
 </div>
 <div class="paragraph">
-<p>If multiple fields or properties are annotated with <code>AutoCleanup</code>, their objects are cleaned up sequentially, in reverse
-field/property declaration order, starting from the most derived class class and walking up the inheritance chain.</p>
+<p>If multiple fields or properties are annotated with <code>AutoCleanup</code>, their objects are cleaned up sequentially, in reverse field/property declaration order, starting from the most derived class class and walking up the inheritance chain.</p>
 </div>
 <div class="paragraph">
-<p>If a cleanup operation fails with an exception, the exception is reported by default, and cleanup proceeds with the next
-annotated object. To prevent cleanup exceptions from being reported, override the annotation&#8217;s <code>quiet</code> attribute:</p>
+<p>If a cleanup operation fails with an exception, the exception is reported by default, and cleanup proceeds with the next annotated object.
+To prevent cleanup exceptions from being reported, override the annotation&#8217;s <code>quiet</code> attribute:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1103,8 +1080,7 @@ annotated object. To prevent cleanup exceptions from being reported, override th
 <div class="sect2">
 <h3 id="temp-dir"><a class="anchor" href="#temp-dir"></a><a class="link" href="#temp-dir">TempDir</a></h3>
 <div class="paragraph">
-<p>In order to generate a temporary directory for test and delete it after test, annotate a member field of type
-<code>java.io.File</code>, <code>java.nio.file.Path</code> or untyped using <code>def</code> in a spec class (<code>def</code> will inject a <code>Path</code>).
+<p>In order to generate a temporary directory for test and delete it after test, annotate a member field of type <code>java.io.File</code>, <code>java.nio.file.Path</code> or untyped using <code>def</code> in a spec class (<code>def</code> will inject a <code>Path</code>).
 Alternatively, you can annotate a field with a custom type that has a public constructor accepting either <code>java.io.File</code> or <code>java.nio.file.Path</code> as its single parameter (see <a href="utilities.html#file-stystem-fixture">FileSystemFixture</a> for an example).
 If the annotated field is <code>@Shared</code>, the temporary directory will be shared in the corresponding specification, otherwise every feature method and every iteration per parametrized feature method will have their own temporary directories.</p>
 </div>
@@ -1160,8 +1136,8 @@ FileSystemFixture path4
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/TempDirDocSpec.groovy#L15" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/TempDirDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/TempDirDocSpec.groovy#L15" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/TempDirDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1269,8 +1245,8 @@ So that bar
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/SeeDocSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/SeeDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SeeDocSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SeeDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1309,18 +1285,17 @@ So that bar
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/IssueDocSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/IssueDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IssueDocSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/IssueDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>If you have a common prefix URL for all issues in a project, you can use the <a href="#spock-configuration-file">Spock Configuration File</a> to set it up
-for all at once. If it is set, it is prepended to the value of the <code>@Issue</code> annotation when building the URL.</p>
+<p>If you have a common prefix URL for all issues in a project, you can use the <a href="#spock-configuration-file">Spock Configuration File</a> to set it up for all at once.
+If it is set, it is prepended to the value of the <code>@Issue</code> annotation when building the URL.</p>
 </div>
 <div class="paragraph">
-<p>If the <code>issueNamePrefix</code> is set, it is prepended to the value of the <code>@Issue</code> annotation when building the name for the
-issue.</p>
+<p>If the <code>issueNamePrefix</code> is set, it is prepended to the value of the <code>@Issue</code> annotation when building the name for the issue.</p>
 </div>
 <div class="listingblock">
 <div class="title">Issue Configuration</div>
@@ -1350,8 +1325,8 @@ issue.</p>
 <span class="type">class</span> <span class="class">SubjectDocSpec</span> <span class="directive">extends</span> Specification {</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/SubjectDocSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/SubjectDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SubjectDocSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SubjectDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1372,8 +1347,8 @@ issue.</p>
 <span class="type">class</span> <span class="class">SubjectDocSpec</span> <span class="directive">extends</span> Specification {</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/SubjectDocSpec.groovy#L10" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/SubjectDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SubjectDocSpec.groovy#L10" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SubjectDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1393,8 +1368,8 @@ issue.</p>
 Foo myFoo</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/SubjectDocSpec.groovy#L17" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/SubjectDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SubjectDocSpec.groovy#L17" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SubjectDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1405,26 +1380,25 @@ Foo myFoo</code></pre>
 <div class="sect2">
 <h3 id="_rule"><a class="anchor" href="#_rule"></a><a class="link" href="#_rule">Rule</a></h3>
 <div class="paragraph">
-<p>Spock understands <code>@org.junit.Rule</code> annotations on non-<code>@Shared</code> instance fields when the <a href="modules.html#junit-4">JUnit 4 module</a> is included. The according rules are run at the
-iteration interception point in the Spock lifecycle. This means that the rules before-actions are done before the
-execution of <code>setup</code> methods and the after-actions are done after the execution of <code>cleanup</code> methods.</p>
+<p>Spock understands <code>@org.junit.Rule</code> annotations on non-<code>@Shared</code> instance fields when the <a href="modules.html#junit-4">JUnit 4 module</a> is included.
+The according rules are run at the iteration interception point in the Spock lifecycle.
+This means that the rules before-actions are done before the execution of <code>setup</code> methods and the after-actions are done after the execution of <code>cleanup</code> methods.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_classrule"><a class="anchor" href="#_classrule"></a><a class="link" href="#_classrule">ClassRule</a></h3>
 <div class="paragraph">
-<p>Spock understands <code>@org.junit.ClassRule</code> annotations on <code>@Shared</code> fields when the <a href="modules.html#junit-4">JUnit 4 module</a> is included. The according rules are run at the
-specification interception point in the Spock lifecycle. This means that the rules before-actions are done before the
-execution of <code>setupSpec</code> methods and the after-actions are done after the execution of <code>cleanupSpec</code> methods.</p>
+<p>Spock understands <code>@org.junit.ClassRule</code> annotations on <code>@Shared</code> fields when the <a href="modules.html#junit-4">JUnit 4 module</a> is included.
+The according rules are run at the specification interception point in the Spock lifecycle.
+This means that the rules before-actions are done before the execution of <code>setupSpec</code> methods and the after-actions are done after the execution of <code>cleanupSpec</code> methods.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_include_and_exclude"><a class="anchor" href="#_include_and_exclude"></a><a class="link" href="#_include_and_exclude">Include and Exclude</a></h3>
 <div class="paragraph">
-<p>Spock is capable of including and excluding specifications according to their classes, super-classes and interfaces and
-according to annotations that are applied to the specification.Spock is also capable of including and excluding
-individual features according to annotations that are applied to the feature method.The configuration for what to
-include or exclude is done according to the <a href="#spock-configuration-file">Spock Configuration File</a> section.</p>
+<p>Spock is capable of including and excluding specifications according to their classes, super-classes and interfaces and according to annotations that are applied to the specification.
+Spock is also capable of including and excluding individual features according to annotations that are applied to the feature method.
+The configuration for what to include or exclude is done according to the <a href="#spock-configuration-file">Spock Configuration File</a> section.</p>
 </div>
 <div class="listingblock">
 <div class="title">Include / Exclude Configuration</div>
@@ -1477,8 +1451,8 @@ If applied on a feature, the tags are applied to the feature.</p>
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/TagDocSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/TagDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/TagDocSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/TagDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1505,10 +1479,11 @@ This is intended to aid in manual debugging of flaky tests and should not be com
 <div class="sect2">
 <h3 id="_optimize_run_order"><a class="anchor" href="#_optimize_run_order"></a><a class="link" href="#_optimize_run_order">Optimize Run Order</a></h3>
 <div class="paragraph">
-<p>Spock can remember which features last failed and how often successively and also how long a feature needed to be
-tested. For successive runs Spock will then first run features that failed at last run and first features that failed
-more often successively. Within the previously failed or non-failed features Spock will run the fastest tests first.
-This behaviour can be enabled according to the <a href="#spock-configuration-file">Spock Configuration File</a> section. The default value is <code>false</code>.</p>
+<p>Spock can remember which features last failed and how often successively and also how long a feature needed to be tested.
+For successive runs Spock will then first run features that failed at last run and first features that failed more often successively.
+Within the previously failed or non-failed features Spock will run the fastest tests first.
+This behaviour can be enabled according to the <a href="#spock-configuration-file">Spock Configuration File</a> section.
+The default value is <code>false</code>.</p>
 </div>
 <div class="listingblock">
 <div class="title">Optimize Run Order Configuration</div>
@@ -1552,8 +1527,8 @@ The examples below will show you how to do both.</p>
   }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy#L29" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy#L29" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1573,8 +1548,8 @@ The examples below will show you how to do both.</p>
   }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy#L40" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy#L40" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1598,8 +1573,8 @@ The examples below will show you how to do both.</p>
   }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy#L47" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy#L47" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1627,8 +1602,8 @@ For example, you could compare two json structures with a third-party library.</
   }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy#L55" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy#L55" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/SnapshotDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1726,25 +1701,21 @@ Often porting a JUnit Jupiter extension to also support Spock is not a big effor
 <h2 id="_writing_custom_extensions"><a class="anchor" href="#_writing_custom_extensions"></a><a class="link" href="#_writing_custom_extensions">Writing Custom Extensions</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>There are two types of extensions that can be created for usage with Spock. These are global extensions and annotation
-driven local extensions. For both extension types you implement a specific interface which defines some callback
-methods. In your implementation of those methods you can set up the magic of your extension, for example by adding
-interceptors to various interception points that are described below.</p>
+<p>There are two types of extensions that can be created for usage with Spock.
+These are global extensions and annotation driven local extensions.
+For both extension types you implement a specific interface which defines some callback methods.
+In your implementation of those methods you can set up the magic of your extension, for example by adding interceptors to various interception points that are described below.</p>
 </div>
 <div class="paragraph">
-<p>It depends on your use case which type of annotation you create. If you want to do something once during the Spock run - at
-the start or end - or want to apply something to all executed specifications without the user of the extension having to
-do anything besides including your extension in the classpath, then you should opt for a global extension. If you
-instead want to apply your magic only by choice of the user, then you should implement an annotation driven local
-extension.</p>
+<p>It depends on your use case which type of annotation you create.
+If you want to do something once during the Spock run - at the start or end - or want to apply something to all executed specifications without the user of the extension having to do anything besides including your extension in the classpath, then you should opt for a global extension.
+If you instead want to apply your magic only by choice of the user, then you should implement an annotation driven local extension.</p>
 </div>
 <div class="sect2">
 <h3 id="_global_extensions"><a class="anchor" href="#_global_extensions"></a><a class="link" href="#_global_extensions">Global Extensions</a></h3>
 <div class="paragraph">
-<p>To create a global extension you need to create a class that implements the interface <code>IGlobalExtension</code> and put its
-fully-qualified class name in a file <code>META-INF/services/org.spockframework.runtime.extension.IGlobalExtension</code> in the
-class path. As soon as these two conditions are satisfied, the extension is automatically loaded and used when Spock is
-running.</p>
+<p>To create a global extension you need to create a class that implements the interface <code>IGlobalExtension</code> and put its fully-qualified class name in a file <code>META-INF/services/org.spockframework.runtime.extension.IGlobalExtension</code> in the class path.
+As soon as these two conditions are satisfied, the extension is automatically loaded and used when Spock is running.</p>
 </div>
 <div class="paragraph">
 <p><code>IGlobalExtension</code> has the following three methods:</p>
@@ -1757,8 +1728,8 @@ running.</p>
 </dd>
 <dt class="hdlist1"><code>visitSpec(SpecInfo spec)</code></dt>
 <dd>
-<p>This is called once for each specification. In this method you can prepare a specification with your extension magic,
-like attaching interceptors to various interception points as described in the chapter <a href="#interceptors">Interceptors</a>.</p>
+<p>This is called once for each specification.
+In this method you can prepare a specification with your extension magic, like attaching interceptors to various interception points as described in the chapter <a href="#interceptors">Interceptors</a>.</p>
 </dd>
 <dt class="hdlist1"><code>stop()</code></dt>
 <dd>
@@ -1770,32 +1741,23 @@ like attaching interceptors to various interception points as described in the c
 <div class="sect2">
 <h3 id="_annotation_driven_local_extensions"><a class="anchor" href="#_annotation_driven_local_extensions"></a><a class="link" href="#_annotation_driven_local_extensions">Annotation Driven Local Extensions</a></h3>
 <div class="paragraph">
-<p>To create an annotation driven local extension you need to create a class implementing the interface
-<code>IAnnotationDrivenExtension</code>. As type argument to the interface you need to supply an annotation class having
-<code>@Retention</code> set to <code>RUNTIME</code>, <code>@Target</code> set to one or more of <code>FIELD</code>, <code>METHOD</code>, and <code>TYPE</code> - depending on where you
-want your annotation to be applicable - and <code>@ExtensionAnnotation</code> applied, with the <code>IAnnotationDrivenExtension</code> class
-as argument. Of course the annotation class can have some attributes with which the user can further configure the
-behaviour of the extension for each annotation application.</p>
+<p>To create an annotation driven local extension you need to create a class implementing the interface <code>IAnnotationDrivenExtension</code>.
+As type argument to the interface you need to supply an annotation class having <code>@Retention</code> set to <code>RUNTIME</code>, <code>@Target</code> set to one or more of <code>FIELD</code>, <code>METHOD</code>, and <code>TYPE</code> - depending on where you want your annotation to be applicable - and <code>@ExtensionAnnotation</code> applied, with the <code>IAnnotationDrivenExtension</code> class as argument.
+Of course the annotation class can have some attributes with which the user can further configure the behaviour of the extension for each annotation application.</p>
 </div>
 <div class="paragraph">
-<p>Your annotation can be applied to a specification, a feature method, a fixture method or a field. On all other places
-like helper methods or other places if the <code>@Target</code> is set accordingly, the annotation will be ignored and has no
-effect other than being visible in the source code, except you check its existence in other places yourself.</p>
+<p>Your annotation can be applied to a specification, a feature method, a fixture method or a field.
+On all other places like helper methods or other places if the <code>@Target</code> is set accordingly, the annotation will be ignored and has no effect other than being visible in the source code, except you check its existence in other places yourself.</p>
 </div>
 <div class="paragraph">
 <p>Since Spock 2.0 your annotation can also be defined as <code>@Repeatable</code> and applied multiple times to the same target.
-<code>IAnnotationDrivenExtension</code> has <code>visit&#8230;&#8203;Annotations</code> methods that are called by Spock with all annotations of the
-extension applied to the same target. Their default implementations will then call the respective singular
-<code>visit&#8230;&#8203;Annotation</code> method once for each annotation. If you want a repeatable annotation that is compatible with
-Spock before 2.0 you need to make the container annotation an extension annotation itself and handle all cases
-accordingly, but you need to make sure to only handle the container annotation if Spock version is before 2.0,
-or your annotations might be handled twice. Be aware that the repeatable annotation can be attached to the target
-directly, inside the container annotation or even both if the user added the container annotation manually
-and also attached one annotation directly.</p>
+<code>IAnnotationDrivenExtension</code> has <code>visit&#8230;&#8203;Annotations</code> methods that are called by Spock with all annotations of the extension applied to the same target.
+Their default implementations will then call the respective singular <code>visit&#8230;&#8203;Annotation</code> method once for each annotation.
+If you want a repeatable annotation that is compatible with Spock before 2.0 you need to make the container annotation an extension annotation itself and handle all cases accordingly, but you need to make sure to only handle the container annotation if Spock version is before 2.0, or your annotations might be handled twice.
+Be aware that the repeatable annotation can be attached to the target directly, inside the container annotation or even both if the user added the container annotation manually and also attached one annotation directly.</p>
 </div>
 <div class="paragraph">
-<p>Repeatable annotations are not supported for parameter annotations,
-as they are primarily intended to provide a value and only a singular value is allowed.</p>
+<p>Repeatable annotations are not supported for parameter annotations, as they are primarily intended to provide a value and only a singular value is allowed.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1811,16 +1773,13 @@ Otherwise, it behaves the same as <code>IAnnotationDrivenExtension</code>.
 </table>
 </div>
 <div class="paragraph">
-<p><code>IAnnotationDrivenExtension</code> has the following nine methods, where in each you can prepare a specification with your
-extension magic, like attaching interceptors to various interception points as described in the chapter
-<a href="#interceptors">Interceptors</a>:</p>
+<p><code>IAnnotationDrivenExtension</code> has the following nine methods, where in each you can prepare a specification with your extension magic, like attaching interceptors to various interception points as described in the chapter <a href="#interceptors">Interceptors</a>:</p>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1"><code>visitSpecAnnotations(List&lt;T&gt; annotations, SpecInfo spec)</code></dt>
 <dd>
-<p>This is called once for each specification where the annotation is applied one or multiple times
-with the annotation instances as first parameter, and the specification info object as second parameter.
+<p>This is called once for each specification where the annotation is applied one or multiple times with the annotation instances as first parameter, and the specification info object as second parameter.
 The default implementation calls <code>visitSpecAnnotation</code> once for each given annotation.</p>
 </dd>
 <dt class="hdlist1"><code>visitSpecAnnotation(T annotation, SpecInfo spec)</code></dt>
@@ -1830,8 +1789,7 @@ The default implementation throws an exception.</p>
 </dd>
 <dt class="hdlist1"><code>visitFieldAnnotations(List&lt;T&gt; annotations, FieldInfo field)</code></dt>
 <dd>
-<p>This is called once for each field where the annotation is applied one or multiple times
-with the annotation instances as first parameter, and the field info object as second parameter.
+<p>This is called once for each field where the annotation is applied one or multiple times with the annotation instances as first parameter, and the field info object as second parameter.
 The default implementation calls <code>visitFieldAnnotation</code> once for each given annotation.</p>
 </dd>
 <dt class="hdlist1"><code>visitFieldAnnotation(T annotation, FieldInfo field)</code></dt>
@@ -1841,8 +1799,7 @@ The default implementation throws an exception.</p>
 </dd>
 <dt class="hdlist1"><code>visitFixtureAnnotations(List&lt;T&gt; annotations, MethodInfo fixtureMethod)</code></dt>
 <dd>
-<p>This is called once for each fixture method where the annotation is applied one or multiple times
-with the annotation instances as first parameter, and the fixture method info object as second parameter.
+<p>This is called once for each fixture method where the annotation is applied one or multiple times with the annotation instances as first parameter, and the fixture method info object as second parameter.
 The default implementation calls <code>visitFixtureAnnotation</code> once for each given annotation.</p>
 </dd>
 <dt class="hdlist1"><code>visitFixtureAnnotation(T annotation, MethodInfo fixtureMethod)</code></dt>
@@ -1852,8 +1809,7 @@ The default implementation throws an exception.</p>
 </dd>
 <dt class="hdlist1"><code>visitFeatureAnnotations(List&lt;T&gt; annotations, FeatureInfo feature)</code></dt>
 <dd>
-<p>This is called once for each feature method where the annotation is applied one or multiple times
-with the annotation instances as first parameter, and the feature info object as second parameter.
+<p>This is called once for each feature method where the annotation is applied one or multiple times with the annotation instances as first parameter, and the feature info object as second parameter.
 The default implementation calls <code>visitFeatureAnnotation</code> once for each given annotation.</p>
 </dd>
 <dt class="hdlist1"><code>visitFeatureAnnotation(T annotation, FeatureInfo feature)</code></dt>
@@ -1868,9 +1824,9 @@ It gets the annotation instance as first parameter and the <code>ParameterInfo</
 </dd>
 <dt class="hdlist1"><code>visitSpec(SpecInfo spec)</code></dt>
 <dd>
-<p>This is called once for each specification within which the annotation is applied to at least one of the supported
-places like defined above. It gets the specification info object as sole parameter. This method is called after all
-other methods of this interface for each applied annotation are processed.</p>
+<p>This is called once for each specification within which the annotation is applied to at least one of the supported places like defined above.
+It gets the specification info object as sole parameter.
+This method is called after all other methods of this interface for each applied annotation are processed.</p>
 </dd>
 </dl>
 </div>
@@ -1878,11 +1834,10 @@ other methods of this interface for each applied annotation are processed.</p>
 <div class="sect2">
 <h3 id="_configuration_objects"><a class="anchor" href="#_configuration_objects"></a><a class="link" href="#_configuration_objects">Configuration Objects</a></h3>
 <div class="paragraph">
-<p>You can add own sections in the <a href="#spock-configuration-file">Spock Configuration File</a> for your extension by creating POJOs or POGOs that are
-annotated with <code>@ConfigurationObject</code> and have a default constructor (either implicitly or explicitly). The argument to
-the annotation is the name of the top-level section that is added to the Spock configuration file syntax. The default
-values for the configuration options are defined in the class by initializing the fields at declaration time or in the
-constructor. In the Spock configuration file those values can then be edited by the user of your extension.</p>
+<p>You can add own sections in the <a href="#spock-configuration-file">Spock Configuration File</a> for your extension by creating POJOs or POGOs that are annotated with <code>@ConfigurationObject</code> and have a default constructor (either implicitly or explicitly).
+The argument to the annotation is the name of the top-level section that is added to the Spock configuration file syntax.
+The default values for the configuration options are defined in the class by initializing the fields at declaration time or in the constructor.
+In the Spock configuration file those values can then be edited by the user of your extension.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1891,9 +1846,7 @@ constructor. In the Spock configuration file those values can then be edited by 
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-It is an error to have multiple configuration objects with the same name, so choose wisely if you pick one and
-probably prefix it with some package-like name to minimize the risk for name clashes with other extensions or the core
-Spock code.
+It is an error to have multiple configuration objects with the same name, so choose wisely if you pick one and probably prefix it with some package-like name to minimize the risk for name clashes with other extensions or the core Spock code.
 </td>
 </tr>
 </table>
@@ -1912,9 +1865,7 @@ Spock code.
 </ul>
 </div>
 <div class="paragraph">
-<p>Spock will then automatically create exactly one instance of the configuration object per Spock run, apply the
-settings from the configuration file to it (before the <code>start()</code> methods of global extensions are called) and inject
-that instance into the extension class instances.</p>
+<p>Spock will then automatically create exactly one instance of the configuration object per Spock run, apply the settings from the configuration file to it (before the <code>start()</code> methods of global extensions are called) and inject that instance into the extension class instances.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1924,30 +1875,25 @@ that instance into the extension class instances.</p>
 </td>
 <td class="content">
 Constructor injection has a higher priority than field injection and Spock won&#8217;t inject any fields if it finds a suitable constructor.
-      If you want to support both Spock 1.x and 2.x you can either use only field injection (Spock 1.x only supports field injection),
-      or you can have both a default constructor and an injectable constructor, this way Spock 2.x will use constructor injection and Spock 1.x will use field injection.
+If you want to support both Spock 1.x and 2.x you can either use only field injection (Spock 1.x only supports field injection), or you can have both a default constructor and an injectable constructor, this way Spock 2.x will use constructor injection and Spock 1.x will use field injection.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>If a configuration object should be used exclusively in an annotation driven local extension you must register it in
-<code>META-INF/services/spock.config.ConfigurationObject</code>.
+<p>If a configuration object should be used exclusively in an annotation driven local extension you must register it in <code>META-INF/services/spock.config.ConfigurationObject</code>.
 This is similar to a global extension, put the fully-qualified class name of the annotated class on a new line in the file.
 This will cause the configuration object to properly get initialized and populated with the settings from the configuration file.
-However, if the configuration object is used in a global extension, you can also use it just fine in an annotation driven local
-extension. If the configuration object is only used in an annotation driven local extension, you will get an exception
-when then configuration object is to be injected into the extension, and you will also get an error when the
-configuration file is evaluated, and it contains the section, as the configuration object is not properly registered yet.</p>
+However, if the configuration object is used in a global extension, you can also use it just fine in an annotation driven local extension.
+If the configuration object is only used in an annotation driven local extension, you will get an exception when then configuration object is to be injected into the extension, and you will also get an error when the configuration file is evaluated, and it contains the section, as the configuration object is not properly registered yet.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="interceptors"><a class="anchor" href="#interceptors"></a><a class="link" href="#interceptors">Interceptors</a></h3>
 <div class="paragraph">
-<p>For applying the magic of your extension, there are various interception points, where you can attach interceptors from
-the extension methods described above to hook into the Spock lifecycle. For each interception point there can of course
-be multiple interceptors added by arbitrary Spock extensions (shipped or 3rd party). Their order currently depends
-on the order they are added, but there should not be made any order assumptions within one interception point.</p>
+<p>For applying the magic of your extension, there are various interception points, where you can attach interceptors from the extension methods described above to hook into the Spock lifecycle.
+For each interception point there can of course be multiple interceptors added by arbitrary Spock extensions (shipped or 3rd party).
+Their order currently depends on the order they are added, but there should not be made any order assumptions within one interception point.</p>
 </div>
 <div id="spock-interceptors" class="imageblock text-center">
 <div class="content">
@@ -1959,35 +1905,27 @@ on the order they are added, but there should not be made any order assumptions 
 <p>An ellipsis in the figure means that the block before it can be repeated an arbitrary amount of times.</p>
 </div>
 <div class="paragraph">
-<p>The <code>&#8230;&#8203; method interceptors</code> are of course only run if there are actual methods of this type to be executed (the white
-boxes) and those can <a href="#parameter-injection">inject parameters</a> to be given to the method that will be run.</p>
+<p>The <code>&#8230;&#8203; method interceptors</code> are of course only run if there are actual methods of this type to be executed (the white boxes) and those can <a href="#parameter-injection">inject parameters</a> to be given to the method that will be run.</p>
 </div>
 <div class="paragraph">
-<p>The shared initializer method interceptor and initializer method interceptor are called around two methods that are
-generated by the compiler if there are <code>@Shared</code>, respectively non-<code>@Shared</code>, fields that get values assigned at
-declaration time. The compiler will put those initializations in a generated method and call it at the proper place in
-the lifecycle. So if there are no such initializations, no method is generated and thus the method interceptor is never
-called. The non-method interceptors are always called at the proper place in the lifecycle to do work that has to be
-done at that time. There can also be multiple such methods, if you for example have a super specification that itself
-has fields with initialization expressions.</p>
+<p>The shared initializer method interceptor and initializer method interceptor are called around two methods that are generated by the compiler if there are <code>@Shared</code>, respectively non-<code>@Shared</code>, fields that get values assigned at declaration time.
+The compiler will put those initializations in a generated method and call it at the proper place in the lifecycle.
+So if there are no such initializations, no method is generated and thus the method interceptor is never called.
+The non-method interceptors are always called at the proper place in the lifecycle to do work that has to be done at that time.
+There can also be multiple such methods, if you for example have a super specification that itself has fields with initialization expressions.</p>
 </div>
 <div class="paragraph">
-<p>To create an interceptor to be attached to an interception point, you need to create a class that implements the
-interface <code>IMethodInterceptor</code>. This interface has the sole method <code>intercept(IMethodInvocation invocation)</code>. The
-<code>invocation</code> parameter can be used to get and modify the current state of execution. Each interceptor <strong>must</strong> call the
-method <code>invocation.proceed()</code>, which will go on in the lifecycle, except you really want to prevent further execution of
-the nested elements like shown in the figure above. But this should be a very rare use case.</p>
+<p>To create an interceptor to be attached to an interception point, you need to create a class that implements the interface <code>IMethodInterceptor</code>.
+This interface has the sole method <code>intercept(IMethodInvocation invocation)</code>.
+The <code>invocation</code> parameter can be used to get and modify the current state of execution.
+Each interceptor <strong>must</strong> call the method <code>invocation.proceed()</code>, which will go on in the lifecycle, except you really want to prevent further execution of the nested elements like shown in the figure above.
+But this should be a very rare use case.</p>
 </div>
 <div class="paragraph">
-<p>If you write an interceptor that can be used at different interception points and should do different work at different
-interception points, there is also the convenience class <code>AbstractMethodInterceptor</code>, which you can extend and which
-provides various methods for overriding that are called for the various interception points. Most of these methods have
-a double meaning, like <code>interceptSetupMethod</code> which is called for the <code>setup interceptor</code> and the <code>setup method
-interceptor</code>. If you attach your interceptor to both of them and need a differentiation, you can check for
-<code>invocation.method.reflection</code>, which will be set in the method interceptor case and <code>null</code> otherwise, or you can check
-<code>invocation.method.name</code> which behaves the same, or you can check for <code>invocation.target == invocation.instance</code>.
-Alternatively, you can of course build two different interceptors or add a parameter to your interceptor and create
-two instances, telling each at addition time whether it is attached to the method interceptor or the other one.</p>
+<p>If you write an interceptor that can be used at different interception points and should do different work at different interception points, there is also the convenience class <code>AbstractMethodInterceptor</code>, which you can extend and which provides various methods for overriding that are called for the various interception points.
+Most of these methods have a double meaning, like <code>interceptSetupMethod</code> which is called for the <code>setup interceptor</code> and the <code>setup method interceptor</code>.
+If you attach your interceptor to both of them and need a differentiation, you can check for <code>invocation.method.reflection</code>, which will be set in the method interceptor case and <code>null</code> otherwise, or you can check <code>invocation.method.name</code> which behaves the same, or you can check for <code>invocation.target == invocation.instance</code>.
+Alternatively, you can of course build two different interceptors or add a parameter to your interceptor and create two instances, telling each at addition time whether it is attached to the method interceptor or the other one.</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -2003,8 +1941,8 @@ two instances, telling each at addition time whether it is attached to the metho
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/InterceptorSpec.groovy#L39" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/InterceptorSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/InterceptorSpec.groovy#L39" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/InterceptorSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -2069,8 +2007,8 @@ featureInfo.parent.allCleanupMethods.each { method -&gt;
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/InterceptorSpec.groovy#L53" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/InterceptorSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/InterceptorSpec.groovy#L53" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/InterceptorSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -2113,8 +2051,8 @@ Parameter injection is supported for fixture methods, such as <code>setup</code>
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/ParameterInjectionSpec.groovy#L45" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/ParameterInjectionSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ParameterInjectionSpec.groovy#L45" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ParameterInjectionSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -2134,7 +2072,8 @@ Parameter injection is supported for fixture methods, such as <code>setup</code>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>This is a <code>Function&lt;IMethodInvocation, Object&gt;</code>, which is called by the <code>ParameterResolver.Interceptor</code> to resolve the parameter value. Here we just return the value of the <code>ParameterInfo&#8217;s `index</code> property, but you could also do some more complex logic here.</td>
+<td>This is a <code>Function&lt;IMethodInvocation, Object&gt;</code>, which is called by the <code>ParameterResolver.Interceptor</code> to resolve the parameter value.
+Here we just return the value of the <code>ParameterInfo&#8217;s `index</code> property, but you could also do some more complex logic here.</td>
 </tr>
 </table>
 </div>
@@ -2160,25 +2099,21 @@ Parameter injection is supported for fixture methods, such as <code>setup</code>
   }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/ParameterInjectionSpec.groovy#L22" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/ParameterInjectionSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ParameterInjectionSpec.groovy#L22" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ParameterInjectionSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="sect4">
 <h5 id="_for_spock_versions_prior_to_2_4_or_for_advanced_use_cases"><a class="anchor" href="#_for_spock_versions_prior_to_2_4_or_for_advanced_use_cases"></a><a class="link" href="#_for_spock_versions_prior_to_2_4_or_for_advanced_use_cases">For Spock versions prior to 2.4 or for advanced use cases</a></h5>
 <div class="paragraph">
-<p>If your interceptor should support custom method parameters for wrapped methods, this can be done by modifying
-<code>invocation.arguments</code>. Two use cases for this would be a mocking framework that can inject method parameters that are
-annotated with a special annotation, or some test helper that injects objects of a specific type that are created and
-prepared for usage automatically.</p>
+<p>If your interceptor should support custom method parameters for wrapped methods, this can be done by modifying <code>invocation.arguments</code>.
+Two use cases for this would be a mocking framework that can inject method parameters that are annotated with a special annotation, or some test helper that injects objects of a specific type that are created and prepared for usage automatically.</p>
 </div>
 <div class="paragraph">
-<p>When called from at least Spock 2.0, the <code>arguments</code> array will always have the size of the method parameter count,
-so you can directly set the arguments you want to set. You cannot change the size of the <code>arguments</code> array either.
-All parameters that did not yet get any value injected, either from data variables or some extension, will have the
-value <code>MethodInfo.MISSING_ARGUMENT</code> and if any of those remain, after all interceptors were run, an exception will be
-thrown.</p>
+<p>When called from at least Spock 2.0, the <code>arguments</code> array will always have the size of the method parameter count, so you can directly set the arguments you want to set.
+You cannot change the size of the <code>arguments</code> array either.
+All parameters that did not yet get any value injected, either from data variables or some extension, will have the value <code>MethodInfo.MISSING_ARGUMENT</code> and if any of those remain, after all interceptors were run, an exception will be thrown.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2188,13 +2123,10 @@ thrown.</p>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>When your extension might be used with a version before Spock 2.0, the <code>arguments</code> array may be an empty array
-or an array of arbitrary length, depending on what interceptors were run before that maybe also have manipulated
-this array for parameter injection. If you for example investigated the method parameters with
-<code>invocation.method.reflection.parameters</code> and found that you want to inject the fifth parameter,
-you should first check whether the <code>arguments</code> array is at least five elements long. If not, you should assign it a new
-array that is at least five elements long and copy the contents of the old array into the new one. Then you can assign
-your objects to be injected.</p>
+<p>When your extension might be used with a version before Spock 2.0, the <code>arguments</code> array may be an empty array or an array of arbitrary length, depending on what interceptors were run before that maybe also have manipulated this array for parameter injection.
+If you for example investigated the method parameters with <code>invocation.method.reflection.parameters</code> and found that you want to inject the fifth parameter, you should first check whether the <code>arguments</code> array is at least five elements long.
+If not, you should assign it a new array that is at least five elements long and copy the contents of the old array into the new one.
+Then you can assign your objects to be injected.</p>
 </div>
 <div class="listingblock">
 <div class="title">Inject Method Parameters</div>
@@ -2234,8 +2166,7 @@ parameters.each { parameter, i -&gt;
 </td>
 <td class="content">
 <div class="paragraph">
-<p><strong>Pre Spock 2.0 only:</strong> When using data driven features (methods with a <code>where:</code> block), the user of your extension has to follow some
-restrictions, if parameters should be injected by your extension:</p>
+<p><strong>Pre Spock 2.0 only:</strong> When using data driven features (methods with a <code>where:</code> block), the user of your extension has to follow some restrictions, if parameters should be injected by your extension:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -2251,8 +2182,7 @@ restrictions, if parameters should be injected by your extension:</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>Of course, you can also make your extension only inject a value if none is set already, as the <code>where:</code> block
-assignments happen before the method interceptor is called</p>
+<p>Of course, you can also make your extension only inject a value if none is set already, as the <code>where:</code> block assignments happen before the method interceptor is called</p>
 </div>
 <div class="paragraph">
 <p>for this simply check whether <code>invocation.arguments[i]</code> is <code>null</code> or not</p>
@@ -2297,8 +2227,8 @@ assignments happen before the method interceptor is called</p>
 <h3 id="mock-makers"><a class="anchor" href="#mock-makers"></a><a class="link" href="#mock-makers">Mock Maker Extensions</a></h3>
 <div class="paragraph">
 <p>Spock creates mock objects via the <code>IMockMaker</code> interface.
-When Spock is creating a mock, it will ask the available mock makers in order of priority,
-if it can mock the requested type. Spock will use the first mock maker which is capable to mock the requested type.</p>
+When Spock is creating a mock, it will ask the available mock makers in order of priority, if it can mock the requested type.
+Spock will use the first mock maker which is capable to mock the requested type.</p>
 </div>
 <div class="paragraph">
 <p>The following mock makers are built-in, and are selected in this order:</p>
@@ -2417,8 +2347,7 @@ if it can mock the requested type. Spock will use the first mock maker which is 
 <p>The class <code>spock.mock.MockMakers</code> provides constants and methods for the built-in mock makers.</p>
 </div>
 <div class="paragraph">
-<p>You can select your preferred mock maker, by defining the <code>preferredMockMaker</code> property
-in the <a href="#spock-configuration-file">Spock Configuration File</a>.
+<p>You can select your preferred mock maker, by defining the <code>preferredMockMaker</code> property in the <a href="#spock-configuration-file">Spock Configuration File</a>.
 The preferred mock maker will be used globally, if no mock maker is explicitly specified for a given mock.</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
@@ -2436,8 +2365,8 @@ The preferred mock maker will be used globally, if no mock maker is explicitly s
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/MockMakerConfigurationDocSpec.groovy#L30" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/MockMakerConfigurationDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/MockMakerConfigurationDocSpec.groovy#L30" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/MockMakerConfigurationDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -2448,8 +2377,7 @@ The preferred mock maker will be used globally, if no mock maker is explicitly s
 The mocking of final classes is automatically enabled, if <code>org.mockito:mockito-core</code> 4.11+ is on the class path.</p>
 </div>
 <div class="paragraph">
-<p>For mocking of final methods, you need to select the <code>mockito</code> mock maker during mock construction,
-like:</p>
+<p>For mocking of final methods, you need to select the <code>mockito</code> mock maker during mock construction, like:</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -2463,8 +2391,8 @@ like:</p>
 <pre class="CodeRay highlight"><code data-lang="groovy">Subscriber subscriber = Mock(<span class="key">mockMaker</span>: MockMakers.mockito)</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/interaction/MockMakerDocSpec.groovy#L41" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/interaction/MockMakerDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/MockMakerDocSpec.groovy#L41" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/MockMakerDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -2479,8 +2407,7 @@ It can&#8217;t mock native methods, see <a href="https://javadoc.io/doc/org.mock
 <i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
-If you try to mock a final method without a Mock Maker supporting it,
-         it will silently fail, without honoring your specified interactions.
+If you try to mock a final method without a Mock Maker supporting it, it will silently fail, without honoring your specified interactions.
 </td>
 </tr>
 </table>
@@ -2502,15 +2429,13 @@ If you try to mock a final method without a Mock Maker supporting it,
 })</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/interaction/MockMakerDocSpec.groovy#L55" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/interaction/MockMakerDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/MockMakerDocSpec.groovy#L55" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/interaction/MockMakerDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>The <code>mockito</code> mock maker uses <code>org.mockito.MockMakers.INLINE</code> under the hood,
-please see the Mockito manual "Mocking final types, enums and final methods" for all pros and cons,
-when using <code>org.mockito.MockMakers.INLINE</code>.
+<p>The <code>mockito</code> mock maker uses <code>org.mockito.MockMakers.INLINE</code> under the hood, please see the Mockito manual "Mocking final types, enums and final methods" for all pros and cons, when using <code>org.mockito.MockMakers.INLINE</code>.
 It also supports mocking of static methods of classes and interfaces with <code>SpyStatic</code>.
 See <a href="interaction_based_testing.html#static-mocks">static mocks</a> section for more details.</p>
 </div>
@@ -2519,20 +2444,16 @@ See <a href="interaction_based_testing.html#static-mocks">static mocks</a> secti
 <h4 id="_custom_mock_maker"><a class="anchor" href="#_custom_mock_maker"></a><a class="link" href="#_custom_mock_maker">Custom Mock Maker</a></h4>
 <div class="paragraph">
 <p>Spock provides an extension point to plug in your own mock maker for creating mock objects.
-To create a mock maker you need to create a class that implements the interface <code>IMockMaker</code> and put its
-fully-qualified class name in a file <code>META-INF/services/org.spockframework.mock.runtime.IMockMaker</code> in the
-class path. As soon as these two conditions are satisfied, your mock maker is automatically loaded and used when Spock is
-running.</p>
+To create a mock maker you need to create a class that implements the interface <code>IMockMaker</code> and put its fully-qualified class name in a file <code>META-INF/services/org.spockframework.mock.runtime.IMockMaker</code> in the class path.
+As soon as these two conditions are satisfied, your mock maker is automatically loaded and used when Spock is running.</p>
 </div>
 <div class="paragraph">
-<p>You should provide a constant class containing the mock maker ID or a method for creating <code>IMockMakerSettings</code> to your users,
-that your mock maker can be easily selected.</p>
+<p>You should provide a constant class containing the mock maker ID or a method for creating <code>IMockMakerSettings</code> to your users, that your mock maker can be easily selected.</p>
 </div>
 <div class="paragraph">
 <p>The <code>IMockMakerSettings</code> can be used by a custom <code>IMockMaker</code> to provide mock maker specific API settings in a type-safe way.
-The custom mock maker may subclass <code>IMockMakerSettings</code> to transport custom data from the declaration site to the mock
-creation. The custom mock maker then provides a static method to create an instance of that subclass and the parameters
-are then used during mock creation.</p>
+The custom mock maker may subclass <code>IMockMakerSettings</code> to transport custom data from the declaration site to the mock creation.
+The custom mock maker then provides a static method to create an instance of that subclass and the parameters are then used during mock creation.</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -2636,7 +2557,7 @@ are then used during mock creation.</p>
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/FancyMockMaker.java#L33" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/FancyMockMaker.java#L33" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -2660,8 +2581,8 @@ CannotCreateMockException ex = thrown()
 ex.message == <span class="string"><span class="delimiter">&quot;</span><span class="content">Cannot create mock for class java.util.ArrayList. fancy: Mock with serialization and fancy types is not supported.</span><span class="delimiter">&quot;</span></span></code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/FancyMockMakerDocSpec.groovy#L26" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/FancyMockMakerDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/FancyMockMakerDocSpec.groovy#L26" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/FancyMockMakerDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -2671,16 +2592,19 @@ ex.message == <span class="string"><span class="delimiter">&quot;</span><span cl
 <h3 id="extension-store"><a class="anchor" href="#extension-store"></a><a class="link" href="#extension-store">Keeping State in Extensions</a></h3>
 <div class="paragraph">
 <p>Prior to Spock 2.4, extensions could only store state either in their own instances or their interceptor instances.
-Often, the state can be kept locally in the <code>intercept(IMethodInvocation)</code> method around the <code>IMethodInvocation.proceed()</code> call. However, there are cases where this is not possible, for example when using initializer interceptors.</p>
+Often, the state can be kept locally in the <code>intercept(IMethodInvocation)</code> method around the <code>IMethodInvocation.proceed()</code> call.
+However, there are cases where this is not possible, for example when using initializer interceptors.</p>
 </div>
 <div class="paragraph">
 <p>Spock 2.4 adds a new <code>org.spockframework.runtime.extension.IStore</code> interface that allows extensions to store and retrieve data during the execution of a specification.</p>
 </div>
 <div class="paragraph">
-<p>The store is available from the <code>org.spockframework.runtime.extension.IMethodInvocation</code> interface via the <code>getStore(IStore.Namespace namespace)</code> method. Currently, it is not possible to access the store directly from an extension, only via registering an <a href="#interceptors">interceptor</a>.</p>
+<p>The store is available from the <code>org.spockframework.runtime.extension.IMethodInvocation</code> interface via the <code>getStore(IStore.Namespace namespace)</code> method.
+Currently, it is not possible to access the store directly from an extension, only via registering an <a href="#interceptors">interceptor</a>.</p>
 </div>
 <div class="paragraph">
-<p>The stores are hierarchical and follow roughly the same hierarchy as shown in the <a href="#spock-interceptors">Spock Interceptors</a> figure. The hierarchy is as follows:</p>
+<p>The stores are hierarchical and follow roughly the same hierarchy as shown in the <a href="#spock-interceptors">Spock Interceptors</a> figure.
+The hierarchy is as follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2697,11 +2621,13 @@ Often, the state can be kept locally in the <code>intercept(IMethodInvocation)</
 <div class="title">Figure 2. Store hierarchy</div>
 </div>
 <div class="paragraph">
-<p>If an item is not found in the current store, its parent store is searched, and so on until the root store is reached. For more information see the JavaDoc of <code>org.spockframework.runtime.extension.IStore</code>.</p>
+<p>If an item is not found in the current store, its parent store is searched, and so on until the root store is reached.
+For more information see the JavaDoc of <code>org.spockframework.runtime.extension.IStore</code>.</p>
 </div>
 <div class="paragraph">
 <div class="title">Example</div>
-<p>If an interceptor adds a <code>Macguffin</code> to the store via a <code>sharedInitializerInterceptor</code>  for <code>ASpec</code> it will be available to all features (<code>AFeature1</code> and <code>AFeature2</code>) and iterations (<code>AFeature1[1]</code>, <code>AFeature1[2]</code>, <code>AFeature2[1]</code>, <code>AFeature2[2]</code>) of that specification, but not to <code>BSpec</code> or its features. Conversely, if a feature interceptor adds a <code>Thingmajig</code> to the store for <code>AFeature1</code> it will be available to all its iterations (<code>AFeature1[1]</code>, <code>AFeature1[2]</code>), but not to sibling features (<code>AFeature2</code>) or to the specification (<code>ASpec</code>).</p>
+<p>If an interceptor adds a <code>Macguffin</code> to the store via a <code>sharedInitializerInterceptor</code>  for <code>ASpec</code> it will be available to all features (<code>AFeature1</code> and <code>AFeature2</code>) and iterations (<code>AFeature1[1]</code>, <code>AFeature1[2]</code>, <code>AFeature2[1]</code>, <code>AFeature2[2]</code>) of that specification, but not to <code>BSpec</code> or its features.
+Conversely, if a feature interceptor adds a <code>Thingmajig</code> to the store for <code>AFeature1</code> it will be available to all its iterations (<code>AFeature1[1]</code>, <code>AFeature1[2]</code>), but not to sibling features (<code>AFeature2</code>) or to the specification (<code>ASpec</code>).</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2711,8 +2637,8 @@ Often, the state can be kept locally in the <code>intercept(IMethodInvocation)</
 </td>
 <td class="content">
 When the store is closed, it will call the <code>close()</code> method for all stored values that implement <code>java.lang.AutoCloseable</code>.
-      Stored values will be closed in reverse insertion order.
-      This does not happen, if the value was added and subsequently removed from the store, before the store was closed.
+Stored values will be closed in reverse insertion order.
+This does not happen, if the value was added and subsequently removed from the store, before the store was closed.
 </td>
 </tr>
 </table>
@@ -2774,8 +2700,8 @@ When the store is closed, it will call the <code>close()</code> method for all s
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/ExtensionStoreSpec.groovy#L92" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/ExtensionStoreSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ExtensionStoreSpec.groovy#L92" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ExtensionStoreSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -2863,8 +2789,8 @@ The extension uses this to print a report of the collected exception statistics.
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/ExtensionStoreSpec.groovy#L45" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/ExtensionStoreSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ExtensionStoreSpec.groovy#L45" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ExtensionStoreSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -2889,8 +2815,8 @@ The extension uses this to print a report of the collected exception statistics.
 ========================</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/ExtensionStoreSpec.groovy#L81" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/extension/ExtensionStoreSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ExtensionStoreSpec.groovy#L81" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/extension/ExtensionStoreSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -2929,7 +2855,7 @@ This extension allows you to provide a default value if the <code>EmptyOrDummyRe
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/java/org/spockframework/smoke/mock/MaybeDefaultValueProvider.java#L23" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/java/org/spockframework/smoke/mock/MaybeDefaultValueProvider.java#L23" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -2980,7 +2906,7 @@ If a <code>cleanup</code> block is present the cleanup block listener methods wi
 <div id="footer">
 <div id="footer-text">
 Version 2.6-SNAPSHOT<br>
-Last updated 2026-10-07 10:58:34 UTC
+Last updated 2026-10-07 16:23:17 UTC
 </div>
 </div>
 </body>

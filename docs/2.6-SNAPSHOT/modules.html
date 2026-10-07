@@ -30,7 +30,8 @@
 <h2 id="junit-4"><a class="anchor" href="#junit-4"></a><a class="link" href="#junit-4">JUnit 4 Module</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Integration with JUnit 4 features for Spock 2+ (which internally uses JUnit Platform - part of JUnit 5). Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-junit4"><code>org.spockframework:spock-junit4</code></a> to your project.</p>
+<p>Integration with JUnit 4 features for Spock 2+ (which internally uses JUnit Platform - part of JUnit 5).
+Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-junit4"><code>org.spockframework:spock-junit4</code></a> to your project.</p>
 </div>
 <div class="paragraph">
 <p>The module is required for:</p>
@@ -63,8 +64,9 @@ This module does its best to support old features from JUnit 4, however, users a
 <h2 id="_guice_module"><a class="anchor" href="#_guice_module"></a><a class="link" href="#_guice_module">Guice Module</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Integration with the <a href="https://github.com/google/guice">Guice</a> IoC container. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-guice"><code>org.spockframework:spock-guice</code></a> to your project. For examples see the specs in the
-<a href="https://github.com/spockframework/spock/tree/master/spock-guice/src/test/groovy/org/spockframework/guice">codebase</a>.</p>
+<p>Integration with the <a href="https://github.com/google/guice">Guice</a> IoC container.
+Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-guice"><code>org.spockframework:spock-guice</code></a> to your project.
+For examples see the specs in the <a href="https://github.com/spockframework/spock/tree/master/spock-guice/src/test/groovy/org/spockframework/guice">codebase</a>.</p>
 </div>
 <div class="paragraph">
 <p>With Spock 1.2+ detached mocks are automatically attached to the <code>Specification</code> if they are injected via <code>@Inject</code>.</p>
@@ -76,7 +78,9 @@ This module does its best to support old features from JUnit 4, however, users a
 <div class="sectionbody">
 <div class="paragraph">
 <p>The Spring module enables integration with <a href="https://docs.spring.io/spring-framework/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework">Spring TestContext Framework</a>.
-It supports the following spring annotations <code>@ContextConfiguration</code> and <code>@ContextHierarchy</code>. Furthermore, it supports the meta-annotation <code>@BootstrapWith</code> and so any annotation that is annotated with <code>@BootstrapWith</code> will also work, such as <code>@SpringBootTest</code>, <code>@WebMvcTest</code>. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-spring"><code>org.spockframework:spock-spring</code></a> to your project.</p>
+It supports the following spring annotations <code>@ContextConfiguration</code> and <code>@ContextHierarchy</code>.
+Furthermore, it supports the meta-annotation <code>@BootstrapWith</code> and so any annotation that is annotated with <code>@BootstrapWith</code> will also work, such as <code>@SpringBootTest</code>, <code>@WebMvcTest</code>.
+Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-spring"><code>org.spockframework:spock-spring</code></a> to your project.</p>
 </div>
 <div class="sect2">
 <h3 id="SpringMocks"><a class="anchor" href="#SpringMocks"></a><a class="link" href="#SpringMocks">Mocks</a></h3>
@@ -91,9 +95,8 @@ It supports the following spring annotations <code>@ContextConfiguration</code> 
 </td>
 <td class="content">
 Although the mocks can be created outside of a specification, they only work properly inside the scope of a specification.
-      All interactions with them until they are attached to one, are handled by the default behavior and not recorded.
-     <br>
-      Furthermore, mocks can only be attached to one <code>Specification</code> instance at a time so keep that in mind when using multi-threaded executions
+All interactions with them until they are attached to one, are handled by the default behavior and not recorded.<br>
+Furthermore, mocks can only be attached to one <code>Specification</code> instance at a time so keep that in mind when using multi-threaded executions
 </td>
 </tr>
 </table>
@@ -134,8 +137,8 @@ Although the mocks can be created outside of a specification, they only work pro
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-spring/src/test/groovy/org/spockframework/spring/docs/DetachedJavaConfig.groovy#L26" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-spring/src/test/groovy/org/spockframework/spring/docs/DetachedJavaConfig.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-spring/src/test/groovy/org/spockframework/spring/docs/DetachedJavaConfig.groovy#L26" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-spring/src/test/groovy/org/spockframework/spring/docs/DetachedJavaConfig.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -178,7 +181,7 @@ Although the mocks can be created outside of a specification, they only work pro
 <span class="tag">&lt;/beans&gt;</span></code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-spring/src/test/resources/org/spockframework/spring/docs/MockDocu-context.xml#L1" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-spring/src/test/resources/org/spockframework/spring/docs/MockDocu-context.xml#L1" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -198,7 +201,8 @@ Although the mocks can be created outside of a specification, they only work pro
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Wraps an existing bean with a <code>Spy</code>. Fails fast if referenced bean is not found.</td>
+<td>Wraps an existing bean with a <code>Spy</code>.
+Fails fast if referenced bean is not found.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
@@ -273,8 +277,8 @@ GreeterService alternativeMock
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-spring/src/test/groovy/org/spockframework/spring/docs/MockExamples.groovy#L32" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-spring/src/test/groovy/org/spockframework/spring/docs/MockExamples.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-spring/src/test/groovy/org/spockframework/spring/docs/MockExamples.groovy#L32" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-spring/src/test/groovy/org/spockframework/spring/docs/MockExamples.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -282,9 +286,9 @@ GreeterService alternativeMock
 <div class="sect3">
 <h4 id="_annotation_driven"><a class="anchor" href="#_annotation_driven"></a><a class="link" href="#_annotation_driven">Annotation driven</a></h4>
 <div class="paragraph">
-<p>Spock 1.2 adds support for exporting mocks from a <code>Specification</code> into an <code>ApplicationContext</code>. This was inspired by
-Spring Boot&#8217;s <code>@MockBean</code>(realised via Mockito) but adapted to fit into Spock style. It does not require any Spring Boot dependencies,
-however it requires Spring Framework 4.3.5 or greater to work.</p>
+<p>Spock 1.2 adds support for exporting mocks from a <code>Specification</code> into an <code>ApplicationContext</code>.
+This was inspired by Spring Boot&#8217;s <code>@MockBean</code>(realised via Mockito) but adapted to fit into Spock style.
+It does not require any Spring Boot dependencies, however it requires Spring Framework 4.3.5 or greater to work.</p>
 </div>
 <div class="sect4">
 <h5 id="_using_springbean"><a class="anchor" href="#_using_springbean"></a><a class="link" href="#_using_springbean">Using <code>@SpringBean</code></a></h5>
@@ -292,9 +296,9 @@ however it requires Spring Framework 4.3.5 or greater to work.</p>
 <p>Registers mock/stub/spy as a spring bean in the test context.</p>
 </div>
 <div class="paragraph">
-<p>To use <code>@SpringBean</code> you have to use a strongly typed field <code>def</code> or <code>Object</code> won&#8217;t work. You also need to directly assign the
-<code>Mock</code>/<code>Stub</code>/<code>Spy</code> to the field using the standard Spock syntax. You can even use the initializer blocks to define common behavior,
-however they are only picked up once they are attached to the <code>Specification</code>.</p>
+<p>To use <code>@SpringBean</code> you have to use a strongly typed field <code>def</code> or <code>Object</code> won&#8217;t work.
+You also need to directly assign the <code>Mock</code>/<code>Stub</code>/<code>Spy</code> to the field using the standard Spock syntax.
+You can even use the initializer blocks to define common behavior, however they are only picked up once they are attached to the <code>Specification</code>.</p>
 </div>
 <div class="paragraph">
 <p><code>@SpringBean</code> definitions can replace existing Beans in your <code>ApplicationContext</code>.</p>
@@ -306,10 +310,9 @@ however they are only picked up once they are attached to the <code>Specificatio
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Spock&#8217;s <code>@SpringBean</code> actually creates a proxy in the <code>ApplicationContext</code> which forwards everything to the current
-      mock instance. The type of the proxy is determined by the type of the annotated field.
-     <br>
-      The proxy attaches itself to the current mock in the setup phase, that is why the mock must be created when the field is initialized.
+Spock&#8217;s <code>@SpringBean</code> actually creates a proxy in the <code>ApplicationContext</code> which forwards everything to the current mock instance.
+The type of the proxy is determined by the type of the annotated field.<br>
+The proxy attaches itself to the current mock in the setup phase, that is why the mock must be created when the field is initialized.
 </td>
 </tr>
 </table>
@@ -346,8 +349,8 @@ Service2 service2 = <span class="predefined-type">Stub</span>() {
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-spring/src/test/groovy/org/spockframework/spring/docs/SpringBeanExamples.groovy#L30" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-spring/src/test/groovy/org/spockframework/spring/docs/SpringBeanExamples.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-spring/src/test/groovy/org/spockframework/spring/docs/SpringBeanExamples.groovy#L30" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-spring/src/test/groovy/org/spockframework/spring/docs/SpringBeanExamples.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -358,13 +361,8 @@ Service2 service2 = <span class="predefined-type">Stub</span>() {
 <i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
-As with Spring&#8217;s own <code>@MockBean</code> this will modify your <code>ApplicationContext</code>, and will create an unique context for your
-         <code>Specification</code> preventing it from being reused by Spring&#8217;s
-         <a href="https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/ctx-management/caching.html">Context Caching</a>
-         outside of the current <code>Specification</code>.
-        <br>
-         If you are using a small context this won&#8217;t matter much, but if it is a heavy context you might want to use
-         the other approaches, e.g., using the <code>DetachedMockFactory</code>.
+As with Spring&#8217;s own <code>@MockBean</code> this will modify your <code>ApplicationContext</code>, and will create an unique context for your <code>Specification</code> preventing it from being reused by Spring&#8217;s <a href="https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/ctx-management/caching.html">Context Caching</a> outside of the current <code>Specification</code>.<br>
+If you are using a small context this won&#8217;t matter much, but if it is a heavy context you might want to use the other approaches, e.g., using the <code>DetachedMockFactory</code>.
 </td>
 </tr>
 </table>
@@ -406,8 +404,8 @@ Service1 service1
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-spring/src/test/groovy/org/spockframework/spring/docs/SpringSpyExamples.groovy#L30" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-spring/src/test/groovy/org/spockframework/spring/docs/SpringSpyExamples.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-spring/src/test/groovy/org/spockframework/spring/docs/SpringSpyExamples.groovy#L30" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-spring/src/test/groovy/org/spockframework/spring/docs/SpringSpyExamples.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -435,8 +433,8 @@ Like <code>@SpringBean</code> <code>@StubBeans</code> also replaced existing Bea
 <span class="type">class</span> <span class="class">StubBeansExamples</span> <span class="directive">extends</span> Specification {</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-spring/src/test/groovy/org/spockframework/spring/docs/StubBeansExamples.groovy#L11" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-spring/src/test/groovy/org/spockframework/spring/docs/StubBeansExamples.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-spring/src/test/groovy/org/spockframework/spring/docs/StubBeansExamples.groovy#L11" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-spring/src/test/groovy/org/spockframework/spring/docs/StubBeansExamples.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -445,8 +443,7 @@ Like <code>@SpringBean</code> <code>@StubBeans</code> also replaced existing Bea
 <div class="sect3">
 <h4 id="_spring_boot"><a class="anchor" href="#_spring_boot"></a><a class="link" href="#_spring_boot">Spring Boot</a></h4>
 <div class="paragraph">
-<p>The recommended way to use Spock mocks in <code>@WebMvcTest</code> or other <code>@SpringBootTest</code>-style tests,
-is to use the <code>@SpringBean</code> and <code>@SpringSpy</code> annotations as shown above.</p>
+<p>The recommended way to use Spock mocks in <code>@WebMvcTest</code> or other <code>@SpringBootTest</code>-style tests, is to use the <code>@SpringBean</code> and <code>@SpringSpy</code> annotations as shown above.</p>
 </div>
 <div class="paragraph">
 <p>Alternatively you can use an embedded config annotated with <code>@TestConfiguration</code> and to create the mocks using the <code>DetachedMockFactory</code>.</p>
@@ -491,8 +488,8 @@ is to use the <code>@SpringBean</code> and <code>@SpringSpy</code> annotations a
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-spring/boot2-test/src/test/groovy/org/spockframework/boot2/WebMvcTestIntegrationSpec.groovy#L37" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-spring/boot2-test/src/test/groovy/org/spockframework/boot2/WebMvcTestIntegrationSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-spring/boot2-test/src/test/groovy/org/spockframework/boot2/WebMvcTestIntegrationSpec.groovy#L37" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-spring/boot2-test/src/test/groovy/org/spockframework/boot2/WebMvcTestIntegrationSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -504,8 +501,8 @@ is to use the <code>@SpringBean</code> and <code>@SpringSpy</code> annotations a
 <div class="sect2">
 <h3 id="_scopes"><a class="anchor" href="#_scopes"></a><a class="link" href="#_scopes">Scopes</a></h3>
 <div class="paragraph">
-<p>Spock ignores bean that is not a <code>singleton</code> (in the <code>singleton</code> scope) by default. To enable mocks to work for scoped beans
-you need to add <code>@ScanScopedBeans</code> to the spec and make sure that the scope allows access to the bean during the setup phase.</p>
+<p>Spock ignores bean that is not a <code>singleton</code> (in the <code>singleton</code> scope) by default.
+To enable mocks to work for scoped beans you need to add <code>@ScanScopedBeans</code> to the spec and make sure that the scope allows access to the bean during the setup phase.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -536,8 +533,9 @@ Refer to javadoc of <code>org.spockframework.spring.EnableSharedInjection</code>
 <h2 id="_tapestry_module"><a class="anchor" href="#_tapestry_module"></a><a class="link" href="#_tapestry_module">Tapestry Module</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Integration with the <a href="https://tapestry.apache.org/tapestry5/">Tapestry5</a> IoC container. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-tapestry"><code>org.spockframework:spock-tapestry</code></a> to your project. For examples see the specs in the
-<a href="https://github.com/spockframework/spock/tree/master/spock-tapestry/src/test/groovy/org/spockframework/tapestry">codebase</a>.</p>
+<p>Integration with the <a href="https://tapestry.apache.org/tapestry5/">Tapestry5</a> IoC container.
+Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-tapestry"><code>org.spockframework:spock-tapestry</code></a> to your project.
+For examples see the specs in the <a href="https://github.com/spockframework/spock/tree/master/spock-tapestry/src/test/groovy/org/spockframework/tapestry">codebase</a>.</p>
 </div>
 </div>
 </div>
@@ -545,8 +543,9 @@ Refer to javadoc of <code>org.spockframework.spring.EnableSharedInjection</code>
 <h2 id="_unitils_module"><a class="anchor" href="#_unitils_module"></a><a class="link" href="#_unitils_module">Unitils Module</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Integration with the <a href="https://unitils.sourceforge.net/">Unitils</a> library. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-unitils"><code>org.spockframework:spock-unitils</code></a> to your project. For examples see the specs in the
-<a href="https://github.com/spockframework/spock/tree/master/spock-unitils/src/test/groovy/org/spockframework/unitils">codebase</a>.</p>
+<p>Integration with the <a href="https://unitils.sourceforge.net/">Unitils</a> library.
+Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-unitils"><code>org.spockframework:spock-unitils</code></a> to your project.
+For examples see the specs in the <a href="https://github.com/spockframework/spock/tree/master/spock-unitils/src/test/groovy/org/spockframework/unitils">codebase</a>.</p>
 </div>
 </div>
 </div>
@@ -554,7 +553,8 @@ Refer to javadoc of <code>org.spockframework.spring.EnableSharedInjection</code>
 <h2 id="_grails_module"><a class="anchor" href="#_grails_module"></a><a class="link" href="#_grails_module">Grails Module</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Grails plugin has moved to its own <a href="https://github.com/spockframework/spock-grails">GitHub project</a>. It has legacy status and was last released for <a href="https://search.maven.org/artifact/org.spockframework/spock-grails">Spock 0.7 and Groovy versions 1.8 and 2.0</a>, because it is no longer necessary.</p>
+<p>The Grails plugin has moved to its own <a href="https://github.com/spockframework/spock-grails">GitHub project</a>.
+It has legacy status and was last released for <a href="https://search.maven.org/artifact/org.spockframework/spock-grails">Spock 0.7 and Groovy versions 1.8 and 2.0</a>, because it is no longer necessary.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -574,7 +574,7 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <div id="footer">
 <div id="footer-text">
 Version 2.6-SNAPSHOT<br>
-Last updated 2026-10-07 10:58:34 UTC
+Last updated 2026-10-07 16:23:17 UTC
 </div>
 </div>
 </body>

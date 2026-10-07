@@ -33,30 +33,23 @@ Take a look at [Third-Party-Extensions](https://github.com/spockframework/spock/
 
 ### Reduce spock-core direct groovy dependencies
 
-`spock-core` now only depends on `groovy.jar`. All other Groovy dependencies have been removed,
-this should make dependency management a bit easier.
+`spock-core` now only depends on `groovy.jar`.
+All other Groovy dependencies have been removed, this should make dependency management a bit easier.
 If you relied on other groovy dependencies transitively, you will need to add them directly.
 
 
 ### Unroll changes
 
-- Data driven features are now unrolled by default. `@Unroll` can still be used to specify a custom naming pattern.
-A simple `@Unroll` without argument is not needed anymore except when undoing a spec-level `@Rollup` annotation
-or if unrolling by default is disabled, so any simple `@Unroll` annotations can be removed from existing code. You
-can verify this by looking at the test count which should not have been changed after you removed the simple
-`@Unroll` annotations.
-- `@Rollup` can now be used on feature and spec level to explicitly roll up any feature where the reporting of single
-iterations is not wanted.
-- The setting `unroll { unrollByDefault false }` in the Spock configuration file can be set to roll up all
-features by default if not overwritten by explicit `@Unroll` annotations and thus reinstate the pre
-Spock 2.0 behaviour.
+- Data driven features are now unrolled by default.
+`@Unroll` can still be used to specify a custom naming pattern.
+A simple `@Unroll` without argument is not needed anymore except when undoing a spec-level `@Rollup` annotation or if unrolling by default is disabled, so any simple `@Unroll` annotations can be removed from existing code.
+You can verify this by looking at the test count which should not have been changed after you removed the simple `@Unroll` annotations.
+- `@Rollup` can now be used on feature and spec level to explicitly roll up any feature where the reporting of single iterations is not wanted.
+- The setting `unroll { unrollByDefault false }` in the Spock configuration file can be set to roll up all features by default if not overwritten by explicit `@Unroll` annotations and thus reinstate the pre Spock 2.0 behaviour.
 
 
-- The default unroll pattern changed from the rather generic `#featureName[#iterationIndex]` to a more fancy
-version that lists all data variables and their values additionally to the feature name and iteration index.
-If you prefer to retain the old behaviour, you can set the setting
-`unroll { defaultPattern '#featureName[#iterationIndex]' }` in the Spock configuration file
-and you will get the same result as previously.
+- The default unroll pattern changed from the rather generic `#featureName[#iterationIndex]` to a more fancy version that lists all data variables and their values additionally to the feature name and iteration index.
+If you prefer to retain the old behaviour, you can set the setting `unroll { defaultPattern '#featureName[#iterationIndex]' }` in the Spock configuration file and you will get the same result as previously.
 
 
 ### Assert unroll expressions by default
@@ -64,35 +57,29 @@ and you will get the same result as previously.
 The system property `spock.assertUnrollExpressions` is not supported anymore.
 Instead the new default behavior is equal to having this property set to `true`.
 This means tests that were successful but had an `#Error:` name rendering will now fail.
-It can be set back to the old pre Spock 2.0 behaviour by setting
-`unroll { validateExpressions false }` in the Spock configuration file.
+It can be set back to the old pre Spock 2.0 behaviour by setting `unroll { validateExpressions false }` in the Spock configuration file.
 
 
 ### Renamed iterationCount token
 
 The token `#iterationCount` in unroll patterns was renamed to `#iterationIndex`.
-If you use it somewhere, you have to manually change it to the new name
-or the test will fail unless you disabled expression asserting,
-then you will get an `#Error:iterationCount` rendering instead.
+If you use it somewhere, you have to manually change it to the new name or the test will fail unless you disabled expression asserting, then you will get an `#Error:iterationCount` rendering instead.
 
 
 ### New meaning of `>> _`
 
 The meaning of `>> _` has changed from "use the default response" to "return a stubbed value" ([Docs](interaction_based_testing.md#_returning_a_default_response)).
 The original behavior was only ever documented in the Javadocs and was basically the same to just omitting it.
-The only use-case was chained responses `>> "a" >> _ >> "b"`,
-but even here it is clearer to just use `null` or `{ callRealMethod() }` explicitly.
+The only use-case was chained responses `>> "a" >> _ >> "b"`, but even here it is clearer to just use `null` or `{ callRealMethod() }` explicitly.
 With the new behavior, you can have a `Mock` or `Spy` return the same value as a `Stub` would.
 
 
 ### No access to data variables in data pipes anymore
 
-It is not possible anymore to access any data variable from a data pipe or anything else but a previous data table
-column in a data table cell. This access was partly possible, but could easily prematurely drain iterators, access
-data providers sooner as expected, behaved differently depending on the concrete code construct used. All these
-points are more confusing than necessary. If you want to calculate a data variable from others, you can always use
-a derived data variable that has full access to all previous data variables and can also call helper methods for
-more complex logic.
+It is not possible anymore to access any data variable from a data pipe or anything else but a previous data table column in a data table cell.
+This access was partly possible, but could easily prematurely drain iterators, access data providers sooner as expected, behaved differently depending on the concrete code construct used.
+All these points are more confusing than necessary.
+If you want to calculate a data variable from others, you can always use a derived data variable that has full access to all previous data variables and can also call helper methods for more complex logic.
 
 
 If you switch your tests that are fully green to use Spock 2.0 and get any `MissingPropertyException`s, you are probably hitting this change, you should then change to a derived data variable there instead of a data pipe.
@@ -120,18 +107,14 @@ b = a
 
 ### Ant custom selector removed
 
-The class `SpecClassFileSelector` that could be used to only select actual Spock specification classes when testing
-and creating a test report was removed. It was the only class that required `ant` and was basically just a one-line
-forward to the `SpecClassFileFinder` which is still available.
+The class `SpecClassFileSelector` that could be used to only select actual Spock specification classes when testing and creating a test report was removed.
+It was the only class that required `ant` and was basically just a one-line forward to the `SpecClassFileFinder` which is still available.
 
 
-If you are still using Spock with `ant`, then you can just copy {SpecClassFileSelector}[the class from the spock source code]
-into your build, or you simply use a {scriptselector}[`<scriptselector>`] that does this forwarding as shown in the
-[Spock Example Project](https://github.com/spockframework/spock-example).
+If you are still using Spock with `ant`, then you can just copy {SpecClassFileSelector}[the class from the spock source code] into your build, or you simply use a {scriptselector}[`<scriptselector>`] that does this forwarding as shown in the [Spock Example Project](https://github.com/spockframework/spock-example).
 
 
-Alternatively, you can also use a naming convention to find the classes that are actual specifications and not helper
-or base classes, or you live with a bit of wasted time and some meaningless entries in the test reports.
+Alternatively, you can also use a naming convention to find the classes that are actual specifications and not helper or base classes, or you live with a bit of wasted time and some meaningless entries in the test reports.
 
 
 ### Other Breaking changes
@@ -139,15 +122,14 @@ or base classes, or you live with a bit of wasted time and some meaningless entr
 - Add new `displayName` via `INameable` for `SpecInfo`, `FeatureInfo`, and `IterationInfo`.
 This field can be set via extensions to change the reported name.
 The existing iteration `NameProvider` now also sets the `displayName` instead of the `name`.
-Modifying the `name` instead of `displayName` is now considered `deprecated` for extensions.
-[#1236](https://github.com/spockframework/spock/issues/1236)
+Modifying the `name` instead of `displayName` is now considered `deprecated` for extensions. [#1236](https://github.com/spockframework/spock/issues/1236)
 - Spock now requires at least Java 8
 - `@Retry.Mode.FEATURE` didn’t work anymore and has been removed
 - `spock-report` module has been removed, it was never officially released
 :leveloffset: -1
-- The `ReportLogExtension` vestiges were removed. As this extension was mostly used for an unreleased Spock module, this won’t affect many users.
-If you are using a [Spock Configuration File](extensions.md#spock-configuration-file) with a `report` section,
-then you must delete everything from this section except for `issueNamePrefix` and `issueUrlPrefix`.
+- The `ReportLogExtension` vestiges were removed.
+As this extension was mostly used for an unreleased Spock module, this won’t affect many users.
+If you are using a [Spock Configuration File](extensions.md#spock-configuration-file) with a `report` section, then you must delete everything from this section except for `issueNamePrefix` and `issueUrlPrefix`.
 These two properties are still supported and used by the `@Issue` extension.
 
 
@@ -159,8 +141,8 @@ Specs, Spec base classes and third-party extensions may have be recompiled in or
 JRE 1.5 and Groovy versions below 2.0 are no longer supported.
 
 
-Make sure to pick the right binaries for your Groovy version of choice: `groovy-2.0` for Groovy 2.0/2.1/2.2,
-`groovy-2.3` for Groovy 2.3, and `groovy-2.4` for Groovy 2.4 and higher. Spock won’t let you run with a "wrong" version.
+Make sure to pick the right binaries for your Groovy version of choice: `groovy-2.0` for Groovy 2.0/2.1/2.2, `groovy-2.3` for Groovy 2.3, and `groovy-2.4` for Groovy 2.4 and higher.
+Spock won’t let you run with a "wrong" version.
 
 
 No known source incompatible changes.
@@ -168,7 +150,8 @@ No known source incompatible changes.
 
 ## 0.7
 
-Client code must be recompiled in order to work with Spock 0.7. This includes third-party Spock extensions and base classes.
+Client code must be recompiled in order to work with Spock 0.7.
+This includes third-party Spock extensions and base classes.
 
 
 No known source incompatible changes.
@@ -202,11 +185,11 @@ class Derived extends Base {
 ```
 
 
-In 0.5, above assignments happened in the order `base1`, `base2`, `derived1`, `derived2`. In other words, field
-initializers were executed right before the setup method in the same class. In 0.6, assignments happen in the order
-`base1`, `derived1`, `base2`, `derived2`. This is a more conventional order that solves a few problems that users
-faced with the previous behavior, and also allows us to support JUnit’s new `TestRule`. As a result of this change,
-the following will no longer work:
+In 0.5, above assignments happened in the order `base1`, `base2`, `derived1`, `derived2`.
+In other words, field initializers were executed right before the setup method in the same class.
+In 0.6, assignments happen in the order `base1`, `derived1`, `base2`, `derived2`.
+This is a more conventional order that solves a few problems that users faced with the previous behavior, and also allows us to support JUnit’s new `TestRule`.
+As a result of this change, the following will no longer work:
 
 
 ```groovy
@@ -222,8 +205,7 @@ class Derived extends Base {
 ```
 
 
-To overcome this problem, you can either use a field initializer for `base`, or move the assignment of `derived` into
-a setup method.
+To overcome this problem, you can either use a field initializer for `base`, or move the assignment of `derived` into a setup method.
 
 
 ### `@Unroll` naming pattern syntax
@@ -261,8 +243,8 @@ def "maximum of two numbers"() { ... }
 ```
 
 
-For various reasons, the new syntax didn’t work out as we had hoped, and eventually we decided to go back to the string
-based syntax. See [Improved `@Unroll`](release_notes.md#improved-unroll-0.6) for recent improvements to that syntax.
+For various reasons, the new syntax didn’t work out as we had hoped, and eventually we decided to go back to the string based syntax.
+See [Improved `@Unroll`](release_notes.md#improved-unroll-0.6) for recent improvements to that syntax.
 
 
 ### Hamcrest matcher syntax

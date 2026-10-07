@@ -21,8 +21,7 @@
 If the interaction contains a lower cardinality, this is still checked at the end of the feature method.
 Upper cardinality is still relevant in the `cleanup` method, so could cause test failures where previously simply the default response of the mock object was used without cardinality check and could now cause previously working tests to fail.
 This enables `cleanup` methods to get stubbed responses from mock objects which previously was only possible by using a custom default response.
-If an interaction with stubbed response is present, the default response is also no longer used in the `cleanup` method because the interaction’s stubbed response is used now, which could also cause existing tests to fail.
-[#616](https://github.com/spockframework/spock/issues/616)
+If an interaction with stubbed response is present, the default response is also no longer used in the `cleanup` method because the interaction’s stubbed response is used now, which could also cause existing tests to fail. [#616](https://github.com/spockframework/spock/issues/616)
 - *This affects users upgrading to Groovy 6.*
 Before Groovy 6, a `switch` with arrow-style branches (`case x ->`) was always compiled as an expression, so a top-level arrow `switch` in an `expect:` or `then:` block was an [implicit condition](spock_primer.md#implicit-and-explicit-conditions).
 Since Groovy 6 ([GROOVY-12255](https://issues.apache.org/jira/browse/GROOVY-12255)), a `switch` is only an expression where it is used as one, so a top-level arrow `switch` is now a statement and is no longer checked.
@@ -83,27 +82,27 @@ Thanks to all the contributors to this release: Andreas Turban, arimu1, Benedikt
 ### Breaking Changes
 
 - *This affects users of the `@Snapshot` extension, only if you were using the snapshotter in parent specification classes.*
-`@Snapshot` used to look up snapshots in directories named after the class containing feature methods. Now, the snapshots will be loaded from directories named after the bottom class in the specification hierarchy. The motivation of the change is to allow users to define features in base specification classes, but overwrite expected snapshots per child specification.
-[#2112](https://github.com/spockframework/spock/pull/2112)
+`@Snapshot` used to look up snapshots in directories named after the class containing feature methods.
+Now, the snapshots will be loaded from directories named after the bottom class in the specification hierarchy.
+The motivation of the change is to allow users to define features in base specification classes, but overwrite expected snapshots per child specification. [#2112](https://github.com/spockframework/spock/pull/2112)
 - *Most users will probably be unaffected by this change as it only becomes relevant in a multithreaded situation where multiple threads do interaction invocations that care about shared state.*
-Calculated responses for interactions (`>> { … }`) previously were all executed synchronized on the respective mock controller instance, so could safely mutate shared state to a certain degree, even if the invocations were happening
-on different threads.
+Calculated responses for interactions (`>> { … }`) previously were all executed synchronized on the respective mock controller instance, so could safely mutate shared state to a certain degree, even if the invocations were happening on different threads.
 This also caused that one response calculation could not wait on something happening in another response calculation, as they were all executed sequentially due to the synchronization.
 Starting with this release, the response calculations are no longer happening synchronized.
-If you depend on shared state in such calculations, you now have to make sure yourself, that this is done in a thread-safe manner.
-[#1910](https://github.com/spockframework/spock/pull/1910)
+If you depend on shared state in such calculations, you now have to make sure yourself, that this is done in a thread-safe manner. [#1910](https://github.com/spockframework/spock/pull/1910)
 - *This should not affect most users, only if you were subclassing `SingleResponseGenerator` and doing unusual things.*
 `SingleResponseGenerator#isAtEndOfCycle` is now `final` and `SingleResponseGenerator#doRespond` is now `protected`.
-When subclassing `SingleResponseGenerator` it does not make sense to override the first method, and it does not make sense to call the second method from somewhere else.
-[#1910](https://github.com/spockframework/spock/pull/1910)
+When subclassing `SingleResponseGenerator` it does not make sense to override the first method, and it does not make sense to call the second method from somewhere else. [#1910](https://github.com/spockframework/spock/pull/1910)
 - The default Groovy method `.with {}` no longer has the Spock special behavior of treating it as a condition block.
 This will break tests using `.with {}` in assertions.
 Use the Spock `with(yourObject) {}` instead of `yourObject.with {}` or prefix it `!!` to fix your test.
-- Calling `old(…)` with multiple arguments is now a compilation error. Previously the additional arguments were simply ignored.
+- Calling `old(…)` with multiple arguments is now a compilation error.
+Previously the additional arguments were simply ignored.
 - Creating `GroovyMock`/`GroovyStub`/`GroovySpy` for an already mocked type will now fail.
-- Creating a global `GroovyMock`/`GroovyStub`/`GroovySpy` when [parallel execution](parallel_execution.md#parallel-execution) is enabled,
-will now require that the spec is annotated with [@Isolated](parallel_execution.md#isolated-execution) or `@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)`. See [Global mocks and parallel execution](interaction_based_testing.md#global-mocks-parallel-execution) [#1848](https://github.com/spockframework/spock/pull/1848)
-- `@TempDir` `spock.tempDir.keep` has been replaced by `spock.tempdir.cleanup`. See [TempDir Cleanup](extensions.md#temp-dir-cleanup) [#1525](https://github.com/spockframework/spock/pull/1525)
+- Creating a global `GroovyMock`/`GroovyStub`/`GroovySpy` when [parallel execution](parallel_execution.md#parallel-execution) is enabled, will now require that the spec is annotated with [@Isolated](parallel_execution.md#isolated-execution) or `@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)`.
+See [Global mocks and parallel execution](interaction_based_testing.md#global-mocks-parallel-execution) [#1848](https://github.com/spockframework/spock/pull/1848)
+- `@TempDir` `spock.tempDir.keep` has been replaced by `spock.tempdir.cleanup`.
+See [TempDir Cleanup](extensions.md#temp-dir-cleanup) [#1525](https://github.com/spockframework/spock/pull/1525)
 
 
 ### Misc
@@ -154,8 +153,9 @@ Thanks to all the contributors to this release: Andreas Turban, Björn Kautler, 
 ### Breaking Changes
 
 - *This affects users of the `@Snapshot` extension, only if you were using the snapshotter in parent specification classes.*
-`@Snapshot` used to look up snapshots in directories named after the class containing feature methods. Now, the snapshots will be loaded from directories named after the bottom class in the specification hierarchy. The motivation of the change is to allow users to define features in base specification classes, but overwrite expected snapshots per child specification.
-[#2112](https://github.com/spockframework/spock/pull/2112)
+`@Snapshot` used to look up snapshots in directories named after the class containing feature methods.
+Now, the snapshots will be loaded from directories named after the bottom class in the specification hierarchy.
+The motivation of the change is to allow users to define features in base specification classes, but overwrite expected snapshots per child specification. [#2112](https://github.com/spockframework/spock/pull/2112)
 
 
 ### Misc
@@ -232,16 +232,13 @@ Thanks to all the contributors to this release: Björn Kautler,
 ### Breaking Changes
 
 - *Most users will probably be unaffected by this change as it only becomes relevant in a multithreaded situation where multiple threads do interaction invocations that care about shared state.*
-Calculated responses for interactions (`>> { … }`) previously were all executed synchronized on the respective mock controller instance, so could safely mutate shared state to a certain degree, even if the invocations were happening
-on different threads.
+Calculated responses for interactions (`>> { … }`) previously were all executed synchronized on the respective mock controller instance, so could safely mutate shared state to a certain degree, even if the invocations were happening on different threads.
 This also caused that one response calculation could not wait on something happening in another response calculation, as they were all executed sequentially due to the synchronization.
 Starting with this release, the response calculations are no longer happening synchronized.
-If you depend on shared state in such calculations, you now have to make sure yourself, that this is done in a thread-safe manner.
-[#1910](https://github.com/spockframework/spock/pull/1910)
+If you depend on shared state in such calculations, you now have to make sure yourself, that this is done in a thread-safe manner. [#1910](https://github.com/spockframework/spock/pull/1910)
 - *This should not affect most users, only if you were subclassing `SingleResponseGenerator` and doing unusual things.*
 `SingleResponseGenerator#isAtEndOfCycle` is now `final` and `SingleResponseGenerator#doRespond` is now `protected`.
-When subclassing `SingleResponseGenerator` it does not make sense to override the first method, and it does not make sense to call the second method from somewhere else.
-[#1910](https://github.com/spockframework/spock/pull/1910)
+When subclassing `SingleResponseGenerator` it does not make sense to override the first method, and it does not make sense to call the second method from somewhere else. [#1910](https://github.com/spockframework/spock/pull/1910)
 
 
 ### Misc
@@ -286,11 +283,13 @@ Thanks to all the contributors to this release: Andreas Turban, Björn Kautler, 
 
 ### Breaking Changes
 
-- Calling `old(…)` with multiple arguments is now a compilation error. Previously the additional arguments were simply ignored.
+- Calling `old(…)` with multiple arguments is now a compilation error.
+Previously the additional arguments were simply ignored.
 - Creating `GroovyMock`/`GroovyStub`/`GroovySpy` for an already mocked type will now fail.
-- Creating a global `GroovyMock`/`GroovyStub`/`GroovySpy` when [parallel execution](parallel_execution.md#parallel-execution) is enabled,
-will now require that the spec is annotated with [@Isolated](parallel_execution.md#isolated-execution) or `@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)`. See [Global mocks and parallel execution](interaction_based_testing.md#global-mocks-parallel-execution) [#1848](https://github.com/spockframework/spock/pull/1848)
-- `@TempDir` `spock.tempDir.keep` has been replaced by `spock.tempdir.cleanup`. See [TempDir Cleanup](extensions.md#temp-dir-cleanup) [#1525](https://github.com/spockframework/spock/pull/1525)
+- Creating a global `GroovyMock`/`GroovyStub`/`GroovySpy` when [parallel execution](parallel_execution.md#parallel-execution) is enabled, will now require that the spec is annotated with [@Isolated](parallel_execution.md#isolated-execution) or `@ResourceLock(org.spockframework.runtime.model.parallel.Resources.META_CLASS_REGISTRY)`.
+See [Global mocks and parallel execution](interaction_based_testing.md#global-mocks-parallel-execution) [#1848](https://github.com/spockframework/spock/pull/1848)
+- `@TempDir` `spock.tempDir.keep` has been replaced by `spock.tempdir.cleanup`.
+See [TempDir Cleanup](extensions.md#temp-dir-cleanup) [#1525](https://github.com/spockframework/spock/pull/1525)
 
 
 ### Misc
@@ -395,7 +394,8 @@ Thanks to all the contributors to this release: Marc Philipp
 - Add junit-platform `TestTag` support with the [@Tag](extensions.md#test-tag-extension) extension [#1467](https://github.com/spockframework/spock/pull/1467)
 - Add `IDataDriver` extension point and refactor data provider handling [#1479](https://github.com/spockframework/spock/pull/1479)
 - Add [named deconstruction](data_driven_testing.md#multi-data-pipe-named) for multi variable datapipes.
-This might lead to changed behavior results if the data object implements `Map` but supports both positional `getAt(int)` and named `getAt(String)` access. In earlier versions, the positional access was used, but now the named access will be used. [#1463](https://github.com/spockframework/spock/pull/1463)
+This might lead to changed behavior results if the data object implements `Map` but supports both positional `getAt(int)` and named `getAt(String)` access.
+In earlier versions, the positional access was used, but now the named access will be used. [#1463](https://github.com/spockframework/spock/pull/1463)
 - Add custom class support to `@TempDir`, you can use any class that has a single `java.io.File` or `java.nio.file.Path` as constructor parameter [#1430](https://github.com/spockframework/spock/pull/1430)
 - Improve `@Stepwise` can be applied to data-driven feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations is one iteration fails. [#1442](https://github.com/spockframework/spock/pull/1442)
 - Improve `EmbeddedSpecCompiler` by making package declaration configurable in `EmbeddedSpecCompiler`
@@ -473,8 +473,7 @@ See [Precondition Context](extensions.md#precondition-context) for more details.
 ### Misc
 
 - Add exception translation to JUnit4 Rules [#1342](https://github.com/spockframework/spock/pull/1342)
-- Add option to omit feature name from iterations [#1386](https://github.com/spockframework/spock/pull/1386)
-and add additional [Special Tokens](data_driven_testing.md#unroll-tokens) to unroll patterns.
+- Add option to omit feature name from iterations [#1386](https://github.com/spockframework/spock/pull/1386) and add additional [Special Tokens](data_driven_testing.md#unroll-tokens) to unroll patterns.
 - Add optional reason to `@Requires` and `@IgnoreIf` [#1362](https://github.com/spockframework/spock/pull/1362)
 - Add `shared.` support to conditional extensions [#1359](https://github.com/spockframework/spock/pull/1359).
 See [Precondition Context](extensions.md#precondition-context) for more details.
@@ -487,22 +486,16 @@ See [Precondition Context](extensions.md#precondition-context) for more details.
 - Fix `@TempDir` not working for `@Shared` inherited fields [#1373](https://github.com/spockframework/spock/pull/1373)
 - Fix JUnit rule run order [#1363](https://github.com/spockframework/spock/pull/1363)
 - Prevent removal of ErrorSpecNode from execution hierarchy [#1358](https://github.com/spockframework/spock/pull/1358)
-  As the ErrorSpecNode does not have children it would get removed
-  when trying to select specific tests methods
-  For example, gradle will report that no test were found,
-  and not report the actual error.
+  As the ErrorSpecNode does not have children it would get removed when trying to select specific tests methods.
+  For example, gradle will report that no test were found, and not report the actual error.
   
   
 - Fix double invocation of IRunListener.beforeSpec and IRunListener.afterSpec [#1344](https://github.com/spockframework/spock/pull/1344)
 - Fix regression with multi-assignment of method call result [#1333](https://github.com/spockframework/spock/pull/1333)
 - Fix Build MethodSource with the correct spec class name [#1345](https://github.com/spockframework/spock/pull/1345)
-  Prior to this fix, all `SpockNode` that use a `MethodSource`
-  did not use the actual test class of the discovered method, and
-  instead used the declaring class. This was problematic for inherited test
-  methods, since they appeared to come from the declaring class instead of
-  the current test class. In addition, the Maven Surefire provider failed
-  to match such methods when executing tests matching a mask (e.g., via
-  `-Dtest=*MaskTest`).
+  Prior to this fix, all `SpockNode` that use a `MethodSource` did not use the actual test class of the discovered method, and instead used the declaring class.
+  This was problematic for inherited test methods, since they appeared to come from the declaring class instead of the current test class.
+  In addition, the Maven Surefire provider failed to match such methods when executing tests matching a mask (e.g., via `-Dtest=*MaskTest`).
   
   
 - Automatically test on CI with JDK 17 (only `-groovy-3.0` variant)
@@ -555,35 +548,30 @@ Special thanks goes to Marc Philipp who helped a lot with the integration of the
 
 ### Breaking Changes
 
-- The `ReportLogExtension` vestiges were removed. As this extension was mostly used for an unreleased Spock module, this won’t affect many users.
-If you are using a [Spock Configuration File](extensions.md#spock-configuration-file) with a `report` section,
-then you must delete everything from this section except for `issueNamePrefix` and `issueUrlPrefix`.
+- The `ReportLogExtension` vestiges were removed.
+As this extension was mostly used for an unreleased Spock module, this won’t affect many users.
+If you are using a [Spock Configuration File](extensions.md#spock-configuration-file) with a `report` section, then you must delete everything from this section except for `issueNamePrefix` and `issueUrlPrefix`.
 These two properties are still supported and used by the `@Issue` extension.
 
 
 ### Misc
 
-- Add support for injection into `@Shared` fields in `spock-spring` module which users can opt-in for by adding
-`@EnableSharedInjection` to the specification. [#76](https://github.com/spockframework/spock/issues/76)
+- Add support for injection into `@Shared` fields in `spock-spring` module which users can opt-in for by adding `@EnableSharedInjection` to the specification. [#76](https://github.com/spockframework/spock/issues/76)
 
 
 - Add new `displayName` via `INameable` for `SpecInfo`, `FeatureInfo`, and `IterationInfo`.
 This field can be set via extensions to change the reported name.
 The existing iteration `NameProvider` now also sets the `displayName` instead of the `name`.
-Modifying the `name` instead of `displayName` is now considered `deprecated` for extensions.
-[#1236](https://github.com/spockframework/spock/issues/1236)
+Modifying the `name` instead of `displayName` is now considered `deprecated` for extensions. [#1236](https://github.com/spockframework/spock/issues/1236)
 - Add support for constructor injection for extensions
 - Improve final field handling.
-Final fields are now transformed similar to shared fields, so that we can still delay the initialization but keep them
-unmodifiable to user code. [#1011](https://github.com/spockframework/spock/issues/1011)
+Final fields are now transformed similar to shared fields, so that we can still delay the initialization but keep them unmodifiable to user code. [#1011](https://github.com/spockframework/spock/issues/1011)
 - Improve parallel extensions to support inheritance [#1245](https://github.com/spockframework/spock/issues/1245)
 - Improve PollingConditions
 - Improve some AST transformation code regarding error handling
 - Deprecate `AbstractGlobalExtension` and replace with `IGlobalExtension`
 - Remove unnecessary try-finally construct for assertions
-- Fix ErrorSpecNode throw Exception in `prepare` instead of `execute`
-this fixes an issue that interceptors for `prepare`, `before`, and `around`
-were still executed and any Exception they throw would hide the actual cause.
+- Fix ErrorSpecNode throw Exception in `prepare` instead of `execute` this fixes an issue that interceptors for `prepare`, `before`, and `around` were still executed and any Exception they throw would hide the actual cause.
 - Fix [#1294](https://github.com/spockframework/spock/issues/1294) swallowing of unrecoverable Errors
 - Fix [#1260](https://github.com/spockframework/spock/issues/1260) Change InteractionRewriter to keep casting of ListExpressions intact
 - Fix [#1282](https://github.com/spockframework/spock/issues/1282) Make TempDirInterceptor safe for parallel invocation of iterations
@@ -593,9 +581,7 @@ were still executed and any Exception they throw would hide the actual cause.
 - Fix [#1232](https://github.com/spockframework/spock/issues/1232) compile error for nested conditions without top-level condition
 - Fix [#1256](https://github.com/spockframework/spock/issues/1256) handling of `is` as getter for boolean properties on Mocks
 - Fix [#1270](https://github.com/spockframework/spock/issues/1270) handling of `is` as getter for boolean properties on GroovyMocks
-- Fix `ErrorSpecNode` to re-throw `Exception` in `prepare` instead of `execute`,
-this fixes an issue that interceptors for `prepare`, `before`, and `around`
-were still executed and any Exception they throw would hide the actual cause.
+- Fix `ErrorSpecNode` to re-throw `Exception` in `prepare` instead of `execute`, this fixes an issue that interceptors for `prepare`, `before`, and `around` were still executed and any Exception they throw would hide the actual cause.
 - Fix [#1263](https://github.com/spockframework/spock/issues/1263) ExceptionAdapterExtension to also handle inherited fixture methods
 - Fix [#1279](https://github.com/spockframework/spock/issues/1279) Cast data variables with type coercion to the declared parameter type
 
@@ -611,10 +597,8 @@ Thanks to all the contributors to this release: Marcin Erdmann, Björn Kautler, 
 Spock will handle this appropriately and call the extensions `visitSpecAnnotations` method with all annotations.
 If these methods are not overwritten, they forward to the usual `visitSpecAnnotation` methods once for each annotation.
 - `@ConfineMetaClassChanges`, `@Issue`, `@IgnoreIf`, `@PendingFeatureIf`, `@Requires`, `@See`, `@Subject`, `@Use`, and `@UseModules` are now repeatable annotations
-- `@Requires`, `@IgnoreIf` and `@PendingFeatureIf` can now access instance fields, shared fields and instance methods
-by using the `instance.` qualifier inside the condition closure.
-- `AbstractAnnotationDrivenExtension` is now deprecated and its logic was moved to `default` methods of
-`IAnnotationDrivenExtension` which should be implemented directly now instead of extending the abstract class.
+- `@Requires`, `@IgnoreIf` and `@PendingFeatureIf` can now access instance fields, shared fields and instance methods by using the `instance.` qualifier inside the condition closure.
+- `AbstractAnnotationDrivenExtension` is now deprecated and its logic was moved to `default` methods of `IAnnotationDrivenExtension` which should be implemented directly now instead of extending the abstract class.
 - Add `@TempDir` built-in extension
 - `@PendingFeature` and `@PendingFeatureIf` can now be used together
 - Fix [#1158](https://github.com/spockframework/spock/issues/1158) Fix strange bug with setter/getter handling of mocks in groovy
@@ -635,33 +619,32 @@ Thanks to all the contributors to this release: Björn Kautler, Marcin Zajączko
 
 #### Sputnik Runner removed (an alternative)
 
-In 2.0-M1 the Sputnik runner was removed and the 2.0-M2 release notes explicitly mentioned that enhancements
-that extend `Sputnik` or use it as a delegate like for example the `PowerMockRunnerDelegate` will not work anymore.
+In 2.0-M1 the Sputnik runner was removed and the 2.0-M2 release notes explicitly mentioned that enhancements that extend `Sputnik` or use it as a delegate like for example the `PowerMockRunnerDelegate` will not work anymore.
 
 
 This is not the full truth though, but be aware that the information in this section is just for informational purpose.
-This is not a solution the Spock maintainers explicitly support or maintain. It is just mentioned as hint for those
-that have no other choice right now. It is strongly recommended to instead use native solutions or integrations. If
-those are not available, you might consider asking about proper integration with Spock for a proper long-term solution.
-As long as this is not available, the work-around described here is at least usable as fallback and mid-term solution
-as long as the JUnit team decides to maintain this legacy support module.
+This is not a solution the Spock maintainers explicitly support or maintain.
+It is just mentioned as hint for those that have no other choice right now.
+It is strongly recommended to instead use native solutions or integrations.
+If those are not available, you might consider asking about proper integration with Spock for a proper long-term solution.
+As long as this is not available, the work-around described here is at least usable as fallback and mid-term solution as long as the JUnit team decides to maintain this legacy support module.
 
 
-There is a JUnit 4 runner provided by JUnit 5 called `JUnitPlatform` that can
-run any JUnit platform based tests - like Spock 2+ based tests - in a JUnit 4 environment. This is intended
-for situations where an IDE, build tool, CI server, or similar does not yet natively support JUnit platform.
+There is a JUnit 4 runner provided by JUnit 5 called `JUnitPlatform` that can run any JUnit platform based tests - like Spock 2+ based tests - in a JUnit 4 environment.
+This is intended for situations where an IDE, build tool, CI server, or similar does not yet natively support JUnit platform.
 It is provided in the artifact `org.junit.platform:junit-platform-runner`.
 
 
-This means, if you make sure your tests are launched with JUnit 4 and you use `JUnitPlatform` where you before used
-`Sputnik`, all should work out properly. In case of PowerMock this means you annotate your specification with
-`@RunWith(PowerMockRunner)` and `@PowerMockRunnerDelegate(JUnitPlatform)` and make sure your tests are launched
-using JUnit 4.
+This means, if you make sure your tests are launched with JUnit 4 and you use `JUnitPlatform` where you before used `Sputnik`, all should work out properly.
+In case of PowerMock this means you annotate your specification with `@RunWith(PowerMockRunner)` and `@PowerMockRunnerDelegate(JUnitPlatform)` and make sure your tests are launched using JUnit 4.
 
 
 #### Removal of JUnit 4 dependency from spock-core
 
-Spock 2.0 from the beginning has leveraged JUnit Platform to execute tests. However, starting with 2.0-M3 `junit4.jar` is no longer a transitive dependency of `spock-core`. This might affect people using `@Before/@After/…` instead of Spock-native `setup/cleanup/…` fixture methods. To keep it work the `spock-junit4` dependency has to be added.
+Spock 2.0 from the beginning has leveraged JUnit Platform to execute tests.
+However, starting with 2.0-M3 `junit4.jar` is no longer a transitive dependency of `spock-core`.
+This might affect people using `@Before/@After/…` instead of Spock-native `setup/cleanup/…` fixture methods.
+To keep it work the `spock-junit4` dependency has to be added.
 
 
 As a side effect of the removal, the order of the fixture methods execution has changed from:
@@ -688,22 +671,24 @@ At the same time, using JUnit 4’s annotations is discouraged (and considered `
 
 #### Reduce spock-core direct groovy dependencies
 
-`spock-core` now only depends on `groovy.jar`. All other Groovy dependencies have been removed,
-this should make dependency management a bit easier.
+`spock-core` now only depends on `groovy.jar`.
+All other Groovy dependencies have been removed, this should make dependency management a bit easier.
 If you relied on other groovy dependencies transitively, you will need to add them directly.
 
 
 #### Upgrade to JUnit 5.6 (and JUnit Platform 1.6)
 
-JUnit Platform 1.6 [deprecated](https://docs.junit.org/5.6.0/release-notes/index.html#deprecations-and-breaking-changes) methods (from experimental API)  in `EngineExecutionResults` that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.
+JUnit Platform 1.6 [deprecated](https://docs.junit.org/5.6.0/release-notes/index.html#deprecations-and-breaking-changes) methods (from experimental API)  in `EngineExecutionResults` that Spock was using.
+To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods.
+As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower.
+The problem might only occur if a project overrides default JUnit Platform version provided by Spock.
 
 
 #### New meaning of `>> _`
 
 The meaning of `>> _` has changed from "use the default response" to "return a stubbed value" ([Docs](interaction_based_testing.md#_returning_a_default_response)).
 The original behavior was only ever documented in the Javadocs and was basically the same to just omitting it.
-The only use-case was chained responses `>> "a" >> _ >> "b"`,
-but even here it is clearer to just use `null` or `{ callRealMethod() }` explicitly.
+The only use-case was chained responses `>> "a" >> _ >> "b"`, but even here it is clearer to just use `null` or `{ callRealMethod() }` explicitly.
 With the new behavior, you can have a `Mock` or `Spy` return the same value as a `Stub` would.
 
 
@@ -715,19 +700,15 @@ subscriber.receive(_) >> _
 #### Renamed iterationCount token
 
 The token `#iterationCount` in unroll patterns was renamed to `#iterationIndex`.
-If you use it somewhere, you have to manually change it to the new name
-or the test will fail unless you disabled expression asserting,
-then you will get an `#Error:iterationCount` rendering instead.
+If you use it somewhere, you have to manually change it to the new name or the test will fail unless you disabled expression asserting, then you will get an `#Error:iterationCount` rendering instead.
 
 
 #### No access to data variables in data pipes anymore
 
-It is not possible anymore to access any data variable from a data pipe or anything else but a previous data table
-column in a data table cell. This access was partly possible, but could easily prematurely drain iterators, access
-data providers sooner as expected, behaved differently depending on the concrete code construct used. All these
-points are more confusing than necessary. If you want to calculate a data variable from others, you can always use
-a derived data variable that has full access to all previous data variables and can also call helper methods for
-more complex logic.
+It is not possible anymore to access any data variable from a data pipe or anything else but a previous data table column in a data table cell.
+This access was partly possible, but could easily prematurely drain iterators, access data providers sooner as expected, behaved differently depending on the concrete code construct used.
+All these points are more confusing than necessary.
+If you want to calculate a data variable from others, you can always use a derived data variable that has full access to all previous data variables and can also call helper methods for more complex logic.
 
 
 If you switch your tests that are fully green to use Spock 2.0 and get any `MissingPropertyException`s, you are probably hitting this change, you should then change to a derived data variable there instead of a data pipe.
@@ -758,43 +739,34 @@ b = a
 The system property `spock.assertUnrollExpressions` is not supported anymore.
 Instead the new default behavior is equal to having this property set to `true`.
 This means tests that were successful but had an `#Error:` name rendering will now fail.
-It can be set back to the old pre Spock 2.0 behaviour by setting
-`unroll { validateExpressions false }` in the Spock configuration file.
+It can be set back to the old pre Spock 2.0 behaviour by setting `unroll { validateExpressions false }` in the Spock configuration file.
 
 
 #### For extension developers
 
-- `FeatureInfo#getDataVariables()` and `FeatureInfo#getParameterNames()` used to return the
-same value, the parameter names, in the order of the method parameters. This can disturb some calculations like method
-argument determination and so on and is plainly wrong, as some parameters could be injected by extensions like
-injecting mock objects or test proxies or similar. `FeatureInfo#getDataVariables()` now only returns the actual data
-variables and in the order how they are defined in the `where` block.
-- Method arguments in `MethodInfo` now have a value of `MethodInfo.MISSING_ARGUMENT` if no value was set so far,
-for example by some extensions or from data variables. If any of these is not replaced by some value, an exception
-will be thrown at runtime.
+- `FeatureInfo#getDataVariables()` and `FeatureInfo#getParameterNames()` used to return the same value, the parameter names, in the order of the method parameters.
+This can disturb some calculations like method argument determination and so on and is plainly wrong, as some parameters could be injected by extensions like injecting mock objects or test proxies or similar.
+`FeatureInfo#getDataVariables()` now only returns the actual data variables and in the order how they are defined in the `where` block.
+- Method arguments in `MethodInfo` now have a value of `MethodInfo.MISSING_ARGUMENT` if no value was set so far, for example by some extensions or from data variables.
+If any of these is not replaced by some value, an exception will be thrown at runtime.
 
 
 #### Ant custom selector removed
 
-The class `SpecClassFileSelector` that could be used to only select actual Spock specification classes when testing
-and creating a test report was removed. It was the only class that required `ant` and was basically just a one-line
-forward to the `SpecClassFileFinder` which is still available.
+The class `SpecClassFileSelector` that could be used to only select actual Spock specification classes when testing and creating a test report was removed.
+It was the only class that required `ant` and was basically just a one-line forward to the `SpecClassFileFinder` which is still available.
 
 
-If you are still using Spock with `ant`, then you can just copy [the class from the spock source code](https://github.com/spockframework/spock/blob/03818ed010f4b4ca1136a292e214f79d518c4abe/spock-core/src/main/java/org/spockframework/buildsupport/ant/SpecClassFileSelector.java)
-into your build, or you simply use a [`<scriptselector>`](https://github.com/spockframework/spock-example/blob/963fd34d1609b7025ba92502483ce31b2c6d9d0a/build.xml#L167-L176) that does this forwarding as shown in the
-[Spock Example Project](https://github.com/spockframework/spock-example).
+If you are still using Spock with `ant`, then you can just copy [the class from the spock source code](https://github.com/spockframework/spock/blob/03818ed010f4b4ca1136a292e214f79d518c4abe/spock-core/src/main/java/org/spockframework/buildsupport/ant/SpecClassFileSelector.java) into your build, or you simply use a [`<scriptselector>`](https://github.com/spockframework/spock-example/blob/963fd34d1609b7025ba92502483ce31b2c6d9d0a/build.xml#L167-L176) that does this forwarding as shown in the [Spock Example Project](https://github.com/spockframework/spock-example).
 
 
-Alternatively, you can also use a naming convention to find the classes that are actual specifications and not helper
-or base classes, or you live with a bit of wasted time and some meaningless entries in the test reports.
+Alternatively, you can also use a naming convention to find the classes that are actual specifications and not helper or base classes, or you live with a bit of wasted time and some meaningless entries in the test reports.
 
 
 ### Misc
 
 - A new `MutableClock` utility class to support time related testing, see [docs](utilities.md#mutable-clock).
-- Defining interactions on property getters within Mock instantiation closures or `with` closures works now without
-the need to explicitly qualify the property access with `it.`:
+- Defining interactions on property getters within Mock instantiation closures or `with` closures works now without the need to explicitly qualify the property access with `it.`:
   ```groovy
   Foo foo = Stub {
       bar >> 'my stubbed property'
@@ -805,8 +777,7 @@ the need to explicitly qualify the property access with `it.`:
 - A sequence of two or more underscores can be used to separate multiple data tables in one `where` block.
 - Type casts in conditions are now properly carried over to properly disambiguate method calls.
 For more information see issue [#1022](https://github.com/spockframework/spock/issues/1022).
-- Data tables now support any amount of semicolons to separate data table columns as alternative
-to pipes and double pipes, but cannot be mixed with them in one table:
+- Data tables now support any amount of semicolons to separate data table columns as alternative to pipes and double pipes, but cannot be mixed with them in one table:
   ```groovy
   where:
   a ; b ;; c
@@ -816,35 +787,26 @@ to pipes and double pipes, but cannot be mixed with them in one table:
   
 
 
-- The default unroll pattern changed from the rather generic `#featureName[#iterationIndex]` to a more fancy
-version that lists all data variables and their values additionally to the feature name and iteration index.
-If you prefer to retain the old behaviour, you can set the setting
-`unroll { defaultPattern '#featureName[#iterationIndex]' }` in the Spock configuration file
-and you will get the same result as previously.
-- If neither a parameter to the `@Unroll` annotation is given, nor the method name contains a `#`,
-now the configuration file setting `unroll { defaultPattern }` is inspected. If it is set to a non-`null` string,
-this value is used as unroll pattern.
+- The default unroll pattern changed from the rather generic `#featureName[#iterationIndex]` to a more fancy version that lists all data variables and their values additionally to the feature name and iteration index.
+If you prefer to retain the old behaviour, you can set the setting `unroll { defaultPattern '#featureName[#iterationIndex]' }` in the Spock configuration file and you will get the same result as previously.
+- If neither a parameter to the `@Unroll` annotation is given, nor the method name contains a `#`, now the configuration file setting `unroll { defaultPattern }` is inspected.
+If it is set to a non-`null` string, this value is used as unroll pattern.
 - `IterationInfo` now has a property for the `iterationIndex` and one for a map of data variable names to values.
 This is typically not interesting for the average user, but might be helpful for authors of Spock extensions.
-- `constructorArgs` now properly transport type cast information to the constructor selection,
-for example to disambiguate multiple candidate constructors:
+- `constructorArgs` now properly transport type cast information to the constructor selection, for example to disambiguate multiple candidate constructors:
   ```groovy
   Spy(constructorArgs: [null as String, (Pattern) null])
   ```
   
   
-- Accessing previous data table columns was broken in some cases, now it should work properly,
-even cross-table and without being disturbed by previous derived data variables.
-- The order of parameters in a data-driven feature does no longer have to be identical to
-the declaration order in the `where` block. Data variables are now injected by name.
-- Data driven features do no longer have the requirement that either none or all data variables are declared as
-parameters and that all parameters are also data variables. Now you can either declare none, some, or all data
-variables as parameters and also have additional method parameters that are no data variables.
-Those additional parameters must be provided by some Spock extension though. If they are not set at execution time,
-an exception will be thrown.
-- Condition closures used in `@Requires`, `@IgnoreIf` and `@PendingFeatureIf` now also get the context passed
-as argument, so you can use this, typed as `org.spockframework.runtime.extension.builtin.PreconditionContext` to
-enable IDE support like code completion:
+- Accessing previous data table columns was broken in some cases, now it should work properly, even cross-table and without being disturbed by previous derived data variables.
+- The order of parameters in a data-driven feature does no longer have to be identical to the declaration order in the `where` block.
+Data variables are now injected by name.
+- Data driven features do no longer have the requirement that either none or all data variables are declared as parameters and that all parameters are also data variables.
+Now you can either declare none, some, or all data variables as parameters and also have additional method parameters that are no data variables.
+Those additional parameters must be provided by some Spock extension though.
+If they are not set at execution time, an exception will be thrown.
+- Condition closures used in `@Requires`, `@IgnoreIf` and `@PendingFeatureIf` now also get the context passed as argument, so you can use this, typed as `org.spockframework.runtime.extension.builtin.PreconditionContext` to enable IDE support like code completion:
   ```groovy
   @IgnoreIf({ PreconditionContext it -> it.os.windows })
   def "I'll run everywhere but on Windows"() { ... }
@@ -856,8 +818,7 @@ enable IDE support like code completion:
 - Upgrade Groovy to 2.5.12 (improved Java 14+ support) and 3.0.4 (fixes [#1127](https://github.com/spockframework/spock/issues/1127))
 - Upgrade JUnit 4 to 4.13 (in `spock-junit4`)
 - Upgrade Hamcrest to 2.2 (from 1.3 provided previously by `junit4.jar`)
-- Derived data variables (assignments in `where` blocks) now also support multi-assignment syntax, including ignoring
-some values with the wildcard expression.
+- Derived data variables (assignments in `where` blocks) now also support multi-assignment syntax, including ignoring some values with the wildcard expression.
   ```groovy
   (a, b, _, c) = row
   ```
@@ -872,21 +833,16 @@ some values with the wildcard expression.
   ```
   
   
-- The condition closures for `@IgnoreIf`, `@Requires` and `@PendingFeatureIf` can now access data variables
-if applied to a data driven feature. This has further implications that are documented in the respective
-documentation parts and JavaDocs.
+- The condition closures for `@IgnoreIf`, `@Requires` and `@PendingFeatureIf` can now access data variables if applied to a data driven feature.
+This has further implications that are documented in the respective documentation parts and JavaDocs.
 
 
-- Data driven features are now unrolled by default. `@Unroll` can still be used to specify a custom naming pattern.
-A simple `@Unroll` without argument is not needed anymore except when undoing a spec-level `@Rollup` annotation
-or if unrolling by default is disabled, so any simple `@Unroll` annotations can be removed from existing code. You
-can verify this by looking at the test count which should not have been changed after you removed the simple
-`@Unroll` annotations.
-- `@Rollup` can now be used on feature and spec level to explicitly roll up any feature where the reporting of single
-iterations is not wanted.
-- The setting `unroll { unrollByDefault false }` in the Spock configuration file can be set to roll up all
-features by default if not overwritten by explicit `@Unroll` annotations and thus reinstate the pre
-Spock 2.0 behaviour.
+- Data driven features are now unrolled by default.
+`@Unroll` can still be used to specify a custom naming pattern.
+A simple `@Unroll` without argument is not needed anymore except when undoing a spec-level `@Rollup` annotation or if unrolling by default is disabled, so any simple `@Unroll` annotations can be removed from existing code.
+You can verify this by looking at the test count which should not have been changed after you removed the simple `@Unroll` annotations.
+- `@Rollup` can now be used on feature and spec level to explicitly roll up any feature where the reporting of single iterations is not wanted.
+- The setting `unroll { unrollByDefault false }` in the Spock configuration file can be set to roll up all features by default if not overwritten by explicit `@Unroll` annotations and thus reinstate the pre Spock 2.0 behaviour.
 - Updated OSGI support with using `bnd` ([#1154](https://github.com/spockframework/spock/pull/1154), [#1175](https://github.com/spockframework/spock/pull/1175))
 - Fix `@PendingFeature` logic [#1103](https://github.com/spockframework/spock/pull/1103)
 - Do not strip type information from arguments [#1134](https://github.com/spockframework/spock/pull/1134)
@@ -915,17 +871,16 @@ To use Spock in your Groovy 3 project just select the `spock-\*-2.0-M2` artifact
 
 > [!NOTE]
 > As Groovy 3 is not backward compatible with Groovy 2, there is a layer of abstraction in Spock to allow to build (and use) the project with both Groovy 2 and 3.
->       As a result, an extra artifact `spock-groovy2-compat` is (automatically) used in projects with Groovy 2.
->       It is **very important** to **do not mix** the `spock-*-2.x-groovy-2.5` artifacts with the `groovy-*-3.x` artifacts on a classpath.
->       This may result in weird runtime errors.
+> As a result, an extra artifact `spock-groovy2-compat` is (automatically) used in projects with Groovy 2.
+> It is **very important** to **do not mix** the `spock-*-2.x-groovy-2.5` artifacts with the `groovy-*-3.x` artifacts on a classpath.
+> This may result in weird runtime errors.
 
 
 ### Breaking Changes
 
 #### Sputnik Runner removed
 
-Although already in 2.0-M1 it wasn’t explicitly mentioned: All enhancements that either extended `Sputnik`
-or used it as a delegate runner will not work anymore, e.g, `PowerMockRunnerDelegate`.
+Although already in 2.0-M1 it wasn’t explicitly mentioned: All enhancements that either extended `Sputnik` or used it as a delegate runner will not work anymore, e.g, `PowerMockRunnerDelegate`.
 
 
 ### Misc
@@ -943,15 +898,13 @@ Thanks to all the contributors to this release: Marcin Zajączkowski (Groovy 3 s
 
 ## 2.0-M1 (2019-12-31)
 
-This is the first milestone release to version 2.0. This means that we have migrated to the new
-JUnit Platform and all internal tests pass. We have tried to keep the API as compatible as possible
-and if you’ve only used the public spock API then there is a high possibility that all you have to
-do is to update the spock version and configure gradle/maven to use the JUnit Platform.
+This is the first milestone release to version 2.0.
+This means that we have migrated to the new JUnit Platform and all internal tests pass.
+We have tried to keep the API as compatible as possible and if you’ve only used the public spock API then there is a high possibility that all you have to do is to update the spock version and configure gradle/maven to use the JUnit Platform.
 
 
-However, this doesn’t mean that the API is finalized yet, the goal for the first milestone was just
-to get it running on the new platform. The next milestones will focus on improvements like the much
-requested parallel execution support.
+However, this doesn’t mean that the API is finalized yet, the goal for the first milestone was just to get it running on the new platform.
+The next milestones will focus on improvements like the much requested parallel execution support.
 
 
 Please try it out and report any new bugs so that we can fix them for the final 2.0 release.
@@ -962,19 +915,16 @@ Please try it out and report any new bugs so that we can fix them for the final 
 #### New JUnit Platform
 
 Switch from JUnit 4 to the JUnit Platform.
-See https://docs.junit.org/5.14.4/running-tests/build-support.html on how to configure
-maven and gradle to use the JUnit Platform.
+See https://docs.junit.org/5.14.4/running-tests/build-support.html on how to configure maven and gradle to use the JUnit Platform.
 
 
-JUnit 4 Rules are not supported by `spock-core` anymore, however, there is a new  `spock-junit4`
-module that provides best effort support to ease migration.
+JUnit 4 Rules are not supported by `spock-core` anymore, however, there is a new  `spock-junit4` module that provides best effort support to ease migration.
 
 
 #### Misc
 
 - Spock now requires at least Java 8
-- All data-driven test iterations are always reported (unrolled), while `@Unroll` is not necessary anymore
-it can still be used to define the name template
+- All data-driven test iterations are always reported (unrolled), while `@Unroll` is not necessary anymore it can still be used to define the name template
 - `@Retry.Mode.FEATURE` didn’t work anymore and has been removed
 - `spock-report` module has been removed, it was never officially released
 - The `SpockReportingExtension` has been disabled until we can integrate it with JUnitPlatform
@@ -1003,10 +953,8 @@ The theme for this release is to increase the information that is provided when 
 #### code argument constraints are treated as implicit assertions
 
 Before this release the code argument constrains worked by returning a boolean result.
-This was fine if you just wanted to do a simple comparison, but it breaks down if you
-need to do 5 comparisons. Users also often assumed that it worked like the assertions in
-`then` blocks and didn’t add `&&` to chain multiple assertions together, so their constraint
-ignored all before the next line.
+This was fine if you just wanted to do a simple comparison, but it breaks down if you need to do 5 comparisons.
+Users also often assumed that it worked like the assertions in `then` blocks and didn’t add `&&` to chain multiple assertions together, so their constraint ignored all before the next line.
 
 
 ```groovy
@@ -1016,25 +964,18 @@ ignored all before the next line.
 
 
 This would only use the length comparison, to make it work you had to add `&&`.
-Another problem arises by having more than one comparison inside the constraints,
-you don’t know which of the 5 comparisons failed. If you just expected one method
-call you could use an explicit `assert` as a workaround, but since it immediately
-breaks, you can’t use it if you want to have multiple different calls to the same
-mock.
+Another problem arises by having more than one comparison inside the constraints, you don’t know which of the 5 comparisons failed.
+If you just expected one method call you could use an explicit `assert` as a workaround, but since it immediately breaks, you can’t use it if you want to have multiple different calls to the same mock.
 
 
-With 1.3 the above code will actually work as intended, and even more important it
-will give actual feedback what didn’t match.
+With 1.3 the above code will actually work as intended, and even more important it will give actual feedback what didn’t match.
 
 
 So what can break?
 
 
-If you used the code argument constraint as a way of capturing
-the argument value, then this will most likely not work anymore, since assignments
-to already declared variables are forbidden in implicit assertion block.
-If you still need access to the argument, you can use the response generator closure
-instead.
+If you used the code argument constraint as a way of capturing the argument value, then this will most likely not work anymore, since assignments to already declared variables are forbidden in implicit assertion block.
+If you still need access to the argument, you can use the response generator closure instead.
 
 
 ```groovy
@@ -1045,17 +986,13 @@ def extern = null
 ```
 
 
-The added benefit of this changes is, that it clearly differentiates the condition from
-the capture.
+The added benefit of this changes is, that it clearly differentiates the condition from the capture.
 
 
-Another consequence of the change is, that the empty `{}` assertion block will now pass
-instead of fail, since no assertion error is being treated as passing, while it required
-a `true` result beforehand.
+Another consequence of the change is, that the empty `{}` assertion block will now pass instead of fail, since no assertion error is being treated as passing, while it required a `true` result beforehand.
 
 
-It is advised, that if you have multiple conditions joined by `&&`, that you remove
-it to get individual assertions reports instead of a large joined block.
+It is advised, that if you have multiple conditions joined by `&&`, that you remove it to get individual assertions reports instead of a large joined block.
 
 
 #### assertions with explicit messages now include power assertions output.
@@ -1090,8 +1027,7 @@ Additional message
 ```
 
 
-If you relied on this behavior to hide some output, or to prevent a stack overflow due to a self referencing
-data structure, then you need to move the condition into a separate method that just returns the boolean result.
+If you relied on this behavior to hide some output, or to prevent a stack overflow due to a self referencing data structure, then you need to move the condition into a separate method that just returns the boolean result.
 
 
 ### What’s New In This release
@@ -1156,8 +1092,7 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 - Fix issue with `@SpringBean` mocks throwing `InvocationTargetException` instead of actual declared exceptions ([#878](https://github.com/spockframework/spock/issues/878), [#887](https://github.com/spockframework/spock/issues/887))
 - Fix void methods with implicit targets failing in `with` and `verifyAll` ([#886](https://github.com/spockframework/spock/issues/886))
 - Fix SpockAssertionErrors and its subclasses now are properly `Serializable`
-- Fix Spring injection of JUnit Rules, due to the changes in 1.1 the rules where initialized before Spring could inject them,
-this has been fixed by performing the injection earlier in the process
+- Fix Spring injection of JUnit Rules, due to the changes in 1.1 the rules where initialized before Spring could inject them, this has been fixed by performing the injection earlier in the process
 - Fix SpringMockTestExecutionListener initializes lazy beans
 - Fix OSGi Import-Package header
 - Fix re-declare recorder variables ([#783](https://github.com/spockframework/spock/issues/783)), this caused annotations such as `@Slf4j` to break Specifications
@@ -1168,9 +1103,7 @@ this has been fixed by performing the injection earlier in the process
 - General dependency update
 
 
-Thanks to all the contributors to this release: Marc Philipp, Rob Elliot, jochenberger, Jan Papenbrock, Paul King, Marcin Zajączkowski, mrb-twx,
-Alexander Kazakov, Serban Iordache, Xavier Fournet, timothy-long, John Osberg, AlexElin, Benjamin Muschko, Andreas Neumann, geoand,
-Burk Hufnagel, signalw, Martin Vseticka, Tilman Ginzel
+Thanks to all the contributors to this release: Marc Philipp, Rob Elliot, jochenberger, Jan Papenbrock, Paul King, Marcin Zajączkowski, mrb-twx, Alexander Kazakov, Serban Iordache, Xavier Fournet, timothy-long, John Osberg, AlexElin, Benjamin Muschko, Andreas Neumann, geoand, Burk Hufnagel, signalw, Martin Vseticka, Tilman Ginzel
 
 
 ## 1.2-RC3 (2018-09-16)
@@ -1217,8 +1150,7 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 - Add `@AutoAttach` extension ([Docs](extensions.md#_autoattach))
 - Add `@Retry` extension ([Docs](extensions.md#_retry))
 - Fix SpockAssertionErrors and its subclasses now are properly `Serializable`
-- Fix Spring injection of JUnit Rules, due to the changes in 1.1 the rules where initialized before Spring could inject them,
-this has been fixed by performing the injection earlier in the process
+- Fix Spring injection of JUnit Rules, due to the changes in 1.1 the rules where initialized before Spring could inject them, this has been fixed by performing the injection earlier in the process
 - Fix SpringMockTestExecutionListener initializes lazy beans
 - Fix OSGi Import-Package header
 - Fix re-declare recorder variables [#783](https://github.com/spockframework/spock/pull/783), this caused annotations such as `@Slf4j` to break Specifications
@@ -1240,9 +1172,7 @@ this has been fixed by performing the injection earlier in the process
 - General dependency update
 
 
-Thanks to all the contributors to this release: Rob Elliot, jochenberger, Jan Papenbrock, Paul King, Marcin Zajączkowski, mrb-twx,
-Alexander Kazakov, Serban Iordache, Xavier Fournet, timothy-long, John Osberg, AlexElin, Benjamin Muschko, Andreas Neumann, geoand,
-Burk Hufnagel
+Thanks to all the contributors to this release: Rob Elliot, jochenberger, Jan Papenbrock, Paul King, Marcin Zajączkowski, mrb-twx, Alexander Kazakov, Serban Iordache, Xavier Fournet, timothy-long, John Osberg, AlexElin, Benjamin Muschko, Andreas Neumann, geoand, Burk Hufnagel
 
 
 ### Known Issues
@@ -1338,33 +1268,26 @@ Special thanks to all the contributors to this release: Dmitry Andreychuk, Aseem
 
 ## 1.0 (released 2015-03-02)
 
-1.0 has arrived! Finally (and some years late) the version number communicates what
-[Spock users](https://code.google.com/archive/p/spock/wikis/WhoIsUsingSpock.wiki) have known for ages - that Spock isn’t only useful
-and fun, but also reliable, mature, and here to stay. So please, go out and tell everyone who hasn’t been assimilated
-that now is the time to join the party!
+1.0 has arrived!
+Finally (and some years late) the version number communicates what [Spock users](https://code.google.com/archive/p/spock/wikis/WhoIsUsingSpock.wiki) have known for ages - that Spock isn’t only useful and fun, but also reliable, mature, and here to stay.
+So please, go out and tell everyone who hasn’t been assimilated that now is the time to join the party!
 
 
-A special thanks goes to all our tireless speakers and supporters, only a few of which are listed here: Andres Almiray,
-Cédric Champeau, David Dawson, Rob Fletcher, Sean Gilligan, Ken Kousen, Guillaume Laforge,
-[NFJS Tour](https://nofluffjuststuff.com/home/main), Graeme Rocher, Baruch Sadogursky, Odin Hole Standal,
-Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.
+A special thanks goes to all our tireless speakers and supporters, only a few of which are listed here: Andres Almiray, Cédric Champeau, David Dawson, Rob Fletcher, Sean Gilligan, Ken Kousen, Guillaume Laforge, [NFJS Tour](https://nofluffjuststuff.com/home/main), Graeme Rocher, Baruch Sadogursky, Odin Hole Standal, Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.
 
 
 ### What’s New In This Release
 
-- [17 contributors](#_contributors), [21 resolved issues](#_resolved_issues), [18 merged pull requests](#_merged_pull_requests),
-[some ongoing work](#_ongoing_work). No ground-breaking new features, but significant improvements and fixes across the board.
+- [17 contributors](#_contributors), [21 resolved issues](#_resolved_issues), [18 merged pull requests](#_merged_pull_requests), [some ongoing work](#_ongoing_work).
+No ground-breaking new features, but significant improvements and fixes across the board.
 - Minimum runtime requirements raised to JRE 1.6 and Groovy 2.0.
-- Improved and restyled reference documentation at https://spockframework.org/spock/docs/. Generated with
-[Asciidoctor](https://asciidoctor.org/) (what else?).
-- Maven plugin removed. Just let Maven Surefire run your Spock specs like your JUnit tests
-(see [spock-example](https://github.com/spockframework/spock-example) project).
-- Official support for Java 1.8, Groovy 2.3 and Groovy 2.4. Make sure to pick the `groovy-2.0` binaries for Groovy
-2.0/2.1/2.2, `groovy-2.3` binaries for Groovy 2.3, and `groovy-2.4` binaries for Groovy 2.4 and higher.
-- Improved infrastructure to allow for easier community involvement: Switch to
-[GitHub issue tracker](https://github.com/spockframework/spock/issues), [Windows](https://winbuilds.spockframework.org) and
-[Linux](https://builds.spockframework.org) CI builds, pull requests automatically tested, all development on `master`
-branch (bye-bye `groovy-x.y` branches!).
+- Improved and restyled reference documentation at https://spockframework.org/spock/docs/.
+Generated with [Asciidoctor](https://asciidoctor.org/) (what else?).
+- Maven plugin removed.
+Just let Maven Surefire run your Spock specs like your JUnit tests (see [spock-example](https://github.com/spockframework/spock-example) project).
+- Official support for Java 1.8, Groovy 2.3 and Groovy 2.4.
+Make sure to pick the `groovy-2.0` binaries for Groovy 2.0/2.1/2.2, `groovy-2.3` binaries for Groovy 2.3, and `groovy-2.4` binaries for Groovy 2.4 and higher.
+- Improved infrastructure to allow for easier community involvement: Switch to [GitHub issue tracker](https://github.com/spockframework/spock/issues), [Windows](https://winbuilds.spockframework.org) and [Linux](https://builds.spockframework.org) CI builds, pull requests automatically tested, all development on `master` branch (bye-bye `groovy-x.y` branches!).
 
 
 ### Other News
@@ -1377,8 +1300,9 @@ branch (bye-bye `groovy-x.y` branches!).
 ### What’s Up Next?
 
 With a revamped build/release process and a reforming core team, we hope to release much more frequently from now on.
-Another big focus will be to better involve the community and their valuable contributions. Last but not least, we are
-finally shooting for a professional logo and website. Stay tuned for announcements!
+Another big focus will be to better involve the community and their valuable contributions.
+Last but not least, we are finally shooting for a professional logo and website.
+Stay tuned for announcements!
 
 
 Test Long And Prosper,
@@ -1500,8 +1424,7 @@ The new Spock reference documentation is available at https://spockframework.org
 It will gradually replace the documentation at https://wiki.spockframework.org.
 Each Spock version is documented separately (e.g. https://docs.spockframework.org/en/spock-0.7-groovy-1.8).
 Documentation for the latest Spock snapshot is at https://spockframework.org/spock/docs/latest/.
-As of Spock 0.7, the chapters on [Data Driven Testing](data_driven_testing.md#data-driven-testing) and
-[Interaction Based Testing](interaction_based_testing.md#interaction-based-testing) are complete.
+As of Spock 0.7, the chapters on [Data Driven Testing](data_driven_testing.md#data-driven-testing) and [Interaction Based Testing](interaction_based_testing.md#interaction-based-testing) are complete.
 
 
 ### Improved Mocking Failure Message for `TooManyInvocationsError`
@@ -1576,9 +1499,10 @@ def person = Spy(Person, constructorArgs: ["Fred"])
 ```
 
 
-A spy sits atop a real object, in this example an instance of class `Person`. All invocations on the spy
-that don’t match an interaction are delegated to that object. This allows to listen in on and selectively
-change the behavior of the real object. Furthermore, spies can be used as partial mocks.
+A spy sits atop a real object, in this example an instance of class `Person`.
+All invocations on the spy that don’t match an interaction are delegated to that object.
+This allows to listen in on and selectively change the behavior of the real object.
+Furthermore, spies can be used as partial mocks.
 
 
 [Reference Documentation](interaction_based_testing.md#Spies)
@@ -1615,9 +1539,9 @@ def spy = GroovySpy(Person)
 ```
 
 
-A Groovy mock automatically implements `groovy.lang.GroovyObject`. It allows stubbing and mocking
-of dynamic methods just like for statically declared methods. When a Groovy mock is called from Java
-rather than Groovy code, it behaves like a regular mock.
+A Groovy mock automatically implements `groovy.lang.GroovyObject`.
+It allows stubbing and mocking of dynamic methods just like for statically declared methods.
+When a Groovy mock is called from Java rather than Groovy code, it behaves like a regular mock.
 
 
 [Reference Documentation](interaction_based_testing.md#GroovyMocks)
@@ -1633,8 +1557,9 @@ GroovySpy(Person, global: true)
 ```
 
 
-A global mock can only be created for a class type. It effectively replaces all instances of that type and makes them
-amenable to stubbing and mocking. (You may know this behavior from Groovy’s `MockFor` and `StubFor` facilities.)
+A global mock can only be created for a class type.
+It effectively replaces all instances of that type and makes them amenable to stubbing and mocking.
+(You may know this behavior from Groovy’s `MockFor` and `StubFor` facilities.)
 Furthermore, a global mock allows mocking of the type’s constructors and static methods.
 
 
@@ -1643,8 +1568,7 @@ Furthermore, a global mock allows mocking of the type’s constructors and stati
 
 ### Grouping Conditions with Same Target Object
 
-Inspired from Groovy’s `Object.with` method, the `Specification.with` method allows to group conditions
-involving the same target object:
+Inspired from Groovy’s `Object.with` method, the `Specification.with` method allows to group conditions involving the same target object:
 
 
 ```groovy
@@ -1685,8 +1609,7 @@ with(service) {
 
 ### Polling Conditions
 
-`spock.util.concurrent.PollingConditions` joins `AsyncConditions` and `BlockingVariable(s)` as another utility for
-testing asynchronous code:
+`spock.util.concurrent.PollingConditions` joins `AsyncConditions` and `BlockingVariable(s)` as another utility for testing asynchronous code:
 
 
 ```groovy
@@ -1714,9 +1637,9 @@ conditions.eventually {
 
 ### Experimental DSL Support for Eclipse
 
-Spock now ships with a DSL descriptor that lets Groovy Eclipse better
-understand certain parts of Spock’s DSL. The descriptor is automatically
-detected and activated by the IDE. Here is an example:
+Spock now ships with a DSL descriptor that lets Groovy Eclipse better understand certain parts of Spock’s DSL.
+The descriptor is automatically detected and activated by the IDE.
+Here is an example:
 
 
 ```groovy
@@ -1742,15 +1665,15 @@ def person = Stub(Person) {
 ```
 
 
-DSL support is activated for Groovy Eclipse 2.7.1 and higher. If necessary,
-it can be deactivated in the Groovy Eclipse preferences.
+DSL support is activated for Groovy Eclipse 2.7.1 and higher.
+If necessary, it can be deactivated in the Groovy Eclipse preferences.
 
 
 ### Experimental DSL Support for IntelliJ IDEA
 
-Spock now ships with a DSL descriptor that lets Intellij IDEA better
-understand certain parts of Spock’s DSL. The descriptor is automatically
-detected and activated by the IDE. Here is an example:
+Spock now ships with a DSL descriptor that lets Intellij IDEA better understand certain parts of Spock’s DSL.
+The descriptor is automatically detected and activated by the IDE.
+Here is an example:
 
 
 ```groovy
@@ -1780,15 +1703,12 @@ DSL support is activated for IntelliJ IDEA 11.1 and higher.
 
 ### Splitting up Class Specification
 
-Parts of class `spock.lang.Specification` were pulled up into two new super classes: `spock.lang.MockingApi`
-now contains all mocking-related methods, and `org.spockframework.lang.SpecInternals` contains internal methods
-which aren’t meant to be used directly.
+Parts of class `spock.lang.Specification` were pulled up into two new super classes: `spock.lang.MockingApi` now contains all mocking-related methods, and `org.spockframework.lang.SpecInternals` contains internal methods which aren’t meant to be used directly.
 
 
 ### Improved Failure Messages for `notThrown` and `noExceptionThrown`
 
-Instead of just passing through exceptions, `Specification.notThrown` and `Specification.noExceptionThrown`
-now fail with messages like:
+Instead of just passing through exceptions, `Specification.notThrown` and `Specification.noExceptionThrown` now fail with messages like:
 
 
 ```
@@ -1800,8 +1720,7 @@ Caused by: java.io.FileNotFoundException: ...
 
 ### `HamcrestSupport.expect`
 
-Class `spock.util.matcher.HamcrestSupport` has a new `expect` method that makes
-[Hamcrest](https://hamcrest.org/JavaHamcrest/) assertions read better in then-blocks:
+Class `spock.util.matcher.HamcrestSupport` has a new `expect` method that makes [Hamcrest](https://hamcrest.org/JavaHamcrest/) assertions read better in then-blocks:
 
 
 ```groovy
@@ -1815,9 +1734,10 @@ expect x, closeTo(42, 0.01)
 
 ### @Beta
 
-Recently introduced classes and methods may be annotated with `@Beta`, as a sign that they may still undergo incompatible
-changes. This gives us a chance to incorporate valuable feedback from our users. (Yes, we need your feedback!) Typically,
-a `@Beta` annotation is removed within one or two releases.
+Recently introduced classes and methods may be annotated with `@Beta`, as a sign that they may still undergo incompatible changes.
+This gives us a chance to incorporate valuable feedback from our users.
+(Yes, we need your feedback!)
+Typically, a `@Beta` annotation is removed within one or two releases.
 
 
 ### Fixed Issues
@@ -1832,8 +1752,8 @@ See the [issue tracker](https://code.google.com/p/spock/issues/list?can=1&q=labe
 The mocking framework now provides better diagnostic messages in some cases.
 
 
-Multiple result declarations can be chained. The following causes method bar to throw an `IOException` when first called,
-return the numbers one, two, and three on the next calls, and throw a `RuntimeException` for all subsequent calls:
+Multiple result declarations can be chained.
+The following causes method bar to throw an `IOException` when first called, return the numbers one, two, and three on the next calls, and throw a `RuntimeException` for all subsequent calls:
 
 
 ```groovy
@@ -1858,11 +1778,11 @@ import static spock.util.matcher.HamcrestMatchers.closeTo
 
 ### Extended JUnit Rules Support
 
-In addition to rules implementing `org.junit.rules.MethodRule` (which has been deprecated in JUnit 4.9), Spock now also
-supports rules implementing the new `org.junit.rules.TestRule` interface. Also supported is the new `@ClassRule`
-annotation. Rule declarations are now verified and can leave off the initialization part. I that case Spock will
-automatically initialize the rule by calling the default constructor. The `@TestName` rule, and rules in general, now
-honor the `@Unroll` annotation and any defined naming pattern.
+In addition to rules implementing `org.junit.rules.MethodRule` (which has been deprecated in JUnit 4.9), Spock now also supports rules implementing the new `org.junit.rules.TestRule` interface.
+Also supported is the new `@ClassRule` annotation.
+Rule declarations are now verified and can leave off the initialization part.
+I that case Spock will automatically initialize the rule by calling the default constructor.
+The `@TestName` rule, and rules in general, now honor the `@Unroll` annotation and any defined naming pattern.
 
 
 See [Issue 240](https://github.com/spockframework/spock/issues/362) for a known limitation with Spock’s TestRule support.
@@ -1870,8 +1790,7 @@ See [Issue 240](https://github.com/spockframework/spock/issues/362) for a known 
 
 ### Condition Rendering Improvements
 
-When two objects are compared with the `==` operator, they are unequal, but their string representations are the same,
-Spock will now print the objects' types:
+When two objects are compared with the `==` operator, they are unequal, but their string representations are the same, Spock will now print the objects' types:
 
 
 ```
@@ -1884,14 +1803,14 @@ enteredNumber == 42
 
 ### JUnit Fixture Annotations
 
-Fixture methods can now be declared with JUnit’s `@Before`, `@After`, `@BeforeClass`, and `@AfterClass` annotations,
-as an addition or alternative to Spock’s own fixture methods. This was particularly needed for Grails 2.0 support.
+Fixture methods can now be declared with JUnit’s `@Before`, `@After`, `@BeforeClass`, and `@AfterClass` annotations, as an addition or alternative to Spock’s own fixture methods.
+This was particularly needed for Grails 2.0 support.
 
 
 ### Tapestry 5.3 Support
 
-Thanks to a contribution from [Howard Lewis Ship](https://howardlewisship.com/), the Tapestry module is now compatible
-with Tapestry 5.3. Older 5.x versions are still supported.
+Thanks to a contribution from [Howard Lewis Ship](https://howardlewisship.com/), the Tapestry module is now compatible with Tapestry 5.3.
+Older 5.x versions are still supported.
 
 
 ### IBM JDK Support
@@ -1901,8 +1820,8 @@ Spock now runs fine on IBM JDKs, working around a bug in the IBM JDK’s verifie
 
 ### Improved JUnit Compatibility
 
-`org.junit.internal.AssumptionViolatedException` is now recognized and handled as known from JUnit. `@Unrolled` methods
-no longer cause "yellow" nodes in IDEs.
+`org.junit.internal.AssumptionViolatedException` is now recognized and handled as known from JUnit.
+`@Unrolled` methods no longer cause "yellow" nodes in IDEs.
 
 
 ### Improved `@Unroll`
@@ -1932,26 +1851,26 @@ def "#person.name.toUpperCase() is #person.age years old"() { ... }
 ```
 
 
-The `@Unroll` annotation can now be applied to a spec class. In this case, all data-driven feature methods in the class
-will be unrolled.
+The `@Unroll` annotation can now be applied to a spec class.
+In this case, all data-driven feature methods in the class will be unrolled.
 
 
 ### Improved `@Timeout`
 
-The `@Timeout` annotation can now be applied to a spec class. In this case, the timeout applies to all feature methods
-(individually) that aren’t already annotated with `@Timeout`. Timed methods are now executed on the regular test
-framework thread. This can be important for tests that rely on thread-local state (like Grails integration tests).
+The `@Timeout` annotation can now be applied to a spec class.
+In this case, the timeout applies to all feature methods (individually) that aren’t already annotated with `@Timeout`.
+Timed methods are now executed on the regular test framework thread.
+This can be important for tests that rely on thread-local state (like Grails integration tests).
 Also the interruption behavior has been improved, to increase the chance that a timeout can be enforced.
 
 
-The failure exception that is thrown when a timeout occurs now contains the stacktrace of test execution, allowing you
-to see where the test was “stuck” or how far it got in the allocated time.
+The failure exception that is thrown when a timeout occurs now contains the stacktrace of test execution, allowing you to see where the test was “stuck” or how far it got in the allocated time.
 
 
 ### Improved Data Table Syntax
 
-Table cells can now be separated with double pipes. This can be used to visually set apart expected outputs from
-provided inputs:
+Table cells can now be separated with double pipes.
+This can be used to visually set apart expected outputs from provided inputs:
 
 
 ```groovy
@@ -1965,10 +1884,11 @@ a | b || sum
 
 ### Groovy 1.8/2.0 Support
 
-Spock 0.6 ships in three variants for Groovy 1.7, 1.8, and 2.0. Make sure to pick the right version - for example,
-for Groovy 1.8 you need to use spock-core-0.6-groovy-1.8 (likewise for all other modules). The Groovy 2.0 variant
-is based on Groovy 2.0-beta-3-SNAPSHOT and only available from https://m2repo.spockframework.org. The Groovy 1.7 and
-1.8 variants are also available from Maven Central. The next version of Spock will no longer support Groovy 1.7.
+Spock 0.6 ships in three variants for Groovy 1.7, 1.8, and 2.0.
+Make sure to pick the right version - for example, for Groovy 1.8 you need to use spock-core-0.6-groovy-1.8 (likewise for all other modules).
+The Groovy 2.0 variant is based on Groovy 2.0-beta-3-SNAPSHOT and only available from https://m2repo.spockframework.org.
+The Groovy 1.7 and 1.8 variants are also available from Maven Central.
+The next version of Spock will no longer support Groovy 1.7.
 
 
 ### Grails 2.0 Support
@@ -1977,31 +1897,29 @@ Spock’s Grails plugin was split off into a separate project and now lives at h
 The plugin supports both Grails 1.3 and 2.0.
 
 
-The Spock Grails plugin supports all of the new Grails 2.0 test mixins, effectively deprecating the existing unit
-testing classes (e.g. UnitSpec). For integration testing, IntegrationSpec must still be used.
+The Spock Grails plugin supports all of the new Grails 2.0 test mixins, effectively deprecating the existing unit testing classes (e.g. UnitSpec).
+For integration testing, IntegrationSpec must still be used.
 
 
 ### IntelliJ IDEA Integration
 
-The folks from [JetBrains](https://www.jetbrains.com) have added a few handy features around data tables. Data tables
-will now be layed out automatically when reformatting code. Data variables are no longer shown as "unknown" and have
-their types inferred from the values in the table (!).
+The folks from [JetBrains](https://www.jetbrains.com) have added a few handy features around data tables.
+Data tables will now be layed out automatically when reformatting code.
+Data variables are no longer shown as "unknown" and have their types inferred from the values in the table (!).
 
 
 ### GitHub Repository
 
-All source code has moved to https://github.com/spockframework/. The [Grails Spock plugin](https://github.com/spockframework/spock-grails),
-[Spock Example](https://github.com/spockframework/spock-example) project, and
-[Spock Web Console](https://github.com/spockframework/spockwebconsole) now have their own GitHub projects.
-Also available are slides and code for various Spock presentations (such as
-[this one](https://github.com/spockframework/smarter-testing-with-spock)).
+All source code has moved to https://github.com/spockframework/.
+The [Grails Spock plugin](https://github.com/spockframework/spock-grails), [Spock Example](https://github.com/spockframework/spock-example) project, and [Spock Web Console](https://github.com/spockframework/spockwebconsole) now have their own GitHub projects.
+Also available are slides and code for various Spock presentations (such as [this one](https://github.com/spockframework/smarter-testing-with-spock)).
 
 
 ### Gradle Build
 
-Spock is now exclusively built with Gradle. Building Spock yourself is as easy as cloning the
-[Github repo](https://github.com/spockframework/spock) and executing `gradlew build`. No build tool installation is
-required; the only prerequisite for building Spock is a JDK installation (1.5 or higher).
+Spock is now exclusively built with Gradle.
+Building Spock yourself is as easy as cloning the [Github repo](https://github.com/spockframework/spock) and executing `gradlew build`.
+No build tool installation is required; the only prerequisite for building Spock is a JDK installation (1.5 or higher).
 
 
 ### Fixed Issues

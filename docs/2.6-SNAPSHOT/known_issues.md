@@ -2,13 +2,10 @@
 
 ## Constructing a Spy from an existing instance on Java 17+
 
-Java continues to tighten up on reflection usage,
-and it is no longer possible to make fields accessible in every case.
+Java continues to tighten up on reflection usage, and it is no longer possible to make fields accessible in every case.
 
 
-As spying on an existing instance involves creating a spy instance,
-and then copying the fields from the original instance to the spy instance,
-this can run into issues on Java 17+ when the code does not have access to the module of the class being spied upon, or any of its parent classes.
+As spying on an existing instance involves creating a spy instance, and then copying the fields from the original instance to the spy instance, this can run into issues on Java 17+ when the code does not have access to the module of the class being spied upon, or any of its parent classes.
 
 
 A workaround is to use the appropriate `--add-opens` parameter to the jvm.
@@ -118,8 +115,7 @@ finally {
 3. Here it is passed to cleanup
 
 
-The catch-22 is that the variable must be declared outside of the `try-finally` block, to be available in the finally,
-but for the variable initialization to be covered by the cleanup it must be initialized inside the `try` block.
+The catch-22 is that the variable must be declared outside of the `try-finally` block, to be available in the finally, but for the variable initialization to be covered by the cleanup it must be initialized inside the `try` block.
 This works fine for normal variables, but final variable can only be initialized when they are declared.
 
 
@@ -129,7 +125,9 @@ Traits on Specifications are not supported by Spock, some use-cases might work w
 This is due to how groovy implements traits and AST transformations.
 
 
-> Traits are not officially compatible with AST transformations. Some of them, like @CompileStatic will be applied on the trait itself (not on implementing classes), while others will apply on both the implementing class and the trait. There is absolutely no guarantee that an AST transformation will run on a trait as it does on a regular class, so use it at your own risk!
+> Traits are not officially compatible with AST transformations.
+> Some of them, like @CompileStatic will be applied on the trait itself (not on implementing classes), while others will apply on both the implementing class and the trait.
+> There is absolutely no guarantee that an AST transformation will run on a trait as it does on a regular class, so use it at your own risk!
 > 
 > 
 >
@@ -138,8 +136,13 @@ This is due to how groovy implements traits and AST transformations.
 
 ## Groovy version compatibility
 
-By default, Spock can only be used with the Groovy version it was compiled with. It means that Spock `2.0-groovy-2.5` can only executed with Groovy 2.5.x, `2.0-groovy-3.0` with 3.0.x, etc. That restriction was introduced to help users find an appropriate Groovy variant and limit number of reported invalid issues caused by the incompatibilities between the major Groovy versions.
+By default, Spock can only be used with the Groovy version it was compiled with.
+It means that Spock `2.0-groovy-2.5` can only executed with Groovy 2.5.x, `2.0-groovy-3.0` with 3.0.x, etc.
+That restriction was introduced to help users find an appropriate Groovy variant and limit number of reported invalid issues caused by the incompatibilities between the major Groovy versions.
 
 
-However, occasionally it might be useful to be able to play with the next (officially unsupported) Groovy version, especially that usually, in the majority of cases, it should just work fine. Starting with Groovy 2.0 that restriction has been relaxed in the Spock SNAPSHOT versions. In addition, the early adopters can implicitly disable that check - also in the production versions - providing the system property `-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true`. ***Please bear in mind, however, that it is completely unsupported and might lead to some unexpected errors***.
+However, occasionally it might be useful to be able to play with the next (officially unsupported) Groovy version, especially that usually, in the majority of cases, it should just work fine.
+Starting with Groovy 2.0 that restriction has been relaxed in the Spock SNAPSHOT versions.
+In addition, the early adopters can implicitly disable that check - also in the production versions - providing the system property `-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true`.
+***Please bear in mind, however, that it is completely unsupported and might lead to some unexpected errors***.
 

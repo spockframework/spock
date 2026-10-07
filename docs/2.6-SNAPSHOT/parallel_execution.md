@@ -27,8 +27,8 @@ runner {
 
 > [!NOTE]
 > JUnit Jupiter also supports [parallel execution](https://docs.junit.org/5.7.0/user-guide/#writing-tests-parallel-execution), both rely on the JUnit Platform implementation, but function independently of each other.
->       If you enable parallel execution in Spock it won’t affect Jupiter and vice versa.
->       The JUnit Platform executes the test engines (Spock, Jupiter) sequentially, so there should not be any interference between engines.
+> If you enable parallel execution in Spock it won’t affect Jupiter and vice versa.
+> The JUnit Platform executes the test engines (Spock, Jupiter) sequentially, so there should not be any interference between engines.
 
 
 ## Execution modes
@@ -311,8 +311,7 @@ skinparam shadowing false
 
 If nothing else is explicit configured, specifications will use `defaultSpecificationExecutionMode` and features use `defaultExecutionMode`.
 However, this changes when you set the execution mode explicitly via `@Execution`.
-Each node (specification, feature) checks first if it has an explicit execution mode set,
-otherwise it will check its parents for an explicit setting and fall back to the respective defaults otherwise.
+Each node (specification, feature) checks first if it has an explicit execution mode set, otherwise it will check its parents for an explicit setting and fall back to the respective defaults otherwise.
 
 
 The following examples have `defaultSpecificationExecutionMode=SAME_THREAD` and `defaultExecutionMode=SAME_THREAD`.
@@ -427,7 +426,8 @@ With parallel execution comes a new set of challenges for testing, as shared sta
 
 
 A simple example would be two features that test the use a system property, both setting it to a specific value in the respective `given` block and then executing the code to test the expected behavior.
-If they run sequentially then both complete without issue. However, if the run at the same time both `given` blocks will run before the `when` blocks and one feature will fail since the system property did not contain the expected value.
+If they run sequentially then both complete without issue.
+However, if the run at the same time both `given` blocks will run before the `when` blocks and one feature will fail since the system property did not contain the expected value.
 
 
 The above example could simply be fixed if both features are part of the same specification by setting them to run in the same thread with `@Execution(SAME_THREAD)`.
@@ -435,7 +435,8 @@ However, this is not really practicable when the features are in separate specif
 To solve this issue Spock has support to coordinate access to shared resources via `@ResourceLock`.
 
 
-With `@ResourceLock` you can define both a `key` and a `mode`. By default, `@ResourceLock` assumes `ResourceAccessMode.READ_WRITE`, but you can weaken it to `ResourceAccessMode.READ`.
+With `@ResourceLock` you can define both a `key` and a `mode`.
+By default, `@ResourceLock` assumes `ResourceAccessMode.READ_WRITE`, but you can weaken it to `ResourceAccessMode.READ`.
 
 
 - `ResourceAccessMode.READ_WRITE` will enforce exclusive access to the resource.
@@ -680,8 +681,7 @@ You can think of this as an implicit global lock.
 
 
 As with other locks, the features in an `@Isolated` specification will run in `SAME_THREAD` mode.
-`@Isolated` can only be applied at the specification level so if you have a large specification and only need it for a few features,
-you might want to consider splitting the spec into `@Isolated` and non isolated.
+`@Isolated` can only be applied at the specification level so if you have a large specification and only need it for a few features, you might want to consider splitting the spec into `@Isolated` and non isolated.
 
 
 **`@Isolated` execution**

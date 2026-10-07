@@ -29,14 +29,13 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This chapter assumes that you have a basic knowledge of Groovy and unit testing. If you are a Java developer but haven&#8217;t
-heard about Groovy, don&#8217;t worry - Groovy will feel very familiar to you! In fact, one of Groovy&#8217;s main design goals is to
-be <em>the</em> scripting language alongside Java. So just follow along and consult the
-<a href="https://groovy-lang.org/documentation.html">Groovy documentation</a> whenever you feel like it.</p>
+<p>This chapter assumes that you have a basic knowledge of Groovy and unit testing.
+If you are a Java developer but haven&#8217;t heard about Groovy, don&#8217;t worry - Groovy will feel very familiar to you!
+In fact, one of Groovy&#8217;s main design goals is to be <em>the</em> scripting language alongside Java.
+So just follow along and consult the <a href="https://groovy-lang.org/documentation.html">Groovy documentation</a> whenever you feel like it.</p>
 </div>
 <div class="paragraph">
-<p>The goals of this chapter are to teach you enough Spock to write real-world Spock specifications, and to
-whet your appetite for more.</p>
+<p>The goals of this chapter are to teach you enough Spock to write real-world Spock specifications, and to whet your appetite for more.</p>
 </div>
 <div class="paragraph">
 <p>To learn more about Groovy, go to <a href="https://groovy-lang.org/" class="bare">https://groovy-lang.org/</a>.</p>
@@ -50,14 +49,13 @@ whet your appetite for more.</p>
 <h2 id="_terminology"><a class="anchor" href="#_terminology"></a><a class="link" href="#_terminology">Terminology</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Let&#8217;s start with a few definitions: Spock lets you write <a href="https://en.wikipedia.org/wiki/Specification_by_example"><em>specifications</em></a>
-that describe expected <em>features</em> (properties, aspects) exhibited by a system of interest. The system of interest could be
-anything between a single class and a whole application, and is also called the <em>system under specification</em> or <em>SUS</em>.
+<p>Let&#8217;s start with a few definitions: Spock lets you write <a href="https://en.wikipedia.org/wiki/Specification_by_example"><em>specifications</em></a> that describe expected <em>features</em> (properties, aspects) exhibited by a system of interest.
+The system of interest could be anything between a single class and a whole application, and is also called the <em>system under specification</em> or <em>SUS</em>.
 The description of a feature starts from a specific snapshot of the SUS and its collaborators; this snapshot is called the feature&#8217;s <em>fixture</em>.</p>
 </div>
 <div class="paragraph">
-<p>The following sections walk you through all building blocks of which a Spock specification may be composed. A typical
-specification uses only a subset of them.</p>
+<p>The following sections walk you through all building blocks of which a Spock specification may be composed.
+A typical specification uses only a subset of them.</p>
 </div>
 </div>
 </div>
@@ -88,14 +86,13 @@ specification uses only a subset of them.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>A specification is represented as a Groovy class that extends from <code>spock.lang.Specification</code>. The name of a specification
-usually relates to the system or system operation described by the specification. For example, <code>CustomerSpec</code>,
-<code>H264VideoPlayback</code>, and <code>ASpaceshipAttackedFromTwoSides</code> are all reasonable names for a specification.</p>
+<p>A specification is represented as a Groovy class that extends from <code>spock.lang.Specification</code>.
+The name of a specification usually relates to the system or system operation described by the specification.
+For example, <code>CustomerSpec</code>, <code>H264VideoPlayback</code>, and <code>ASpaceshipAttackedFromTwoSides</code> are all reasonable names for a specification.</p>
 </div>
 <div class="paragraph">
-<p>Class <code>Specification</code> contains a number of useful methods for writing specifications. Furthermore it marks the specification
-as <code>@Testable</code>, which instructs tools that only look at the source code - like typically IDEs and similar - that this
-class is something that executes tests via a JUnit Platform engine.</p>
+<p>Class <code>Specification</code> contains a number of useful methods for writing specifications.
+Furthermore it marks the specification as <code>@Testable</code>, which instructs tools that only look at the source code - like typically IDEs and similar - that this class is something that executes tests via a JUnit Platform engine.</p>
 </div>
 </div>
 </div>
@@ -109,11 +106,12 @@ class is something that executes tests via a JUnit Platform engine.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Instance fields are a good place to store objects belonging to the specification&#8217;s fixture. It is good practice to
-initialize them right at the point of declaration. (Semantically, this is equivalent to initializing them at the very
-beginning of the <code>setup()</code> method.) Objects stored into instance fields are <em>not</em> shared between feature methods.
-Instead, every feature method gets its own object. This helps to isolate feature methods from each other, which is often
-a desirable goal.</p>
+<p>Instance fields are a good place to store objects belonging to the specification&#8217;s fixture.
+It is good practice to initialize them right at the point of declaration.
+(Semantically, this is equivalent to initializing them at the very beginning of the <code>setup()</code> method.)
+Objects stored into instance fields are <em>not</em> shared between feature methods.
+Instead, every feature method gets its own object.
+This helps to isolate feature methods from each other, which is often a desirable goal.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -121,10 +119,11 @@ a desirable goal.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Sometimes you need to share an object between feature methods. For example, the object might be very expensive to create,
-or you might want your feature methods to interact with each other. To achieve this, declare a <code>@Shared</code> field. Again
-it&#8217;s best to initialize the field right at the point of declaration. (Semantically, this is equivalent to initializing
-the field at the very beginning of the <code>setupSpec()</code> method.)</p>
+<p>Sometimes you need to share an object between feature methods.
+For example, the object might be very expensive to create, or you might want your feature methods to interact with each other.
+To achieve this, declare a <code>@Shared</code> field.
+Again it&#8217;s best to initialize the field right at the point of declaration.
+(Semantically, this is equivalent to initializing the field at the very beginning of the <code>setupSpec()</code> method.)</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -224,9 +223,10 @@ There is no need to explicitly call <code>super.setup()</code> or <code>super.cl
 </div>
 </div>
 <div class="paragraph">
-<p>Feature methods are the heart of a specification. They describe the features (properties, aspects) that you expect to
-find in the system under specification. By convention, feature methods are named with String literals. Try to choose
-good names for your feature methods, and feel free to use any characters you like!</p>
+<p>Feature methods are the heart of a specification.
+They describe the features (properties, aspects) that you expect to find in the system under specification.
+By convention, feature methods are named with String literals.
+Try to choose good names for your feature methods, and feel free to use any characters you like!</p>
 </div>
 <div class="paragraph">
 <p>Conceptually, a feature method consists of four phases:</p>
@@ -248,20 +248,20 @@ good names for your feature methods, and feel free to use any characters you lik
 </ol>
 </div>
 <div class="paragraph">
-<p>Whereas the first and last phases are optional, the stimulus and response phases are always present (except in
-interacting feature methods), and may occur more than once.</p>
+<p>Whereas the first and last phases are optional, the stimulus and response phases are always present (except in interacting feature methods), and may occur more than once.</p>
 </div>
 <div class="sect2">
 <h3 id="_blocks"><a class="anchor" href="#_blocks"></a><a class="link" href="#_blocks">Blocks</a></h3>
 <div class="paragraph">
-<p>Spock has built-in support for implementing each of the conceptual phases of a feature method. To this end, feature
-methods are structured into so-called <em>blocks</em>. Blocks start with a label, and extend to the beginning of the next block,
-or the end of the method. There are seven kinds of blocks: <code>given</code>, <code>when</code>, <code>then</code>, <code>expect</code>, <code>cleanup</code>, <code>where</code>, and <code>filter</code> blocks.
+<p>Spock has built-in support for implementing each of the conceptual phases of a feature method.
+To this end, feature methods are structured into so-called <em>blocks</em>.
+Blocks start with a label, and extend to the beginning of the next block, or the end of the method.
+There are seven kinds of blocks: <code>given</code>, <code>when</code>, <code>then</code>, <code>expect</code>, <code>cleanup</code>, <code>where</code>, and <code>filter</code> blocks.
 Any statements between the beginning of the method and the first explicit block belong to an implicit <code>given</code> block.</p>
 </div>
 <div class="paragraph">
-<p>A feature method must have at least one explicit (i.e. labelled) block - in fact, the presence of an explicit block is
-what makes a method a feature method. Blocks divide a method into distinct sections, and cannot be nested.</p>
+<p>A feature method must have at least one explicit (i.e. labelled) block - in fact, the presence of an explicit block is what makes a method a feature method.
+Blocks divide a method into distinct sections, and cannot be nested.</p>
 </div>
 <div class="openblock float-group">
 <div class="content">
@@ -271,8 +271,9 @@ what makes a method a feature method. Blocks divide a method into distinct secti
 </div>
 </div>
 <div class="paragraph">
-<p>The picture on the right shows how blocks map to the conceptual phases of a feature method. The <code>where</code> block has a
-special role, which will be revealed shortly. But first, let&#8217;s have a closer look at the other blocks.</p>
+<p>The picture on the right shows how blocks map to the conceptual phases of a feature method.
+The <code>where</code> block has a special role, which will be revealed shortly.
+But first, let&#8217;s have a closer look at the other blocks.</p>
 </div>
 </div>
 </div>
@@ -286,10 +287,11 @@ special role, which will be revealed shortly. But first, let&#8217;s have a clos
 </div>
 </div>
 <div class="paragraph">
-<p>The <code>given</code> block is where you do any setup work for the feature that you are describing. It may not be preceded by
-other blocks, and may not be repeated. A <code>given</code> block doesn&#8217;t have any special semantics. The <code>given:</code> label is
-optional and may be omitted, resulting in an <em>implicit</em> <code>given</code> block. Originally, the alias <code>setup:</code> was the preferred block name,
-but using <code>given:</code> often leads to a more readable feature method description (see <a href="#specifications-as-documentation">Specifications as Documentation</a>).</p>
+<p>The <code>given</code> block is where you do any setup work for the feature that you are describing.
+It may not be preceded by other blocks, and may not be repeated.
+A <code>given</code> block doesn&#8217;t have any special semantics.
+The <code>given:</code> label is optional and may be omitted, resulting in an <em>implicit</em> <code>given</code> block.
+Originally, the alias <code>setup:</code> was the preferred block name, but using <code>given:</code> often leads to a more readable feature method description (see <a href="#specifications-as-documentation">Specifications as Documentation</a>).</p>
 </div>
 </div>
 <div class="sect3">
@@ -301,16 +303,18 @@ but using <code>given:</code> often leads to a more readable feature method desc
 </div>
 </div>
 <div class="paragraph">
-<p>The <code>when</code> and <code>then</code> blocks always occur together. They describe a stimulus and the expected response. Whereas <code>when</code>
-blocks may contain arbitrary code, <code>then</code> blocks are restricted to <em>conditions</em>, <em>exception conditions</em>, <em>interactions</em>,
-and variable definitions. A feature method may contain multiple pairs of <code>when-then</code> blocks.</p>
+<p>The <code>when</code> and <code>then</code> blocks always occur together.
+They describe a stimulus and the expected response.
+Whereas <code>when</code> blocks may contain arbitrary code, <code>then</code> blocks are restricted to <em>conditions</em>, <em>exception conditions</em>, <em>interactions</em>, and variable definitions.
+A feature method may contain multiple pairs of <code>when-then</code> blocks.</p>
 </div>
 <div class="sect4">
 <h5 id="_conditions"><a class="anchor" href="#_conditions"></a><a class="link" href="#_conditions">Conditions</a></h5>
 <div class="paragraph">
-<p>Conditions describe an expected state, much like JUnit&#8217;s assertions. However, conditions are written as plain boolean
-expressions, eliminating the need for an assertion API. (More precisely, a condition may also produce a non-boolean
-value, which will then be evaluated according to Groovy truth.) Let&#8217;s see some conditions in action:</p>
+<p>Conditions describe an expected state, much like JUnit&#8217;s assertions.
+However, conditions are written as plain boolean expressions, eliminating the need for an assertion API.
+(More precisely, a condition may also produce a non-boolean value, which will then be evaluated according to Groovy truth.)
+Let&#8217;s see some conditions in action:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -330,17 +334,19 @@ stack.peek() == elem</code></pre>
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-Try to keep the number of conditions per feature method small. One to five conditions is a good guideline. If you
-have more than that, ask yourself if you are specifying multiple unrelated features at once. If the answer is yes,
-break up the feature method in several smaller ones. If your conditions only differ in their values, consider using
-a <a href="data_driven_testing.html#data-tables">data table</a>.
+Try to keep the number of conditions per feature method small.
+One to five conditions is a good guideline.
+If you have more than that, ask yourself if you are specifying multiple unrelated features at once.
+If the answer is yes, break up the feature method in several smaller ones.
+If your conditions only differ in their values, consider using a <a href="data_driven_testing.html#data-tables">data table</a>.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>What kind of feedback does Spock provide if a condition is violated? Let&#8217;s try and change the second condition to
-<code>stack.size() == 2</code>. Here is what we get:</p>
+<p>What kind of feedback does Spock provide if a condition is violated?
+Let&#8217;s try and change the second condition to <code>stack.size() == 2</code>.
+Here is what we get:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -353,15 +359,15 @@ stack.size() == <span class="integer">2</span>
 </div>
 </div>
 <div class="paragraph">
-<p>As you can see, Spock captures all values produced during the evaluation of a condition, and presents them in an easily
-digestible form. Nice, isn&#8217;t it?</p>
+<p>As you can see, Spock captures all values produced during the evaluation of a condition, and presents them in an easily digestible form.
+Nice, isn&#8217;t it?</p>
 </div>
 </div>
 <div class="sect4">
 <h5 id="implicit-and-explicit-conditions"><a class="anchor" href="#implicit-and-explicit-conditions"></a><a class="link" href="#implicit-and-explicit-conditions">Implicit and explicit conditions</a></h5>
 <div class="paragraph">
-<p>Conditions are an essential ingredient of <code>then</code> blocks and <code>expect</code> blocks. Except for calls to <code>void</code> methods and
-expressions classified as interactions, all top-level expressions in these blocks are implicitly treated as conditions.
+<p>Conditions are an essential ingredient of <code>then</code> blocks and <code>expect</code> blocks.
+Except for calls to <code>void</code> methods and expressions classified as interactions, all top-level expressions in these blocks are implicitly treated as conditions.
 To use conditions in other places, you need to designate them with Groovy&#8217;s assert keyword:</p>
 </div>
 <div class="listingblock">
@@ -396,8 +402,8 @@ To use conditions in other places, you need to designate them with Groovy&#8217;
 aList.each { <span class="keyword">assert</span> <span class="local-variable">it</span> &gt; <span class="integer">0</span> }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy#L69" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy#L69" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -420,8 +426,8 @@ aList.each { <span class="keyword">assert</span> <span class="local-variable">it
 !!aList.each { <span class="keyword">assert</span> <span class="local-variable">it</span> &gt; <span class="integer">0</span> }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy#L78" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy#L78" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -443,8 +449,8 @@ This can be helpful, if the rendered expression is too long to be readable, or i
 <span class="keyword">assert</span> !!(foo == bar) : <span class="string"><span class="delimiter">&quot;</span><span class="content">foobar</span><span class="delimiter">&quot;</span></span></code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy#L42" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy#L42" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -465,8 +471,8 @@ This can be helpful, if the rendered expression is too long to be readable, or i
 foobar</pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy#L36" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy#L36" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -494,8 +500,8 @@ very long foo
 foobar</pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy#L12" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy#L12" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -514,8 +520,8 @@ foobar</pre>
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">assert</span> !!(foo == bar)</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy#L59" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy#L59" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -534,8 +540,8 @@ foobar</pre>
 <pre>(foo == bar)</pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy#L53" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy#L53" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/ConditionsSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -547,7 +553,7 @@ foobar</pre>
 </td>
 <td class="content">
 The <code>!!</code> must be the outermost expression, see <a href="https://groovy-lang.org/operators.html#_operator_precedence">Groovy&#8217;s docs on Operator Precedence</a>.
-           If in doubt use parentheses, <code>!!(expression)</code>.
+If in doubt use parentheses, <code>!!(expression)</code>.
 </td>
 </tr>
 </table>
@@ -557,9 +563,9 @@ The <code>!!</code> must be the outermost expression, see <a href="https://groov
 <div class="sect4">
 <h5 id="_exception_conditions"><a class="anchor" href="#_exception_conditions"></a><a class="link" href="#_exception_conditions">Exception Conditions</a></h5>
 <div class="paragraph">
-<p>Exception conditions are used to describe that a <code>when</code> block should throw an exception. They are defined using the
-<code>thrown()</code> method, passing along the expected exception type. For example, to describe that popping from an empty stack
-should throw an <code>EmptyStackException</code>, you could write the following:</p>
+<p>Exception conditions are used to describe that a <code>when</code> block should throw an exception.
+They are defined using the <code>thrown()</code> method, passing along the expected exception type.
+For example, to describe that popping from an empty stack should throw an <code>EmptyStackException</code>, you could write the following:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -572,8 +578,9 @@ stack.empty</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>As you can see, exception conditions may be followed by other conditions (and even other blocks). This is particularly
-useful for specifying the expected content of an exception. To access the exception, first bind it to a variable:</p>
+<p>As you can see, exception conditions may be followed by other conditions (and even other blocks).
+This is particularly useful for specifying the expected content of an exception.
+To access the exception, first bind it to a variable:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -599,14 +606,13 @@ e.cause == <span class="predefined-constant">null</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This syntax has two small advantages: First, the exception variable is strongly typed, making it easier for IDEs to
-offer code completion. Second, the condition reads a bit more like a sentence ("then an EmptyStackException is thrown").
-Note that if no exception type is passed to the <code>thrown()</code> method, it is inferred from the variable type on the left-hand
-side.</p>
+<p>This syntax has two small advantages: First, the exception variable is strongly typed, making it easier for IDEs to offer code completion.
+Second, the condition reads a bit more like a sentence ("then an EmptyStackException is thrown").
+Note that if no exception type is passed to the <code>thrown()</code> method, it is inferred from the variable type on the left-hand side.</p>
 </div>
 <div class="paragraph">
-<p>Sometimes we need to convey that an exception should <strong>not</strong> be thrown. For example, let&#8217;s try to express that a <code>HashMap</code>
-should accept a <code>null</code> key:</p>
+<p>Sometimes we need to convey that an exception should <strong>not</strong> be thrown.
+For example, let&#8217;s try to express that a <code>HashMap</code> should accept a <code>null</code> key:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -618,8 +624,10 @@ should accept a <code>null</code> key:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>This works but doesn&#8217;t reveal the intention of the code. Did someone just leave the building before he had finished
-implementing this method? After all, where are the conditions? Fortunately, we can do better:</p>
+<p>This works but doesn&#8217;t reveal the intention of the code.
+Did someone just leave the building before he had finished implementing this method?
+After all, where are the conditions?
+Fortunately, we can do better:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -636,17 +644,16 @@ implementing this method? After all, where are the conditions? Fortunately, we c
 </div>
 </div>
 <div class="paragraph">
-<p>By using <code>notThrown()</code>, we make it clear that in particular a <code>NullPointerException</code> should not be thrown. (As per the
-contract of <code>Map.put()</code>, this would be the right thing to do for a map that doesn&#8217;t support <code>null</code> keys.) However,
-the method will also fail if any other exception is thrown.</p>
+<p>By using <code>notThrown()</code>, we make it clear that in particular a <code>NullPointerException</code> should not be thrown.
+(As per the contract of <code>Map.put()</code>, this would be the right thing to do for a map that doesn&#8217;t support <code>null</code> keys.)
+However, the method will also fail if any other exception is thrown.</p>
 </div>
 </div>
 <div class="sect4">
 <h5 id="_methods_accepting_implicit_conditions_as_code_blocks"><a class="anchor" href="#_methods_accepting_implicit_conditions_as_code_blocks"></a><a class="link" href="#_methods_accepting_implicit_conditions_as_code_blocks">Methods Accepting Implicit Conditions as Code Blocks</a></h5>
 <div class="paragraph">
-<p>Methods annotated with <code>@ConditionBlock</code> will treat <code>Closure</code> arguments as code blocks containing
-conditions allowing to leave off the <code>assert</code> keyword. As in <code>expect</code>-blocks and <code>then</code>-blocks, variable declarations
-and void method invocations will not be considered conditions.</p>
+<p>Methods annotated with <code>@ConditionBlock</code> will treat <code>Closure</code> arguments as code blocks containing conditions allowing to leave off the <code>assert</code> keyword.
+As in <code>expect</code>-blocks and <code>then</code>-blocks, variable declarations and void method invocations will not be considered conditions.</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -672,8 +679,8 @@ and void method invocations will not be considered conditions.</p>
 conds.await()</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/utilities/ConditionBlockSpec.groovy#L13" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/utilities/ConditionBlockSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/utilities/ConditionBlockSpec.groovy#L13" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/utilities/ConditionBlockSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -684,7 +691,8 @@ conds.await()</code></pre>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The <code>@ConditionBlock</code> only works, if the types involved are known at compile time (no <code>def</code> keyword). See below for more details.
+The <code>@ConditionBlock</code> only works, if the types involved are known at compile time (no <code>def</code> keyword).
+See below for more details.
 </td>
 </tr>
 </table>
@@ -695,9 +703,7 @@ The <code>@ConditionBlock</code> only works, if the types involved are known at 
 <div class="ulist">
 <ul>
 <li>
-<p>the <code>Closures</code> are passed as literals,
-and the Groovy compiler can (at compilation time) determine the target type of the method invocation
-referencing the annotated method,</p>
+<p>the <code>Closures</code> are passed as literals, and the Groovy compiler can (at compilation time) determine the target type of the method invocation referencing the annotated method,</p>
 </li>
 <li>
 <p>the annotated method is called on object of type known at compilation time (no <code>def</code>).</p>
@@ -713,7 +719,8 @@ referencing the annotated method,</p>
 <div class="paragraph">
 <p>Whereas conditions describe an object&#8217;s state, interactions describe how objects communicate with each other.
 Interactions and Interaction based testing are described in a separate <a href="interaction_based_testing.html#interaction-based-testing">chapter</a>, so we only give a quick example here.
-Suppose we want to describe the flow of events from a publisher to its subscribers. Here is the code:</p>
+Suppose we want to describe the flow of events from a publisher to its subscribers.
+Here is the code:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -759,8 +766,8 @@ x == <span class="integer">2</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Although both snippets are semantically equivalent, the second one is clearly preferable. As a guideline, use <code>when-then</code>
-to describe methods with side effects, and <code>expect</code> to describe purely functional methods.</p>
+<p>Although both snippets are semantically equivalent, the second one is clearly preferable.
+As a guideline, use <code>when-then</code> to describe methods with side effects, and <code>expect</code> to describe purely functional methods.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -769,8 +776,7 @@ to describe methods with side effects, and <code>expect</code> to describe purel
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-Leverage <a href="https://docs.groovy-lang.org/docs/latest/html/groovy-jdk/">Groovy JDK</a> methods like <code>any()</code> and <code>every()</code>
-to create more expressive and succinct conditions.
+Leverage <a href="https://docs.groovy-lang.org/docs/latest/html/groovy-jdk/">Groovy JDK</a> methods like <code>any()</code> and <code>every()</code> to create more expressive and succinct conditions.
 </td>
 </tr>
 </table>
@@ -791,11 +797,9 @@ file.delete()</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>A <code>cleanup</code> block may only be followed by a <code>where</code> block, and may not be repeated. Like a <code>cleanup</code> method, it is used
-to free any resources used by a feature method, and is run even if (a previous part of) the feature method has produced
-an exception. As a consequence, a <code>cleanup</code> block must be coded defensively; in the worst case, it must gracefully
-handle the situation where the first statement in a feature method has thrown an exception, and all local variables
-still have their default values.</p>
+<p>A <code>cleanup</code> block may only be followed by a <code>where</code> block, and may not be repeated.
+Like a <code>cleanup</code> method, it is used to free any resources used by a feature method, and is run even if (a previous part of) the feature method has produced an exception.
+As a consequence, a <code>cleanup</code> block must be coded defensively; in the worst case, it must gracefully handle the situation where the first statement in a feature method has thrown an exception, and all local variables still have their default values.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -810,9 +814,8 @@ Groovy&#8217;s safe dereference operator (<code>foo?.bar()</code>) simplifies wr
 </table>
 </div>
 <div class="paragraph">
-<p>Object-level specifications usually don&#8217;t need a <code>cleanup</code> method, as the only resource they consume is memory, which
-is automatically reclaimed by the garbage collector. More coarse-grained specifications, however, might use a <code>cleanup</code>
-block to clean up the file system, close a database connection, or shut down a network service.</p>
+<p>Object-level specifications usually don&#8217;t need a <code>cleanup</code> method, as the only resource they consume is memory, which is automatically reclaimed by the garbage collector.
+More coarse-grained specifications, however, might use a <code>cleanup</code> block to clean up the file system, close a database connection, or shut down a network service.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -821,8 +824,8 @@ block to clean up the file system, close a database connection, or shut down a n
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-If a specification is designed in such a way that all its feature methods require the same resources, use a
-<code>cleanup()</code> method; otherwise, prefer <code>cleanup</code> blocks. The same trade-off applies to <code>setup()</code> methods and <code>given</code> blocks.
+If a specification is designed in such a way that all its feature methods require the same resources, use a <code>cleanup()</code> method; otherwise, prefer <code>cleanup</code> blocks.
+The same trade-off applies to <code>setup()</code> methods and <code>given</code> blocks.
 </td>
 </tr>
 </table>
@@ -831,7 +834,8 @@ If a specification is designed in such a way that all its feature methods requir
 <div class="sect3">
 <h4 id="_where_blocks"><a class="anchor" href="#_where_blocks"></a><a class="link" href="#_where_blocks">Where Blocks</a></h4>
 <div class="paragraph">
-<p>A <code>where</code> block may only be followed by a <code>filter</code> block, and may not be repeated. It is used to write data-driven feature methods.
+<p>A <code>where</code> block may only be followed by a <code>filter</code> block, and may not be repeated.
+It is used to write data-driven feature methods.
 To give you an idea how this is done, have a look at the following example:</p>
 </div>
 <div class="listingblock">
@@ -848,8 +852,7 @@ To give you an idea how this is done, have a look at the following example:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>This <code>where</code> block effectively creates two "versions" of the feature method: One where <code>a</code> is 5, <code>b</code> is 1, and <code>c</code> is 5,
-and another one where <code>a</code> is 3, <code>b</code> is 9, and <code>c</code> is 9.</p>
+<p>This <code>where</code> block effectively creates two "versions" of the feature method: One where <code>a</code> is 5, <code>b</code> is 1, and <code>c</code> is 5, and another one where <code>a</code> is 3, <code>b</code> is 9, and <code>c</code> is 9.</p>
 </div>
 <div class="paragraph">
 <p>Although it is declared last, the <code>where</code> block is evaluated before the feature method containing it runs.</p>
@@ -861,7 +864,8 @@ and another one where <code>a</code> is 3, <code>b</code> is 9, and <code>c</cod
 <div class="sect3">
 <h4 id="_filter_blocks"><a class="anchor" href="#_filter_blocks"></a><a class="link" href="#_filter_blocks">Filter Blocks</a></h4>
 <div class="paragraph">
-<p>A <code>filter</code> block always comes last in a method, and may not be repeated. It is used to filter iterations in data-driven feature methods.
+<p>A <code>filter</code> block always comes last in a method, and may not be repeated.
+It is used to filter iterations in data-driven feature methods.
 To give you an idea how this is done, have a look at the following example:</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
@@ -885,14 +889,14 @@ To give you an idea how this is done, have a look at the following example:</p>
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L620" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L620" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>The content of the <code>filter</code> block is treated like the content of an <code>expect</code> block. If any of the implicit or explicit
-assertions in it fail for a given iteration, this iteration is skipped.</p>
+<p>The content of the <code>filter</code> block is treated like the content of an <code>expect</code> block.
+If any of the implicit or explicit assertions in it fail for a given iteration, this iteration is skipped.</p>
 </div>
 <div class="paragraph">
 <p>The <code>filter</code> block is further explained in the <a href="data_driven_testing.html#data-driven-testing">Data Driven Testing</a> chapter.</p>
@@ -905,8 +909,9 @@ assertions in it fail for a given iteration, this iteration is skipped.</p>
 <h2 id="_helper_methods"><a class="anchor" href="#_helper_methods"></a><a class="link" href="#_helper_methods">Helper Methods</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Sometimes feature methods grow large and/or contain lots of duplicated code. In such cases it can make sense to introduce
-one or more helper methods. Two good candidates for helper methods are setup/cleanup logic and complex conditions.
+<p>Sometimes feature methods grow large and/or contain lots of duplicated code.
+In such cases it can make sense to introduce one or more helper methods.
+Two good candidates for helper methods are setup/cleanup logic and complex conditions.
 Factoring out the former is straightforward, so let&#8217;s have a look at conditions:</p>
 </div>
 <div class="listingblock">
@@ -924,8 +929,8 @@ Factoring out the former is straightforward, so let&#8217;s have a look at condi
 </div>
 </div>
 <div class="paragraph">
-<p>If you happen to be a computer geek, your preferred PC configuration might be very detailed, or you might want to
-compare offers from many different shops. Therefore, let&#8217;s factor out the conditions:</p>
+<p>If you happen to be a computer geek, your preferred PC configuration might be very detailed, or you might want to compare offers from many different shops.
+Therefore, let&#8217;s factor out the conditions:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -947,7 +952,8 @@ compare offers from many different shops. Therefore, let&#8217;s factor out the 
 </div>
 <div class="paragraph">
 <p>The new helper method <code>matchesPreferredConfiguration()</code> consists of a single boolean expression whose result is returned.
-(The <code>return</code> keyword is optional in Groovy.) This is fine except for the way that an inadequate offer is now presented:</p>
+(The <code>return</code> keyword is optional in Groovy.)
+This is fine except for the way that an inadequate offer is now presented:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -959,7 +965,8 @@ matchesPreferredConfiguration(pc)
 </div>
 </div>
 <div class="paragraph">
-<p>Not very helpful. Fortunately, we can do better:</p>
+<p>Not very helpful.
+Fortunately, we can do better:</p>
 </div>
 <div class="sect2">
 <h3 id="at-verify-helper-method"><a class="anchor" href="#at-verify-helper-method"></a><a class="link" href="#at-verify-helper-method">Using <code>@Verify</code> helper methods to assert expectations</a></h3>
@@ -981,8 +988,8 @@ matchesPreferredConfiguration(pc)
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyMethodsDocSpec.groovy#L40" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyMethodsDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyMethodsDocSpec.groovy#L40" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyMethodsDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1010,15 +1017,15 @@ pc.clockRate &gt;= <span class="integer">2333</span>
 |  <span class="integer">1666</span>      <span class="predefined-constant">false</span></code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyMethodsDocSpec.groovy#L57" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyMethodsDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyMethodsDocSpec.groovy#L57" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyMethodsDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>A final advice: Although code reuse is generally a good thing, don&#8217;t take it too far. Be aware that the use of fixture
-and helper methods can increase the coupling between feature methods. If you reuse too much or the wrong code, you will
-end up with specifications that are fragile and hard to evolve.</p>
+<p>A final advice: Although code reuse is generally a good thing, don&#8217;t take it too far.
+Be aware that the use of fixture and helper methods can increase the coupling between feature methods.
+If you reuse too much or the wrong code, you will end up with specifications that are fragile and hard to evolve.</p>
 </div>
 </div>
 </div>
@@ -1069,8 +1076,7 @@ with(service) {
 </div>
 </div>
 <div class="paragraph">
-<p>Sometimes an IDE has trouble to determine the type of the target, in that case you can help out by manually specifying the
-target type via <code>with(target, type, closure)</code>.</p>
+<p>Sometimes an IDE has trouble to determine the type of the target, in that case you can help out by manually specifying the target type via <code>with(target, type, closure)</code>.</p>
 </div>
 </div>
 </div>
@@ -1078,8 +1084,8 @@ target type via <code>with(target, type, closure)</code>.</p>
 <h2 id="_using_verifyall_or_verifyall_helper_methods_to_assert_multiple_expectations_together"><a class="anchor" href="#_using_verifyall_or_verifyall_helper_methods_to_assert_multiple_expectations_together"></a><a class="link" href="#_using_verifyall_or_verifyall_helper_methods_to_assert_multiple_expectations_together">Using <code>verifyAll</code> or <code>@VerifyAll</code> helper methods to assert multiple expectations together</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Normal expectations fail the test on the first failed assertions. Sometimes it is helpful to collect these failures before
-failing the test to have more information, this behavior is also known as soft assertions.</p>
+<p>Normal expectations fail the test on the first failed assertions.
+Sometimes it is helpful to collect these failures before failing the test to have more information, this behavior is also known as soft assertions.</p>
 </div>
 <div class="paragraph">
 <p>The <code>verifyAll</code> method can be used like <code>with</code>,</p>
@@ -1136,8 +1142,8 @@ failing the test to have more information, this behavior is also known as soft a
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyMethodsDocSpec.groovy#L112" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyMethodsDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyMethodsDocSpec.groovy#L112" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyMethodsDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1170,8 +1176,8 @@ failing the test to have more information, this behavior is also known as soft a
 <span class="keyword">assert</span> list == [<span class="integer">1</span>, <span class="integer">2</span>, <span class="integer">4</span>]</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy#L35" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy#L35" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1193,8 +1199,8 @@ failing the test to have more information, this behavior is also known as soft a
 [1, 2, 3]</pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy#L28" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy#L28" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1217,8 +1223,8 @@ failing the test to have more information, this behavior is also known as soft a
 <span class="keyword">assert</span> set == [<span class="integer">1</span>, <span class="integer">2</span>, <span class="integer">4</span>] <span class="keyword">as</span> <span class="predefined-type">Set</span></code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy#L55" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy#L55" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1243,8 +1249,8 @@ failing the test to have more information, this behavior is also known as soft a
 [2, 3, 1]</pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy#L45" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy#L45" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1268,8 +1274,8 @@ The downside is, that you don&#8217;t get any insight into which element failed,
 <span class="keyword">assert</span> list.every { <span class="local-variable">it</span> == <span class="integer">2</span> }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy#L72" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy#L72" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1291,8 +1297,8 @@ The downside is, that you don&#8217;t get any insight into which element failed,
 [1, 2, 3]</pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy#L65" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy#L65" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1319,8 +1325,8 @@ The statements in the closure will also be treated as implicit assertions.</p>
 verifyEach(list) { <span class="local-variable">it</span> == <span class="integer">2</span> }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy#L82" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy#L82" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1352,7 +1358,7 @@ it == 2
 3  false</pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/resources/snapshots/org/spockframework/docs/primer/VerifyEachDocSpec/verifyEach_method.txt#L1" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/resources/snapshots/org/spockframework/docs/primer/VerifyEachDocSpec/verifyEach_method.txt#L1" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1374,8 +1380,8 @@ This is useful when the item either has no useful <code>toString()</code> method
 verifyEach(list, { <span class="string"><span class="delimiter">&quot;</span><span class="content">int(</span><span class="inline"><span class="inline-delimiter">$</span><span class="local-variable">it</span></span><span class="content">)</span><span class="delimiter">&quot;</span></span> }) { <span class="local-variable">it</span> == <span class="integer">2</span> }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy#L92" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy#L92" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1407,7 +1413,7 @@ it == 2
 3  false</pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/resources/snapshots/org/spockframework/docs/primer/VerifyEachDocSpec/verifyEach_with_namer_method.txt#L1" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/resources/snapshots/org/spockframework/docs/primer/VerifyEachDocSpec/verifyEach_with_namer_method.txt#L1" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1430,8 +1436,8 @@ For example, if you want to compare with a list of expected values.</p>
 verifyEach(list) { <span class="local-variable">it</span>, i -&gt; <span class="local-variable">it</span> == expected[i] }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy#L103" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy#L103" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/primer/VerifyEachDocSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1469,7 +1475,7 @@ it == expected[i]
    false</pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/resources/snapshots/org/spockframework/docs/primer/VerifyEachDocSpec/verifyEach_with_index_method.txt#L1" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/resources/snapshots/org/spockframework/docs/primer/VerifyEachDocSpec/verifyEach_with_index_method.txt#L1" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1480,10 +1486,9 @@ it == expected[i]
 <h2 id="specifications-as-documentation"><a class="anchor" href="#specifications-as-documentation"></a><a class="link" href="#specifications-as-documentation">Specifications as Documentation</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Well-written specifications are a valuable source of information. Especially for higher-level specifications targeting
-a wider audience than just developers (architects, domain experts, customers, etc.), it makes sense to provide more
-information in natural language than just the names of specifications and features. Therefore, Spock provides a way to
-attach textual descriptions to blocks:</p>
+<p>Well-written specifications are a valuable source of information.
+Especially for higher-level specifications targeting a wider audience than just developers (architects, domain experts, customers, etc.), it makes sense to provide more information in natural language than just the names of specifications and features.
+Therefore, Spock provides a way to attach textual descriptions to blocks:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1507,8 +1512,7 @@ attach textual descriptions to blocks:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>An <code>and:</code> label followed by a description can be inserted at any (top-level) position of a feature method, without
-altering the method&#8217;s semantics.</p>
+<p>An <code>and:</code> label followed by a description can be inserted at any (top-level) position of a feature method, without altering the method&#8217;s semantics.</p>
 </div>
 <div class="paragraph">
 <p>In Behavior Driven Development, customer-facing features (called <em>stories</em>) are described in a given-when-then format.
@@ -1527,8 +1531,8 @@ Spock directly supports this style of specification with the <code>given:</code>
 </div>
 </div>
 <div class="paragraph">
-<p>Block descriptions are not only present in source code, but are also available to the Spock runtime. Planned usages of
-block descriptions are enhanced diagnostic messages, and textual reports that are equally understood by all stakeholders.</p>
+<p>Block descriptions are not only present in source code, but are also available to the Spock runtime.
+Planned usages of block descriptions are enhanced diagnostic messages, and textual reports that are equally understood by all stakeholders.</p>
 </div>
 </div>
 </div>
@@ -1536,9 +1540,11 @@ block descriptions are enhanced diagnostic messages, and textual reports that ar
 <h2 id="_extensions"><a class="anchor" href="#_extensions"></a><a class="link" href="#_extensions">Extensions</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>As we have seen, Spock offers lots of functionality for writing specifications. However, there always comes a time
-when something else is needed. Therefore, Spock provides an interception-based extension mechanism. Extensions are
-activated by annotations called <em>directives</em>. Currently, Spock ships - among others - with the following directives:</p>
+<p>As we have seen, Spock offers lots of functionality for writing specifications.
+However, there always comes a time when something else is needed.
+Therefore, Spock provides an interception-based extension mechanism.
+Extensions are activated by annotations called <em>directives</em>.
+Currently, Spock ships - among others - with the following directives:</p>
 </div>
 <div class="hdlist">
 <table>
@@ -1563,7 +1569,8 @@ activated by annotations called <em>directives</em>. Currently, Spock ships - am
 <code>@IgnoreRest</code>
 </td>
 <td class="hdlist2">
-<p>Any feature method carrying this annotation will be executed, all others will be ignored. Useful for quickly running just a few features.</p>
+<p>Any feature method carrying this annotation will be executed, all others will be ignored.
+Useful for quickly running just a few features.</p>
 </td>
 </tr>
 <tr>
@@ -1571,9 +1578,10 @@ activated by annotations called <em>directives</em>. Currently, Spock ships - am
 <code>@FailsWith</code>
 </td>
 <td class="hdlist2">
-<p>Expects a feature method to complete abruptly. <code>@FailsWith</code> has two use cases: First, to document known bugs that cannot
-be resolved immediately. Second, to replace exception conditions in certain corner cases where the latter cannot be
-used (like specifying the behavior of exception conditions). In all other cases, exception conditions are preferable.</p>
+<p>Expects a feature method to complete abruptly.
+<code>@FailsWith</code> has two use cases: First, to document known bugs that cannot be resolved immediately.
+Second, to replace exception conditions in certain corner cases where the latter cannot be used (like specifying the behavior of exception conditions).
+In all other cases, exception conditions are preferable.</p>
 </td>
 </tr>
 </table>
@@ -1610,7 +1618,8 @@ Often porting a JUnit Jupiter extension to also support Spock is not a big effor
 <h2 id="_comparison_to_junit"><a class="anchor" href="#_comparison_to_junit"></a><a class="link" href="#_comparison_to_junit">Comparison to JUnit</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Although Spock uses a different terminology, many of its concepts and features are inspired by JUnit. Here is a rough comparison:</p>
+<p>Although Spock uses a different terminology, many of its concepts and features are inspired by JUnit.
+Here is a rough comparison:</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -1676,7 +1685,7 @@ Often porting a JUnit Jupiter extension to also support Spock is not a big effor
 <div id="footer">
 <div id="footer-text">
 Version 2.6-SNAPSHOT<br>
-Last updated 2026-10-07 10:58:34 UTC
+Last updated 2026-10-07 16:23:17 UTC
 </div>
 </div>
 </body>

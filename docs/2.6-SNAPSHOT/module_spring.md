@@ -1,7 +1,9 @@
 # Spring Module
 
 The Spring module enables integration with [Spring TestContext Framework](https://docs.spring.io/spring-framework/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework).
-It supports the following spring annotations `@ContextConfiguration` and `@ContextHierarchy`. Furthermore, it supports the meta-annotation `@BootstrapWith` and so any annotation that is annotated with `@BootstrapWith` will also work, such as `@SpringBootTest`, `@WebMvcTest`. Please add dependency [`org.spockframework:spock-spring`](https://search.maven.org/artifact/org.spockframework/spock-spring) to your project.
+It supports the following spring annotations `@ContextConfiguration` and `@ContextHierarchy`.
+Furthermore, it supports the meta-annotation `@BootstrapWith` and so any annotation that is annotated with `@BootstrapWith` will also work, such as `@SpringBootTest`, `@WebMvcTest`.
+Please add dependency [`org.spockframework:spock-spring`](https://search.maven.org/artifact/org.spockframework/spock-spring) to your project.
 
 
 ## Mocks
@@ -11,10 +13,9 @@ Spock 1.1 introduced the `DetachedMockFactory` and the `SpockMockFactoryBean` wh
 
 > [!NOTE]
 > Although the mocks can be created outside of a specification, they only work properly inside the scope of a specification.
->       All interactions with them until they are attached to one, are handled by the default behavior and not recorded.
->      
+> All interactions with them until they are attached to one, are handled by the default behavior and not recorded.
 > 
->       Furthermore, mocks can only be attached to one `Specification` instance at a time so keep that in mind when using multi-threaded executions
+> Furthermore, mocks can only be attached to one `Specification` instance at a time so keep that in mind when using multi-threaded executions
 
 
 ### Java Config
@@ -80,7 +81,8 @@ Spock has spring namespace support, so if you declare the spock namespace with `
 1. Creates a `Mock`
 2. Creates a `Stub`
 3. Creates a `Spy`
-4. Wraps an existing bean with a `Spy`. Fails fast if referenced bean is not found.
+4. Wraps an existing bean with a `Spy`.
+Fails fast if referenced bean is not found.
 5. If you don’t want to use the special namespace support you can create the beans via the `SpockMockFactoryBean`
 6. The `mockNature` can be `MOCK`, `STUB`, or `SPY` and defaults to `MOCK` if not declared.
 
@@ -142,9 +144,9 @@ def "alternative mock service"() {
 
 ### Annotation driven
 
-Spock 1.2 adds support for exporting mocks from a `Specification` into an `ApplicationContext`. This was inspired by
-Spring Boot’s `@MockBean`(realised via Mockito) but adapted to fit into Spock style. It does not require any Spring Boot dependencies,
-however it requires Spring Framework 4.3.5 or greater to work.
+Spock 1.2 adds support for exporting mocks from a `Specification` into an `ApplicationContext`.
+This was inspired by Spring Boot’s `@MockBean`(realised via Mockito) but adapted to fit into Spock style.
+It does not require any Spring Boot dependencies, however it requires Spring Framework 4.3.5 or greater to work.
 
 
 #### Using `@SpringBean`
@@ -152,20 +154,19 @@ however it requires Spring Framework 4.3.5 or greater to work.
 Registers mock/stub/spy as a spring bean in the test context.
 
 
-To use `@SpringBean` you have to use a strongly typed field `def` or `Object` won’t work. You also need to directly assign the
-`Mock`/`Stub`/`Spy` to the field using the standard Spock syntax. You can even use the initializer blocks to define common behavior,
-however they are only picked up once they are attached to the `Specification`.
+To use `@SpringBean` you have to use a strongly typed field `def` or `Object` won’t work.
+You also need to directly assign the `Mock`/`Stub`/`Spy` to the field using the standard Spock syntax.
+You can even use the initializer blocks to define common behavior, however they are only picked up once they are attached to the `Specification`.
 
 
 `@SpringBean` definitions can replace existing Beans in your `ApplicationContext`.
 
 
 > [!NOTE]
-> Spock’s `@SpringBean` actually creates a proxy in the `ApplicationContext` which forwards everything to the current
->       mock instance. The type of the proxy is determined by the type of the annotated field.
->      
+> Spock’s `@SpringBean` actually creates a proxy in the `ApplicationContext` which forwards everything to the current mock instance.
+> The type of the proxy is determined by the type of the annotated field.
 > 
->       The proxy attaches itself to the current mock in the setup phase, that is why the mock must be created when the field is initialized.
+> The proxy attaches itself to the current mock in the setup phase, that is why the mock must be created when the field is initialized.
 
 
 ```groovy
@@ -194,14 +195,9 @@ def "mocking works was well"() {
 
 
 > [!CAUTION]
-> As with Spring’s own `@MockBean` this will modify your `ApplicationContext`, and will create an unique context for your
->          `Specification` preventing it from being reused by Spring’s
->          [Context Caching](https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/ctx-management/caching.html)
->          outside of the current `Specification`.
->         
+> As with Spring’s own `@MockBean` this will modify your `ApplicationContext`, and will create an unique context for your `Specification` preventing it from being reused by Spring’s [Context Caching](https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/ctx-management/caching.html) outside of the current `Specification`.
 > 
->          If you are using a small context this won’t matter much, but if it is a heavy context you might want to use
->          the other approaches, e.g., using the `DetachedMockFactory`.
+> If you are using a small context this won’t matter much, but if it is a heavy context you might want to use the other approaches, e.g., using the `DetachedMockFactory`.
 
 
 #### Using `@SpringSpy`
@@ -251,8 +247,7 @@ class StubBeansExamples extends Specification {
 
 ### Spring Boot
 
-The recommended way to use Spock mocks in `@WebMvcTest` or other `@SpringBootTest`-style tests,
-is to use the `@SpringBean` and `@SpringSpy` annotations as shown above.
+The recommended way to use Spock mocks in `@WebMvcTest` or other `@SpringBootTest`-style tests, is to use the `@SpringBean` and `@SpringSpy` annotations as shown above.
 
 
 Alternatively you can use an embedded config annotated with `@TestConfiguration` and to create the mocks using the `DetachedMockFactory`.
@@ -296,8 +291,8 @@ For more examples see the specs in the [codebase](https://github.com/spockframew
 
 ## Scopes
 
-Spock ignores bean that is not a `singleton` (in the `singleton` scope) by default. To enable mocks to work for scoped beans
-you need to add `@ScanScopedBeans` to the spec and make sure that the scope allows access to the bean during the setup phase.
+Spock ignores bean that is not a `singleton` (in the `singleton` scope) by default.
+To enable mocks to work for scoped beans you need to add `@ScanScopedBeans` to the spec and make sure that the scope allows access to the bean during the setup phase.
 
 
 > [!NOTE]

@@ -2,7 +2,8 @@
 
 ## What are Spock’s optional dependencies used for?
 
-Spock runs fine without optional dependencies, hence the term *optional*. So what are they used for?
+Spock runs fine without optional dependencies, hence the term *optional*.
+So what are they used for?
 
 
 - Objenesis (artifact `org.objenesis:objenesis`) is required for mocking classes without default constructors.

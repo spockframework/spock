@@ -60,8 +60,8 @@ Spock&#8217;s data driven testing support makes this a first class feature.</p>
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v1/MathSpec.groovy#L6" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v1/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v1/MathSpec.groovy#L6" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v1/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -88,9 +88,9 @@ Spock&#8217;s data driven testing support makes this a first class feature.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>Spock&#8217;s data-driven testing support tries to address these concerns. To get started, let&#8217;s refactor above code into a
-data-driven feature method. First, we introduce three method parameters (called <em>data variables</em>) that replace the
-hard-coded integer values:</p>
+<p>Spock&#8217;s data-driven testing support tries to address these concerns.
+To get started, let&#8217;s refactor above code into a data-driven feature method.
+First, we introduce three method parameters (called <em>data variables</em>) that replace the hard-coded integer values:</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -110,14 +110,15 @@ hard-coded integer values:</p>
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v2/MathSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v2/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v2/MathSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v2/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>We have finished the test logic, but still need to supply the data values to be used. This is done in a <code>where:</code> block,
-which always comes at the end of the method. In the simplest (and most common) case, the <code>where:</code> block holds a <em>data table</em>.</p>
+<p>We have finished the test logic, but still need to supply the data values to be used.
+This is done in a <code>where:</code> block, which always comes at the end of the method.
+In the simplest (and most common) case, the <code>where:</code> block holds a <em>data table</em>.</p>
 </div>
 </div>
 </div>
@@ -150,19 +151,21 @@ which always comes at the end of the method. In the simplest (and most common) c
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v2/MathSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v2/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v2/MathSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v2/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>The first line of the table, called the <em>table header</em>, declares the data variables. The subsequent lines, called
-<em>table rows</em>, hold the corresponding values. For each row, the feature method will get executed once; we call this an
-<em>iteration</em> of the method. If an iteration fails, the remaining iterations will nevertheless be executed. All
-failures will be reported.</p>
+<p>The first line of the table, called the <em>table header</em>, declares the data variables.
+The subsequent lines, called <em>table rows</em>, hold the corresponding values.
+For each row, the feature method will get executed once; we call this an <em>iteration</em> of the method.
+If an iteration fails, the remaining iterations will nevertheless be executed.
+All failures will be reported.</p>
 </div>
 <div class="paragraph">
-<p>Data tables must have at least two columns. A single-column table can be written as:</p>
+<p>Data tables must have at least two columns.
+A single-column table can be written as:</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -180,16 +183,14 @@ a | _
 <span class="integer">0</span> | _</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L43" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L43" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
 <p>A sequence of two or more underscores can be used to split one wide data table into multiple narrower ones.
-Without this separator and without any other data variable assignment in between there
-is no way to have multiple data tables in one <code>where</code> block, the second table would just
-be further iterations of the first table, including the seemingly header row:</p>
+Without this separator and without any other data variable assignment in between there is no way to have multiple data tables in one <code>where</code> block, the second table would just be further iterations of the first table, including the seemingly header row:</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -213,8 +214,8 @@ b | c
 <span class="integer">5</span> | <span class="integer">6</span></code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L92" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L92" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -237,18 +238,16 @@ a | b | c
 <span class="integer">0</span> | <span class="integer">5</span> | <span class="integer">6</span></code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L112" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L112" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
 <p>The sequence of two or more underscores can be used anywhere in the <code>where</code> block.
-It will be ignored everywhere, except for in between two data tables, where it is
-used to separate the two data tables. This means that the separator can also be used
-as styling element in different ways. It can be used as separator line like shown in
-the last example or it can for example be used visually as top border of tables
-additionally to its effect of separating them:</p>
+It will be ignored everywhere, except for in between two data tables, where it is used to separate the two data tables.
+This means that the separator can also be used as styling element in different ways.
+It can be used as separator line like shown in the last example or it can for example be used visually as top border of tables additionally to its effect of separating them:</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -272,8 +271,8 @@ b | c
 <span class="integer">5</span> | <span class="integer">6</span></code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L126" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L126" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -283,9 +282,8 @@ b | c
 <h2 id="_isolated_execution_of_iterations"><a class="anchor" href="#_isolated_execution_of_iterations"></a><a class="link" href="#_isolated_execution_of_iterations">Isolated Execution of Iterations</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Iterations are isolated from each other in the same way as separate feature methods. Each iteration gets its own instance
-of the specification class, and the <code>setup</code> and <code>cleanup</code> methods will be called before and after each iteration,
-respectively.</p>
+<p>Iterations are isolated from each other in the same way as separate feature methods.
+Each iteration gets its own instance of the specification class, and the <code>setup</code> and <code>cleanup</code> methods will be called before and after each iteration, respectively.</p>
 </div>
 </div>
 </div>
@@ -308,9 +306,10 @@ Only <code>@Shared</code> and static variables can be accessed from within a <co
 </table>
 </div>
 <div class="paragraph">
-<p>Note that such objects will also be shared with other methods. There is currently no good way to share an object
-just between iterations of the same method. If you consider this a problem, consider putting each method into a separate
-spec, all of which can be kept in the same file. This achieves better isolation at the cost of some boilerplate code.</p>
+<p>Note that such objects will also be shared with other methods.
+There is currently no good way to share an object just between iterations of the same method.
+If you consider this a problem, consider putting each method into a separate spec, all of which can be kept in the same file.
+This achieves better isolation at the cost of some boilerplate code.</p>
 </div>
 </div>
 </div>
@@ -321,8 +320,7 @@ spec, all of which can be kept in the same file. This achieves better isolation 
 <p>The previous code can be tweaked in a few ways.</p>
 </div>
 <div class="paragraph">
-<p>First, since the <code>where:</code> block already declares all data variables, the method parameters can be
-omitted.<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
+<p>First, since the <code>where:</code> block already declares all data variables, the method parameters can be omitted.<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
 </div>
 <div class="paragraph">
 <p>You can also omit some parameters and specify others, for example to have them typed.
@@ -357,14 +355,13 @@ The order also is not important, data variables are matched by name to the speci
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v3/MathSpec.groovy#L6" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v3/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v3/MathSpec.groovy#L6" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v3/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>Alternatively to using single or double pipes you can also use any amount of semicolons to separate data columns
-from each other:</p>
+<p>Alternatively to using single or double pipes you can also use any amount of semicolons to separate data columns from each other:</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -389,8 +386,8 @@ from each other:</p>
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v6/MathSpec.groovy#L6" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v6/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v6/MathSpec.groovy#L6" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v6/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -427,8 +424,8 @@ If the column separator changes, this starts a new stand-alone data table:</p>
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v7/MathSpec.groovy#L6" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v7/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v7/MathSpec.groovy#L6" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v7/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -457,12 +454,12 @@ maximum of two numbers [a: 0, b: 0, c: 0, #2]   PASSED</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The obvious question is: Which iteration failed, and what are its data values? In our example, it isn&#8217;t hard to figure
-out that it&#8217;s the second iteration (with index 1) that failed even from the rich condition rendering. At other times
-this can be more difficult or even impossible.<sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup> In any case, Spock makes it loud and clear which iteration failed, rather
-than just reporting the failure. Iterations of a feature method are by default unrolled with a rich naming pattern.
-This pattern can also be configured as documented at <a href="#_unrolled_iteration_names">Unrolled Iteration Names</a> or the unrolling can be disabled
-like described in the following section.</p>
+<p>The obvious question is: Which iteration failed, and what are its data values?
+In our example, it isn&#8217;t hard to figure out that it&#8217;s the second iteration (with index 1) that failed even from the rich condition rendering.
+At other times this can be more difficult or even impossible.<sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup>
+In any case, Spock makes it loud and clear which iteration failed, rather than just reporting the failure.
+Iterations of a feature method are by default unrolled with a rich naming pattern.
+This pattern can also be configured as documented at <a href="#_unrolled_iteration_names">Unrolled Iteration Names</a> or the unrolling can be disabled like described in the following section.</p>
 </div>
 </div>
 </div>
@@ -470,9 +467,8 @@ like described in the following section.</p>
 <h2 id="_method_uprolling_and_unrolling"><a class="anchor" href="#_method_uprolling_and_unrolling"></a><a class="link" href="#_method_uprolling_and_unrolling">Method Uprolling and Unrolling</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A method annotated with <code>@Rollup</code> will have its iterations not reported independently but only aggregated within the
-feature. This can for example be used if you produce many test cases from calculations or if you use external data
-like the contents of a database as test data and do not want the test count to vary:</p>
+<p>A method annotated with <code>@Rollup</code> will have its iterations not reported independently but only aggregated within the feature.
+This can for example be used if you produce many test cases from calculations or if you use external data like the contents of a database as test data and do not want the test count to vary:</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -488,8 +484,8 @@ like the contents of a database as test data and do not want the test count to v
 ...</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v4/MathSpec.groovy#L8" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v4/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v4/MathSpec.groovy#L8" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v4/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -512,14 +508,10 @@ class java.lang.Math</pre>
 </div>
 <div class="paragraph">
 <p>The <code>@Rollup</code> annotation can also be placed on a spec.
-This has the same effect as placing it on each data-driven feature method of the spec that does not have an
-<code>@Unroll</code> annotation.</p>
+This has the same effect as placing it on each data-driven feature method of the spec that does not have an <code>@Unroll</code> annotation.</p>
 </div>
 <div class="paragraph">
-<p>Alternatively the <a href="extensions.html#spock-configuration-file">configuration file</a> setting <code>unrollByDefault</code>
-in the <code>unroll</code> section can be set to <code>false</code> to roll up all features automatically unless
-they are annotated with <code>@Unroll</code> or are contained in an <code>@Unroll</code>ed spec and thus reinstate the pre Spock 2.0
-behavior where this was the default.</p>
+<p>Alternatively the <a href="extensions.html#spock-configuration-file">configuration file</a> setting <code>unrollByDefault</code> in the <code>unroll</code> section can be set to <code>false</code> to roll up all features automatically unless they are annotated with <code>@Unroll</code> or are contained in an <code>@Unroll</code>ed spec and thus reinstate the pre Spock 2.0 behavior where this was the default.</p>
 </div>
 <div class="listingblock">
 <div class="title">Disable Default Unrolling</div>
@@ -530,8 +522,7 @@ behavior where this was the default.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>It is illegal to annotate a spec or a feature with both the <code>@Unroll</code> and the <code>@Rollup</code> annotation and if detected
-this will cause an exception to be thrown.</p>
+<p>It is illegal to annotate a spec or a feature with both the <code>@Unroll</code> and the <code>@Rollup</code> annotation and if detected this will cause an exception to be thrown.</p>
 </div>
 <hr>
 <div class="paragraph">
@@ -549,8 +540,7 @@ this will cause an exception to be thrown.</p>
 <p>if the method is not annotated with <code>@Unroll</code> and the spec is annotated with <code>@Rollup</code></p>
 </li>
 <li>
-<p>if neither the method nor the spec is annotated with <code>@Unroll</code>
-and the configuration option <code>unroll { unrollByDefault }</code> is set to <code>false</code></p>
+<p>if neither the method nor the spec is annotated with <code>@Unroll</code> and the configuration option <code>unroll { unrollByDefault }</code> is set to <code>false</code></p>
 </li>
 </ul>
 </div>
@@ -566,8 +556,7 @@ and the configuration option <code>unroll { unrollByDefault }</code> is set to <
 <p>if the method is not annotated with <code>@Rollup</code> and the spec is annotated with <code>@Unroll</code></p>
 </li>
 <li>
-<p>if neither the method nor the spec is annotated with <code>@Rollup</code>
-and the configuration option <code>unroll { unrollByDefault }</code> is set to its default value <code>true</code></p>
+<p>if neither the method nor the spec is annotated with <code>@Rollup</code> and the configuration option <code>unroll { unrollByDefault }</code> is set to its default value <code>true</code></p>
 </li>
 </ul>
 </div>
@@ -577,8 +566,8 @@ and the configuration option <code>unroll { unrollByDefault }</code> is set to i
 <h2 id="_data_pipes"><a class="anchor" href="#_data_pipes"></a><a class="link" href="#_data_pipes">Data Pipes</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Data tables aren&#8217;t the only way to supply values to data variables. In fact, a data table is just syntactic sugar for
-one or more <em>data pipes</em>:</p>
+<p>Data tables aren&#8217;t the only way to supply values to data variables.
+In fact, a data table is just syntactic sugar for one or more <em>data pipes</em>:</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -596,17 +585,17 @@ b &lt;&lt; [<span class="integer">3</span>, <span class="integer">4</span>, <spa
 c &lt;&lt; [<span class="integer">3</span>, <span class="integer">7</span>, <span class="integer">0</span>]</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L578" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L578" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>A data pipe, indicated by the left-shift (<code>&lt;&lt;</code>) operator, connects a data variable to a <em>data provider</em>. The data
-provider holds all values for the variable, one per iteration. Any object that Groovy knows how to iterate over can be
-used as a data provider. This includes objects of type <code>Collection</code>, <code>String</code>, <code>Iterable</code>, and objects implementing the
-<code>Iterable</code> contract. Data providers don&#8217;t necessarily have to <em>be</em> the data (as in the case of a <code>Collection</code>);
-they can fetch data from external sources like text files, databases and spreadsheets, or generate data randomly.
+<p>A data pipe, indicated by the left-shift (<code>&lt;&lt;</code>) operator, connects a data variable to a <em>data provider</em>.
+The data provider holds all values for the variable, one per iteration.
+Any object that Groovy knows how to iterate over can be used as a data provider.
+This includes objects of type <code>Collection</code>, <code>String</code>, <code>Iterable</code>, and objects implementing the <code>Iterable</code> contract.
+Data providers don&#8217;t necessarily have to <em>be</em> the data (as in the case of a <code>Collection</code>); they can fetch data from external sources like text files, databases and spreadsheets, or generate data randomly.
 Data providers are queried for their next value only when needed (before the next iteration).</p>
 </div>
 <div class="admonitionblock note">
@@ -616,9 +605,7 @@ Data providers are queried for their next value only when needed (before the nex
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Spock uses the <code>size()</code> method to calculate the amount of iterations,
-      except for data providers that implement <code>Iterator</code>,
-      so make sure <code>size()</code> is working efficient, or supply an <code>Iterator</code> if that is not possible.
+Spock uses the <code>size()</code> method to calculate the amount of iterations, except for data providers that implement <code>Iterator</code>, so make sure <code>size()</code> is working efficient, or supply an <code>Iterator</code> if that is not possible.
 </td>
 </tr>
 </table>
@@ -629,9 +616,8 @@ Spock uses the <code>size()</code> method to calculate the amount of iterations,
 <h2 id="_multi_variable_data_pipes"><a class="anchor" href="#_multi_variable_data_pipes"></a><a class="link" href="#_multi_variable_data_pipes">Multi-Variable Data Pipes</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If a data provider returns multiple values per iteration (as an object that Groovy knows how to iterate over),
-it can be connected to multiple data variables simultaneously. The syntax is somewhat similar to Groovy multi-assignment
-but uses brackets instead of parentheses on the left-hand side:</p>
+<p>If a data provider returns multiple values per iteration (as an object that Groovy knows how to iterate over), it can be connected to multiple data variables simultaneously.
+The syntax is somewhat similar to Groovy multi-assignment but uses brackets instead of parentheses on the left-hand side:</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -653,8 +639,8 @@ but uses brackets instead of parentheses on the left-hand side:</p>
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L15" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L15" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -675,13 +661,14 @@ where:
 [a, b, _, c] &lt;&lt; sql.rows(<span class="string"><span class="delimiter">&quot;</span><span class="content">select * from maxdata</span><span class="delimiter">&quot;</span></span>)</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L371" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L371" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>The multi-assignments can even be nested. The following example will generate these iterations:</p>
+<p>The multi-assignments can even be nested.
+The following example will generate these iterations:</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -763,8 +750,8 @@ where:
 ].combinations()</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L382" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L382" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -800,8 +787,8 @@ where:
 ]</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L400" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L400" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -825,8 +812,8 @@ where:
 ]</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L423" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L423" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -837,9 +824,8 @@ where:
 <h2 id="_cross_multiplying_data_providers"><a class="anchor" href="#_cross_multiplying_data_providers"></a><a class="link" href="#_cross_multiplying_data_providers">Cross-multiplying Data Providers</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Two or more consecutive data providers, be it a data table or a data pipe, can also be combined
-using a cartesian product using the <code>combined:</code> label between them. The following will result
-in these executed tests:</p>
+<p>Two or more consecutive data providers, be it a data table or a data pipe, can also be combined using a cartesian product using the <code>combined:</code> label between them.
+The following will result in these executed tests:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -885,8 +871,8 @@ d | _
 e = a + b</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L165" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L165" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -913,8 +899,8 @@ d = <span class="integer">1</span>
 e = a + b</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L207" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L207" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -937,9 +923,8 @@ Combining with a derived data variable (<code>x = &#8230;&#8203;</code>) makes n
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-If a data table takes part in a cross-multiplication, accessing columns of previous
-      data tables would not behave in an intuitive way and thus is currently forbidden. Accessing
-      previous columns within one data table even works while taking part in a cross-multiplication.
+If a data table takes part in a cross-multiplication, accessing columns of previous data tables would not behave in an intuitive way and thus is currently forbidden.
+Accessing previous columns within one data table even works while taking part in a cross-multiplication.
 </td>
 </tr>
 </table>
@@ -952,8 +937,7 @@ If a data table takes part in a cross-multiplication, accessing columns of previ
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Only the data provider right before the <code>combined:</code> label is
-combined with the data provider right after the <code>combined:</code> label.</p>
+<p>Only the data provider right before the <code>combined:</code> label is combined with the data provider right after the <code>combined:</code> label.</p>
 </div>
 <div class="paragraph">
 <p>So if you execute</p>
@@ -974,8 +958,8 @@ b &lt;&lt; [<span class="integer">5</span>, <span class="integer">6</span>]
 c &lt;&lt; [<span class="integer">7</span>, <span class="integer">8</span>, <span class="integer">9</span>]</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L258" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L258" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1044,8 +1028,8 @@ c &lt;&lt; [<span class="integer">7</span>, <span class="integer">8</span>, <spa
 c &lt;&lt; [<span class="integer">5</span>, <span class="integer">6</span>]</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L303" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L303" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1069,8 +1053,8 @@ a | b
 c &lt;&lt; [<span class="integer">5</span>, <span class="integer">6</span>]</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L333" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L333" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1102,14 +1086,14 @@ b = <span class="predefined-type">Math</span>.random() * <span class="integer">1
 c = a &gt; b ? a : b</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L436" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L436" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>Assignments are re-evaluated for every iteration. As already shown above, the right-hand side of an assignment may refer
-to other data variables:</p>
+<p>Assignments are re-evaluated for every iteration.
+As already shown above, the right-hand side of an assignment may refer to other data variables:</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -1129,8 +1113,8 @@ b = row.b
 c = row.c</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L448" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L448" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1140,14 +1124,11 @@ c = row.c</code></pre>
 <h2 id="_accessing_other_data_variables"><a class="anchor" href="#_accessing_other_data_variables"></a><a class="link" href="#_accessing_other_data_variables">Accessing Other Data Variables</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>There are only two possibilities to access one data variable from the calculation
-of another data variable.</p>
+<p>There are only two possibilities to access one data variable from the calculation of another data variable.</p>
 </div>
 <div class="paragraph">
 <p>The first possibility are derived data variables like shown in the last section.
-Every data variable that is defined by a direct assignment can access all
-previously defined data variables, including the ones defined through data
-tables or data pipes:</p>
+Every data variable that is defined by a direct assignment can access all previously defined data variables, including the ones defined through data tables or data pipes:</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -1165,8 +1146,8 @@ b = <span class="predefined-type">Math</span>.random() * <span class="integer">1
 c = a &gt; b ? a : b</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L436" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L436" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1190,8 +1171,8 @@ a | b
 <span class="integer">0</span> | a + <span class="integer">3</span></code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L462" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L462" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1224,8 +1205,8 @@ a * <span class="integer">3</span> | b * <span class="integer">3</span>
 a * <span class="integer">4</span> | b * <span class="integer">4</span></code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L476" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L476" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1256,8 +1237,8 @@ input              | expected
 <span class="string"><span class="delimiter">&quot;</span><span class="content">x</span><span class="inline"><span class="inline-delimiter">${</span>sep<span class="inline-delimiter">}</span></span><span class="content">y</span><span class="inline"><span class="inline-delimiter">${</span>sep<span class="inline-delimiter">}</span></span><span class="content">z</span><span class="delimiter">&quot;</span></span>  | <span class="string"><span class="delimiter">&quot;</span><span class="content">x/y/z</span><span class="delimiter">&quot;</span></span></code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L56" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L56" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1329,8 +1310,8 @@ The same rules apply to every target, and each name becomes its own where-block 
   value &lt;&lt; [lower, <span class="integer">50</span>, upper]</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L73" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L73" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1353,8 +1334,8 @@ On Groovy 2.5 declare one <code>final</code> local per line instead.
 <h2 id="_multi_variable_assignment"><a class="anchor" href="#_multi_variable_assignment"></a><a class="link" href="#_multi_variable_assignment">Multi-Variable Assignment</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Like with data pipes, you can also assign to multiple variables in one expression, if you have some object Groovy
-can iterate over. Unlike with data pipes, the syntax here is identical to standard Groovy multi-assignment syntax:</p>
+<p>Like with data pipes, you can also assign to multiple variables in one expression, if you have some object Groovy can iterate over.
+Unlike with data pipes, the syntax here is identical to standard Groovy multi-assignment syntax:</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -1377,8 +1358,8 @@ can iterate over. Unlike with data pipes, the syntax here is identical to standa
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L15" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L15" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1400,8 +1381,8 @@ row &lt;&lt; sql.rows(<span class="string"><span class="delimiter">&quot;</span>
 (a, b, _, c) = row</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L509" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L509" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1434,8 +1415,8 @@ c &lt;&lt; [<span class="integer">3</span>, <span class="integer">4</span>, <spa
 d = a &gt; c ? a : c</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L520" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L520" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1445,11 +1426,8 @@ d = a &gt; c ? a : c</code></pre>
 <h2 id="_type_coercion_for_data_variable_values"><a class="anchor" href="#_type_coercion_for_data_variable_values"></a><a class="link" href="#_type_coercion_for_data_variable_values">Type Coercion for Data Variable Values</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Data variable values are coerced to the declared parameter type using
-<a href="https://groovy-lang.org/operators.html#_coercion_operator">type coercion</a>. Due to that custom type conversions can be
-provided as <a href="https://groovy-lang.org/metaprogramming.html#_extension_modules">extension module</a> or with the help of
-the <a href="extensions.html#_use"><code>@Use</code></a> extension on the specification (as it has no effect to the <code>where:</code> block if
-applied to a feature).</p>
+<p>Data variable values are coerced to the declared parameter type using <a href="https://groovy-lang.org/operators.html#_coercion_operator">type coercion</a>.
+Due to that custom type conversions can be provided as <a href="https://groovy-lang.org/metaprogramming.html#_extension_modules">extension module</a> or with the help of the <a href="extensions.html#_use"><code>@Use</code></a> extension on the specification (as it has no effect to the <code>where:</code> block if applied to a feature).</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -1470,8 +1448,8 @@ applied to a feature).</p>
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L533" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L533" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1503,8 +1481,8 @@ applied to a feature).</p>
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L549" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L549" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1514,10 +1492,11 @@ applied to a feature).</p>
 <h2 id="_number_of_iterations"><a class="anchor" href="#_number_of_iterations"></a><a class="link" href="#_number_of_iterations">Number of Iterations</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The number of iterations depends on how much data is available. Successive executions of the same method can
-yield different numbers of iterations. If a data provider runs out of values sooner than its peers, an exception will occur.
-Variable assignments don&#8217;t affect the number of iterations. A <code>where:</code> block that only contains assignments yields
-exactly one iteration.</p>
+<p>The number of iterations depends on how much data is available.
+Successive executions of the same method can yield different numbers of iterations.
+If a data provider runs out of values sooner than its peers, an exception will occur.
+Variable assignments don&#8217;t affect the number of iterations.
+A <code>where:</code> block that only contains assignments yields exactly one iteration.</p>
 </div>
 </div>
 </div>
@@ -1533,8 +1512,7 @@ If any of the implicit or explicit assertions in the <code>filter</code> block f
 This also means, that if all iterations are filtered out, the test will fail like when giving a data provider without content.</p>
 </div>
 <div class="paragraph">
-<p>In the following example the test is executed with the values <code>1</code>, <code>2</code>, <code>4</code>, and <code>5</code> for the variable <code>i</code>,
-the iteration where <code>i</code> would be <code>3</code> is filtered out by the <code>filter</code> block:</p>
+<p>In the following example the test is executed with the values <code>1</code>, <code>2</code>, <code>4</code>, and <code>5</code> for the variable <code>i</code>, the iteration where <code>i</code> would be <code>3</code> is filtered out by the <code>filter</code> block:</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -1557,8 +1535,8 @@ the iteration where <code>i</code> would be <code>3</code> is filtered out by th
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L620" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L620" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1568,8 +1546,7 @@ the iteration where <code>i</code> would be <code>3</code> is filtered out by th
 <h2 id="_closing_of_data_providers"><a class="anchor" href="#_closing_of_data_providers"></a><a class="link" href="#_closing_of_data_providers">Closing of Data Providers</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>After all iterations have completed, the zero-argument <code>close</code> method is called on all data providers that have
-such a method.</p>
+<p>After all iterations have completed, the zero-argument <code>close</code> method is called on all data providers that have such a method.</p>
 </div>
 </div>
 </div>
@@ -1577,13 +1554,11 @@ such a method.</p>
 <h2 id="_unrolled_iteration_names"><a class="anchor" href="#_unrolled_iteration_names"></a><a class="link" href="#_unrolled_iteration_names">Unrolled Iteration Names</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>By default, the names of unrolled iterations are the name of the feature, plus the data variables and the iteration
-index. This will always produce unique names and should enable you to identify easily the failing data variable
-combination.</p>
+<p>By default, the names of unrolled iterations are the name of the feature, plus the data variables and the iteration index.
+This will always produce unique names and should enable you to identify easily the failing data variable combination.</p>
 </div>
 <div class="paragraph">
-<p>The example at <a href="#_reporting_of_failures">Reporting of Failures</a> for example shows with <code>maximum of two numbers [a: 7, b: 4, c: 7, #1]</code>,
-that the second iteration (<code>#1</code>) where the data variables have the values <code>7</code>, <code>4</code> and <code>7</code> failed.</p>
+<p>The example at <a href="#_reporting_of_failures">Reporting of Failures</a> for example shows with <code>maximum of two numbers [a: 7, b: 4, c: 7, #1]</code>, that the second iteration (<code>#1</code>) where the data variables have the values <code>7</code>, <code>4</code> and <code>7</code> failed.</p>
 </div>
 <div class="paragraph">
 <p>With a bit of effort, we can do even better:</p>
@@ -1601,8 +1576,8 @@ that the second iteration (<code>#1</code>) where the data variables have the va
 ...</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v5/MathSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v5/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v5/MathSpec.groovy#L7" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/v5/MathSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1641,8 +1616,7 @@ maximum of 0 and 0 is 0   PASSED</pre>
 </ul>
 </div>
 <div class="paragraph">
-<p>Given a class <code>Person</code> with properties <code>name</code> and <code>age</code>, and a data variable <code>person</code> of type <code>Person</code>, the
-following are valid method names:</p>
+<p>Given a class <code>Person</code> with properties <code>name</code> and <code>age</code>, and a data variable <code>person</code> of type <code>Person</code>, the following are valid method names:</p>
 </div>
 <table class="tableblock frame-none grid-none stretch includeSourceLinkerTable">
 <colgroup>
@@ -1657,8 +1631,8 @@ following are valid method names:</p>
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#person.name.toUpperCase()</span><span class="delimiter">&quot;</span></span>() { <span class="comment">// zero-arg method call</span></code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L586" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L586" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
@@ -1694,15 +1668,14 @@ following are valid method names:</p>
 }</code></pre>
 </div>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L607" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
-<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ed250db4a1c8e653ff22f5adcb0fbe97f4cbff27/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><sup><span class="icon"><a class="image" href="https://github.com/spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy#L607" target="_blank" rel="noopener"><i class="fa fa-github fa-2x"></i></a></span></sup>
+<sup><span class="icon"><a class="image" href="https://groovyconsole.dev?github=spockframework/spock/blob/ae0c88f904725d6b2158f15e7a3bf6e05c30756a/spock-specs/src/test/groovy/org/spockframework/docs/datadriven/DataSpec.groovy" target="_blank" rel="noopener"><i class="fa fa-play fa-2x"></i></a></span></sup></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
 <p>Additionally, to the data variables the tokens <code>#featureName</code> and <code>#iterationIndex</code> are supported.
-The former does not make much sense inside an actual feature name, but there are two other places
-where an unroll-pattern can be defined, where it is more useful.</p>
+The former does not make much sense inside an actual feature name, but there are two other places where an unroll-pattern can be defined, where it is more useful.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1724,8 +1697,7 @@ where an unroll-pattern can be defined, where it is more useful.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Alternatively, to specifying the unroll-pattern as method name, it can be given as parameter
-to the <code>@Unroll</code> annotation which takes precedence over the method name:</p>
+<p>Alternatively, to specifying the unroll-pattern as method name, it can be given as parameter to the <code>@Unroll</code> annotation which takes precedence over the method name:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1753,10 +1725,9 @@ to the <code>@Unroll</code> annotation which takes precedence over the method na
 Furthermore, the feature method name is not filled with placeholders and thus better readable.</p>
 </div>
 <div class="paragraph">
-<p>If neither a parameter to the annotation is given, nor the method name contains a <code>#</code>,
-the <a href="extensions.html#spock-configuration-file">configuration file</a> setting <code>defaultPattern</code>
-in the <code>unroll</code> section is inspected. If it is set to a non-<code>null</code>
-string, this value is used as unroll-pattern. This could for example be set to</p>
+<p>If neither a parameter to the annotation is given, nor the method name contains a <code>#</code>, the <a href="extensions.html#spock-configuration-file">configuration file</a> setting <code>defaultPattern</code> in the <code>unroll</code> section is inspected.
+If it is set to a non-<code>null</code> string, this value is used as unroll-pattern.
+This could for example be set to</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1767,8 +1738,7 @@ string, this value is used as unroll-pattern. This could for example be set to</
 <p><code>#featureName[#iterationIndex]</code> to have a simply indexed iteration name, or</p>
 </li>
 <li>
-<p><code>#iterationName</code> if you make sure that in each data-driven feature you also set
-a data variable called <code>iterationName</code> that is then used for reporting</p>
+<p><code>#iterationName</code> if you make sure that in each data-driven feature you also set a data variable called <code>iterationName</code> that is then used for reporting</p>
 </li>
 </ul>
 </div>
@@ -1805,22 +1775,15 @@ a data variable called <code>iterationName</code> that is then used for reportin
 </div>
 </div>
 <div class="paragraph">
-<p>If none of the three described ways is used to set a custom unroll-pattern, by default
-the feature name is used, suffixed with all data variable names and their values and
-finally the iteration index, so the result will be for example
-<code>my feature [x: 1, y: 2, z: 3, #0]</code>.</p>
+<p>If none of the three described ways is used to set a custom unroll-pattern, by default the feature name is used, suffixed with all data variable names and their values and finally the iteration index, so the result will be for example <code>my feature [x: 1, y: 2, z: 3, #0]</code>.</p>
 </div>
 <div class="paragraph">
-<p>If there is an error in an unroll expression, for example typo in variable name, exception during
-evaluation of a property or method in the expression and so on, the test will fail. This is not
-true for the automatic fall back rendering of the data variables if there is no unroll-pattern
-set in any way, this will never fail the test, no matter what happens.</p>
+<p>If there is an error in an unroll expression, for example typo in variable name, exception during evaluation of a property or method in the expression and so on, the test will fail.
+This is not true for the automatic fall back rendering of the data variables if there is no unroll-pattern set in any way, this will never fail the test, no matter what happens.</p>
 </div>
 <div class="paragraph">
-<p>The failing of test with errors in the unroll expression can be disabled by setting the
-<a href="extensions.html#spock-configuration-file">configuration file</a> setting <code>validateExpressions</code>
-in the <code>unroll</code> section to <code>false</code>. If this is done and an error happens, the erroneous expression
-<code>#foo.bar</code> will be substituted by <code>#Error:foo.bar</code>.</p>
+<p>The failing of test with errors in the unroll expression can be disabled by setting the <a href="extensions.html#spock-configuration-file">configuration file</a> setting <code>validateExpressions</code> in the <code>unroll</code> section to <code>false</code>.
+If this is done and an error happens, the erroneous expression <code>#foo.bar</code> will be substituted by <code>#Error:foo.bar</code>.</p>
 </div>
 <div class="listingblock">
 <div class="title">Disable Unroll-pattern Expression Asserting</div>
@@ -1896,7 +1859,7 @@ The same can be achieved for individual features by using <code>@Unroll('#dataVa
 <div id="footer">
 <div id="footer-text">
 Version 2.6-SNAPSHOT<br>
-Last updated 2026-10-07 10:58:34 UTC
+Last updated 2026-10-07 16:23:17 UTC
 </div>
 </div>
 </body>

@@ -4,13 +4,10 @@
 
 When working with dates or time we often have the problem of writing stable tests.
 Java only provides a `FixedClock` for testing.
-However, often time related code has to deal with the change of time,
-so a fixed clock is not enough or makes the test harder to follow.
+However, often time related code has to deal with the change of time, so a fixed clock is not enough or makes the test harder to follow.
 
 
-The prerequisite for using both `FixedClock` and Spocks `MutableClock` is that the production code,
-actually uses a configurable `Clock` and not just the parameterless `Instant.now()`
-or the corresponding methods in the other `java.time.*` classes.
+The prerequisite for using both `FixedClock` and Spocks `MutableClock` is that the production code, actually uses a configurable `Clock` and not just the parameterless `Instant.now()` or the corresponding methods in the other `java.time.*` classes.
 
 
 ### Example
@@ -87,7 +84,8 @@ Since Spock 2.1 you can use two new conditions:
 
 
 > [!NOTE]
-> This is a Spock feature, not a Groovy feature. So it only works where Spock treats an expression as a [condition](spock_primer.md#implicit-and-explicit-conditions).
+> This is a Spock feature, not a Groovy feature.
+> So it only works where Spock treats an expression as a [condition](spock_primer.md#implicit-and-explicit-conditions).
 
 
 ### Lenient Match
@@ -184,12 +182,10 @@ It can be helpful to know the old value of an expression before the `when:` was 
 This allows you to compare the changes made by a `when:` block.
 
 
-You can capture the old value of an expression with `old(<expr>)` in a `then:` block,
-which will return the value of the `<expr>` before the previous `when:` block is executed.
+You can capture the old value of an expression with `old(<expr>)` in a `then:` block, which will return the value of the `<expr>` before the previous `when:` block is executed.
 
 
-The usage of the `old()` method makes a test less fragile, because you can assert the difference,
-which was made by the `when:` block.
+The usage of the `old()` method makes a test less fragile, because you can assert the difference, which was made by the `when:` block.
 
 
 ### Example

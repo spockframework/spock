@@ -1,13 +1,12 @@
 # Spock Primer
 
-This chapter assumes that you have a basic knowledge of Groovy and unit testing. If you are a Java developer but haven’t
-heard about Groovy, don’t worry - Groovy will feel very familiar to you! In fact, one of Groovy’s main design goals is to
-be *the* scripting language alongside Java. So just follow along and consult the
-[Groovy documentation](https://groovy-lang.org/documentation.html) whenever you feel like it.
+This chapter assumes that you have a basic knowledge of Groovy and unit testing.
+If you are a Java developer but haven’t heard about Groovy, don’t worry - Groovy will feel very familiar to you!
+In fact, one of Groovy’s main design goals is to be *the* scripting language alongside Java.
+So just follow along and consult the [Groovy documentation](https://groovy-lang.org/documentation.html) whenever you feel like it.
 
 
-The goals of this chapter are to teach you enough Spock to write real-world Spock specifications, and to
-whet your appetite for more.
+The goals of this chapter are to teach you enough Spock to write real-world Spock specifications, and to whet your appetite for more.
 
 
 To learn more about Groovy, go to https://groovy-lang.org/.
@@ -18,14 +17,13 @@ To learn more about unit testing, go to https://en.wikipedia.org/wiki/Unit_testi
 
 ## Terminology
 
-Let’s start with a few definitions: Spock lets you write [*specifications*](https://en.wikipedia.org/wiki/Specification_by_example)
-that describe expected *features* (properties, aspects) exhibited by a system of interest. The system of interest could be
-anything between a single class and a whole application, and is also called the *system under specification* or *SUS*.
+Let’s start with a few definitions: Spock lets you write [*specifications*](https://en.wikipedia.org/wiki/Specification_by_example) that describe expected *features* (properties, aspects) exhibited by a system of interest.
+The system of interest could be anything between a single class and a whole application, and is also called the *system under specification* or *SUS*.
 The description of a feature starts from a specific snapshot of the SUS and its collaborators; this snapshot is called the feature’s *fixture*.
 
 
-The following sections walk you through all building blocks of which a Spock specification may be composed. A typical
-specification uses only a subset of them.
+The following sections walk you through all building blocks of which a Spock specification may be composed.
+A typical specification uses only a subset of them.
 
 
 ## Imports
@@ -50,14 +48,13 @@ class MyFirstSpecification extends Specification {
 ```
 
 
-A specification is represented as a Groovy class that extends from `spock.lang.Specification`. The name of a specification
-usually relates to the system or system operation described by the specification. For example, `CustomerSpec`,
-`H264VideoPlayback`, and `ASpaceshipAttackedFromTwoSides` are all reasonable names for a specification.
+A specification is represented as a Groovy class that extends from `spock.lang.Specification`.
+The name of a specification usually relates to the system or system operation described by the specification.
+For example, `CustomerSpec`, `H264VideoPlayback`, and `ASpaceshipAttackedFromTwoSides` are all reasonable names for a specification.
 
 
-Class `Specification` contains a number of useful methods for writing specifications. Furthermore it marks the specification
-as `@Testable`, which instructs tools that only look at the source code - like typically IDEs and similar - that this
-class is something that executes tests via a JUnit Platform engine.
+Class `Specification` contains a number of useful methods for writing specifications.
+Furthermore it marks the specification as `@Testable`, which instructs tools that only look at the source code - like typically IDEs and similar - that this class is something that executes tests via a JUnit Platform engine.
 
 
 ## Fields
@@ -68,11 +65,12 @@ def coll = new Collaborator()
 ```
 
 
-Instance fields are a good place to store objects belonging to the specification’s fixture. It is good practice to
-initialize them right at the point of declaration. (Semantically, this is equivalent to initializing them at the very
-beginning of the `setup()` method.) Objects stored into instance fields are *not* shared between feature methods.
-Instead, every feature method gets its own object. This helps to isolate feature methods from each other, which is often
-a desirable goal.
+Instance fields are a good place to store objects belonging to the specification’s fixture.
+It is good practice to initialize them right at the point of declaration.
+(Semantically, this is equivalent to initializing them at the very beginning of the `setup()` method.)
+Objects stored into instance fields are *not* shared between feature methods.
+Instead, every feature method gets its own object.
+This helps to isolate feature methods from each other, which is often a desirable goal.
 
 
 ```groovy
@@ -80,10 +78,11 @@ a desirable goal.
 ```
 
 
-Sometimes you need to share an object between feature methods. For example, the object might be very expensive to create,
-or you might want your feature methods to interact with each other. To achieve this, declare a `@Shared` field. Again
-it’s best to initialize the field right at the point of declaration. (Semantically, this is equivalent to initializing
-the field at the very beginning of the `setupSpec()` method.)
+Sometimes you need to share an object between feature methods.
+For example, the object might be very expensive to create, or you might want your feature methods to interact with each other.
+To achieve this, declare a `@Shared` field.
+Again it’s best to initialize the field right at the point of declaration.
+(Semantically, this is equivalent to initializing the field at the very beginning of the `setupSpec()` method.)
 
 
 ```groovy
@@ -148,9 +147,10 @@ def "pushing an element on the stack"() {
 ```
 
 
-Feature methods are the heart of a specification. They describe the features (properties, aspects) that you expect to
-find in the system under specification. By convention, feature methods are named with String literals. Try to choose
-good names for your feature methods, and feel free to use any characters you like!
+Feature methods are the heart of a specification.
+They describe the features (properties, aspects) that you expect to find in the system under specification.
+By convention, feature methods are named with String literals.
+Try to choose good names for your feature methods, and feel free to use any characters you like!
 
 
 Conceptually, a feature method consists of four phases:
@@ -162,27 +162,28 @@ Conceptually, a feature method consists of four phases:
 4. Clean up the feature’s fixture
 
 
-Whereas the first and last phases are optional, the stimulus and response phases are always present (except in
-interacting feature methods), and may occur more than once.
+Whereas the first and last phases are optional, the stimulus and response phases are always present (except in interacting feature methods), and may occur more than once.
 
 
 ### Blocks
 
-Spock has built-in support for implementing each of the conceptual phases of a feature method. To this end, feature
-methods are structured into so-called *blocks*. Blocks start with a label, and extend to the beginning of the next block,
-or the end of the method. There are seven kinds of blocks: `given`, `when`, `then`, `expect`, `cleanup`, `where`, and `filter` blocks.
+Spock has built-in support for implementing each of the conceptual phases of a feature method.
+To this end, feature methods are structured into so-called *blocks*.
+Blocks start with a label, and extend to the beginning of the next block, or the end of the method.
+There are seven kinds of blocks: `given`, `when`, `then`, `expect`, `cleanup`, `where`, and `filter` blocks.
 Any statements between the beginning of the method and the first explicit block belong to an implicit `given` block.
 
 
-A feature method must have at least one explicit (i.e. labelled) block - in fact, the presence of an explicit block is
-what makes a method a feature method. Blocks divide a method into distinct sections, and cannot be nested.
+A feature method must have at least one explicit (i.e. labelled) block - in fact, the presence of an explicit block is what makes a method a feature method.
+Blocks divide a method into distinct sections, and cannot be nested.
 
 
 ![Blocks2Phases](images/Blocks2Phases.png)
 
 
-The picture on the right shows how blocks map to the conceptual phases of a feature method. The `where` block has a
-special role, which will be revealed shortly. But first, let’s have a closer look at the other blocks.
+The picture on the right shows how blocks map to the conceptual phases of a feature method.
+The `where` block has a special role, which will be revealed shortly.
+But first, let’s have a closer look at the other blocks.
 
 
 #### Given Blocks
@@ -194,10 +195,11 @@ def elem = "push me"
 ```
 
 
-The `given` block is where you do any setup work for the feature that you are describing. It may not be preceded by
-other blocks, and may not be repeated. A `given` block doesn’t have any special semantics. The `given:` label is
-optional and may be omitted, resulting in an *implicit* `given` block. Originally, the alias `setup:` was the preferred block name,
-but using `given:` often leads to a more readable feature method description (see [Specifications as Documentation](#specifications-as-documentation)).
+The `given` block is where you do any setup work for the feature that you are describing.
+It may not be preceded by other blocks, and may not be repeated.
+A `given` block doesn’t have any special semantics.
+The `given:` label is optional and may be omitted, resulting in an *implicit* `given` block.
+Originally, the alias `setup:` was the preferred block name, but using `given:` often leads to a more readable feature method description (see [Specifications as Documentation](#specifications-as-documentation)).
 
 
 #### When and Then Blocks
@@ -208,16 +210,18 @@ then:   // response
 ```
 
 
-The `when` and `then` blocks always occur together. They describe a stimulus and the expected response. Whereas `when`
-blocks may contain arbitrary code, `then` blocks are restricted to *conditions*, *exception conditions*, *interactions*,
-and variable definitions. A feature method may contain multiple pairs of `when-then` blocks.
+The `when` and `then` blocks always occur together.
+They describe a stimulus and the expected response.
+Whereas `when` blocks may contain arbitrary code, `then` blocks are restricted to *conditions*, *exception conditions*, *interactions*, and variable definitions.
+A feature method may contain multiple pairs of `when-then` blocks.
 
 
 ##### Conditions
 
-Conditions describe an expected state, much like JUnit’s assertions. However, conditions are written as plain boolean
-expressions, eliminating the need for an assertion API. (More precisely, a condition may also produce a non-boolean
-value, which will then be evaluated according to Groovy truth.) Let’s see some conditions in action:
+Conditions describe an expected state, much like JUnit’s assertions.
+However, conditions are written as plain boolean expressions, eliminating the need for an assertion API.
+(More precisely, a condition may also produce a non-boolean value, which will then be evaluated according to Groovy truth.)
+Let’s see some conditions in action:
 
 
 ```groovy
@@ -232,14 +236,16 @@ stack.peek() == elem
 
 
 > [!TIP]
-> Try to keep the number of conditions per feature method small. One to five conditions is a good guideline. If you
-> have more than that, ask yourself if you are specifying multiple unrelated features at once. If the answer is yes,
-> break up the feature method in several smaller ones. If your conditions only differ in their values, consider using
-> a [data table](data_driven_testing.md#data-tables).
+> Try to keep the number of conditions per feature method small.
+> One to five conditions is a good guideline.
+> If you have more than that, ask yourself if you are specifying multiple unrelated features at once.
+> If the answer is yes, break up the feature method in several smaller ones.
+> If your conditions only differ in their values, consider using a [data table](data_driven_testing.md#data-tables).
 
 
-What kind of feedback does Spock provide if a condition is violated? Let’s try and change the second condition to
-`stack.size() == 2`. Here is what we get:
+What kind of feedback does Spock provide if a condition is violated?
+Let’s try and change the second condition to `stack.size() == 2`.
+Here is what we get:
 
 
 ```groovy
@@ -252,14 +258,14 @@ stack.size() == 2
 ```
 
 
-As you can see, Spock captures all values produced during the evaluation of a condition, and presents them in an easily
-digestible form. Nice, isn’t it?
+As you can see, Spock captures all values produced during the evaluation of a condition, and presents them in an easily digestible form.
+Nice, isn’t it?
 
 
 ##### Implicit and explicit conditions
 
-Conditions are an essential ingredient of `then` blocks and `expect` blocks. Except for calls to `void` methods and
-expressions classified as interactions, all top-level expressions in these blocks are implicitly treated as conditions.
+Conditions are an essential ingredient of `then` blocks and `expect` blocks.
+Except for calls to `void` methods and expressions classified as interactions, all top-level expressions in these blocks are implicitly treated as conditions.
 To use conditions in other places, you need to designate them with Groovy’s assert keyword:
 
 
@@ -356,14 +362,14 @@ will be rendered as
 
 > [!IMPORTANT]
 > The `!!` must be the outermost expression, see [Groovy’s docs on Operator Precedence](https://groovy-lang.org/operators.html#_operator_precedence).
->            If in doubt use parentheses, `!!(expression)`.
+> If in doubt use parentheses, `!!(expression)`.
 
 
 ##### Exception Conditions
 
-Exception conditions are used to describe that a `when` block should throw an exception. They are defined using the
-`thrown()` method, passing along the expected exception type. For example, to describe that popping from an empty stack
-should throw an `EmptyStackException`, you could write the following:
+Exception conditions are used to describe that a `when` block should throw an exception.
+They are defined using the `thrown()` method, passing along the expected exception type.
+For example, to describe that popping from an empty stack should throw an `EmptyStackException`, you could write the following:
 
 
 ```groovy
@@ -376,8 +382,9 @@ stack.empty
 ```
 
 
-As you can see, exception conditions may be followed by other conditions (and even other blocks). This is particularly
-useful for specifying the expected content of an exception. To access the exception, first bind it to a variable:
+As you can see, exception conditions may be followed by other conditions (and even other blocks).
+This is particularly useful for specifying the expected content of an exception.
+To access the exception, first bind it to a variable:
 
 
 ```groovy
@@ -403,14 +410,13 @@ e.cause == null
 ```
 
 
-This syntax has two small advantages: First, the exception variable is strongly typed, making it easier for IDEs to
-offer code completion. Second, the condition reads a bit more like a sentence ("then an EmptyStackException is thrown").
-Note that if no exception type is passed to the `thrown()` method, it is inferred from the variable type on the left-hand
-side.
+This syntax has two small advantages: First, the exception variable is strongly typed, making it easier for IDEs to offer code completion.
+Second, the condition reads a bit more like a sentence ("then an EmptyStackException is thrown").
+Note that if no exception type is passed to the `thrown()` method, it is inferred from the variable type on the left-hand side.
 
 
-Sometimes we need to convey that an exception should **not** be thrown. For example, let’s try to express that a `HashMap`
-should accept a `null` key:
+Sometimes we need to convey that an exception should **not** be thrown.
+For example, let’s try to express that a `HashMap` should accept a `null` key:
 
 
 ```groovy
@@ -422,8 +428,10 @@ def "HashMap accepts null key"() {
 ```
 
 
-This works but doesn’t reveal the intention of the code. Did someone just leave the building before he had finished
-implementing this method? After all, where are the conditions? Fortunately, we can do better:
+This works but doesn’t reveal the intention of the code.
+Did someone just leave the building before he had finished implementing this method?
+After all, where are the conditions?
+Fortunately, we can do better:
 
 
 ```groovy
@@ -440,16 +448,15 @@ def "HashMap accepts null key"() {
 ```
 
 
-By using `notThrown()`, we make it clear that in particular a `NullPointerException` should not be thrown. (As per the
-contract of `Map.put()`, this would be the right thing to do for a map that doesn’t support `null` keys.) However,
-the method will also fail if any other exception is thrown.
+By using `notThrown()`, we make it clear that in particular a `NullPointerException` should not be thrown.
+(As per the contract of `Map.put()`, this would be the right thing to do for a map that doesn’t support `null` keys.)
+However, the method will also fail if any other exception is thrown.
 
 
 ##### Methods Accepting Implicit Conditions as Code Blocks
 
-Methods annotated with `@ConditionBlock` will treat `Closure` arguments as code blocks containing
-conditions allowing to leave off the `assert` keyword. As in `expect`-blocks and `then`-blocks, variable declarations
-and void method invocations will not be considered conditions.
+Methods annotated with `@ConditionBlock` will treat `Closure` arguments as code blocks containing conditions allowing to leave off the `assert` keyword.
+As in `expect`-blocks and `then`-blocks, variable declarations and void method invocations will not be considered conditions.
 
 
 ```groovy
@@ -470,15 +477,14 @@ conds.await()
 
 
 > [!NOTE]
-> The `@ConditionBlock` only works, if the types involved are known at compile time (no `def` keyword). See below for more details.
+> The `@ConditionBlock` only works, if the types involved are known at compile time (no `def` keyword).
+> See below for more details.
 
 
 The `@ConditionBlock` annotation only takes effect if:
 
 
-- the `Closures` are passed as literals,
-and the Groovy compiler can (at compilation time) determine the target type of the method invocation
-referencing the annotated method,
+- the `Closures` are passed as literals, and the Groovy compiler can (at compilation time) determine the target type of the method invocation referencing the annotated method,
 - the annotated method is called on object of type known at compilation time (no `def`).
 
 
@@ -489,7 +495,8 @@ If the annotated method is overloaded, the closure arguments of all overloads ar
 
 Whereas conditions describe an object’s state, interactions describe how objects communicate with each other.
 Interactions and Interaction based testing are described in a separate [chapter](interaction_based_testing.md#interaction-based-testing), so we only give a quick example here.
-Suppose we want to describe the flow of events from a publisher to its subscribers. Here is the code:
+Suppose we want to describe the flow of events from a publisher to its subscribers.
+Here is the code:
 
 
 ```groovy
@@ -533,13 +540,12 @@ Math.max(1, 2) == 2
 ```
 
 
-Although both snippets are semantically equivalent, the second one is clearly preferable. As a guideline, use `when-then`
-to describe methods with side effects, and `expect` to describe purely functional methods.
+Although both snippets are semantically equivalent, the second one is clearly preferable.
+As a guideline, use `when-then` to describe methods with side effects, and `expect` to describe purely functional methods.
 
 
 > [!TIP]
-> Leverage [Groovy JDK](https://docs.groovy-lang.org/docs/latest/html/groovy-jdk/) methods like `any()` and `every()`
-> to create more expressive and succinct conditions.
+> Leverage [Groovy JDK](https://docs.groovy-lang.org/docs/latest/html/groovy-jdk/) methods like `any()` and `every()` to create more expressive and succinct conditions.
 
 
 #### Cleanup Blocks
@@ -556,30 +562,28 @@ file.delete()
 ```
 
 
-A `cleanup` block may only be followed by a `where` block, and may not be repeated. Like a `cleanup` method, it is used
-to free any resources used by a feature method, and is run even if (a previous part of) the feature method has produced
-an exception. As a consequence, a `cleanup` block must be coded defensively; in the worst case, it must gracefully
-handle the situation where the first statement in a feature method has thrown an exception, and all local variables
-still have their default values.
+A `cleanup` block may only be followed by a `where` block, and may not be repeated.
+Like a `cleanup` method, it is used to free any resources used by a feature method, and is run even if (a previous part of) the feature method has produced an exception.
+As a consequence, a `cleanup` block must be coded defensively; in the worst case, it must gracefully handle the situation where the first statement in a feature method has thrown an exception, and all local variables still have their default values.
 
 
 > [!TIP]
 > Groovy’s safe dereference operator (`foo?.bar()`) simplifies writing defensive code.
 
 
-Object-level specifications usually don’t need a `cleanup` method, as the only resource they consume is memory, which
-is automatically reclaimed by the garbage collector. More coarse-grained specifications, however, might use a `cleanup`
-block to clean up the file system, close a database connection, or shut down a network service.
+Object-level specifications usually don’t need a `cleanup` method, as the only resource they consume is memory, which is automatically reclaimed by the garbage collector.
+More coarse-grained specifications, however, might use a `cleanup` block to clean up the file system, close a database connection, or shut down a network service.
 
 
 > [!TIP]
-> If a specification is designed in such a way that all its feature methods require the same resources, use a
-> `cleanup()` method; otherwise, prefer `cleanup` blocks. The same trade-off applies to `setup()` methods and `given` blocks.
+> If a specification is designed in such a way that all its feature methods require the same resources, use a `cleanup()` method; otherwise, prefer `cleanup` blocks.
+> The same trade-off applies to `setup()` methods and `given` blocks.
 
 
 #### Where Blocks
 
-A `where` block may only be followed by a `filter` block, and may not be repeated. It is used to write data-driven feature methods.
+A `where` block may only be followed by a `filter` block, and may not be repeated.
+It is used to write data-driven feature methods.
 To give you an idea how this is done, have a look at the following example:
 
 
@@ -596,8 +600,7 @@ def "computing the maximum of two numbers"() {
 ```
 
 
-This `where` block effectively creates two "versions" of the feature method: One where `a` is 5, `b` is 1, and `c` is 5,
-and another one where `a` is 3, `b` is 9, and `c` is 9.
+This `where` block effectively creates two "versions" of the feature method: One where `a` is 5, `b` is 1, and `c` is 5, and another one where `a` is 3, `b` is 9, and `c` is 9.
 
 
 Although it is declared last, the `where` block is evaluated before the feature method containing it runs.
@@ -608,7 +611,8 @@ The `where` block is further explained in the [Data Driven Testing](data_driven_
 
 #### Filter Blocks
 
-A `filter` block always comes last in a method, and may not be repeated. It is used to filter iterations in data-driven feature methods.
+A `filter` block always comes last in a method, and may not be repeated.
+It is used to filter iterations in data-driven feature methods.
 To give you an idea how this is done, have a look at the following example:
 
 
@@ -626,8 +630,8 @@ def "excluding iterations"() {
 ```
 
 
-The content of the `filter` block is treated like the content of an `expect` block. If any of the implicit or explicit
-assertions in it fail for a given iteration, this iteration is skipped.
+The content of the `filter` block is treated like the content of an `expect` block.
+If any of the implicit or explicit assertions in it fail for a given iteration, this iteration is skipped.
 
 
 The `filter` block is further explained in the [Data Driven Testing](data_driven_testing.md#data-driven-testing) chapter.
@@ -635,8 +639,9 @@ The `filter` block is further explained in the [Data Driven Testing](data_driven
 
 ## Helper Methods
 
-Sometimes feature methods grow large and/or contain lots of duplicated code. In such cases it can make sense to introduce
-one or more helper methods. Two good candidates for helper methods are setup/cleanup logic and complex conditions.
+Sometimes feature methods grow large and/or contain lots of duplicated code.
+In such cases it can make sense to introduce one or more helper methods.
+Two good candidates for helper methods are setup/cleanup logic and complex conditions.
 Factoring out the former is straightforward, so let’s have a look at conditions:
 
 
@@ -654,8 +659,8 @@ def "offered PC matches preferred configuration"() {
 ```
 
 
-If you happen to be a computer geek, your preferred PC configuration might be very detailed, or you might want to
-compare offers from many different shops. Therefore, let’s factor out the conditions:
+If you happen to be a computer geek, your preferred PC configuration might be very detailed, or you might want to compare offers from many different shops.
+Therefore, let’s factor out the conditions:
 
 
 ```groovy
@@ -677,7 +682,8 @@ def matchesPreferredConfiguration(pc) {
 
 
 The new helper method `matchesPreferredConfiguration()` consists of a single boolean expression whose result is returned.
-(The `return` keyword is optional in Groovy.) This is fine except for the way that an inadequate offer is now presented:
+(The `return` keyword is optional in Groovy.)
+This is fine except for the way that an inadequate offer is now presented:
 
 
 ```groovy
@@ -689,7 +695,8 @@ false                         ...
 ```
 
 
-Not very helpful. Fortunately, we can do better:
+Not very helpful.
+Fortunately, we can do better:
 
 
 ### Using `@Verify` helper methods to assert expectations
@@ -722,9 +729,9 @@ pc.clockRate >= 2333
 ```
 
 
-A final advice: Although code reuse is generally a good thing, don’t take it too far. Be aware that the use of fixture
-and helper methods can increase the coupling between feature methods. If you reuse too much or the wrong code, you will
-end up with specifications that are fragile and hard to evolve.
+A final advice: Although code reuse is generally a good thing, don’t take it too far.
+Be aware that the use of fixture and helper methods can increase the coupling between feature methods.
+If you reuse too much or the wrong code, you will end up with specifications that are fragile and hard to evolve.
 
 
 ## Using `with` for expectations
@@ -771,14 +778,13 @@ with(service) {
 ```
 
 
-Sometimes an IDE has trouble to determine the type of the target, in that case you can help out by manually specifying the
-target type via `with(target, type, closure)`.
+Sometimes an IDE has trouble to determine the type of the target, in that case you can help out by manually specifying the target type via `with(target, type, closure)`.
 
 
 ## Using `verifyAll` or `@VerifyAll` helper methods to assert multiple expectations together
 
-Normal expectations fail the test on the first failed assertions. Sometimes it is helpful to collect these failures before
-failing the test to have more information, this behavior is also known as soft assertions.
+Normal expectations fail the test on the first failed assertions.
+Sometimes it is helpful to collect these failures before failing the test to have more information, this behavior is also known as soft assertions.
 
 
 The `verifyAll` method can be used like `with`,
@@ -1016,10 +1022,9 @@ it == expected[i]
 
 ## Specifications as Documentation
 
-Well-written specifications are a valuable source of information. Especially for higher-level specifications targeting
-a wider audience than just developers (architects, domain experts, customers, etc.), it makes sense to provide more
-information in natural language than just the names of specifications and features. Therefore, Spock provides a way to
-attach textual descriptions to blocks:
+Well-written specifications are a valuable source of information.
+Especially for higher-level specifications targeting a wider audience than just developers (architects, domain experts, customers, etc.), it makes sense to provide more information in natural language than just the names of specifications and features.
+Therefore, Spock provides a way to attach textual descriptions to blocks:
 
 
 ```groovy
@@ -1043,8 +1048,7 @@ and: "seed the product table"
 ```
 
 
-An `and:` label followed by a description can be inserted at any (top-level) position of a feature method, without
-altering the method’s semantics.
+An `and:` label followed by a description can be inserted at any (top-level) position of a feature method, without altering the method’s semantics.
 
 
 In Behavior Driven Development, customer-facing features (called *stories*) are described in a given-when-then format.
@@ -1063,15 +1067,17 @@ then: "the account's balance is \$10"
 ```
 
 
-Block descriptions are not only present in source code, but are also available to the Spock runtime. Planned usages of
-block descriptions are enhanced diagnostic messages, and textual reports that are equally understood by all stakeholders.
+Block descriptions are not only present in source code, but are also available to the Spock runtime.
+Planned usages of block descriptions are enhanced diagnostic messages, and textual reports that are equally understood by all stakeholders.
 
 
 ## Extensions
 
-As we have seen, Spock offers lots of functionality for writing specifications. However, there always comes a time
-when something else is needed. Therefore, Spock provides an interception-based extension mechanism. Extensions are
-activated by annotations called *directives*. Currently, Spock ships - among others - with the following directives:
+As we have seen, Spock offers lots of functionality for writing specifications.
+However, there always comes a time when something else is needed.
+Therefore, Spock provides an interception-based extension mechanism.
+Extensions are activated by annotations called *directives*.
+Currently, Spock ships - among others - with the following directives:
 
 
 **`@Timeout`**
@@ -1081,12 +1087,14 @@ activated by annotations called *directives*. Currently, Spock ships - among oth
 : Ignores any feature method carrying this annotation.
 
 **`@IgnoreRest`**
-: Any feature method carrying this annotation will be executed, all others will be ignored. Useful for quickly running just a few features.
+: Any feature method carrying this annotation will be executed, all others will be ignored.
+Useful for quickly running just a few features.
 
 **`@FailsWith`**
-: Expects a feature method to complete abruptly. `@FailsWith` has two use cases: First, to document known bugs that cannot
-be resolved immediately. Second, to replace exception conditions in certain corner cases where the latter cannot be
-used (like specifying the behavior of exception conditions). In all other cases, exception conditions are preferable.
+: Expects a feature method to complete abruptly.
+`@FailsWith` has two use cases: First, to document known bugs that cannot be resolved immediately.
+Second, to replace exception conditions in certain corner cases where the latter cannot be used (like specifying the behavior of exception conditions).
+In all other cases, exception conditions are preferable.
 
 
 Go to the [Extensions](extensions.md#extensions) chapter to learn how to implement your own directives and extensions, to learn where to find some of the 3rd party extensions, and to learn about all built-in extensions and directives.
@@ -1109,7 +1117,8 @@ Go to the [Extensions](extensions.md#extensions) chapter to learn how to impleme
 
 ## Comparison to JUnit
 
-Although Spock uses a different terminology, many of its concepts and features are inspired by JUnit. Here is a rough comparison:
+Although Spock uses a different terminology, many of its concepts and features are inspired by JUnit.
+Here is a rough comparison:
 
 
 | Spock | JUnit |

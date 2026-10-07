@@ -30,13 +30,10 @@
 <h2 id="instance-spy-on-java-17"><a class="anchor" href="#instance-spy-on-java-17"></a><a class="link" href="#instance-spy-on-java-17">Constructing a Spy from an existing instance on Java 17+</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Java continues to tighten up on reflection usage,
-and it is no longer possible to make fields accessible in every case.</p>
+<p>Java continues to tighten up on reflection usage, and it is no longer possible to make fields accessible in every case.</p>
 </div>
 <div class="paragraph">
-<p>As spying on an existing instance involves creating a spy instance,
-and then copying the fields from the original instance to the spy instance,
-this can run into issues on Java 17+ when the code does not have access to the module of the class being spied upon, or any of its parent classes.</p>
+<p>As spying on an existing instance involves creating a spy instance, and then copying the fields from the original instance to the spy instance, this can run into issues on Java 17+ when the code does not have access to the module of the class being spied upon, or any of its parent classes.</p>
 </div>
 <div class="paragraph">
 <p>A workaround is to use the appropriate <code>--add-opens</code> parameter to the jvm.
@@ -171,8 +168,7 @@ If you look at the compiled code you can see how it was transformed</p>
 </table>
 </div>
 <div class="paragraph">
-<p>The catch-22 is that the variable must be declared outside of the <code>try-finally</code> block, to be available in the finally,
-but for the variable initialization to be covered by the cleanup it must be initialized inside the <code>try</code> block.
+<p>The catch-22 is that the variable must be declared outside of the <code>try-finally</code> block, to be available in the finally, but for the variable initialization to be covered by the cleanup it must be initialized inside the <code>try</code> block.
 This works fine for normal variables, but final variable can only be initialized when they are declared.</p>
 </div>
 </div>
@@ -187,7 +183,9 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
-<p>Traits are not officially compatible with AST transformations. Some of them, like @CompileStatic will be applied on the trait itself (not on implementing classes), while others will apply on both the implementing class and the trait. There is absolutely no guarantee that an AST transformation will run on a trait as it does on a regular class, so use it at your own risk!</p>
+<p>Traits are not officially compatible with AST transformations.
+Some of them, like @CompileStatic will be applied on the trait itself (not on implementing classes), while others will apply on both the implementing class and the trait.
+There is absolutely no guarantee that an AST transformation will run on a trait as it does on a regular class, so use it at your own risk!</p>
 </div>
 </blockquote>
 <div class="attribution">
@@ -200,10 +198,15 @@ This is due to how groovy implements traits and AST transformations.</p>
 <h2 id="_groovy_version_compatibility"><a class="anchor" href="#_groovy_version_compatibility"></a><a class="link" href="#_groovy_version_compatibility">Groovy version compatibility</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>By default, Spock can only be used with the Groovy version it was compiled with. It means that Spock <code>2.0-groovy-2.5</code> can only executed with Groovy 2.5.x, <code>2.0-groovy-3.0</code> with 3.0.x, etc. That restriction was introduced to help users find an appropriate Groovy variant and limit number of reported invalid issues caused by the incompatibilities between the major Groovy versions.</p>
+<p>By default, Spock can only be used with the Groovy version it was compiled with.
+It means that Spock <code>2.0-groovy-2.5</code> can only executed with Groovy 2.5.x, <code>2.0-groovy-3.0</code> with 3.0.x, etc.
+That restriction was introduced to help users find an appropriate Groovy variant and limit number of reported invalid issues caused by the incompatibilities between the major Groovy versions.</p>
 </div>
 <div class="paragraph">
-<p>However, occasionally it might be useful to be able to play with the next (officially unsupported) Groovy version, especially that usually, in the majority of cases, it should just work fine. Starting with Groovy 2.0 that restriction has been relaxed in the Spock SNAPSHOT versions. In addition, the early adopters can implicitly disable that check - also in the production versions - providing the system property <code>-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true</code>. <strong>Please bear in mind, however, that it is completely unsupported and might lead to some unexpected errors</strong>.</p>
+<p>However, occasionally it might be useful to be able to play with the next (officially unsupported) Groovy version, especially that usually, in the majority of cases, it should just work fine.
+Starting with Groovy 2.0 that restriction has been relaxed in the Spock SNAPSHOT versions.
+In addition, the early adopters can implicitly disable that check - also in the production versions - providing the system property <code>-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true</code>.
+<strong>Please bear in mind, however, that it is completely unsupported and might lead to some unexpected errors</strong>.</p>
 </div>
 </div>
 </div>
@@ -211,7 +214,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.6-SNAPSHOT<br>
-Last updated 2026-10-07 10:58:34 UTC
+Last updated 2026-10-07 16:23:17 UTC
 </div>
 </div>
 </body>

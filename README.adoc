@@ -93,13 +93,13 @@ e.g. compile `com.github.spockframework.spock:spock-core:d91bf785a1`
 * spock-specs -- Specifications for spock-core, implemented using Spock.
 Not required for using Spock.
 * spock-spring -- Integration with the
-https://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework[Spring
+https://docs.spring.io/spring-framework/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework[Spring
 TestContext Framework].
 * spock-tapestry -- Integration with the
 https://tapestry.apache.org/[Tapestry 5] IoC container.
 * spock-guice -- Integration with https://github.com/google/guice[Guice]
 2/3.
-* spock-unitils -- Integration with http://www.unitils.org/[Unitils].
+* spock-unitils -- Integration with https://unitils.sourceforge.net/[Unitils].
 
 === Building
 
@@ -193,7 +193,7 @@ repository].
 * Spock Homepage -- https://spockframework.org[https://spockframework.org]
 * Groovy Web Console -- https://groovyconsole.dev/[https://groovyconsole.dev/]
 * GitHub Organization -- https://github.com/spockframework[https://github.com/spockframework]
-* Reference Documentation -- https://docs.spockframework.org[https://docs.spockframework.org]
+* Reference Documentation -- https://spockframework.org/spock/docs/[https://spockframework.org/spock/docs/]
 * User Forum -- https://github.com/spockframework/spock/discussions[https://github.com/spockframework/spock/discussions]
 * Chat -- https://gitter.im/spockframework/spock[https://gitter.im/spockframework/spock]
 * Stack Overflow -- https://stackoverflow.com/questions/tagged/spock[https://stackoverflow.com/questions/tagged/spock]

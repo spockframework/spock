@@ -2,7 +2,7 @@
 = Spring Module
 include::include.adoc[]
 
-The Spring module enables integration with https://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework[Spring TestContext Framework].
+The Spring module enables integration with https://docs.spring.io/spring-framework/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework[Spring TestContext Framework].
 It supports the following spring annotations `@ContextConfiguration` and `@ContextHierarchy`. Furthermore, it supports the meta-annotation `@BootstrapWith` and so any annotation that is annotated with `@BootstrapWith` will also work, such as `@SpringBootTest`, `@WebMvcTest`. Please add dependency https://search.maven.org/artifact/org.spockframework/spock-spring[`org.spockframework:spock-spring`] to your project.
 
 [[SpringMocks]]
@@ -74,7 +74,7 @@ include::{sourcedir-spring}/SpringBeanExamples.groovy[tag=example]
 
 CAUTION: As with Spring's own `@MockBean` this will modify your `ApplicationContext`, and will create an unique context for your
          `Specification` preventing it from being reused by Spring's
-         https://docs.spring.io/spring/docs/current/spring-framework-reference/testing.html#testcontext-ctx-management-caching[Context Caching]
+         https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/ctx-management/caching.html[Context Caching]
          outside of the current `Specification`.
          +
          If you are using a small context this won't matter much, but if it is a heavy context you might want to use

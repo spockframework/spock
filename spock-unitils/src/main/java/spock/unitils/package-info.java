@@ -13,6 +13,6 @@
  */
 
 /**
- * Integration with <a href="http://www.unitils.org">Unitils</a>.
+ * Integration with <a href="https://unitils.sourceforge.net/">Unitils</a>.
  */
 package spock.unitils;

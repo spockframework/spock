@@ -14,7 +14,7 @@ A pull request is not a finished product, it is the start of a conversation. Whe
 
 **We strongly prefer an issue or a discussion over an unsolicited pull request, especially a large one.**
 
-Before investing time in a sizeable change, AI-assisted or not, please open an issue on the [issue tracker](https://issues.spockframework.org) or start a [discussion](https://github.com/spockframework/spock/discussions). A short conversation up front lets us:
+Before investing time in a sizeable change, AI-assisted or not, please open an issue on the [issue tracker](https://github.com/spockframework/spock/issues) or start a [discussion](https://github.com/spockframework/spock/discussions). A short conversation up front lets us:
 
 - confirm the change fits Spock's direction and goals,
 - guide the design before the code is written, and

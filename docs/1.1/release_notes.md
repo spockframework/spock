@@ -358,7 +358,7 @@ that now is the time to join the party!
 
 A special thanks goes to all our tireless speakers and supporters, only a few of which are listed here: Andres Almiray,
 Cédric Champeau, David Dawson, Rob Fletcher, Sean Gilligan, Ken Kousen, Guillaume Laforge,
-[NFJS Tour](http://www.nofluffjuststuff.com/home/main), Graeme Rocher, Baruch Sadogursky, Odin Hole Standal,
+[NFJS Tour](https://www.nofluffjuststuff.com/home/main), Graeme Rocher, Baruch Sadogursky, Odin Hole Standal,
 Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.
 
 
@@ -367,14 +367,14 @@ Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.
 - [17 contributors](#_contributors), [21 resolved issues](#_resolved_issues), [18 merged pull requests](#_merged_pull_requests),
 [some ongoing work](#_ongoing_work). No ground-breaking new features, but significant improvements and fixes across the board.
 - Minimum runtime requirements raised to JRE 1.6 and Groovy 2.0.
-- Improved and restyled reference documentation at http://docs.spockframework.org. Generated with
-[Asciidoctor](http://asciidoctor.org/) (what else?).
+- Improved and restyled reference documentation at https://docs.spockframework.org. Generated with
+[Asciidoctor](https://asciidoctor.org/) (what else?).
 - Maven plugin removed. Just let Maven Surefire run your Spock specs like your JUnit tests
 (see [spock-example](http://examples.spockframework.org) project).
 - Official support for Java 1.8, Groovy 2.3 and Groovy 2.4. Make sure to pick the `groovy-2.0` binaries for Groovy
 2.0/2.1/2.2, `groovy-2.3` binaries for Groovy 2.3, and `groovy-2.4` binaries for Groovy 2.4 and higher.
 - Improved infrastructure to allow for easier community involvement: Switch to
-[GitHub issue tracker](http://issues.spockframework.org), [Windows](http://winbuilds.spockframework.org) and
+[GitHub issue tracker](https://issues.spockframework.org), [Windows](http://winbuilds.spockframework.org) and
 [Linux](http://builds.spockframework.org) CI builds, pull requests automatically tested, all development on `master`
 branch (bye-bye `groovy-x.y` branches!).
 
@@ -383,7 +383,7 @@ branch (bye-bye `groovy-x.y` branches!).
 
 - Follow our new [Twitter account](http://twitter.spockframework.org)
 - Try these [new third-party extensions](#_new_third_party_extensions)
-- Check out the upcoming [Java Testing with Spock](http://manning.com/kapelonis/) book from Manning
+- Check out the upcoming [Java Testing with Spock](https://manning.com/kapelonis/) book from Manning
 
 
 ### What’s Up Next?
@@ -493,7 +493,7 @@ These awesome extensions have been published or updated:
 These great features didn’t make it into this release (but hopefully the next!):
 
 
-- [Spock reports](http://spockframework.github.io/spock/sampleReports/Ninja%20Commander.html)
+- [Spock reports](https://spockframework.github.io/spock/sampleReports/Ninja%20Commander.html)
 - [Render exceptions in conditions as condition failure](https://github.com/spockframework/spock/pull/49)
 - [Soft asserts: check all then throw all failures](https://github.com/spockframework/spock/pull/50)
 - [Detached mocks](https://github.com/spockframework/spock/pull/17)
@@ -508,10 +508,10 @@ Spock snapshots are now available from https://oss.sonatype.org/content/reposito
 
 ### New Reference Documentation
 
-The new Spock reference documentation is available at http://docs.spockframework.org.
+The new Spock reference documentation is available at https://docs.spockframework.org.
 It will gradually replace the documentation at http://wiki.spockframework.org.
-Each Spock version is documented separately (e.g. http://docs.spockframework.org/en/spock-0.7-groovy-1.8).
-Documentation for the latest Spock snapshot is at http://docs.spockframework.org/en/latest.
+Each Spock version is documented separately (e.g. https://docs.spockframework.org/en/spock-0.7-groovy-1.8).
+Documentation for the latest Spock snapshot is at https://docs.spockframework.org/en/latest.
 As of Spock 0.7, the chapters on [Data Driven Testing](data_driven_testing.md) and
 [Interaction Based Testing](interaction_based_testing.md) are complete.
 
@@ -813,7 +813,7 @@ Caused by: java.io.FileNotFoundException: ...
 ### `HamcrestSupport.expect`
 
 Class `spock.util.matcher.HamcrestSupport` has a new `expect` method that makes
-[Hamcrest](http://code.google.com/p/hamcrest/) assertions read better in then-blocks:
+[Hamcrest](https://code.google.com/p/hamcrest/) assertions read better in then-blocks:
 
 
 ```groovy
@@ -856,7 +856,7 @@ foo.bar() >> { throw new IOException() } >>> [1, 2, 3] >> { throw new RuntimeExc
 It’s now possible to match any argument list (including the empty list) with `foo.bar(*_)`.
 
 
-Method arguments can now be constrained with [Hamcrest](http://code.google.com/p/hamcrest/) matchers:
+Method arguments can now be constrained with [Hamcrest](https://code.google.com/p/hamcrest/) matchers:
 
 
 ```groovy
@@ -902,7 +902,7 @@ as an addition or alternative to Spock’s own fixture methods. This was particu
 
 ### Tapestry 5.3 Support
 
-Thanks to a contribution from [Howard Lewis Ship](http://howardlewisship.com/), the Tapestry module is now compatible
+Thanks to a contribution from [Howard Lewis Ship](https://howardlewisship.com/), the Tapestry module is now compatible
 with Tapestry 5.3. Older 5.x versions are still supported.
 
 
@@ -995,7 +995,7 @@ testing classes (e.g. UnitSpec). For integration testing, IntegrationSpec must s
 
 ### IntelliJ IDEA Integration
 
-The folks from [JetBrains](http://www.jetbrains.com) have added a few handy features around data tables. Data tables
+The folks from [JetBrains](https://www.jetbrains.com) have added a few handy features around data tables. Data tables
 will now be layed out automatically when reformatting code. Data variables are no longer shown as "unknown" and have
 their types inferred from the values in the table (!).
 

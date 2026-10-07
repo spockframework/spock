@@ -111,7 +111,7 @@ This is due to how groovy implements traits and AST transformations.
 > 
 > 
 >
-> — [Groovy Docs](http://docs.groovy-lang.org/next/html/documentation/core-traits.html#_compatibility_with_ast_transformations)
+> — [Groovy Docs](https://docs.groovy-lang.org/next/html/documentation/core-traits.html#_compatibility_with_ast_transformations)
 
 
 ## Groovy version compatibility

@@ -7398,7 +7398,7 @@ Integration with the [Tapestry5](https://tapestry.apache.org/tapestry5/) IoC con
 
 ### Unitils Module
 
-Integration with the [Unitils](https://www.unitils.org/) library. Please add dependency [`org.spockframework:spock-unitils`](https://search.maven.org/artifact/org.spockframework/spock-unitils) to your project. For examples see the specs in the
+Integration with the [Unitils](https://unitils.sourceforge.net/) library. Please add dependency [`org.spockframework:spock-unitils`](https://search.maven.org/artifact/org.spockframework/spock-unitils) to your project. For examples see the specs in the
 [codebase](https://github.com/spockframework/spock/tree/master/spock-unitils/src/test/groovy/org/spockframework/unitils).
 
 

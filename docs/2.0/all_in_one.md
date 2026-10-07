@@ -4,8 +4,8 @@
 
 Spock is a testing and specification framework for Java and Groovy applications. What makes it stand out from the crowd
 is its beautiful and highly expressive specification language. Thanks to its JUnit runner, Spock is compatible with most
-IDEs, build tools, and continuous integration servers. Spock is inspired from [JUnit](http://junit.org/),
-[jMock](http://www.jmock.org/), [RSpec](http://rspec.info/), [Groovy](http://groovy-lang.org/), [Scala](http://scala-lang.org/),
+IDEs, build tools, and continuous integration servers. Spock is inspired from [JUnit](https://junit.org/),
+[jMock](https://www.jmock.org/), [RSpec](https://rspec.info/), [Groovy](https://groovy-lang.org/), [Scala](https://scala-lang.org/),
 [Vulcans](https://en.wikipedia.org/wiki/Vulcan_(Star_Trek)), and other fascinating life forms.
 
 
@@ -16,9 +16,9 @@ It’s really easy to get started with Spock. This section shows you how.
 
 ### Spock Web Console
 
-[Spock Web Console](http://webconsole.spockframework.org) is a website that allows you to instantly view, edit, run, and
+[Spock Web Console](https://webconsole.spockframework.org) is a website that allows you to instantly view, edit, run, and
 even publish Spock specifications. It is the perfect place to toy around with Spock without making any commitments.
-So why not run [Hello, Spock!](http://webconsole.spockframework.org/edit/9001) right away?
+So why not run [Hello, Spock!](https://webconsole.spockframework.org/edit/9001) right away?
 
 
 ### Spock Example Project
@@ -34,17 +34,17 @@ running in Eclipse or IDEA with a single command. See the README for detailed in
 This chapter assumes that you have a basic knowledge of Groovy and unit testing. If you are a Java developer but haven’t
 heard about Groovy, don’t worry - Groovy will feel very familiar to you! In fact, one of Groovy’s main design goals is to
 be *the* scripting language alongside Java. So just follow along and consult the
-[Groovy documentation](http://groovy-lang.org/documentation.html) whenever you feel like it.
+[Groovy documentation](https://groovy-lang.org/documentation.html) whenever you feel like it.
 
 
 The goals of this chapter are to teach you enough Spock to write real-world Spock specifications, and to
 whet your appetite for more.
 
 
-To learn more about Groovy, go to http://groovy-lang.org/.
+To learn more about Groovy, go to https://groovy-lang.org/.
 
 
-To learn more about unit testing, go to http://en.wikipedia.org/wiki/Unit_testing.
+To learn more about unit testing, go to https://en.wikipedia.org/wiki/Unit_testing.
 
 
 ### Terminology
@@ -441,7 +441,7 @@ to describe methods with side effects, and `expect` to describe purely functiona
 
 
 > [!TIP]
-> Leverage [Groovy JDK](http://docs.groovy-lang.org/docs/latest/html/groovy-jdk/) methods like `any()` and `every()`
+> Leverage [Groovy JDK](https://docs.groovy-lang.org/docs/latest/html/groovy-jdk/) methods like `any()` and `every()`
 > to create more expressive and succinct conditions.
 
 
@@ -1614,13 +1614,13 @@ collaborators, and can generate mock implementations of collaborators that verif
 **How Are Mock Implementations Generated?**
 
 Like most Java mocking frameworks, Spock uses
-[JDK dynamic proxies](http://docs.oracle.com/javase/7/docs/api/java/lang/reflect/Proxy.html) (when mocking interfaces)
-and [Byte Buddy](http://bytebuddy.net/) or [CGLIB](https://github.com/cglib/cglib) proxies (when mocking classes) to generate mock implementations at runtime.
+[JDK dynamic proxies](https://docs.oracle.com/javase/7/docs/api/java/lang/reflect/Proxy.html) (when mocking interfaces)
+and [Byte Buddy](https://bytebuddy.net/) or [CGLIB](https://github.com/cglib/cglib) proxies (when mocking classes) to generate mock implementations at runtime.
 Compared to implementations based on Groovy meta-programming, this has the advantage that it also works for testing Java code.
 
 
-The Java world has no shortage of popular and mature mocking frameworks: [JMock](http://www.jmock.org/),
-[EasyMock](http://www.easymock.org), [Mockito](http://mockito.org/), to name just a few.
+The Java world has no shortage of popular and mature mocking frameworks: [JMock](https://www.jmock.org/),
+[EasyMock](https://www.easymock.org), [Mockito](https://mockito.org/), to name just a few.
 Although each of these tools can be used together with Spock, we decided to roll our own mocking framework,
 tightly integrated with Spock’s specification language. This decision was driven by the desire to leverage all of
 Groovy’s capabilities to make interaction-based tests easier to write, more readable, and ultimately more fun.
@@ -2673,8 +2673,8 @@ Subscriber subscriber = GroovyMock()
 
 Usually, Groovy mocks need to be injected into the code under specification just like regular mocks.
 However, when a Groovy mock is created as *global*, it automagically replaces all real instances
-of the mocked type for the duration of the feature method: (Note: You may know this behavior from Groovy’s [MockFor)(http://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/MockFor.html) and
-[StubFor](http://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/StubFor.html) facilities.]
+of the mocked type for the duration of the feature method: (Note: You may know this behavior from Groovy’s [MockFor)(https://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/MockFor.html) and
+[StubFor](https://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/StubFor.html) facilities.]
 
 
 ```groovy
@@ -2829,13 +2829,13 @@ mock.nature == MockNature.MOCK
 If you would like to dive deeper into interaction-based testing, we recommend the following resources:
 
 
-**[Endo-Testing: Unit Testing with Mock Objects](http://www.ccs.neu.edu/research/demeter/related-work/extreme-programming/MockObjectsFinal.PDF)**
+**[Endo-Testing: Unit Testing with Mock Objects](https://www.ccs.neu.edu/research/demeter/related-work/extreme-programming/MockObjectsFinal.PDF)**
 : Paper from the XP2000 conference that introduces the concept of mock objects.
 
-**[Mock Roles, not Objects](http://www.jmock.org/oopsla2004.pdf)**
+**[Mock Roles, not Objects](https://www.jmock.org/oopsla2004.pdf)**
 : Paper from the OOPSLA2004 conference that explains how to do mocking *right*.
 
-**[Mocks Aren’t Stubs](http://martinfowler.com/articles/mocksArentStubs.html)**
+**[Mocks Aren’t Stubs](https://martinfowler.com/articles/mocksArentStubs.html)**
 : Martin Fowler’s take on mocking.
 
 **[Growing Object-Oriented Software Guided by Tests](http://www.growing-object-oriented-software.com)**
@@ -3530,13 +3530,13 @@ To link to one or more references to external information related to a specifica
 ```groovy
 @See("http://spockframework.org/spec")
 class SeeDocSpec extends Specification {
-  @See(["http://en.wikipedia.org/wiki/Levenshtein_distance", "http://www.levenshtein.net/"])
+  @See(["https://en.wikipedia.org/wiki/Levenshtein_distance", "https://www.levenshtein.net/"])
   def "Even more information is available on the feature"() {
     expect: true
   }
 
   @See("http://www.levenshtein.de/")
-  @See(["http://en.wikipedia.org/wiki/Levenshtein_distance", "http://www.levenshtein.net/"])
+  @See(["https://en.wikipedia.org/wiki/Levenshtein_distance", "https://www.levenshtein.net/"])
   def "And even more information is available on the feature"() {
     expect: true
   }
@@ -4863,7 +4863,7 @@ The module is required for:
 
 ### Guice Module
 
-Integration with the [Guice](http://code.google.com/p/google-guice/) IoC container. For examples see the specs in the
+Integration with the [Guice](https://code.google.com/p/google-guice/) IoC container. For examples see the specs in the
 [codebase](https://github.com/spockframework/spock/tree/master/spock-guice/src/test/groovy/org/spockframework/guice).
 
 
@@ -4872,7 +4872,7 @@ With Spock 1.2+ detached mocks are automatically attached to the `Specification`
 
 ### Spring Module
 
-The Spring module enables integration with [Spring TestContext Framework](http://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework).
+The Spring module enables integration with [Spring TestContext Framework](https://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework).
 It supports the following spring annotations `@ContextConfiguration` and `@ContextHierarchy`. Furthermore, it supports the meta-annotation `@BootstrapWith` and so any annotation that is annotated with `@BootstrapWith` will also work, such as `@SpringBootTest`, `@WebMvcTest`.
 
 
@@ -5187,13 +5187,13 @@ Refer to javadoc of `org.spockframework.spring.EnableSharedInjection` for furthe
 
 ### Tapestry Module
 
-Integration with the [Tapestry5](http://tapestry.apache.org/tapestry5/) IoC container. For examples see the specs in the
+Integration with the [Tapestry5](https://tapestry.apache.org/tapestry5/) IoC container. For examples see the specs in the
 [codebase](https://github.com/spockframework/spock/tree/master/spock-tapestry/src/test/groovy/org/spockframework/tapestry).
 
 
 ### Unitils Module
 
-Integration with the [Unitils](http://www.unitils.org/) library. For examples see the specs in the
+Integration with the [Unitils](https://unitils.sourceforge.net/) library. For examples see the specs in the
 [codebase](https://github.com/spockframework/spock/tree/master/spock-unitils/src/test/groovy/org/spockframework/unitils).
 
 
@@ -6033,7 +6033,7 @@ that now is the time to join the party!
 
 A special thanks goes to all our tireless speakers and supporters, only a few of which are listed here: Andres Almiray,
 Cédric Champeau, David Dawson, Rob Fletcher, Sean Gilligan, Ken Kousen, Guillaume Laforge,
-[NFJS Tour](http://www.nofluffjuststuff.com/home/main), Graeme Rocher, Baruch Sadogursky, Odin Hole Standal,
+[NFJS Tour](https://www.nofluffjuststuff.com/home/main), Graeme Rocher, Baruch Sadogursky, Odin Hole Standal,
 Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.
 
 
@@ -6042,14 +6042,14 @@ Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.
 - [17 contributors](#_contributors), [21 resolved issues](#_resolved_issues), [18 merged pull requests](#_merged_pull_requests),
 [some ongoing work](#_ongoing_work). No ground-breaking new features, but significant improvements and fixes across the board.
 - Minimum runtime requirements raised to JRE 1.6 and Groovy 2.0.
-- Improved and restyled reference documentation at http://docs.spockframework.org. Generated with
-[Asciidoctor](http://asciidoctor.org/) (what else?).
+- Improved and restyled reference documentation at https://docs.spockframework.org. Generated with
+[Asciidoctor](https://asciidoctor.org/) (what else?).
 - Maven plugin removed. Just let Maven Surefire run your Spock specs like your JUnit tests
 (see [spock-example](http://examples.spockframework.org) project).
 - Official support for Java 1.8, Groovy 2.3 and Groovy 2.4. Make sure to pick the `groovy-2.0` binaries for Groovy
 2.0/2.1/2.2, `groovy-2.3` binaries for Groovy 2.3, and `groovy-2.4` binaries for Groovy 2.4 and higher.
 - Improved infrastructure to allow for easier community involvement: Switch to
-[GitHub issue tracker](http://issues.spockframework.org), [Windows](http://winbuilds.spockframework.org) and
+[GitHub issue tracker](https://issues.spockframework.org), [Windows](http://winbuilds.spockframework.org) and
 [Linux](http://builds.spockframework.org) CI builds, pull requests automatically tested, all development on `master`
 branch (bye-bye `groovy-x.y` branches!).
 
@@ -6058,7 +6058,7 @@ branch (bye-bye `groovy-x.y` branches!).
 
 - Follow our new [Twitter account](http://twitter.spockframework.org)
 - Try these [new third-party extensions](#_new_third_party_extensions)
-- Check out the upcoming [Java Testing with Spock](http://manning.com/kapelonis/) book from Manning
+- Check out the upcoming [Java Testing with Spock](https://manning.com/kapelonis/) book from Manning
 
 
 #### What’s Up Next?
@@ -6168,7 +6168,7 @@ These awesome extensions have been published or updated:
 These great features didn’t make it into this release (but hopefully the next!):
 
 
-- [Spock reports](http://spockframework.github.io/spock/sampleReports/Ninja%20Commander.html)
+- [Spock reports](https://spockframework.github.io/spock/sampleReports/Ninja%20Commander.html)
 - [Render exceptions in conditions as condition failure](https://github.com/spockframework/spock/pull/49)
 - [Soft asserts: check all then throw all failures](https://github.com/spockframework/spock/pull/50)
 - [Detached mocks](https://github.com/spockframework/spock/pull/17)
@@ -6183,10 +6183,10 @@ Spock snapshots are now available from https://oss.sonatype.org/content/reposito
 
 #### New Reference Documentation
 
-The new Spock reference documentation is available at http://docs.spockframework.org.
+The new Spock reference documentation is available at https://docs.spockframework.org.
 It will gradually replace the documentation at http://wiki.spockframework.org.
-Each Spock version is documented separately (e.g. http://docs.spockframework.org/en/spock-0.7-groovy-1.8).
-Documentation for the latest Spock snapshot is at http://docs.spockframework.org/en/latest.
+Each Spock version is documented separately (e.g. https://docs.spockframework.org/en/spock-0.7-groovy-1.8).
+Documentation for the latest Spock snapshot is at https://docs.spockframework.org/en/latest.
 As of Spock 0.7, the chapters on [Data Driven Testing](#data-driven-testing) and
 [Interaction Based Testing](#interaction-based-testing) are complete.
 
@@ -6488,7 +6488,7 @@ Caused by: java.io.FileNotFoundException: ...
 #### `HamcrestSupport.expect`
 
 Class `spock.util.matcher.HamcrestSupport` has a new `expect` method that makes
-[Hamcrest](http://code.google.com/p/hamcrest/) assertions read better in then-blocks:
+[Hamcrest](https://code.google.com/p/hamcrest/) assertions read better in then-blocks:
 
 
 ```groovy
@@ -6531,7 +6531,7 @@ foo.bar() >> { throw new IOException() } >>> [1, 2, 3] >> { throw new RuntimeExc
 It’s now possible to match any argument list (including the empty list) with `foo.bar(*_)`.
 
 
-Method arguments can now be constrained with [Hamcrest](http://code.google.com/p/hamcrest/) matchers:
+Method arguments can now be constrained with [Hamcrest](https://code.google.com/p/hamcrest/) matchers:
 
 
 ```groovy
@@ -6577,7 +6577,7 @@ as an addition or alternative to Spock’s own fixture methods. This was particu
 
 #### Tapestry 5.3 Support
 
-Thanks to a contribution from [Howard Lewis Ship](http://howardlewisship.com/), the Tapestry module is now compatible
+Thanks to a contribution from [Howard Lewis Ship](https://howardlewisship.com/), the Tapestry module is now compatible
 with Tapestry 5.3. Older 5.x versions are still supported.
 
 
@@ -6670,7 +6670,7 @@ testing classes (e.g. UnitSpec). For integration testing, IntegrationSpec must s
 
 #### IntelliJ IDEA Integration
 
-The folks from [JetBrains](http://www.jetbrains.com) have added a few handy features around data tables. Data tables
+The folks from [JetBrains](https://www.jetbrains.com) have added a few handy features around data tables. Data tables
 will now be layed out automatically when reformatting code. Data variables are no longer shown as "unknown" and have
 their types inferred from the values in the table (!).
 
@@ -6959,7 +6959,7 @@ based syntax. See [Improved `@Unroll`](#improved-unroll-0.6) for recent improvem
 > This only affects users moving from the Groovy 1.7 to the 1.8 or 2.0 variant.
 
 
-Spock offers a very neat syntax for using [Hamcrest](http://code.google.com/p/hamcrest/) matchers:
+Spock offers a very neat syntax for using [Hamcrest](https://code.google.com/p/hamcrest/) matchers:
 
 
 ```groovy
@@ -7141,7 +7141,7 @@ This is due to how groovy implements traits and AST transformations.
 > 
 > 
 >
-> — [Groovy Docs](http://docs.groovy-lang.org/next/html/documentation/core-traits.html#_compatibility_with_ast_transformations)
+> — [Groovy Docs](https://docs.groovy-lang.org/next/html/documentation/core-traits.html#_compatibility_with_ast_transformations)
 
 
 ### Groovy version compatibility

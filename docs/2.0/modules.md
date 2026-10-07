@@ -18,7 +18,7 @@ The module is required for:
 
 ## Guice Module
 
-Integration with the [Guice](http://code.google.com/p/google-guice/) IoC container. For examples see the specs in the
+Integration with the [Guice](https://code.google.com/p/google-guice/) IoC container. For examples see the specs in the
 [codebase](https://github.com/spockframework/spock/tree/master/spock-guice/src/test/groovy/org/spockframework/guice).
 
 
@@ -27,7 +27,7 @@ With Spock 1.2+ detached mocks are automatically attached to the `Specification`
 
 ## Spring Module
 
-The Spring module enables integration with [Spring TestContext Framework](http://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework).
+The Spring module enables integration with [Spring TestContext Framework](https://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework).
 It supports the following spring annotations `@ContextConfiguration` and `@ContextHierarchy`. Furthermore, it supports the meta-annotation `@BootstrapWith` and so any annotation that is annotated with `@BootstrapWith` will also work, such as `@SpringBootTest`, `@WebMvcTest`.
 
 
@@ -342,13 +342,13 @@ Refer to javadoc of `org.spockframework.spring.EnableSharedInjection` for furthe
 
 ## Tapestry Module
 
-Integration with the [Tapestry5](http://tapestry.apache.org/tapestry5/) IoC container. For examples see the specs in the
+Integration with the [Tapestry5](https://tapestry.apache.org/tapestry5/) IoC container. For examples see the specs in the
 [codebase](https://github.com/spockframework/spock/tree/master/spock-tapestry/src/test/groovy/org/spockframework/tapestry).
 
 
 ## Unitils Module
 
-Integration with the [Unitils](http://www.unitils.org/) library. For examples see the specs in the
+Integration with the [Unitils](https://unitils.sourceforge.net/) library. For examples see the specs in the
 [codebase](https://github.com/spockframework/spock/tree/master/spock-unitils/src/test/groovy/org/spockframework/unitils).
 
 

@@ -3,17 +3,17 @@
 This chapter assumes that you have a basic knowledge of Groovy and unit testing. If you are a Java developer but haven’t
 heard about Groovy, don’t worry - Groovy will feel very familiar to you! In fact, one of Groovy’s main design goals is to
 be *the* scripting language alongside Java. So just follow along and consult the
-[Groovy documentation](http://groovy-lang.org/documentation.html) whenever you feel like it.
+[Groovy documentation](https://groovy-lang.org/documentation.html) whenever you feel like it.
 
 
 The goals of this chapter are to teach you enough Spock to write real-world Spock specifications, and to
 whet your appetite for more.
 
 
-To learn more about Groovy, go to http://groovy-lang.org/.
+To learn more about Groovy, go to https://groovy-lang.org/.
 
 
-To learn more about unit testing, go to http://en.wikipedia.org/wiki/Unit_testing.
+To learn more about unit testing, go to https://en.wikipedia.org/wiki/Unit_testing.
 
 
 ## Terminology
@@ -397,7 +397,7 @@ to describe methods with side effects, and `expect` to describe purely functiona
 
 
 > [!TIP]
-> Leverage [Groovy JDK](http://docs.groovy-lang.org/docs/latest/html/groovy-jdk/) methods like `any()` and `every()`
+> Leverage [Groovy JDK](https://docs.groovy-lang.org/docs/latest/html/groovy-jdk/) methods like `any()` and `every()`
 > to create more expressive and succinct conditions.
 
 

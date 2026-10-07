@@ -430,8 +430,8 @@
 <div class="paragraph">
 <p>Spock is a testing and specification framework for Java and Groovy applications. What makes it stand out from the crowd
 is its beautiful and highly expressive specification language. Thanks to its JUnit runner, Spock is compatible with most
-IDEs, build tools, and continuous integration servers. Spock is inspired from <a href="http://junit.org/">JUnit</a>,
-<a href="http://www.jmock.org/">jMock</a>, <a href="http://rspec.info/">RSpec</a>, <a href="http://groovy-lang.org/">Groovy</a>, <a href="http://scala-lang.org/">Scala</a>,
+IDEs, build tools, and continuous integration servers. Spock is inspired from <a href="https://junit.org/">JUnit</a>,
+<a href="https://www.jmock.org/">jMock</a>, <a href="https://rspec.info/">RSpec</a>, <a href="https://groovy-lang.org/">Groovy</a>, <a href="https://scala-lang.org/">Scala</a>,
 <a href="https://en.wikipedia.org/wiki/Vulcan_(Star_Trek)">Vulcans</a>, and other fascinating life forms.</p>
 </div>
 </div>
@@ -468,17 +468,17 @@ running in Eclipse or IDEA with a single command. See the README for detailed in
 <p>This chapter assumes that you have a basic knowledge of Groovy and unit testing. If you are a Java developer but haven&#8217;t
 heard about Groovy, don&#8217;t worry - Groovy will feel very familiar to you! In fact, one of Groovy&#8217;s main design goals is to
 be <em>the</em> scripting language alongside Java. So just follow along and consult the
-<a href="http://groovy-lang.org/documentation.html">Groovy documentation</a> whenever you feel like it.</p>
+<a href="https://groovy-lang.org/documentation.html">Groovy documentation</a> whenever you feel like it.</p>
 </div>
 <div class="paragraph">
 <p>The goals of this chapter are to teach you enough Spock to write real-world Spock specifications, and to
 whet your appetite for more.</p>
 </div>
 <div class="paragraph">
-<p>To learn more about Groovy, go to <a href="http://groovy-lang.org/" class="bare">http://groovy-lang.org/</a>.</p>
+<p>To learn more about Groovy, go to <a href="https://groovy-lang.org/" class="bare">https://groovy-lang.org/</a>.</p>
 </div>
 <div class="paragraph">
-<p>To learn more about unit testing, go to <a href="http://en.wikipedia.org/wiki/Unit_testing" class="bare">http://en.wikipedia.org/wiki/Unit_testing</a>.</p>
+<p>To learn more about unit testing, go to <a href="https://en.wikipedia.org/wiki/Unit_testing" class="bare">https://en.wikipedia.org/wiki/Unit_testing</a>.</p>
 </div>
 <div class="sect2">
 <h3 id="_terminology"><a class="anchor" href="#_terminology"></a><a class="link" href="#_terminology">Terminology</a></h3>
@@ -936,7 +936,7 @@ to describe methods with side effects, and <code>expect</code> to describe purel
 <div class="title">Tip</div>
 </td>
 <td class="content">
-Leverage <a href="http://docs.groovy-lang.org/docs/latest/html/groovy-jdk/">Groovy JDK</a> methods like <code>any()</code> and <code>every()</code>
+Leverage <a href="https://docs.groovy-lang.org/docs/latest/html/groovy-jdk/">Groovy JDK</a> methods like <code>any()</code> and <code>every()</code>
 to create more expressive and succinct conditions.
 </td>
 </tr>
@@ -2431,15 +2431,15 @@ collaborators, and can generate mock implementations of collaborators that verif
 <div class="title">How Are Mock Implementations Generated?</div>
 <div class="paragraph">
 <p>Like most Java mocking frameworks, Spock uses
-<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/reflect/Proxy.html">JDK dynamic proxies</a> (when mocking interfaces)
-and <a href="http://bytebuddy.net/">Byte Buddy</a> or <a href="https://github.com/cglib/cglib">CGLIB</a> proxies (when mocking classes) to generate mock implementations at runtime.
+<a href="https://docs.oracle.com/javase/7/docs/api/java/lang/reflect/Proxy.html">JDK dynamic proxies</a> (when mocking interfaces)
+and <a href="https://bytebuddy.net/">Byte Buddy</a> or <a href="https://github.com/cglib/cglib">CGLIB</a> proxies (when mocking classes) to generate mock implementations at runtime.
 Compared to implementations based on Groovy meta-programming, this has the advantage that it also works for testing Java code.</p>
 </div>
 </div>
 </div>
 <div class="paragraph">
-<p>The Java world has no shortage of popular and mature mocking frameworks: <a href="http://www.jmock.org/">JMock</a>,
-<a href="http://www.easymock.org">EasyMock</a>, <a href="http://mockito.org/">Mockito</a>, to name just a few.
+<p>The Java world has no shortage of popular and mature mocking frameworks: <a href="https://www.jmock.org/">JMock</a>,
+<a href="https://www.easymock.org">EasyMock</a>, <a href="https://mockito.org/">Mockito</a>, to name just a few.
 Although each of these tools can be used together with Spock, we decided to roll our own mocking framework,
 tightly integrated with Spock&#8217;s specification language. This decision was driven by the desire to leverage all of
 Groovy&#8217;s capabilities to make interaction-based tests easier to write, more readable, and ultimately more fun.
@@ -3811,15 +3811,15 @@ mock.nature == MockNature.MOCK</code></pre>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><a href="http://www.ccs.neu.edu/research/demeter/related-work/extreme-programming/MockObjectsFinal.PDF">Endo-Testing: Unit Testing with Mock Objects</a></dt>
+<dt class="hdlist1"><a href="https://www.ccs.neu.edu/research/demeter/related-work/extreme-programming/MockObjectsFinal.PDF">Endo-Testing: Unit Testing with Mock Objects</a></dt>
 <dd>
 <p>Paper from the XP2000 conference that introduces the concept of mock objects.</p>
 </dd>
-<dt class="hdlist1"><a href="http://www.jmock.org/oopsla2004.pdf">Mock Roles, not Objects</a></dt>
+<dt class="hdlist1"><a href="https://www.jmock.org/oopsla2004.pdf">Mock Roles, not Objects</a></dt>
 <dd>
 <p>Paper from the OOPSLA2004 conference that explains how to do mocking <em>right</em>.</p>
 </dd>
-<dt class="hdlist1"><a href="http://martinfowler.com/articles/mocksArentStubs.html">Mocks Aren&#8217;t Stubs</a></dt>
+<dt class="hdlist1"><a href="https://martinfowler.com/articles/mocksArentStubs.html">Mocks Aren&#8217;t Stubs</a></dt>
 <dd>
 <p>Martin Fowler&#8217;s take on mocking.</p>
 </dd>
@@ -4677,13 +4677,13 @@ So that bar
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@See</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://spockframework.org/spec</span><span class="delimiter">&quot;</span></span>)
 <span class="type">class</span> <span class="class">SeeDocSpec</span> <span class="directive">extends</span> Specification {
-  <span class="annotation">@See</span>([<span class="string"><span class="delimiter">&quot;</span><span class="content">http://en.wikipedia.org/wiki/Levenshtein_distance</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.levenshtein.net/</span><span class="delimiter">&quot;</span></span>])
+  <span class="annotation">@See</span>([<span class="string"><span class="delimiter">&quot;</span><span class="content">https://en.wikipedia.org/wiki/Levenshtein_distance</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">https://www.levenshtein.net/</span><span class="delimiter">&quot;</span></span>])
   <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Even more information is available on the feature</span><span class="delimiter">&quot;</span></span>() {
     <span class="key">expect</span>: <span class="predefined-constant">true</span>
   }
 
   <span class="annotation">@See</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.levenshtein.de/</span><span class="delimiter">&quot;</span></span>)
-  <span class="annotation">@See</span>([<span class="string"><span class="delimiter">&quot;</span><span class="content">http://en.wikipedia.org/wiki/Levenshtein_distance</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.levenshtein.net/</span><span class="delimiter">&quot;</span></span>])
+  <span class="annotation">@See</span>([<span class="string"><span class="delimiter">&quot;</span><span class="content">https://en.wikipedia.org/wiki/Levenshtein_distance</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">https://www.levenshtein.net/</span><span class="delimiter">&quot;</span></span>])
   <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">And even more information is available on the feature</span><span class="delimiter">&quot;</span></span>() {
     <span class="key">expect</span>: <span class="predefined-constant">true</span>
   }
@@ -5796,7 +5796,7 @@ This module does its best to support old features from JUnit 4, however, users a
 <div class="sect2">
 <h3 id="_guice_module"><a class="anchor" href="#_guice_module"></a><a class="link" href="#_guice_module">Guice Module</a></h3>
 <div class="paragraph">
-<p>Integration with the <a href="http://code.google.com/p/google-guice/">Guice</a> IoC container. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-guice"><code>org.spockframework:spock-guice</code></a> to your project. For examples see the specs in the
+<p>Integration with the <a href="https://code.google.com/p/google-guice/">Guice</a> IoC container. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-guice"><code>org.spockframework:spock-guice</code></a> to your project. For examples see the specs in the
 <a href="https://github.com/spockframework/spock/tree/master/spock-guice/src/test/groovy/org/spockframework/guice">codebase</a>.</p>
 </div>
 <div class="paragraph">
@@ -5806,7 +5806,7 @@ This module does its best to support old features from JUnit 4, however, users a
 <div class="sect2">
 <h3 id="_spring_module"><a class="anchor" href="#_spring_module"></a><a class="link" href="#_spring_module">Spring Module</a></h3>
 <div class="paragraph">
-<p>The Spring module enables integration with <a href="http://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework">Spring TestContext Framework</a>.
+<p>The Spring module enables integration with <a href="https://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework">Spring TestContext Framework</a>.
 It supports the following spring annotations <code>@ContextConfiguration</code> and <code>@ContextHierarchy</code>. Furthermore, it supports the meta-annotation <code>@BootstrapWith</code> and so any annotation that is annotated with <code>@BootstrapWith</code> will also work, such as <code>@SpringBootTest</code>, <code>@WebMvcTest</code>. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-spring"><code>org.spockframework:spock-spring</code></a> to your project.</p>
 </div>
 <div class="sect3">
@@ -6176,14 +6176,14 @@ Refer to javadoc of <code>org.spockframework.spring.EnableSharedInjection</code>
 <div class="sect2">
 <h3 id="_tapestry_module"><a class="anchor" href="#_tapestry_module"></a><a class="link" href="#_tapestry_module">Tapestry Module</a></h3>
 <div class="paragraph">
-<p>Integration with the <a href="http://tapestry.apache.org/tapestry5/">Tapestry5</a> IoC container. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-tapestry"><code>org.spockframework:spock-tapestry</code></a> to your project. For examples see the specs in the
+<p>Integration with the <a href="https://tapestry.apache.org/tapestry5/">Tapestry5</a> IoC container. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-tapestry"><code>org.spockframework:spock-tapestry</code></a> to your project. For examples see the specs in the
 <a href="https://github.com/spockframework/spock/tree/master/spock-tapestry/src/test/groovy/org/spockframework/tapestry">codebase</a>.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_unitils_module"><a class="anchor" href="#_unitils_module"></a><a class="link" href="#_unitils_module">Unitils Module</a></h3>
 <div class="paragraph">
-<p>Integration with the <a href="http://www.unitils.org/">Unitils</a> library. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-unitils"><code>org.spockframework:spock-unitils</code></a> to your project. For examples see the specs in the
+<p>Integration with the <a href="https://unitils.sourceforge.net/">Unitils</a> library. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-unitils"><code>org.spockframework:spock-unitils</code></a> to your project. For examples see the specs in the
 <a href="https://github.com/spockframework/spock/tree/master/spock-unitils/src/test/groovy/org/spockframework/unitils">codebase</a>.</p>
 </div>
 </div>
@@ -7699,7 +7699,7 @@ that now is the time to join the party!</p>
 <div class="paragraph">
 <p>A special thanks goes to all our tireless speakers and supporters, only a few of which are listed here: Andres Almiray,
 Cédric Champeau, David Dawson, Rob Fletcher, Sean Gilligan, Ken Kousen, Guillaume Laforge,
-<a href="http://www.nofluffjuststuff.com/home/main">NFJS Tour</a>, Graeme Rocher, Baruch Sadogursky, Odin Hole Standal,
+<a href="https://www.nofluffjuststuff.com/home/main">NFJS Tour</a>, Graeme Rocher, Baruch Sadogursky, Odin Hole Standal,
 Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.</p>
 </div>
 <div class="sect3">
@@ -7714,8 +7714,8 @@ Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.</p>
 <p>Minimum runtime requirements raised to JRE 1.6 and Groovy 2.0.</p>
 </li>
 <li>
-<p>Improved and restyled reference documentation at <a href="http://docs.spockframework.org" class="bare">http://docs.spockframework.org</a>. Generated with
-<a href="http://asciidoctor.org/">Asciidoctor</a> (what else?).</p>
+<p>Improved and restyled reference documentation at <a href="https://docs.spockframework.org" class="bare">https://docs.spockframework.org</a>. Generated with
+<a href="https://asciidoctor.org/">Asciidoctor</a> (what else?).</p>
 </li>
 <li>
 <p>Maven plugin removed. Just let Maven Surefire run your Spock specs like your JUnit tests
@@ -7727,7 +7727,7 @@ Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.</p>
 </li>
 <li>
 <p>Improved infrastructure to allow for easier community involvement: Switch to
-<a href="http://issues.spockframework.org">GitHub issue tracker</a>, <a href="http://winbuilds.spockframework.org">Windows</a> and
+<a href="https://issues.spockframework.org">GitHub issue tracker</a>, <a href="http://winbuilds.spockframework.org">Windows</a> and
 <a href="http://builds.spockframework.org">Linux</a> CI builds, pull requests automatically tested, all development on <code>master</code>
 branch (bye-bye <code>groovy-x.y</code> branches!).</p>
 </li>
@@ -7745,7 +7745,7 @@ branch (bye-bye <code>groovy-x.y</code> branches!).</p>
 <p>Try these <a href="#_new_third_party_extensions">new third-party extensions</a></p>
 </li>
 <li>
-<p>Check out the upcoming <a href="http://manning.com/kapelonis/">Java Testing with Spock</a> book from Manning</p>
+<p>Check out the upcoming <a href="https://manning.com/kapelonis/">Java Testing with Spock</a> book from Manning</p>
 </li>
 </ul>
 </div>
@@ -7987,7 +7987,7 @@ finally shooting for a professional logo and website. Stay tuned for announcemen
 <div class="ulist">
 <ul>
 <li>
-<p><a href="http://spockframework.github.io/spock/sampleReports/Ninja%20Commander.html">Spock reports</a></p>
+<p><a href="https://spockframework.github.io/spock/sampleReports/Ninja%20Commander.html">Spock reports</a></p>
 </li>
 <li>
 <p><a href="https://github.com/spockframework/spock/pull/49">Render exceptions in conditions as condition failure</a></p>
@@ -8013,10 +8013,10 @@ finally shooting for a professional logo and website. Stay tuned for announcemen
 <div class="sect3">
 <h4 id="_new_reference_documentation"><a class="anchor" href="#_new_reference_documentation"></a><a class="link" href="#_new_reference_documentation">New Reference Documentation</a></h4>
 <div class="paragraph">
-<p>The new Spock reference documentation is available at <a href="http://docs.spockframework.org" class="bare">http://docs.spockframework.org</a>.
+<p>The new Spock reference documentation is available at <a href="https://docs.spockframework.org" class="bare">https://docs.spockframework.org</a>.
 It will gradually replace the documentation at <a href="http://wiki.spockframework.org" class="bare">http://wiki.spockframework.org</a>.
-Each Spock version is documented separately (e.g. <a href="http://docs.spockframework.org/en/spock-0.7-groovy-1.8" class="bare">http://docs.spockframework.org/en/spock-0.7-groovy-1.8</a>).
-Documentation for the latest Spock snapshot is at <a href="http://docs.spockframework.org/en/latest" class="bare">http://docs.spockframework.org/en/latest</a>.
+Each Spock version is documented separately (e.g. <a href="https://docs.spockframework.org/en/spock-0.7-groovy-1.8" class="bare">https://docs.spockframework.org/en/spock-0.7-groovy-1.8</a>).
+Documentation for the latest Spock snapshot is at <a href="https://docs.spockframework.org/en/latest" class="bare">https://docs.spockframework.org/en/latest</a>.
 As of Spock 0.7, the chapters on <a href="#data-driven-testing">Data Driven Testing</a> and
 <a href="#interaction-based-testing">Interaction Based Testing</a> are complete.</p>
 </div>
@@ -8333,7 +8333,7 @@ Caused by: java.io.FileNotFoundException: ...</pre>
 <h4 id="_hamcrestsupport_expect"><a class="anchor" href="#_hamcrestsupport_expect"></a><a class="link" href="#_hamcrestsupport_expect"><code>HamcrestSupport.expect</code></a></h4>
 <div class="paragraph">
 <p>Class <code>spock.util.matcher.HamcrestSupport</code> has a new <code>expect</code> method that makes
-<a href="http://code.google.com/p/hamcrest/">Hamcrest</a> assertions read better in then-blocks:</p>
+<a href="https://code.google.com/p/hamcrest/">Hamcrest</a> assertions read better in then-blocks:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -8380,7 +8380,7 @@ return the numbers one, two, and three on the next calls, and throw a <code>Runt
 <p>It&#8217;s now possible to match any argument list (including the empty list) with <code>foo.bar(*_)</code>.</p>
 </div>
 <div class="paragraph">
-<p>Method arguments can now be constrained with <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> matchers:</p>
+<p>Method arguments can now be constrained with <a href="https://code.google.com/p/hamcrest/">Hamcrest</a> matchers:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -8430,7 +8430,7 @@ as an addition or alternative to Spock&#8217;s own fixture methods. This was par
 <div class="sect3">
 <h4 id="_tapestry_5_3_support"><a class="anchor" href="#_tapestry_5_3_support"></a><a class="link" href="#_tapestry_5_3_support">Tapestry 5.3 Support</a></h4>
 <div class="paragraph">
-<p>Thanks to a contribution from <a href="http://howardlewisship.com/">Howard Lewis Ship</a>, the Tapestry module is now compatible
+<p>Thanks to a contribution from <a href="https://howardlewisship.com/">Howard Lewis Ship</a>, the Tapestry module is now compatible
 with Tapestry 5.3. Older 5.x versions are still supported.</p>
 </div>
 </div>
@@ -8531,7 +8531,7 @@ testing classes (e.g. UnitSpec). For integration testing, IntegrationSpec must s
 <div class="sect3">
 <h4 id="_intellij_idea_integration"><a class="anchor" href="#_intellij_idea_integration"></a><a class="link" href="#_intellij_idea_integration">IntelliJ IDEA Integration</a></h4>
 <div class="paragraph">
-<p>The folks from <a href="http://www.jetbrains.com">JetBrains</a> have added a few handy features around data tables. Data tables
+<p>The folks from <a href="https://www.jetbrains.com">JetBrains</a> have added a few handy features around data tables. Data tables
 will now be layed out automatically when reformatting code. Data variables are no longer shown as "unknown" and have
 their types inferred from the values in the table (!).</p>
 </div>
@@ -8906,7 +8906,7 @@ This only affects users moving from the Groovy 1.7 to the 1.8 or 2.0 variant.
 </table>
 </div>
 <div class="paragraph">
-<p>Spock offers a very neat syntax for using <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> matchers:</p>
+<p>Spock offers a very neat syntax for using <a href="https://code.google.com/p/hamcrest/">Hamcrest</a> matchers:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -9118,7 +9118,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 </div>
 </blockquote>
 <div class="attribution">
-&#8212; <a href="http://docs.groovy-lang.org/next/html/documentation/core-traits.html#_compatibility_with_ast_transformations">Groovy Docs</a>
+&#8212; <a href="https://docs.groovy-lang.org/next/html/documentation/core-traits.html#_compatibility_with_ast_transformations">Groovy Docs</a>
 </div>
 </div>
 </div>
@@ -9152,7 +9152,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <a href="#_footnoteref_5">5</a>. The destructuring semantics for closure arguments come straight from Groovy.
 </div>
 <div class="footnote" id="_footnotedef_6">
-<a href="#_footnoteref_6">6</a>. You may know this behavior from Groovy&#8217;s <a href="http://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/MockFor.html">MockFor</a> and <a href="http://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/StubFor.html">StubFor</a> facilities.
+<a href="#_footnoteref_6">6</a>. You may know this behavior from Groovy&#8217;s <a href="https://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/MockFor.html">MockFor</a> and <a href="https://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/StubFor.html">StubFor</a> facilities.
 </div>
 <div class="footnote" id="_footnotedef_7">
 <a href="#_footnoteref_7">7</a>. Because mock configurations are immutable, the interface contains just the properties' getters.

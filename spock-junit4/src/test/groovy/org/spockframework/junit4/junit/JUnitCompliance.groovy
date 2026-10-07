@@ -21,7 +21,7 @@ import spock.lang.Issue
 import spock.util.EmbeddedSpecCompiler
 
 class JUnitCompliance extends JUnitBaseSpec {
-  @Issue("https://code.google.com/archive/p/spock/issues/13")
+  @Issue("https://github.com/spockframework/spock/issues/136")
   def "failing setupSpec method"() {
     runner.throwFailure = false
 
@@ -67,7 +67,7 @@ class Foo extends Specification {
     result.containersSkippedCount == 1
   }
 
-  @Issue("https://code.google.com/archive/p/spock/issues/20")
+  @Issue("https://github.com/spockframework/spock/issues/143")
   def "ignoring feature methods"() {
     def clazz = compiler.compileSpecBody("""
 static log = ""

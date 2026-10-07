@@ -2,47 +2,25 @@
 :spock-release-date: 2026-10-06
 :spock-snapshot-version: 2.6
 
-https://github.com/spockframework/spock/blob/master/LICENSE[image:https://img.shields.io/badge/License-Apache%202.0-blue.svg[License]]
-https://search.maven.org/search?q=g:org.spockframework[image:https://img.shields.io/maven-central/v/org.spockframework/spock-core.svg?label=Maven%20Central[Maven
-Central]]
-https://github.com/spockframework/spock/actions/workflows/release.yaml[image:https://img.shields.io/github/actions/workflow/status/spockframework/spock/release.yaml?branch=master[GitHub
-Workflow Status (branch)]]
-https://jitpack.io/#org.spockframework/spock[image:https://jitpack.io/v/org.spockframework/spock.svg[Jitpack]]
-https://codecov.io/gh/spockframework/spock[image:https://codecov.io/gh/spockframework/spock/branch/master/graph/badge.svg[Codecov]]
-https://gitter.im/spockframework/spock?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge[image:https://badges.gitter.im/spockframework/spock.svg[Gitter]]
-https://community.develocity.cloud/scans?search.rootProjectNames=spock[image:https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A[Revved
-up by Develocity]]
+https://github.com/spockframework/spock/blob/master/LICENSE[image:https://img.shields.io/badge/License-Apache%202.0-blue.svg[License]] https://search.maven.org/search?q=g:org.spockframework[image:https://img.shields.io/maven-central/v/org.spockframework/spock-core.svg?label=Maven%20Central[Maven Central]] https://github.com/spockframework/spock/actions/workflows/release.yaml[image:https://img.shields.io/github/actions/workflow/status/spockframework/spock/release.yaml?branch=master[GitHub Workflow Status (branch)]] https://jitpack.io/#org.spockframework/spock[image:https://jitpack.io/v/org.spockframework/spock.svg[Jitpack]] https://codecov.io/gh/spockframework/spock[image:https://codecov.io/gh/spockframework/spock/branch/master/graph/badge.svg[Codecov]] https://gitter.im/spockframework/spock?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge[image:https://badges.gitter.im/spockframework/spock.svg[Gitter]] https://community.develocity.cloud/scans?search.rootProjectNames=spock[image:https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A[Revved up by Develocity]]
 
 image::docs/images/spock-main-logo.png[width=100px,float=right]
 
 == Spock Framework
 
-Spock is a BDD-style developer testing and specification framework for
-Java and https://groovy-lang.org/[Groovy] applications. To learn more
-about Spock, visit
-https://spockframework.org[https://spockframework.org]. To run a sample
-spec in your browser use the
-https://groovyconsole.dev/[Groovy Web Console].
+Spock is a BDD-style developer testing and specification framework for Java and https://groovy-lang.org/[Groovy] applications.
+To learn more about Spock, visit https://spockframework.org[https://spockframework.org].
+To run a sample spec in your browser use the https://groovyconsole.dev/[Groovy Web Console].
 
 === Latest Versions
 
-* The latest 2.x release version is *{spock-release-version}* ({spock-release-version}-groovy-2.5,
-{spock-release-version}-groovy-3.0, {spock-release-version}-groovy-4.0, {spock-release-version}-groovy-5.0,
-{spock-release-version}-groovy-6.0), released on {spock-release-date}.
-* The current development version is *{spock-snapshot-version}-SNAPSHOT*
-({spock-snapshot-version}-groovy-2.5-SNAPSHOT, {spock-snapshot-version}-groovy-3.0-SNAPSHOT,
-{spock-snapshot-version}-groovy-4.0-SNAPSHOT, {spock-snapshot-version}-groovy-5.0-SNAPSHOT,
-{spock-snapshot-version}-groovy-6.0-SNAPSHOT).
+* The latest 2.x release version is *{spock-release-version}* ({spock-release-version}-groovy-2.5, {spock-release-version}-groovy-3.0, {spock-release-version}-groovy-4.0, {spock-release-version}-groovy-5.0, {spock-release-version}-groovy-6.0), released on {spock-release-date}.
+* The current development version is *{spock-snapshot-version}-SNAPSHOT* ({spock-snapshot-version}-groovy-2.5-SNAPSHOT, {spock-snapshot-version}-groovy-3.0-SNAPSHOT, {spock-snapshot-version}-groovy-4.0-SNAPSHOT, {spock-snapshot-version}-groovy-5.0-SNAPSHOT, {spock-snapshot-version}-groovy-6.0-SNAPSHOT).
 
-*NOTE:* Spock 2.x is based on the JUnit Platform and requires Java
-8+/groovy-2.5+ (Groovy 3.0 or newer is recommended, especially in projects using
-Java 12+).
+*NOTE:* Spock 2.x is based on the JUnit Platform and requires Java 8+/groovy-2.5+ (Groovy 3.0 or newer is recommended, especially in projects using Java 12+).
 
-Releases are available from
-https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.spockframework%22[Maven
-Central]. Development snapshots are available from
-https://central.sonatype.com/repository/maven-snapshots/org/spockframework/spock-core/maven-metadata.xml[Sonatype
-Snapshot].
+Releases are available from https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.spockframework%22[Maven Central].
+Development snapshots are available from https://central.sonatype.com/repository/maven-snapshots/org/spockframework/spock-core/maven-metadata.xml[Sonatype Snapshot].
 
 ==== Snapshot Releases
 
@@ -62,13 +40,10 @@ dependencies {
 
 ==== Ad-Hoc Intermediate Releases
 
-For intermediate stable builds we recommend to use
-https://jitpack.io/#org.spockframework/spock[JitPack] (go here for
-instructions):
+For intermediate stable builds we recommend to use https://jitpack.io/#org.spockframework/spock[JitPack] (go here for instructions):
 
 . Add https://jitpack.io[https://jitpack.io] as a repository
-. Use `org.spockframework.spock` as `groupId` and the normal
-`artifact-id`
+. Use `org.spockframework.spock` as `groupId` and the normal `artifact-id`
 
 [source,groovy,subs="attributes"]
 ----
@@ -84,21 +59,17 @@ dependencies {
 ----
 
 [start=3]
-. For intermediate releases you can also use the commit-hash as version,
-e.g. compile `com.github.spockframework.spock:spock-core:d91bf785a1`
+. For intermediate releases you can also use the commit-hash as version, e.g. compile `com.github.spockframework.spock:spock-core:d91bf785a1`
 
 === Modules
 
-* spock-core -- Core framework. This is the only mandatory module.
+* spock-core -- Core framework.
+  This is the only mandatory module.
 * spock-specs -- Specifications for spock-core, implemented using Spock.
-Not required for using Spock.
-* spock-spring -- Integration with the
-https://docs.spring.io/spring-framework/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework[Spring
-TestContext Framework].
-* spock-tapestry -- Integration with the
-https://tapestry.apache.org/[Tapestry 5] IoC container.
-* spock-guice -- Integration with https://github.com/google/guice[Guice]
-2/3.
+  Not required for using Spock.
+* spock-spring -- Integration with the https://docs.spring.io/spring-framework/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework[Spring TestContext Framework].
+* spock-tapestry -- Integration with the https://tapestry.apache.org/[Tapestry 5] IoC container.
+* spock-guice -- Integration with https://github.com/google/guice[Guice] 2/3.
 * spock-unitils -- Integration with https://unitils.sourceforge.net/[Unitils].
 
 === Building
@@ -110,8 +81,7 @@ Spock needs both a JDK 11 and JDK 17+ installed.
 * JDK 11 is required to compile Spock via toolchains (automatic download is disabled).
 * The gradle build itself requires at least JDK 17 to run.
 
-JDK locations must be made known to toolchains via `JDK<version>=<PATH>` environment
-variable if they are not in standard places recognized by Gradle, e.g. `JDK11=/path/to/jdk11`.
+JDK locations must be made known to toolchains via `JDK<version>=<PATH>` environment variable if they are not in standard places recognized by Gradle, e.g. `JDK11=/path/to/jdk11`.
 
 ==== Supported versions
 
@@ -119,13 +89,10 @@ Spock is supported for Java version 8+.
 
 Spock is supported for Groovy versions 2.5, 3.0, 4.0, 5.0, and 6.0.
 
-The tests are testing Spock with the specific versions (variants) of
-Groovy and Java. Default Groovy version is 2.5.
+The tests are testing Spock with the specific versions (variants) of Groovy and Java.
+Default Groovy version is 2.5.
 
-The Groovy 3.0 and 4.0 variant should pass on all supported JDK versions,
-Groovy 2.5 does not work with Java 17+:
-Groovy 5.0 does not work with Java <11,
-Groovy 6.0 and newer does not work with Java <17:
+The Groovy 3.0 and 4.0 variant should pass on all supported JDK versions, Groovy 2.5 does not work with Java 17+: Groovy 5.0 does not work with Java <11, Groovy 6.0 and newer does not work with Java <17:
 
 ....
 ./gradlew build
@@ -144,27 +111,23 @@ Of course, this can be combined with the variant selection from above.
 ./gradlew build -DjavaVersion=17
 ....
 
-(In `cmd.exe`: `gradlew build`). All build dependencies, including the
-https://www.gradle.org[build tool] itself, will be downloaded
-automatically (unless already present).
+(In `cmd.exe`: `gradlew build`).
+All build dependencies, including the https://www.gradle.org[build tool] itself, will be downloaded automatically (unless already present).
 
 === Contributing
 
-Contributions are welcome! Please see the
-https://github.com/spockframework/spock/blob/master/CONTRIBUTING.adoc[contributing
-page] for detailed instructions.
+Contributions are welcome!
+Please see the https://github.com/spockframework/spock/blob/master/CONTRIBUTING.adoc[contributing page] for detailed instructions.
 
 === Support
 
-If you have any comments or questions, please direct them to the
-https://github.com/spockframework/spock/discussions[user forum]. All
-feedback is appreciated!
+If you have any comments or questions, please direct them to the https://github.com/spockframework/spock/discussions[user forum].
+All feedback is appreciated!
 
 === Java 9 Module Names
 
-All published jars (beginning with Spock 1.2) will contain
-`Automatic-Module-Name` manifest attribute. This allows for Spock to be
-used in a Java 9+ Module Path.
+All published jars (beginning with Spock 1.2) will contain `Automatic-Module-Name` manifest attribute.
+This allows for Spock to be used in a Java 9+ Module Path.
 
 * spock-core -- `org.spockframework.core`
 * spock-spring -- `org.spockframework.spring`
@@ -172,8 +135,7 @@ used in a Java 9+ Module Path.
 * spock-guice -- `org.spockframework.guice`
 * spock-unitils -- `org.spockframework.unitils`
 
-So module authors can use well known module names for the spock modules,
-e.g. something like this:
+So module authors can use well known module names for the spock modules, e.g. something like this:
 
 ....
 open module foo.bar {
@@ -184,9 +146,7 @@ open module foo.bar {
 
 === Logo
 
-The Spock Logo, created by Ayşe Altınsoy (@AltinsoyAyse), is
-managed in the https://github.com/spockframework/spock-logo[spock-logo
-repository].
+The Spock Logo, created by Ayşe Altınsoy (@AltinsoyAyse), is managed in the https://github.com/spockframework/spock-logo[spock-logo repository].
 
 === Links
 

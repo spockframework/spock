@@ -147,7 +147,8 @@ The same goes for changes to user-visible behavior.
 
 === Tests
 
-All tests are written in Spock. Tests for `spock-core` are located in the `spock-specs` project; all other projects have co-located tests.
+All tests are written in Spock.
+Tests for `spock-core` are located in the `spock-specs` project; all other projects have co-located tests.
 A functional test is required for each user-visible behavior.
 Functional tests for `spock-core` are located under https://github.com/spockframework/spock/tree/master/spock-specs/src/test/groovy/org/spockframework/smoke[`spock-specs/src/test/groovy/org/spockframework/smoke`].
 
@@ -161,7 +162,9 @@ The build itself must be run with JDK 17, but JDK 11 must be available via toolc
 You can check if Gradle can locate the necessary JDKs by running `./gradlew javaToolchains`.
 If Gradle can't locate your JDK 11, you can make the location of the JDK 11 available via an environment variable called `JDK11`.
 
-After cloning the https://github.com/spockframework/spock[GitHub repository], cd into the top directory and execute `./gradlew build`. The build should succeed without any errors. `./gradlew tasks` lists the available tasks.
+After cloning the https://github.com/spockframework/spock[GitHub repository], cd into the top directory and execute `./gradlew build`.
+The build should succeed without any errors.
+`./gradlew tasks` lists the available tasks.
 Always use the Gradle Wrapper (`gradlew` command) rather than your own Gradle installation.
 
 === CI Build
@@ -216,6 +219,7 @@ If you encounter any problems with the IDE setup, or want to make some improveme
 
 == The End
 
-Thanks for reading this far. We are looking forward to your contributions!
+Thanks for reading this far.
+We are looking forward to your contributions!
 
 The Spock Framework Team

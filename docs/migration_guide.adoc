@@ -50,14 +50,15 @@ Specs, Spec base classes and third-party extensions may have be recompiled in or
 
 JRE 1.5 and Groovy versions below 2.0 are no longer supported.
 
-Make sure to pick the right binaries for your Groovy version of choice: `groovy-2.0` for Groovy 2.0/2.1/2.2,
-`groovy-2.3` for Groovy 2.3, and `groovy-2.4` for Groovy 2.4 and higher. Spock won't let you run with a "wrong" version.
+Make sure to pick the right binaries for your Groovy version of choice: `groovy-2.0` for Groovy 2.0/2.1/2.2, `groovy-2.3` for Groovy 2.3, and `groovy-2.4` for Groovy 2.4 and higher.
+Spock won't let you run with a "wrong" version.
 
 No known source incompatible changes.
 
 == 0.7
 
-Client code must be recompiled in order to work with Spock 0.7. This includes third-party Spock extensions and base classes.
+Client code must be recompiled in order to work with Spock 0.7.
+This includes third-party Spock extensions and base classes.
 
 No known source incompatible changes.
 
@@ -86,11 +87,11 @@ class Derived extends Base {
 }
 ----
 
-In 0.5, above assignments happened in the order `base1`, `base2`, `derived1`, `derived2`. In other words, field
-initializers were executed right before the setup method in the same class. In 0.6, assignments happen in the order
-`base1`, `derived1`, `base2`, `derived2`. This is a more conventional order that solves a few problems that users
-faced with the previous behavior, and also allows us to support JUnit's new `TestRule`. As a result of this change,
-the following will no longer work:
+In 0.5, above assignments happened in the order `base1`, `base2`, `derived1`, `derived2`.
+In other words, field initializers were executed right before the setup method in the same class.
+In 0.6, assignments happen in the order `base1`, `derived1`, `base2`, `derived2`.
+This is a more conventional order that solves a few problems that users faced with the previous behavior, and also allows us to support JUnit's new `TestRule`.
+As a result of this change, the following will no longer work:
 
 [source,groovy]
 ----
@@ -105,8 +106,7 @@ class Derived extends Base {
 }
 ----
 
-To overcome this problem, you can either use a field initializer for `base`, or move the assignment of `derived` into
-a setup method.
+To overcome this problem, you can either use a field initializer for `base`, or move the assignment of `derived` into a setup method.
 
 === `@Unroll` naming pattern syntax
 
@@ -137,8 +137,8 @@ In 0.6-SNAPSHOT, this was changed to a closure returning a `GString`:
 def "maximum of two numbers"() { ... }
 ----
 
-For various reasons, the new syntax didn't work out as we had hoped, and eventually we decided to go back to the string
-based syntax. See <<release_notes.adoc#improved-unroll-0.6,Improved `@Unroll`>> for recent improvements to that syntax.
+For various reasons, the new syntax didn't work out as we had hoped, and eventually we decided to go back to the string based syntax.
+See <<release_notes.adoc#improved-unroll-0.6,Improved `@Unroll`>> for recent improvements to that syntax.
 
 === Hamcrest matcher syntax
 

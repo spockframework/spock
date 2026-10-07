@@ -962,7 +962,7 @@ Please try it out and report any new bugs so that we can fix them for the final 
 #### New JUnit Platform
 
 Switch from JUnit 4 to the JUnit Platform.
-See https://junit.org/junit5/docs/current/user-guide/#running-tests-build on how to configure
+See https://docs.junit.org/5.14.4/running-tests/build-support.html on how to configure
 maven and gradle to use the JUnit Platform.
 
 

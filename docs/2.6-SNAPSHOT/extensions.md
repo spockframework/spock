@@ -998,7 +998,7 @@ runner {
 
 ### Tags
 
-Since version 2.2 Spock supports [JUnit Platform tags](https://junit.org/junit5/docs/current/user-guide/#running-tests-tags).
+Since version 2.2 Spock supports [JUnit Platform tags](https://docs.junit.org/5.14.4/running-tests/tags.html).
 See the platform documentation for more information regarding valid tag values and how to configure your test execution to use them.
 
 

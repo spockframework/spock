@@ -16,7 +16,7 @@ The biggest change is the switch from being a JUnit 4 Runner to a full-fledged J
 That means, that you’ll have to configure your build to use the JUnit Platform to execute tests.
 
 
-See the [JUnit Platform Guide](https://junit.org/junit5/docs/current/user-guide/#running-tests-build) on how to configure your build to use the JUnit Platform.
+See the [JUnit Platform Guide](https://docs.junit.org/5.14.4/running-tests/build-support.html) on how to configure your build to use the JUnit Platform.
 
 
 ### JUnit 4 support

@@ -5075,7 +5075,7 @@ runner {
 
 #### Tags
 
-Since version 2.2 Spock supports [JUnit Platform tags](https://junit.org/junit5/docs/current/user-guide/#running-tests-tags).
+Since version 2.2 Spock supports [JUnit Platform tags](https://docs.junit.org/5.14.4/running-tests/tags.html).
 See the platform documentation for more information regarding valid tag values and how to configure your test execution to use them.
 
 
@@ -7372,7 +7372,7 @@ def "mocking works was well"() {
 > [!CAUTION]
 > As with Spring’s own `@MockBean` this will modify your `ApplicationContext`, and will create an unique context for your
 >          `Specification` preventing it from being reused by Spring’s
->          [Context Caching](https://docs.spring.io/spring/docs/current/spring-framework-reference/testing.html#testcontext-ctx-management-caching)
+>          [Context Caching](https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/ctx-management/caching.html)
 >          outside of the current `Specification`.
 >         
 > 
@@ -8474,7 +8474,7 @@ Please try it out and report any new bugs so that we can fix them for the final 
 ##### New JUnit Platform
 
 Switch from JUnit 4 to the JUnit Platform.
-See https://junit.org/junit5/docs/current/user-guide/#running-tests-build on how to configure
+See https://docs.junit.org/5.14.4/running-tests/build-support.html on how to configure
 maven and gradle to use the JUnit Platform.
 
 
@@ -9539,7 +9539,7 @@ The biggest change is the switch from being a JUnit 4 Runner to a full-fledged J
 That means, that you’ll have to configure your build to use the JUnit Platform to execute tests.
 
 
-See the [JUnit Platform Guide](https://junit.org/junit5/docs/current/user-guide/#running-tests-build) on how to configure your build to use the JUnit Platform.
+See the [JUnit Platform Guide](https://docs.junit.org/5.14.4/running-tests/build-support.html) on how to configure your build to use the JUnit Platform.
 
 
 #### JUnit 4 support

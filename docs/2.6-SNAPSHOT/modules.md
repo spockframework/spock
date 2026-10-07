@@ -223,7 +223,7 @@ def "mocking works was well"() {
 > [!CAUTION]
 > As with Spring’s own `@MockBean` this will modify your `ApplicationContext`, and will create an unique context for your
 >          `Specification` preventing it from being reused by Spring’s
->          [Context Caching](https://docs.spring.io/spring/docs/current/spring-framework-reference/testing.html#testcontext-ctx-management-caching)
+>          [Context Caching](https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/ctx-management/caching.html)
 >          outside of the current `Specification`.
 >         
 > 

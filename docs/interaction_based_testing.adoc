@@ -37,7 +37,8 @@ Except where indicated, all features of Spock's mocking framework work both for 
 
 == Creating Mock Objects
 
-Mock objects are created with the `MockingApi.Mock()` method.footnote:[For additional ways to create mock objects, see <<OtherKindsOfMockObjects>> and <<ALaCarteMocks>>.] Let's create two mock subscribers:
+Mock objects are created with the `MockingApi.Mock()` method.footnote:[For additional ways to create mock objects, see <<OtherKindsOfMockObjects>> and <<ALaCarteMocks>>.]
+Let's create two mock subscribers:
 
 
 [source,groovy,indent=0]

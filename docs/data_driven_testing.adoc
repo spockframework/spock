@@ -106,7 +106,8 @@ This achieves better isolation at the cost of some boilerplate code.
 
 The previous code can be tweaked in a few ways.
 
-First, since the `where:` block already declares all data variables, the method parameters can be omitted.footnote:[The idea behind allowing method parameters is to enable better IDE support. However, recent versions of IntelliJ IDEA recognize data variables automatically, and even infer their types from the values contained in the data table.]
+First, since the `where:` block already declares all data variables, the method parameters can be omitted.footnote:[The idea behind allowing method parameters is to enable better IDE support.
+However, recent versions of IntelliJ IDEA recognize data variables automatically, and even infer their types from the values contained in the data table.]
 
 You can also omit some parameters and specify others, for example to have them typed.
 The order also is not important, data variables are matched by name to the specified method parameters.
@@ -156,7 +157,8 @@ maximum of two numbers [a: 0, b: 0, c: 0, #2]   PASSED
 
 The obvious question is: Which iteration failed, and what are its data values?
 In our example, it isn't hard to figure out that it's the second iteration (with index 1) that failed even from the rich condition rendering.
-At other times this can be more difficult or even impossible.footnote:[For example, a feature method could use data variables in its `given:` block, but not in any conditions.] In any case, Spock makes it loud and clear which iteration failed, rather than just reporting the failure.
+At other times this can be more difficult or even impossible.footnote:[For example, a feature method could use data variables in its `given:` block, but not in any conditions.]
+In any case, Spock makes it loud and clear which iteration failed, rather than just reporting the failure.
 Iterations of a feature method are by default unrolled with a rich naming pattern.
 This pattern can also be configured as documented at <<Unrolled Iteration Names>> or the unrolling can be disabled like described in the following section.
 

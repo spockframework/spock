@@ -30,6 +30,17 @@ Before Groovy 6, a `switch` with arrow-style branches (`+case x ->+`) was always
 Since Groovy 6 (https://issues.apache.org/jira/browse/GROOVY-12255[GROOVY-12255]), a `switch` is only an expression where it is used as one, so a top-level arrow `switch` is now a statement and is no longer checked.
 Assign the result to a variable and check that variable instead.
 Using `!!` on a `switch` still <<spock_primer.adoc#opt-out-of-condition-handling,opts out of condition handling>> as before spockPull:2416[]
+* It is no longer true that only top-level expression statements are treated as implicit conditions.
+Just like within `with { ... }`, `verifyAll { ... }`, `@ConditionBlock` methods, and other places, each expression statement is now considered an implicit condition, except for statements in unknown closures.
++
+This enables the usage of `if` and similar while also being able to still safely use `.every { ... }`, but without the regular confusion why a test is not failing if the condition is inside an `if`.
+You can even have interactions in those nested places now.
++
+As now expression statements are considered implicit conditions that previously were not, this can lead to compilation errors in existing code-bases, because such nested statements were previously simply ignored by the Spock compiler and now also must be valid conditions.
++
+If those compile errors are not accidentally written assignments that should have been conditions or similar, you can for example use the <<spock_primer.adoc#opt-out-of-condition-handling,`!!` prefix operator>> to declare an expression statement explicitly as not being an implicit condition.
++
+spockPull:2250[]
 
 === Misc
 

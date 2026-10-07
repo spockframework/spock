@@ -57,6 +57,18 @@ public @interface Retry {
   Class<? extends Throwable>[] exceptions() default {Exception.class, AssertionError.class};
 
   /**
+   * Whether to also match causes against {@link #exceptions()} and
+   * {@link #skipRetryExceptions()}. A skipped exception anywhere in the cause
+   * chain takes precedence over a matching exception.
+   *
+   * <p>The {@link #condition()} still receives the original failure.
+   *
+   * @return whether exception causes should be inspected.
+   * @since 2.5
+   */
+  boolean inspectCauses() default false;
+
+  /**
    * Configures which types of Exceptions should skip any remaining retry.
    * If the retry is skipped, the exception will be thrown.
    *

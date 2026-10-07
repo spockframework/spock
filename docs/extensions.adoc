@@ -351,6 +351,10 @@ With the flag `applyGlobalTimeoutToFixtures` you can control if the global timeo
 The `@Retry` extensions can be used for flaky integration tests, where remote systems can fail sometimes.
 By default it retries an iteration `3` times with `0` delay if either an `Exception` or `AssertionError` has been thrown, all this is configurable.
 In addition, an optional `condition` closure can be used to determine if a feature should be retried.
+Set `inspectCauses = true` to match `exceptions` and `skipRetryExceptions` against nested causes as well.
+A matching `skipRetryExceptions` entry anywhere in the cause chain prevents retrying, even if another exception matches `exceptions`.
+The `condition` closure still receives the original failure.
+Cause inspection is disabled by default.
 In its standard mode it only retries the feature method execution, but this can be changed using `mode` to
 also run setup and cleanup on retries. Even in this mode, the retry is only triggered if the feature method is failing
 in the expected way. If the setup or cleanup is failing, the test fails immediately.

@@ -59,18 +59,25 @@ public class RetryBaseInterceptor {
   }
 
   private boolean hasExpectedClass(Throwable failure) {
-    for (Class<? extends Throwable> exception : retry.skipRetryExceptions()) {
-      if (exception.isInstance(failure)) {
-        return false;
+    Set<Throwable> visited = Collections.newSetFromMap(new IdentityHashMap<>());
+    boolean expected = false;
+    do {
+      for (Class<? extends Throwable> exception : retry.skipRetryExceptions()) {
+        if (exception.isInstance(failure)) {
+          return false;
+        }
       }
-    }
 
-    for (Class<? extends Throwable> exception : retry.exceptions()) {
-      if (exception.isInstance(failure)) {
-        return true;
+      for (Class<? extends Throwable> exception : retry.exceptions()) {
+        if (exception.isInstance(failure)) {
+          expected = true;
+          break;
+        }
       }
-    }
-    return false;
+      visited.add(failure);
+      failure = retry.inspectCauses() ? failure.getCause() : null;
+    } while (failure != null && !visited.contains(failure));
+    return expected;
   }
 
   private boolean satisfiesCondition(IMethodInvocation invocation, Throwable failure) {

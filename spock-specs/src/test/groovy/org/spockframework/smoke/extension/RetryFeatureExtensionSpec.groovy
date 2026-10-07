@@ -234,6 +234,86 @@ def bar() {
   }
 
 
+  def "@Retry optionally inspects nested causes"(boolean inspectCauses, String mode, int attempts) {
+    when:
+    def result = runner.runSpecBody("""
+@Retry(exceptions = IOException, inspectCauses = $inspectCauses, mode = Retry.Mode.$mode)
+def bar() {
+  featureCounter.incrementAndGet()
+  expect:
+  throw new IllegalStateException(new RuntimeException(new IOException()))
+}
+    """)
+
+    then:
+    result.testsFailedCount == 1
+    featureCounter.get() == attempts
+
+    where:
+    inspectCauses | mode                                  || attempts
+    false         | Retry.Mode.ITERATION.name()            || 1
+    true          | Retry.Mode.ITERATION.name()            || 4
+    false         | Retry.Mode.SETUP_FEATURE_CLEANUP.name() || 1
+    true          | Retry.Mode.SETUP_FEATURE_CLEANUP.name() || 4
+  }
+
+  def "@Retry gives skipped causes precedence over matching exceptions"() {
+    when:
+    def result = runner.runSpecBody("""
+@Retry(inspectCauses = true, skipRetryExceptions = IOException)
+def bar() {
+  featureCounter.incrementAndGet()
+  expect:
+  throw new IllegalStateException(new IOException())
+}
+    """)
+
+    then:
+    result.testsFailedCount == 1
+    result.failures.exception[0] instanceof IllegalStateException
+    featureCounter.get() == 1
+  }
+
+  def "@Retry condition receives the original failure when matching a cause"() {
+    when:
+    def result = runner.runSpecBody("""
+@Retry(exceptions = IOException, inspectCauses = true,
+  condition = { failure instanceof IllegalStateException })
+def bar() {
+  featureCounter.incrementAndGet()
+  expect:
+  throw new IllegalStateException(new IOException())
+}
+    """)
+
+    then:
+    result.testsFailedCount == 1
+    featureCounter.get() == 4
+    result.failures.exception[0].failures.every { it instanceof IllegalStateException }
+  }
+
+  @Timeout(10)
+  def "@Retry terminates inspection of circular causes"() {
+    when:
+    def result = runner.runSpecBody("""
+@Retry(exceptions = IOException, inspectCauses = true)
+def bar() {
+  given:
+  featureCounter.incrementAndGet()
+  def first = new IllegalStateException()
+  def second = new IllegalArgumentException(first)
+  first.initCause(second)
+
+  expect:
+  throw first
+}
+    """)
+
+    then:
+    result.testsFailedCount == 1
+    featureCounter.get() == 1
+  }
+
   def "@Retry rethrows non handled exceptions"() {
     given:
     runner.throwFailure = true

@@ -29,6 +29,8 @@
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.actions.actions.Checkout.FetchDepth
 import io.github.typesafegithub.workflows.actions.codecov.CodecovAction
+import io.github.typesafegithub.workflows.domain.Mode
+import io.github.typesafegithub.workflows.domain.Permission
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.dsl.expressions.Contexts.github
@@ -70,7 +72,8 @@ workflow(
         condition = "${github.repository} == 'spockframework/spock'",
         strategy = Strategy(
             matrix = matrix
-        )
+        ),
+        permissions = develocityPermissions
     ) {
         uses(
             name = "Checkout Repository",
@@ -94,8 +97,7 @@ workflow(
                 """"-Dvariant=${expr(Matrix.variant)}"""",
                 """"-DjavaVersion=${expr(Matrix.javaVersion)}"""",
                 """"-Dscan.tag.main-build""""
-            ).joinToString(" "),
-            env = commonCredentials
+            ).joinToString(" ")
         )
         run(
             name = "Stop Daemon",
@@ -113,6 +115,7 @@ workflow(
         name = "Release Spock",
         runsOn = RunnerType.Custom(expr(Matrix.operatingSystem)),
         needs = listOf(buildAndVerify),
+        permissions = develocityPermissions,
         _customArguments = mapOf(
             "strategy" to Strategy(
                 matrix = Matrix(
@@ -156,12 +159,12 @@ workflow(
                 """"-DjavaVersion=${expr(Matrix.javaVersion)}"""",
                 """"-Dscan.tag.main-publish""""
             ).joinToString(" "),
-            env = mutableMapOf(
+            env = mapOf(
                 "GITHUB_TOKEN" to expr(GITHUB_TOKEN),
                 "SONATYPE_OSS_USER" to expr(SONATYPE_OSS_USER),
                 "SONATYPE_OSS_PASSWORD" to expr(SONATYPE_OSS_PASSWORD),
                 "SIGNING_PASSWORD" to expr(SIGNING_GPG_PASSWORD)
-            ).apply { putAll(commonCredentials) }
+            )
         )
     }
     job(
@@ -169,6 +172,8 @@ workflow(
         name = "Publish Release Docs",
         runsOn = RunnerType.Custom(expr(Matrix.operatingSystem)),
         needs = listOf(releaseSpock),
+        // pushes javadoc and docs to gh-pages
+        permissions = develocityPermissions + (Permission.Contents to Mode.Write),
         strategyMatrix = mapOf(
             // docs need the highest variant
             "variant" to Matrix.axes.variants.takeLast(1),
@@ -202,9 +207,9 @@ workflow(
                 """"-DjavaVersion=${expr(Matrix.javaVersion)}"""",
                 """"-Dscan.tag.main-docs""""
             ).joinToString(" "),
-            env = mutableMapOf(
+            env = mapOf(
                 "GITHUB_TOKEN" to expr(GITHUB_TOKEN)
-            ).apply { putAll(commonCredentials) }
+            )
         )
     }
 }

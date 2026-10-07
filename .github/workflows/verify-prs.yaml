@@ -44,6 +44,12 @@ jobs:
   build-and-verify:
     name: 'Build and Verify'
     runs-on: '${{ matrix.os }}'
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+      actions: 'read'
+      checks: 'read'
+      pull-requests: 'read'
     needs:
     - 'check_yaml_consistency'
     strategy:
@@ -130,8 +136,6 @@ jobs:
       if: 'github.event_name == ''pull_request'''
     - id: 'step-3'
       name: 'Build Spock'
-      env:
-        DEVELOCITY_ACCESS_KEY: '${{ secrets.DEVELOCITY_ACCESS_KEY }}'
       run: './gradlew --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}"'
     - id: 'step-4'
       name: 'Upload to Codecov.io'

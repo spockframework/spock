@@ -32,6 +32,8 @@ import io.github.typesafegithub.workflows.actions.actions.Checkout.FetchDepth
 import io.github.typesafegithub.workflows.actions.codecov.CodecovAction
 import io.github.typesafegithub.workflows.actions.testlensapp.SetupTestlens
 import io.github.typesafegithub.workflows.domain.Concurrency
+import io.github.typesafegithub.workflows.domain.Mode
+import io.github.typesafegithub.workflows.domain.Permission
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
 import io.github.typesafegithub.workflows.domain.triggers.MergeGroup
@@ -95,6 +97,12 @@ workflow(
         runsOn = RunnerType.Custom(expr(Matrix.operatingSystem)),
         strategy = Strategy(
             matrix = matrix
+        ),
+        // TestLens forwards the token to its backend, fork PRs show that read access is sufficient
+        permissions = develocityPermissions + mapOf(
+            Permission.Actions to Mode.Read,
+            Permission.Checks to Mode.Read,
+            Permission.PullRequests to Mode.Read
         )
     ) {
         uses(
@@ -123,9 +131,7 @@ workflow(
                 "ghActionsBuild",
                 """"-Dvariant=${expr(Matrix.variant)}"""",
                 """"-DjavaVersion=${expr(Matrix.javaVersion)}""""
-            ).joinToString(" "),
-            // secrets are not injected for pull requests
-            env = commonCredentials
+            ).joinToString(" ")
         )
         uses(
             name = "Upload to Codecov.io",

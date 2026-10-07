@@ -445,7 +445,8 @@ This allows access to static methods when `@IgnoreIf`, `@Requires` and `@Pending
 - Fix JUnit rule run order spockPull:1363[]
 - Prevent removal of ErrorSpecNode from execution hierarchy spockPull:1358[]
 +
-As the ErrorSpecNode does not have children it would get removed when trying to select specific tests methods For example, gradle will report that no test were found, and not report the actual error.
+As the ErrorSpecNode does not have children it would get removed when trying to select specific tests methods.
+For example, gradle will report that no test were found, and not report the actual error.
 
 - Fix double invocation of IRunListener.beforeSpec and IRunListener.afterSpec spockPull:1344[]
 - Fix regression with multi-assignment of method call result spockPull:1333[]

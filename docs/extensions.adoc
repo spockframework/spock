@@ -610,7 +610,9 @@ This means that the rules before-actions are done before the execution of `setup
 
 === Include and Exclude
 
-Spock is capable of including and excluding specifications according to their classes, super-classes and interfaces and according to annotations that are applied to the specification.Spock is also capable of including and excluding individual features according to annotations that are applied to the feature method.The configuration for what to include or exclude is done according to the <<spock-configuration-file,Spock Configuration File>> section.
+Spock is capable of including and excluding specifications according to their classes, super-classes and interfaces and according to annotations that are applied to the specification.
+Spock is also capable of including and excluding individual features according to annotations that are applied to the feature method.
+The configuration for what to include or exclude is done according to the <<spock-configuration-file,Spock Configuration File>> section.
 
 .Include / Exclude Configuration
 [source,groovy]

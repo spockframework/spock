@@ -37,7 +37,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 Copyright and related rights for sample code are waived via CC0. Sample
 code is defined as all source code contained within the demos directory.
 
-CC0: https://creativecommons.org/publicdomain/zero/1.0/
+CC0: http://creativecommons.org/publicdomain/zero/1.0/
 
 ====
 

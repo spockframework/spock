@@ -695,7 +695,7 @@ If you relied on other groovy dependencies transitively, you will need to add th
 
 #### Upgrade to JUnit 5.6 (and JUnit Platform 1.6)
 
-JUnit Platform 1.6 [deprecated](https://junit.org/junit5/docs/5.6.0/release-notes/index.html#deprecations-and-breaking-changes) methods (from experimental API)  in `EngineExecutionResults` that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.
+JUnit Platform 1.6 [deprecated](https://docs.junit.org/5.6.0/release-notes/index.html#deprecations-and-breaking-changes) methods (from experimental API)  in `EngineExecutionResults` that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.
 
 
 #### New meaning of `>> _`
@@ -1339,14 +1339,14 @@ Special thanks to all the contributors to this release: Dmitry Andreychuk, Aseem
 ## 1.0 (released 2015-03-02)
 
 1.0 has arrived! Finally (and some years late) the version number communicates what
-[Spock users](https://code.google.com/p/spock/wiki/WhoIsUsingSpock) have known for ages - that Spock isn’t only useful
+[Spock users](https://code.google.com/archive/p/spock/wikis/WhoIsUsingSpock.wiki) have known for ages - that Spock isn’t only useful
 and fun, but also reliable, mature, and here to stay. So please, go out and tell everyone who hasn’t been assimilated
 that now is the time to join the party!
 
 
 A special thanks goes to all our tireless speakers and supporters, only a few of which are listed here: Andres Almiray,
 Cédric Champeau, David Dawson, Rob Fletcher, Sean Gilligan, Ken Kousen, Guillaume Laforge,
-[NFJS Tour](https://www.nofluffjuststuff.com/home/main), Graeme Rocher, Baruch Sadogursky, Odin Hole Standal,
+[NFJS Tour](https://nofluffjuststuff.com/home/main), Graeme Rocher, Baruch Sadogursky, Odin Hole Standal,
 Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.
 
 
@@ -1355,14 +1355,14 @@ Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.
 - [17 contributors](#_contributors), [21 resolved issues](#_resolved_issues), [18 merged pull requests](#_merged_pull_requests),
 [some ongoing work](#_ongoing_work). No ground-breaking new features, but significant improvements and fixes across the board.
 - Minimum runtime requirements raised to JRE 1.6 and Groovy 2.0.
-- Improved and restyled reference documentation at https://docs.spockframework.org. Generated with
+- Improved and restyled reference documentation at https://spockframework.org/spock/docs/. Generated with
 [Asciidoctor](https://asciidoctor.org/) (what else?).
 - Maven plugin removed. Just let Maven Surefire run your Spock specs like your JUnit tests
 (see [spock-example](https://github.com/spockframework/spock-example) project).
 - Official support for Java 1.8, Groovy 2.3 and Groovy 2.4. Make sure to pick the `groovy-2.0` binaries for Groovy
 2.0/2.1/2.2, `groovy-2.3` binaries for Groovy 2.3, and `groovy-2.4` binaries for Groovy 2.4 and higher.
 - Improved infrastructure to allow for easier community involvement: Switch to
-[GitHub issue tracker](https://issues.spockframework.org), [Windows](https://winbuilds.spockframework.org) and
+[GitHub issue tracker](https://github.com/spockframework/spock/issues), [Windows](https://winbuilds.spockframework.org) and
 [Linux](https://builds.spockframework.org) CI builds, pull requests automatically tested, all development on `master`
 branch (bye-bye `groovy-x.y` branches!).
 
@@ -1371,7 +1371,7 @@ branch (bye-bye `groovy-x.y` branches!).
 
 - Follow our new [Twitter account](https://twitter.spockframework.org)
 - Try these [new third-party extensions](#_new_third_party_extensions)
-- Check out the upcoming [Java Testing with Spock](https://manning.com/kapelonis/) book from Manning
+- Check out the upcoming [Java Testing with Spock](https://www.manning.com/books/java-testing-with-spock) book from Manning
 
 
 ### What’s Up Next?
@@ -1419,27 +1419,27 @@ The Spock Team
 21 burning issues were fixed:
 
 
-- [Create a example which uses ConfineMetaClassChanges](https://code.google.com/p/spock/issues/detail?id=221)
-- [Mistakes in PollingConditions sphinx docs](https://code.google.com/p/spock/issues/detail?id=273)
-- [Closure used as data value in where-block can’t be called with method syntax](https://code.google.com/p/spock/issues/detail?id=274)
-- [old() expression blows up when part of failing condition](https://code.google.com/p/spock/issues/detail?id=276)
-- [Reflect subsequent filtering/sorting in a spec’s JUnit description](https://code.google.com/p/spock/issues/detail?id=278)
-- [After/AfterClass/Before/BeforeClass methods from superclass should not be called if they have been overrided in the derived class](https://code.google.com/p/spock/issues/detail?id=282)
-- [Data values in where-block are not resolved in nested closures](https://code.google.com/p/spock/issues/detail?id=286)
-- [spock-maven:0.7-groovy-2.0 has an invalid descriptor (and a workaround for this)](https://code.google.com/p/spock/issues/detail?id=290)
-- [PollingConditions doesn’t report failed assertion](https://code.google.com/p/spock/issues/detail?id=291)
-- [Provide a Specification.with() overload that states the expected target type](https://code.google.com/p/spock/issues/detail?id=292)
-- [Problem with array arguments to mock methods](https://code.google.com/p/spock/issues/detail?id=294)
-- [spock-tapestry should support @javax.inject.Inject and @InjectService](https://code.google.com/p/spock/issues/detail?id=296)
-- [Compilation error when using multi assignment](https://code.google.com/p/spock/issues/detail?id=297)
-- [Groovy mocks should allow to mock final classes/methods](https://code.google.com/p/spock/issues/detail?id=302)
-- [Better generics support for mocks and stubs](https://code.google.com/p/spock/issues/detail?id=307)
-- [GC calls to finalize() on mocks cause strict interaction specifications (0 * _) to fail intermittently](https://code.google.com/p/spock/issues/detail?id=338)
-- [Multiple Assignment in when: and anything in cleanup:](https://code.google.com/p/spock/issues/detail?id=371)
-- [Move OptimizeRunOrderSuite from spock-core to spock-maven to solve a problem with Android’s test runner](https://code.google.com/p/spock/issues/detail?id=385)
-- [Support running on JDK 8](https://code.google.com/p/spock/issues/detail?id=391)
-- [Release binary variants for Groovy 2.3 and Groovy 2.4](https://code.google.com/p/spock/issues/detail?id=392)
-- [Port reference documentation to Asciidoc](https://code.google.com/p/spock/issues/detail?id=393)
+- [Create a example which uses ConfineMetaClassChanges](https://code.google.com/archive/p/spock/issues/221)
+- [Mistakes in PollingConditions sphinx docs](https://code.google.com/archive/p/spock/issues/273)
+- [Closure used as data value in where-block can’t be called with method syntax](https://code.google.com/archive/p/spock/issues/274)
+- [old() expression blows up when part of failing condition](https://code.google.com/archive/p/spock/issues/276)
+- [Reflect subsequent filtering/sorting in a spec’s JUnit description](https://code.google.com/archive/p/spock/issues/278)
+- [After/AfterClass/Before/BeforeClass methods from superclass should not be called if they have been overrided in the derived class](https://code.google.com/archive/p/spock/issues/282)
+- [Data values in where-block are not resolved in nested closures](https://code.google.com/archive/p/spock/issues/286)
+- [spock-maven:0.7-groovy-2.0 has an invalid descriptor (and a workaround for this)](https://code.google.com/archive/p/spock/issues/290)
+- [PollingConditions doesn’t report failed assertion](https://code.google.com/archive/p/spock/issues/291)
+- [Provide a Specification.with() overload that states the expected target type](https://code.google.com/archive/p/spock/issues/292)
+- [Problem with array arguments to mock methods](https://code.google.com/archive/p/spock/issues/294)
+- [spock-tapestry should support @javax.inject.Inject and @InjectService](https://code.google.com/archive/p/spock/issues/296)
+- [Compilation error when using multi assignment](https://code.google.com/archive/p/spock/issues/297)
+- [Groovy mocks should allow to mock final classes/methods](https://code.google.com/archive/p/spock/issues/302)
+- [Better generics support for mocks and stubs](https://code.google.com/archive/p/spock/issues/307)
+- [GC calls to finalize() on mocks cause strict interaction specifications (0 * _) to fail intermittently](https://code.google.com/archive/p/spock/issues/338)
+- [Multiple Assignment in when: and anything in cleanup:](https://code.google.com/archive/p/spock/issues/371)
+- [Move OptimizeRunOrderSuite from spock-core to spock-maven to solve a problem with Android’s test runner](https://code.google.com/archive/p/spock/issues/385)
+- [Support running on JDK 8](https://code.google.com/archive/p/spock/issues/391)
+- [Release binary variants for Groovy 2.3 and Groovy 2.4](https://code.google.com/archive/p/spock/issues/392)
+- [Port reference documentation to Asciidoc](https://code.google.com/archive/p/spock/issues/393)
 
 
 ### Merged Pull Requests
@@ -1481,7 +1481,7 @@ These awesome extensions have been published or updated:
 These great features didn’t make it into this release (but hopefully the next!):
 
 
-- [Spock reports](https://spockframework.github.io/spock/sampleReports/Ninja%20Commander.html)
+- [Spock reports](https://spockframework.org/spock/sampleReports/Ninja%20Commander.html)
 - [Render exceptions in conditions as condition failure](https://github.com/spockframework/spock/pull/49)
 - [Soft asserts: check all then throw all failures](https://github.com/spockframework/spock/pull/50)
 - [Detached mocks](https://github.com/spockframework/spock/pull/17)
@@ -1496,10 +1496,10 @@ Spock snapshots are now available from https://oss.sonatype.org/content/reposito
 
 ### New Reference Documentation
 
-The new Spock reference documentation is available at https://docs.spockframework.org.
+The new Spock reference documentation is available at https://spockframework.org/spock/docs/.
 It will gradually replace the documentation at https://wiki.spockframework.org.
 Each Spock version is documented separately (e.g. https://docs.spockframework.org/en/spock-0.7-groovy-1.8).
-Documentation for the latest Spock snapshot is at https://docs.spockframework.org/en/latest.
+Documentation for the latest Spock snapshot is at https://spockframework.org/spock/docs/latest/.
 As of Spock 0.7, the chapters on [Data Driven Testing](data_driven_testing.md#data-driven-testing) and
 [Interaction Based Testing](interaction_based_testing.md#interaction-based-testing) are complete.
 
@@ -1865,7 +1865,7 @@ automatically initialize the rule by calling the default constructor. The `@Test
 honor the `@Unroll` annotation and any defined naming pattern.
 
 
-See [Issue 240](https://code.google.com/p/spock/issues/detail?id=240) for a known limitation with Spock’s TestRule support.
+See [Issue 240](https://code.google.com/archive/p/spock/issues/240) for a known limitation with Spock’s TestRule support.
 
 
 ### Condition Rendering Improvements
@@ -1973,7 +1973,7 @@ is based on Groovy 2.0-beta-3-SNAPSHOT and only available from https://m2repo.sp
 
 ### Grails 2.0 Support
 
-Spock’s Grails plugin was split off into a separate project and now lives at https://github.spockframework.org/spock-grails.
+Spock’s Grails plugin was split off into a separate project and now lives at https://github.com/spockframework/spock-grails.
 The plugin supports both Grails 1.3 and 2.0.
 
 
@@ -1990,17 +1990,17 @@ their types inferred from the values in the table (!).
 
 ### GitHub Repository
 
-All source code has moved to https://github.spockframework.org/. The [Grails Spock plugin](https://github.spockframework.org/spock-grails),
+All source code has moved to https://github.com/spockframework/. The [Grails Spock plugin](https://github.com/spockframework/spock-grails),
 [Spock Example](https://github.com/spockframework/spock-example) project, and
-[Spock Web Console](https://github.spockframework.org/spockwebconsole) now have their own GitHub projects.
+[Spock Web Console](https://github.com/spockframework/spockwebconsole) now have their own GitHub projects.
 Also available are slides and code for various Spock presentations (such as
-[this one](https://github.spockframework.org/smarter-testing-with-spock)).
+[this one](https://github.com/spockframework/smarter-testing-with-spock)).
 
 
 ### Gradle Build
 
 Spock is now exclusively built with Gradle. Building Spock yourself is as easy as cloning the
-[Github repo](https://github.spockframework.org/spock) and executing `gradlew build`. No build tool installation is
+[Github repo](https://github.com/spockframework/spock) and executing `gradlew build`. No build tool installation is
 required; the only prerequisite for building Spock is a JDK installation (1.5 or higher).
 
 

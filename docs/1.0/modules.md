@@ -2,13 +2,13 @@
 
 ## Guice Module
 
-Integration with the [Guice](https://code.google.com/p/google-guice/) IoC container. For examples see the specs in the
+Integration with the [Guice](https://github.com/google/guice) IoC container. For examples see the specs in the
 [codebase](https://github.com/spockframework/spock/tree/master/spock-guice/src/test/groovy/org/spockframework/guice).
 
 
 ## Spring Module
 
-Integration with the [Spring TestContext Framework](https://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework).
+Integration with the [Spring TestContext Framework](https://docs.spring.io/spring-framework/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework).
 For examples see the specs in the [codebase](https://github.com/spockframework/spock/tree/master/spock-spring/src/test/groovy/org/spockframework/spring).
 
 

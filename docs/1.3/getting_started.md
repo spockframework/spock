@@ -5,9 +5,9 @@ It’s really easy to get started with Spock. This section shows you how.
 
 ## Spock Web Console
 
-[Spock Web Console](https://webconsole.spockframework.org) is a website that allows you to instantly view, edit, run, and
+[Spock Web Console](https://groovyconsole.dev/) is a website that allows you to instantly view, edit, run, and
 even publish Spock specifications. It is the perfect place to toy around with Spock without making any commitments.
-So why not run [Hello, Spock!](https://webconsole.spockframework.org/edit/9001) right away?
+So why not run [Hello, Spock!](https://groovyconsole.dev/) right away?
 
 
 ## Spock Example Project

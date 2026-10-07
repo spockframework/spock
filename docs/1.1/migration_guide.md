@@ -123,7 +123,7 @@ based syntax. See [Improved `@Unroll`](#improved-unroll-0.6) for recent improvem
 > This only affects users moving from the Groovy 1.7 to the 1.8 or 2.0 variant.
 
 
-Spock offers a very neat syntax for using [Hamcrest](https://code.google.com/p/hamcrest/) matchers:
+Spock offers a very neat syntax for using [Hamcrest](https://code.google.com/archive/p/hamcrest) matchers:
 
 
 ```groovy

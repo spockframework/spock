@@ -452,7 +452,7 @@
 <p>Spock is a testing and specification framework for Java and Groovy applications. What makes it stand out from the crowd
 is its beautiful and highly expressive specification language. Thanks to its JUnit runner, Spock is compatible with most
 IDEs, build tools, and continuous integration servers. Spock is inspired from <a href="https://junit.org/">JUnit</a>,
-<a href="https://www.jmock.org/">jMock</a>, <a href="https://rspec.info/">RSpec</a>, <a href="https://groovy-lang.org/">Groovy</a>, <a href="https://scala-lang.org/">Scala</a>,
+<a href="https://jmock.org/">jMock</a>, <a href="https://rspec.info/">RSpec</a>, <a href="https://groovy-lang.org/">Groovy</a>, <a href="https://scala-lang.org/">Scala</a>,
 <a href="https://en.wikipedia.org/wiki/Vulcan_(Star_Trek)">Vulcans</a>, and other fascinating life forms.</p>
 </div>
 </div>
@@ -2498,8 +2498,8 @@ Compared to implementations based on Groovy meta-programming, this has the advan
 </div>
 </div>
 <div class="paragraph">
-<p>The Java world has no shortage of popular and mature mocking frameworks: <a href="https://www.jmock.org/">JMock</a>,
-<a href="https://www.easymock.org">EasyMock</a>, <a href="https://mockito.org/">Mockito</a>, to name just a few.
+<p>The Java world has no shortage of popular and mature mocking frameworks: <a href="https://jmock.org/">JMock</a>,
+<a href="https://easymock.org">EasyMock</a>, <a href="https://site.mockito.org/">Mockito</a>, to name just a few.
 Although each of these tools can be used together with Spock, we decided to roll our own mocking framework,
 tightly integrated with Spock&#8217;s specification language. This decision was driven by the desire to leverage all of
 Groovy&#8217;s capabilities to make interaction-based tests easier to write, more readable, and ultimately more fun.
@@ -3900,11 +3900,11 @@ mock.nature == MockNature.MOCK</code></pre>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><a href="https://www.ccs.neu.edu/research/demeter/related-work/extreme-programming/MockObjectsFinal.PDF">Endo-Testing: Unit Testing with Mock Objects</a></dt>
+<dt class="hdlist1"><a href="https://www2.ccs.neu.edu/research/demeter/related-work/extreme-programming/MockObjectsFinal.PDF">Endo-Testing: Unit Testing with Mock Objects</a></dt>
 <dd>
 <p>Paper from the XP2000 conference that introduces the concept of mock objects.</p>
 </dd>
-<dt class="hdlist1"><a href="https://www.jmock.org/oopsla2004.pdf">Mock Roles, not Objects</a></dt>
+<dt class="hdlist1"><a href="https://jmock.org/oopsla2004.pdf">Mock Roles, not Objects</a></dt>
 <dd>
 <p>Paper from the OOPSLA2004 conference that explains how to do mocking <em>right</em>.</p>
 </dd>
@@ -3912,7 +3912,7 @@ mock.nature == MockNature.MOCK</code></pre>
 <dd>
 <p>Martin Fowler&#8217;s take on mocking.</p>
 </dd>
-<dt class="hdlist1"><a href="https://www.growing-object-oriented-software.com">Growing Object-Oriented Software Guided by Tests</a></dt>
+<dt class="hdlist1"><a href="https://growing-object-oriented-software.com">Growing Object-Oriented Software Guided by Tests</a></dt>
 <dd>
 <p>TDD pioneers Steve Freeman and Nat Pryce explain in detail how test-driven development and mocking work in the real world.</p>
 </dd>
@@ -5670,7 +5670,7 @@ See <a href="#spock-configuration-file">Spock Configuration File</a> for general
 <div class="title">Note</div>
 </td>
 <td class="content">
-JUnit Jupiter also supports  <a href="https://junit.org/junit5/docs/5.7.0/user-guide/#writing-tests-parallel-execution">parallel execution</a>, both rely on the JUnit Platform implementation, but function independently of each other.
+JUnit Jupiter also supports  <a href="https://docs.junit.org/5.7.0/user-guide/#writing-tests-parallel-execution">parallel execution</a>, both rely on the JUnit Platform implementation, but function independently of each other.
       If you enable parallel execution in Spock it won&#8217;t affect Jupiter and vice versa.
       The JUnit Platform executes the test engines (Spock, Jupiter) sequentially, so there should not be any interference between engines.
 </td>
@@ -6027,7 +6027,7 @@ This module does its best to support old features from JUnit 4, however, users a
 <div class="sect2">
 <h3 id="_spring_module"><a class="anchor" href="#_spring_module"></a><a class="link" href="#_spring_module">Spring Module</a></h3>
 <div class="paragraph">
-<p>The Spring module enables integration with <a href="https://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework">Spring TestContext Framework</a>.
+<p>The Spring module enables integration with <a href="https://docs.spring.io/spring-framework/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework">Spring TestContext Framework</a>.
 It supports the following spring annotations <code>@ContextConfiguration</code> and <code>@ContextHierarchy</code>. Furthermore, it supports the meta-annotation <code>@BootstrapWith</code> and so any annotation that is annotated with <code>@BootstrapWith</code> will also work, such as <code>@SpringBootTest</code>, <code>@WebMvcTest</code>. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-spring"><code>org.spockframework:spock-spring</code></a> to your project.</p>
 </div>
 <div class="sect3">
@@ -6989,7 +6989,7 @@ If you relied on other groovy dependencies transitively, you will need to add th
 <div class="sect4">
 <h5 id="_upgrade_to_junit_5_6_and_junit_platform_1_6"><a class="anchor" href="#_upgrade_to_junit_5_6_and_junit_platform_1_6"></a><a class="link" href="#_upgrade_to_junit_5_6_and_junit_platform_1_6">Upgrade to JUnit 5.6 (and JUnit Platform 1.6)</a></h5>
 <div class="paragraph">
-<p>JUnit Platform 1.6 <a href="https://junit.org/junit5/docs/5.6.0/release-notes/index.html#deprecations-and-breaking-changes">deprecated</a> methods (from experimental API)  in <code>EngineExecutionResults</code> that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.</p>
+<p>JUnit Platform 1.6 <a href="https://docs.junit.org/5.6.0/release-notes/index.html#deprecations-and-breaking-changes">deprecated</a> methods (from experimental API)  in <code>EngineExecutionResults</code> that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.</p>
 </div>
 </div>
 <div class="sect4">
@@ -8047,14 +8047,14 @@ verifyAll {
 <h3 id="_1_0_released_2015_03_02"><a class="anchor" href="#_1_0_released_2015_03_02"></a><a class="link" href="#_1_0_released_2015_03_02">1.0 (released 2015-03-02)</a></h3>
 <div class="paragraph">
 <p>1.0 has arrived! Finally (and some years late) the version number communicates what
-<a href="https://code.google.com/p/spock/wiki/WhoIsUsingSpock">Spock users</a> have known for ages - that Spock isn&#8217;t only useful
+<a href="https://code.google.com/archive/p/spock/wikis/WhoIsUsingSpock.wiki">Spock users</a> have known for ages - that Spock isn&#8217;t only useful
 and fun, but also reliable, mature, and here to stay. So please, go out and tell everyone who hasn&#8217;t been assimilated
 that now is the time to join the party!</p>
 </div>
 <div class="paragraph">
 <p>A special thanks goes to all our tireless speakers and supporters, only a few of which are listed here: Andres Almiray,
 Cédric Champeau, David Dawson, Rob Fletcher, Sean Gilligan, Ken Kousen, Guillaume Laforge,
-<a href="https://www.nofluffjuststuff.com/home/main">NFJS Tour</a>, Graeme Rocher, Baruch Sadogursky, Odin Hole Standal,
+<a href="https://nofluffjuststuff.com/home/main">NFJS Tour</a>, Graeme Rocher, Baruch Sadogursky, Odin Hole Standal,
 Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.</p>
 </div>
 <div class="sect3">
@@ -8069,7 +8069,7 @@ Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.</p>
 <p>Minimum runtime requirements raised to JRE 1.6 and Groovy 2.0.</p>
 </li>
 <li>
-<p>Improved and restyled reference documentation at <a href="https://docs.spockframework.org" class="bare">https://docs.spockframework.org</a>. Generated with
+<p>Improved and restyled reference documentation at <a href="https://spockframework.org/spock/docs/" class="bare">https://spockframework.org/spock/docs/</a>. Generated with
 <a href="https://asciidoctor.org/">Asciidoctor</a> (what else?).</p>
 </li>
 <li>
@@ -8082,7 +8082,7 @@ Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.</p>
 </li>
 <li>
 <p>Improved infrastructure to allow for easier community involvement: Switch to
-<a href="https://issues.spockframework.org">GitHub issue tracker</a>, <a href="https://winbuilds.spockframework.org">Windows</a> and
+<a href="https://github.com/spockframework/spock/issues">GitHub issue tracker</a>, <a href="https://winbuilds.spockframework.org">Windows</a> and
 <a href="https://builds.spockframework.org">Linux</a> CI builds, pull requests automatically tested, all development on <code>master</code>
 branch (bye-bye <code>groovy-x.y</code> branches!).</p>
 </li>
@@ -8100,7 +8100,7 @@ branch (bye-bye <code>groovy-x.y</code> branches!).</p>
 <p>Try these <a href="#_new_third_party_extensions">new third-party extensions</a></p>
 </li>
 <li>
-<p>Check out the upcoming <a href="https://manning.com/kapelonis/">Java Testing with Spock</a> book from Manning</p>
+<p>Check out the upcoming <a href="https://www.manning.com/books/java-testing-with-spock">Java Testing with Spock</a> book from Manning</p>
 </li>
 </ul>
 </div>
@@ -8189,67 +8189,67 @@ finally shooting for a professional logo and website. Stay tuned for announcemen
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=221">Create a example which uses ConfineMetaClassChanges</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/221">Create a example which uses ConfineMetaClassChanges</a></p>
 </li>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=273">Mistakes in PollingConditions sphinx docs</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/273">Mistakes in PollingConditions sphinx docs</a></p>
 </li>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=274">Closure used as data value in where-block can&#8217;t be called with method syntax</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/274">Closure used as data value in where-block can&#8217;t be called with method syntax</a></p>
 </li>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=276">old() expression blows up when part of failing condition</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/276">old() expression blows up when part of failing condition</a></p>
 </li>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=278">Reflect subsequent filtering/sorting in a spec&#8217;s JUnit description</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/278">Reflect subsequent filtering/sorting in a spec&#8217;s JUnit description</a></p>
 </li>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=282">After/AfterClass/Before/BeforeClass methods from superclass should not be called if they have been overrided in the derived class</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/282">After/AfterClass/Before/BeforeClass methods from superclass should not be called if they have been overrided in the derived class</a></p>
 </li>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=286">Data values in where-block are not resolved in nested closures</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/286">Data values in where-block are not resolved in nested closures</a></p>
 </li>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=290">spock-maven:0.7-groovy-2.0 has an invalid descriptor (and a workaround for this)</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/290">spock-maven:0.7-groovy-2.0 has an invalid descriptor (and a workaround for this)</a></p>
 </li>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=291">PollingConditions doesn&#8217;t report failed assertion</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/291">PollingConditions doesn&#8217;t report failed assertion</a></p>
 </li>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=292">Provide a Specification.with() overload that states the expected target type</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/292">Provide a Specification.with() overload that states the expected target type</a></p>
 </li>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=294">Problem with array arguments to mock methods</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/294">Problem with array arguments to mock methods</a></p>
 </li>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=296">spock-tapestry should support @javax.inject.Inject and @InjectService</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/296">spock-tapestry should support @javax.inject.Inject and @InjectService</a></p>
 </li>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=297">Compilation error when using multi assignment</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/297">Compilation error when using multi assignment</a></p>
 </li>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=302">Groovy mocks should allow to mock final classes/methods</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/302">Groovy mocks should allow to mock final classes/methods</a></p>
 </li>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=307">Better generics support for mocks and stubs</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/307">Better generics support for mocks and stubs</a></p>
 </li>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=338">GC calls to finalize() on mocks cause strict interaction specifications (0 * _) to fail intermittently</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/338">GC calls to finalize() on mocks cause strict interaction specifications (0 * _) to fail intermittently</a></p>
 </li>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=371">Multiple Assignment in when: and anything in cleanup:</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/371">Multiple Assignment in when: and anything in cleanup:</a></p>
 </li>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=385">Move OptimizeRunOrderSuite from spock-core to spock-maven to solve a problem with Android&#8217;s test runner</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/385">Move OptimizeRunOrderSuite from spock-core to spock-maven to solve a problem with Android&#8217;s test runner</a></p>
 </li>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=391">Support running on JDK 8</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/391">Support running on JDK 8</a></p>
 </li>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=392">Release binary variants for Groovy 2.3 and Groovy 2.4</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/392">Release binary variants for Groovy 2.3 and Groovy 2.4</a></p>
 </li>
 <li>
-<p><a href="https://code.google.com/p/spock/issues/detail?id=393">Port reference documentation to Asciidoc</a></p>
+<p><a href="https://code.google.com/archive/p/spock/issues/393">Port reference documentation to Asciidoc</a></p>
 </li>
 </ul>
 </div>
@@ -8342,7 +8342,7 @@ finally shooting for a professional logo and website. Stay tuned for announcemen
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://spockframework.github.io/spock/sampleReports/Ninja%20Commander.html">Spock reports</a></p>
+<p><a href="https://spockframework.org/spock/sampleReports/Ninja%20Commander.html">Spock reports</a></p>
 </li>
 <li>
 <p><a href="https://github.com/spockframework/spock/pull/49">Render exceptions in conditions as condition failure</a></p>
@@ -8368,10 +8368,10 @@ finally shooting for a professional logo and website. Stay tuned for announcemen
 <div class="sect3">
 <h4 id="_new_reference_documentation"><a class="anchor" href="#_new_reference_documentation"></a><a class="link" href="#_new_reference_documentation">New Reference Documentation</a></h4>
 <div class="paragraph">
-<p>The new Spock reference documentation is available at <a href="https://docs.spockframework.org" class="bare">https://docs.spockframework.org</a>.
+<p>The new Spock reference documentation is available at <a href="https://spockframework.org/spock/docs/" class="bare">https://spockframework.org/spock/docs/</a>.
 It will gradually replace the documentation at <a href="https://wiki.spockframework.org" class="bare">https://wiki.spockframework.org</a>.
 Each Spock version is documented separately (e.g. <a href="https://docs.spockframework.org/en/spock-0.7-groovy-1.8" class="bare">https://docs.spockframework.org/en/spock-0.7-groovy-1.8</a>).
-Documentation for the latest Spock snapshot is at <a href="https://docs.spockframework.org/en/latest" class="bare">https://docs.spockframework.org/en/latest</a>.
+Documentation for the latest Spock snapshot is at <a href="https://spockframework.org/spock/docs/latest/" class="bare">https://spockframework.org/spock/docs/latest/</a>.
 As of Spock 0.7, the chapters on <a href="#data-driven-testing">Data Driven Testing</a> and
 <a href="#interaction-based-testing">Interaction Based Testing</a> are complete.</p>
 </div>
@@ -8757,7 +8757,7 @@ automatically initialize the rule by calling the default constructor. The <code>
 honor the <code>@Unroll</code> annotation and any defined naming pattern.</p>
 </div>
 <div class="paragraph">
-<p>See <a href="https://code.google.com/p/spock/issues/detail?id=240">Issue 240</a> for a known limitation with Spock&#8217;s TestRule support.</p>
+<p>See <a href="https://code.google.com/archive/p/spock/issues/240">Issue 240</a> for a known limitation with Spock&#8217;s TestRule support.</p>
 </div>
 </div>
 <div class="sect3">
@@ -8875,7 +8875,7 @@ is based on Groovy 2.0-beta-3-SNAPSHOT and only available from <a href="https://
 <div class="sect3">
 <h4 id="_grails_2_0_support"><a class="anchor" href="#_grails_2_0_support"></a><a class="link" href="#_grails_2_0_support">Grails 2.0 Support</a></h4>
 <div class="paragraph">
-<p>Spock&#8217;s Grails plugin was split off into a separate project and now lives at <a href="https://github.spockframework.org/spock-grails" class="bare">https://github.spockframework.org/spock-grails</a>.
+<p>Spock&#8217;s Grails plugin was split off into a separate project and now lives at <a href="https://github.com/spockframework/spock-grails" class="bare">https://github.com/spockframework/spock-grails</a>.
 The plugin supports both Grails 1.3 and 2.0.</p>
 </div>
 <div class="paragraph">
@@ -8894,18 +8894,18 @@ their types inferred from the values in the table (!).</p>
 <div class="sect3">
 <h4 id="_github_repository"><a class="anchor" href="#_github_repository"></a><a class="link" href="#_github_repository">GitHub Repository</a></h4>
 <div class="paragraph">
-<p>All source code has moved to <a href="https://github.spockframework.org/" class="bare">https://github.spockframework.org/</a>. The <a href="https://github.spockframework.org/spock-grails">Grails Spock plugin</a>,
-<a href="https://github.spockframework.org/spock-example">Spock Example</a> project, and
-<a href="https://github.spockframework.org/spockwebconsole">Spock Web Console</a> now have their own GitHub projects.
+<p>All source code has moved to <a href="https://github.com/spockframework/" class="bare">https://github.com/spockframework/</a>. The <a href="https://github.com/spockframework/spock-grails">Grails Spock plugin</a>,
+<a href="https://github.com/spockframework/spock-example">Spock Example</a> project, and
+<a href="https://github.com/spockframework/spockwebconsole">Spock Web Console</a> now have their own GitHub projects.
 Also available are slides and code for various Spock presentations (such as
-<a href="https://github.spockframework.org/smarter-testing-with-spock">this one</a>).</p>
+<a href="https://github.com/spockframework/smarter-testing-with-spock">this one</a>).</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_gradle_build"><a class="anchor" href="#_gradle_build"></a><a class="link" href="#_gradle_build">Gradle Build</a></h4>
 <div class="paragraph">
 <p>Spock is now exclusively built with Gradle. Building Spock yourself is as easy as cloning the
-<a href="https://github.spockframework.org/spock">Github repo</a> and executing <code>gradlew build</code>. No build tool installation is
+<a href="https://github.com/spockframework/spock">Github repo</a> and executing <code>gradlew build</code>. No build tool installation is
 required; the only prerequisite for building Spock is a JDK installation (1.5 or higher).</p>
 </div>
 </div>

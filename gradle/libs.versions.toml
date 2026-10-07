@@ -12,7 +12,7 @@ junit6 = '6.1.3'
 junitPlatformVersionRange = "[1.12,7)"
 asm = '9.10.1'
 mockito4 = '4.11.0'
-mockito5 = '5.23.0'
+mockito5 = '5.24.0'
 workflows-kotlin = "2.3.21"
 
 [libraries]

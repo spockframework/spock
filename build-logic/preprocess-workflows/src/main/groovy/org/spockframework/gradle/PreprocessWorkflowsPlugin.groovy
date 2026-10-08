@@ -37,11 +37,7 @@ class PreprocessWorkflowsPlugin implements Plugin<Project> {
     )
     def mainKtsClasspath = project.configurations.detachedConfiguration(
       libs.findLibrary('workflows-kotlin-mainKts').orElseThrow(AssertionError::new).get(),
-      libs.findLibrary('workflows-kotlin-stdlib').orElseThrow(AssertionError::new).get(),
-      libs.findLibrary('workflows-kotlin-reflect').orElseThrow(AssertionError::new).get()
-    ).tap {
-      it.transitive = false
-    }
+    )
 
     def preprocessWorkflows = project.tasks.register('preprocessWorkflows') {
       it.group = 'github workflows'

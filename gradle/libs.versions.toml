@@ -44,9 +44,7 @@ junit-platform-testkit.module = "org.junit.platform:junit-platform-testkit"
 workflows-kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "workflows-kotlin" }
 workflows-kotlin-compilerEmbeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "workflows-kotlin" }
 workflows-kotlin-mainKts = { module = "org.jetbrains.kotlin:kotlin-main-kts", version.ref = "workflows-kotlin" }
-workflows-kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "workflows-kotlin" }
 workflows-kotlin-scriptingCompiler = { module = "org.jetbrains.kotlin:kotlin-scripting-compiler", version.ref = "workflows-kotlin" }
-workflows-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "workflows-kotlin" }
 
 # just here so that renovate can figure out the dependencies
 groovy-v2 = { module = "org.codehaus.groovy:groovy", version.ref="groovy2" }

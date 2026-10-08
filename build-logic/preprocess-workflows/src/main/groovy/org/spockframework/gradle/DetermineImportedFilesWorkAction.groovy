@@ -6,6 +6,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.CompilerConfigurationCreationKt
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.com.intellij.openapi.vfs.local.CoreLocalFileSystem
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 
 import static org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles.JVM_CONFIG_FILES
-import static org.jetbrains.kotlin.config.CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY
 
 @CompileStatic
 abstract class DetermineImportedFilesWorkAction implements WorkAction<Parameters> {
@@ -46,9 +46,11 @@ abstract class DetermineImportedFilesWorkAction implements WorkAction<Parameters
         KotlinCoreEnvironment
           .createForProduction(
             Disposer.newDisposable(),
-            new CompilerConfiguration().tap {
-              it.put(MESSAGE_COLLECTOR_KEY, MessageCollector.@Companion.NONE)
-            },
+            CompilerConfigurationCreationKt.create(
+              CompilerConfiguration.@Companion,
+              null,
+              MessageCollector.@Companion.NONE
+            ),
             JVM_CONFIG_FILES
           )
           .project

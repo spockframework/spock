@@ -36,7 +36,9 @@ class PreprocessWorkflowsPlugin implements Plugin<Project> {
       libs.findLibrary('workflows-kotlin-scriptingCompiler').orElseThrow(AssertionError::new).get()
     )
     def mainKtsClasspath = project.configurations.detachedConfiguration(
-      libs.findLibrary('workflows-kotlin-mainKts').orElseThrow(AssertionError::new).get()
+      libs.findLibrary('workflows-kotlin-mainKts').orElseThrow(AssertionError::new).get(),
+      libs.findLibrary('workflows-kotlin-stdlib').orElseThrow(AssertionError::new).get(),
+      libs.findLibrary('workflows-kotlin-reflect').orElseThrow(AssertionError::new).get()
     ).tap {
       it.transitive = false
     }

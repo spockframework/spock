@@ -5,19 +5,19 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.IdeaStandaloneExecutionSetup
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode.Production
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import org.jetbrains.kotlin.com.intellij.openapi.vfs.local.CoreLocalVirtualFile
 import org.jetbrains.kotlin.com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
-
-import static org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles.JVM_CONFIG_FILES
-import static org.jetbrains.kotlin.config.CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY
 
 @CompileStatic
 abstract class DetermineImportedFilesWorkAction implements WorkAction<Parameters> {
@@ -41,17 +41,20 @@ abstract class DetermineImportedFilesWorkAction implements WorkAction<Parameters
       return []
     }
 
+    def disposable = Disposer.newDisposable()
+    IdeaStandaloneExecutionSetup.INSTANCE.doSetup()
     return PsiManager
       .getInstance(
-        KotlinCoreEnvironment
-          .createForProduction(
-            Disposer.newDisposable(),
-            new CompilerConfiguration().tap {
-              it.put(MESSAGE_COLLECTOR_KEY, MessageCollector.@Companion.NONE)
-            },
-            JVM_CONFIG_FILES
-          )
-          .project
+        new KotlinCoreProjectEnvironment(
+          disposable,
+          KotlinCoreApplicationEnvironment.@Companion.create(
+            disposable,
+            Production.INSTANCE
+          ).tap {
+            registerParserDefinition(new KotlinParserDefinition())
+            registerFileType(KotlinFileType.INSTANCE, 'kts')
+          }
+        ).project
       )
       .findFile(
         new CoreLocalVirtualFile(

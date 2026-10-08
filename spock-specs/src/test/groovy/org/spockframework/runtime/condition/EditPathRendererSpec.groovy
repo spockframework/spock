@@ -67,10 +67,13 @@ class EditPathRendererSpec extends Specification {
     expect:
     renderer.render(str, seq, dist.calculatePath()) == "$out1\n$out2"
 
+    // the last case pins one specific alignment; several alignments with the same minimal
+    // edit distance exist and the current algorithm pairs up "row"/"-ur" instead of
+    // "-"/"u" and "ow"/"--"
     where:
     str = "the quick brown"
     seq << ["${"the"} quark ${"burn"}", new StringBuilder("the quark burn"), CharBuffer.wrap("the quark burn".toCharArray())]
-    out1 = "the qu(ic)k b(-)r(ow)n"
-    out2 = "the qu(ar)k b(u)r(--)n"
+    out1 = "the qu(ic)k b(row)n"
+    out2 = "the qu(ar)k b(-ur)n"
   }
 }

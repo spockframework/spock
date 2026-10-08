@@ -66,7 +66,7 @@ methodName == "add"
 remove     false
            6 differences (0% similarity)
            (remove)
-           (add---)
+           (---add)
 
 1 * list2.add(2)
 instance == target
@@ -93,7 +93,7 @@ methodName == "add"
 size       false
            4 differences (0% similarity)
            (size)
-           (add-)
+           (-add)
 
 <too few arguments>
     ''')
@@ -163,7 +163,7 @@ methodName == "add"
 remove     false
            6 differences (0% similarity)
            (remove)
-           (add---)
+           (---add)
 
 One or more arguments(s) didn't match:
 0: argument == expected

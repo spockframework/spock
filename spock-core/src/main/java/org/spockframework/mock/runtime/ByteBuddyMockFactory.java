@@ -51,6 +51,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static java.util.Objects.requireNonNull;
 import static net.bytebuddy.matcher.ElementMatchers.none;
+import static org.spockframework.util.ObjectUtil.uncheckedCast;
 
 class ByteBuddyMockFactory {
   /**
@@ -111,7 +112,7 @@ class ByteBuddyMockFactory {
     return cl == targetClass.getClassLoader();
   }
 
-  Object createMock(IMockMaker.IMockCreationSettings settings) {
+  <T> T createMock(IMockMaker.IMockCreationSettings settings) {
     final Class<?> type = settings.getMockType();
     TypeCache.SimpleKey key = new TypeCache.SimpleKey(type, settings.getAdditionalInterface());
     ClassLoader classLoader = settings.getClassLoader();
@@ -155,7 +156,7 @@ class ByteBuddyMockFactory {
           .getLoaded();
       }, getCacheLockForKey(key));
 
-    Object proxy = MockInstantiator.instantiate(type, enhancedType, settings.getConstructorArgs(), settings.isUseObjenesis());
+    T proxy = uncheckedCast(MockInstantiator.instantiate(type, enhancedType, settings.getConstructorArgs(), settings.isUseObjenesis()));
     ((ByteBuddyInterceptorAdapter.InterceptorAccess) proxy).$spock_set(settings.getMockInterceptor());
     return proxy;
   }

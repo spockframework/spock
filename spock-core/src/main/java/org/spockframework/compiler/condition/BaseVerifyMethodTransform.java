@@ -15,6 +15,7 @@ package org.spockframework.compiler.condition;
 
 import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.MethodNode;
+import org.codehaus.groovy.classgen.VariableScopeVisitor;
 import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.transform.ASTTransformation;
 import org.spockframework.compiler.*;
@@ -53,12 +54,12 @@ abstract class BaseVerifyMethodTransform implements ASTTransformation {
           errorReporter.error(node, "Method '%s' cannot be annotated with both @Verify and @VerifyAll.", methodNode.getName());
         }
 
-        processVerificationHelperMethod(createVerifyMethod(methodNode), errorReporter, sourceLookup);
+        processVerificationHelperMethod(createVerifyMethod(methodNode), errorReporter, sourceLookup, sourceUnit);
       }
     }
   }
 
-  private void processVerificationHelperMethod(Method method, ErrorReporter errorReporter, SourceLookup sourceLookup) {
+  private void processVerificationHelperMethod(Method method, ErrorReporter errorReporter, SourceLookup sourceLookup, SourceUnit sourceUnit) {
     MethodNode methodAst = method.getAst();
     if (!VerifyMethod.verifyReturnType(methodAst, errorReporter)) {
       return;
@@ -73,6 +74,10 @@ abstract class BaseVerifyMethodTransform implements ASTTransformation {
 
     try {
       rewriter.rewrite();
+      // if there were no errors so far, let the variable scope visitor fix up variable scopes
+      if (!sourceUnit.getErrorCollector().hasErrors()) {
+        new VariableScopeVisitor(sourceUnit).visitMethod(methodAst);
+      }
     } catch (Exception e) {
       errorReporter.error(
           "Unexpected error during compilation of verification helper method '%s'. Maybe you have used invalid Spock syntax? Anyway, please file a bug report at https://issues.spockframework.org.",

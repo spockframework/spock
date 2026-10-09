@@ -788,34 +788,66 @@ will be rendered as
 include::{snapshotdir}/primer/VerifyEachDocSpec/verifyEach_with_index_method.txt[]
 ----
 
-[[statically-compiled-specifications]]
-== Statically Compiled Specifications
+[[statically-type-checked-specifications]]
+== Statically Type-Checked or Compiled Specifications
 
-Specifications can be compiled with Groovy's static compilation by annotating the specification class or individual
-feature methods with `@CompileStatic` or `@TypeChecked`. All major features work under static compilation: conditions
-including their failure rendering, exception conditions, interactions and stubbing, `old()`, `with`, `verifyAll`, and
-data driven features.
+Specifications can be compiled with Groovy's static type-checking or static compilation by annotating the specification
+class or individual feature methods with `@SpockTypeChecked` or `@SpockCompileStatic` or by using a compiler configuration script.
+All major features work under static type-checking and compilation: conditions including their failure rendering,
+exception conditions, interactions and stubbing, `old()`, `with`, `verifyAll`, and data driven features.
+
+The advantage of static type-checking is, that you are forced to provide more explicit types or use the correct types
+and not superclasses that only work due to Groovy's duck-typing. As a consequence also the IDE you use does have better
+type information and can better to usage-searches, refactorings, and so on.
+
+The advantage of static compilation over static type-checking is, that additionally the compiled bytecode does not have
+the Groovy dynamic magic in it and can thus execute the tests faster, so if you do not need the Groovy dynamic language
+features, you can save some execution time.
 
 Since the static type checker analyzes the code after Spock has rewritten it, a few rules apply:
 
-* Mock creation must use a typed variable declaration, e.g. `List list = Mock()` or `List list = Mock(List)`.
-  With `def list = Mock(List)` the variable is typed as `Object`, so calls on it will not pass type checking.
+* Specification fields need to be explicitly typed, except if they are only used as `Object`.
+  Spock separates the declaration from the initialization so that extensions can wrap around the field initialization.
+  Due to that, the type of the field cannot be inferred from the initializer expression.
+  With `def list = []` the field, as far as the static type-checker is concerned, is typed as `Object`,
+  so calls on it will not pass type checking.
 * Data variables in `where:` blocks default to `Object`. Declare typed feature method parameters to use them
-  with methods or operators, e.g. `def "maximum of two numbers"(int a, int b, int c)`.
-* Precondition closures of `@IgnoreIf` and `@Requires` need an explicitly typed parameter, e.g.
-  `@IgnoreIf({ PreconditionContext it -> it.os.windows })`.
+  with methods or operators that need the actual type, e.g. `def "maximum of two numbers"(int a, int b, int c)`.
+  Only those where the type needs to be known need to be declared explicitly.
+* Some closures like the preconditions in `@IgnoreIf` and `@Requires`, or some interaction result calculation closures,
+  or argument constraint closures might need explicit typing for the closure argument to compile properly,
+  e.g. `@IgnoreIf({ PreconditionContext it -> it.os.windows })`.
+* Some more places like variables initialized with a not-casted `null` might need explict type declaration.
+* Private methods and fields cannot be simply accessed anymore, but need to be referenced using method closure syntax (`&.`)
+  or field accessor syntax (`@.`) or if really the property needs to be accessed a method closure syntax for the accessor method.
 
 Some limitations remain:
 
 * Global Groovy mocks (e.g. `GroovySpy(Foo, global: true)`) rely on Groovy's meta-object protocol and therefore
   cannot intercept calls made from statically compiled code. The real method is called instead.
+  This is independent from whether the tests are statically compiled, but depends on whether the production code is.
 * Dynamic language features, like dynamic method names or `methodMissing`, are not available, as in any
   statically compiled Groovy code.
-* Spock detects static compilation via the annotations. If static compilation is instead applied globally through
-  a compiler configuration script, Spock does not see it and conditions will fail to compile.
 * Condition rendering can differ in minor ways. For example, the target class of a static method call like
-  `Math.max(a, b)` is not rendered, because statically compiled code never evaluates the receiver of a static
-  method call, so there is no value to record.
+  `Math.max(a, b)` is not rendered under static compilation, because statically compiled code never evaluates the
+  receiver of a static method call, so there is no value to record.
+* The standard Groovy `@TypeChecked`, `@CompileStatic`, and `@CompileDynamic` annotations must not be used anywhere within a Spock specification.
+  IDEs interpret these annotations, but use the code as written to display type errors, instead of the code as
+  rewritten by Spock which is what the annotations do in actual Groovy compilation.
+  This causes a lot of errors displayed that actually are no errors after Spock transformation, and on the other hand
+  miss to display a lot of errors that are errors after Spock transformation.
+  Due to that it is prohibited that you use those annotations.
+  Instead you use `@SpockTypeChecked`, `@SpockCompileStatic`, and `@SpockCompileDynamic`, which have the same semantics and effect but do not confuse IDEs.
+  On non-specification classes you use the normal built-in annotations.
+  Using a compiler configuration script with the standard annotations
+  works as intended as the IDE does not recognize those settings even if the configuration script is configured in the IDE.
+  The type-errors you then get from actual Groovy compilation of the specifications.
+* The `@Use` extension with wich you can enable Groovy categories within the scope of a feature method or spec has no
+  effect. It would at runtime add those categories but the static type-checker cannot know that and thus does not see
+  the methods added by the category. With an explicit `use(...) { ... }` the static type-checker would even fail
+  explicitly due to that. As an alternative, you can make the category a Groovy extension module. As those are always
+  there at configuration, static type-checker can work with those. Or you can switch off the type-checking for where you
+  want to use `@Use`.
 
 [[specifications-as-documentation]]
 == Specifications as Documentation

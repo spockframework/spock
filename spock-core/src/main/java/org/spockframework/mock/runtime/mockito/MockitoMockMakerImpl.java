@@ -101,7 +101,7 @@ class MockitoMockMakerImpl {
     return mockHandler instanceof SpockMockHandler;
   }
 
-  Object makeMock(IMockMaker.IMockCreationSettings settings) throws CannotCreateMockException {
+  <T> T makeMock(IMockMaker.IMockCreationSettings settings) throws CannotCreateMockException {
     try {
       MockSettings mockitoSettings = Mockito.withSettings();
       mockitoSettings.mockMaker(INLINE);
@@ -120,7 +120,7 @@ class MockitoMockMakerImpl {
 
       applyMockMakerSettingsFromUser(settings, mockitoSettings);
 
-      MockCreationSettings<?> mockitoCreationSettings = mockitoSettings.build(settings.getMockType());
+      MockCreationSettings<T> mockitoCreationSettings = mockitoSettings.build(uncheckedCast(settings.getMockType()));
       SpockMockHandler handler = new SpockMockHandler(settings.getMockInterceptor());
 
       return inlineMockMaker.createMock(mockitoCreationSettings, handler);

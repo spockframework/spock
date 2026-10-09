@@ -22,6 +22,7 @@ import org.spockframework.runtime.model.MethodInfo;
 import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.Checks;
 import org.spockframework.util.CollectionUtil;
+import spock.lang.Specification;
 
 import java.util.Iterator;
 import java.util.List;
@@ -35,8 +36,8 @@ import static org.spockframework.runtime.model.MethodInfo.MISSING_ARGUMENT;
 public class MethodInvocation implements IMethodInvocation {
   private final FeatureInfo feature;
   private final IterationInfo iteration;
-  private final Object sharedInstance;
-  private final Object instance;
+  private final Specification sharedInstance;
+  private final Specification instance;
   private final Object target;
   private final MethodInfo method;
   private Object[] arguments;
@@ -45,8 +46,8 @@ public class MethodInvocation implements IMethodInvocation {
 
   private final StoreProvider storeProvider;
 
-  public MethodInvocation(FeatureInfo feature, IterationInfo iteration, StoreProvider storeProvider, Object sharedInstance,
-                          Object instance, Object target, MethodInfo method, List<IMethodInterceptor> scopedInterceptors, Object[] arguments) {
+  public MethodInvocation(FeatureInfo feature, IterationInfo iteration, StoreProvider storeProvider, Specification sharedInstance,
+                          Specification instance, Object target, MethodInfo method, List<IMethodInterceptor> scopedInterceptors, Object[] arguments) {
     this.feature = feature;
     this.iteration = iteration;
     this.storeProvider = storeProvider;
@@ -60,8 +61,8 @@ public class MethodInvocation implements IMethodInvocation {
       : CollectionUtil.concat(scopedInterceptors, method.getInterceptors()).iterator();
   }
 
-  private MethodInvocation(FeatureInfo feature, IterationInfo iteration, StoreProvider storeProvider, Object sharedInstance,
-                          Object instance, Object target, MethodInfo method, Iterator<IMethodInterceptor> interceptors, Object[] arguments) {
+  private MethodInvocation(FeatureInfo feature, IterationInfo iteration, StoreProvider storeProvider, Specification sharedInstance,
+                           Specification instance, Object target, MethodInfo method, Iterator<IMethodInterceptor> interceptors, Object[] arguments) {
     this.feature = feature;
     this.iteration = iteration;
     this.storeProvider = storeProvider;
@@ -89,12 +90,12 @@ public class MethodInvocation implements IMethodInvocation {
   }
 
   @Override
-  public Object getSharedInstance() {
+  public Specification getSharedInstance() {
     return sharedInstance;
   }
 
   @Override
-  public Object getInstance() {
+  public Specification getInstance() {
     return instance;
   }
 

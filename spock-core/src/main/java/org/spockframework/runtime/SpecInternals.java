@@ -15,7 +15,7 @@
 package org.spockframework.runtime;
 
 import groovy.transform.stc.ClosureParams;
-import groovy.transform.stc.SecondParam;
+import groovy.transform.stc.FromString;
 import groovy.transform.stc.ThirdParam;
 import org.spockframework.mock.*;
 import org.spockframework.mock.runtime.*;
@@ -72,14 +72,14 @@ public final class SpecInternals {
   }
 
   public static <T extends Throwable> T thrownImpl(Specification specification, String inferredName, Class<T> inferredType) {
-    return inferredType.cast(checkExceptionThrown(specification, inferredType));
+    return checkExceptionThrown(specification, inferredType);
   }
 
-  public static Throwable thrownImpl(Specification specification, String inferredName, Class<? extends Throwable> inferredType, Class<? extends Throwable> specifiedType) {
+  public static <T extends Throwable, S extends T> T thrownImpl(Specification specification, String inferredName, Class<T> inferredType, Class<S> specifiedType) {
     return checkExceptionThrown(specification, specifiedType == null ? inferredType : specifiedType);
   }
 
-  public static Throwable checkExceptionThrown(Specification specification, Class<? extends Throwable> exceptionType) {
+  private static <T extends Throwable> T checkExceptionThrown(Specification specification, Class<? extends T> exceptionType) {
     if (exceptionType == null) {
       throw new InvalidSpecException("Thrown exception type cannot be inferred automatically. " +
         "Please specify a type explicitly (e.g. 'thrown(MyException)').");
@@ -92,7 +92,7 @@ public final class SpecInternals {
 
     SpecificationContext specificationContext = uncheckedCast(specification.getSpecificationContext());
     Throwable actual = specificationContext.getThrownException();
-    if (exceptionType.isInstance(actual)) return actual;
+    if (exceptionType.isInstance(actual)) return exceptionType.cast(actual);
 
     throw new WrongExceptionThrownError(exceptionType, actual);
   }
@@ -101,7 +101,7 @@ public final class SpecInternals {
     return createMockImpl(specification, inferredName, inferredType, MockNature.MOCK, MockImplementation.JAVA, emptyMap(), null, null);
   }
 
-  public static <T> T MockImpl(Specification specification, String inferredName, Type inferredType, @ClosureParams(SecondParam.FirstGenericType.class) Closure<?> closure) {
+  public static <T> T MockImpl(Specification specification, String inferredName, Type inferredType, @ClosureParams(ThirdParam.FirstGenericType.class) Closure<?> closure) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.MOCK, MockImplementation.JAVA, emptyMap(), null, closure);
   }
 
@@ -113,19 +113,19 @@ public final class SpecInternals {
     return createMockImpl(specification, inferredName, inferredType, MockNature.MOCK, MockImplementation.JAVA, options, null, closure);
   }
 
-  public static <T> T MockImpl(Specification specification, String inferredName, Type inferredType, Class<?> specifiedType) {
+  public static <T> T MockImpl(Specification specification, String inferredName, Type inferredType, Class<T> specifiedType) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.MOCK, MockImplementation.JAVA, emptyMap(), specifiedType, null);
   }
 
-  public static <T> T MockImpl(Specification specification, String inferredName, Type inferredType, Class<?> specifiedType, Closure<?> closure) {
+  public static <T> T MockImpl(Specification specification, String inferredName, Type inferredType, Class<T> specifiedType, Closure<?> closure) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.MOCK, MockImplementation.JAVA, emptyMap(), specifiedType, closure);
   }
 
-  public static <T> T MockImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<?> specifiedType) {
+  public static <T> T MockImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<T> specifiedType) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.MOCK, MockImplementation.JAVA, options, specifiedType, null);
   }
 
-  public static <T> T MockImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<?> specifiedType, Closure<?> closure) {
+  public static <T> T MockImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<T> specifiedType, Closure<?> closure) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.MOCK, MockImplementation.JAVA, options, specifiedType, closure);
   }
 
@@ -133,7 +133,7 @@ public final class SpecInternals {
     return createMockImpl(specification, inferredName, inferredType, MockNature.STUB, MockImplementation.JAVA, emptyMap(), null, null);
   }
 
-  public static <T> T StubImpl(Specification specification, String inferredName, Type inferredType, @ClosureParams(SecondParam.FirstGenericType.class) Closure<?> closure) {
+  public static <T> T StubImpl(Specification specification, String inferredName, Type inferredType, @ClosureParams(ThirdParam.FirstGenericType.class) Closure<?> closure) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.STUB, MockImplementation.JAVA, emptyMap(), null, closure);
   }
 
@@ -145,19 +145,19 @@ public final class SpecInternals {
     return createMockImpl(specification, inferredName, inferredType, MockNature.STUB, MockImplementation.JAVA, options, null, closure);
   }
 
-  public static <T> T StubImpl(Specification specification, String inferredName, Type inferredType, Class<?> specifiedType) {
+  public static <T> T StubImpl(Specification specification, String inferredName, Type inferredType, Class<T> specifiedType) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.STUB, MockImplementation.JAVA, emptyMap(), specifiedType, null);
   }
 
-  public static <T> T StubImpl(Specification specification, String inferredName, Type inferredType, Class<?> specifiedType, Closure<?> closure) {
+  public static <T> T StubImpl(Specification specification, String inferredName, Type inferredType, Class<T> specifiedType, Closure<?> closure) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.STUB, MockImplementation.JAVA, emptyMap(), specifiedType, closure);
   }
 
-  public static <T> T StubImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<?> specifiedType) {
+  public static <T> T StubImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<T> specifiedType) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.STUB, MockImplementation.JAVA, options, specifiedType, null);
   }
 
-  public static <T> T StubImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<?> specifiedType, Closure<?> closure) {
+  public static <T> T StubImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<T> specifiedType, Closure<?> closure) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.STUB, MockImplementation.JAVA, options, specifiedType, closure);
   }
 
@@ -165,7 +165,7 @@ public final class SpecInternals {
     return createMockImpl(specification, inferredName, inferredType, MockNature.SPY, MockImplementation.JAVA, emptyMap(), null, null);
   }
 
-  public static <T> T SpyImpl(Specification specification, String inferredName, Type inferredType, @ClosureParams(SecondParam.FirstGenericType.class) Closure<?> closure) {
+  public static <T> T SpyImpl(Specification specification, String inferredName, Type inferredType, @ClosureParams(ThirdParam.FirstGenericType.class) Closure<?> closure) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.SPY, MockImplementation.JAVA, emptyMap(), null, closure);
   }
 
@@ -177,19 +177,19 @@ public final class SpecInternals {
     return createMockImpl(specification, inferredName, inferredType, MockNature.SPY, MockImplementation.JAVA, options, null, closure);
   }
 
-  public static <T> T SpyImpl(Specification specification, String inferredName, Type inferredType, Class<?> specifiedType) {
+  public static <T> T SpyImpl(Specification specification, String inferredName, Type inferredType, Class<T> specifiedType) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.SPY, MockImplementation.JAVA, emptyMap(), specifiedType, null);
   }
 
-  public static <T> T SpyImpl(Specification specification, String inferredName, Type inferredType, Class<?> specifiedType, Closure<?> closure) {
+  public static <T> T SpyImpl(Specification specification, String inferredName, Type inferredType, Class<T> specifiedType, Closure<?> closure) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.SPY, MockImplementation.JAVA, emptyMap(), specifiedType, closure);
   }
 
-  public static <T> T SpyImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<?> specifiedType) {
+  public static <T> T SpyImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<T> specifiedType) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.SPY, MockImplementation.JAVA, options, specifiedType, null);
   }
 
-  public static <T> T SpyImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<?> specifiedType, Closure<?> closure) {
+  public static <T> T SpyImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<T> specifiedType, Closure<?> closure) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.SPY, MockImplementation.JAVA, options, specifiedType, closure);
   }
 
@@ -197,7 +197,7 @@ public final class SpecInternals {
     return SpyImpl(specification, inferredName, inferredType, instance, null);
   }
 
-  public static <T> T SpyImpl(Specification specification, String inferredName, Type inferredType, T instance, @ClosureParams(ThirdParam.class) Closure<?> closure) {
+  public static <T> T SpyImpl(Specification specification, String inferredName, Type inferredType, T instance, @ClosureParams(value = FromString.class, options = "T") Closure<?> closure) {
     if (instance == null) {
       throw new SpockException("Spy instance may not be null");
     }
@@ -211,7 +211,7 @@ public final class SpecInternals {
     return createMockImpl(specification, inferredName, inferredType, MockNature.MOCK, MockImplementation.GROOVY, emptyMap(), null, null);
   }
 
-  public static <T> T GroovyMockImpl(Specification specification, String inferredName, Type inferredType, @ClosureParams(SecondParam.FirstGenericType.class) Closure<?> closure) {
+  public static <T> T GroovyMockImpl(Specification specification, String inferredName, Type inferredType, @ClosureParams(ThirdParam.FirstGenericType.class) Closure<?> closure) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.MOCK, MockImplementation.GROOVY, emptyMap(), null, closure);
   }
 
@@ -223,19 +223,19 @@ public final class SpecInternals {
     return createMockImpl(specification, inferredName, inferredType, MockNature.MOCK, MockImplementation.GROOVY, options, null, closure);
   }
 
-  public static <T> T GroovyMockImpl(Specification specification, String inferredName, Type inferredType, Class<?> specifiedType) {
+  public static <T> T GroovyMockImpl(Specification specification, String inferredName, Type inferredType, Class<T> specifiedType) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.MOCK, MockImplementation.GROOVY, emptyMap(), specifiedType, null);
   }
 
-  public static <T> T GroovyMockImpl(Specification specification, String inferredName, Type inferredType, Class<?> specifiedType, Closure<?> closure) {
+  public static <T> T GroovyMockImpl(Specification specification, String inferredName, Type inferredType, Class<T> specifiedType, Closure<?> closure) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.MOCK, MockImplementation.GROOVY, emptyMap(), specifiedType, closure);
   }
 
-  public static <T> T GroovyMockImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<?> specifiedType) {
+  public static <T> T GroovyMockImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<T> specifiedType) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.MOCK, MockImplementation.GROOVY, options, specifiedType, null);
   }
 
-  public static <T> T GroovyMockImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<?> specifiedType, Closure<?> closure) {
+  public static <T> T GroovyMockImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<T> specifiedType, Closure<?> closure) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.MOCK, MockImplementation.GROOVY, options, specifiedType, closure);
   }
 
@@ -243,7 +243,7 @@ public final class SpecInternals {
     return createMockImpl(specification, inferredName, inferredType, MockNature.STUB, MockImplementation.GROOVY, emptyMap(), null, null);
   }
 
-  public static <T> T GroovyStubImpl(Specification specification, String inferredName, Type inferredType, @ClosureParams(SecondParam.FirstGenericType.class) Closure<?> closure) {
+  public static <T> T GroovyStubImpl(Specification specification, String inferredName, Type inferredType, @ClosureParams(ThirdParam.FirstGenericType.class) Closure<?> closure) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.STUB, MockImplementation.GROOVY, emptyMap(), null, closure);
   }
 
@@ -255,19 +255,19 @@ public final class SpecInternals {
     return createMockImpl(specification, inferredName, inferredType, MockNature.STUB, MockImplementation.GROOVY, options, null, closure);
   }
 
-  public static <T> T GroovyStubImpl(Specification specification, String inferredName, Type inferredType, Class<?> specifiedType) {
+  public static <T> T GroovyStubImpl(Specification specification, String inferredName, Type inferredType, Class<T> specifiedType) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.STUB, MockImplementation.GROOVY, emptyMap(), specifiedType, null);
   }
 
-  public static <T> T GroovyStubImpl(Specification specification, String inferredName, Type inferredType, Class<?> specifiedType, Closure<?> closure) {
+  public static <T> T GroovyStubImpl(Specification specification, String inferredName, Type inferredType, Class<T> specifiedType, Closure<?> closure) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.STUB, MockImplementation.GROOVY, emptyMap(), specifiedType, closure);
   }
 
-  public static <T> T GroovyStubImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<?> specifiedType) {
+  public static <T> T GroovyStubImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<T> specifiedType) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.STUB, MockImplementation.GROOVY, options, specifiedType, null);
   }
 
-  public static <T> T GroovyStubImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<?> specifiedType, Closure<?> closure) {
+  public static <T> T GroovyStubImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<T> specifiedType, Closure<?> closure) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.STUB, MockImplementation.GROOVY, options, specifiedType, closure);
   }
 
@@ -275,7 +275,7 @@ public final class SpecInternals {
     return createMockImpl(specification, inferredName, inferredType, MockNature.SPY, MockImplementation.GROOVY, emptyMap(), null, null);
   }
 
-  public static <T> T GroovySpyImpl(Specification specification, String inferredName, Type inferredType, @ClosureParams(SecondParam.FirstGenericType.class) Closure<?> closure) {
+  public static <T> T GroovySpyImpl(Specification specification, String inferredName, Type inferredType, @ClosureParams(ThirdParam.FirstGenericType.class) Closure<?> closure) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.SPY, MockImplementation.GROOVY, emptyMap(), null, closure);
   }
 
@@ -287,19 +287,19 @@ public final class SpecInternals {
     return createMockImpl(specification, inferredName, inferredType, MockNature.SPY, MockImplementation.GROOVY, options, null, closure);
   }
 
-  public static <T> T GroovySpyImpl(Specification specification, String inferredName, Type inferredType, Class<?> specifiedType) {
+  public static <T> T GroovySpyImpl(Specification specification, String inferredName, Type inferredType, Class<T> specifiedType) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.SPY, MockImplementation.GROOVY, emptyMap(), specifiedType, null);
   }
 
-  public static <T> T GroovySpyImpl(Specification specification, String inferredName, Type inferredType, Class<?> specifiedType, Closure<?> closure) {
+  public static <T> T GroovySpyImpl(Specification specification, String inferredName, Type inferredType, Class<T> specifiedType, Closure<?> closure) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.SPY, MockImplementation.GROOVY, emptyMap(), specifiedType, closure);
   }
 
-  public static <T> T GroovySpyImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<?> specifiedType) {
+  public static <T> T GroovySpyImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<T> specifiedType) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.SPY, MockImplementation.GROOVY, options, specifiedType, null);
   }
 
-  public static <T> T GroovySpyImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<?> specifiedType, Closure<?> closure) {
+  public static <T> T GroovySpyImpl(Specification specification, String inferredName, Type inferredType, Map<String, Object> options, Class<T> specifiedType, Closure<?> closure) {
     return createMockImpl(specification, inferredName, inferredType, MockNature.SPY, MockImplementation.GROOVY, options, specifiedType, closure);
   }
 
@@ -318,12 +318,12 @@ public final class SpecInternals {
   }
 
   private static <T> T createMockImpl(Specification specification, String inferredName, Type inferredType, MockNature nature,
-      MockImplementation implementation, Map<String, Object> options, Class<?> specifiedType, Closure<?> closure) {
+      MockImplementation implementation, Map<String, Object> options, Class<T> specifiedType, Closure<?> closure) {
     return createMockImpl(specification, inferredName, inferredType, null, nature, implementation, options, specifiedType, closure);
   }
 
   private static <T> T createMockImpl(Specification specification, String inferredName, Type inferredType, T instance, MockNature nature,
-      MockImplementation implementation, Map<String, Object> options, Class<?> specifiedType, Closure<?> closure) {
+      MockImplementation implementation, Map<String, Object> options, Class<T> specifiedType, Closure<?> closure) {
     Type effectiveType = specifiedType != null ? specifiedType : options.containsKey("type") ? (Type) options.get("type") : inferredType;
     if (effectiveType == null) {
       throw new InvalidSpecException(nature + " object type cannot be inferred automatically. " +

@@ -25,6 +25,7 @@ import java.util.*;
 
 import groovy.lang.Closure;
 import org.opentest4j.MultipleFailuresError;
+import spock.lang.Specification;
 
 /**
  * @author Leonard Brünings
@@ -77,14 +78,15 @@ public class RetryBaseInterceptor {
     if (condition == null) {
       return true;
     }
-    final Closure condition = this.condition.rehydrate(
-      new RetryConditionContext(invocation.getInstance(), failure),
+    RetryConditionContext<Specification> retryConditionContext = new RetryConditionContext<>(invocation.getInstance(), failure);
+    final Closure<?> condition = this.condition.rehydrate(
+      retryConditionContext,
       invocation.getSpec().getReflection(),
       null);
     condition.setResolveStrategy(Closure.DELEGATE_FIRST);
 
     try {
-      return GroovyRuntimeUtil.isTruthy(condition.call());
+      return GroovyRuntimeUtil.isTruthy(condition.call(retryConditionContext));
     } catch (Exception e) {
       throw new ExtensionException("Failed to evaluate @Retry condition", e);
     }

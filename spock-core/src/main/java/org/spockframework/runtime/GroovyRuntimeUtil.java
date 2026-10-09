@@ -177,9 +177,9 @@ public abstract class GroovyRuntimeUtil {
   /**
    * Note: This method may throw checked exceptions although it doesn't say so.
    */
-  public static Object invokeConstructor(Class<?> clazz, Object... args) {
+  public static <T> T invokeConstructor(Class<T> clazz, Object... args) {
     try {
-      return InvokerHelper.invokeConstructorOf(clazz, args);
+      return clazz.cast(InvokerHelper.invokeConstructorOf(clazz, args));
     } catch (InvokerInvocationException e) {
       return ExceptionUtil.sneakyThrow(e.getCause());
     }

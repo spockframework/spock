@@ -16,17 +16,18 @@
 
 package org.spockframework.compiler;
 
+import groovy.transform.CompileDynamic;
+import groovy.transform.CompileStatic;
+import groovy.transform.TypeChecked;
 import org.codehaus.groovy.runtime.wrappers.PojoWrapper;
 import org.spockframework.mock.runtime.MockController;
 import org.spockframework.runtime.*;
 import org.spockframework.runtime.extension.RepeatedExtensionAnnotations;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.Identifiers;
-import spock.lang.Specification;
+import spock.lang.*;
 
 import org.codehaus.groovy.ast.*;
-import spock.lang.Verify;
-import spock.lang.VerifyAll;
 
 import java.util.Set;
 
@@ -49,6 +50,12 @@ public class AstNodeCache {
   public final ClassNode DataVariableMultiplicationFactor = ClassHelper.makeWithoutCaching(DataVariableMultiplicationFactor.class);
   public final ClassNode BlockInfo = ClassHelper.makeWithoutCaching(BlockInfo.class);
   public final ClassNode Void = ClassHelper.makeWithoutCaching(void.class);
+  public final ClassNode CompileDynamic = ClassHelper.makeWithoutCaching(CompileDynamic.class);
+  public final ClassNode CompileStatic = ClassHelper.makeWithoutCaching(CompileStatic.class);
+  public final ClassNode SpockCompileDynamic = ClassHelper.makeWithoutCaching(SpockCompileDynamic.class);
+  public final ClassNode SpockCompileStatic = ClassHelper.makeWithoutCaching(SpockCompileStatic.class);
+  public final ClassNode SpockTypeChecked = ClassHelper.makeWithoutCaching(SpockTypeChecked.class);
+  public final ClassNode TypeChecked = ClassHelper.makeWithoutCaching(TypeChecked.class);
 
   public final MethodNode Specification_GetSpecificationContext =
     Specification.getDeclaredMethods(Identifiers.GET_SPECIFICATION_CONTEXT).get(0);
@@ -178,6 +185,8 @@ public class AstNodeCache {
     InteractionBuilder.getDeclaredMethods(org.spockframework.mock.runtime.InteractionBuilder.ADD_CODE_ARG).get(0);
   public final MethodNode InteractionBuilder_AddEqualArg =
     InteractionBuilder.getDeclaredMethods(org.spockframework.mock.runtime.InteractionBuilder.ADD_EQUAL_ARG).get(0);
+  public final MethodNode InteractionBuilder_AddSpreadWildcardArg =
+    InteractionBuilder.getDeclaredMethods(org.spockframework.mock.runtime.InteractionBuilder.ADD_SPREAD_WILDCARD_ARG).get(0);
   public final MethodNode InteractionBuilder_AddIterableResponse =
     InteractionBuilder.getDeclaredMethods(org.spockframework.mock.runtime.InteractionBuilder.ADD_ITERABLE_RESPONSE).get(0);
   public final MethodNode InteractionBuilder_AddCodeResponse =

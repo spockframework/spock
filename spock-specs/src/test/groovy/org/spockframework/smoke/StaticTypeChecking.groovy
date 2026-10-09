@@ -24,7 +24,7 @@ class StaticTypeChecking extends EmbeddedSpecification {
   def "correctly spelled setup compiles successfully"() {
     when:
     compiler.compileSpecBody("""
-@groovy.transform.TypeChecked
+@spock.lang.SpockTypeChecked
 def foo(Object element){
   assert element != null
 }""")

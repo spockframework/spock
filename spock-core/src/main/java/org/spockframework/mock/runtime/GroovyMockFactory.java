@@ -32,6 +32,8 @@ import java.util.Set;
 
 import groovy.lang.*;
 
+import static org.spockframework.util.ObjectUtil.uncheckedCast;
+
 public class GroovyMockFactory implements IMockFactory {
 
   private static final ExclusiveResource META_CLASS_REGISTRY_RW = new ExclusiveResource(Resources.META_CLASS_REGISTRY,
@@ -47,7 +49,7 @@ public class GroovyMockFactory implements IMockFactory {
   }
 
   @Override
-  public Object create(IMockConfiguration configuration, Specification specification) throws CannotCreateMockException {
+  public <T> T create(IMockConfiguration configuration, Specification specification) throws CannotCreateMockException {
     final Class<?> type = configuration.getType();
     final MetaClass oldMetaClass = GroovyRuntimeUtil.getMetaClass(configuration.getType());
     if (oldMetaClass instanceof GroovyMockMetaClass) {
@@ -78,7 +80,7 @@ public class GroovyMockFactory implements IMockFactory {
       if (isAbstractClass(type)) {
         return createProxyObjectForAbstractGlobalMock(configuration, specification, newMetaClass);
       }
-      return MockInstantiator.instantiate(type, type, configuration.getConstructorArgs(), configuration.isUseObjenesis());
+      return uncheckedCast(MockInstantiator.instantiate(type, type, configuration.getConstructorArgs(), configuration.isUseObjenesis()));
     }
 
     if (isFinalClass(type)) {
@@ -86,14 +88,14 @@ public class GroovyMockFactory implements IMockFactory {
         throw new CannotCreateMockException(type,
           ". Cannot add additionalInterfaces to final classes.");
       }
-      final Object instance = MockInstantiator.instantiate(type,
-          type, configuration.getConstructorArgs(), configuration.isUseObjenesis());
+      final T instance = uncheckedCast(MockInstantiator.instantiate(type,
+          type, configuration.getConstructorArgs(), configuration.isUseObjenesis()));
       GroovyRuntimeUtil.setMetaClass(instance, newMetaClass);
 
       return instance;
     }
     GroovyMockInterceptor mockInterceptor = new GroovyMockInterceptor(configuration, specification, newMetaClass);
-    Object proxy = createMockObject(configuration, specification, mockInterceptor);
+    T proxy = createMockObject(configuration, specification, mockInterceptor);
 
     if (hasAdditionalInterfaces) {
       //Issue #1405: We need to update the mockMetaClass to reflect the methods of the additional interfaces
@@ -129,16 +131,16 @@ public class GroovyMockFactory implements IMockFactory {
     return feature.getExclusiveResources().contains(META_CLASS_REGISTRY_RW);
   }
 
-  private Object createProxyObjectForAbstractGlobalMock(IMockConfiguration configuration, Specification specification, GroovyMockMetaClass mockMetaClass) {
+  private <T> T createProxyObjectForAbstractGlobalMock(IMockConfiguration configuration, Specification specification, GroovyMockMetaClass mockMetaClass) {
     IProxyBasedMockInterceptor mockInterceptor = new GroovyMockInterceptor(configuration, specification, mockMetaClass);
     //Issue #464: We need to create a subclass mock here to be able to instantiate the abstract class.
-    Object proxy = createMockObject(configuration, specification, mockInterceptor);
+    T proxy = createMockObject(configuration, specification, mockInterceptor);
     //We need also to replace the metaClass of the Proxy Object to ensure correct usage of the mock object.
     GroovyRuntimeUtil.setMetaClass(proxy, mockMetaClass);
     return proxy;
   }
 
-  private Object createMockObject(IMockConfiguration configuration, Specification specification, IProxyBasedMockInterceptor mockInterceptor) {
+  private <T> T createMockObject(IMockConfiguration configuration, Specification specification, IProxyBasedMockInterceptor mockInterceptor) {
     IMockMaker.IMockCreationSettings mockCreationSettings = MockCreationSettings.settingsFromMockConfiguration(configuration,
       mockInterceptor,
       specification.getClass().getClassLoader());
@@ -155,7 +157,7 @@ public class GroovyMockFactory implements IMockFactory {
   }
 
   @Override
-  public Object createDetached(IMockConfiguration configuration, ClassLoader classLoader) {
+  public <T> T createDetached(IMockConfiguration configuration, ClassLoader classLoader) {
     throw new CannotCreateMockException(configuration.getType(),
         ". Detached mocking is only possible for JavaMocks but not GroovyMocks at the moment.");
   }

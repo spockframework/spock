@@ -59,7 +59,7 @@ public class ByteBuddyMockMaker implements IMockMaker {
   }
 
   @Override
-  public Object makeMock(IMockCreationSettings settings) throws CannotCreateMockException {
+  public <T> T makeMock(IMockCreationSettings settings) throws CannotCreateMockException {
     return requireNonNull(mockFactory).createMock(settings);
   }
 

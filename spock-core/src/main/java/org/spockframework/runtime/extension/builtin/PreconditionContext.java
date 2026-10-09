@@ -17,10 +17,12 @@
 package org.spockframework.runtime.extension.builtin;
 
 import static java.util.Collections.emptyMap;
+import static org.spockframework.util.ObjectUtil.uncheckedCast;
 
 import java.math.BigDecimal;
 import java.util.*;
 
+import org.spockframework.util.ObjectUtil;
 import spock.lang.IgnoreIf;
 import spock.lang.PendingFeatureIf;
 import spock.lang.Requires;
@@ -32,15 +34,15 @@ import spock.util.environment.OperatingSystem;
  * The context (delegate) for a {@link Requires}, {@link IgnoreIf} or {@link PendingFeatureIf} condition.
  */
 public class PreconditionContext<S extends Specification> {
-  private final Object theSharedInstance;
-  private final Object theInstance;
+  private final S theSharedInstance;
+  private final S theInstance;
   private final Map<String, Object> dataVariables;
 
   public PreconditionContext() {
     this(null, null, emptyMap());
   }
 
-  public PreconditionContext(Object sharedInstance, Object instance, Map<String, Object> dataVariables) {
+  public PreconditionContext(S sharedInstance, S instance, Map<String, Object> dataVariables) {
     this.theSharedInstance = sharedInstance;
     this.theInstance = instance;
     this.dataVariables = new StrictHashMap<>(dataVariables);
@@ -93,7 +95,7 @@ public class PreconditionContext<S extends Specification> {
     if (theInstance == null) {
       throw new InstanceContextException();
     }
-    return (S) theInstance;
+    return uncheckedCast(theInstance);
   }
 
   /**
@@ -108,7 +110,7 @@ public class PreconditionContext<S extends Specification> {
     if (theSharedInstance == null) {
       throw new SharedContextException();
     }
-    return (S) theSharedInstance;
+    return uncheckedCast(theSharedInstance);
   }
 
   /**

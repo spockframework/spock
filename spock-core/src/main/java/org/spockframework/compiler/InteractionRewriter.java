@@ -16,6 +16,7 @@
 
 package org.spockframework.compiler;
 
+import org.codehaus.groovy.ast.stmt.*;
 import org.spockframework.lang.Wildcard;
 import org.spockframework.util.*;
 
@@ -23,12 +24,10 @@ import java.util.*;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
-import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.syntax.Types;
 
 import static java.util.Arrays.asList;
-import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
-import static org.spockframework.compiler.AstUtil.primitiveConstExpression;
+import static org.spockframework.compiler.AstUtil.*;
 
 /**
  * Creates the AST representation of an InteractionBuilder build sequence.
@@ -51,6 +50,7 @@ public class InteractionRewriter {
   // holds the incrementally constructed expression, which looks roughly as follows:
   // "new InteractionBuilder(..).setCount(..).setTarget(..).setMethod(..).addArg(..).addResult(..).build()"
   private Expression builderExpr;
+  private Statement interactionMethodReferenceStatement;
 
   public InteractionRewriter(IRewriteResources resources, @Nullable ClosureExpression activeWithOrMockClosure) {
     this.resources = resources;
@@ -64,7 +64,7 @@ public class InteractionRewriter {
    * and returns null.
    */
   @Nullable
-  public ExpressionStatement rewrite(ExpressionStatement stat) {
+  public Statement rewrite(ExpressionStatement stat) {
     try {
       if (!isInteraction(stat)) return null;
 
@@ -73,7 +73,14 @@ public class InteractionRewriter {
       setCall();
       addResponses();
       build();
-      return register();
+      Statement result = register();
+      if (interactionMethodReferenceStatement != null) {
+        BlockStatement blockStatement = new BlockStatement();
+        blockStatement.addStatement(result);
+        blockStatement.addStatement(interactionMethodReferenceStatement);
+        result = blockStatement;
+      }
+      return result;
     } catch (InvalidSpecCompileException e) {
       resources.getErrorReporter().error(e);
       return null;
@@ -223,9 +230,23 @@ public class InteractionRewriter {
   }
 
   private void setMethodCall() {
-    setTarget();
-    setMethodName();
+    ClassNode targetType = setTarget();
+    Expression methodName = setMethodName();
     addArgs();
+    if (!ClassHelper.OBJECT_TYPE.equals(targetType)
+      && (methodName instanceof ConstantExpression)
+      && !Wildcard.INSTANCE.toString().equals(((ConstantExpression) methodName).getValue())) {
+
+      ConstantExpression copiedMethodName = new ConstantExpression(((ConstantExpression) methodName).getValue());
+      copiedMethodName.setSourcePosition(methodName);
+      interactionMethodReferenceStatement = new IfStatement(
+        new BooleanExpression(new ConstantExpression(false, true)),
+        new ExpressionStatement(
+          new MethodPointerExpression(
+            new CastExpression(targetType, new ConstantExpression(null)),
+            copiedMethodName)),
+        new EmptyStatement());
+    }
   }
 
   private void setConstructorCall() {
@@ -234,19 +255,23 @@ public class InteractionRewriter {
     addArgs();
   }
 
-  private void setTarget()  {
+  private ClassNode setTarget()  {
+    Expression target;
     if (implicitTarget) {
-      call(resources.getAstNodeCache().InteractionBuilder_AddEqualTarget, AstUtil.getImplicitParameterRef(activeWithOrMockClosure));
+      target = AstUtil.getImplicitParameterRef(activeWithOrMockClosure);
     } else {
-      call(resources.getAstNodeCache().InteractionBuilder_AddEqualTarget, AstUtil.getInvocationTarget(call));
+      target = AstUtil.getInvocationTarget(call);
     }
+    call(resources.getAstNodeCache().InteractionBuilder_AddEqualTarget, target);
+    return target.getType();
   }
 
-  private void setMethodName() {
+  private Expression setMethodName() {
     Expression methodNameExpr = ((MethodCallExpression) call).getMethod();
     MethodNode constraint = selectNameConstraint(methodNameExpr,
       resources.getAstNodeCache().InteractionBuilder_AddEqualMethodName, resources.getAstNodeCache().InteractionBuilder_AddRegexMethodName);
     call(constraint, methodNameExpr);
+    return (constraint == resources.getAstNodeCache().InteractionBuilder_AddEqualMethodName) ? methodNameExpr : null;
   }
 
   private MethodNode selectNameConstraint(Expression nameExpr, MethodNode constraint1, MethodNode constraint2) {
@@ -267,7 +292,6 @@ public class InteractionRewriter {
     if (call instanceof PropertyExpression) return;
 
     Expression args = AstUtil.getArguments(call);
-    if (args == ArgumentListExpression.EMPTY_ARGUMENTS) return; // fast lane
 
     if (args instanceof ArgumentListExpression)
       addPositionalArgs((ArgumentListExpression) args);
@@ -347,6 +371,11 @@ public class InteractionRewriter {
 
     if (arg instanceof ClosureExpression) {
       call(resources.getAstNodeCache().InteractionBuilder_AddCodeArg, arg);
+      return;
+    }
+
+    if ((arg instanceof SpreadExpression) && AstUtil.isWildcardRef(((SpreadExpression) arg).getExpression())) {
+      call(resources.getAstNodeCache().InteractionBuilder_AddSpreadWildcardArg);
       return;
     }
 

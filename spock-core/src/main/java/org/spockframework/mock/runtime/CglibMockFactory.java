@@ -14,11 +14,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.spockframework.util.ObjectUtil.uncheckedCast;
+
 class CglibMockFactory {
 
   private static final Class<?>[] CLASSES = new Class<?>[0];
 
-  static Object createMock(IMockMaker.IMockCreationSettings settings) {
+  static <T> T createMock(IMockMaker.IMockCreationSettings settings) {
     Class<?> type = settings.getMockType();
     Enhancer enhancer = new ConstructorFriendlyEnhancer();
     enhancer.setClassLoader(settings.getClassLoader());
@@ -36,7 +38,7 @@ class CglibMockFactory {
     enhancer.setCallbackTypes(new Class[] {cglibInterceptor.getClass(), NoOp.class});
 
     Class<?> enhancedType = enhancer.createClass();
-    Object proxy = MockInstantiator.instantiate(type, enhancedType, settings.getConstructorArgs(), settings.isUseObjenesis());
+    T proxy = uncheckedCast(MockInstantiator.instantiate(type, enhancedType, settings.getConstructorArgs(), settings.isUseObjenesis()));
     ((Factory) proxy).setCallbacks(new Callback[] {cglibInterceptor, NoOp.INSTANCE});
     return proxy;
   }

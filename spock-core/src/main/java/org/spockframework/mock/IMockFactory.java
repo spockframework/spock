@@ -18,6 +18,6 @@ import spock.lang.Specification;
 
 public interface IMockFactory {
   boolean canCreate(IMockConfiguration configuration);
-  Object create(IMockConfiguration configuration, Specification specification);
-  Object createDetached(IMockConfiguration configuration, ClassLoader classLoader);
+  <T> T create(IMockConfiguration configuration, Specification specification);
+  <T> T createDetached(IMockConfiguration configuration, ClassLoader classLoader);
 }

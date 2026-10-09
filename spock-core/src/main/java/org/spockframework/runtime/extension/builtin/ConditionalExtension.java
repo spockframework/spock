@@ -25,6 +25,7 @@ import org.spockframework.runtime.extension.IMethodInvocation;
 import org.spockframework.runtime.extension.builtin.PreconditionContext.*;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.SpecInfo;
+import spock.lang.Specification;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
@@ -32,7 +33,7 @@ import java.util.Map;
 import static java.util.Collections.emptyMap;
 
 public abstract class ConditionalExtension<T extends Annotation> implements IAnnotationDrivenExtension<T> {
-  protected abstract Class<? extends Closure> getConditionClass(T annotation);
+  protected abstract Class<? extends Closure<?>> getConditionClass(T annotation);
 
   protected void specConditionResult(boolean result, T annotation, SpecInfo spec) {
     throw new UnsupportedOperationException();
@@ -97,8 +98,8 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
     }
   }
 
-  private Closure createCondition(T annotation) {
-    Class<? extends Closure> clazz = getConditionClass(annotation);
+  private Closure<?> createCondition(T annotation) {
+    Class<? extends Closure<?>> clazz = getConditionClass(annotation);
     try {
       return clazz.getConstructor(Object.class, Object.class).newInstance(null, null);
     } catch (Exception e) {
@@ -106,22 +107,22 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
     }
   }
 
-  private static Object evaluateCondition(Closure condition,
-                                          Object sharedInstance,
-                                          Object instance,
+  private static Object evaluateCondition(Closure<?> condition,
+                                          Specification sharedInstance,
+                                          Specification instance,
                                           Map<String, Object> dataVariables) {
     return evaluateCondition(condition, sharedInstance, instance, dataVariables, null);
   }
 
-  private static Object evaluateCondition(Closure condition, Object owner) {
+  private static Object evaluateCondition(Closure<?> condition, Object owner) {
     return evaluateCondition(condition, null, null, emptyMap(), owner);
   }
 
-  private static Object evaluateCondition(Closure condition,
-                                          Object sharedInstance,
-                                          Object instance,
+  private static Object evaluateCondition(Closure<?> condition,
+                                          Specification sharedInstance,
+                                          Specification instance,
                                           Map<String, Object> dataVariables, Object owner) {
-    PreconditionContext context = new PreconditionContext(sharedInstance, instance, dataVariables);
+    PreconditionContext<?> context = new PreconditionContext<>(sharedInstance, instance, dataVariables);
     condition = condition.rehydrate(context, owner, null);
     condition.setResolveStrategy(Closure.DELEGATE_FIRST);
 

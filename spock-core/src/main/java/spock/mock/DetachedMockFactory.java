@@ -162,7 +162,7 @@ public class DetachedMockFactory implements MockFactory {
     if (classLoader == null) {
       classLoader = ClassLoader.getSystemClassLoader();
     }
-    return (T) new MockUtil().createDetachedMock(name, type, nature, MockImplementation.JAVA, options, classLoader);
+    return new MockUtil().createDetachedMock(name, type, nature, MockImplementation.JAVA, options, classLoader);
   }
 
   @SuppressWarnings("unchecked")
@@ -171,7 +171,7 @@ public class DetachedMockFactory implements MockFactory {
     if (classLoader == null) {
       classLoader = ClassLoader.getSystemClassLoader();
     }
-    return (T) new MockUtil().createDetachedMock(name, obj, nature, MockImplementation.JAVA, options, classLoader);
+    return new MockUtil().createDetachedMock(name, obj, nature, MockImplementation.JAVA, options, classLoader);
   }
 
   private String inferNameFromType(Class<?> type) {

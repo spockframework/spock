@@ -8,7 +8,7 @@ include::include.adoc[]
 
 === Enhancements
 
-* Add support for statically compiled specifications: conditions, interactions, `old()`, and data tables referencing previous columns now work in specs or feature methods annotated with `@CompileStatic` or `@TypeChecked`, see <<spock_primer.adoc#statically-compiled-specifications,Statically Compiled Specifications>> spockPull:2397[]
+* Add support for statically type-checked or compiled specifications: conditions, interactions, `old()`, and data tables referencing previous columns now work in specs or feature methods annotated with `@SpockTypeChecked` or `@SpockCompileStatic`, see <<spock_primer.adoc#statically-type-checked-specifications,Statically Type-Checked or Compiled Specifications>> spockPull:2397[]
 * Add support for `final` local variables in `where:` blocks, declared at their beginning and evaluated once per feature, scoped to the where-block spockIssue:138[]
 * Improve `TooManyInvocationsError` now reports unsatisfied interactions with argument mismatch details, making it easier to diagnose why invocations didn't match expected interactions spockPull:2315[]
 
@@ -24,6 +24,10 @@ include::include.adoc[]
 === Breaking Changes
 
 * Mock/Stub checks on `Comparable<T>` with `T` being something other than `Object` now compare using the java identity hash code instead of always being equal spockIssue:2352[]
+* If you used `@TypeChecked`, `@CompileStatic`, or `@CompileDynamic` anywhere within a Spock specification, this will now fail compilation.
+  Use `@SpockTypeChecked`, `@SpockCompileStatic`, or `@SpockCompileDynamic` instead, which have the same semantics and effect during Groovy compilation.
+  On non-specification classes you use the normal built-in annotations.
+  For further information see <<spock_primer.adoc#statically-type-checked-specifications,Statically Type-Checked or Compiled Specifications>> spockPull:2397[]
 
 == 2.4 (2025-12-11)
 

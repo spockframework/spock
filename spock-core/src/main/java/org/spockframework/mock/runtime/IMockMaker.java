@@ -88,7 +88,7 @@ public interface IMockMaker {
    * @return the new mock instance
    * @throws CannotCreateMockException if this {@code IMockMaker} can't create such a mock.
    */
-  Object makeMock(IMockCreationSettings settings) throws CannotCreateMockException;
+  <T> T makeMock(IMockCreationSettings settings) throws CannotCreateMockException;
 
   /**
    * Creates a new static mock for the passed {@link IMockCreationSettings}.

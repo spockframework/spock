@@ -14,9 +14,11 @@
 
 package org.spockframework.smoke.mock
 
+import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.runtime.InvalidSpecException
 import org.spockframework.mock.CannotCreateMockException
 import spock.lang.Issue
+import spock.lang.PendingFeatureIf
 import spock.lang.Specification
 import spock.lang.FailsWith
 import spock.mock.MockMakers
@@ -65,7 +67,8 @@ class JavaStubs extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1076")
-  def "can stub property access for implicit getProperty() call"() {
+  @PendingFeatureIf({ GroovyRuntimeUtil.MAJOR_VERSION < 4 })
+  def "can stub property access for implicit getProperty() call in assertion"() {
     given:
     person = Stub(Person)
 
@@ -76,6 +79,25 @@ class JavaStubs extends Specification {
     expect:
     person.getProperty("name") == "fred"
     person.getProperty("age") == 25
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1076")
+  @PendingFeatureIf({ GroovyRuntimeUtil.MAJOR_VERSION < 4 })
+  def "can stub property access for implicit getProperty() call"() {
+    given:
+    person = Stub(Person)
+
+    and:
+    person.getName() >> "fred"
+    person.age >> 25
+
+    when:
+    def name = person.getProperty("name")
+    def age = person.getProperty("age")
+
+    then:
+    name == "fred"
+    age == 25
   }
 
   def "like to be stubbed at creation time"() {

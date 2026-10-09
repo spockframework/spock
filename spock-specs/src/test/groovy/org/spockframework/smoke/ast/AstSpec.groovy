@@ -24,6 +24,9 @@ import org.spockframework.util.VersionNumber
 import spock.lang.Requires
 import spock.lang.Snapshot
 import spock.lang.Snapshotter
+import spock.lang.SpockCompileDynamic
+import spock.lang.SpockCompileStatic
+import spock.lang.SpockTypeChecked
 import spock.util.Show
 
 class AstSpec extends EmbeddedSpecification {
@@ -134,6 +137,33 @@ class Foo {
 ''', EnumSet.of(Show.METHODS))
     then:
     snapshotter.assertThat(result.source).matchesSnapshot()
+  }
+
+  def "STC annotations are transplanted to generated methods with @#annotation.simpleName"() {
+    when:
+    def result = compiler.transpileWithImports("""
+class ASpec extends Specification {
+  @${annotation.name}
+  def "type-checked where block"() {
+    expect:
+    true
+
+    where:
+    final foo = [].does_not_exist()
+    bar = [].does_not_exist()
+    baz << [[].does_not_exist()]
+    combined:
+    bam << [[].does_not_exist()]
+    filter:
+    [[].does_not_exist()]
+  }
+}
+""")
+    then:
+    snapshotter.assertThat(result.source).matchesSnapshot(GroovyRuntimeUtil.MAJOR_VERSION >= 3 ? "" : "groovy25")
+
+    where:
+    annotation << [SpockCompileDynamic, SpockTypeChecked, SpockCompileStatic]
   }
 
   def "nested generic type arguments are rendered faithfully"() {

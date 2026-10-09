@@ -36,7 +36,7 @@ public class IgnoreIfExtension extends ConditionalExtension<IgnoreIf> implements
   private static final String DEFAULT_MESSAGE = "Ignored via @" + IgnoreIf.class.getSimpleName();
 
   @Override
-  protected Class<? extends Closure> getConditionClass(IgnoreIf annotation) {
+  protected Class<? extends Closure<?>> getConditionClass(IgnoreIf annotation) {
     return annotation.value();
   }
 

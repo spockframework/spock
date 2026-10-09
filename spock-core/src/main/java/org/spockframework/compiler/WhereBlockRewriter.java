@@ -25,6 +25,7 @@ import org.spockframework.util.*;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -454,6 +455,12 @@ public class WhereBlockRewriter {
     return result;
   }
 
+  private void transplantStcAnnotations(MethodNode method) {
+    whereBlock.getParent().getAst().getAnnotations(resources.getAstNodeCache().CompileDynamic).forEach(method::addAnnotation);
+    whereBlock.getParent().getAst().getAnnotations(resources.getAstNodeCache().TypeChecked).forEach(method::addAnnotation);
+    whereBlock.getParent().getAst().getAnnotations(resources.getAstNodeCache().CompileStatic).forEach(method::addAnnotation);
+  }
+
   private void createDataProviderMethod(Expression dataProviderExpr, int nextDataVariableIndex, boolean addDataTableParameters) {
     instanceFieldAccessChecker.check(dataProviderExpr);
 
@@ -480,6 +487,7 @@ public class WhereBlockRewriter {
         new BlockStatement(dataProviderStats, null));
 
     method.addAnnotation(createDataProviderAnnotation(dataProviderExpr, nextDataVariableIndex, addDataTableParameters));
+    transplantStcAnnotations(method);
     whereBlock.getParent().getParent().getAst().addMethod(method);
   }
 
@@ -562,11 +570,11 @@ public class WhereBlockRewriter {
     int nextDataVariableIndex = dataProcessorVars.size();
     Parameter dataProcessorParameter = createDataProcessorParameter();
     ListExpression list = (ListExpression) binExpr.getLeftExpression();
-    rewriteMultiParameterization(list, new VariableExpression(dataProcessorParameter), enclosingStat);
+    rewriteMultiParameterization(list, () -> new VariableExpression(dataProcessorParameter), enclosingStat);
     createDataProviderMethod(binExpr.getRightExpression(), nextDataVariableIndex, false);
   }
 
-  private void rewriteMultiParameterization(ListExpression list, Expression rightBase, Statement enclosingStat)
+  private void rewriteMultiParameterization(ListExpression list, Supplier<Expression> rightBaseSupplier, Statement enclosingStat)
       throws InvalidSpecCompileException {
     List<Expression> listElems = list.getExpressions();
     for (int i = 0; i < listElems.size(); i++) {
@@ -575,11 +583,11 @@ public class WhereBlockRewriter {
 
       if (listElem instanceof VariableExpression) {
         VariableExpression variable = createDataProcessorVariable(listElem, enclosingStat);
-        createDataProcessorStatement(variable, createGetAtWithMapSupportMethodCall(rightBase, i, variable.getName()), enclosingStat);
+        createDataProcessorStatement(variable, createGetAtWithMapSupportMethodCall(rightBaseSupplier, i, variable.getName()), enclosingStat);
       } else if (listElem instanceof ListExpression) {
-        VariableExpression variable = new VariableExpression("$spock_l" + localVariableCount++);
-        createDataProcessorStatement(variable, createGetAtMethodCall(rightBase, i), enclosingStat);
-        rewriteMultiParameterization(((ListExpression) listElem), variable, enclosingStat);
+        String variableName = "$spock_l" + localVariableCount++;
+        createDataProcessorStatement(new VariableExpression(variableName), createGetAtMethodCall(rightBaseSupplier.get(), i), enclosingStat);
+        rewriteMultiParameterization(((ListExpression) listElem), () -> new VariableExpression(variableName), enclosingStat);
       } else {
         throw notAParameterization(enclosingStat);
       }
@@ -969,6 +977,7 @@ public class WhereBlockRewriter {
       ClassNode.EMPTY_ARRAY,
       blockStat);
     dataProcessorMethod.addAnnotation(createDataProcessorAnnotation());
+    transplantStcAnnotations(dataProcessorMethod);
 
     whereBlock.getParent().getParent().getAst().addMethod(dataProcessorMethod);
   }
@@ -1043,6 +1052,7 @@ public class WhereBlockRewriter {
       Parameter.EMPTY_ARRAY,
       ClassNode.EMPTY_ARRAY,
       new BlockStatement(Arrays.asList(valuesDecl, tryCatch), null));
+    transplantStcAnnotations(method);
 
     whereBlock.getParent().getParent().getAst().addMethod(method);
   }
@@ -1091,6 +1101,7 @@ public class WhereBlockRewriter {
       Parameter.EMPTY_ARRAY,
       ClassNode.EMPTY_ARRAY,
       blockStat);
+    transplantStcAnnotations(dataVariableMultiplicationsMethod);
 
     whereBlock.getParent().getParent().getAst().addMethod(dataVariableMultiplicationsMethod);
   }
@@ -1127,6 +1138,7 @@ public class WhereBlockRewriter {
         createWhereVariableParameters()),
       ClassNode.EMPTY_ARRAY,
       blockStat);
+    transplantStcAnnotations(filterMethod);
 
     filterBlock.getParent().getParent().getAst().addMethod(filterMethod);
   }

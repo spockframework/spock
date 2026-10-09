@@ -18,8 +18,9 @@ package org.spockframework.smoke
 import spock.lang.Specification
 
 import groovy.transform.CompileStatic
+import spock.lang.SpockCompileStatic
 
-@CompileStatic
+@SpockCompileStatic
 class WithBlocksStatic extends Specification {
 
   def "can statically compile against type of the target"() {

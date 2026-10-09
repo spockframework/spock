@@ -11,7 +11,7 @@ public class PendingFeatureIfExtension extends ConditionalExtension<PendingFeatu
   private static final String PENDING_FEATURE_IF = "@PendingFeatureIf";
 
   @Override
-  protected Class<? extends Closure> getConditionClass(PendingFeatureIf annotation) {
+  protected Class<? extends Closure<?>> getConditionClass(PendingFeatureIf annotation) {
     return annotation.value();
   }
 

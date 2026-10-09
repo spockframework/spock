@@ -25,7 +25,7 @@ import org.spockframework.util.ReflectionUtil;
 public class MockInstantiator {
   private static final boolean objenesisAvailable = ReflectionUtil.isClassAvailable("org.objenesis.Objenesis");
 
-  public static Object instantiate(Class<?> declaredType, Class<?> actualType, @Nullable List<Object> constructorArgs, boolean useObjenesis) {
+  public static <T> T instantiate(Class<?> declaredType, Class<T> actualType, @Nullable List<Object> constructorArgs, boolean useObjenesis) {
     try {
       if (!declaredType.isInterface() && constructorArgs == null && useObjenesis && objenesisAvailable) {
         return ObjenesisInstantiator.instantiate(actualType);
@@ -41,8 +41,8 @@ public class MockInstantiator {
 
   // inner class to defer class loading
   private static class ObjenesisInstantiator {
-    static Object instantiate(Class<?> clazz) {
-      return clazz.cast(ObjenesisHelper.newInstance(clazz));
+    static <T> T instantiate(Class<T> clazz) {
+      return ObjenesisHelper.newInstance(clazz);
     }
   }
 }

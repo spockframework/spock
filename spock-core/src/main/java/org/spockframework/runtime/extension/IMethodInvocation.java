@@ -18,6 +18,7 @@ package org.spockframework.runtime.extension;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.Beta;
 import org.spockframework.util.Nullable;
+import spock.lang.Specification;
 
 /**
  * @author Peter Niederwieser
@@ -60,7 +61,7 @@ public interface IMethodInvocation extends IStoreProvider {
    *
    * @return the {@code Specification} instance for {@code @Shared}fields
    */
-  Object getSharedInstance();
+  Specification getSharedInstance();
 
   /**
    * Returns the {@code Specification} instance for the current iteration.
@@ -69,7 +70,7 @@ public interface IMethodInvocation extends IStoreProvider {
    *
    * @return the {@code Specification} instance for the current iteration
    */
-  Object getInstance();
+  Specification getInstance();
 
   /**
    * Returns the target (receiver) of this method invocation.

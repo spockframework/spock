@@ -142,8 +142,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
         TextRegion.of(expr),
         TextPosition.startOf(expr),
         expr.getName()
-    ).setRelevant(expr != VariableExpression.THIS_EXPRESSION
-        && expr != VariableExpression.SUPER_EXPRESSION);
+    ).setRelevant(!expr.isThisExpression() && !expr.isSuperExpression());
   }
 
   @Override

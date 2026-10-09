@@ -96,7 +96,7 @@ include "spock-junit4"
 include "spock-testkit"
 
 def variant = System.getProperty("variant") as BigDecimal ?: 2.5
-def javaVersion = (System.getProperty("javaVersion") ?: 8) as int
+def javaVersion = (System.getProperty("javaVersion") ?: (variant == 5.0) ? 11 : 8) as int
 
 if (variant == 2.5) {
   //Remove once Groovy 2.5 support is dropped

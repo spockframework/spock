@@ -177,7 +177,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   }
 
   private boolean handleInteraction(InteractionRewriter rewriter, ExpressionStatement stat) {
-    ExpressionStatement interaction = rewriter.rewrite(stat);
+    Statement interaction = rewriter.rewrite(stat);
     if (interaction == null) return false;
 
     // would also want to enforce this for when-blocks, but unfortunately it's not that uncommon

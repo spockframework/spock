@@ -38,7 +38,7 @@ public class CompositeMockFactory implements IMockFactory {
   }
 
   @Override
-  public Object create(IMockConfiguration configuration, Specification specification) {
+  public <T> T create(IMockConfiguration configuration, Specification specification) {
     for (IMockFactory factory : mockFactories) {
       if (factory.canCreate(configuration)) {
         return factory.create(configuration, specification);
@@ -49,7 +49,7 @@ public class CompositeMockFactory implements IMockFactory {
   }
 
 	@Override
-  public Object createDetached(IMockConfiguration configuration,
+  public <T> T createDetached(IMockConfiguration configuration,
                                ClassLoader classLoader) {
 	  for (IMockFactory factory : mockFactories) {
       if (factory.canCreate(configuration)) {

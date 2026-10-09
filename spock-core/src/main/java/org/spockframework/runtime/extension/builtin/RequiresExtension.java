@@ -36,7 +36,7 @@ public class RequiresExtension extends ConditionalExtension<Requires> implements
   private static final String DEFAULT_MESSAGE = "Ignored via @" + Requires.class.getSimpleName();
 
   @Override
-  protected Class<? extends Closure> getConditionClass(Requires annotation) {
+  protected Class<? extends Closure<?>> getConditionClass(Requires annotation) {
     return annotation.value();
   }
 

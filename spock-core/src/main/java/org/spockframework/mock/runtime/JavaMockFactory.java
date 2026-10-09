@@ -38,22 +38,22 @@ public class JavaMockFactory implements IMockFactory {
   }
 
   @Override
-  public Object create(IMockConfiguration configuration, Specification specification) {
+  public <T> T create(IMockConfiguration configuration, Specification specification) {
     return createInternal(configuration, specification, specification.getClass().getClassLoader());
   }
 
-	@Override
-  public Object createDetached(IMockConfiguration configuration, ClassLoader classLoader) {
-		 return createInternal(configuration, null, classLoader);
-	}
+  @Override
+  public <T> T createDetached(IMockConfiguration configuration, ClassLoader classLoader) {
+    return createInternal(configuration, null, classLoader);
+  }
 
-  private Object createInternal(IMockConfiguration configuration, Specification specification, ClassLoader classLoader) {
+  private <T> T createInternal(IMockConfiguration configuration, Specification specification, ClassLoader classLoader) {
     Class<?> type = configuration.getType();
     checkNotGlobal(configuration);
 
     MetaClass mockMetaClass = GroovyRuntimeUtil.getMetaClass(type);
     JavaMockInterceptor interceptor = new JavaMockInterceptor(configuration, specification, mockMetaClass);
-    Object proxy = getMockMakerRegistry().makeMock(MockCreationSettings.settingsFromMockConfiguration(configuration, interceptor, classLoader));
+    T proxy = getMockMakerRegistry().makeMock(MockCreationSettings.settingsFromMockConfiguration(configuration, interceptor, classLoader));
     List<Class<?>> additionalInterfaces = configuration.getAdditionalInterfaces();
     if (!additionalInterfaces.isEmpty() && GroovyObject.class.isAssignableFrom(type)) {
       //Issue #1405: We need to update the mockMetaClass to reflect the methods of the additional interfaces

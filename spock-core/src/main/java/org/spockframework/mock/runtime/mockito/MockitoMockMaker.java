@@ -79,7 +79,7 @@ public class MockitoMockMaker implements IMockMaker {
   }
 
   @Override
-  public Object makeMock(IMockCreationSettings settings) throws CannotCreateMockException {
+  public <T> T makeMock(IMockCreationSettings settings) throws CannotCreateMockException {
     return Objects.requireNonNull(impl).makeMock(settings);
   }
 

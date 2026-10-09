@@ -120,7 +120,7 @@ public final class MockMakerRegistry {
    * @return the new instance of the mocked type defined by the settings
    * @throws CannotCreateMockException if a mock with the provided settings can't be created.
    */
-  public Object makeMock(IMockCreationSettings settings) throws CannotCreateMockException {
+  public <T> T makeMock(IMockCreationSettings settings) throws CannotCreateMockException {
     if (settings.isStaticMock()) {
       throw new IllegalArgumentException("Can't mock static mocks with makeMock().");
     }

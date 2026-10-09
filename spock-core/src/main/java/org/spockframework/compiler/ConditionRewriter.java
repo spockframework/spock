@@ -15,6 +15,7 @@
 
 package org.spockframework.compiler;
 
+import org.codehaus.groovy.ast.ClassHelper;
 import org.codehaus.groovy.ast.ClassNode;
 import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.ast.Parameter;
@@ -27,7 +28,6 @@ import org.spockframework.compat.groovy2.GroovyCodeVisitorCompat;
 import org.spockframework.runtime.ValueRecorder;
 import org.spockframework.util.AbstractExpressionConverter;
 import org.spockframework.util.Assert;
-import org.spockframework.util.Identifiers;
 import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.TextUtil;
 
@@ -73,16 +73,12 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
 
   private final String errorCollectorName;
 
-  private final boolean staticallyTypeChecked;
-
   private int recordCount = 0;
 
   private ConditionRewriter(IRewriteResources resources, String valueRecorderSuffix, String errorCollectorSuffix) {
     this.resources = resources;
     valueRecorderName = SpockNames.VALUE_RECORDER + valueRecorderSuffix;
     errorCollectorName = SpockNames.ERROR_COLLECTOR + errorCollectorSuffix;
-    org.spockframework.compiler.model.Method currentMethod = resources.getCurrentMethod();
-    staticallyTypeChecked = currentMethod != null && AstUtil.isStaticallyTypeChecked(currentMethod.getAst());
   }
 
   public static Statement rewriteExplicitCondition(AssertStatement stat, IRewriteResources resources) {
@@ -133,29 +129,22 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
 
     conversion.setSafe(expr.isSafe());
     conversion.setSpreadSafe(expr.isSpreadSafe());
-    if (staticallyTypeChecked) {
-      // must be kept in sync, otherwise a qualified call with a constant method
-      // name would be dispatched as an implicit-this call, e.g. to a local
-      // closure variable of the same name; only done for statically checked code
-      // to keep the dispatch of dynamic code untouched
-      conversion.setImplicitThis(expr.isImplicitThis());
-    }
+    // must be kept in sync, otherwise a qualified call with a constant method
+    // name would be dispatched as an implicit-this call, e.g. to a local
+    // closure variable of the same name
+    conversion.setImplicitThis(expr.isImplicitThis());
     conversion.setSourcePosition(expr);
     result = record(conversion);
   }
 
   /**
    * Wrapping a method name in record() turns the call into a dynamic method name
-   * call, which does not pass static type checking. Method names synthesized by an
-   * earlier rewrite step (e.g. old() -> oldImpl()) and, in statically type checked
-   * code, all constant method names therefore stay as they are; their value slot is
-   * still allocated to keep the numbering intact, it just stays N/A, which the
-   * renderer never displays for method names anyway. Dynamic code keeps the recorded
-   * method name to leave its dispatch semantics untouched.
+   * call, which does not pass static type checking. All constant method names stay as they are;
+   * their value slot is still allocated to keep the numbering intact, it just stays N/A, which the
+   * renderer never displays for method names anyway.
    */
   private Expression convertMethodName(Expression method) {
-    if (method instanceof ConstantExpression
-        && (staticallyTypeChecked || !AstUtil.hasPlausibleSourcePosition(method))) {
+    if (method instanceof ConstantExpression) {
       return recordNa(method);
     }
     return convert(method);
@@ -432,10 +421,20 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
 
   @Override
   public void visitConstructorCallExpression(ConstructorCallExpression expr) {
-    ConstructorCallExpression conversion =
-        new ConstructorCallExpression(
-            expr.getType(),
-            convert(expr.getArguments()));
+    ConstructorCallExpression conversion;
+
+    if ((expr.getArguments() instanceof ArgumentListExpression)
+      && (((ArgumentListExpression) expr.getArguments()).getExpressions().size() == 1)
+      && ((ArgumentListExpression) expr.getArguments()).getExpression(0) instanceof MapExpression) {
+
+      // work-around for https://issues.apache.org/jira/browse/GROOVY-12454
+      ArgumentListExpression converted = ((ArgumentListExpression) convert(expr.getArguments()));
+      Expression mapExpression = converted.getExpressions().remove(0);
+      converted.addExpression(unrecord(mapExpression));
+      conversion = new ConstructorCallExpression(expr.getType(), converted);
+    } else {
+      conversion = new ConstructorCallExpression(expr.getType(), convert(expr.getArguments()));
+    }
 
     conversion.setSourcePosition(expr);
     conversion.setUsingAnonymousInnerClass(expr.isUsingAnonymousInnerClass());
@@ -715,14 +714,39 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
     args.add(primitiveConstExpression(explicit));
     args.add(primitiveConstExpression(lastVariableNum));
 
-    return surroundWithTryCatch(
+    Statement result = surroundWithTryCatch(
+      condition,
+      message,
+      rewriteToSpockRuntimeCall(
+        resources.getAstNodeCache().SpockRuntime_VerifyMethodCondition,
         condition,
         message,
-        rewriteToSpockRuntimeCall(
-            resources.getAstNodeCache().SpockRuntime_VerifyMethodCondition,
-            condition,
-            message,
-            args, optOut), optOut);
+        args, optOut), optOut);
+
+    if (!AstUtil.isInvocationWithImplicitThis(condition)) {
+      ClassNode targetType = AstUtil.getInvocationTarget(condition).getType();
+
+      if (!ClassHelper.OBJECT_TYPE.equals(targetType)
+        && !resources.getAstNodeCache().SpockRuntime.equals(targetType)
+        && (condition.getMethod() instanceof ConstantExpression)) {
+
+        BlockStatement blockStatement = new BlockStatement();
+        blockStatement.addStatement(result);
+        ConstantExpression methodName = new ConstantExpression(((ConstantExpression) condition.getMethod()).getValue());
+        methodName.setSourcePosition(condition.getMethod());
+        blockStatement.addStatement(
+          new IfStatement(
+            new BooleanExpression(new ConstantExpression(false, true)),
+            new ExpressionStatement(
+              new MethodPointerExpression(
+                new CastExpression(targetType, new ConstantExpression(null)),
+                methodName)),
+            new EmptyStatement()));
+        result = blockStatement;
+      }
+    }
+
+    return result;
   }
 
   private Statement rewriteStaticMethodCondition(StaticMethodCallExpression condition, Expression message,
@@ -747,16 +771,35 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
     args.add(primitiveConstExpression(explicit));
     args.add(primitiveConstExpression(lastVariableNum));
 
-    return surroundWithTryCatch(
+    Statement result = surroundWithTryCatch(
+      condition,
+      message,
+      rewriteToSpockRuntimeCall(
+        resources.getAstNodeCache().SpockRuntime_VerifyMethodCondition,
         condition,
         message,
-        rewriteToSpockRuntimeCall(
-            resources.getAstNodeCache().SpockRuntime_VerifyMethodCondition,
-            condition,
-            message,
-            args,
-            optOut),
-        optOut);
+        args,
+        optOut),
+      optOut);
+
+    ClassNode targetType = condition.getOwnerType();
+    if (!ClassHelper.OBJECT_TYPE.equals(targetType)) {
+      BlockStatement blockStatement = new BlockStatement();
+      blockStatement.addStatement(result);
+      ConstantExpression methodName = new ConstantExpression(condition.getMethod());
+      methodName.setSourcePosition(condition);
+      blockStatement.addStatement(
+        new IfStatement(
+          new BooleanExpression(new ConstantExpression(false, true)),
+          new ExpressionStatement(
+            new MethodPointerExpression(
+              new CastExpression(targetType, new ConstantExpression(null)),
+              methodName)),
+          new EmptyStatement()));
+      result = blockStatement;
+    }
+
+    return result;
   }
 
   private Statement rewriteOtherCondition(Expression condition, Expression message, boolean optOut) {

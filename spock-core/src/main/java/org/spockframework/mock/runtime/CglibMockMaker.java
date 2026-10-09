@@ -53,7 +53,7 @@ public class CglibMockMaker implements IMockMaker {
   }
 
   @Override
-  public Object makeMock(IMockCreationSettings settings) throws CannotCreateMockException {
+  public <T> T makeMock(IMockCreationSettings settings) throws CannotCreateMockException {
     return CglibMockFactory.createMock(settings);
   }
 

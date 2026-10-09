@@ -10,6 +10,9 @@ public void $spock_feature_0_0() {
     java.util.List list = org.spockframework.runtime.SpecInternals.MockImpl(this, 'list', java.util.List)
     this.getSpecificationContext().getMockController().enterScope()
     this.getSpecificationContext().getMockController().addInteraction(new org.spockframework.mock.runtime.InteractionBuilder(8, 5, '1 * list.add(1)').setFixedCount(1).addEqualTarget(list).addEqualMethodName('add').setArgListKind(true, false).addEqualArg(1).build())
+    if (false) {
+        ((java.util.List) null).&'add'
+    }
     org.spockframework.runtime.SpockRuntime.callBlockExited(this, 0)
     org.spockframework.runtime.SpockRuntime.callBlockEntered(this, 1)
     list.add(1)

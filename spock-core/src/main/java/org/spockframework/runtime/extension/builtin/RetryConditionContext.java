@@ -7,10 +7,10 @@ import spock.lang.Specification;
  */
 public class RetryConditionContext<S extends Specification> {
 
-  private final Object instance;
+  private final S instance;
   private final Throwable failure;
 
-  RetryConditionContext(Object instance, Throwable failure) {
+  RetryConditionContext(S instance, Throwable failure) {
     this.instance = instance;
     this.failure = failure;
   }
@@ -30,7 +30,7 @@ public class RetryConditionContext<S extends Specification> {
    * @return the current {@code Specification} instance
    */
   public S getInstance() {
-    return (S) instance;
+    return instance;
   }
 
 }

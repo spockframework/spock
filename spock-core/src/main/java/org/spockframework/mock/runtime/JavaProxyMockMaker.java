@@ -29,6 +29,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.spockframework.util.ObjectUtil.uncheckedCast;
+
 @ThreadSafe
 public class JavaProxyMockMaker implements IMockMaker {
   public static final MockMakerId ID = new MockMakerId("java-proxy");
@@ -54,20 +56,20 @@ public class JavaProxyMockMaker implements IMockMaker {
   }
 
   @Override
-  public Object makeMock(IMockCreationSettings settings) throws CannotCreateMockException {
+  public <T> T makeMock(IMockCreationSettings settings) throws CannotCreateMockException {
     return createMock(settings);
   }
 
-  private Object createMock(IMockMaker.IMockCreationSettings settings) {
+  private <T> T createMock(IMockMaker.IMockCreationSettings settings) {
     List<Class<?>> interfaces = new ArrayList<>();
     interfaces.add(settings.getMockType());
     interfaces.addAll(settings.getAdditionalInterface());
     interfaces.add(ISpockMockObject.class);
-    return Proxy.newProxyInstance(
+    return uncheckedCast(Proxy.newProxyInstance(
       settings.getClassLoader(),
       interfaces.toArray(CLASSES),
       new JavaProxyMockInterceptorAdapter(settings.getMockInterceptor())
-    );
+    ));
   }
 
   @Override

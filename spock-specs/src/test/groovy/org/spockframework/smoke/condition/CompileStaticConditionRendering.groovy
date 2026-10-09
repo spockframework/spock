@@ -16,13 +16,13 @@
 
 package org.spockframework.smoke.condition
 
-import groovy.transform.CompileStatic
+import spock.lang.SpockCompileStatic
 
 /**
  * Describes rendering of conditions in statically compiled code.
  * The rendered output must match the one of dynamic code, see {@link ConditionRendering}.
  */
-@CompileStatic
+@SpockCompileStatic
 class CompileStaticConditionRendering extends ConditionRenderingSpec {
   def "simple condition"() {
     expect:

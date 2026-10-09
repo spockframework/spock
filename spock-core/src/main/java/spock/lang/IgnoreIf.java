@@ -59,7 +59,7 @@ public @interface IgnoreIf {
    *
    * @return the closure to evaluate
    */
-  Class<? extends Closure> value();
+  Class<? extends Closure<?>> value();
 
   /**
    * Whether this annotation should be inherited by child classes.

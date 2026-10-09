@@ -5,8 +5,9 @@ import org.spockframework.runtime.*
 import spock.lang.FailsWith
 import spock.lang.Issue
 
-import groovy.transform.*
+import groovy.transform.CompileStatic
 import org.opentest4j.MultipleFailuresError
+import spock.lang.SpockTypeChecked
 
 class VerifyAllSpecification extends EmbeddedSpecification {
 
@@ -218,7 +219,7 @@ class VerifyAllSpecification extends EmbeddedSpecification {
     }
   }
 
-  @TypeChecked
+  @SpockTypeChecked
   def "verifyAll with target"() {
     given:
     Person p = new Person()
@@ -230,7 +231,7 @@ class VerifyAllSpecification extends EmbeddedSpecification {
     }
   }
 
-  @TypeChecked
+  @SpockTypeChecked
   def "verifyAll with target and class"() {
     given:
     Object p = new Person()

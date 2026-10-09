@@ -38,7 +38,7 @@ public @interface PendingFeatureIf {
    *
    * @return Closure to be evaluated
    */
-  Class<? extends Closure> value();
+  Class<? extends Closure<?>> value();
 
   /**
    * Configures which types of Exceptions are expected in the pending feature.

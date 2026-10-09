@@ -14,16 +14,24 @@
 
 package spock.util.concurrent
 
+import java.lang.reflect.Proxy
 import java.util.concurrent.TimeUnit
 
 import org.spockframework.util.ThreadSafe
 import org.spockframework.util.TimeUtil
+
+import static org.spockframework.util.ObjectUtil.uncheckedCast
 
 /**
  * Provides an unlimited number of dynamic variables. Reading the value of a
  * variable will block until some other thread has set the value of the variable,
  * or a timeout expires. Useful for verifying state in an expect- or then-block
  * that has been captured in some other thread.
+ *
+ * <p><b>WARNING:</b> That this class implements {@code Map} is solely for the purpose to use the
+ * same syntax under dynamic compilation, type-checked and static compilation. All {@code Map} methods
+ * except {@code get} with {@code String} as first argument and {@code put} will throw
+ * {@code UnsupportedOperationException}.
  *
  * <p>Example:
  *
@@ -53,8 +61,14 @@ import org.spockframework.util.TimeUtil
  * @author Peter Niederwieser
  */
 @ThreadSafe
-class BlockingVariables {
+class BlockingVariables implements Map<String, Object> {
   private final BlockingVariablesImpl impl
+
+  @Delegate
+  private final Map<String, Object> delegate = uncheckedCast(
+    Proxy.newProxyInstance(BlockingVariables.classLoader, [Map] as Class[]) { proxy, method, args ->
+      throw new UnsupportedOperationException(method.name)
+    })
 
   /**
    * Same as <tt>BlockingVariables(1, TimeUnit.SECONDS)</tt>.
@@ -108,5 +122,35 @@ class BlockingVariables {
    */
   Object getProperty(String name) {
     impl.get(name)
+  }
+
+  /**
+   * Sets a variable's value. This method should not be called directly
+   * but by setting a dynamic variable's value.
+   *
+   * @param name the variable's name
+   * @param value the variable's value
+   */
+  @Override
+  Object put(String name, Object value) {
+    setProperty(name, value)
+    null
+  }
+
+  /**
+   * Gets a variable's value. Blocks until a value has been set for the variable
+   * or a timeout expires. This method should not be called directly but by
+   * getting a dynamic variable's value.
+   *
+   * @param name the variable's name
+   *
+   * @return the variable's value
+   */
+  @Override
+  Object get(Object name) {
+    if (!(name instanceof String)) {
+      throw new UnsupportedOperationException("get")
+    }
+    getProperty(name as String)
   }
 }

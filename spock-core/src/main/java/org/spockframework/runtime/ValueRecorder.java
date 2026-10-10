@@ -42,7 +42,7 @@ public class ValueRecorder {
    * Records and returns the specified value. Hence an expression can be replaced
    * with record(expression) without impacting evaluation of the expression.
    */
-  public Object record(int index, Object value) {
+  public <T> T record(int index, T value) {
     realizeNas(index + 1, null);
     values.set(index, value);
 

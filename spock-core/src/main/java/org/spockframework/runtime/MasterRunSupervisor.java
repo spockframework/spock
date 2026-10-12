@@ -54,11 +54,23 @@ class MasterRunSupervisor implements IRunSupervisor {
     errorInfoCollector.addErrorInfo(transformedError);
   }
 
-  // for better JUnit compatibility, e.g when a @Rule is used
-  private void handleMultipleFailures(ErrorInfoCollector errorInfoCollector,  ErrorInfo error) {
+  private void handleMultipleFailures(ErrorInfoCollector errorInfoCollector, ErrorInfo error) {
     MultipleFailuresError multiFailure = (MultipleFailuresError) error.getException();
-    for (Throwable failure : multiFailure.getFailures())
-      error(errorInfoCollector, new ErrorInfo(error.getMethod(), failure, error.getErrorContext()));
+    // Internal condition groups are flattened, but external aggregates carry their own diagnostics.
+    if (multiFailure instanceof SpockMultipleFailuresError && !((SpockMultipleFailuresError) multiFailure).isTransformed()) {
+      for (Throwable failure : multiFailure.getFailures()) {
+        error(errorInfoCollector, new ErrorInfo(error.getMethod(), failure, error.getErrorContext()));
+      }
+      return;
+    }
+
+    ErrorInfoCollector nestedCollector = new ErrorInfoCollector();
+    for (Throwable failure : multiFailure.getFailures()) {
+      error(nestedCollector, new ErrorInfo(error.getMethod(), failure, error.getErrorContext()));
+    }
+    SpockMultipleFailuresError transformed = SpockMultipleFailuresError.from(multiFailure, nestedCollector.getExceptions());
+    filter.filter(transformed);
+    errorInfoCollector.addErrorInfo(new ErrorInfo(error.getMethod(), transformed, error.getErrorContext()));
   }
 
 

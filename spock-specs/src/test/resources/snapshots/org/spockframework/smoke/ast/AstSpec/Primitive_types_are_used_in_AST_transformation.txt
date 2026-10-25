@@ -181,7 +181,7 @@ public class apackage/TestSpec extends spock/lang/Specification implements groov
     LDC Lorg/spockframework/mock/runtime/MockController;.class
     INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.castToType (Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
     CHECKCAST org/spockframework/mock/runtime/MockController
-    INVOKEVIRTUAL org/spockframework/mock/runtime/MockController.leaveScope ()V
+    INVOKEVIRTUAL org/spockframework/mock/runtime/MockController.verifyLastScope ()V
     ACONST_NULL
     POP
    L18

@@ -43,7 +43,7 @@ public void $spock_feature_0_0() {
             }
         }
     }
-    this.getSpecificationContext().getMockController().leaveScope()
+    this.getSpecificationContext().getMockController().verifyLastScope()
 }
 /*--------- end::snapshot[] ---------*/
   }

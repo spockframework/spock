@@ -552,7 +552,10 @@ class Ext <T extends Serializable, V extends Cloneable> {
     given:
     def snapshotId
     switch (GroovyRuntimeUtil.MAJOR_VERSION) {
-      case 5..Integer.MAX_VALUE:
+      case 6..Integer.MAX_VALUE:
+        snapshotId = "groovy6"
+        break
+      case 5:
         snapshotId = "groovy5"
         break
       case 4:

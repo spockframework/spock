@@ -32,34 +32,30 @@ import io.github.typesafegithub.workflows.actions.actions.Checkout.FetchDepth
 import io.github.typesafegithub.workflows.actions.codecov.CodecovAction
 import io.github.typesafegithub.workflows.actions.testlensapp.SetupTestlens
 import io.github.typesafegithub.workflows.domain.Concurrency
+import io.github.typesafegithub.workflows.domain.Mode
+import io.github.typesafegithub.workflows.domain.Permission
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
 import io.github.typesafegithub.workflows.domain.triggers.MergeGroup
 import io.github.typesafegithub.workflows.domain.triggers.PullRequest
-import io.github.typesafegithub.workflows.domain.triggers.Push
+import io.github.typesafegithub.workflows.domain.triggers.WorkflowDispatch
 import io.github.typesafegithub.workflows.dsl.expressions.Contexts.github
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
 
 workflow(
-    name = "Verify Branches and PRs",
+    name = "Verify PRs",
     on = listOf(
-        Push(
-            branchesIgnore = listOf(
-                "master",
-                "gh-pages"
-            )
-        ),
         PullRequest(),
-        MergeGroup()
+        MergeGroup(),
+        WorkflowDispatch()
     ),
     sourceFile = __FILE__,
     // https://stackoverflow.com/a/72408109/16358266
     concurrency = Concurrency(
         group = "${expr { github.workflow }}-${expr("${github.eventPullRequest.pull_request.number} || ${github.ref}")}",
         cancelInProgress = true
-    ),
-    consistencyCheckJobConfig = commonConsistencyCheckJobConfig
+    )
 ) {
     job(
         id = "check_all_workflow_yaml_consistency",
@@ -70,7 +66,6 @@ workflow(
             name = "Checkout Repository",
             action = Checkout()
         )
-        installPinnedKotlin()
         run(
             name = "Regenerate all Workflow YAMLs",
             command = """find .github/workflows -mindepth 1 -maxdepth 1 -name '*.main.kts' -exec {} \;"""
@@ -92,7 +87,7 @@ workflow(
                 parentFile
                     .resolve("../build/")
                     .apply { mkdirs() }
-                    .resolve("codecov_branches-and-prs.yml")
+                    .resolve("codecov_verify-prs.yml")
                     .writeText(it)
             }
     }
@@ -102,6 +97,12 @@ workflow(
         runsOn = RunnerType.Custom(expr(Matrix.operatingSystem)),
         strategy = Strategy(
             matrix = matrix
+        ),
+        // TestLens forwards the token to its backend, fork PRs show that read access is sufficient
+        permissions = develocityPermissions + mapOf(
+            Permission.Actions to Mode.Read,
+            Permission.Checks to Mode.Read,
+            Permission.PullRequests to Mode.Read
         )
     ) {
         uses(
@@ -130,9 +131,7 @@ workflow(
                 "ghActionsBuild",
                 """"-Dvariant=${expr(Matrix.variant)}"""",
                 """"-DjavaVersion=${expr(Matrix.javaVersion)}""""
-            ).joinToString(" "),
-            // secrets are not injected for pull requests
-            env = commonCredentials
+            ).joinToString(" ")
         )
         uses(
             name = "Upload to Codecov.io",

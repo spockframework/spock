@@ -31,6 +31,9 @@ public class TargetConstraint implements IInvocationConstraint, IInteractionAwar
   private IMockInteraction interaction;
 
   public TargetConstraint(Object target) {
+    if (target == null) {
+      throw new InvalidSpecException("Interaction target must not be null, interactions can only be defined on mock objects");
+    }
     this.target = target;
   }
 

@@ -4,11 +4,11 @@ import spock.lang.Specification
 
 import java.util.regex.Pattern
 
-import static DisambiguationInConditionsTestee.Java1
-import static DisambiguationInConditionsTestee.Java2
-import static DisambiguationInConditionsTestee.Java3
-import static DisambiguationInConditionsTestee.Java4
-import static DisambiguationInConditionsTestee.Verifier
+import static org.spockframework.smoke.DisambiguationInConditionsTestee.Java1
+import static org.spockframework.smoke.DisambiguationInConditionsTestee.Java2
+import static org.spockframework.smoke.DisambiguationInConditionsTestee.Java3
+import static org.spockframework.smoke.DisambiguationInConditionsTestee.Java4
+import static org.spockframework.smoke.DisambiguationInConditionsTestee.Verifier
 
 class DisambiguationInConditions extends Specification {
   Verifier verifier = Mock()

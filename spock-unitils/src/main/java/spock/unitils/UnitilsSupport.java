@@ -20,7 +20,7 @@ import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.unitils.UnitilsExtension;
 
 /**
- * Activates <a href="http://www.unitils.org">Unitils</a> support for a specification.
+ * Activates <a href="https://unitils.sourceforge.net/">Unitils</a> support for a specification.
  * All Unitils features are supported.
  */
 @Inherited

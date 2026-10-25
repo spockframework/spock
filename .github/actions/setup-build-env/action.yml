@@ -13,10 +13,25 @@ runs:
       uses: ./.github/actions/setup-jdks
       with:
         additional-java-version: ${{ inputs.additional-java-version }}
+    - name: 'Request Develocity OIDC token'
+      id: develocity-oidc
+      run: |
+        # Only available if the job has the 'id-token: write' permission, never for pull requests from forks
+        if [ -z "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" ]; then
+          echo "No OIDC token available, building without Develocity access key"
+          exit 0
+        fi
+        token=$(curl -sSf -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+          "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https%3A%2F%2Fcommunity.develocity.cloud" | jq -r .value)
+        echo "::add-mask::$token"
+        echo "access-key=community.develocity.cloud=$token" >> "$GITHUB_OUTPUT"
+      shell: bash
     - name: Init Gradle Build Action
       uses: gradle/actions/setup-gradle@v6
       with:
         cache-read-only: ${{ github.ref != 'refs/heads/master' }}
+        # exchanged for a short-lived access key that is exported as DEVELOCITY_ACCESS_KEY
+        develocity-access-key: ${{ steps.develocity-oidc.outputs.access-key }}
     - name: 'Gradle javaToolchains'
       run: ./gradlew --show-version javaToolchains
       shell: bash

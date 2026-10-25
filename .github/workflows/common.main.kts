@@ -21,40 +21,22 @@
 
 import io.github.typesafegithub.workflows.domain.Job
 import io.github.typesafegithub.workflows.domain.JobOutputs.EMPTY
+import io.github.typesafegithub.workflows.domain.Mode
+import io.github.typesafegithub.workflows.domain.Permission
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.domain.actions.Action.Outputs
 import io.github.typesafegithub.workflows.domain.actions.LocalAction
 import io.github.typesafegithub.workflows.dsl.JobBuilder
 import io.github.typesafegithub.workflows.dsl.WorkflowBuilder
-import io.github.typesafegithub.workflows.dsl.expressions.Contexts.secrets
-import io.github.typesafegithub.workflows.dsl.expressions.expr
-import io.github.typesafegithub.workflows.yaml.CheckoutActionVersionSource.InferFromClasspath
-import io.github.typesafegithub.workflows.yaml.DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG
 import java.util.Properties
 
-val DEVELOCITY_ACCESS_KEY by secrets
-
-val commonCredentials = mapOf(
-    "DEVELOCITY_ACCESS_KEY" to expr(DEVELOCITY_ACCESS_KEY)
-)
-
-// Work-around for https://youtrack.jetbrains.com/issue/KT-86352,
-// see the action definition for details.
-object InstallPinnedKotlin : LocalAction<Outputs>("./.github/actions/install-pinned-kotlin") {
-    override fun toYamlArguments() = linkedMapOf<String, String>()
-
-    override fun buildOutputObject(stepId: String): Outputs = Outputs(stepId)
-}
-
-fun JobBuilder<*>.installPinnedKotlin() {
-    uses(
-        name = "Install pinned Kotlin (work-around for KT-86352)",
-        action = InstallPinnedKotlin
-    )
-}
-
-val commonConsistencyCheckJobConfig = DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG.copy(
-    additionalSteps = { installPinnedKotlin() }
+/**
+ * Permissions for jobs that build with Gradle.
+ * `id-token: write` lets `SetupBuildEnv` request an OIDC token for Develocity.
+ */
+val develocityPermissions = mapOf(
+    Permission.Contents to Mode.Read,
+    Permission.IdToken to Mode.Write
 )
 
 data class Strategy(
@@ -140,6 +122,7 @@ fun WorkflowBuilder.job(
     condition: String? = null,
     strategy: Strategy? = null,
     simpleStrategy: Map<String, List<String>>? = null,
+    permissions: Map<Permission, Mode>? = null,
     block: JobBuilder<EMPTY>.() -> Unit
 ): Job<EMPTY> = job(
     id = id,
@@ -148,6 +131,7 @@ fun WorkflowBuilder.job(
     needs = needs,
     condition = condition,
     strategyMatrix = simpleStrategy,
+    permissions = permissions,
     _customArguments = mapOf(
         *listOfNotNull(
             strategy?.let { "strategy" to strategy.toCustomArguments() }

@@ -1,15 +1,12 @@
-# This file was generated using Kotlin DSL (.github/workflows/branches-and-prs.main.kts).
+# This file was generated using Kotlin DSL (.github/workflows/verify-prs.main.kts).
 # If you want to modify the workflow, please change the Kotlin file and regenerate this YAML file.
 # Generated with https://github.com/typesafegithub/github-workflows-kt
 
-name: 'Verify Branches and PRs'
+name: 'Verify PRs'
 on:
-  push:
-    branches-ignore:
-    - 'master'
-    - 'gh-pages'
   pull_request: {}
   merge_group: {}
+  workflow_dispatch: {}
 concurrency:
   group: '${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}'
   cancel-in-progress: true
@@ -22,14 +19,11 @@ jobs:
       name: 'Check out'
       uses: 'actions/checkout@v7'
     - id: 'step-1'
-      name: 'Install pinned Kotlin (work-around for KT-86352)'
-      uses: './.github/actions/install-pinned-kotlin'
-    - id: 'step-2'
       name: 'Execute script'
-      run: 'rm ''.github/workflows/branches-and-prs.yaml'' && ''.github/workflows/branches-and-prs.main.kts'''
-    - id: 'step-3'
+      run: 'rm ''.github/workflows/verify-prs.yaml'' && ''.github/workflows/verify-prs.main.kts'''
+    - id: 'step-2'
       name: 'Consistency check'
-      run: 'git diff --exit-code ''.github/workflows/branches-and-prs.yaml'''
+      run: 'git diff --exit-code ''.github/workflows/verify-prs.yaml'''
   check_all_workflow_yaml_consistency:
     name: 'Check all Workflow YAML Consistency'
     runs-on: 'ubuntu-latest'
@@ -40,12 +34,9 @@ jobs:
       name: 'Checkout Repository'
       uses: 'actions/checkout@v7'
     - id: 'step-1'
-      name: 'Install pinned Kotlin (work-around for KT-86352)'
-      uses: './.github/actions/install-pinned-kotlin'
-    - id: 'step-2'
       name: 'Regenerate all Workflow YAMLs'
       run: 'find .github/workflows -mindepth 1 -maxdepth 1 -name ''*.main.kts'' -exec {} \;'
-    - id: 'step-3'
+    - id: 'step-2'
       name: 'Check for Modifications'
       run: |-
         git add --intent-to-add .
@@ -53,6 +44,12 @@ jobs:
   build-and-verify:
     name: 'Build and Verify'
     runs-on: '${{ matrix.os }}'
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+      actions: 'read'
+      checks: 'read'
+      pull-requests: 'read'
     needs:
     - 'check_yaml_consistency'
     strategy:
@@ -139,8 +136,6 @@ jobs:
       if: 'github.event_name == ''pull_request'''
     - id: 'step-3'
       name: 'Build Spock'
-      env:
-        DEVELOCITY_ACCESS_KEY: '${{ secrets.DEVELOCITY_ACCESS_KEY }}'
       run: './gradlew --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}"'
     - id: 'step-4'
       name: 'Upload to Codecov.io'

@@ -18,7 +18,7 @@ package org.spockframework.runtime
 
 import spock.lang.*
 
-import static GroovyRuntimeUtil.isVoidMethod
+import static org.spockframework.runtime.GroovyRuntimeUtil.isVoidMethod
 
 class GroovyRuntimeUtilIsVoidMethodSpec extends Specification {
   def "void Java instance method"() {

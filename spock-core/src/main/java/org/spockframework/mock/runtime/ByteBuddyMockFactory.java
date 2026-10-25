@@ -34,7 +34,6 @@ import net.bytebuddy.implementation.FieldAccessor;
 import net.bytebuddy.implementation.FixedValue;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.implementation.bind.annotation.Morph;
-import org.codehaus.groovy.runtime.callsite.AbstractCallSite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 import org.spockframework.compiler.SpockNames;
@@ -194,7 +193,8 @@ class ByteBuddyMockFactory {
    * Checks if the passed method, is a Groovy MOP method from {@link GroovyObject}.
    *
    * <p>{@code GroovyObject} defined MOP methods {@code getProperty()}, {@code setProperty()} and {@code invokeMethod()},
-   * because these methods are handled in a special way in the {@link AbstractCallSite} when marked with {@link Internal @Internal}.
+   * because these methods are handled in a special way in {@code org.codehaus.groovy.runtime.callsite.AbstractCallSite}
+   * (in the optional {@code groovy-callsite} module since Groovy 6) when marked with {@link Internal @Internal}.
    * See also {@link GroovyObject} comments.
    * So we need to mark the method with {@link Internal @Internal} annotation, if we intercept it.
    *

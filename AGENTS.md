@@ -3,4 +3,5 @@
 - This repository is frequently forked, so when working with `git` make sure to use the correct remote: `spockframework/spock` is the main repository, anything else is a fork.
 - Spock uses snapshot tests: **never** generate the snapshot files manually, always use `-PupdateSnapshots` to regenerate them, then inspect the results.
     - Snapshots support an optional `snapshotId`, use this for multiple snapshots per test, or if the snapshot depends on something, e.g., the Groovy version.
-- Spock is built and tested against multiple Groovy versions, selected via the `variant` (Groovy) and `javaVersion` system properties (e.g. `-Dvariant=4.0 -DjavaVersion=17`); `gradle.properties` lists the supported values (`variantsList`, `javaVersionsList`). Set or mention the variant when a build/test issue may be Groovy-version specific.
+- Spock is built and tested against multiple Groovy versions, selected via the `variant` (Groovy) and `javaVersion` system properties (e.g. `-Dvariant=4.0 -DjavaVersion=17`); `gradle.properties` lists the supported values (`variantsList`, `javaVersionsList`).
+  Set or mention the variant when a build/test issue may be Groovy-version specific.

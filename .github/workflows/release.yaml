@@ -18,17 +18,17 @@ jobs:
       name: 'Check out'
       uses: 'actions/checkout@v7'
     - id: 'step-1'
-      name: 'Install pinned Kotlin (work-around for KT-86352)'
-      uses: './.github/actions/install-pinned-kotlin'
-    - id: 'step-2'
       name: 'Execute script'
       run: 'rm ''.github/workflows/release.yaml'' && ''.github/workflows/release.main.kts'''
-    - id: 'step-3'
+    - id: 'step-2'
       name: 'Consistency check'
       run: 'git diff --exit-code ''.github/workflows/release.yaml'''
   build-and-verify:
     name: 'Build and Verify'
     runs-on: '${{ matrix.os }}'
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     needs:
     - 'check_yaml_consistency'
     if: 'github.repository == ''spockframework/spock'''
@@ -112,8 +112,6 @@ jobs:
         additional-java-version: '${{ matrix.java }}'
     - id: 'step-2'
       name: 'Build Spock'
-      env:
-        DEVELOCITY_ACCESS_KEY: '${{ secrets.DEVELOCITY_ACCESS_KEY }}'
       run: './gradlew --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" "-Dscan.tag.main-build"'
     - id: 'step-3'
       name: 'Stop Daemon'
@@ -126,6 +124,9 @@ jobs:
   release-spock:
     name: 'Release Spock'
     runs-on: '${{ matrix.os }}'
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     needs:
     - 'build-and-verify'
     - 'check_yaml_consistency'
@@ -144,6 +145,9 @@ jobs:
         - variant: '5.0'
           java: '11'
           os: 'ubuntu-latest'
+        - variant: '6.0'
+          java: '17'
+          os: 'ubuntu-latest'
     steps:
     - id: 'step-0'
       name: 'Checkout Repository'
@@ -160,18 +164,20 @@ jobs:
         SONATYPE_OSS_USER: '${{ secrets.SONATYPE_OSS_USER }}'
         SONATYPE_OSS_PASSWORD: '${{ secrets.SONATYPE_OSS_PASSWORD }}'
         SIGNING_PASSWORD: '${{ secrets.SIGNING_GPG_PASSWORD }}'
-        DEVELOCITY_ACCESS_KEY: '${{ secrets.DEVELOCITY_ACCESS_KEY }}'
       run: './gradlew --no-parallel --stacktrace ghActionsPublish "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" "-Dscan.tag.main-publish"'
   publish-release-docs:
     name: 'Publish Release Docs'
     runs-on: '${{ matrix.os }}'
+    permissions:
+      contents: 'write'
+      id-token: 'write'
     needs:
     - 'release-spock'
     - 'check_yaml_consistency'
     strategy:
       matrix:
         variant:
-        - '5.0'
+        - '6.0'
         java:
         - '25'
         os:
@@ -192,5 +198,4 @@ jobs:
       name: 'Publish Docs'
       env:
         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-        DEVELOCITY_ACCESS_KEY: '${{ secrets.DEVELOCITY_ACCESS_KEY }}'
       run: './gradlew --no-parallel --stacktrace ghActionsDocs "-Dvariant=${{ matrix.variant }}" "-DjavaVersion=${{ matrix.java }}" "-Dscan.tag.main-docs"'

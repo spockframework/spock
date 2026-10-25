@@ -19,8 +19,8 @@ import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.ClassNode;
 import org.codehaus.groovy.ast.CodeVisitorSupport;
 import org.codehaus.groovy.ast.MethodNode;
+import org.codehaus.groovy.ast.expr.ClosureExpression;
 import org.codehaus.groovy.ast.expr.DeclarationExpression;
-import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.control.CompilationUnit;
 import org.codehaus.groovy.control.SourceUnit;
@@ -74,8 +74,16 @@ public class ClosureParameterTypeFromVariableType extends SingleSignatureClosure
         @Override
         public void visitMethodCallExpression(MethodCallExpression call) {
           if ((currentDeclarations.peek() != null) && MOCK_METHODS.contains(call.getMethodAsString())) {
-            List<Expression> arguments = AstUtil.getArgumentList(call);
-            if (arguments.contains(usage)) {
+            //TODO: After https://youtrack.jetbrains.com/issue/IDEA-331844 is fixed,
+            //      check what node is given as usage and adapt to IntelliJ situation if necessary.
+            //      unfortunately the definition of the parameter just says
+            //      "the AST node, in the compiled file, which triggered a call to this method. Normally only used for logging/error handling"
+            //      and even that not for this method but for the method that calls this method, forwarding its own usage parameter.
+
+            // groovy-eclipse provides the method call expression
+            if (((usage instanceof MethodCallExpression) && usage.equals(call))
+              // static type-checker provides the closure expression
+              || ((usage instanceof ClosureExpression) && AstUtil.getArgumentList(call).contains(usage))) {
               result[0] = currentDeclarations.peek().getVariableExpression().getType();
               return;
             }

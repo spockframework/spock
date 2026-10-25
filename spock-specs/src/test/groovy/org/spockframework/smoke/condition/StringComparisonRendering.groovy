@@ -93,7 +93,7 @@ null == "foo"
     renderedConditionContains({
       assert a == b
     },
-      "1 difference (90% similarity) (comparing subset start: 0, end1: 11, end2: 11)",
+      "1 difference (99% similarity) (comparing subset start: 0, end1: 251, end2: 251)",
       "(a)aaaaaaaaaa",
       "(b)aaaaaaaaaa"
     )
@@ -110,7 +110,7 @@ null == "foo"
     renderedConditionContains({
       assert a == b
     },
-      "1 difference (95% similarity) (comparing subset start: 12789, end1: 12811, end2: 12811)",
+      "1 difference (99% similarity) (comparing subset start: 261893, end1: 262395, end2: 262395)",
       "aaaaaaaaaaa(a)aaaaaaaaaa",
       "aaaaaaaaaaa(b)aaaaaaaaaa"
     )
@@ -127,7 +127,7 @@ null == "foo"
     renderedConditionContains({
       assert a == b
     },
-      "1 difference (91% similarity) (comparing subset start: 25588, end1: 25600, end2: 25600)",
+      "1 difference (99% similarity) (comparing subset start: 524036, end1: 524288, end2: 524288)",
       "aaaaaaaaaaa(a)",
       "aaaaaaaaaaa(b)")
   }
@@ -208,8 +208,8 @@ null == "foo"
            |
            false
            4 differences (20% similarity)
-           (foo)\\n(-~)
-           (bar)\\n(\\n)
+           (foo-~)\\n
+           (bar\\n)\\n
 ''', {
       assert """foo
 """ == """bar
@@ -290,8 +290,8 @@ $b
                                                                                                                                                                               |
                                                                                                                                                                               false
                                                                                                                                                                               7 differences (95% similarity)
-                                                                                                                                                                              Lorem ipsum\\n(\\n)Lorem ipsum (-)dolor sit amet, (-)consetetur sadipscing elitr, sed (-)diam nonumy eirmod tempor (-)invidunt ut labore et (-)dolore magna aliquyam erat, sed diam voluptua.(-~)
-                                                                                                                                                                              Lorem ipsum\\n(-~)Lorem ipsum ( )dolor sit amet, ( )consetetur sadipscing elitr, sed ( )diam nonumy eirmod tempor ( )invidunt ut labore et ( )dolore magna aliquyam erat, sed diam voluptua.(\\n)
+                                                                                                                                                                              Lorem ipsum\\n(\\n)Lorem ipsum(-) dolor sit amet,(-) consetetur sadipscing elitr, sed(-) diam nonumy eirmod tempor (-)invidunt ut labore et(-) dolore magna aliquyam erat, sed diam voluptua.(-~)
+                                                                                                                                                                              Lorem ipsum\\n(-~)Lorem ipsum( ) dolor sit amet,( ) consetetur sadipscing elitr, sed( ) diam nonumy eirmod tempor ( )invidunt ut labore et( ) dolore magna aliquyam erat, sed diam voluptua.(\\n)
 ''', {
       assert """\
 Lorem ipsum
@@ -335,5 +335,39 @@ dolore magna aliquyam erat, sed diam voluptua.\
       sb.append(source, 0, Math.min(length - i, cslength))
     }
     return sb
+  }
+
+  def "large near-identical strings render a full inline diff instead of giving up"() {
+    given:
+    String a = largeStringBuilder("the quick brown fox ", 6000)
+    String b = a[0..<-1] + "z"
+
+    expect:
+    renderedConditionContains({
+      assert a == b
+    }, "1 difference (99% similarity)", "(z)")
+  }
+
+  def "huge completely-different strings still fall back to the no-diff message"() {
+    given:
+    int length = 4 * Math.sqrt(FailedStringComparisonRenderer.MAX_EDIT_DISTANCE_MEMORY)
+    String a = largeStringBuilder("a", length)
+    String b = largeStringBuilder("b", length)
+
+    expect:
+    renderedConditionContains({
+      assert a == b
+    }, "false", "Strings too large to calculate edit distance.")
+  }
+
+  def "gstring comparison of large strings renders a real diff"() {
+    given:
+    String a = largeStringBuilder("hello world ", 6000)
+    GString b = "j${5}${a[1..-1]}"
+
+    expect:
+    renderedConditionContains({
+      assert a == b
+    }, "2 differences (99% similarity)", "(j5)")
   }
 }

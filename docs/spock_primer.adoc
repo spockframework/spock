@@ -306,6 +306,41 @@ include::{sourcedir}/primer/ConditionsSpec.groovy[tag=explicit-with-opt-out-oper
 IMPORTANT: The `!!` must be the outermost expression, see https://groovy-lang.org/operators.html#_operator_precedence[Groovy's docs on Operator Precedence].
 If in doubt use parentheses, `!!(expression)`.
 
+[[hamcrest-matchers]]
+===== Hamcrest matchers
+
+Spock can evaluate Hamcrest matchers as conditions. This is useful when a matcher provides a reusable check or a failure description that is more helpful than a plain comparison.
+
+Any Hamcrest matcher on the test classpath can be used. Spock also provides `closeTo` for numeric comparisons.
+
+The following imports use Spock's `closeTo` matcher and its helpers for applying matchers:
+
+[source,groovy]
+----
+include::{sourcedir}/primer/HamcrestMatchersDocSpec.groovy[tag=hamcrest-imports]
+----
+
+In `expect:` and `then:` blocks, use the compact matcher syntax or the `expect` helper. The helper makes a matcher check read naturally in a `then:` block:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/primer/HamcrestMatchersDocSpec.groovy[tag=hamcrest-expect]
+----
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/primer/HamcrestMatchersDocSpec.groovy[tag=hamcrest-then]
+----
+
+To use a matcher in an explicit assertion, wrap it with `that()`:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/primer/HamcrestMatchersDocSpec.groovy[tag=hamcrest-assert]
+----
+
+Hamcrest matchers can also be used as mock argument constraints; see the <<interaction_based_testing.adoc#hamcrest-constraint,Hamcrest Constraint>> section.
+
 ===== Exception Conditions
 
 Exception conditions are used to describe that a `when` block should throw an exception.

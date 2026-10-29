@@ -309,9 +309,11 @@ If in doubt use parentheses, `!!(expression)`.
 [[hamcrest-matchers]]
 ===== Hamcrest matchers
 
-Spock can evaluate Hamcrest matchers as conditions. This is useful when a matcher provides a reusable check or a failure description that is more helpful than a plain comparison.
+Spock can evaluate Hamcrest matchers as conditions.
+This is useful when a matcher provides a reusable check or a failure description that is more helpful than a plain comparison.
 
-Any Hamcrest matcher on the test classpath can be used. Spock also provides `closeTo` for numeric comparisons.
+Any Hamcrest matcher on the test classpath can be used.
+Spock also provides `closeTo` for numeric comparisons.
 
 The following imports use Spock's `closeTo` matcher and its helpers for applying matchers:
 
@@ -320,7 +322,8 @@ The following imports use Spock's `closeTo` matcher and its helpers for applying
 include::{sourcedir}/primer/HamcrestMatchersDocSpec.groovy[tag=hamcrest-imports]
 ----
 
-In `expect:` and `then:` blocks, use the compact matcher syntax or the `expect` helper. The helper makes a matcher check read naturally in a `then:` block:
+In `expect:` and `then:` blocks, use the compact matcher syntax or the `expect` helper.
+The helper makes a matcher check read naturally in a `then:` block:
 
 [source,groovy,indent=0]
 ----

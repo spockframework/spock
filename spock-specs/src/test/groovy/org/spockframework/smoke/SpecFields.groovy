@@ -129,9 +129,9 @@ class DefaultValuesOfUnsharedFields extends Specification {
   def "primitive types"() {
     expect:
       f1 == false
-      f2 == (char)0
-      f3 == (byte)0
-      f4 == (short)0
+      f2 == 0 as char
+      f3 == 0 as byte
+      f4 == 0 as short
       f5 == 0
       f6 == 0l
       f7 == 0f
@@ -183,9 +183,9 @@ class DefaultValuesOfSharedFields extends Specification {
   def "primitive types"() {
     expect:
       f1 == false
-      f2 == (char)0
-      f3 == (byte)0
-      f4 == (short)0
+      f2 == 0 as char
+      f3 == 0 as byte
+      f4 == 0 as short
       f5 == 0
       f6 == 0l
       f7 == 0f

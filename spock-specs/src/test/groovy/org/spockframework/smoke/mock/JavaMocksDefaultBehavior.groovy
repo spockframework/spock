@@ -14,6 +14,7 @@
 
 package org.spockframework.smoke.mock
 
+import org.spockframework.mock.IMockInvocation
 import spock.lang.*
 
 class JavaMocksDefaultBehavior extends Specification {
@@ -78,7 +79,7 @@ class JavaMocksDefaultBehavior extends Specification {
     def foo = Mock(Foo)
     def bar = Mock(Bar)
 
-    foo.equals(_) >> { it[0].is(bar) }
+    foo.equals(_) >> { List<?> it -> it.first().is(bar) }
     bar.equals(_) >> false
 
     expect:

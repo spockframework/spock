@@ -25,6 +25,7 @@ import spock.lang.Verify;
 import spock.lang.VerifyAll;
 
 import static org.spockframework.compiler.AstUtil.hasAnnotation;
+import static org.spockframework.compiler.UnhygienicAstDetector.UNHYGIENIC_AST_DETECTOR_PROPERTY_NAME;
 
 abstract class BaseVerifyMethodTransform implements ASTTransformation {
 
@@ -77,6 +78,10 @@ abstract class BaseVerifyMethodTransform implements ASTTransformation {
       // if there were no errors so far, let the variable scope visitor fix up variable scopes
       if (!sourceUnit.getErrorCollector().hasErrors()) {
         new VariableScopeVisitor(sourceUnit).visitMethod(methodAst);
+      }
+      // if there were no errors so far, detect unhygienic AST
+      if (!sourceUnit.getErrorCollector().hasErrors() && "true".equals(System.getProperty(UNHYGIENIC_AST_DETECTOR_PROPERTY_NAME))) {
+        new UnhygienicAstDetector(sourceUnit).visitMethod(methodAst);
       }
     } catch (Exception e) {
       errorReporter.error(

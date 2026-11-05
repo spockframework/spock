@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Bean
 
 //tag::javaconfig[]
 class DetachedJavaConfig {
-  def mockFactory = new DetachedMockFactory()
+  DetachedMockFactory mockFactory = new DetachedMockFactory()
 
   @Bean
   GreeterService serviceMock() {

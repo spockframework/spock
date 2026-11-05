@@ -45,7 +45,6 @@ where :
     [a, b] << [[a: 1, b: 1], [a: 2, b: 2], [b: 3, a: 3]]
   }
 
-
   def "multi-parameterization with placeholder in first position"() {
     expect: a == b
     where:
@@ -138,14 +137,14 @@ where:
 '''
   }
 
-  def "derived parameterization"() {
+  def "derived parameterization"(String a, String b) {
     expect: a == b.toUpperCase()
     where:
       a << ["A", "B", "C"]
       b = a.toLowerCase()
   }
 
-  def "dependent derived parameterizations"() {
+  def "dependent derived parameterizations"(int b, int c) {
     expect: d == a
     where:
       a << [1, 2, 3]
@@ -167,7 +166,7 @@ where:
     thrown Exception
   }
 
-  def "simple, multi-, derived and multi-derived parameterizations used together"() {
+  def "simple, multi-, derived and multi-derived parameterizations used together"(int a, int b, int c) {
     expect:
       d == a * 3
       e == a
@@ -180,7 +179,7 @@ where:
   }
 
   @Issue("https://github.com/spockframework/spock/issues/271")
-  def "can use data variables named p0, p1, etc."() {
+  def "can use data variables named p0, p1, etc."(int p0) {
     expect:
     p1 == p0 * 2
 
@@ -191,7 +190,7 @@ where:
     3  | 6
   }
 
-  def "can use data variables named like special @Unroll variables"() {
+  def "can use data variables named like special @Unroll variables"(int featureName) {
     expect:
     iterationIndex == featureName * 2
 
@@ -201,12 +200,12 @@ where:
   }
 
   @Issue("https://github.com/spockframework/spock/issues/396")
-  def "can call closures contained in data variables with method syntax"() {
+  def "can call closures contained in data variables with method syntax"(Closure<Integer> a, Closure<Integer> b) {
     expect:
     a() == 1
     b(1, 2) == 3
-    1.times { n ->
-      assert b(n, n) - n == n
+    1.times { int n ->
+      assert (b(n, n) as int) - n == n
     }
 
     and:
@@ -214,7 +213,7 @@ where:
 
     where:
     a = { 1 }
-    b = { i, j -> i + j }
+    b = { int i, int j -> i + j }
     size = { 42 }
   }
 

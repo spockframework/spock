@@ -1,4 +1,40 @@
 #!/bin/sh
+
+#set -euo pipefail
+set -eu
+set -o pipefail
+shopt -s inherit_errexit
+
+script_dir="$(dirname "$0")"
+
+if [ "$1" = "--no-pause" ]; then
+    shift
+    pause_on_error=0
+else
+    pause_on_error=1
+fi
+
 for var in 2.5 3.0 4.0 5.0; do
-    ./gradlew -Dvariant="$var" "$@"
+    echo
+    echo "Variant: $var"
+    set +e
+    "$script_dir/gradlew" -p "$script_dir" -Dvariant="$var" "$@"
+    exit_code=$?
+    set -e
+    if [ $exit_code -ne 0 ]; then
+        error="${error+"$error, "}$var"
+        if [ $pause_on_error -eq 1 ]; then
+            read -n 1 -r -s -p $'Press any key to continue...\n'
+        fi
+    fi
 done
+
+if [ -n "${error-}" ]; then
+    if [ $pause_on_error -eq 0 ]; then
+        echo >&2
+        echo ********************************************************** >&2
+        echo * Error during execution of the following variants: $error >&2
+        echo ********************************************************** >&2
+    fi
+    exit 1
+fi

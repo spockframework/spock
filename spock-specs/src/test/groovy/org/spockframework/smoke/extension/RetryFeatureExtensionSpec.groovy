@@ -1,5 +1,6 @@
 package org.spockframework.smoke.extension
 
+import org.junit.platform.launcher.listeners.TestExecutionSummary.Failure
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.SpockMultipleFailuresError
@@ -15,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import org.opentest4j.MultipleFailuresError
 
+import static groovy.transform.TypeCheckingMode.SKIP
 import static org.junit.platform.testkit.engine.EventConditions.event
 import static org.junit.platform.testkit.engine.EventConditions.finishedSuccessfully
 import static org.junit.platform.testkit.engine.EventConditions.finishedWithFailure
@@ -85,7 +87,7 @@ def bar() {
     featureCounter.get() == 4
   }
 
-  def "@Retry mode #mode executes setup and cleanup #expectedCount times (parallel: #parallel)"(String mode, int expectedCount) {
+  def "@Retry mode #mode executes setup and cleanup #expectedCount times (parallel: #parallel)"(String mode, int expectedCount, boolean parallel) {
     given:
     withParallelExecution(parallel)
 
@@ -164,12 +166,18 @@ def foo() {
 
     then:
     result.failures.size() == 2
-    result.failures.collect { it.exception.getClass() } =~ [SpockMultipleFailuresError]
-    result.failures.collect { it.exception.failures.size() } =~ [4]
-    result.failures.collectMany { it.exception.failures*.getClass() } =~ [ConditionNotSatisfiedError]
+    result.failures.collect { Failure it ->
+      it.exception.getClass()
+    } =~ [SpockMultipleFailuresError]
+    result.failures.collect { Failure it ->
+      (it.exception as SpockMultipleFailuresError).failures.size()
+    } =~ [4]
+    result.failures.collectMany { Failure it ->
+      (it.exception as SpockMultipleFailuresError).failures*.getClass()
+    } =~ [ConditionNotSatisfiedError]
   }
 
-  def "@Retry mode #mode executes setup and cleanup #expectedCount times for @Unroll'ed feature (parallel: #parallel)"(String mode, int expectedCount) {
+  def "@Retry mode #mode executes setup and cleanup #expectedCount times for @Unroll'ed feature (parallel: #parallel)"(String mode, int expectedCount, boolean parallel) {
     given:
     withParallelExecution(parallel)
 
@@ -712,6 +720,7 @@ def bar(baz) {
     extensionCounter.get() == 4
   }
 
+  @SpockTypeChecked(SKIP)
   private def withParallelExecution(boolean enableParallelExecution) {
     runner.configurationScript {
       runner {

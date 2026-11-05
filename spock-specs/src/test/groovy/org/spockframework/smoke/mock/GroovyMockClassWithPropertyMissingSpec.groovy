@@ -20,7 +20,10 @@ import org.spockframework.runtime.model.parallel.Resources
 import spock.lang.Issue
 import spock.lang.ResourceLock
 import spock.lang.Specification
+import spock.lang.SpockTypeChecked
 import spock.lang.Stepwise
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 //We need to execute it sequentially, because we change global metaClass state
 @Stepwise
@@ -30,8 +33,8 @@ import spock.lang.Stepwise
 )
 @SuppressWarnings('GroovyAssignabilityCheck')
 class GroovyMockClassWithPropertyMissingSpec extends Specification {
-
   @Issue('https://github.com/spockframework/spock/issues/2196')
+  @SpockTypeChecked(SKIP)
   def "Class with propertyMissing() works normally"() {
     given:
     def c = new ClassWithPropertyMissing()
@@ -40,10 +43,11 @@ class GroovyMockClassWithPropertyMissingSpec extends Specification {
   }
 
   @Issue('https://github.com/spockframework/spock/issues/2196')
+  @SpockTypeChecked(SKIP)
   def "Class with propertyMissing() setter works normally"() {
     given:
     def c = new ClassWithPropertyMissing()
-    
+
     when:
     c.prop1 = "value"
     then:
@@ -52,6 +56,7 @@ class GroovyMockClassWithPropertyMissingSpec extends Specification {
   }
 
   @Issue('https://github.com/spockframework/spock/issues/2196')
+  @SpockTypeChecked(SKIP)
   def "Class with propertyMissing() as global spy"() {
     given:
     def c = GroovySpy(ClassWithPropertyMissing, global: true)
@@ -61,6 +66,7 @@ class GroovyMockClassWithPropertyMissingSpec extends Specification {
   }
 
   @Issue('https://github.com/spockframework/spock/issues/2196')
+  @SpockTypeChecked(SKIP)
   def "Class with propertyMissing() setter as global spy"() {
     given:
     def c = GroovySpy(ClassWithPropertyMissing, global: true)
@@ -73,6 +79,7 @@ class GroovyMockClassWithPropertyMissingSpec extends Specification {
   }
 
   @Issue('https://github.com/spockframework/spock/issues/2196')
+  @SpockTypeChecked(SKIP)
   def "Spy on synthetic property of a Class with propertyMissing"() {
     given:
     def c = GroovySpy(ClassWithPropertyMissing, global: true)
@@ -86,6 +93,7 @@ class GroovyMockClassWithPropertyMissingSpec extends Specification {
   }
 
   @Issue('https://github.com/spockframework/spock/issues/2196')
+  @SpockTypeChecked(SKIP)
   def "Spy on synthetic property setter of a Class with propertyMissing"() {
     given:
     def c = GroovySpy(ClassWithPropertyMissing, global: true)

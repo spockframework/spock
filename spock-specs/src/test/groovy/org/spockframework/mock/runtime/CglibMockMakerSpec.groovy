@@ -28,7 +28,7 @@ import java.lang.reflect.Proxy
 import java.util.concurrent.Callable
 
 @IgnoreIf(
-  value = { jvm.java21Compatible },
+  value = { PreconditionContext pc -> pc.jvm.java21Compatible },
   reason = "Cglib doesn't support running on Java 21+"
 )
 class CglibMockMakerSpec extends Specification {
@@ -87,7 +87,7 @@ class CglibMockMakerSpec extends Specification {
 
 
   @Requires(
-    value = { jvm.java21Compatible },
+    value = { PreconditionContext pc -> pc.jvm.java21Compatible },
     reason = "Cglib doesn't support running on Java 21+"
   )
   static class CglibMockMakerUnsupportedSpec extends Specification {

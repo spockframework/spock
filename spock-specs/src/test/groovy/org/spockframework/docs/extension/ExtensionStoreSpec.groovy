@@ -1,10 +1,12 @@
 package org.spockframework.docs.extension
 
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.mock.IMockInvocation
 import org.spockframework.runtime.IStandardStreamsListener
 import org.spockframework.runtime.StandardStreamsCapturer
 import org.spockframework.runtime.extension.IGlobalExtension
 import org.spockframework.runtime.extension.IMethodInterceptor
+import org.spockframework.runtime.extension.IMethodInvocation
 import org.spockframework.runtime.extension.ISpockExecution
 import org.spockframework.runtime.extension.IStore.Namespace
 import org.spockframework.runtime.model.SpecInfo
@@ -14,7 +16,7 @@ import spock.lang.ResourceLock
 
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
-
+import java.util.function.Function
 
 @ResourceLock(Resources.SYSTEM_OUT)
 @ResourceLock(Resources.SYSTEM_ERR)
@@ -22,8 +24,8 @@ class ExtensionStoreSpec extends EmbeddedSpecification {
 
   @AutoCleanup("stop")
   StandardStreamsCapturer outputCapturer = new StandardStreamsCapturer()
-  def lines = new StringBuilder()
-  def listener = Mock(IStandardStreamsListener) {
+  StringBuilder lines = new StringBuilder()
+  IStandardStreamsListener listener = Mock() {
     standardOut(_) >> { String line -> lines.append(line.normalize()) }
   }
 
@@ -94,11 +96,17 @@ class ExceptionCounterGlobalExtension implements IGlobalExtension {
     Namespace.create(ExceptionCounterGlobalExtension)
   private static final String ACCUMULATOR = "accumulator"
   private static final IMethodInterceptor INTERCEPTOR =  {
+    // tag::example-extension[]
+    IMethodInvocation it ->
+    // end::example-extension[]
     try {
       it.proceed()
     } catch (Exception e) {
       it.getStore(EXAMPLE_NS)                                             // <6>
         .get(ACCUMULATOR, ConcurrentHashMap)                              // <7>
+        // end::example-extension[]
+        .with { it as ConcurrentHashMap<String, AtomicInteger> }
+        // tag::example-extension[]
         .computeIfAbsent(e.class.name, { __ -> new AtomicInteger() })     // <8>
         .incrementAndGet()
       throw e

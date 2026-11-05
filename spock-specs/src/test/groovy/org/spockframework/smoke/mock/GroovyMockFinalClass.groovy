@@ -19,9 +19,11 @@ package org.spockframework.smoke.mock
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.mock.runtime.GroovyMockMetaClass
 import org.spockframework.runtime.GroovyRuntimeUtil
+import spock.lang.SpockCompileDynamic
 
 class GroovyMockFinalClass extends EmbeddedSpecification {
 
+  @SpockCompileDynamic
   def "Mock for final class shall only change meta class of instance"() {
     given:
     def originalMetaClass = GroovyRuntimeUtil.getMetaClass(FinalClass)
@@ -37,7 +39,7 @@ class GroovyMockFinalClass extends EmbeddedSpecification {
     then:
     1 * mock.method() >> "MockedName"
     result == "MockedName"
-    
+
     expect:
     mock.getMetaClass() instanceof GroovyMockMetaClass
     mock.getMetaClass() == afterMetaClass
@@ -48,4 +50,3 @@ class GroovyMockFinalClass extends EmbeddedSpecification {
     String method() { return "Name" }
   }
 }
-

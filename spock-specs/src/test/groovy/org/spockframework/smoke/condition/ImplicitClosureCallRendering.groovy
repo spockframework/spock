@@ -14,6 +14,10 @@
 
 package org.spockframework.smoke.condition
 
+import spock.lang.SpockTypeChecked
+
+import static groovy.transform.TypeCheckingMode.SKIP
+
 /**
  * Describes rendering of conditions that contain a closure call
  * with the implicit "foo(args)" syntax instead of the explicit
@@ -34,7 +38,7 @@ func(42) == null
     }
   }
 
-  def assertFunc(func) {
+  def assertFunc(Closure<?> func) {
     assert func(42) == null
   }
 
@@ -49,7 +53,7 @@ func(42) == null
     }
   }
 
-  private funcField = { it }
+  private Closure<?> funcField = { it }
 
   def "with field"() {
     expect:
@@ -62,7 +66,7 @@ funcField(42) == null
     }
   }
 
-  def func = { it }
+  Closure<?> func = { it }
 
   def "with property"() {
     expect:
@@ -75,6 +79,7 @@ func(42) == null
     }
   }
 
+  @SpockTypeChecked(SKIP)
   def "with qualified property"() {
     def holder = new FuncHolder()
 
@@ -123,8 +128,6 @@ ${holder.dump()}
   }
 
   static class FuncHolder {
-    def func = { it }
+    Closure<?> func = { it }
   }
-
 }
-

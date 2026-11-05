@@ -37,12 +37,12 @@ class ByteBuddyMockFactoryConcurrentSpec extends Specification {
 
   def "ensure lockMask bit patterns"() {
     expect:
-    1 << Integer.bitCount(ByteBuddyMockFactory.CACHE_LOCK_MASK) - 1 == Integer.highestOneBit(ByteBuddyMockFactory.CACHE_LOCK_MASK)
+    1 << Integer.bitCount(ByteBuddyMockFactory.@CACHE_LOCK_MASK) - 1 == Integer.highestOneBit(ByteBuddyMockFactory.@CACHE_LOCK_MASK)
   }
 
   // Just to be save to abort, normally the tests run in 2 secs.
   @Timeout(120)
-  def "cacheLockingStressTest #test"() {
+  def "cacheLockingStressTest #test"(MockSpec mockSpecA, MockSpec mockSpecB) {
     given:
     int iterations = 5_000
     def tempClassLoader = new ByteBuddyTestClassLoader()
@@ -74,7 +74,7 @@ class ByteBuddyMockFactoryConcurrentSpec extends Specification {
       assertValidMockClass(featB, mockClass, tempClassLoader)
     }
 
-    def cacheFuture = runCode.apply { mockFactory.CACHE.clear() }
+    def cacheFuture = runCode.apply { mockFactory.@CACHE.clear() }
 
     phaser.arriveAndAwaitAdvance()
     // Wait for test to end

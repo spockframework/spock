@@ -28,7 +28,7 @@ abstract class EmbeddedSpecification extends Specification {
   EmbeddedSpecRunner runner = new EmbeddedSpecRunner()
   EmbeddedSpecCompiler compiler = new EmbeddedSpecCompiler()
 
-  def javaVersion = System.getProperty("java.specification.version") as BigDecimal
+  BigDecimal javaVersion = System.getProperty("java.specification.version") as BigDecimal
 
   void stackTraceLooksLike(Throwable exception, String template) {
 

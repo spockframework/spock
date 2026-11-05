@@ -19,19 +19,22 @@ package org.spockframework.smoke.condition
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import spock.lang.*
 
+import static groovy.transform.TypeCheckingMode.SKIP
+
 /**
  * @author Peter Niederwieser
  */
 class ExplicitConditionsInFields extends Specification {
-  def instanceField = { assert false }
-  @Shared sharedField = { assert false }
+  Closure<Void> instanceField = { assert false }
+  @Shared Closure<Void> sharedField = { assert false }
 
   @FailsWith(ConditionNotSatisfiedError)
   def "explicit condition in instance field"() {
     setup: instanceField()
-
   }
 
+  // SpockCompileDynamic can be removed if minimum Groovy version is 5
+  @SpockTypeChecked(SKIP)
   @FailsWith(ConditionNotSatisfiedError)
   def "explicit condition in shared field"() {
     setup: sharedField()

@@ -5,12 +5,12 @@ import spock.lang.Specification
 import java.util.AbstractMap.SimpleEntry
 
 class DataVariableMapTest extends Specification {
-  def testee = new DataVariableMap(
+  DataVariableMap testee = new DataVariableMap(
     ['a', 'b'],
     1, 2
   )
 
-  def 'modifying methods throw exception'() {
+  def 'modifying methods throw exception'(Closure<Void> method) {
     when:
     method(testee)
 
@@ -19,16 +19,16 @@ class DataVariableMapTest extends Specification {
 
     where:
     _ | method
-    _ | { it.put('foo', _) }
-    _ | { it.remove(_) }
-    _ | { it.putAll(foo: _) }
-    _ | { it.clear() }
-    _ | { it.entrySet().add(new SimpleEntry<>('foo', _)) }
-    _ | { it.entrySet().remove(_) }
-    _ | { it.entrySet().addAll([new SimpleEntry<>('foo', _)]) }
-    _ | { it.entrySet().retainAll([]) }
-    _ | { it.entrySet().removeAll([]) }
-    _ | { it.entrySet().clear() }
+    _ | { DataVariableMap it -> it.put('foo', _) }
+    _ | { DataVariableMap it -> it.remove(_) }
+    _ | { DataVariableMap it -> it.putAll(foo: _) }
+    _ | { DataVariableMap it -> it.clear() }
+    _ | { DataVariableMap it -> it.entrySet().add(new SimpleEntry<>('foo', _)) }
+    _ | { DataVariableMap it -> it.entrySet().remove(_) }
+    _ | { DataVariableMap it -> it.entrySet().addAll([new SimpleEntry<>('foo', _)]) }
+    _ | { DataVariableMap it -> it.entrySet().retainAll([]) }
+    _ | { DataVariableMap it -> it.entrySet().removeAll([]) }
+    _ | { DataVariableMap it -> it.entrySet().clear() }
   }
 
   def 'size returns proper result'() {
@@ -36,7 +36,7 @@ class DataVariableMapTest extends Specification {
     testee.size() == 2
   }
 
-  def 'isEmpty returns proper result'() {
+  def 'isEmpty returns proper result'(DataVariableMap testee) {
     expect:
     testee.isEmpty() == result
 
@@ -86,7 +86,7 @@ class DataVariableMapTest extends Specification {
     testee.entrySet().size() == 2
   }
 
-  def 'entrySet isEmpty returns proper result'() {
+  def 'entrySet isEmpty returns proper result'(DataVariableMap testee) {
     expect:
     testee.entrySet().empty == result
 

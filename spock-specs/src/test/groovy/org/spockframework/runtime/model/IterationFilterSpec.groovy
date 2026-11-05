@@ -6,7 +6,7 @@ import spock.lang.Subject
 class IterationFilterSpec extends Specification {
 
   @Subject
-  def filter = new IterationFilter()
+  IterationFilter filter = new IterationFilter()
 
   def "allows all indexes by default"() {
     expect:

@@ -20,9 +20,9 @@ import spock.lang.*
 import java.nio.CharBuffer
 
 class EditPathRendererSpec extends Specification {
-  def renderer = new EditPathRenderer()
+  EditPathRenderer renderer = new EditPathRenderer()
 
-  def "examples"() {
+  def "examples"(CharSequence str1, CharSequence str2) {
     def dist = new EditDistance(str1, str2)
 
     expect:
@@ -35,7 +35,7 @@ class EditPathRendererSpec extends Specification {
     out2 << ["the qui(r)k", "(----)quick", "(--)e qui(--)", "(and now for s)th(.) (completely d)i(fferent)"]
   }
 
-  def "compared strings contain control characters"() {
+  def "compared strings contain control characters"(CharSequence str1, CharSequence str2) {
     def dist = new EditDistance(str1, str2)
 
     expect:
@@ -48,7 +48,7 @@ class EditPathRendererSpec extends Specification {
     out2 = "one(-~)two(\\n)three(-~)four\\rfive(\\t)six"
   }
 
-  def "compared strings contain same delimiters as used by diff renderer"() {
+  def "compared strings contain same delimiters as used by diff renderer"(CharSequence str1, CharSequence str2) {
     def dist = new EditDistance(str1, str2)
 
     expect:
@@ -61,7 +61,7 @@ class EditPathRendererSpec extends Specification {
     out2 = "q(u)i((r))k())"
   }
 
-  def "compare String with other CharSequence"() {
+  def "compare String with other CharSequence"(CharSequence str, CharSequence seq) {
     def dist = new EditDistance(str, seq)
 
     expect:

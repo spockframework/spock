@@ -19,10 +19,14 @@ package org.spockframework.idea
 import spock.lang.Ignore
 import spock.lang.Rollup
 import spock.lang.Specification
+import spock.lang.SpockTypeChecked
 import spock.lang.Unroll
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 // tested with IDEA 12.0.1
 @Ignore
+@SpockTypeChecked(SKIP)
 class IntelliJIdeaSpec extends Specification {
   // both inference and formatting work
   @Rollup

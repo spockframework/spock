@@ -51,7 +51,7 @@ class Foo extends Specification {
     expectedSkipMessagesCount == 2
   }
 
-  def "automatically runs excluded methods that lead up to an included method"() {
+  def "automatically runs excluded methods that lead up to an included method"(String step, int succeeded) {
     def clazz = compiler.compileWithImports("""
 @Stepwise
 class Foo extends Specification {
@@ -88,7 +88,7 @@ class Foo extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1593")
-  def "automatically runs excluded methods that lead up to an included method with post discovery filter"() {
+  def "automatically runs excluded methods that lead up to an included method with post discovery filter"(int succeeded) {
     def clazz = compiler.compileWithImports("""
 @Stepwise
 class Foo extends Specification {

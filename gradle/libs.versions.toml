@@ -37,6 +37,7 @@ junit5-bom =  { module = "org.junit:junit-bom",  version.ref = "junit5" }
 junit6-bom =  { module = "org.junit:junit-bom",  version.ref = "junit6" }
 # to omit the version we have to use this syntax, the version is managed by the junit-bom
 junit-jupiter.module = "org.junit.jupiter:junit-jupiter"
+junit-vintage.module = "org.junit.vintage:junit-vintage-engine"
 junit-platform-console.module = "org.junit.platform:junit-platform-console"
 junit-platform-launcher.module = "org.junit.platform:junit-platform-launcher"
 junit-platform-testkit.module = "org.junit.platform:junit-platform-testkit"

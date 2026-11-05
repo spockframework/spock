@@ -172,7 +172,7 @@ class WithBlockPassingConditions extends Specification {
     helper(list)
   }
 
-  void helper(list) {
+  void helper(List list) {
     with(list) {
       size() == 2
       get(0) == 1

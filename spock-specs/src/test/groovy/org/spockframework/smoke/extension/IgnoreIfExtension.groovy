@@ -24,6 +24,9 @@ import spock.lang.IgnoreIf
 import spock.lang.Issue
 import spock.lang.Requires
 import spock.lang.Shared
+import spock.lang.SpockTypeChecked
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 class IgnoreIfExtension extends EmbeddedSpecification {
   @Shared
@@ -34,35 +37,36 @@ class IgnoreIfExtension extends EmbeddedSpecification {
     expect: false
   }
 
-  @IgnoreIf({ os.windows || os.linux || os.macOs || os.solaris || os.other })
+  @IgnoreIf({ PreconditionContext pc -> pc.os.windows || pc.os.linux || pc.os.macOs || pc.os.solaris || pc.os.other })
   def "provides OS information"() {
     expect: false
   }
 
-  @IgnoreIf({
-    jvm.java8 || jvm.java9 || jvm.java10 || jvm.java11 || jvm.java12 || jvm.java13 || jvm.java14 || jvm.java15 || jvm.java16 || jvm.java17 ||
-      jvm.java18 || jvm.java19 || jvm.java20 || jvm.java21 || jvm.java22 || jvm.java23 || jvm.java24 || jvm.java25
+  @IgnoreIf({ PreconditionContext pc ->
+    pc.jvm.java8 || pc.jvm.java9 || pc.jvm.java10 || pc.jvm.java11 || pc.jvm.java12 || pc.jvm.java13 || pc.jvm.java14 || pc.jvm.java15 || pc.jvm.java16 || pc.jvm.java17 ||
+      pc.jvm.java18 || pc.jvm.java19 || pc.jvm.java20 || pc.jvm.java21 || pc.jvm.java22 || pc.jvm.java23 || pc.jvm.java24 || pc.jvm.java25
   })
   def "provides JVM information"() {
     expect: false
   }
 
-  @IgnoreIf({ !env.containsKey("FOOBARBAZ") })
+  @IgnoreIf({ PreconditionContext pc -> !pc.env.containsKey("FOOBARBAZ") })
   def "provides access to environment variables"() {
     expect: false
   }
 
-  @IgnoreIf({ !sys.contains("java.version") })
+  @IgnoreIf({ PreconditionContext pc -> !pc.sys.contains("java.version") })
   def "provides access to system properties"() {
     expect: false
   }
 
+  @SpockTypeChecked(SKIP)
   @IgnoreIf({ !it.sys.contains("java.version") })
   def "can use closure argument for an easy option to typecast and use IDE support"() {
     expect: false
   }
 
-  @IgnoreIf({ data.a == 1 })
+  @IgnoreIf({ PreconditionContext pc -> pc.data.a == 1 })
   def 'can evaluate for single iterations if data variables are accessed'() {
     expect:
     a == 2
@@ -78,7 +82,7 @@ class IgnoreIfExtension extends EmbeddedSpecification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1710")
-  @IgnoreIf({ shared.shouldIgnore })
+  @IgnoreIf({ PreconditionContext<IgnoreIfExtension> pc -> pc.shared.shouldIgnore })
   def 'can skip data providers completely if no data variables are accessed by checking a `shared.` field'() {
     expect: false
     where:
@@ -386,7 +390,7 @@ def foo() {
     thrown(ConditionNotSatisfiedError)
   }
 
-  @IgnoreIf({ data.a == 1 })
+  @IgnoreIf({ PreconditionContext pc -> pc.data.a == 1 })
   @IgnoreIf({ false })
   def "feature is ignored if data variable accessing IgnoreIf annotation is true"() {
     expect: false
@@ -394,8 +398,8 @@ def foo() {
     a = 1
   }
 
-  @IgnoreIf({ data.a == 1 })
-  @IgnoreIf({ data.a != 1 })
+  @IgnoreIf({ PreconditionContext pc -> pc.data.a == 1 })
+  @IgnoreIf({ PreconditionContext pc -> pc.data.a != 1 })
   def "feature is ignored if at least one data variable accessing IgnoreIf annotation is true"() {
     expect: false
     where:
@@ -403,7 +407,7 @@ def foo() {
   }
 
   @IgnoreIf({ true })
-  @IgnoreIf({ data.a != 1 })
+  @IgnoreIf({ PreconditionContext pc -> pc.data.a != 1 })
   def "feature is ignored if non data variable accessing IgnoreIf annotation is true"() {
     expect: false
     where:

@@ -18,6 +18,7 @@ package org.spockframework.smoke.condition
 
 
 import org.spockframework.runtime.FailedStringComparisonRenderer
+import spock.lang.Ignore
 import spock.lang.Issue
 
 class StringComparisonRendering extends ConditionRenderingSpec {
@@ -166,7 +167,7 @@ null == "foo"
 
 
   def "large String comparison without room for context"() {
-    int stringLength = Math.sqrt(FailedStringComparisonRenderer.MAX_EDIT_DISTANCE_MEMORY)
+    int stringLength = Math.sqrt(FailedStringComparisonRenderer.MAX_EDIT_DISTANCE_MEMORY) as int
 
     String common = largeStringBuilder("cccccccccccccccc", stringLength)
     String a = largeStringBuilder("aaaaaaaaaaaaaaaa", stringLength) + common
@@ -183,9 +184,8 @@ null == "foo"
       "$stringLength differences (0% similarity) (comparing subset start: 0, end1: $stringLength, end2: $stringLength)")
   }
 
-
   def "String diff does not cause int overflow when shortening, causing OOM"() {
-    int stringLength = Math.sqrt(Integer.MAX_VALUE) * 2
+    int stringLength = (Math.sqrt(Integer.MAX_VALUE) as int) * 2
 
     String a = largeStringBuilder("aaaaaaaaaaaaaaaa", stringLength)
     String b = largeStringBuilder("bbbbbbbbbbbbbbbb", stringLength)
@@ -328,7 +328,7 @@ dolore magna aliquyam erat, sed diam voluptua.\
     }
   }
 
-  private StringBuilder largeStringBuilder(CharSequence source = "aaaaaaaaaaaaaaaa", int length = FailedStringComparisonRenderer.MAX_EDIT_DISTANCE_MEMORY / 2) {
+  private StringBuilder largeStringBuilder(CharSequence source = "aaaaaaaaaaaaaaaa", int length = (FailedStringComparisonRenderer.MAX_EDIT_DISTANCE_MEMORY / 2) as int) {
     def sb = new StringBuilder(length + 10)
     int cslength = source.length()
     for (int i = 0; i < length; i += cslength) {

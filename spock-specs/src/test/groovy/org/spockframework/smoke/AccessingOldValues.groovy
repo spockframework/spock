@@ -64,7 +64,7 @@ class AccessingOldValues extends EmbeddedSpecification {
     (0..2).every { old(list.size()) == 3 }
   }
 
-  def "can access data-driven value"() {
+  def "can access data-driven value"(List list) {
     when:
     list << "elem"
 

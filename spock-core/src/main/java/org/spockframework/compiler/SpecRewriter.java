@@ -128,7 +128,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     BlockStatement getterBlock = new BlockStatement();
     getter = new MethodNode(getterName, determineVisibilityForSharedFieldAccessor(field) | Opcodes.ACC_SYNTHETIC,
-        field.getAst().getType(), Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, getterBlock);
+        field.getAst().getType(), new Parameter[0], new ClassNode[0], getterBlock);
 
     getterBlock.addStatement(
         new ReturnStatement(
@@ -154,7 +154,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     BlockStatement getterBlock = new BlockStatement();
     getter = new MethodNode(getterName, determineVisibilityForFinalFieldAccessor(field) | Opcodes.ACC_SYNTHETIC,
-        field.getAst().getType(), Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, getterBlock);
+        field.getAst().getType(), new Parameter[0], new ClassNode[0], getterBlock);
 
     getterBlock.addStatement(
         new ReturnStatement(
@@ -178,7 +178,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     BlockStatement setterBlock = new BlockStatement();
     setter = new MethodNode(setterName, determineVisibilityForSharedFieldAccessor(field) | Opcodes.ACC_SYNTHETIC,
-        getPlainReference(ClassHelper.VOID_TYPE), params, ClassNode.EMPTY_ARRAY, setterBlock);
+        getPlainReference(ClassHelper.VOID_TYPE), params, new ClassNode[0], setterBlock);
 
     setterBlock.addStatement(
         new ExpressionStatement(
@@ -447,7 +447,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   private @NotNull Statement storeFailedBlock(VariableExpression failedBlock) {
-    MethodCallExpression getCurrentBlock = createDirectMethodCall(getSpecificationContext(), nodeCache.SpecificationContext_GetCurrentBlock, ArgumentListExpression.EMPTY_ARGUMENTS);
+    MethodCallExpression getCurrentBlock = createDirectMethodCall(getSpecificationContext(), nodeCache.SpecificationContext_GetCurrentBlock, new ArgumentListExpression());
     return new ExpressionStatement(new BinaryExpression(failedBlock, Token.newSymbol(Types.ASSIGN, -1, -1), getCurrentBlock));
   }
 
@@ -460,7 +460,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       // if ($spock_feature_throwable != null)
       new BooleanExpression(AstUtil.createVariableIsNotNullExpression(new VariableExpression(SpockNames.SPOCK_FEATURE_THROWABLE, nodeCache.Throwable))),
       statement,
-      EmptyStatement.INSTANCE
+      new EmptyStatement()
     );
   }
 
@@ -536,7 +536,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   private Statement createMockControllerCall(MethodNode method) {
-    return new ExpressionStatement(createDirectMethodCall(getMockInvocationMatcher(), method, ArgumentListExpression.EMPTY_ARGUMENTS));
+    return new ExpressionStatement(createDirectMethodCall(getMockInvocationMatcher(), method, new ArgumentListExpression()));
   }
 
   /*
@@ -571,9 +571,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       moveVariableDeclarations(b.getAst(), method.getStatements());
     }
 
-    VariableExpression featureThrowableVar =
-        new VariableExpression(SpockNames.SPOCK_FEATURE_THROWABLE, nodeCache.Throwable);
-    method.getStatements().add(createVariableDeclarationStatement(featureThrowableVar));
+    method.getStatements().add(createVariableDeclarationStatement(new VariableExpression(SpockNames.SPOCK_FEATURE_THROWABLE, nodeCache.Throwable)));
 
     List<Statement> featureStats = new ArrayList<>();
     for (Block b : method.getBlocks()) {
@@ -581,11 +579,10 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       featureStats.addAll(b.getAst());
     }
 
-    CatchStatement featureCatchStat = createThrowableAssignmentAndRethrowCatchStatement(featureThrowableVar);
-    VariableExpression failedBlock = new VariableExpression(SpockNames.FAILED_BLOCK, nodeCache.BlockInfo);
+    CatchStatement featureCatchStat = createThrowableAssignmentAndRethrowCatchStatement(new VariableExpression(SpockNames.SPOCK_FEATURE_THROWABLE, nodeCache.Throwable));
     List<Statement> cleanupStats = asList(
-        new ExpressionStatement(new DeclarationExpression(failedBlock, Token.newSymbol(Types.ASSIGN, -1, -1), ConstantExpression.NULL)),
-        createCleanupTryCatch(block, featureThrowableVar, failedBlock));
+        new ExpressionStatement(new DeclarationExpression(new VariableExpression(SpockNames.FAILED_BLOCK, nodeCache.BlockInfo), Token.newSymbol(Types.ASSIGN, -1, -1), new ConstantExpression(null))),
+        createCleanupTryCatch(block, new VariableExpression(SpockNames.SPOCK_FEATURE_THROWABLE, nodeCache.Throwable), new VariableExpression(SpockNames.FAILED_BLOCK, nodeCache.BlockInfo)));
 
     TryCatchStatement tryFinally =
         new TryCatchStatement(
@@ -644,12 +641,12 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   private CatchStatement createHandleSuppressedThrowableStatement(VariableExpression featureThrowableVar) {
     Parameter catchParameter = new Parameter(nodeCache.Throwable, SpockNames.SPOCK_TMP_THROWABLE);
 
-    BinaryExpression featureThrowableNotNullExpr = AstUtil.createVariableIsNotNullExpression(featureThrowableVar);
+    BinaryExpression featureThrowableNotNullExpr = AstUtil.createVariableIsNotNullExpression(new VariableExpression(featureThrowableVar));
 
     List<Statement> addSuppressedStats =
       singletonList(new ExpressionStatement(
         createDirectMethodCall(
-          featureThrowableVar,
+          new VariableExpression(featureThrowableVar),
           nodeCache.Throwable_AddSuppressed,
           new ArgumentListExpression(new VariableExpression(catchParameter)))));
     List<Statement> throwFeatureStats =
@@ -694,7 +691,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   public MethodCallExpression getSpecificationContext() {
     return createDirectMethodCall(AstUtil.createThisExpression(),
-        nodeCache.Specification_GetSpecificationContext, ArgumentListExpression.EMPTY_ARGUMENTS);
+        nodeCache.Specification_GetSpecificationContext, new ArgumentListExpression());
   }
 
   @Override
@@ -702,7 +699,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     return createDirectMethodCall(
       getSpecificationContext(),
       nodeCache.SpecificationContext_GetMockController,
-      ArgumentListExpression.EMPTY_ARGUMENTS);
+      new ArgumentListExpression());
   }
 
   public MethodCallExpression setThrownException(Expression value) {
@@ -716,7 +713,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     return createDirectMethodCall(
       getSpecificationContext(),
       nodeCache.SpecificationContext_GetSharedInstance,
-      ArgumentListExpression.EMPTY_ARGUMENTS);
+      new ArgumentListExpression());
   }
 
   @Override
@@ -728,7 +725,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     if (spec.getInitializerMethod() == null) {
       // method is private s.t. multiple initializer methods along hierarchy can be called independently
       MethodNode gMethod = new MethodNode(InternalIdentifiers.INITIALIZER_METHOD, Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC,
-          getPlainReference(ClassHelper.OBJECT_TYPE), Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, new BlockStatement());
+          getPlainReference(ClassHelper.OBJECT_TYPE), new Parameter[0], new ClassNode[0], new BlockStatement());
       spec.getAst().addMethod(gMethod);
       FixtureMethod method = new FixtureMethod(spec, gMethod);
       method.addBlock(new AnonymousBlock(method));
@@ -757,7 +754,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     if (spec.getSharedInitializerMethod() == null) {
       // method is private s.t. multiple initializer methods along hierarchy can be called independently
       MethodNode gMethod = new MethodNode(InternalIdentifiers.SHARED_INITIALIZER_METHOD, Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC,
-        getPlainReference(ClassHelper.OBJECT_TYPE), Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, new BlockStatement());
+        getPlainReference(ClassHelper.OBJECT_TYPE), new Parameter[0], new ClassNode[0], new BlockStatement());
       spec.getAst().addMethod(gMethod);
       FixtureMethod method = new FixtureMethod(spec, gMethod);
       method.addBlock(new AnonymousBlock(method));
@@ -774,7 +771,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     blockStats.add(
         new ExpressionStatement(
-            setThrownException(ConstantExpression.NULL)));
+            setThrownException(new ConstantExpression(null))));
 
     // ensure variables remain in same scope
     // by moving variable defs to the very beginning of the method, they don't

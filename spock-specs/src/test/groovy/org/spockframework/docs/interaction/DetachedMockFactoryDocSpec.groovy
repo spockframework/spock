@@ -20,10 +20,10 @@ import static org.spockframework.docs.interaction.DetachedMockFactoryDocSpec.Eng
 class DetachedMockFactoryDocSpec extends Specification {
   // tag::declare-shared[]
   @Shared
-  def mockFactory = new DetachedMockFactory()
+  DetachedMockFactory mockFactory = new DetachedMockFactory()
 
   @Shared
-  def mockUtil = new MockUtil()
+  MockUtil mockUtil = new MockUtil()
   // end::declare-shared[]
 
   // tag::attach-manually[]
@@ -55,7 +55,7 @@ class DetachedMockFactoryDocSpec extends Specification {
 
   // tag::auto-attach[]
   @AutoAttach
-  def autoAttachedEngine = mockFactory.Mock(Engine)
+  Engine autoAttachedEngine = mockFactory.Mock(Engine)
 
   def "Auto-attach detached mock"() {
     given:
@@ -80,7 +80,11 @@ class DetachedMockFactoryDocSpec extends Specification {
 
   // tag::use-custom-mock-creator-no-attach[]
   @Unroll("Engine state #engineStateResponseType")
-  def "Mock usage without manually attach detach with preconfigured engine state"() {
+  def "Mock usage without manually attach detach with preconfigured engine state"(
+  // end::use-custom-mock-creator-no-attach[]
+    EngineMockCreator.StartMode engineStateResponseType, Engine preconfiguredEngine
+  // tag::use-custom-mock-creator-no-attach[]
+  ) {
     given:
     def car = new Car(engine: preconfiguredEngine)
     // The preconfigured mock with default behaviour behaves as defined,
@@ -111,7 +115,11 @@ class DetachedMockFactoryDocSpec extends Specification {
 
   // tag::use-custom-mock-creator-attach[]
   @Unroll("Engine state #engineStateResponseType")
-  def "Manually attach detached mock with preconfigured engine state"() {
+  def "Manually attach detached mock with preconfigured engine state"(
+  // end::use-custom-mock-creator-attach[]
+    EngineMockCreator.StartMode engineStateResponseType, Engine preconfiguredEngine
+  // tag::use-custom-mock-creator-attach[]
+  ) {
     given:
     def car = new Car(engine: preconfiguredEngine)
     //Now, let's attach the mock to the spec and override its default behaviour.

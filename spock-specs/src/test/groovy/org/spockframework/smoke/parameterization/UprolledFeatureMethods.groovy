@@ -21,7 +21,9 @@ import org.spockframework.runtime.InvalidSpecException
 import org.spockframework.runtime.SpockExecutionException
 import spock.lang.Rollup
 import spock.lang.Specification
-import spock.lang.Unroll
+import spock.lang.SpockTypeChecked
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 class UprolledFeatureMethods extends EmbeddedSpecification {
   def setup() {
@@ -153,13 +155,23 @@ def method() {
     thrown(InvalidSpecException)
   }
 
-  def "method-level uproll annotation wins over configuration script"() {
-    given:
+  @SpockTypeChecked(SKIP)
+  private withUnrollConfiguration(Map args) {
     runner.configurationScript {
       unroll {
-        unrollByDefault true
+        if (args.defaultPattern) {
+          defaultPattern args.defaultPattern
+        }
+        if (args.unrollByDefault) {
+          unrollByDefault true
+        }
       }
     }
+  }
+
+  def "method-level uproll annotation wins over configuration script"() {
+    given:
+    withUnrollConfiguration(unrollByDefault: true)
 
     when:
     def result = runner.runSpecBody("""
@@ -178,11 +190,7 @@ def method() {
 
   def "class-level uproll annotation wins over configuration script"() {
     given:
-    runner.configurationScript {
-      unroll {
-        unrollByDefault true
-      }
-    }
+    withUnrollConfiguration(unrollByDefault: true)
 
     when:
     def result = runner.runWithImports("""
@@ -203,11 +211,7 @@ class Foo extends Specification {
 
   def "rollup annotations are not inheritable"() {
     given:
-    runner.configurationScript {
-      unroll {
-        defaultPattern '#featureName: #actor.details.name'
-      }
-    }
+    withUnrollConfiguration(defaultPattern: '#featureName: #actor.details.name')
     runner.addClassImport(Base)
 
     when:

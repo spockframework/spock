@@ -20,6 +20,8 @@ import java.util.concurrent.Callable
 
 import spock.lang.*
 
+import static groovy.transform.TypeCheckingMode.SKIP
+
 class ResponseGenerators extends Specification {
   def "return simple response"() {
     List list = Mock()
@@ -123,6 +125,7 @@ class ResponseGenerators extends Specification {
     producer.produce() instanceof Set
   }
 
+  @SpockTypeChecked(SKIP)
   def "access args with 'it' variable"() {
     List list = Mock()
 
@@ -140,7 +143,7 @@ class ResponseGenerators extends Specification {
     list.subList(3, 5)
 
     then:
-    1 * list.subList(_, _) >> { args -> assert args.size() == 2 }
+    1 * list.subList(_, _) >> { List args -> assert args.size() == 2 }
   }
 
   def "access args with destructuring"() {
@@ -174,7 +177,7 @@ class ResponseGenerators extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/288")
-  def "exceptions thrown from code response generators aren't wrapped"() {
+  def "exceptions thrown from code response generators aren't wrapped"(Caller caller) {
     def callable = Mock(Callable)
     callable.call() >> { throw exception }
 
@@ -203,7 +206,8 @@ class ResponseGenerators extends Specification {
     Set produce()
   }
 
-  static class GroovyCaller {
+  static class GroovyCaller implements Caller {
+    @Override
     Throwable call(Callable callable) {
       try {
         callable.call()
@@ -214,4 +218,3 @@ class ResponseGenerators extends Specification {
     }
   }
 }
-

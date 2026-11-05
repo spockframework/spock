@@ -346,7 +346,7 @@ def bar() {
       testEvents().failed().assertEventsMatchExactly(
         finishedWithFailure(
           instanceOf(MultipleFailuresError),
-          new Condition<>({ it.failures*.getClass() == [IllegalArgumentException] * 3 }, 'failures match')
+          new Condition<>({ MultipleFailuresError mfe -> mfe.failures*.getClass() == [IllegalArgumentException] * 3 }, 'failures match')
         )
       )
     }
@@ -461,7 +461,7 @@ def bar() {
       testEvents().failed().assertEventsMatchExactly(
         finishedWithFailure(
           instanceOf(MultipleFailuresError),
-          new Condition<>({ it.failures*.getClass() == [IllegalArgumentException] * 2 }, 'failures match')
+          new Condition<>({ MultipleFailuresError mfe -> mfe.failures*.getClass() == [IllegalArgumentException] * 2 }, 'failures match')
         )
       )
     }
@@ -521,7 +521,7 @@ def bar() {
           message('All iterations were aborted'),
           cause(
             instanceOf(MultipleFailuresError),
-            new Condition<>({ it.failures*.message == ['ignored because I can'] * 3 }, 'failures match')
+            new Condition<>({ MultipleFailuresError mfe -> mfe.failures*.message == ['ignored because I can'] * 3 }, 'failures match')
           )
         )
       )

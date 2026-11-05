@@ -25,7 +25,7 @@ import spock.lang.Unroll
  */
 class FeatureUnrolling extends Specification {
   @Rollup
-  def "without unrolling"() {
+  def "without unrolling"(String name) {
     expect:
     name.size() == length
 
@@ -34,7 +34,7 @@ class FeatureUnrolling extends Specification {
     length << [4, 5, 6]
   }
 
-  def "with unrolling"() {
+  def "with unrolling"(String name) {
     expect:
     name.size() == length
 
@@ -44,7 +44,7 @@ class FeatureUnrolling extends Specification {
   }
 
   @Unroll("length of '#name' should be #length")
-  def "with unrolling and custom naming pattern"() {
+  def "with unrolling and custom naming pattern"(String name) {
     expect:
     name.size() == length
 

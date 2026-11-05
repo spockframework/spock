@@ -363,9 +363,9 @@ def 'a feature'() {
 
     then:
     verifyAll(result) {
-      with(failures.exception) {
-        it*.getClass() == [MultipleFailuresError]
-        first().failures*.getClass() == [SpockComparisonFailure, SpockComparisonFailure]
+      failures.exception.size() == 1
+      with(failures.exception.first(), MultipleFailuresError) {
+        failures*.getClass() == [SpockComparisonFailure, SpockComparisonFailure]
       }
 
       dynamicallyRegisteredCount == 0
@@ -403,9 +403,9 @@ def 'a feature'() {
 
     then:
     verifyAll(result) {
-      with(failures.exception) {
-        it*.getClass() == [MultipleFailuresError]
-        first().failures*.getClass() == [Error, SpockComparisonFailure]
+      failures.exception.size() == 1
+      with(failures.exception.first(), MultipleFailuresError) {
+        failures*.getClass() == [Error, SpockComparisonFailure]
       }
 
       dynamicallyRegisteredCount == 0
@@ -443,9 +443,9 @@ def 'a feature'() {
 
     then:
     verifyAll(result) {
-      with(failures.exception) {
-        it*.getClass() == [MultipleFailuresError]
-        first().failures*.getClass() == [Error, Error]
+      failures.exception.size() == 1
+      with(failures.exception.first(), MultipleFailuresError) {
+        failures*.getClass() == [Error, Error]
       }
 
       dynamicallyRegisteredCount == 0

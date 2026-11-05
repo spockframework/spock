@@ -15,10 +15,12 @@
 
 package org.spockframework.docs.interaction
 
+import org.spockframework.mock.IMockInvocation
 import org.spockframework.runtime.model.parallel.Resources
 import spock.lang.Issue
 import spock.lang.ResourceLock
 import spock.lang.Specification
+import spock.lang.SpockCompileDynamic
 import spock.lang.Stepwise
 
 @Stepwise
@@ -45,6 +47,7 @@ class GlobalMockDocSpec extends Specification {
     // end::global-spy[]
   }
 
+  @SpockCompileDynamic
   def "Global GroovyMock mocks also constructor"() {
     // tag::global-mock-constructor[]
     given:
@@ -56,12 +59,18 @@ class GlobalMockDocSpec extends Specification {
     // end::global-mock-constructor[]
   }
 
+  @SpockCompileDynamic
   def "Global GroovyMock but with real constructor"() {
     // tag::global-mock-constructor-real[]
     given:
     GroovyMock(global: true, RealSubscriber) {
       //Allow that the real constructor is called
-      new RealSubscriber(*_) >> { callRealMethod() }
+      new RealSubscriber(*_) >> {
+        // end::global-mock-constructor-real[]
+        IMockInvocation inv -> inv.
+        // tag::global-mock-constructor-real[]
+        callRealMethod()
+      }
     }
     when:
     def sub = new RealSubscriber()

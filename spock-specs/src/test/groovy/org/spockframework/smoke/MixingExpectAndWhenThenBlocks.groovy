@@ -19,7 +19,7 @@ package org.spockframework.smoke
 import spock.lang.Specification
 
 class MixingExpectAndWhenThenBlocks extends Specification {
-  def x = 0
+  int x = 0
 
   def mix() {
     expect:

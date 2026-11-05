@@ -14,18 +14,25 @@
 
 package org.spockframework.junit4.junit
 
-
 import spock.lang.Ignore
+import spock.lang.SpockTypeChecked
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 class UseJUnitTimeoutRule extends JUnitBaseSpec {
   def timeout
 
-  def setup() {
+  @SpockTypeChecked(SKIP)
+  private withoutStackTraceFiltering() {
     runner.configurationScript = {
       runner {
         filterStackTrace = false
       }
     }
+  }
+
+  def setup() {
+    withoutStackTraceFiltering()
   }
 
   def "feature method that completes in time"() {

@@ -116,7 +116,7 @@ class Assertions {
 
     then:
     MultipleFailuresError e = thrown()
-    e.failures.every {
+    e.failures.every { Throwable it ->
       it instanceof InvalidSpecCompileException
       it.message.contains("Method 'isPositiveAndEven' cannot be annotated with both @Verify and @VerifyAll")
     }

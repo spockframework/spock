@@ -34,7 +34,7 @@ class ExplicitConditionsInHelperMethods extends Specification {
 
   def deeplyNested() {
     if (true) {
-      { it -> assert false }()
+      { -> assert false }()
     }
   }
 

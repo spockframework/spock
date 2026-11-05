@@ -15,14 +15,19 @@
 */
 package org.spockframework.smoke.traits
 
+import groovy.transform.TypeChecked
 import org.junit.*
 
+import static groovy.transform.TypeCheckingMode.SKIP
+
 trait MyTraitWithJUnit4Annotations {
+  @TypeChecked(SKIP)
   @Before
   void before() {
     beforeEvaluated = true
   }
 
+  @TypeChecked(SKIP)
   @After
   void after() {
     afterEvaluated = true

@@ -17,6 +17,7 @@
 package org.spockframework.groovy
 
 import org.codehaus.groovy.ast.ASTNode
+import org.codehaus.groovy.ast.expr.BinaryExpression
 import org.codehaus.groovy.ast.expr.PropertyExpression
 import org.spockframework.util.inspector.AstInspector
 import spock.lang.Specification
@@ -33,7 +34,7 @@ foo[0]
     """)
 
     expect:
-    inspector.scriptExpressions[0].operation.startColumn == 4
+    (inspector.scriptExpressions.first() as BinaryExpression).operation.startColumn == 4
   }
 
   def "PropertyExpression that will become ClassExpression"() {

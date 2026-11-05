@@ -94,4 +94,5 @@ tasks.named("compileTestGroovy", GroovyCompile) {
   jacocoAgent.jacocoAgent.fileProvider(provider { file(configurations.jacocoAgentRuntime.asPath) })
   jacocoAgent.execResultFile = layout.buildDirectory.file("jacoco/compileTestGroovy.exec")
   groovyOptions.forkOptions.jvmArgumentProviders.add(jacocoAgent)
+  groovyOptions.forkOptions.memoryMaximumSize = '1g'
 }

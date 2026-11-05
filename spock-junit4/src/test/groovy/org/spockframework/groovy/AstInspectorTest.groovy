@@ -16,7 +16,15 @@
 
 package org.spockframework.groovy
 
+import org.codehaus.groovy.ast.MethodNode
+import org.codehaus.groovy.ast.Parameter
+import org.codehaus.groovy.ast.expr.ArgumentListExpression
 import org.codehaus.groovy.ast.expr.BinaryExpression
+import org.codehaus.groovy.ast.expr.ConstantExpression
+import org.codehaus.groovy.ast.expr.DeclarationExpression
+import org.codehaus.groovy.ast.expr.MethodCall
+import org.codehaus.groovy.ast.expr.VariableExpression
+import org.codehaus.groovy.ast.stmt.ExpressionStatement
 import org.codehaus.groovy.ast.stmt.ForStatement
 import org.codehaus.groovy.control.CompilePhase
 import org.junit.Before
@@ -72,7 +80,7 @@ class Foo {
     def scriptLoop = inspector.getStatement("scriptLoop")
     assertTrue(scriptLoop instanceof ForStatement)
 
-    def scriptStat = inspector.getStatement("scriptExpr")
+    def scriptStat = inspector.getStatement("scriptExpr") as ExpressionStatement
     def scriptExpr = inspector.getExpression("scriptExpr")
     assertSame(scriptExpr, scriptStat.expression)
   }
@@ -98,18 +106,18 @@ class Foo {
     def ctor = inspector.getConstructor("Foo")
     assertTrue(inspector.getExpressions(ctor)[0] instanceof BinaryExpression)
 
-    def param = inspector.getMarkedNode("param")
-    def init1 = inspector.getExpression("init1")
-    def init2 = inspector.getExpression("init2")
+    def param = inspector.getMarkedNode("param") as Parameter
+    def init1 = inspector.getExpression("init1") as ConstantExpression
+    def init2 = inspector.getExpression("init2") as ConstantExpression
 
     assertEquals(42, init1.value)
     assertEquals(5, init2.value)
-    assertSame(init2, param.initialExpression.arguments.expressions[0])
+    assertSame(init2, ((param.initialExpression as MethodCall).arguments as ArgumentListExpression).expressions[0])
   }
 
   @Test
   void inspectMethod() {
-    def method = inspector.getMarkedNode("bar2")
+    def method = inspector.getMarkedNode("bar2") as MethodNode
     def stat1 = inspector.getStatement("stat1")
     def stat2 = inspector.getStatement("stat2")
     def stat3 = inspector.getStatement("stat3")
@@ -117,7 +125,7 @@ class Foo {
     assertEquals([stat1,stat2,stat3],
       inspector.getStatements(method))
 
-    def upperValue = inspector.getExpression("upperValue")
+    def upperValue = inspector.getExpression("upperValue") as ConstantExpression
     assertEquals(5, upperValue.value)
   }
 
@@ -133,8 +141,8 @@ class Foo {
 
   @Test
   void someMoreSemanticAnalysis() {
-    def varDef = inspector.getExpression("stat1")
-    def varRef = inspector.getExpression("varRef")
+    def varDef = inspector.getExpression("stat1") as DeclarationExpression
+    def varRef = inspector.getExpression("varRef") as VariableExpression
     assertSame(varDef.variableExpression, varRef.accessedVariable)
 
     def method = inspector.getMarkedNode("bar2")

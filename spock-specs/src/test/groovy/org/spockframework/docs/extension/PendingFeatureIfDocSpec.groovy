@@ -1,13 +1,19 @@
 package org.spockframework.docs.extension
 
 import org.opentest4j.TestAbortedException
+import org.spockframework.runtime.extension.builtin.PreconditionContext
 import spock.lang.PendingFeature
 import spock.lang.PendingFeatureIf
 import spock.lang.Specification
 
 class PendingFeatureIfDocSpec extends Specification {
 // tag::example-a[]
-  @PendingFeatureIf({ os.windows })
+  @PendingFeatureIf({
+    // end::example-a[]
+    PreconditionContext pc -> pc.
+    // tag::example-a[]
+    os.windows
+  })
   def "I'm not yet implemented on windows, but I am on other operating systems"() {
 // end::example-a[]
     expect:
@@ -15,7 +21,12 @@ class PendingFeatureIfDocSpec extends Specification {
   }
 
 // tag::example-b[]
-  @PendingFeatureIf({ sys.targetEnvironment == "prod" })
+  @PendingFeatureIf({
+    // end::example-b[]
+    PreconditionContext pc -> pc.
+    // tag::example-b[]
+    sys.targetEnvironment == "prod"
+  })
   def "This feature isn't deployed out to production yet, and isn't expected to pass"() {
 // end::example-b[]
     expect:
@@ -26,11 +37,21 @@ class PendingFeatureIfDocSpec extends Specification {
   @PendingFeature(exceptions = UnsupportedOperationException)
   @PendingFeatureIf(
     exceptions = IllegalArgumentException,
-    value = { os.windows },
+    value = {
+      // end::example-c[]
+      PreconditionContext pc -> pc.
+      // tag::example-c[]
+      os.windows
+    },
     reason = 'Does not yet work on Windows')
   @PendingFeatureIf(
     exceptions = IllegalAccessException,
-    value = { jvm.java8 },
+    value = {
+      // end::example-c[]
+      PreconditionContext pc -> pc.
+      // tag::example-c[]
+      jvm.java8
+    },
     reason = 'Does not yet work on Java 8')
   def "I have various problems in certain situations"() {
 // end::example-c[]

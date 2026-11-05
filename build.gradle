@@ -102,6 +102,11 @@ allprojects {
       }
     }
   }
+
+  tasks.withType(GroovyCompile).configureEach {
+    groovyOptions.configurationScript = rootProject.layout.projectDirectory.file('groovyc.groovy').asFile
+//    groovyOptions.forkOptions.jvmArgs << '-Dorg.spockframework.unhygienic.ast.detector=true'
+  }
 }
 
 apply from: script("ide")

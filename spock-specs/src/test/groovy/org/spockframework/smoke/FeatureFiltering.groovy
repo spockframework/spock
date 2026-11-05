@@ -18,8 +18,12 @@ import org.junit.platform.engine.discovery.DiscoverySelectors
 
 import org.spockframework.EmbeddedSpecification
 import spock.lang.Issue
+import spock.lang.SpockTypeChecked
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 class FeatureFiltering extends EmbeddedSpecification {
+  @SpockTypeChecked(SKIP)
   def "filter selected feature methods"() {
     def clazz = compiler.compileSpecBody("""
 static log = ""

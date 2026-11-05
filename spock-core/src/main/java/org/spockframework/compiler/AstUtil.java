@@ -357,12 +357,12 @@ public abstract class AstUtil {
     Expression left = assignment.getLeftExpression();
     if (left instanceof Variable) return new ConstantExpression(((Variable) left).getName());
     if (left instanceof FieldExpression) return new ConstantExpression(((FieldExpression) left).getFieldName());
-    return ConstantExpression.NULL;
+    return new ConstantExpression(null);
   }
 
   public static Expression getVariableType(BinaryExpression assignment) {
     ClassNode type = assignment.getLeftExpression().getType();
-    return type == null || isDynamicTypedExpression(assignment.getLeftExpression()) ? ConstantExpression.NULL : new ClassExpression(type);
+    return type == null || isDynamicTypedExpression(assignment.getLeftExpression()) ? new ConstantExpression(null) : new ClassExpression(type);
   }
 
   private static boolean isDynamicTypedExpression(Expression leftExpression) {

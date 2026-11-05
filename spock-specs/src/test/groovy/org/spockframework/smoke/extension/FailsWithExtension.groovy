@@ -23,6 +23,9 @@ import spock.lang.FailsWith
 import spock.lang.Specification
 
 import org.spockframework.runtime.SpockComparisonFailure
+import spock.lang.SpockTypeChecked
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 /**
  *
@@ -83,6 +86,7 @@ java.lang.RuntimeException: Not my message"""
 
   }
 
+  @SpockTypeChecked(SKIP)
   @FailsWith(ConditionFailedWithExceptionError)
   def "can handle ConditionFailedWithExceptionError"() {
     when:
@@ -92,6 +96,7 @@ java.lang.RuntimeException: Not my message"""
     a.b.c.size()
   }
 
+  @SpockTypeChecked(SKIP)
   @FailsWith(NullPointerException)
   def "can handle cause of ConditionFailedWithExceptionError"() {
     when:
@@ -116,6 +121,7 @@ class FailsWithOnSpec extends Specification {
     foo.get(1)
   }
 
+  @SpockTypeChecked(SKIP)
   @FailsWith(NullPointerException)
   def ex3() {
     given:

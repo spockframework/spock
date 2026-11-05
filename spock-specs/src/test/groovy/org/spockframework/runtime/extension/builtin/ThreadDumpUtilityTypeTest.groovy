@@ -43,7 +43,7 @@ class ThreadDumpUtilityTypeTest extends Specification {
     }
   }
 
-  def '#utility utility provides correct command arguments'() {
+  def '#utility utility provides correct command arguments'(ThreadDumpUtilityType utility, Path javaHome, List<String> additionalArgs) {
     given:
     expect:
     utility.getCommand(javaHome, PID) == [utilityPath.toString(), PID.toString()] + additionalArgs

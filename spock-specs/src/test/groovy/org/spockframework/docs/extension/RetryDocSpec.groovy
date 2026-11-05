@@ -1,6 +1,8 @@
 package org.spockframework.docs.extension
 
 import groovy.sql.Sql
+import org.spockframework.runtime.extension.builtin.PreconditionContext
+import org.spockframework.runtime.extension.builtin.RetryConditionContext
 import spock.lang.Retry
 import spock.lang.Shared
 import spock.lang.Specification
@@ -10,7 +12,7 @@ abstract
 class FlakyIntegrationSpec extends Specification {
 // end::example-common[]
   @Shared
-  def sql = Sql.newInstance("jdbc:h2:mem:", "org.h2.Driver")
+  Sql sql = Sql.newInstance("jdbc:h2:mem:", "org.h2.Driver")
 }
 
 class FlakyIntegrationSpecA extends FlakyIntegrationSpec {
@@ -30,12 +32,24 @@ class FlakyIntegrationSpecA extends FlakyIntegrationSpec {
     expect: true
   }
 
-  @Retry(condition = { failure.message.contains('foo') })
+  @Retry(condition = {
+    // end::example-a[]
+    RetryConditionContext rcc -> rcc.
+    // tag::example-a[]
+    failure.message.contains('foo')
+  })
   def "only retry if condition on failure holds"() {
     expect: true
   }
 
-  @Retry(condition = { instance.field != null })
+  def field
+
+  @Retry(condition = {
+    // end::example-a[]
+    RetryConditionContext<FlakyIntegrationSpecA> rcc -> rcc.
+    // tag::example-a[]
+    instance.field != null
+  })
   def "only retry if condition on instance holds"() {
     expect: true
   }

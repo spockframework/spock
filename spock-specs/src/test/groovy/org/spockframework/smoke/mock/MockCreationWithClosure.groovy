@@ -59,7 +59,7 @@ class MockCreationWithClosure extends Specification {
   }
 
   def "mock is declared in interaction"() {
-    def list = Mock(List)
+    List<Map> list = Mock(List)
     list.get(_) >> { int index ->
       Mock(Map) {
         containsKey(_) >> { index % 2 == 0 }
@@ -72,7 +72,7 @@ class MockCreationWithClosure extends Specification {
   }
 
   def "nested mock declaration"() {
-    def list = Mock(List) {
+    List<Map> list = Mock(List) {
       get(_) >> { int index ->
         Mock(Map) {
           size() >> index + 1

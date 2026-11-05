@@ -12,7 +12,7 @@ class TestTagTest extends Specification {
     tag << ['tag', 'tag_with_underscore', 'tag-with-dash', 'ʘ‿ʘ', '♥╣[-_-]╠♥️', '💩', /"'..?/]
   }
 
-  def "forbids invalid characters in tags"(){
+  def "forbids invalid characters in tags"(String tag){
     when:
     TestTag.create(tag)
 
@@ -25,7 +25,7 @@ class TestTagTest extends Specification {
     readableName = Character.getName(tag.codePointAt(0))
   }
 
-  def "forbids empty or null tags"() {
+  def "forbids empty or null tags"(String tag) {
     when:
     TestTag.create(tag)
 

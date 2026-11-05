@@ -7,6 +7,7 @@ import spock.lang.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicInteger
 
+import static groovy.transform.TypeCheckingMode.SKIP
 import static java.util.concurrent.TimeUnit.MILLISECONDS
 
 @Isolated("Isolate from other tests to have full access to cores for the embedded tests.")
@@ -20,6 +21,11 @@ class ParallelSpec extends EmbeddedSpecification {
     runner.addClassImport(ResourceAccessMode)
     runner.addClassImport(ExecutionMode)
     runner.addClassMemberImport(ParallelSpec)
+    withParallelExecution()
+  }
+
+  @SpockTypeChecked(SKIP)
+  private withParallelExecution() {
     runner.configurationScript {
       runner {
         optimizeRunOrder false

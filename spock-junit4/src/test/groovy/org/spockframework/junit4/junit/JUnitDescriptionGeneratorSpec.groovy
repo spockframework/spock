@@ -16,6 +16,7 @@
 
 package org.spockframework.junit4.junit
 
+import org.junit.runner.Description
 import org.spockframework.junit4.JUnitDescriptionGenerator
 import org.spockframework.runtime.SpecInfoBuilder
 import spock.lang.Issue
@@ -45,7 +46,7 @@ class Derived extends Base {
     then:
     desc.displayName == "apackage.Derived"
     desc.children.size() == 2
-    desc.children.collect { it.methodName } == ["f1", "f2"]
-    desc.children.collect { it.className } == ["apackage.Derived", "apackage.Derived"]
+    desc.children.collect { Description it -> it.methodName } == ["f1", "f2"]
+    desc.children.collect { Description it -> it.className } == ["apackage.Derived", "apackage.Derived"]
   }
 }

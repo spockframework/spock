@@ -24,13 +24,13 @@ import org.junit.platform.engine.EngineExecutionListener
 
 class EstimatedNumberOfIterations extends Specification {
 
-  def context = new SpockExecutionContext(Stub(EngineExecutionListener))
+  SpockExecutionContext context = new SpockExecutionContext(Stub(EngineExecutionListener))
     .withErrorInfoCollector(new ErrorInfoCollector())
     .withCurrentInstance(this)
     .withRunContext(Stub(RunContext) {
       getConfiguration(RunnerConfiguration) >> new RunnerConfiguration()
     })
-  def factory = new DataIteratorFactory(Stub(IRunSupervisor))
+  DataIteratorFactory factory = new DataIteratorFactory(Stub(IRunSupervisor))
 
   def "w/o data provider"() {
     given:

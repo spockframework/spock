@@ -34,7 +34,7 @@ abstract class BaseTimeoutExtensionSpecification extends EmbeddedSpecification {
         when: Thread.sleep 99999999999
         then: thrown InterruptedException
       """
-    }.join()}
+    }.join(null)}
       }
     """
   }
@@ -68,7 +68,7 @@ abstract class BaseTimeoutExtensionSpecification extends EmbeddedSpecification {
     }
 
     int count(String sequence) {
-      lines.count { it.contains(sequence) }
+      lines.count { it.contains(sequence) } as int
     }
   }
 }

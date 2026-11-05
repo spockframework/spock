@@ -19,7 +19,9 @@ package org.spockframework.smoke.mock
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.InvalidSpecException
-import spock.lang.Ignore
+import spock.lang.SpockTypeChecked
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 /**
  * @author Peter Niederwieser
@@ -69,7 +71,7 @@ def foo() { expect: true }
     thrown(InvalidSpecException)
   }
 
-  @Ignore("TODO: doesn't throw an exception in Groovy 2.0")
+  @SpockTypeChecked(SKIP)
   def "local w/ incompatible type"() {
     when:
     List list = Mock(Map)
@@ -78,6 +80,7 @@ def foo() { expect: true }
     thrown(GroovyCastException)
   }
 
+  @SpockTypeChecked(SKIP)
   def "local w/ wrong argument"() {
     when:
     def list = Mock(1)
@@ -94,6 +97,7 @@ def foo() { expect: true }
     thrown(InvalidSpecException)
   }
 
+  @SpockTypeChecked(SKIP)
   def "expr w/ wrong argument"() {
     when:
     Mock(1)

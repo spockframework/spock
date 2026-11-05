@@ -30,7 +30,7 @@ class EmbeddedSpecRunnerClassLoaderSpec extends Specification {
 
     expect:
     //noinspection GroovyAccessibility
-    !runner.compiler.unwrapCompileException
+    !runner.@compiler.unwrapCompileException
 
     when:
     def result = runner.runFeatureBody("""

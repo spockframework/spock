@@ -15,7 +15,10 @@ package spock.util
 
 import spock.lang.Isolated
 import spock.lang.Specification
+import spock.lang.SpockTypeChecked
 import spock.util.environment.*
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 @Isolated
 @RestoreSystemProperties
@@ -31,7 +34,7 @@ class JvmSpec extends Specification {
     minor << (7..8)
   }
 
-  def "can check for Java 8 version (old scheme) (given major version)"() {
+  def "can check for Java 8 version (old scheme) (given major version)"(int minor) {
     System.setProperty("java.specification.version", "1.$minor")
     def jvm = Jvm.current
 
@@ -42,7 +45,7 @@ class JvmSpec extends Specification {
     minor << (7..8)
   }
 
-  def "can check for Java 8 version compatibility (old scheme)"() {
+  def "can check for Java 8 version compatibility (old scheme)"(int minor) {
     System.setProperty("java.specification.version", "1.$minor")
     def jvm = Jvm.current
 
@@ -53,7 +56,7 @@ class JvmSpec extends Specification {
     minor << (7..8)
   }
 
-  def "can check for Java 8 version compatibility (old scheme) (given major version)"() {
+  def "can check for Java 8 version compatibility (old scheme) (given major version)"(int minor) {
     System.setProperty("java.specification.version", "1.$minor")
     def jvm = Jvm.current
 
@@ -64,6 +67,7 @@ class JvmSpec extends Specification {
     minor << (7..8)
   }
 
+  @SpockTypeChecked(SKIP)
   def "can check for Java version"() {
     System.setProperty("java.specification.version", "$major")
     def jvm = Jvm.current
@@ -77,6 +81,7 @@ class JvmSpec extends Specification {
     major << (9..23)
   }
 
+  @SpockTypeChecked(SKIP)
   def "can check for Java version compatibility"() {
     System.setProperty("java.specification.version", "$major")
     def jvm = Jvm.current
@@ -103,7 +108,7 @@ class JvmSpec extends Specification {
     major << (9..23)
   }
 
-  def "can check for Java version compatibility (given major version)"() {
+  def "can check for Java version compatibility (given major version)"(int major) {
     System.setProperty("java.specification.version", "$major")
     def jvm = Jvm.current
 

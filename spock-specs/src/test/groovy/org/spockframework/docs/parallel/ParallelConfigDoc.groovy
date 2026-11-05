@@ -1,6 +1,7 @@
 package org.spockframework.docs.parallel
 
 import org.spockframework.runtime.*
+import org.spockframework.runtime.model.parallel.ExecutionMode
 import spock.config.*
 import spock.lang.*
 import spock.util.EmbeddedSpecRunner
@@ -10,6 +11,7 @@ import org.junit.platform.engine.discovery.DiscoverySelectors
 import org.junit.platform.launcher.LauncherDiscoveryRequest
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder
 
+import static groovy.transform.TypeCheckingMode.SKIP
 import static org.spockframework.runtime.model.parallel.ExecutionMode.CONCURRENT
 import static org.spockframework.runtime.model.parallel.ExecutionMode.SAME_THREAD
 
@@ -24,10 +26,9 @@ class ParallelConfigDoc extends Specification implements ConfigSupport {
     getConfigurationByName('runner') >> runnerConfiguration
   }
 
-
-  def "enable parallel"() {
-    given:
-    Closure closure = {
+  @SpockTypeChecked(SKIP)
+  private Closure<?> withParallelExecution() {
+    return {
       // tag::enable[]
       runner {
         parallel {
@@ -36,16 +37,19 @@ class ParallelConfigDoc extends Specification implements ConfigSupport {
       }
       // end::enable[]
     }
+  }
+
+  def "enable parallel"() {
     when:
-    builder.build(configurationRegistry, closureToScript(closure))
+    builder.build(configurationRegistry, closureToScript(withParallelExecution()))
 
     then:
     runnerConfiguration.parallel.enabled
   }
 
-  def "enable and fixed"() {
-    given:
-    Closure closure = {
+  @SpockTypeChecked(SKIP)
+  private Closure<?> withFixedParallelExecution() {
+    return {
       // tag::fixed[]
       runner {
         parallel {
@@ -55,17 +59,19 @@ class ParallelConfigDoc extends Specification implements ConfigSupport {
       }
       // end::fixed[]
     }
+  }
+
+  def "enable and fixed"() {
     when:
-    builder.build(configurationRegistry, closureToScript(closure))
+    builder.build(configurationRegistry, closureToScript(withFixedParallelExecution()))
 
     then:
     runnerConfiguration.parallel.enabled
     runnerConfiguration.parallel.parallelExecutionConfiguration.parallelism == 4
   }
 
-  def "execution mode is calculated correctly"() {
-    given: 'a runner configuration'
-    EmbeddedSpecRunner embeddedSpecRunner = new EmbeddedSpecRunner()
+  @SpockTypeChecked(SKIP)
+  private withParallelExecution(embeddedSpecRunner, defExecutionMode, defSpecificationExecutionMode) {
     embeddedSpecRunner.configurationScript {
       runner {
         parallel {
@@ -74,6 +80,13 @@ class ParallelConfigDoc extends Specification implements ConfigSupport {
           defaultSpecificationExecutionMode defSpecificationExecutionMode
         }
       }
+    }
+  }
+
+  def "execution mode is calculated correctly"(Class<? extends Specification> spec, ExecutionMode specExecutionMode, ExecutionMode nodeExecutionMode) {
+    given: 'a runner configuration'
+    EmbeddedSpecRunner embeddedSpecRunner = new EmbeddedSpecRunner().tap {
+      withParallelExecution(it, defExecutionMode, defSpecificationExecutionMode)
     }
     def discoveryRequest = createRequest(spec)
 

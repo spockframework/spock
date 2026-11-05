@@ -16,6 +16,7 @@
 
 package spock.util
 
+import groovy.transform.CompileStatic
 import org.spockframework.runtime.SpecUtil
 import org.spockframework.util.*
 import spock.lang.Specification
@@ -32,6 +33,7 @@ import org.opentest4j.MultipleFailuresError
  *
  * @author Peter Niederwieser
  */
+@CompileStatic
 @NotThreadSafe
 class EmbeddedSpecCompiler {
   final ImportCustomizer importCustomizer = new ImportCustomizer()
@@ -84,7 +86,7 @@ class EmbeddedSpecCompiler {
   void addClassImport(Class<?> clazz) {
     def importName = clazz.name
     if (clazz.memberClass) {
-      importName = importName.reverse().replaceFirst(/\$/, ".").reverse()
+      importName = importName.reverse().replaceFirst(/\$/, '.').reverse()
     }
     addClassImport(importName)
   }
@@ -106,7 +108,7 @@ class EmbeddedSpecCompiler {
   }
 
   List<Class> compileWithImports(@Language('Groovy') String source,
-                                 String packageDeclaration = "package apackage;") {
+                                 String packageDeclaration = 'package apackage;') {
     addPackageImport(Specification.package)
     // one-liner keeps line numbers intact
     doCompile("$packageDeclaration  ${source.trim()}", loaderWithImports)
@@ -128,7 +130,7 @@ class EmbeddedSpecCompiler {
   TranspileResult transpileWithImports(@Language('Groovy') String source,
                                        Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.CLASS, Show.METHODS, Show.FIELDS, Show.OBJECT_INITIALIZERS, Show.PROPERTIES),
                                        CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS,
-                                       String packageDeclaration = "package apackage;") {
+                                       String packageDeclaration = 'package apackage;') {
     addPackageImport(Specification.package)
     // one-liner keeps line numbers intact
     doTranspile("$packageDeclaration ${source.trim()}", showSet, phase, loaderWithImports, compilerConfigurationWithImports)
@@ -175,16 +177,18 @@ class EmbeddedSpecCompiler {
       gcl.parseClass(source.trim())
     } catch (MultipleCompilationErrorsException e) {
       def errors = e.errorCollector.errors
-      if (unwrapCompileException && errors.every { it.hasProperty("cause") })
+      if (unwrapCompileException && errors.every { it.hasProperty('cause') })
         if (errors.size() == 1)
-          throw errors[0].cause
+          throw errors[0].getMetaClass().getProperty(errors[0], 'cause') as Throwable
         else
-          throw new MultipleFailuresError("Errors during compile", errors.cause)
+          throw new MultipleFailuresError('Errors during compile', errors.collect {
+            it.getMetaClass().getProperty(it, 'cause') as Throwable
+          })
 
       throw e
     }
 
-    gcl.loadedClasses.findAll {
+    gcl.loadedClasses.findAll { Class it ->
       SpecUtil.isSpec(it)
     } as List
   }

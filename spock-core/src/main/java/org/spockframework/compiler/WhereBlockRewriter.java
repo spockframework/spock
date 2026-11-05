@@ -481,9 +481,9 @@ public class WhereBlockRewriter {
         // previous-data-table parameters (data tables only) followed by the where-block
         // variable parameters that are passed to every provider
         concatParameters(
-          addDataTableParameters ? createPreviousDataTableParameters(nextDataVariableIndex) : Parameter.EMPTY_ARRAY,
+          addDataTableParameters ? createPreviousDataTableParameters(nextDataVariableIndex) : new Parameter[0],
           createWhereVariableParameters()),
-        ClassNode.EMPTY_ARRAY,
+        new ClassNode[0],
         new BlockStatement(dataProviderStats, null));
 
     method.addAnnotation(createDataProviderAnnotation(dataProviderExpr, nextDataVariableIndex, addDataTableParameters));
@@ -604,15 +604,15 @@ public class WhereBlockRewriter {
       throws InvalidSpecCompileException {
     TupleExpression tuple = (TupleExpression) binExpr.getLeftExpression();
 
-    VariableExpression rightExpression = new VariableExpression("$spock_l" + localVariableCount++);
-    createDataProcessorStatement(rightExpression, binExpr.getRightExpression(), enclosingStat);
+    String variableName = "$spock_l" + localVariableCount++;
+    createDataProcessorStatement(new VariableExpression(variableName), binExpr.getRightExpression(), enclosingStat);
 
     List<Expression> tupleElems = tuple.getExpressions();
     for (int i = 0; i < tupleElems.size(); i++) {
       Expression tupleElem = tupleElems.get(i);
       if (AstUtil.isWildcardRef(tupleElem)) continue;
       VariableExpression dataVar = createDataProcessorVariable(tupleElem, enclosingStat);
-      createDataProcessorStatement(dataVar, createGetAtMethodCall(rightExpression, i), enclosingStat);
+      createDataProcessorStatement(dataVar, createGetAtMethodCall(new VariableExpression(variableName), i), enclosingStat);
     }
   }
 
@@ -789,13 +789,13 @@ public class WhereBlockRewriter {
         statements.add(providerStatement);
 
         ClosureExpression closureExpression = new ClosureExpression(
-          Parameter.EMPTY_ARRAY,
+          new Parameter[0],
           new BlockStatement(statements, null));
 
         listExpr.addExpression(createDirectMethodCall(
           closureExpression,
           resources.getAstNodeCache().Closure_Call,
-          ArgumentListExpression.EMPTY_ARGUMENTS));
+          new ArgumentListExpression()));
       }
     }
 
@@ -965,7 +965,10 @@ public class WhereBlockRewriter {
         new ReturnStatement(
             new ArrayExpression(
                 ClassHelper.OBJECT_TYPE,
-                (List) dataProcessorVars)));
+                dataProcessorVars
+                  .stream()
+                  .map(VariableExpression::new)
+                  .collect(toList()))));
 
     BlockStatement blockStat = new BlockStatement(dataProcessorStats, null);
 
@@ -974,7 +977,7 @@ public class WhereBlockRewriter {
       Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
       ClassHelper.OBJECT_TYPE,
       concatParameters(dataProcessorParams.toArray(Parameter.EMPTY_ARRAY), createWhereVariableParameters()),
-      ClassNode.EMPTY_ARRAY,
+      new ClassNode[0],
       blockStat);
     dataProcessorMethod.addAnnotation(createDataProcessorAnnotation());
     transplantStcAnnotations(dataProcessorMethod);
@@ -1034,7 +1037,7 @@ public class WhereBlockRewriter {
     tryStats.add(new ReturnStatement(new VariableExpression(SpockNames.WHERE_VARIABLE_VALUES)));
 
     Parameter failure = new Parameter(resources.getAstNodeCache().Throwable, SpockNames.SPOCK_TMP_THROWABLE);
-    TryCatchStatement tryCatch = new TryCatchStatement(new BlockStatement(tryStats, null), EmptyStatement.INSTANCE);
+    TryCatchStatement tryCatch = new TryCatchStatement(new BlockStatement(tryStats, null), new EmptyStatement());
     tryCatch.addCatch(new CatchStatement(failure, new BlockStatement(Arrays.asList(
       new ExpressionStatement(
         createDirectMethodCall(
@@ -1049,8 +1052,8 @@ public class WhereBlockRewriter {
       InternalIdentifiers.getWhereVariablesName(whereBlock.getParent().getAst().getName()),
       Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
       ClassHelper.OBJECT_TYPE.makeArray(),
-      Parameter.EMPTY_ARRAY,
-      ClassNode.EMPTY_ARRAY,
+      new Parameter[0],
+      new ClassNode[0],
       new BlockStatement(Arrays.asList(valuesDecl, tryCatch), null));
     transplantStcAnnotations(method);
 
@@ -1098,8 +1101,8 @@ public class WhereBlockRewriter {
       InternalIdentifiers.getDataVariableMultiplicationsName(whereBlock.getParent().getAst().getName()),
       Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_SYNTHETIC,
       resources.getAstNodeCache().DataVariableMultiplication.makeArray(),
-      Parameter.EMPTY_ARRAY,
-      ClassNode.EMPTY_ARRAY,
+      new Parameter[0],
+      new ClassNode[0],
       blockStat);
     transplantStcAnnotations(dataVariableMultiplicationsMethod);
 
@@ -1136,7 +1139,7 @@ public class WhereBlockRewriter {
           .map(variable -> new Parameter(ClassHelper.OBJECT_TYPE, variable.getName()))
           .toArray(Parameter[]::new),
         createWhereVariableParameters()),
-      ClassNode.EMPTY_ARRAY,
+      new ClassNode[0],
       blockStat);
     transplantStcAnnotations(filterMethod);
 

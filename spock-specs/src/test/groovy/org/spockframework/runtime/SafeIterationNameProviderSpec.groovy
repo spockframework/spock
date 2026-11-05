@@ -23,12 +23,12 @@ import org.spockframework.runtime.model.FeatureInfo
 import spock.lang.Specification
 
 class SafeIterationNameProviderSpec extends Specification {
-  def feature = new FeatureInfo().tap { it.reportIterations = false }
+  FeatureInfo feature = new FeatureInfo().tap { it.reportIterations = false }
   IterationInfo iteration = Stub {
     getFeature() >> feature
   }
-  def other = Mock(NameProvider)
-  def provider = new SafeIterationNameProvider(other)
+  NameProvider other = Mock()
+  SafeIterationNameProvider provider = new SafeIterationNameProvider(other)
 
   def setup() {
     feature.name = "feature"

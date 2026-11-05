@@ -24,6 +24,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
+import static groovy.transform.TypeCheckingMode.SKIP
+
 /**
  * @author dqyuan
  */
@@ -100,14 +102,20 @@ class TempDirExtensionSpec extends EmbeddedSpecification {
     i << [0, 1]
   }
 
-  def "define temp directory location using configuration script"() {
-    given:
-    def userDefinedBase = untypedPath.resolve("build")
+  @SpockTypeChecked(SKIP)
+  private withTempDirBaseDir(userDefinedBase) {
     runner.configurationScript {
       tempdir {
         baseDir userDefinedBase
       }
     }
+  }
+
+  @SpockTypeChecked(SKIP)
+  def "define temp directory location using configuration script"() {
+    given:
+    def userDefinedBase = untypedPath.resolve("build")
+    withTempDirBaseDir(userDefinedBase)
     runner.addClassImport(Path)
     runner.addClassImport(getClass())
 
@@ -171,8 +179,8 @@ def method1(@TempDir(cleanup = ${cleanupMode}) Path param) {
     then:
     result.testsSucceededCount == (testSucceeds ? 1 : 0)
     result.testsFailedCount == (testSucceeds ? 0 : 1)
-    pathFromEmbedded.forEach {
-      assert Files.exists(it) == expectKeep
+    verifyEach(pathFromEmbedded) {
+      Files.exists(it) == expectKeep
     }
 
     cleanup:
@@ -187,14 +195,19 @@ def method1(@TempDir(cleanup = ${cleanupMode}) Path param) {
     expectKeep = (!testSucceeds && cleanupMode == TempDir.CleanupMode.ON_SUCCESS) || cleanupMode == TempDir.CleanupMode.NEVER
   }
 
-  @ResourceLock(Resources.SYSTEM_ERR)
-  def "define cleanup using configuration script"(boolean testSucceeds, TempDir.CleanupMode cleanupMode, boolean expectKeep) {
-    given:
+  @SpockTypeChecked(SKIP)
+  private withTempDirCleanupMode(cleanupMode) {
     runner.configurationScript {
       tempdir {
         cleanup cleanupMode
       }
     }
+  }
+
+  @ResourceLock(Resources.SYSTEM_ERR)
+  def "define cleanup using configuration script"(boolean testSucceeds, TempDir.CleanupMode cleanupMode, boolean expectKeep) {
+    given:
+    withTempDirCleanupMode(cleanupMode)
     runner.addClassImport(Path)
     runner.addClassImport(getClass())
     runner.throwFailure = false
@@ -233,7 +246,7 @@ def method1(@TempDir Path param) {
     then:
     result.testsSucceededCount == (testSucceeds ? 1 : 0)
     result.testsFailedCount == (testSucceeds ? 0 : 1)
-    pathFromEmbedded.forEach {
+    pathFromEmbedded.forEach { Path it ->
       assert Files.exists(it) == expectKeep
     }
 
@@ -274,7 +287,7 @@ class ParallelTempDirSpec extends Specification {
 
   @TempDir Path tmpDir
 
-  def "Try creating multiple dirs"() {
+  def "Try creating multiple dirs"(String name) {
     when:
     def dir = Files.createDirectory(tmpDir.resolve(name))
 

@@ -34,6 +34,7 @@ class GroovyMockAbstractGlobalClass extends Specification {
   private static String outerStaticMethod() { NAME }
 
   @Issue('https://github.com/spockframework/spock/issues/464')
+  @SpockCompileDynamic
   def "Creating a Global GroovyMock from abstract class shall not fail"() {
     given:
     def m = GroovyMock(AbstractClassA, global: true)
@@ -57,6 +58,7 @@ class GroovyMockAbstractGlobalClass extends Specification {
   }
 
   @Issue('https://github.com/spockframework/spock/issues/2196')
+  @SpockCompileDynamic
   def "Static getProperty() access to staticName is working when a global spy was created"() {
     given:
     GroovySpy(AbstractClassA, global: true)
@@ -66,6 +68,7 @@ class GroovyMockAbstractGlobalClass extends Specification {
   }
 
   @Issue('https://github.com/spockframework/spock/issues/2196')
+  @SpockCompileDynamic
   def "Static setProperty() to staticMutableField is working when a global spy was created"() {
     given:
     GroovySpy(AbstractClassA, global: true)
@@ -83,6 +86,7 @@ class GroovyMockAbstractGlobalClass extends Specification {
   }
 
   @Issue('https://github.com/spockframework/spock/issues/2196')
+  @SpockCompileDynamic
   def "Static invokeMethod() to callsOuterStaticMethod is working when a global spy was created"() {
     given:
     GroovySpy(AbstractClassA, global: true)
@@ -92,6 +96,7 @@ class GroovyMockAbstractGlobalClass extends Specification {
   }
 
   @Issue('https://github.com/spockframework/spock/issues/464')
+  @SpockCompileDynamic
   def "Creating a Global GroovySpy from abstract class shall not fail"() {
     given:
     def m = GroovySpy(AbstractClassA, global: true)
@@ -110,6 +115,7 @@ class GroovyMockAbstractGlobalClass extends Specification {
   }
 
   @Issue('https://github.com/spockframework/spock/issues/464')
+  @SpockCompileDynamic
   @FailsWith(TooFewInvocationsError)
   def "Asserting on a Global GroovySpy Class for call made on instance shall fail"() {
     given:
@@ -123,6 +129,7 @@ class GroovyMockAbstractGlobalClass extends Specification {
   }
 
   @Issue('https://github.com/spockframework/spock/issues/464')
+  @SpockCompileDynamic
   def "Asserting on a Global GroovySpy object for call made on instance"() {
     given:
     AbstractClassA m = GroovySpy(global: true)
@@ -136,6 +143,7 @@ class GroovyMockAbstractGlobalClass extends Specification {
   }
 
   @Issue('https://github.com/spockframework/spock/issues/464')
+  @SpockCompileDynamic
   @FailsWith(TooFewInvocationsError)
   def "Asserting on a Global GroovySpy object for static calls shall fail"() {
     given:
@@ -149,6 +157,7 @@ class GroovyMockAbstractGlobalClass extends Specification {
   }
 
   @Issue('https://github.com/spockframework/spock/issues/464')
+  @SpockCompileDynamic
   @FailsWith(TooFewInvocationsError)
   def "Asserting on a Global GroovySpy object for subclass instance call shall fail"() {
     given:
@@ -162,6 +171,7 @@ class GroovyMockAbstractGlobalClass extends Specification {
     1 * m.getName() >> MOCKED_NAME
   }
 
+  @SpockCompileDynamic
   def "Two global mocks"() {
     given:
     GroovySpy(AbstractClassA, global: true)

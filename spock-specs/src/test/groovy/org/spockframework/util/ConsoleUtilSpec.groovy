@@ -14,11 +14,12 @@
 
 package org.spockframework.util
 
+import org.spockframework.runtime.extension.builtin.PreconditionContext
 import spock.lang.Requires
 import spock.lang.Specification
 
 class ConsoleUtilSpec extends Specification {
-  @Requires({ !os.windows })
+  @Requires({ PreconditionContext pc -> !pc.os.windows })
   def "renders triple-slash URLs"() {
     def file = new File("/foo/bar")
 

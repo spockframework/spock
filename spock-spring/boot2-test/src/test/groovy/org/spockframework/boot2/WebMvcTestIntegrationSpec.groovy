@@ -55,7 +55,7 @@ class WebMvcTestIntegrationSpec extends Specification {
 
   @TestConfiguration
   static class MockConfig {
-    def detachedMockFactory = new DetachedMockFactory()
+    DetachedMockFactory detachedMockFactory = new DetachedMockFactory()
 
     @Bean
     HelloWorldService helloWorldService() {

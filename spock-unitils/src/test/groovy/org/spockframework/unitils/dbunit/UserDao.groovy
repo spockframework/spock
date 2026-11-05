@@ -14,6 +14,8 @@
 
 package org.spockframework.unitils.dbunit
 
+import groovy.sql.GroovyRowResult
+
 import javax.sql.DataSource
 
 import groovy.sql.Sql
@@ -26,17 +28,17 @@ class UserDao {
   }
 
   User findByName(String firstName, String lastName) {
-    def row = sql.firstRow("select * from `user` where first_name=? and last_name=?", [firstName, lastName])
+    def row = sql.firstRow("select * from `user` where first_name=? and last_name=?", [firstName, lastName] as List<Object>)
     row2User(row)
   }
 
   List<User> findByMinimalAge(int age) {
-    sql.rows("select * from `user` where age >= ?", [age]).collect {
+    sql.rows("select * from `user` where age >= ?", [age] as List<Object>).collect {
       row2User(it)
     }
   }
 
-  private row2User(row) {
-    new User(firstName: row.first_name, lastName: row.last_name, age: row.age)
+  private User row2User(GroovyRowResult row) {
+    new User(firstName: row.first_name, lastName: row.last_name, age: row.age as int)
   }
 }

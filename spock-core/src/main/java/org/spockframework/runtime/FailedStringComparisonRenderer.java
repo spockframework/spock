@@ -8,7 +8,7 @@ import groovy.lang.GString;
 import java.util.Locale;
 
 public class FailedStringComparisonRenderer implements ExpressionComparisonRenderer {
-  public static final long MAX_EDIT_DISTANCE_MEMORY = 50 * 1024;
+  public static final int MAX_EDIT_DISTANCE_MEMORY = 50 * 1024;
   @Override
   public String render(ExpressionInfo expr) {
     if (!(Boolean.FALSE.equals(expr.getValue()))) return null;
@@ -18,7 +18,7 @@ public class FailedStringComparisonRenderer implements ExpressionComparisonRende
     String str1 = expr.getChildren().get(0).getValue().toString();
     String str2 = expr.getChildren().get(1).getValue().toString();
 
-    if (((long)str1.length()) * str2.length() > MAX_EDIT_DISTANCE_MEMORY) {
+    if ((long) str1.length() * str2.length() > MAX_EDIT_DISTANCE_MEMORY) {
       return tryReduceStringSizes(str1, str2);
     } else {
       return createAndRenderEditDistance(str1, str2);

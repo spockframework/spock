@@ -4,7 +4,11 @@ import spock.lang.Specification
 
 class MathSpec extends Specification {
 // tag::example[]
-  def "maximum of #a and #b is #c"() {
+  def "maximum of #a and #b is #c"(
+// end::example[]
+    int a, int b
+// tag::example[]
+  ) {
 // end::example[]
     expect:
     Math.max(a, b) == c

@@ -17,8 +17,10 @@ package org.spockframework.smoke.mock
 import org.spockframework.mock.*
 import spock.lang.*
 
+import static groovy.transform.TypeCheckingMode.SKIP
+
 class GroovyMocksForGroovyClasses extends Specification {
-  def person = GroovyMock(Person)
+  Person person = GroovyMock()
 
   def "physical method"() {
     when:
@@ -37,6 +39,7 @@ class GroovyMocksForGroovyClasses extends Specification {
     1 * person.sing('song1')
   }
 
+  @SpockTypeChecked(SKIP)
   def "final physical method"() {
     def finalPerson = GroovyMock(clazz)
 
@@ -50,6 +53,7 @@ class GroovyMocksForGroovyClasses extends Specification {
     clazz << [FinalPerson, FinalMethodsPerson, FinalJavaPerson, FinalMethodsJavaPerson]
   }
 
+  @SpockTypeChecked(SKIP)
   def "dynamic method"() {
     when:
     person.greet("henry")
@@ -58,6 +62,7 @@ class GroovyMocksForGroovyClasses extends Specification {
     1 * person.greet("henry")
   }
 
+  @SpockCompileDynamic
   def "DGM method"() {
     when:
     person.dump()
@@ -74,6 +79,7 @@ class GroovyMocksForGroovyClasses extends Specification {
     1 * person.sing("song")
   }
 
+  @SpockTypeChecked(SKIP)
   def "dynamic method via GroovyObject.invokeMethod"() {
     when:
     person.invokeMethod("greet", ["henry", "freddy"] as Object[])
@@ -104,6 +110,7 @@ class GroovyMocksForGroovyClasses extends Specification {
     1 * person.name
   }
 
+  @SpockTypeChecked(SKIP)
   def "get final physical property"() {
     def finalPerson = GroovyMock(clazz)
 
@@ -123,6 +130,7 @@ class GroovyMocksForGroovyClasses extends Specification {
     clazz << [FinalPerson, FinalMethodsPerson, FinalJavaPerson, FinalMethodsJavaPerson]
   }
 
+  @SpockTypeChecked(SKIP)
   def "get dynamic property"() {
     when:
     person.age
@@ -137,6 +145,7 @@ class GroovyMocksForGroovyClasses extends Specification {
     1 * person.age
   }
 
+  @SpockCompileDynamic
   def "get DGM property"() {
     when:
     person.properties
@@ -165,6 +174,7 @@ class GroovyMocksForGroovyClasses extends Specification {
     1 * person.name
   }
 
+  @SpockTypeChecked(SKIP)
   def "get dynamic property via GroovyObject.getProperty"() {
     when:
     person.getProperty("age")
@@ -201,6 +211,7 @@ class GroovyMocksForGroovyClasses extends Specification {
     1 * person.setName("fred")
   }
 
+  @SpockTypeChecked(SKIP)
   def "set dynamic property"() {
     when:
     person.age = 42
@@ -225,6 +236,7 @@ class GroovyMocksForGroovyClasses extends Specification {
     1 * person.setName("fred")
   }
 
+  @SpockTypeChecked(SKIP)
   def "set dynamic property via GroovyObject.setProperty"() {
     when:
     person.setProperty("age", 42)
@@ -336,7 +348,3 @@ class GroovyMocksForGroovyClasses extends Specification {
     final void setName(String name) { throw new UnsupportedOperationException("setName") }
   }
 }
-
-
-
-

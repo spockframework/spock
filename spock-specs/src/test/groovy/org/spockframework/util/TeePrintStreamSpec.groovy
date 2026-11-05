@@ -17,12 +17,16 @@
 package org.spockframework.util
 
 import spock.lang.Specification
+import spock.lang.SpockTypeChecked
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 class TeePrintStreamSpec extends Specification {
-  def delegate1 = Mock(PrintStream)
-  def delegate2 = Mock(PrintStream)
-  def printStream = new TeePrintStream(delegate1, delegate2)
+  PrintStream delegate1 = Mock()
+  PrintStream delegate2 = Mock()
+  TeePrintStream printStream = new TeePrintStream(delegate1, delegate2)
 
+  @SpockTypeChecked(SKIP)
   def "forwards stream management methods to all delegates"() {
     when:
     printStream."$method"()
@@ -77,7 +81,11 @@ class TeePrintStreamSpec extends Specification {
 
   def "forwards append methods to all delegates"() {
     when:
-    printStream.append(arg)
+    if (arg instanceof CharSequence) {
+      printStream.append(arg)
+    } else {
+      printStream.append(arg as char)
+    }
 
     then:
     1 * delegate1.append(arg)
@@ -96,7 +104,7 @@ class TeePrintStreamSpec extends Specification {
     1 * delegate2.append("foobar", 2, 4)
   }
 
-  def "forwards write method to all delegates"() {
+  def "forwards write method to all delegates"(byte[] arg) {
     when:
     printStream.write(arg)
 

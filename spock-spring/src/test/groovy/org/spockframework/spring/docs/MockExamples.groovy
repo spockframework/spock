@@ -16,6 +16,7 @@
 
 package org.spockframework.spring.docs
 
+import org.spockframework.runtime.extension.builtin.PreconditionContext
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 
@@ -94,7 +95,7 @@ class DetachedJavaConfigExample extends MockExampleBase {
 
 
 @IgnoreIf(
-  value = { jvm.java17Compatible },
+  value = { PreconditionContext pc -> pc.jvm.java17Compatible },
   reason = "Spring 4s reflection doesn't work on 17+"
 )
 @ContextConfiguration(locations = "classpath:org/spockframework/spring/docs/MockDocu-context.xml")

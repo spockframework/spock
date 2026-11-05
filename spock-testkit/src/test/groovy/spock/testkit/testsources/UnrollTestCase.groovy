@@ -4,7 +4,7 @@ import spock.lang.*
 
 class UnrollTestCase extends Specification {
 
-  def "unrollMe"() {
+  def "unrollMe"(int a, int b) {
     expect:
     Math.max(a, b) == c
 
@@ -17,7 +17,7 @@ class UnrollTestCase extends Specification {
 
 
   @Unroll("Max of #a #b == #c")
-  def "unrollMe2"() {
+  def "unrollMe2"(int a, int b) {
     expect:
     Math.max(a, b) == c
 
@@ -28,7 +28,7 @@ class UnrollTestCase extends Specification {
     3 | 2 | 3
   }
 
-  def "Unroll #a #b == #c"() {
+  def "Unroll #a #b == #c"(int a, int b) {
     expect:
     Math.max(a, b) == c
 
@@ -40,7 +40,7 @@ class UnrollTestCase extends Specification {
   }
 
   @Rollup
-  def "noExtraReporting"() {
+  def "noExtraReporting"(int a, int b) {
     expect:
     Math.max(a, b) == c
 

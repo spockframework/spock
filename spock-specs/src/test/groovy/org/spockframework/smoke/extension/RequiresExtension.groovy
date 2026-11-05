@@ -26,6 +26,9 @@ import spock.lang.Issue
 import spock.lang.Requires
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.SpockTypeChecked
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 class RequiresExtension extends EmbeddedSpecification {
 
@@ -440,36 +443,37 @@ class Test extends Bar {
       expect: true
     }
 
-    @Requires({ os.windows || os.linux || os.macOs || os.solaris || os.other })
+    @Requires({ PreconditionContext pc -> pc.os.windows || pc.os.linux || pc.os.macOs || pc.os.solaris || pc.os.other })
     def "provides OS information"() {
       expect: true
     }
 
-    @Requires({
-      jvm.java8 || jvm.java9 || jvm.java10 || jvm.java11 || jvm.java12 || jvm.java13 || jvm.java14 || jvm.java15 || jvm.java16 || jvm.java17 ||
-      jvm.isJavaVersion(18) ||
-      jvm.java21 || jvm.java22 || jvm.java23 || jvm.java24 || jvm.java25 || jvm.java26 || jvm.java27 || jvm.java28 || jvm.java29
+    @Requires({ PreconditionContext pc ->
+      pc.jvm.java8 || pc.jvm.java9 || pc.jvm.java10 || pc.jvm.java11 || pc.jvm.java12 || pc.jvm.java13 || pc.jvm.java14 || pc.jvm.java15 || pc.jvm.java16 || pc.jvm.java17 ||
+      pc.jvm.isJavaVersion(18) ||
+      pc.jvm.java21 || pc.jvm.java22 || pc.jvm.java23 || pc.jvm.java24 || pc.jvm.java25 || pc.jvm.java26 || pc.jvm.java27 || pc.jvm.java28 || pc.jvm.java29
     })
     def "provides JVM information"() {
       expect: true
     }
 
-    @Requires({ !env.containsKey("FOO_BAR_BAZ") })
+    @Requires({ PreconditionContext pc -> !pc.env.containsKey("FOO_BAR_BAZ") })
     def "provides access to environment variables"() {
       expect: true
     }
 
-    @Requires({ sys.containsKey("java.version") })
+    @Requires({ PreconditionContext pc -> pc.sys.containsKey("java.version") })
     def "provides access to system properties"() {
       expect: true
     }
 
+    @SpockTypeChecked(SKIP)
     @Requires({ it.sys.containsKey("java.version") })
     def "can use closure argument for an easy option to typecast and use IDE support"() {
       expect: true
     }
 
-    @Requires({ data.a == 2 })
+    @Requires({ PreconditionContext pc -> pc.data.a == 2 })
     def 'can evaluate for single iterations if data variables are accessed'() {
       expect:
       a == 2
@@ -484,7 +488,7 @@ class Test extends Bar {
       a = { throw new RuntimeException() }.call()
     }
     @Issue("https://github.com/spockframework/spock/issues/1710")
-    @Requires({ shared.shouldRun })
+    @Requires({ PreconditionContext<RequiresExtensionExamples> pc -> pc.shared.shouldRun })
     def 'can skip data providers completely if no data variables are accessed by checking a `shared.` field'() {
       expect: false
       where:

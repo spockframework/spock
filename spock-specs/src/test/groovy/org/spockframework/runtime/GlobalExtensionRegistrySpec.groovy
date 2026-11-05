@@ -45,7 +45,7 @@ class GlobalExtensionRegistrySpec extends Specification {
     noExceptionThrown()
 
     when:
-    new GlobalExtensionRegistry([IgnoreExtension], []).initializeGlobalExtensions()
+    new GlobalExtensionRegistry([IgnoreExtension] as List<Class<? extends IGlobalExtension>>, []).initializeGlobalExtensions()
 
     then:
     thrown(ExtensionException)
@@ -131,12 +131,14 @@ class GlobalExtensionRegistrySpec extends Specification {
     when:
     registry.initializeGlobalExtensions()
 
+
     then:
-    registry.getConfigurationByType(MySettings).is(registry.globalExtensions[0].settings)
-    registry.globalExtensions[0].settings.is(registry.globalExtensions[1].settings)
+    def extensions = registry.globalExtensions as List<HasSettings>
+    registry.getConfigurationByType(MySettings).is(extensions[0].settings)
+    extensions[0].settings.is(extensions[1].settings)
   }
 
-  def "allows to instantiate local extensions via #desc injection"() {
+  def "allows to instantiate local extensions via #desc injection"(Class<? extends HasConfig> clazz) {
     def registry = new GlobalExtensionRegistry([], [RunnerConfiguration])
     registry.initializeGlobalExtensions()
 
@@ -152,7 +154,7 @@ class GlobalExtensionRegistrySpec extends Specification {
     LocalConstructorExtension | 'constructor'
   }
 
-  def "complains if local extension references unknown configuration class (#desc injection)"() {
+  def "complains if local extension references unknown configuration class (#desc injection)"(Class<?> clazz) {
     def registry = new GlobalExtensionRegistry([], [])
     registry.initializeGlobalExtensions()
 
@@ -181,12 +183,16 @@ class GlobalExtensionRegistrySpec extends Specification {
     MissingNoArgCtorExtension(int x) {}
   }
 
-  static class FieldInjectableExtension implements IGlobalExtension {
+  interface HasSettings {
+    abstract MySettings getSettings()
+  }
+
+  static class FieldInjectableExtension implements IGlobalExtension, HasSettings {
     RunnerConfiguration config
     MySettings settings
   }
 
-  static class ConstructorInjectableExtension implements IGlobalExtension {
+  static class ConstructorInjectableExtension implements IGlobalExtension, HasSettings {
     final RunnerConfiguration config
     final MySettings settings
 
@@ -196,15 +202,19 @@ class GlobalExtensionRegistrySpec extends Specification {
     }
   }
 
-  static class SettingsExtension implements IGlobalExtension {
+  static class SettingsExtension implements IGlobalExtension, HasSettings {
     MySettings settings
   }
 
-  static class LocalFieldExtension implements IAnnotationDrivenExtension<Ignore> {
+  interface HasConfig {
+    abstract RunnerConfiguration getConfig()
+  }
+
+  static class LocalFieldExtension implements IAnnotationDrivenExtension<Ignore>, HasConfig {
     RunnerConfiguration config
   }
 
-  static class LocalConstructorExtension implements IAnnotationDrivenExtension<Ignore> {
+  static class LocalConstructorExtension implements IAnnotationDrivenExtension<Ignore>, HasConfig {
     final RunnerConfiguration config
 
     LocalConstructorExtension(RunnerConfiguration config) {

@@ -1,6 +1,8 @@
 package spock.platform
 
 import org.junit.jupiter.api.Test
+import org.junit.platform.engine.DiscoverySelector
+import org.junit.platform.engine.Filter
 import org.junit.platform.launcher.PostDiscoveryFilter
 import org.junit.platform.launcher.TagFilter
 import org.junit.platform.testkit.engine.EngineExecutionResults
@@ -61,11 +63,11 @@ class TagCompatibilityTest extends SpockEngineBase {
     assert succeededUids(results) =~ [CHILD_SIMPLE_FEATURE, CHILD_COMPLEX_FEATURE, CHILD_CHILD_FEATURE, CHILD_BLAND_FEATURE, CHILD_PLAIN_FEATURE]
   }
 
-  private ArrayList<String> succeededUids(EngineExecutionResults results) {
+  private List<String> succeededUids(EngineExecutionResults results) {
     results.testEvents().succeeded().list().testDescriptor.uniqueId*.toString()
   }
 
   private EngineExecutionResults executeWithTagFilter(PostDiscoveryFilter filter) {
-    execute([selectPackage(SimpleTagSpec.getPackage().name)], [filter])
+    execute([selectPackage(SimpleTagSpec.getPackage().name)] as List<DiscoverySelector>, [filter] as List<Filter<?>>)
   }
 }

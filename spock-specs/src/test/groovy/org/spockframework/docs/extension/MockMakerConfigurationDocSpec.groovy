@@ -18,13 +18,15 @@ package org.spockframework.docs.extension
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.RunContext
+import spock.lang.SpockTypeChecked
 import spock.mock.MockMakers
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 class MockMakerConfigurationDocSpec extends EmbeddedSpecification {
 
-  @SuppressWarnings('UnnecessaryQualifiedReference')
-  def "preferredMockMaker configuration setting"() {
-    given:
+  @SpockTypeChecked(SKIP)
+  private withByteBuddyPreferredMockMaker() {
     runner.configurationScript {
       // tag::mock-maker-preferredMockMaker[]
       mockMaker {
@@ -32,6 +34,12 @@ class MockMakerConfigurationDocSpec extends EmbeddedSpecification {
       }
       // end::mock-maker-preferredMockMaker[]
     }
+  }
+
+  @SuppressWarnings('UnnecessaryQualifiedReference')
+  def "preferredMockMaker configuration setting"() {
+    given:
+    withByteBuddyPreferredMockMaker()
     runner.addClassImport(RunContext)
     runner.addClassImport(MockMakers)
     runner.runFeatureBody("""

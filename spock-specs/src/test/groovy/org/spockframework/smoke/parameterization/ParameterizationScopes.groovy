@@ -25,7 +25,7 @@ class ParameterizationScopes extends Specification {
     where: x << 1
   }
 
-  def "in inner scope"() {
+  def "in inner scope"(int inc) {
     def sum = 0
 
     when:
@@ -40,7 +40,7 @@ class ParameterizationScopes extends Specification {
     inc << 2
   }
 
-  def "in closure scope"() {
+  def "in closure scope"(int inc) {
     def sum = 0
 
     when:
@@ -69,7 +69,7 @@ class ParameterizationScopes extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/408")
-  def "in closure scope of derived data value"() {
+  def "in closure scope of derived data value"(int val1) {
     expect:
     val2 == [2, 3]
 
@@ -79,7 +79,7 @@ class ParameterizationScopes extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/408")
-  def "in nested closure scope of derived data value"() {
+  def "in nested closure scope of derived data value"(int val1) {
     expect:
     val2 == [2, 3]
 

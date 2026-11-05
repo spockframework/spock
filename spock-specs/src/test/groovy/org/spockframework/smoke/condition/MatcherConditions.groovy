@@ -22,6 +22,7 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.InvalidSpecException
 import org.spockframework.runtime.ConditionNotSatisfiedError
 
+import static groovy.transform.TypeCheckingMode.SKIP
 import static org.hamcrest.CoreMatchers.*
 import static spock.util.matcher.HamcrestSupport.that
 import static spock.util.matcher.HamcrestSupport.expect
@@ -109,6 +110,7 @@ class MatcherConditions extends EmbeddedSpecification {
     assert that(x, equalTo(42))
   }
 
+  @SpockTypeChecked(SKIP)
   @FailsWith(MissingMethodException)
   def "can only be used where a condition is expected (1)"() {
     setup:

@@ -75,7 +75,7 @@ class ReflectionUtilSpec extends Specification {
       @Override
       Enumeration<URL> getResources(String name) throws IOException {
         if (name == resPath) {
-          return new Vector([new URL("file:/" + resPath)]).elements()
+          return new Vector<URL>([new URL("file:/" + resPath)]).elements()
         }
         return super.getResources(name)
       }
@@ -173,7 +173,7 @@ class ReflectionUtilSpec extends Specification {
     file.name == "ReflectionUtilSpec.class"
   }
 
-  def "get default value for a type"() {
+  def "get default value for a type"(Class<?> type) {
     expect:
     ReflectionUtil.getDefaultValue(type) == defaultValue
 

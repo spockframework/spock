@@ -23,6 +23,8 @@ import spock.lang.*
 
 import java.lang.annotation.*
 
+import static groovy.transform.TypeCheckingMode.SKIP
+
 /**
  * @author Peter Niederwieser
  */
@@ -60,7 +62,7 @@ def foo() {
     """
 
     then:
-    result.testEvents().started().list().testDescriptor.displayName == ["foo"] + (0..2).collect {"foo [x: ${it + 1}, #$it]" }
+    result.testEvents().started().list().testDescriptor.displayName == ["foo"] + (0..2).collect { int it -> "foo [x: ${it + 1}, #$it]" as String }
   }
 
   def "if creation of a data provider fails, feature isn't unrolled"() {
@@ -166,13 +168,29 @@ def foo() {
                                                                         "one x: 3, y: c, #2 two"]
   }
 
-  def "old iteration naming is restorable using configuration script"() {
-    given:
+  @SpockTypeChecked(SKIP)
+  private withUnrollConfiguration(Map args) {
     runner.configurationScript {
       unroll {
-        defaultPattern '#featureName[#iterationIndex]'
+        if (args.defaultPattern) {
+          defaultPattern args.defaultPattern
+        }
+        if (args.excludeFeatureNameForIterations) {
+          includeFeatureNameForIterations false
+        }
+        if (args.doNotValidateExpressions) {
+          validateExpressions false
+        }
+        if (args.rollupByDefault) {
+          unrollByDefault false
+        }
       }
     }
+  }
+
+  def "old iteration naming is restorable using configuration script"() {
+    given:
+    withUnrollConfiguration(defaultPattern: '#featureName[#iterationIndex]')
 
     when:
     def result = runner.runSpecBody("""
@@ -194,11 +212,7 @@ def foo() {
 
   def "default iteration naming is configurable using configuration script"() {
     given:
-    runner.configurationScript {
-      unroll {
-        defaultPattern '#featureName'
-      }
-    }
+    withUnrollConfiguration(defaultPattern: '#featureName')
 
     when:
     def result = runner.runSpecBody("""
@@ -220,11 +234,7 @@ def foo() {
 
   def "includeFeatureNameForIterations is configurable using configuration script"() {
     given:
-    runner.configurationScript {
-      unroll {
-        includeFeatureNameForIterations false
-      }
-    }
+    withUnrollConfiguration(excludeFeatureNameForIterations: true)
 
     when:
     def result = runner.runSpecBody("""
@@ -323,11 +333,7 @@ def foo() {
 
   def "expressions in naming pattern that can't be evaluated are prefixed with '#Error:' if expressions asserting is disabled"() {
     given:
-    runner.configurationScript {
-      unroll {
-        validateExpressions false
-      }
-    }
+    withUnrollConfiguration(doNotValidateExpressions: true)
 
     when:
     def result = runner.runSpecBody("""
@@ -424,11 +430,7 @@ class Foo extends Specification {
 
   def "method-level unroll annotation wins over configuration script"() {
     given:
-    runner.configurationScript {
-      unroll {
-        unrollByDefault false
-      }
-    }
+    withUnrollConfiguration(rollupByDefault: true)
 
     when:
     def result = runner.runSpecBody("""
@@ -448,11 +450,7 @@ def method() {
 
   def "class-level unroll annotation wins over configuration script"() {
     given:
-    runner.configurationScript {
-      unroll {
-        unrollByDefault false
-      }
-    }
+    withUnrollConfiguration(rollupByDefault: true)
 
     when:
     def result = runner.runWithImports("""
@@ -474,12 +472,9 @@ class Foo extends Specification {
 
   def "unroll annotations are not inheritable"() {
     given:
-    runner.configurationScript {
-      unroll {
-        unrollByDefault false
-        defaultPattern '#featureName: #actor.details.name'
-      }
-    }
+    withUnrollConfiguration(
+      rollupByDefault: true,
+      defaultPattern: '#featureName: #actor.details.name')
     runner.addClassImport(Base)
 
     when:

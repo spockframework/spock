@@ -4,6 +4,7 @@ import spock.lang.FailsWith
 import spock.lang.Issue
 import spock.lang.Rollup
 import spock.lang.Specification
+import spock.lang.SpockCompileDynamic
 
 @Issue("https://github.com/spockframework/spock/issues/1200")
 class NameClashes extends Specification {

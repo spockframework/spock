@@ -14,6 +14,7 @@
 
 package org.spockframework.smoke.extension
 
+import org.junit.platform.testkit.engine.Event
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpecNode
 import spock.lang.Title
@@ -39,8 +40,8 @@ class ASpec extends Specification {
 ''')
 
     then:
-    def containers = result.containerEvents().succeeded().filter { it.testDescriptor instanceof SpecNode }.collect(toList())
-    with(containers[0].testDescriptor, SpecNode) {
+    List<Event> containers = result.containerEvents().succeeded().filter { it.testDescriptor instanceof SpecNode }.collect(toList())
+    with(containers.first().testDescriptor, SpecNode) {
       displayName == "A beautiful mind"
     }
   }

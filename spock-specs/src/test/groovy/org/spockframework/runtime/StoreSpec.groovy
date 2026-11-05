@@ -15,10 +15,13 @@
 
 package org.spockframework.runtime
 
+import groovy.transform.TypeChecked
+import org.spockframework.runtime.extension.builtin.PreconditionContext
 import spock.config.ConfigurationObject
 import spock.lang.IgnoreIf
 import spock.lang.Shared
 import spock.lang.Snapshot
+import spock.lang.SpockTypeChecked
 
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
@@ -32,6 +35,8 @@ import org.spockframework.specs.extension.SpockSnapshotter
 import org.spockframework.util.Assert
 import org.spockframework.util.InternalSpockError
 
+import static groovy.transform.TypeCheckingMode.SKIP
+
 class StoreSpec extends EmbeddedSpecification {
 
   def setup() {
@@ -41,15 +46,30 @@ class StoreSpec extends EmbeddedSpecification {
     runner.addClassMemberImport(MethodKind)
   }
 
-  def "store is created and cleaned for each level"(@Snapshot SpockSnapshotter snapshotter) {
-    given:
-    AtomicReference sharedList = new AtomicReference([])
+  @SpockTypeChecked(SKIP)
+  private initLoggingStore(actionRecorders) {
     runner.configClasses << LoggingStoreConfig
     runner.configurationScript {
       loggingStore {
-        actionRecorderList sharedList
+        actionRecorderList actionRecorders
       }
     }
+  }
+
+  @SpockTypeChecked(SKIP)
+  private initFailingCleanup(cleanupRecorders) {
+    runner.configClasses << FailingCleanupStoreConfig
+    runner.configurationScript {
+      failingCleanup {
+        cleanupRecorderList cleanupRecorders
+      }
+    }
+  }
+
+  def "store is created and cleaned for each level"(@Snapshot SpockSnapshotter snapshotter) {
+    given:
+    AtomicReference<List> sharedList = new AtomicReference<>([])
+    initLoggingStore(sharedList)
 
     when:
     runner.runWithImports('''
@@ -58,15 +78,15 @@ class StoreSpec extends EmbeddedSpecification {
       def setupSpec() {
         logStoreAt("setupSpec")
       }
-      
+
       def setup() {
         logStoreAt("setup")
       }
-    
+
       def "a feature"() {
         given:
         logStoreAt("feature 'a feature'")
-        
+
         expect: true
       }
 
@@ -77,15 +97,15 @@ class StoreSpec extends EmbeddedSpecification {
         where:
         i << [1, 2]
       }
-      
+
       def cleanup() {
         logStoreAt("cleanup")
       }
-      
+
       def cleanupSpec() {
         logStoreAt("cleanupSpec")
       }
-      
+
       def logStoreAt(String location) {
         def store = specificationContext.getStore(LoggingStoreInterceptor.NAMESPACE)
         store.get("list", List) << "Store contents at [$location] is: ${store.get("message", String)}"
@@ -98,21 +118,16 @@ class StoreSpec extends EmbeddedSpecification {
   }
 
   @Shared
-  def supportedMethodKinds = ((MethodKind.values() as List) - [MethodKind.DATA_PROCESSOR, MethodKind.DATA_PROVIDER, MethodKind.DATA_VARIABLE_MULTIPLICATIONS, MethodKind.WHERE_VARIABLES, MethodKind.FILTER])
+  List supportedMethodKinds = ((MethodKind.values() as List) - [MethodKind.DATA_PROCESSOR, MethodKind.DATA_PROVIDER, MethodKind.DATA_VARIABLE_MULTIPLICATIONS, MethodKind.WHERE_VARIABLES, MethodKind.FILTER])
 
   @IgnoreIf(
-    value = { env.CI && (os.macOs || os.windows) },
+    value = { PreconditionContext pc -> pc.env.CI && (pc.os.macOs || pc.os.windows) },
     reason = "The CI runners for macos and windows are too slow and this isn't really affected by platform"
   )
-  def "properly handles failures during store cleanup"() {
+  def "properly handles failures during store cleanup"(List methodKinds) {
     given:
     AtomicReference sharedList = new AtomicReference([])
-    runner.configClasses << FailingCleanupStoreConfig
-    runner.configurationScript {
-      failingCleanup {
-        cleanupRecorderList sharedList
-      }
-    }
+    initFailingCleanup(sharedList)
 
     when:
     runner.runWithImports("""
@@ -220,13 +235,13 @@ class LoggingStoreConfig {
   AtomicReference<List<String>> actionRecorderList
 }
 
-
+// can be removed if Groovy 5 is the minimum version
+@TypeChecked(SKIP)
 @Retention(RetentionPolicy.RUNTIME)
 @ExtensionAnnotation(FailingCleanupStoreExtension)
 @interface FailingStoreUsage {
   MethodKind[] value() default []
 }
-
 
 class FailingCleanupStoreExtension implements IAnnotationDrivenExtension<FailingStoreUsage> {
 

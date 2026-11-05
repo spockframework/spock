@@ -19,7 +19,7 @@ import org.spockframework.mock.TooManyInvocationsError
 import spock.lang.*
 
 class InteractionsWithPropertySyntax extends Specification {
-  def lengthField = 20
+  int lengthField = 20
 
   def "stubbing properties"() {
     def props = Mock(HasProperties)
@@ -47,7 +47,7 @@ class InteractionsWithPropertySyntax extends Specification {
     props.length == 10
   }
 
-  def "stubbing properties in initializer closure without 'it' does not work if the property is also a parameter"(def length) {
+  def "stubbing properties in initializer closure without 'it' does not work if the property is also a parameter"(int length) {
     def props = Mock(HasProperties) {
       length >> 10
     }
@@ -164,5 +164,3 @@ class InteractionsWithPropertySyntax extends Specification {
     boolean getFull()
   }
 }
-
-

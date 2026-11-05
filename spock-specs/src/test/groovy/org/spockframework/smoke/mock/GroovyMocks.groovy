@@ -19,6 +19,7 @@ import org.spockframework.mock.CannotCreateMockException
 import org.spockframework.runtime.model.parallel.Resources
 import spock.lang.ResourceLock
 import spock.lang.Specification
+import spock.lang.SpockCompileDynamic
 import spock.lang.Unroll
 
 class GroovyMocks extends Specification {

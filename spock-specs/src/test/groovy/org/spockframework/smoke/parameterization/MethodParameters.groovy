@@ -162,7 +162,7 @@ def foo(x, ClassLoader y) {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/651")
-  def "data values are injected by name, not order"(y, x) {
+  def "data values are injected by name, not order"(y, int x) {
     expect:
     2 * x == y
 

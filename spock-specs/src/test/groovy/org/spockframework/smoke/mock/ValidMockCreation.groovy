@@ -111,7 +111,7 @@ class ValidMockCreation extends Specification {
   def "creation in closure"() {
     // a closure preceded by a label is parsed as block by Groovy,
     // so we use "assert" instead of "expect:" here
-    assert { it -> { it2 -> Mock(List) }() }() instanceof List
+    assert { -> { -> Mock(List) }() }() instanceof List
   }
 
   def "creation in interaction result"() {

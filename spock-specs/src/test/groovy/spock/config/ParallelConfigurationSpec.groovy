@@ -5,9 +5,11 @@ import org.spockframework.runtime.IConfigurationRegistry
 import org.spockframework.runtime.model.parallel.ExecutionMode
 import spock.lang.*
 
+import static groovy.transform.TypeCheckingMode.SKIP
+
 class ParallelConfigurationSpec extends Specification implements ConfigSupport {
   @Shared
-  int availableProcessors = Runtime.runtime.availableProcessors();
+  int availableProcessors = Runtime.runtime.availableProcessors()
 
   @Subject
   RunnerConfiguration runnerConfiguration = new RunnerConfiguration()
@@ -26,6 +28,7 @@ class ParallelConfigurationSpec extends Specification implements ConfigSupport {
     }
   }
 
+  @SpockTypeChecked(SKIP)
   def "check binding"() {
     given:
     Closure closure = {
@@ -48,6 +51,7 @@ class ParallelConfigurationSpec extends Specification implements ConfigSupport {
     }
   }
 
+  @SpockTypeChecked(SKIP)
   def "check fixed"() {
     given:
     Closure closure = {
@@ -72,6 +76,7 @@ class ParallelConfigurationSpec extends Specification implements ConfigSupport {
     }
   }
 
+  @SpockTypeChecked(SKIP)
   def "check dynamic"() {
     given:
     int expectedParallelism = availableProcessors * 2
@@ -97,6 +102,7 @@ class ParallelConfigurationSpec extends Specification implements ConfigSupport {
     }
   }
 
+  @SpockTypeChecked(SKIP)
   def "check dynamicWithReservedProcessors"() {
     given:
     int expectedParallelism = Math.max(availableProcessors - 1, 1)
@@ -122,6 +128,7 @@ class ParallelConfigurationSpec extends Specification implements ConfigSupport {
     }
   }
 
+  @SpockTypeChecked(SKIP)
   def "dynamicWithReservedProcessors throws for negative reservedThreads"() {
     given:
     int expectedParallelism = Math.max(availableProcessors - 1, 1)
@@ -141,7 +148,7 @@ class ParallelConfigurationSpec extends Specification implements ConfigSupport {
     thrown(IllegalArgumentException)
   }
 
-
+  @SpockTypeChecked(SKIP)
   def "dynamicWithReservedProcessors throws for factor larger than 1"() {
     given:
     int expectedParallelism = Math.max(availableProcessors - 1, 1)

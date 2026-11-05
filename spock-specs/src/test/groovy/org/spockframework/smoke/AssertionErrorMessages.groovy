@@ -30,7 +30,7 @@ class AssertionErrorMessages extends Specification {
     e.message == e.toString()
   }
 
-  def createSpockAssertionError() {
+  SpockAssertionError createSpockAssertionError() {
     try {
       assert 1 == 2
     } catch (SpockAssertionError e) {

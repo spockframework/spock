@@ -114,7 +114,7 @@ class WithBlockFailingConditions extends EmbeddedSpecification {
   def "with null fails"() {
     expect:
     with(null) {
-      size() == 42
+      true
     }
   }
 
@@ -151,7 +151,7 @@ class WithBlockFailingConditions extends EmbeddedSpecification {
     }
   }
 
-  void helper(list) {
+  void helper(List list) {
     with(list) {
       size() == 3
     }
@@ -173,7 +173,7 @@ class WithBlockFailingConditions extends EmbeddedSpecification {
     }
   }
 
-  def "condition method #conditionMethod within condition method #conditionMethod"() {
+  def "condition method #conditionMethod within condition method #conditionMethod"(Class<Throwable> expectedException) {
     when:
     runner.runFeatureBody("""
 expect:
@@ -194,7 +194,7 @@ $conditionMethod(['']) {
     'verifyEach'    || SpockAssertionError
   }
 
-  def "condition method #conditionMethod within condition method #conditionMethod with exception"() {
+  def "condition method #conditionMethod within condition method #conditionMethod with exception"(Class<Throwable> expectedException) {
     when:
     runner.runFeatureBody("""
 expect:
@@ -217,7 +217,7 @@ $conditionMethod(['']) {
     'verifyEach'    || SpockAssertionError
   }
 
-  def "condition method #conditionMethod within condition method #conditionMethod with only exception"() {
+  def "condition method #conditionMethod within condition method #conditionMethod with only exception"(Class<Throwable> expectedException) {
     when:
     runner.runFeatureBody("""
 expect:
@@ -239,7 +239,7 @@ $conditionMethod(['']) {
     'verifyEach'    || SpockAssertionError
   }
 
-  def "condition method #conditionMethod"() {
+  def "condition method #conditionMethod"(Class<Throwable> expectedException) {
     when:
     runner.runFeatureBody("""
 expect:
@@ -258,7 +258,7 @@ $conditionMethod(['']) {
     'verifyEach'    || SpockAssertionError
   }
 
-  def "condition method #conditionMethod with exception"() {
+  def "condition method #conditionMethod with exception"(Class<Throwable> expectedException) {
     when:
     runner.runFeatureBody("""
 expect:
@@ -279,7 +279,7 @@ $conditionMethod(['']) {
     'verifyEach'    || SpockAssertionError
   }
 
-  def "condition method #conditionMethod with only exception"() {
+  def "condition method #conditionMethod with only exception"(Class<Throwable> expectedException) {
     when:
     runner.runFeatureBody("""
 expect:

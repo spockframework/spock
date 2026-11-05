@@ -69,7 +69,7 @@ class MultiThreaded extends Specification {
     CountDownLatch latch1 = new CountDownLatch(1)
     CountDownLatch latch2 = new CountDownLatch(1)
     CountDownLatch latch3 = new CountDownLatch(2)
-    List aList = Mock()
+    List<Closure<Void>> aList = Mock()
 
     when:
     Thread.start { aList.get(0)(); latch3.countDown() }

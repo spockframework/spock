@@ -5,6 +5,9 @@ import org.spockframework.compiler.InvalidSpecCompileException
 
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.SpockTypeChecked
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 class FinalFields extends Specification {
     @Shared
@@ -39,6 +42,7 @@ class FinalFields extends Specification {
         normalShared == 'new value'
     }
 
+    @SpockTypeChecked(SKIP)
     def "cannot modify final fields"() {
         expect:
         finalField == 'final field'
@@ -52,6 +56,7 @@ class FinalFields extends Specification {
         finalField == 'final field'
     }
 
+    @SpockTypeChecked(SKIP)
     def "cannot modify final shared fields"() {
         expect:
         finalShared == 'final shared field'

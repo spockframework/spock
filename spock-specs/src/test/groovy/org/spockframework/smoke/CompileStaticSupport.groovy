@@ -32,13 +32,15 @@ import spock.lang.SpockCompileDynamic
 import spock.lang.SpockCompileStatic
 import spock.lang.SpockTypeChecked
 
+import java.lang.annotation.Annotation
+
 /**
  * Specs annotated with {@code @CompileStatic} must compile even though
  * Spock rewrites their conditions, and must render failed conditions
  * with the recorded values.
  */
 class CompileStaticSupport extends EmbeddedSpecification {
-  def "comparison conditions on typed variables compile with @#annotation.simpleName"() {
+  def "comparison conditions on typed variables compile with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     compiler.compileWithImports """
 @${annotation.name}
@@ -63,7 +65,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "property access in conditions compiles with @#annotation.simpleName"() {
+  def "property access in conditions compiles with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     given:
     compiler.addClassImport(CompileStatic)
 
@@ -97,7 +99,7 @@ class Pogo {
     value = { GroovyRuntimeUtil.MAJOR_VERSION >= 5 },
     reason = 'https://issues.apache.org/jira/browse/GROOVY-12456'
   )
-  def "Map-construction with explicit map syntax compiles in assertions with @#annotation.simpleName"() {
+  def "Map-construction with explicit map syntax compiles in assertions with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     given:
     compiler.addClassImport(CompileStatic)
 
@@ -128,7 +130,7 @@ class Pogo {
     value = { GroovyRuntimeUtil.MAJOR_VERSION >= 5 },
     reason = 'https://issues.apache.org/jira/browse/GROOVY-12456'
   )
-  def "Map-construction with implicit map syntax compiles in assertions with @#annotation.simpleName"() {
+  def "Map-construction with implicit map syntax compiles in assertions with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     given:
     compiler.addClassImport(CompileStatic)
 
@@ -155,7 +157,7 @@ class Pogo {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "@#annotation.simpleName is not allowed on non-specification classes"() {
+  def "@#annotation.simpleName is not allowed on non-specification classes"(Class<? extends Annotation> annotation) {
     when:
     compiler.compileWithImports """
 @${annotation.name}
@@ -172,7 +174,7 @@ class Pogo {
     annotation << [SpockCompileDynamic, SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "@#annotation.simpleName is not allowed on non-specification methods"() {
+  def "@#annotation.simpleName is not allowed on non-specification methods"(Class<? extends Annotation> annotation) {
     when:
     compiler.compileWithImports """
 class Pogo {
@@ -191,7 +193,7 @@ class Pogo {
     annotation << [SpockCompileDynamic, SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "@#annotation.simpleName is not allowed on specification classes"() {
+  def "@#annotation.simpleName is not allowed on specification classes"(Class<? extends Annotation> annotation) {
     given:
     compiler.addClassImport(CompileStatic)
 
@@ -222,7 +224,7 @@ class Pogo {
     annotation << [CompileDynamic, TypeChecked, CompileStatic]
   }
 
-  def "@#annotation.simpleName is not allowed on specification methods"() {
+  def "@#annotation.simpleName is not allowed on specification methods"(Class<? extends Annotation> annotation) {
     given:
     compiler.addClassImport(CompileStatic)
 
@@ -253,7 +255,7 @@ class Pogo {
     annotation << [CompileDynamic, TypeChecked, CompileStatic]
   }
 
-  def "indexing in conditions compiles with @#annotation.simpleName"() {
+  def "indexing in conditions compiles with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     compiler.compileWithImports """
 @${annotation.name}
@@ -275,7 +277,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "top-level method call conditions compile with @#annotation.simpleName"() {
+  def "top-level method call conditions compile with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     compiler.compileWithImports """
 @${annotation.name}
@@ -297,7 +299,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "old() compiles and evaluates with @#annotation.simpleName"() {
+  def "old() compiles and evaluates with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     runner.runWithImports """
 @${annotation.name}
@@ -324,7 +326,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "data table cells referencing previous columns compile with @#annotation.simpleName"() {
+  def "data table cells referencing previous columns compile with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     runner.runWithImports """
 @${annotation.name}
@@ -351,7 +353,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "interactions in mock init closures work with @#annotation.simpleName"() {
+  def "interactions in mock init closures work with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     runner.runWithImports """
 @${annotation.name}
@@ -378,7 +380,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "non-existent constant-name methods in interactions fail compilation with @#annotation.simpleName"() {
+  def "non-existent constant-name methods in interactions fail compilation with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     runner.runWithImports """
 @${annotation.name}
@@ -406,7 +408,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "non-existent method in where block fails compilation with @#annotation.simpleName on class"() {
+  def "non-existent method in where block fails compilation with @#annotation.simpleName on class"(Class<? extends Annotation> annotation) {
     when:
     runner.runWithImports """
 @${annotation.name}
@@ -429,7 +431,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "non-existent method in where block fails compilation with @#annotation.simpleName on method"() {
+  def "non-existent method in where block fails compilation with @#annotation.simpleName on method"(Class<? extends Annotation> annotation) {
     when:
     runner.runWithImports """
 class ASpec extends Specification {
@@ -452,7 +454,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "interactions in interaction blocks with argument-inferred variable type work with @#annotation.simpleName"() {
+  def "interactions in interaction blocks with argument-inferred variable type work with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     runner.runWithImports """
 @${annotation.name}
@@ -479,7 +481,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "interactions in interaction blocks work with @#annotation.simpleName"() {
+  def "interactions in interaction blocks work with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     runner.runWithImports """
 @${annotation.name}
@@ -506,7 +508,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "method calls in conditions compile with @#annotation.simpleName"() {
+  def "method calls in conditions compile with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     compiler.compileWithImports """
 @${annotation.name}
@@ -536,7 +538,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "method-level CompileStatic annotation is honored with @#annotation.simpleName"() {
+  def "method-level CompileStatic annotation is honored with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     runner.runWithImports """
 class ASpec extends Specification {
@@ -558,7 +560,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "exception property access in conditions compiles with @#annotation.simpleName"() {
+  def "exception property access in conditions compiles with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     runner.runWithImports """
 @${annotation.name}
@@ -581,7 +583,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "unclear exception type compiles but fails at runtime with @#annotation.simpleName"() {
+  def "unclear exception type compiles but fails at runtime with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     runner.runWithImports """
 @${annotation.name}
@@ -605,7 +607,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "exception property access from inferred variable type compiles with @#annotation.simpleName"() {
+  def "exception property access from inferred variable type compiles with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     runner.runWithImports """
 @${annotation.name}
@@ -628,7 +630,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "exception property access with explicit type and null argument compiles with @#annotation.simpleName"() {
+  def "exception property access with explicit type and null argument compiles with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     runner.runWithImports """
 @${annotation.name}
@@ -651,7 +653,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "exception assertion with unrelated types should not compile with @#annotation.simpleName"() {
+  def "exception assertion with unrelated types should not compile with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     compiler.compileWithImports """
 @${annotation.name}
@@ -674,7 +676,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "exception assertion with compatible types but wrong thrown should fail accordingly with @#annotation.simpleName"() {
+  def "exception assertion with compatible types but wrong thrown should fail accordingly with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     runner.runWithImports """
 @${annotation.name}
@@ -698,7 +700,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "exception assertion with incompatible types should not compile with @#annotation.simpleName"() {
+  def "exception assertion with incompatible types should not compile with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     compiler.compileWithImports """
 @${annotation.name}
@@ -721,7 +723,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "method calls on the delegate of with blocks compile with @#annotation.simpleName"() {
+  def "method calls on the delegate of with blocks compile with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     runner.runWithImports """
 @${annotation.name}
@@ -746,7 +748,7 @@ class ASpec extends Specification {
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "failed method call condition renders recorded values with @#annotation.simpleName"() {
+  def "failed method call condition renders recorded values with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     runner.runWithImports """
 @${annotation.name}
@@ -773,7 +775,7 @@ list.size() == 2
     annotation << [SpockTypeChecked, SpockCompileStatic]
   }
 
-  def "failed comparison condition renders recorded values with @#annotation.simpleName"() {
+  def "failed comparison condition renders recorded values with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     runner.runWithImports """
 @${annotation.name}

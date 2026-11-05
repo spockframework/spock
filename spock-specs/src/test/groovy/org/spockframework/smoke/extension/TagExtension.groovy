@@ -7,13 +7,13 @@ import spock.lang.Tag
 class TagExtension extends Specification {
   def "class level tags"() {
     expect:
-    specificationContext.currentFeature.testTags.value == ["class-level"]
+    specificationContext.currentFeature.testTags*.value == ["class-level"]
   }
 
   @Tag("method-level")
   def "method level tags"() {
     expect:
-    specificationContext.currentFeature.testTags.value =~ ["class-level", "method-level"]
+    specificationContext.currentFeature.testTags*.value =~ ["class-level", "method-level"]
   }
 
   @Tag("multi-tags")
@@ -21,13 +21,13 @@ class TagExtension extends Specification {
   @Tag("method-level")
   def "multi tags"() {
     expect:
-    specificationContext.currentFeature.testTags.value =~ ["class-level", "method-level" , "multi-tags"]
+    specificationContext.currentFeature.testTags*.value =~ ["class-level", "method-level" , "multi-tags"]
   }
 }
 
 class InheritedTagExtension extends TagExtension {
   def "inherited tags"() {
     expect:
-    specificationContext.currentFeature.testTags.value =~ ["class-level"]
+    specificationContext.currentFeature.testTags*.value =~ ["class-level"]
   }
 }

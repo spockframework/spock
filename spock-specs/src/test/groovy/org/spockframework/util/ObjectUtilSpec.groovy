@@ -62,7 +62,7 @@ class ObjectUtilSpec extends Specification {
     expect:
     ObjectUtil.compare(null, null) == 0
     ObjectUtil.compare(null, 3) < 0
-    ObjectUtil.compare(3, null) > 0
+    ObjectUtil.compare(3, null as Integer) > 0
     ObjectUtil.compare(3, 3) == 0
     ObjectUtil.compare(3, 4) < 0
     ObjectUtil.compare(4, 3) > 0

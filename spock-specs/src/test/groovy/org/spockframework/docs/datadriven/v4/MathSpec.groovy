@@ -6,7 +6,11 @@ import spock.lang.Specification
 class MathSpec extends Specification {
 // tag::example[]
   @Rollup
-  def "maximum of two numbers"() {
+  def "maximum of two numbers"(
+    // end::example[]
+    int a, int b
+    // tag::example[]
+  ) {
 // end::example[]
     expect:
     Math.max(a, b) == c

@@ -27,15 +27,17 @@ import org.spockframework.mock.TooManyInvocationsError
 
 import spock.lang.*
 
+import static groovy.transform.TypeCheckingMode.SKIP
+
 class InvokingMocksFromMultipleThreads extends Specification {
   private static final int WAIT_TIME_S = 200
 
-  def numThreads = 10
-  def list = Mock(List)
-  def latch = new CountDownLatch(numThreads)
+  int numThreads = 10
+  List list = Mock()
+  CountDownLatch latch = new CountDownLatch(numThreads)
   @AutoCleanup("shutdownNow")
   @Shared
-  def executorService = createExecutorService()
+  ExecutorService executorService = createExecutorService()
 
   def "invoking a mock from multiple threads"() {
     when:
@@ -110,7 +112,7 @@ class InvokingMocksFromMultipleThreads extends Specification {
     }
   }
 
-
+  @SpockTypeChecked(SKIP)
   private static ExecutorService createExecutorService() {
     return Jvm.current.java21Compatible ? Executors."newVirtualThreadPerTaskExecutor"() : Executors.newCachedThreadPool() { new Thread(it).tap { it.daemon = true } }
   }

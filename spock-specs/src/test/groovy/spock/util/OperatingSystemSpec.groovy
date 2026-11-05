@@ -38,7 +38,7 @@ class OperatingSystemSpec extends Specification {
   }
 
   @RestoreSystemProperties
-  def "determines family based on os.name system property"() {
+  def "determines family based on os.name system property"(String osName) {
     System.setProperty("os.name", osName)
 
     expect:
@@ -54,7 +54,7 @@ class OperatingSystemSpec extends Specification {
   }
 
   @RestoreSystemProperties
-  def "provides convenience methods to test for family"() {
+  def "provides convenience methods to test for family"(String osName, Closure<Boolean> notHolds) {
     System.setProperty("os.name", osName)
     def os = OperatingSystem.current
 
@@ -63,11 +63,11 @@ class OperatingSystemSpec extends Specification {
     !notHolds.call(os)
 
     where:
-    osName                 | holds          | notHolds
-    "Windows 7"            | { it.windows } | { it.linux }
-    "Ubuntu Linux"         | { it.linux }   | { it.macOs }
-    "Mac OS 10.8.2"        | { it.macOs }   | { it.solaris }
-    "Some SunOS version"   | { it.solaris } | { it.other }
-    "FreeBSD 9.0"          | { it.other }   | { it.windows }
+    osName               | holds                                | notHolds
+    "Windows 7"          | { OperatingSystem it -> it.windows } | { OperatingSystem it -> it.linux }
+    "Ubuntu Linux"       | { OperatingSystem it -> it.linux }   | { OperatingSystem it -> it.macOs }
+    "Mac OS 10.8.2"      | { OperatingSystem it -> it.macOs }   | { OperatingSystem it -> it.solaris }
+    "Some SunOS version" | { OperatingSystem it -> it.solaris } | { OperatingSystem it -> it.other }
+    "FreeBSD 9.0"        | { OperatingSystem it -> it.other }   | { OperatingSystem it -> it.windows }
   }
 }

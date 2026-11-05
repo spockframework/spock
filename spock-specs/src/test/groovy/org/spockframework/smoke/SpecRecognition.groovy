@@ -41,13 +41,12 @@ class Foo extends $baseClass {
     thrown(SpockAssertionError)
 
     where:
-    [importStat                                     , baseClass                                      ] << [
-    ["import spock.lang.Specification"              , "Specification"                                ],
-    [""                                             , "spock.lang.Specification"                     ],
-    ["import org.spockframework.smoke.Intermediary1", "Intermediary1"                                ],
-    [""                                             , "org.spockframework.smoke.Intermediary2"       ],
-    [""                                             , "org.spockframework.smoke.AbstractIntermediary"]
-    ]
+    importStat                                      | baseClass
+    "import spock.lang.Specification"               | "Specification"
+    ""                                              | "spock.lang.Specification"
+    "import org.spockframework.smoke.Intermediary1" | "Intermediary1"
+    ""                                              | "org.spockframework.smoke.Intermediary2"
+    ""                                              | "org.spockframework.smoke.AbstractIntermediary"
   }
 
   def "is properly recognized when inheriting from Specification base class through intermediary in same compilation unit"() {

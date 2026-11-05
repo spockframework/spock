@@ -17,6 +17,7 @@
 package org.spockframework.spring
 
 import org.spockframework.mock.MockUtil
+import org.spockframework.runtime.extension.builtin.PreconditionContext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.IgnoreIf
@@ -26,7 +27,7 @@ import javax.inject.Named as JavaxNamed
 import jakarta.inject.Named
 
 @IgnoreIf(
-  value = { jvm.java17Compatible },
+  value = { PreconditionContext pc -> pc.jvm.java17Compatible },
   reason = "Spring 4s reflection doesn't work on 17+"
 )
 @ContextConfiguration(locations = "MockExamples-context.xml")

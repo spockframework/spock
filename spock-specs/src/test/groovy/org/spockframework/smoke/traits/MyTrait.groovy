@@ -15,19 +15,26 @@
 */
 package org.spockframework.smoke.traits
 
+import groovy.transform.TypeChecked
+
+import static groovy.transform.TypeCheckingMode.SKIP
+
 trait MyTrait {
   int x = 10
 
-  def multiply(m, n) { m * n }
+  def multiply(int m, int n) { m * n }
 
+  @TypeChecked(SKIP)
   def setup() {
     setupEvaluated = true
   }
 
+  @TypeChecked(SKIP)
   def cleanup() {
     cleanupEvaluated = true
   }
 
+  @TypeChecked(SKIP)
   def setupSpec() {
     setupSpecEvaluated = true
   }

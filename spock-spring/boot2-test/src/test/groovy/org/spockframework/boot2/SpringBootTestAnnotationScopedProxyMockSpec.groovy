@@ -65,7 +65,7 @@ class SpringBootTestAnnotationScopedProxyMockSpec extends Specification {
 
   @TestConfiguration
   static class MockConfig {
-    def detachedMockFactory = new DetachedMockFactory()
+    DetachedMockFactory detachedMockFactory = new DetachedMockFactory()
 
     @Bean @RequestScope(proxyMode = ScopedProxyMode.TARGET_CLASS)
     HelloWorldService helloWorldService() {

@@ -101,6 +101,7 @@ class WildcardUsages extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/460")
+  @SpockCompileDynamic
   def "wildcard method name doesn't match Object's equals(), hashCode(), toString(), and finalize() methods"() {
     // needs to be a class, otherwise finalize() call wouldn't get through in any case
     // (probably a difference between Java and CGLIB proxies)
@@ -109,8 +110,8 @@ class WildcardUsages extends Specification {
     when:
     list.equals(new Object())
     list.hashCode()
-    list.toString()
-    list.finalize()
+    list.&toString()
+    list.&finalize()
 
     then:
     0 * list._()
@@ -131,7 +132,8 @@ class WildcardUsages extends Specification {
     4 * overloaded._
   }
 
-  def "usage in interaction doesn't interfere with usage in where-block"() {
+  @SpockCompileDynamic
+  def "usage in interaction doesn't interfere with usage in where-block"(Class<List<Integer>> type) {
     def list = Mock(type)
 
     when:

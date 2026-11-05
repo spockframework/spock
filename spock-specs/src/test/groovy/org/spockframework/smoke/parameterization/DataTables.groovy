@@ -18,7 +18,6 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.IStandardStreamsListener
 import org.spockframework.runtime.SpockExecutionException
 import org.spockframework.runtime.StandardStreamsCapturer
-import spock.lang.AutoCleanup
 import spock.lang.Issue
 import spock.lang.PendingFeature
 import spock.lang.ResourceLock
@@ -26,10 +25,11 @@ import spock.lang.Rollup
 import spock.lang.Shared
 import spock.lang.Snapshot
 import spock.lang.Snapshotter
+import spock.lang.SpockTypeChecked
 import spock.lang.Unroll
 
+import static groovy.transform.TypeCheckingMode.SKIP
 import static org.spockframework.runtime.model.parallel.Resources.SYSTEM_ERR
-import static org.spockframework.runtime.model.parallel.Resources.SYSTEM_OUT
 
 @Rollup
 class DataTables extends EmbeddedSpecification {
@@ -38,7 +38,7 @@ class DataTables extends EmbeddedSpecification {
   @Shared
   def sharedField = 42
 
-  def "basic usage"() {
+  def "basic usage"(int a, int b) {
     expect:
     Math.max(a, b) == c
 
@@ -49,7 +49,7 @@ class DataTables extends EmbeddedSpecification {
     9 | 9 | 9
   }
 
-  def "basic usage with semicolon"() {
+  def "basic usage with semicolon"(int a, int b) {
     expect:
     Math.max(a, b) == c
 
@@ -118,7 +118,7 @@ class DataTables extends EmbeddedSpecification {
     3 | _
   }
 
-  def "tables can be mixed with other parameterizations"() {
+  def "tables can be mixed with other parameterizations"(int c) {
     expect:
     [a, b, c, d] == [1, 2, 3, 4]
 
@@ -129,7 +129,7 @@ class DataTables extends EmbeddedSpecification {
     d = c + 1
   }
 
-  def "tables with semicolon can be mixed with other parameterizations"() {
+  def "tables with semicolon can be mixed with other parameterizations"(int c) {
     expect:
     [a, b, c, d] == [1, 2, 3, 4]
 
@@ -162,7 +162,7 @@ class DataTables extends EmbeddedSpecification {
     true | false ; true || false
   }
 
-  def "cells may contain arbitrary expressions"() {
+  def "cells may contain arbitrary expressions"(Person b) {
     expect:
     a == "oo"
     b.age == 23
@@ -173,7 +173,7 @@ class DataTables extends EmbeddedSpecification {
     "foo"[1..2] | new Person(age: 23) | Math.max(4, 5)
   }
 
-  def "cells may contain arbitrary expressions with semicolon"() {
+  def "cells may contain arbitrary expressions with semicolon"(Person b) {
     expect:
     a == "oo"
     b.age == 23
@@ -204,7 +204,7 @@ class DataTables extends EmbeddedSpecification {
     staticField ; sharedField
   }
 
-  def 'cells can reference previous cells'() {
+  def 'cells can reference previous cells'(int a, int b) {
     expect:
     [a, b, c] == [0, 1, 2]
 
@@ -213,7 +213,7 @@ class DataTables extends EmbeddedSpecification {
     0 | a + 1 | b + 1
   }
 
-  def 'cells can reference previous cells with semicolon'() {
+  def 'cells can reference previous cells with semicolon'(int a, int b) {
     expect:
     [a, b, c] == [0, 1, 2]
 
@@ -235,7 +235,7 @@ class DataTables extends EmbeddedSpecification {
     15 | 11 || a
   }
 
-  def 'cell references are pointing to the current row'() {
+  def 'cell references are pointing to the current row'(int a, int b) {
     expect:
     b == 1 + a * 2
     c == 3 * b
@@ -265,7 +265,7 @@ class DataTables extends EmbeddedSpecification {
     result.testEvents().finished().list().testDescriptor.displayName == ["a = 0, b = 1", "a = 2, b = 2", "a = #a, b = #b"]
   }
 
-  def "data tables can be referenced from following variables"() {
+  def "data tables can be referenced from following variables"(int a, int b) {
     expect:
     c == 3
 
@@ -277,7 +277,7 @@ class DataTables extends EmbeddedSpecification {
     c = b + 1
   }
 
-  def "cells can be separated with single or double pipe operator"() {
+  def "cells can be separated with single or double pipe operator"(int a, int b) {
     expect:
     a + b == c
 
@@ -502,7 +502,15 @@ false
     e.message == 'Data provider has no data'
   }
 
-  @ResourceLock(SYSTEM_OUT)
+  @SpockTypeChecked(SKIP)
+  private logFilteredIterations() {
+    runner.configurationScript {
+      runner {
+        logFilteredIterations true
+      }
+    }
+  }
+
   @ResourceLock(SYSTEM_ERR)
   def "filtered iterations are logged"(@Snapshot Snapshotter snapshotter) {
     given:
@@ -513,7 +521,7 @@ false
     and:
     StandardStreamsCapturer outputCapturer = new StandardStreamsCapturer()
     def output = new StringBuilder()
-    outputCapturer.addStandardStreamsListener({
+    outputCapturer.addStandardStreamsListener({ String it ->
       output.append(it.normalize())
     } as IStandardStreamsListener)
     outputCapturer.start()
@@ -521,11 +529,7 @@ false
 
     and:
     runner.throwFailure = false
-    runner.configurationScript {
-      runner {
-        logFilteredIterations true
-      }
-    }
+    logFilteredIterations()
 
     when:
     def result = runner.runFeatureBody '''
@@ -720,7 +724,7 @@ i == 1
     ]
   }
 
-  def "cells can be separated with any amount of semicolons"() {
+  def "cells can be separated with any amount of semicolons"(int a, int b) {
     expect:
     a + b == c
 
@@ -730,7 +734,7 @@ i == 1
     4 ; 5 ;;;; 9
   }
 
-  def "tables can be surrounded by borders of semicolons and underscores"() {
+  def "tables can be surrounded by borders of semicolons and underscores"(int a, int b, int d, int f) {
     expect:
     a + b == c
     d + f == g
@@ -749,7 +753,7 @@ i == 1
     ______________
   }
 
-  def "consistent use of cell separators is not enforced"() {
+  def "consistent use of cell separators is not enforced"(int a, int b) {
     expect:
     a + b == c
 
@@ -780,7 +784,7 @@ d | e | f
     dataTableSeparator << (2..20).collect { '_' * it }
   }
 
-  def "derived data variables do not break data table previous column references"() {
+  def "derived data variables do not break data table previous column references"(int y, int z) {
     expect:
     y == z
 
@@ -793,7 +797,7 @@ d | e | f
     2 | y | y + z
   }
 
-  def "data pipe variables do not break data table previous column references"() {
+  def "data pipe variables do not break data table previous column references"(int y, int z) {
     expect:
     y == z
 
@@ -806,7 +810,7 @@ d | e | f
     4 | y | y + z
   }
 
-  def "data table previous column references work in closures"() {
+  def "data table previous column references work in closures"(int x, int y) {
     expect:
     x == y
     z == 2 * x
@@ -817,7 +821,7 @@ d | e | f
     2 | { x }() | x + y
   }
 
-  def "data table previous column references work across data tables"() {
+  def "data table previous column references work across data tables"(int x, int y) {
     expect:
     x == y
     z == 2 * x

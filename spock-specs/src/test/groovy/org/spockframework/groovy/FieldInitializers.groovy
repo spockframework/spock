@@ -26,7 +26,7 @@ import spock.lang.Specification
  * @author Peter Niederwieser
  */
 class FieldInitializers extends Specification {
-  def inspector = new AstInspector()
+  AstInspector inspector = new AstInspector()
 
   def setup() {
     inspector.compilePhase = CompilePhase.SEMANTIC_ANALYSIS

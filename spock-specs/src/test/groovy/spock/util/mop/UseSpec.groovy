@@ -21,10 +21,14 @@ import org.spockframework.runtime.model.parallel.ExecutionMode
 import spock.lang.Isolated
 import spock.lang.Requires
 import spock.lang.Specification
+import spock.lang.SpockTypeChecked
 
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
+import static groovy.transform.TypeCheckingMode.SKIP
+
+@SpockTypeChecked(SKIP)
 class UseOnMethods extends Specification {
   // can be applied to a fixture method
   @Use(StringExtensions)
@@ -86,12 +90,8 @@ class UseOnMethods extends Specification {
 @Isolated("Isolate from other tests to have full access to cores for the embedded tests.")
 @Requires({ Runtime.runtime.availableProcessors() >= 2 })
 class IsolatedUseSpec extends EmbeddedSpecification {
-  def setup() {
-    runner.addClassImport(Use)
-    runner.addClassImport(CountDownLatch)
-    runner.addClassImport(StringExtensions)
-    runner.addClassImport(ExecutionMode)
-    runner.addClassImport(TimeUnit)
+  @SpockTypeChecked(SKIP)
+  private withParallelExecution() {
     runner.configurationScript {
       runner {
         parallel {
@@ -100,6 +100,15 @@ class IsolatedUseSpec extends EmbeddedSpecification {
         }
       }
     }
+  }
+
+  def setup() {
+    runner.addClassImport(Use)
+    runner.addClassImport(CountDownLatch)
+    runner.addClassImport(StringExtensions)
+    runner.addClassImport(ExecutionMode)
+    runner.addClassImport(TimeUnit)
+    withParallelExecution()
   }
 
   def "executing iterations in parallel is prevented with annotated specification"() {
@@ -146,6 +155,7 @@ class IsolatedUseSpec extends EmbeddedSpecification {
   }
 }
 
+@SpockTypeChecked(SKIP)
 @Use(StringExtensions)
 class UseOnClasses extends Specification {
   // affects fixture methods

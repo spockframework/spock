@@ -322,7 +322,9 @@ a
     then:
     MultipleFailuresError e = thrown()
     e.failures*.class == [InvalidSpecCompileException] * 2
-    e.failures*.message.every { it.startsWith('where-blocks may only contain parameterizations') }
+    verifyEach(e.failures*.message) {
+      startsWith('where-blocks may only contain parameterizations')
+    }
   }
 
   def "table with just a header is not allowed"() {

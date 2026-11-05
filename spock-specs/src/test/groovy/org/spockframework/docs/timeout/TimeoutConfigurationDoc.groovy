@@ -3,13 +3,16 @@ package org.spockframework.docs.timeout
 import org.spockframework.runtime.SpockTimeoutError
 import org.spockframework.runtime.extension.builtin.ThreadDumpUtilityType
 import spock.lang.Isolated
+import spock.lang.SpockTypeChecked
 import spock.timeout.BaseTimeoutExtensionSpecification
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 @Isolated("The thread dump interferes with the parallel logging")
 class TimeoutConfigurationDoc extends BaseTimeoutExtensionSpecification {
 
-  def "thread dump capturing respects provided configuration"() {
-    given:
+  @SpockTypeChecked(SKIP)
+  private initTimeoutSettings() {
     runner.configurationScript {
       // tag::example[]
       timeout {
@@ -28,6 +31,11 @@ class TimeoutConfigurationDoc extends BaseTimeoutExtensionSpecification {
       }
       // end::example[]
     }
+  }
+
+  def "thread dump capturing respects provided configuration"() {
+    given:
+    initTimeoutSettings()
 
     when:
     runSpecWithInterrupts(3)

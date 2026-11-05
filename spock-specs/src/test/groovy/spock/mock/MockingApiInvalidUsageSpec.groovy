@@ -28,7 +28,7 @@ class MockingApiInvalidUsageSpec extends Specification {
   @Shared
   private final Map<String, Object> OPTS = [:]
 
-  def "Invalid usage check"() {
+  def "Invalid usage check"(String methodName, List<Object> args) {
     when:
     def api = new MockingApi()
     InvokerHelper.invokeMethod(api, methodName, args.toArray())

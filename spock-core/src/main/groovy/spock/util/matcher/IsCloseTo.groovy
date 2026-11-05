@@ -16,6 +16,7 @@
 
 package spock.util.matcher
 
+import groovy.transform.CompileDynamic
 import org.hamcrest.TypeSafeMatcher
 import org.hamcrest.Description
 
@@ -52,6 +53,8 @@ class IsCloseTo extends TypeSafeMatcher<Number> {
         .appendValue(value)
   }
 
+  // https://issues.apache.org/jira/browse/GROOVY-12471
+  @CompileDynamic
   private Number delta(Number item) {
     // handle special values (infinity, nan)
     if (item == value) return 0
@@ -59,4 +62,3 @@ class IsCloseTo extends TypeSafeMatcher<Number> {
     (item - value).abs()
   }
 }
-

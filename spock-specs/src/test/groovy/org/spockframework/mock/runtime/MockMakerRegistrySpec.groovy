@@ -38,7 +38,7 @@ class MockMakerRegistrySpec extends Specification {
   private static final int TEST_PRIORITY = 2
 
   @Shared
-  def defaultMockMakerRegistry = RunContext.get().getMockMakerRegistry()
+  MockMakerRegistry defaultMockMakerRegistry = RunContext.get().getMockMakerRegistry()
 
   def "No MockMaker"() {
     when:

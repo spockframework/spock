@@ -21,7 +21,10 @@ import org.spockframework.EmbeddedSpecification
 import spock.lang.*
 import org.spockframework.compiler.InvalidSpecCompileException
 
+import static groovy.transform.TypeCheckingMode.SKIP
+
 class SpecInheritance extends EmbeddedSpecification {
+  @SpockTypeChecked(SKIP)
   def "fixture methods are run in correct order"() {
     def classes = compiler.compileWithImports("""
 class Base extends Specification {
@@ -101,6 +104,7 @@ class Derived extends Base {
     method << ["setup", "cleanup", "setupSpec", "cleanupSpec"]
   }
 
+  @SpockTypeChecked(SKIP)
   def "feature methods are run in correct order"() {
     def classes = compiler.compileWithImports("""
 class Base extends Specification {
@@ -206,6 +210,7 @@ class Derived extends Base {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/175")
+  @SpockTypeChecked(SKIP)
   def "feature methods cannot be overridden"() {
     def classes = compiler.compileWithImports("""
 class Base extends Specification {
@@ -233,6 +238,7 @@ class Derived extends Base {
     result.testsSucceededCount == 2
   }
 
+  @SpockTypeChecked(SKIP)
   def "private feature methods with same name can coexist peacefully in inheritance chain"() {
     def classes = compiler.compileWithImports("""
 class Base extends Specification {
@@ -288,4 +294,3 @@ class Derived extends Base {
     noExceptionThrown()
   }
 }
-

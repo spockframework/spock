@@ -17,7 +17,9 @@
 package org.spockframework.smoke.mock
 
 import spock.lang.Issue
+import spock.lang.SpockTypeChecked
 
+import static groovy.transform.TypeCheckingMode.SKIP
 import static spock.util.matcher.HamcrestMatchers.closeTo
 
 import spock.lang.Specification
@@ -167,6 +169,7 @@ class PartialMockingInterfacesWithDefaultMethods extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1516")
+  @SpockTypeChecked(SKIP)
   def "Partial mocking for methods inherited from Object works"() {
     given:
     IQuarterlyCompoundedDeposit deposit = Spy()

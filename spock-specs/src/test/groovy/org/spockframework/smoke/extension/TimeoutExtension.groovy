@@ -16,7 +16,7 @@
 
 package org.spockframework.smoke.extension
 
-import java.util.concurrent.CountDownLatch
+import org.spockframework.runtime.extension.builtin.PreconditionContext
 
 import org.spockframework.runtime.SpockTimeoutError
 import org.spockframework.runtime.extension.builtin.ThreadDumpUtilityType
@@ -26,6 +26,7 @@ import spock.util.environment.RestoreSystemProperties
 
 import java.nio.file.Path
 
+import static groovy.transform.TypeCheckingMode.SKIP
 import static java.util.concurrent.TimeUnit.MILLISECONDS
 
 /**
@@ -113,13 +114,13 @@ class TimeoutExtension extends BaseTimeoutExtensionSpecification {
     then:
     result.failures.size() == 2
 
-    def e1 = result.failures[0].exception
-    e1 instanceof SpockTimeoutError
-    e1.timeout == 0.25
+    with(result.failures.first().exception, SpockTimeoutError) {
+      timeout == 0.25
+    }
 
-    def e2 = result.failures[1].exception
-    e2 instanceof SpockTimeoutError
-    e2.timeout == 0.1
+    with(result.failures[1].exception, SpockTimeoutError) {
+      timeout == 0.1
+    }
   }
 
   @Issue("https://github.com/spockframework/spock/issues/303")
@@ -154,13 +155,35 @@ class TimeoutExtension extends BaseTimeoutExtensionSpecification {
     assertThreadDumpsCaptured(2, 0, false)
   }
 
-  def "can capture thread dumps on interrupt attempts"() {
-    given:
+  @SpockTypeChecked(SKIP)
+  private withTimeoutConfiguration(Map args) {
     runner.configurationScript {
       timeout {
-        printThreadDumpsOnInterruptAttempts true
+        if (args.printThreadDumpsOnInterruptAttempts) {
+          printThreadDumpsOnInterruptAttempts args.printThreadDumpsOnInterruptAttempts
+        }
+        if (args.maxInterruptAttemptsWithThreadDumps) {
+          maxInterruptAttemptsWithThreadDumps args.maxInterruptAttemptsWithThreadDumps
+        }
+        if (args.interruptAttemptListeners) {
+          if (args.interruptAttemptListeners.someListeners) {
+            interruptAttemptListeners.addAll(args.interruptAttemptListeners.someListeners)
+          }
+          if (args.interruptAttemptListeners.anotherListener) {
+            interruptAttemptListeners.add(args.interruptAttemptListeners.anotherListener)
+          }
+          interruptAttemptListeners.add({ println("inline interrupt listener") })
+        }
+        if (args.threadDumpUtilityType) {
+          threadDumpUtilityType args.threadDumpUtilityType
+        }
       }
     }
+  }
+
+  def "can capture thread dumps on interrupt attempts"() {
+    given:
+    withTimeoutConfiguration(printThreadDumpsOnInterruptAttempts: true)
 
     when:
     runSpecWithInterrupts(3)
@@ -172,12 +195,9 @@ class TimeoutExtension extends BaseTimeoutExtensionSpecification {
 
   def "can set the maximum number of interrupt attempts with thread dump captured"() {
     given:
-    runner.configurationScript {
-      timeout {
-        printThreadDumpsOnInterruptAttempts true
-        maxInterruptAttemptsWithThreadDumps 1
-      }
-    }
+    withTimeoutConfiguration(
+      printThreadDumpsOnInterruptAttempts: true,
+      maxInterruptAttemptsWithThreadDumps: 1)
 
     when:
     runSpecWithInterrupts(3)
@@ -189,12 +209,9 @@ class TimeoutExtension extends BaseTimeoutExtensionSpecification {
 
   def "can capture thread dumps using jstack"() {
     given:
-    runner.configurationScript {
-      timeout {
-        printThreadDumpsOnInterruptAttempts true
-        threadDumpUtilityType ThreadDumpUtilityType.JSTACK
-      }
-    }
+    withTimeoutConfiguration(
+      printThreadDumpsOnInterruptAttempts: true,
+      threadDumpUtilityType: ThreadDumpUtilityType.JSTACK)
 
     when:
     runSpecWithInterrupts(3)
@@ -208,15 +225,11 @@ class TimeoutExtension extends BaseTimeoutExtensionSpecification {
     given:
     List<Runnable> someListeners = [Mock(Runnable), Mock(Runnable)]
     Runnable anotherListener = Mock()
-    runner.configurationScript {
-      timeout {
-        printThreadDumpsOnInterruptAttempts true
-        maxInterruptAttemptsWithThreadDumps 1
-        interruptAttemptListeners.addAll(someListeners)
-        interruptAttemptListeners.add(anotherListener)
-        interruptAttemptListeners.add({ println("inline interrupt listener") })
-      }
-    }
+    withTimeoutConfiguration(
+      printThreadDumpsOnInterruptAttempts: true,
+      maxInterruptAttemptsWithThreadDumps: 1,
+      interruptAttemptListeners: [someListeners: someListeners, anotherListener: anotherListener]
+    )
 
     when:
     runSpecWithInterrupts(3)
@@ -235,11 +248,7 @@ class TimeoutExtension extends BaseTimeoutExtensionSpecification {
 
   def "excludes dump-capturing thread from thread dumps"() {
     given:
-    runner.configurationScript {
-      timeout {
-        printThreadDumpsOnInterruptAttempts true
-      }
-    }
+    withTimeoutConfiguration(printThreadDumpsOnInterruptAttempts: true)
 
     when:
     runSpecWithInterrupts(2)
@@ -256,11 +265,7 @@ class TimeoutExtension extends BaseTimeoutExtensionSpecification {
     System.setProperty('java.home', tempDir.toString())
 
     and:
-    runner.configurationScript {
-      timeout {
-        printThreadDumpsOnInterruptAttempts true
-      }
-    }
+    withTimeoutConfiguration(printThreadDumpsOnInterruptAttempts: true)
 
     when:
     runSpecWithInterrupts(2)
@@ -279,11 +284,7 @@ class TimeoutExtension extends BaseTimeoutExtensionSpecification {
     System.clearProperty('java.home')
 
     and:
-    runner.configurationScript {
-      timeout {
-        printThreadDumpsOnInterruptAttempts true
-      }
-    }
+    withTimeoutConfiguration(printThreadDumpsOnInterruptAttempts: true)
 
     when:
     runSpecWithInterrupts(2)
@@ -298,7 +299,7 @@ class TimeoutExtension extends BaseTimeoutExtensionSpecification {
 
   @Timeout(1)
   @IgnoreIf(
-      value = { jvm.java21Compatible },
+      value = { PreconditionContext pc -> pc.jvm.java21Compatible },
       reason = "The TimeoutExtension uses virtual threads if available, which can't be enumerated"
   )
   def "watcher thread has descriptive name"() {
@@ -307,6 +308,6 @@ class TimeoutExtension extends BaseTimeoutExtensionSpecification {
     group.enumerate(threads)
 
     expect:
-    threads.find { it.name == "[spock.lang.Timeout] Watcher for method 'watcher thread has descriptive name'" }
+    threads.find { Thread it -> it.name == "[spock.lang.Timeout] Watcher for method 'watcher thread has descriptive name'" }
   }
 }

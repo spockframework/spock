@@ -148,8 +148,8 @@ class SubSpec extends SuperSpec {
   }
 
   static class LifecycleRecorderAndContextTesterExtension implements IAnnotationDrivenExtension<LifecycleTest> {
-    static lifecycleOutline = ''
-    def indent = ''
+    static String lifecycleOutline = ''
+    String indent = ''
 
     @Override
     void visitSpecAnnotation(LifecycleTest annotation, SpecInfo specInfo) {

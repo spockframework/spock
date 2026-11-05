@@ -14,12 +14,15 @@
 
 package org.spockframework.junit4.junit
 
-import spock.lang.Unroll
-
 import org.intellij.lang.annotations.Language
+import spock.lang.SpockTypeChecked
+import spock.lang.Unroll
+import spock.util.EmbeddedSpecRunner.SummarizedEngineExecutionResults
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 class JUnitFixtureMethods extends JUnitBaseSpec {
-  static invocations = []
+  static List invocations = []
   static RECORD_INVOCATION_METHOD = "static record(methodName) { JUnitFixtureMethods.invocations << methodName }"
 
   def setup() {
@@ -52,6 +55,7 @@ class JUnitFixtureMethods extends JUnitBaseSpec {
     ]
   }
 
+  @SpockTypeChecked(SKIP)
   def "multiple of #fixtureType"() {
     when:
     runSpecBody """
@@ -69,6 +73,7 @@ class JUnitFixtureMethods extends JUnitBaseSpec {
     fixtureType << ["beforeClass", "before", "after", "afterClass"]
   }
 
+  @SpockTypeChecked(SKIP)
   def "inheritance for #fixtureType"() {
     when:
     run """
@@ -96,6 +101,7 @@ class JUnitFixtureMethods extends JUnitBaseSpec {
     "afterClass"  | ["child", "parent"]
   }
 
+  @SpockTypeChecked(SKIP)
   def "inheritance with overriding for #fixtureType"() {
     when:
     run """
@@ -138,7 +144,7 @@ class JUnitFixtureMethods extends JUnitBaseSpec {
   }
 
   @Unroll("exceptions thrown by [#declaration] methods with failing feature [#failFeature]")
-  def "exceptions thrown by fixture methods are handled correctly"() {
+  def "exceptions thrown by fixture methods are handled correctly"(int exceptionPos) {
     runner.throwFailure = false
 
     when:
@@ -189,7 +195,7 @@ class JUnitFixtureMethods extends JUnitBaseSpec {
     runner.addPackageImport(org.junit.Before.package)
   }
 
-  protected runSpecBody(String specBody) {
+  protected SummarizedEngineExecutionResults runSpecBody(String specBody) {
     addImports()
     runner.runSpecBody """
       $RECORD_INVOCATION_METHOD

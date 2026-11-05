@@ -18,8 +18,11 @@ package org.spockframework.smoke.mock
 import spock.lang.*
 import org.spockframework.mock.TooFewInvocationsError
 
+import static groovy.transform.TypeCheckingMode.SKIP
+
 @Issue("https://github.com/spockframework/spock/issues/177")
 class MockingMethodsWithVarArgParameters extends Specification {
+  @SpockTypeChecked(SKIP)
   def "interactions of methods callable in vararg-style can be written in vararg-style"() {
     def mock = Mock(clazz)
 
@@ -33,6 +36,7 @@ class MockingMethodsWithVarArgParameters extends Specification {
     clazz << [GroovyVarArgParameter, GroovyArrayParameter]
   }
 
+  @SpockTypeChecked(SKIP)
   def "interactions of methods callable in vararg-style can be written in array-style"() {
     def mock = Mock(clazz)
 
@@ -46,6 +50,7 @@ class MockingMethodsWithVarArgParameters extends Specification {
     clazz << [GroovyVarArgParameter, GroovyArrayParameter]
   }
 
+  @SpockTypeChecked(SKIP)
   def "interactions of methods callable in vararg-style can be written in list-style"() {
     def mock = Mock(clazz)
 
@@ -186,6 +191,7 @@ class MockingMethodsWithVarArgParameters extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/416")
+  @SpockTypeChecked(SKIP)
   def "vararg handling also works when element type is a primitive type"() {
     def mock = Mock(clazz)
 
@@ -227,5 +233,3 @@ class MockingMethodsWithVarArgParameters extends Specification {
     def foo(int i, strings)
   }
 }
-
-

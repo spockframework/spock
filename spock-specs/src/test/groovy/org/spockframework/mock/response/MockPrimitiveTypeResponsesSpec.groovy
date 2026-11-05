@@ -17,6 +17,9 @@ package org.spockframework.mock.response
 
 import spock.lang.Issue
 import spock.lang.Specification
+import spock.lang.SpockTypeChecked
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 class MockPrimitiveTypeResponsesSpec extends Specification {
   private static final String SUCCESS = "success"
@@ -34,6 +37,7 @@ class MockPrimitiveTypeResponsesSpec extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1974")
+  @SpockTypeChecked(SKIP)
   def "Mock Response TypeArgumentConstraint with different primitive types Issue #1974"() {
     given:
     ObjClass client = Mock()

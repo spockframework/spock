@@ -23,7 +23,7 @@ import spock.lang.Specification
  * @author Peter Niederwieser
  */
 class PackageNames extends Specification {
-  def inspector = new AstInspector()
+  AstInspector inspector = new AstInspector()
 
   def "package names and imports end in '.'"() {
 inspector.load("""

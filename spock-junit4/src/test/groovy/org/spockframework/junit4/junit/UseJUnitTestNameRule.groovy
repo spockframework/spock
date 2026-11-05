@@ -41,7 +41,7 @@ class UseJUnitTestNameRule extends Specification {
     i << (1..3)
   }
 
-  def "data-driven, unrolled w/o name pattern"() {
+  def "data-driven, unrolled w/o name pattern"(int i) {
     expect:
     name.methodName == "data-driven, unrolled w/o name pattern [i: $i, #${i-1}]"
 

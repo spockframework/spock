@@ -19,6 +19,7 @@ package org.spockframework.smoke.mock
 import org.spockframework.mock.TooFewInvocationsError
 import spock.lang.FailsWith
 import spock.lang.Specification
+import spock.lang.SpockCompileDynamic
 
 class MethodMatching extends Specification {
   List list = Mock()

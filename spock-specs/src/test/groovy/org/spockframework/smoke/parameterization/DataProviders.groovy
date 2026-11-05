@@ -68,12 +68,12 @@ where: x << []
     where: x << ([3, 2, 1] as int[])
   }
 
-  def "map"() {
+  def "map"(Map.Entry<String, String> x) {
     expect: x.value == x.key.toUpperCase()
     where: x << ["vienna":"VIENNA", "tokyo":"TOKYO"]
   }
 
-  def "matcher"() {
+  def "matcher"(String x) {
     expect: x.startsWith "a"
     where: x << ("a1a2a3" =~ /a./)
   }
@@ -121,7 +121,7 @@ where: x << []
 
   @Issue("https://github.com/spockframework/spock/issues/1287")
   @Rollup
-  def "data provider with asserting closure works properly"() {
+  def "data provider with asserting closure works properly"(Closure<Void> condition) {
     when:
     condition()
 
@@ -150,7 +150,7 @@ where: x << []
 
   @Issue("https://github.com/spockframework/spock/issues/1287")
   @Rollup
-  def "data variable with asserting closure works properly"() {
+  def "data variable with asserting closure works properly"(Closure<Void> condition) {
     when:
     condition()
 
@@ -198,7 +198,7 @@ y << []
     thrown(SpockExecutionException)
   }
 
-  def "different kinds of data providers used together"() {
+  def "different kinds of data providers used together"(String a, String b, String c, String d, String e) {
     expect: a + b + c + d + e == "abcde"
     where:
       a << "a"
@@ -255,7 +255,7 @@ where: a << b
   }
 
   @Shared
-  def sizeCalls = 0
+  int sizeCalls = 0
 
   def "call size only once"() {
     expect:
@@ -541,7 +541,7 @@ where: a << b
   }
 
   static class MyIterator implements Iterator {
-    def elems = [1, 2, 3]
+    List<Integer> elems = [1, 2, 3]
 
     boolean hasNext() {
       elems.size() > 0

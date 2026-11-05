@@ -17,7 +17,7 @@ package org.spockframework.util
 import spock.lang.*
 
 class CollectionUtilSpec extends Specification {
-  def "copy an array"() {
+  def "copy an array"(int from, int to) {
     def array = [1, 2, 3] as Object[]
 
     expect:

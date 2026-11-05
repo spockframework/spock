@@ -29,6 +29,8 @@ import org.spockframework.util.VersionChecker;
 
 import java.util.List;
 
+import static org.spockframework.compiler.UnhygienicAstDetector.UNHYGIENIC_AST_DETECTOR_PROPERTY_NAME;
+
 /**
  * AST transformation for rewriting Spock specifications. Runs after phase
  * SEMANTIC_ANALYSIS, which means that the AST is semantically accurate
@@ -87,6 +89,10 @@ public class SpockTransform implements ASTTransformation {
         // if there were no errors so far, let the variable scope visitor fix up variable scopes
         if (!sourceUnit.getErrorCollector().hasErrors()) {
           new VariableScopeVisitor(sourceUnit).visitClass(clazz);
+        }
+        // if there were no errors so far, detect unhygienic AST
+        if (!sourceUnit.getErrorCollector().hasErrors() && "true".equals(System.getProperty(UNHYGIENIC_AST_DETECTOR_PROPERTY_NAME))) {
+          new UnhygienicAstDetector(sourceUnit).visitClass(clazz);
         }
       } catch (Exception e) {
         errorReporter.error(

@@ -336,11 +336,11 @@ public class InteractionRewriter {
   }
 
   private void useNamedArgs(boolean isMixed) {
-    call(resources.getAstNodeCache().InteractionBuilder_SetArgListKind_boolean_boolean, ConstantExpression.PRIM_FALSE, primitiveConstExpression(isMixed));
+    call(resources.getAstNodeCache().InteractionBuilder_SetArgListKind_boolean_boolean, primitiveConstExpression(false), primitiveConstExpression(isMixed));
   }
 
   private void usePositionalArgs(boolean isMixed) {
-    call(resources.getAstNodeCache().InteractionBuilder_SetArgListKind_boolean_boolean, ConstantExpression.PRIM_TRUE, primitiveConstExpression(isMixed));
+    call(resources.getAstNodeCache().InteractionBuilder_SetArgListKind_boolean_boolean, primitiveConstExpression(true), primitiveConstExpression(isMixed));
   }
 
   private void addName(Expression name) {

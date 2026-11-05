@@ -22,7 +22,7 @@ import org.spockframework.mock.WrongInvocationOrderError
 
 class ErrorReporting extends Specification {
   Collaborator collaborator = Mock()
-  def swallower = new Swallower(collaborator: collaborator)
+  Swallower swallower = new Swallower(collaborator: collaborator)
 
   @FailsWith(TooFewInvocationsError)
   def "error 'too few invocations' is reported even if object under test swallows exception"() {
@@ -71,5 +71,3 @@ class ErrorReporting extends Specification {
     def work()
   }
 }
-
-

@@ -56,7 +56,7 @@ public final class FancyMockMaker implements IMockMaker {
   }
 
   @Override
-  public Object makeMock(IMockCreationSettings settings) {
+  public <T> T makeMock(IMockCreationSettings settings) {
     FancyMockMakerSettings fancySettings = settings.getMockMakerSettings();
     return makeMockInternal(fancySettings);
   }
@@ -72,7 +72,7 @@ public final class FancyMockMaker implements IMockMaker {
     return IMockabilityResult.MOCKABLE;
   }
 
-  Object makeMockInternal(FancyMockMakerSettings settings) {
+  <T> T makeMockInternal(FancyMockMakerSettings settings) {
     //Implementation omitted ...
     return null;
   }

@@ -1,8 +1,12 @@
 import org.spockframework.mock.CannotCreateMockException
+import org.spockframework.runtime.extension.builtin.PreconditionContext
 import spock.lang.IgnoreIf
 import spock.lang.Requires
 import spock.lang.Specification
+import spock.lang.SpockTypeChecked
 import spock.mock.MockMakers
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 class MockingIntegrationSpec extends Specification {
 
@@ -21,7 +25,7 @@ class MockingIntegrationSpec extends Specification {
 
   @IgnoreIf({ TEST_TYPE == "plain" })
   @IgnoreIf(
-    value = { jvm.java21Compatible && TEST_TYPE.contains("cglib") },
+    value = { PreconditionContext pc -> pc.jvm.java21Compatible && TEST_TYPE.contains("cglib") },
     reason = "Cglib doesn't support running on Java 21+"
   )
   def "can mock class when cglib or byte-buddy are present"() {
@@ -37,7 +41,7 @@ class MockingIntegrationSpec extends Specification {
 
   @Requires({ TEST_TYPE == "plain" })
   @IgnoreIf(
-    value = { jvm.java21Compatible && TEST_TYPE.contains("cglib") },
+    value = { PreconditionContext pc -> pc.jvm.java21Compatible && TEST_TYPE.contains("cglib") },
     reason = "Cglib doesn't support running on Java 21+"
   )
   def "cannot mock class without cglib and byte-buddy"() {
@@ -50,7 +54,7 @@ class MockingIntegrationSpec extends Specification {
 
   @IgnoreIf({ TEST_TYPE == "plain" })
   @IgnoreIf(
-    value = { jvm.java21Compatible && TEST_TYPE.contains("cglib") },
+    value = { PreconditionContext pc -> pc.jvm.java21Compatible && TEST_TYPE.contains("cglib") },
     reason = "Cglib doesn't support running on Java 21+"
   )
   def "can spy on class when cglib or byte-buddy are present"() {
@@ -94,6 +98,7 @@ class MockingIntegrationSpec extends Specification {
     ex.message == "Cannot create mock for interface java.lang.Runnable. cglib: The cglib-nodep library is missing on the class path."
   }
 
+  @SpockTypeChecked(SKIP)
   @Requires({ TEST_TYPE == "plain" })
   def "cannot Mock explicitly with mockito, if it is not on the classpath"() {
     when:
@@ -104,6 +109,7 @@ class MockingIntegrationSpec extends Specification {
     ex.message == "Cannot create mock for interface java.lang.Runnable. mockito: The mockito-core library >= 4.11 is missing on the class path."
   }
 
+  @SpockTypeChecked(SKIP)
   @Requires({ TEST_TYPE == "plain" })
   def "cannot Mock explicitly with mockito with settings, if it is not on the classpath"() {
     when:

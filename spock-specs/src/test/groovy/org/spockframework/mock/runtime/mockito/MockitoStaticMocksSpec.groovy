@@ -22,16 +22,17 @@ import org.mockito.exceptions.base.MockitoException
 import org.spockframework.mock.CannotCreateMockException
 import org.spockframework.mock.MockUtil
 import org.spockframework.runtime.InvalidSpecException
-import org.spockframework.runtime.SpecInternals
-import org.spockframework.runtime.model.SpecInfo
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.SpockTypeChecked
 import spock.mock.IMockMakerSettings
 import spock.mock.MockMakers
 
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 @SuppressWarnings(["GroovyAssignabilityCheck", "UnnecessaryQualifiedReference"])
 class MockitoStaticMocksSpec extends Specification {
@@ -40,7 +41,7 @@ class MockitoStaticMocksSpec extends Specification {
   private static final String MOCK_VALUE2 = "MockValue2"
 
   @Shared
-  def mockUtil = new MockUtil()
+  MockUtil mockUtil = new MockUtil()
 
   def cleanup() {
     //Ensure that all static mocks where cleaned up
@@ -507,6 +508,7 @@ class MockitoStaticMocksSpec extends Specification {
 The syntax SpyStatic(StaticClass){} is not supported, please use SpyStatic(StaticClass) without a Closure instead.""")
   }
 
+  @SpockTypeChecked(SKIP)
   def "SpyStatic with closure returning something shall produce nice error message"() {
     when:
     SpyStatic(StaticClass) {

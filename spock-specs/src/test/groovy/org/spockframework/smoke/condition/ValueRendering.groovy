@@ -16,7 +16,9 @@
 
 package org.spockframework.smoke.condition
 
+import groovy.transform.CompileDynamic
 import spock.lang.Issue
+import spock.lang.SpockCompileDynamic
 
 import static java.lang.Thread.State.NEW
 
@@ -189,6 +191,7 @@ ${x.objectToString().replace '$ThrowingToString', '.ThrowingToString'} (renderer
     }
   }
 
+  @SpockCompileDynamic
   def "enum literal"() {
     expect:
     isRendered '''
@@ -212,6 +215,7 @@ NEW == null
     }
   }
 
+  @SpockCompileDynamic
   def "enum literal with toString"() {
     expect:
     isRendered '''
@@ -263,6 +267,7 @@ ${x.dump()}
     }
   }
 
+  @CompileDynamic
   static class NullToString {
     String objectToString() {
       super.toString()
@@ -271,6 +276,7 @@ ${x.dump()}
     String toString() { null }
   }
 
+  @CompileDynamic
   static class EmptyToString {
     String objectToString() {
       super.toString()
@@ -279,6 +285,7 @@ ${x.dump()}
     String toString() { "" }
   }
 
+  @CompileDynamic
   static class ThrowingToString {
     String objectToString() {
       super.toString()
@@ -300,4 +307,3 @@ ${x.dump()}
     String toString() { "I'm a value" }
   }
 }
-

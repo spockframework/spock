@@ -23,10 +23,10 @@ import static org.spockframework.runtime.model.parallel.ExecutionMode.SAME_THREA
 
 @Execution(SAME_THREAD)
 class AutoCleanupExtension extends EmbeddedSpecification {
-  static closable
-  static disposable
-  static boom1
-  static boom2
+  static MyClosable closable
+  static MyDisposable disposable
+  static Boom boom1
+  static Boom boom2
 
   def setup() {
     runner.addClassImport(AutoCleanupExtension)
@@ -219,6 +219,3 @@ def feature() { expect: true }
 
   static class BoomException extends Exception {}
 }
-
-
-

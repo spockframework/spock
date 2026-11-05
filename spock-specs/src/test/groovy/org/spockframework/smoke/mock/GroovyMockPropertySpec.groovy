@@ -20,6 +20,7 @@ import org.spockframework.runtime.model.parallel.Resources
 import spock.lang.Issue
 import spock.lang.ResourceLock
 import spock.lang.Specification
+import spock.lang.SpockCompileDynamic
 import spock.lang.Stepwise
 
 //We need to execute it sequentially, because we change global metaClass state
@@ -51,6 +52,7 @@ class GroovyMockPropertySpec extends Specification {
   }
 
   @Issue('https://github.com/spockframework/spock/issues/2196')
+  @SpockCompileDynamic
   def "Spy on property getter"() {
     given:
     def c = GroovySpy(ClassWithProperty, global: true)
@@ -64,6 +66,7 @@ class GroovyMockPropertySpec extends Specification {
   }
 
   @Issue('https://github.com/spockframework/spock/issues/2196')
+  @SpockCompileDynamic
   def "Spy on property getter method"() {
     given:
     def c = GroovySpy(ClassWithProperty, global: true)
@@ -77,6 +80,7 @@ class GroovyMockPropertySpec extends Specification {
   }
 
   @Issue('https://github.com/spockframework/spock/issues/2196')
+  @SpockCompileDynamic
   def "Spy on property setter"() {
     given:
     def c = GroovySpy(ClassWithProperty, global: true)
@@ -89,6 +93,7 @@ class GroovyMockPropertySpec extends Specification {
   }
 
   @Issue('https://github.com/spockframework/spock/issues/2196')
+  @SpockCompileDynamic
   def "Spy on property setter method"() {
     given:
     def c = GroovySpy(ClassWithProperty, global: true)
@@ -104,5 +109,3 @@ class GroovyMockPropertySpec extends Specification {
     String prop1
   }
 }
-
-

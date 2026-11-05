@@ -29,7 +29,7 @@ class SqlDataSource extends Specification {
     sql.execute("insert into data values (1, 3, 7, 7), (2, 5, 5, 4), (3, 9, 9, 9)")
   }
 
-  def "simple parameterization"() {
+  def "simple parameterization"(int a, int b) {
     expect:
     Math.max(a, b) == c
 
@@ -40,7 +40,7 @@ class SqlDataSource extends Specification {
     c = row["c"]
   }
 
-  def "multi-parameterization"() {
+  def "multi-parameterization"(int a, int b) {
     expect:
     Math.max(a, b) == c
 
@@ -48,7 +48,7 @@ class SqlDataSource extends Specification {
     [a, b, c] << sql.rows("select a, b, c from data")
   }
 
-  def "multi-parameterization with wildcard"() {
+  def "multi-parameterization with wildcard"(int a, int b) {
     expect:
     Math.max(a, b) == c
 

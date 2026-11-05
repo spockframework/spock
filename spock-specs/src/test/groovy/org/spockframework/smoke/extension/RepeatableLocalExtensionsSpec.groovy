@@ -14,6 +14,7 @@
 
 package org.spockframework.smoke.extension
 
+import groovy.transform.TypeChecked
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.extension.ExtensionAnnotation
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension
@@ -21,6 +22,7 @@ import org.spockframework.runtime.model.FeatureInfo
 import org.spockframework.runtime.model.FieldInfo
 import org.spockframework.runtime.model.MethodInfo
 import org.spockframework.runtime.model.SpecInfo
+import spock.lang.SpockTypeChecked
 import spock.util.EmbeddedSpecRunner
 import spock.util.mop.ConfineMetaClassChanges
 
@@ -28,6 +30,9 @@ import java.lang.annotation.Repeatable
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 
+import static groovy.transform.TypeCheckingMode.SKIP
+
+@SpockTypeChecked(SKIP)
 @ConfineMetaClassChanges(EmbeddedSpecRunner)
 class RepeatableLocalExtensionsSpec extends EmbeddedSpecification {
   def setup() {
@@ -180,6 +185,7 @@ def foo() {
     '@Foo      @FooContainer([@Foo, @Foo])' || 3
   }
 
+  @TypeChecked(SKIP)
   static class FooExtension implements IAnnotationDrivenExtension<Foo> {
     @Override
     void visitSpecAnnotation(Foo annotation, SpecInfo spec) {

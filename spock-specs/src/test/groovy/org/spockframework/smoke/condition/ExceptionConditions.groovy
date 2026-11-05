@@ -25,6 +25,8 @@ import org.spockframework.mock.InteractionNotSatisfiedError
 
 import spock.lang.*
 
+import static groovy.transform.TypeCheckingMode.SKIP
+
 /**
  * @author Peter Niederwieser
  */
@@ -54,7 +56,7 @@ class ExceptionConditions extends EmbeddedSpecification {
   def "when-block with var defs"() {
     when: "a when-block defines some vars and throws an exception"
     def x = null
-    def ch = "".charAt(0)
+    Object ch = "".charAt(0) as Object
     then: "the vars can be accessed from the then-block (provided the exception is caught)"
     ch == null
     thrown(IndexOutOfBoundsException)
@@ -214,6 +216,7 @@ Exception e = thrown(IOException)
   }
 
   @Issue("https://github.com/spockframework/spock/issues/260")
+  @SpockTypeChecked(SKIP)
   @FailsWith(InvalidSpecException)
   def "(Java-style) exception condition must specify a type that is-a java.lang.Throwable"() {
     when:
@@ -333,7 +336,7 @@ Exception e = thrown(IOException)
     thrown(Exception)
   }
 
-  def foobar() {
+  Tuple2 foobar() {
     throw new IllegalStateException("foo")
   }
 

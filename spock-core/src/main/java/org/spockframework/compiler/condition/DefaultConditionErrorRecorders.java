@@ -58,7 +58,7 @@ public class DefaultConditionErrorRecorders implements IConditionErrorRecorders 
           Token.newSymbol(Types.ASSIGN, -1, -1),
           new ConstructorCallExpression(
             nodeCache.ErrorCollector,
-            ArgumentListExpression.EMPTY_ARGUMENTS))));
+            new ArgumentListExpression()))));
 
     stats.add(
       new TryCatchStatement(
@@ -67,7 +67,7 @@ public class DefaultConditionErrorRecorders implements IConditionErrorRecorders 
           createDirectMethodCall(
             new VariableExpression(SpockNames.ERROR_COLLECTOR + variableNameSuffix),
             nodeCache.ErrorCollector_Validate,
-            ArgumentListExpression.EMPTY_ARGUMENTS
+            new ArgumentListExpression()
           ))));
   }
 
@@ -94,7 +94,7 @@ public class DefaultConditionErrorRecorders implements IConditionErrorRecorders 
           Token.newSymbol(Types.ASSIGN, -1, -1),
           new ConstructorCallExpression(
             nodeCache.ValueRecorder,
-            ArgumentListExpression.EMPTY_ARGUMENTS))));
+            new ArgumentListExpression()))));
   }
 
 }

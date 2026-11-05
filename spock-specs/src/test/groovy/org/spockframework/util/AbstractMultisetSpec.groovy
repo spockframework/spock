@@ -19,7 +19,7 @@ package org.spockframework.util
 import spock.lang.Specification
 
 abstract class AbstractMultisetSpec extends Specification {
-  def multiset = createMultiset([])
+  IMultiset<String> multiset = createMultiset([] as List<String>)
 
   abstract <T> IMultiset<T> createMultiset(List<T> elements)
 
@@ -69,8 +69,8 @@ abstract class AbstractMultisetSpec extends Specification {
 
     expect:
     entrySet.size() == 2
-    entrySet.find { it.key == "foo" && it.value == 2 }
-    entrySet.find { it.key == "bar" && it.value == 1 }
+    entrySet.find { Map.Entry<String, Integer> it -> it.key == "foo" && it.value == 2 }
+    entrySet.find { Map.Entry<String, Integer> it -> it.key == "bar" && it.value == 1 }
   }
 
   def "add elements"() {

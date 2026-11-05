@@ -202,8 +202,8 @@ public class SpecialMethodCall implements ISpecialMethodCall {
       inferredType = AstUtil.getVariableType(binaryExpr);
     } else {
       binaryExpr = null; // not part of this special method call
-      inferredName = ConstantExpression.NULL;
-      inferredType = ConstantExpression.NULL;
+      inferredName = new ConstantExpression(null);
+      inferredType = new ConstantExpression(null);
     }
 
     ClosureExpression closureExpr = null;

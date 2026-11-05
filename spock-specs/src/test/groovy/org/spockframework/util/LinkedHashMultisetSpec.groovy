@@ -27,7 +27,7 @@ class LinkedHashMultisetSpec extends AbstractMultisetSpec {
     expect:
     toList(multiset.iterator()) == ["a", "b", "c", "d", "e"]
     multiset.toArray() == ["a", "b", "c", "d", "e"] as Object[]
-    toList(multiset.entrySet().collect { it.key }.iterator()) == ["a", "b", "c", "d", "e"]
+    toList(multiset.entrySet().collect { Map.Entry<String, ?> it -> it.key }.iterator()) == ["a", "b", "c", "d", "e"]
   }
 
   private toList(Iterator iterator) {

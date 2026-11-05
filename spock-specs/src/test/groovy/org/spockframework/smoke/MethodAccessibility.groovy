@@ -25,7 +25,7 @@ import spock.lang.Specification
  * @author Peter Niederwieser
  */
 class MethodAccessibility extends Specification {
-  @Shared numCalls = 0
+  @Shared int numCalls = 0
 
   private setup() {
     numCalls++

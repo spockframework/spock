@@ -21,9 +21,12 @@ import org.spockframework.runtime.SpockComparisonFailure
 import spock.lang.Issue
 import spock.lang.Requires
 import spock.lang.ResourceLock
+import spock.lang.SpockCompileDynamic
+import spock.lang.SpockTypeChecked
 
 import java.sql.Date
 
+import static groovy.transform.TypeCheckingMode.SKIP
 import static java.lang.Math.min
 import static java.lang.Integer.MAX_VALUE
 import static java.lang.Thread.State.BLOCKED
@@ -94,6 +97,7 @@ a.get(b) == null
     }
   }
 
+  @SpockTypeChecked(SKIP)
   void "MethodCallExpression with GString method"() {
     expect:
     isRendered """
@@ -106,6 +110,7 @@ a.get(b) == null
     }
   }
 
+  @SpockCompileDynamic
   def "MethodCallExpression invoking static method"() {
     expect:
     isRendered """
@@ -248,6 +253,8 @@ nsi                       false
     """, e.condition
   }
 
+  // https://issues.apache.org/jira/browse/GROOVY-12456
+  @SpockCompileDynamic
   def "ConstructorCallExpression with named arguments"() {
     expect:
     isRendered """
@@ -261,6 +268,8 @@ p                 fred       25        false
     }
   }
 
+  // https://issues.apache.org/jira/browse/GROOVY-12456
+  @SpockCompileDynamic
   def "ConstructorCallExpression with named arguments passed as map"() {
     expect:
     isRendered """
@@ -485,6 +494,7 @@ null
     }
   }
 
+  @SpockCompileDynamic
   def "PropertyExpression"() {
     expect:
     isRendered """

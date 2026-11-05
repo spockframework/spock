@@ -1,18 +1,21 @@
 package org.spockframework.docs.datadriven
 
+import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
 import groovy.transform.ToString
+import org.junit.platform.engine.TestDescriptor
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.GroovyRuntimeUtil
 import spock.lang.Requires
 import spock.lang.Shared
+import spock.lang.SpockCompileDynamic
 
 import static org.junit.platform.engine.TestDescriptor.Type.TEST
 
 class DataSpec extends EmbeddedSpecification {
 
 // tag::datasource[]
-  @Shared sql = Sql.newInstance("jdbc:h2:mem:", "org.h2.Driver")
+  @Shared Sql sql = Sql.newInstance("jdbc:h2:mem:", "org.h2.Driver")
 // end::datasource[]
 
   def setupSpec() {
@@ -35,7 +38,7 @@ class DataSpec extends EmbeddedSpecification {
     sql.execute 'drop table if exists maxdata'
   }
 
-  def "single column"() {
+  def "single column"(int a) {
     expect:
     a >= 0
 
@@ -83,7 +86,7 @@ class DataSpec extends EmbeddedSpecification {
     result.testsFailedCount == 0
   }
 
-  def "multiple tables"() {
+  def "multiple tables"(int a, int b, int c) {
     expect:
     a >= 0
     b < c
@@ -103,7 +106,7 @@ class DataSpec extends EmbeddedSpecification {
 // end::multiple-tables[]
   }
 
-  def "multiple tables joined"() {
+  def "multiple tables joined"(int a, int b, int c) {
     expect:
     a >= 0
     b < c
@@ -117,7 +120,7 @@ class DataSpec extends EmbeddedSpecification {
 // end::multiple-tables-joined[]
   }
 
-  def "multiple tables with top border"() {
+  def "multiple tables with top border"(int a, int b, int c) {
     expect:
     a >= 0
     b < c
@@ -147,7 +150,13 @@ class DataSpec extends EmbeddedSpecification {
       - `feature [a: 2, b: 4, c: 6, d: 1, e: 6, #3]`
       end::data-providers-combined-result[]
     '''
-      .stripIndent(*((GroovyRuntimeUtil.MAJOR_VERSION >= 3) ? [true] : []))
+      .with {
+        if (GroovyRuntimeUtil.MAJOR_VERSION >= 3) {
+          it.stripIndent(true)
+        } else {
+          it.stripIndent()
+        }
+      }
       .readLines()
       .findAll {it.startsWith('-') }
       .join('\n')
@@ -190,7 +199,7 @@ class DataSpec extends EmbeddedSpecification {
         .succeeded()
         .list()
         *.testDescriptor
-        .findAll { it.type == TEST }
+        .findAll { TestDescriptor it -> it.type == TEST }
         *.displayName
         .join('`\n- `')
     }`""" == expected
@@ -224,7 +233,7 @@ class DataSpec extends EmbeddedSpecification {
         .succeeded()
         .list()
         *.testDescriptor
-        .findAll { it.type == TEST }
+        .findAll { TestDescriptor it -> it.type == TEST }
         *.displayName
         .join('`\n- `')
     }`""" == expected
@@ -242,7 +251,13 @@ class DataSpec extends EmbeddedSpecification {
       - `feature [a: 6, b: 6, c: 9, #5]`
       end::single-data-providers-combined-result1[]
     '''
-      .stripIndent(*((GroovyRuntimeUtil.MAJOR_VERSION >= 3) ? [true] : []))
+      .with {
+        if (GroovyRuntimeUtil.MAJOR_VERSION >= 3) {
+          it.stripIndent(true)
+        } else {
+          it.stripIndent()
+        }
+      }
       .readLines()
       .findAll {it.startsWith('-') }
       .join('\n')
@@ -271,7 +286,7 @@ class DataSpec extends EmbeddedSpecification {
         .succeeded()
         .list()
         *.testDescriptor
-        .findAll { it.type == TEST }
+        .findAll { TestDescriptor it -> it.type == TEST }
         *.displayName
         .join('`\n- `')
     }`""" == expected
@@ -287,7 +302,13 @@ class DataSpec extends EmbeddedSpecification {
       - `feature [a: 2, b: 4, c: 6, #3]`
       end::single-data-providers-combined-result2[]
     '''
-      .stripIndent(*((GroovyRuntimeUtil.MAJOR_VERSION >= 3) ? [true] : []))
+      .with {
+        if (GroovyRuntimeUtil.MAJOR_VERSION >= 3) {
+          it.stripIndent(true)
+        } else {
+          it.stripIndent()
+        }
+      }
       .readLines()
       .findAll {it.startsWith('-') }
       .join('\n')
@@ -318,7 +339,7 @@ class DataSpec extends EmbeddedSpecification {
         .succeeded()
         .list()
         *.testDescriptor
-        .findAll { it.type == TEST }
+        .findAll { TestDescriptor it -> it.type == TEST }
         *.displayName
         .join('`\n- `')
     }`""" == expected
@@ -347,14 +368,18 @@ class DataSpec extends EmbeddedSpecification {
         .succeeded()
         .list()
         *.testDescriptor
-        .findAll { it.type == TEST }
+        .findAll { TestDescriptor it -> it.type == TEST }
         *.displayName
         .join('`\n- `')
     }`""" == expected
   }
 
 // tag::sql-data-pipe[]
-  def "maximum of two numbers"() {
+  def "maximum of two numbers"(
+    // end::sql-data-pipe[]
+    int a, int b
+    // tag::sql-data-pipe[]
+  ) {
     expect:
     Math.max(a, b) == c
 
@@ -363,7 +388,7 @@ class DataSpec extends EmbeddedSpecification {
   }
 // end::sql-data-pipe[]
 
-  def "maximum of two numbers star"() {
+  def "maximum of two numbers star"(int a, int b) {
     expect:
     Math.max(a, b) == c
 
@@ -428,7 +453,7 @@ class DataSpec extends EmbeddedSpecification {
 // end::nested-and-named-multi-variable-data-pipe[]
   }
 
-  def "maximum of two numbers data variable assignment"() {
+  def "maximum of two numbers data variable assignment"(int a, int b) {
     expect:
     Math.max(a, b) == c
 
@@ -440,7 +465,7 @@ class DataSpec extends EmbeddedSpecification {
 // end::data-variable-assignment[]
   }
 
-  def "maximum of two numbers sql data variable assignment"() {
+  def "maximum of two numbers sql data variable assignment"(GroovyRowResult row, int a, int b) {
     expect:
     Math.max(a, b) == c
 
@@ -454,7 +479,7 @@ class DataSpec extends EmbeddedSpecification {
 // end::sql-data-variable-assignment[]
   }
 
-  def "maximum of two numbers previous column access"() {
+  def "maximum of two numbers previous column access"(int a, int b) {
     expect:
     Math.max(a, b) == b
 
@@ -467,7 +492,7 @@ class DataSpec extends EmbeddedSpecification {
 // end::previous-column-access[]
   }
 
-  def "maximum of two numbers previous column access over multiple tables"() {
+  def "maximum of two numbers previous column access over multiple tables"(int a, int b, int d, int e) {
     expect:
     Math.max(a, b) == b
     Math.max(d, e) == e
@@ -491,7 +516,11 @@ class DataSpec extends EmbeddedSpecification {
   }
 
 // tag::sql-multi-assignment[]
-  def "maximum of two numbers multi-assignment"() {
+  def "maximum of two numbers multi-assignment"(
+    // end::sql-multi-assignment[]
+    int a, int b
+    // tag::sql-multi-assignment[]
+  ) {
     expect:
     Math.max(a, b) == c
 
@@ -501,7 +530,7 @@ class DataSpec extends EmbeddedSpecification {
   }
 // end::sql-multi-assignment[]
 
-  def "maximum of two numbers multi-assignment star"() {
+  def "maximum of two numbers multi-assignment star"(int a, int b) {
     expect:
     Math.max(a, b) == c
 
@@ -512,7 +541,7 @@ class DataSpec extends EmbeddedSpecification {
 // end::sql-multi-assignment-with-underscore[]
   }
 
-  def "maximum of two numbers combined assignment"() {
+  def "maximum of two numbers combined assignment"(int a, int c) {
     expect:
     Math.max(a, c) == d
 
@@ -570,7 +599,7 @@ class CoerceBazToBar {
     noExceptionThrown()
   }
 
-  def "data pipes"() {
+  def "data pipes"(int a, int b) {
     expect:
     Math.max(a, b) == c
 
@@ -604,7 +633,11 @@ class CoerceBazToBar {
 
 
 // tag::unrolled-3a[]
-  def "#lastName"() {
+  def "#lastName"(
+// end::unrolled-3a[]
+    Person person
+// tag::unrolled-3a[]
+  ) {
 // end::unrolled-3a[]
     expect:
     person

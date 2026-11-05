@@ -21,6 +21,7 @@ import spock.lang.*
 
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 
+import static groovy.transform.TypeCheckingMode.SKIP
 import static org.spockframework.runtime.model.parallel.ExecutionMode.SAME_THREAD
 
 @Execution(SAME_THREAD)
@@ -137,6 +138,7 @@ def feature() {
     assert x == 1
   }
 
+  @SpockTypeChecked(SKIP)
   @FailsWith(GroovyCastException)
   def "declared type of variable is kept"() {
     int x = "abc"
@@ -210,7 +212,7 @@ def feature() {
 
   }
 
-  def foobar() {
-    return ["foo", "bar"]
+  Tuple2<String, String> foobar() {
+    return new Tuple2("foo", "bar")
   }
 }

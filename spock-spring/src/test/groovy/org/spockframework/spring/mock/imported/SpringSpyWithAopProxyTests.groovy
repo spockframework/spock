@@ -16,6 +16,7 @@
 
 package org.spockframework.spring.mock.imported
 
+import org.spockframework.runtime.extension.builtin.PreconditionContext
 import org.spockframework.spring.*
 import org.springframework.core.SpringVersion
 import spock.lang.*
@@ -51,9 +52,9 @@ class SpringSpyWithAopProxyTests extends Specification {
 
   @PendingFeatureIf(
     reason = 'Spring before 5.0.0.RELEASE has an incompatibility with ByteBuddy',
-    value = {
+    value = { PreconditionContext pc ->
       (SpringVersion.getVersion().split(/\./, 2).first().toInteger() < 5) &&
-        !sys.'org.spockframework.mock.ignoreByteBuddy'?.toBoolean()
+        !(pc.sys.'org.spockframework.mock.ignoreByteBuddy' as String)?.toBoolean()
     })
   def 'verify use proxyTarget'() throws Exception {
     when:

@@ -117,11 +117,11 @@ class GroovySpyBasics extends MockBasics {
 }
 
 class Foo {
-  Foo(String s, def verifier) {
+  Foo(String s, Foo verifier) {
     verifier.verify(String)
   }
 
-  Foo(Pattern p, def verifier) {
+  Foo(Pattern p, Foo verifier) {
     verifier.verify(Pattern)
   }
 

@@ -17,6 +17,7 @@ package org.spockframework.smoke.mock
 import org.spockframework.mock.CannotCreateMockException
 import org.spockframework.runtime.InvalidSpecException
 import org.spockframework.runtime.SpockException
+import org.spockframework.runtime.extension.builtin.PreconditionContext
 import org.spockframework.util.SpockDocLinks
 import spock.lang.*
 import spock.mock.MockMakers
@@ -300,7 +301,7 @@ class JavaSpies extends Specification {
   }
 
   @Requires(
-    value = { jvm.java17Compatible },
+    value = { PreconditionContext pc -> pc.jvm.java17Compatible },
     reason = "Only happens on 17+, without an explicit --add-opens"
   )
   def "known issue copy fields"() {
@@ -379,7 +380,7 @@ class JavaSpies extends Specification {
       "singing"
     }
 
-    def getWorkHours() {
+    int getWorkHours() {
       2
     }
 

@@ -14,6 +14,7 @@
 
 package org.spockframework.smoke.mock
 
+import org.spockframework.runtime.extension.builtin.PreconditionContext
 import spock.lang.Requires
 import spock.lang.Specification
 
@@ -22,7 +23,7 @@ import org.spockframework.mock.FinalClass
 class DefaultValueProvider extends Specification {
 
   @Requires(
-      value = { jvm.isJava17Compatible() },
+      value = { PreconditionContext pc -> pc.jvm.isJava17Compatible() },
       reason = "Sealed interfaces are only supported in Java 17+"
   )
   def "Stub's EmptyOrDummyResponse does not support sealed interfaces by default"() {

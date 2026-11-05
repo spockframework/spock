@@ -23,7 +23,8 @@ class MixedSpecSkippingExtensions extends EmbeddedSpecification {
 
   @Unroll("#specAnnotationName skips spec, #featureAnnotationName on feature not evaluated")
   @Issue("https://github.com/spockframework/spock/issues/1458")
-  def "feature skipping condition is not evaluated in skipped spec"() {
+  @SpockCompileDynamic
+  def "feature skipping condition is not evaluated in skipped spec"(String specAnnotation, String featureAnnotation) {
     when:
     def result = runner.runWithImports """
 $specAnnotation
@@ -59,7 +60,8 @@ class Foo extends Specification {
 
   @Unroll("#specAnnotationName #skipsSpec, #featureAnnotationName on feature #isEvaluated")
   @Issue("https://github.com/spockframework/spock/issues/1458")
-  def "feature skipping condition is not evaluated in skipped spec with inheritance"() {
+  @SpockCompileDynamic
+  def "feature skipping condition is not evaluated in skipped spec with inheritance"(String specAnnotation, String featureAnnotation) {
     runner.throwFailure = false
 
     when:

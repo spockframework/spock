@@ -16,7 +16,11 @@
 package org.spockframework.builder
 
 import spock.lang.Specification
+import spock.lang.SpockTypeChecked
 
+import static groovy.transform.TypeCheckingMode.SKIP
+
+@SpockTypeChecked(SKIP)
 class PojoBuilderSpec extends Specification {
   Person person = new Person()
   PojoBuilder builder = new PojoBuilder()

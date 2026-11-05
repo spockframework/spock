@@ -24,7 +24,7 @@ import static org.spockframework.runtime.condition.EditOperation.Kind.*
 
 @See(["https://en.wikipedia.org/wiki/Levenshtein_distance", "https://www.levenshtein.net/"])
 class EditDistanceSpec extends Specification {
-  @Shared chars = ('a'..'z') + ('A'..'Z') + ('0'..'9') + [' '] * 10
+  @Shared List<Character> chars = (('a'..'z') + ('A'..'Z') + ('0'..'9') + [' '] * 10) as List<Character>
 
   def "matrix for 'sitting' and 'kitten'"() {
     def matrix = new EditDistance("sitting", "kitten").matrix
@@ -112,7 +112,7 @@ class EditDistanceSpec extends Specification {
     path[6] == new EditOperation(SKIP, 4)
   }
 
-  def "compute distance"() {
+  def "compute distance"(String str) {
     def dist = new EditDistance("asdf", str)
 
     expect:
@@ -123,7 +123,7 @@ class EditDistanceSpec extends Specification {
     d   << [ 1    , 1     , 1     , 1     , 4 , 3  , 2   , 1    , 0     , 1      , 1      , 2       ]
   }
 
-  def "computed path has correct distance"() {
+  def "computed path has correct distance"(int num, String str1, String str2) {
     def dist = new EditDistance(str1, str2)
 
     expect:
@@ -135,8 +135,8 @@ class EditDistanceSpec extends Specification {
     str2 = editedString(str1)
   }
 
-  def computeDistance(List operations) {
-    operations.sum 0, { it.getKind() == EditOperation.Kind.SKIP ? 0 : it.getLength() }
+  def computeDistance(List<EditOperation> operations) {
+    operations.sum 0, { EditOperation it -> it.getKind() == EditOperation.Kind.SKIP ? 0 : it.getLength() }
   }
 
   def randomChar() {

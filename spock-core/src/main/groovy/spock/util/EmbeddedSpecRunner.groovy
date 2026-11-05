@@ -16,6 +16,7 @@
 
 package spock.util
 
+import groovy.transform.CompileStatic
 import org.junit.platform.engine.Filter
 import org.spockframework.runtime.*
 import org.spockframework.util.*
@@ -39,6 +40,7 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
  *
  * @author Peter Niederwieser
  */
+@CompileStatic
 @NotThreadSafe
 class EmbeddedSpecRunner {
   private final EmbeddedSpecCompiler compiler
@@ -122,13 +124,13 @@ class EmbeddedSpecRunner {
 
   SummarizedEngineExecutionResults runClasses(List<Class<?>> classes) {
     withNewContext {
-      doRunRequest(classes.findAll { !Modifier.isAbstract(it.modifiers) }.collect {selectClass(it)})
+      doRunRequest(classes.findAll { !Modifier.isAbstract(it.modifiers) }.collect {selectClass(it)} as List<DiscoverySelector>)
     }
   }
 
   SummarizedEngineExecutionResults runClass(Class clazz, Filter<?>... filters) {
     withNewContext {
-      doRunRequest([selectClass(clazz)], asList(filters))
+      doRunRequest([selectClass(clazz)] as List<DiscoverySelector>, asList(filters))
     }
   }
 
@@ -170,8 +172,8 @@ class EmbeddedSpecRunner {
   private EngineExecutionResults doRunRequestInner(List<DiscoverySelector> selectors, List<Filter<?>> filters = []) {
     def executionResults = EngineTestKit
       .engine("spock")
-      .selectors(*selectors)
-      .filters(*filters)
+      .selectors(selectors as DiscoverySelector[])
+      .filters(filters as Filter[])
       .execute()
     if (throwFailure) {
       def first = executionResults.allEvents().executions().failed().stream().findFirst()
@@ -191,30 +193,30 @@ class EmbeddedSpecRunner {
     }
 
     @Deprecated
-    int getFailureCount() {
+    long getFailureCount() {
       return results.testEvents().failed().count()
     }
 
     @Deprecated
-    int getRunCount() {
+    long getRunCount() {
       return results.testEvents().started().count()
     }
 
     @Deprecated
-    int getIgnoreCount() {
+    long getIgnoreCount() {
       return results.testEvents().skipped().count()
     }
 
     @Override
     long getTimeStarted() {
-      return results.allEvents().started().stream().findFirst().map{it.timestamp.toEpochMilli()}.orElseGet {0}
+      return results.allEvents().started().stream().findFirst().map{it.timestamp.toEpochMilli()}.orElseGet {0L}
     }
 
     @Override
     long getTimeFinished() {
       return results.allEvents().finished().stream()
         .reduce{first, second -> second} // fancy for .last()
-        .map{it.timestamp.toEpochMilli()}.orElseGet {0}
+        .map{it.timestamp.toEpochMilli()}.orElseGet {0L}
     }
 
     long getDynamicallyRegisteredCount() {
@@ -317,7 +319,7 @@ class EmbeddedSpecRunner {
       return results.allEvents().executions().failed()
         .map{ it.terminationInfo.executionResult.throwable.get()}
         .map {new XFailure(it)}
-        .collect(Collectors.toList())
+        .collect(Collectors.toList()) as List<Failure>
     }
   }
 

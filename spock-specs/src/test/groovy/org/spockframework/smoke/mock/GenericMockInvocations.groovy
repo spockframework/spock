@@ -27,7 +27,7 @@ class GenericMockInvocations extends Specification {
   }
 
   def "mock with parameterized type"() {
-    def holder = Mock(type: new TypeToken<Function<String, Integer>>(){}.type)
+    Function<String, Integer> holder = Mock(type: new TypeToken<Function<String, Integer>>(){}.type)
 
     when:
     holder.get("foo")

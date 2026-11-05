@@ -57,7 +57,7 @@ class ArgumentMatching extends Specification {
     when:
     list.add('foo')
     then:
-    1 * list.add({ it.length() > 1 })
+    1 * list.add({ String it -> it.length() > 1 })
   }
 
   def "match nested closure in code argument"() {
@@ -76,7 +76,7 @@ class ArgumentMatching extends Specification {
     when:
     list.add('foo')
     then:
-    1 * list.add({ assert it.length() == 1 })
+    1 * list.add({ String it -> assert it.length() == 1 })
   }
 
   def "match code argument with type"() {
@@ -85,7 +85,7 @@ class ArgumentMatching extends Specification {
     when:
     list.add('foo')
     then:
-    1 * list.add({ it.length() > 1 } as String)
+    1 * list.add({ String it -> it.length() > 1 } as String)
   }
 
   def "match negate null argument argument"() {
@@ -112,7 +112,7 @@ class ArgumentMatching extends Specification {
     when:
     list.add('foo')
     then:
-    1 * list.add(!{ it.length() < 1 })
+    1 * list.add(!{ String it -> it.length() < 1 })
   }
 
   def "match negate type argument  argument"() {
@@ -142,7 +142,7 @@ class ArgumentMatching extends Specification {
     when:
     list.add('foo')
     then:
-    1 * list.add(!({ it.length() == 1 } as String))
+    1 * list.add(!({ String it -> it.length() == 1 } as String))
   }
 
   def "match empty argument list"() {
@@ -252,7 +252,7 @@ class ArgumentMatching extends Specification {
     varargs.m('one', 'two', 'three', 'four')
 
     then:
-    1 * varargs.m('one', _ as String, !null, { it.length() > 1 })
+    1 * varargs.m('one', _ as String, !null, { String it -> it.length() > 1 })
   }
 
   def "match multi spread matcher (w/ varargs)"() {

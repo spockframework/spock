@@ -17,7 +17,10 @@
 package org.spockframework.groovy
 
 import org.codehaus.groovy.ast.ASTNode
+import org.codehaus.groovy.ast.expr.ArgumentListExpression
 import org.codehaus.groovy.ast.expr.ClassExpression
+import org.codehaus.groovy.ast.expr.MethodCall
+import org.codehaus.groovy.ast.expr.PropertyExpression
 import org.codehaus.groovy.control.CompilePhase
 import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.util.inspector.AstInspector
@@ -39,7 +42,7 @@ import static java.lang.Thread.State.*
 NEW
     """)
 
-    ASTNode node = inspector.scriptExpressions[0].objectExpression
+    ASTNode node = (inspector.scriptExpressions.first() as PropertyExpression).objectExpression
 
     expect:
     node.lineNumber == -1
@@ -55,7 +58,7 @@ import java.lang.Thread.State
 State.NEW
     """)
 
-    ASTNode node = inspector.scriptExpressions[0].objectExpression
+    ASTNode node = (inspector.scriptExpressions.first() as PropertyExpression).objectExpression
 
     expect:
     node.lineNumber == 3
@@ -73,28 +76,34 @@ println(  List  )
     """)
 
     expect:
-    ASTNode node1 = inspector.scriptExpressions[0]
-    node1 instanceof ClassExpression
-    node1.lineNumber == 2
-    node1.columnNumber == 1
-    node1.lastLineNumber == 2
-    node1.lastColumnNumber == 5
+    with(inspector.scriptExpressions[0], ClassExpression) {
+      lineNumber == 2
+      columnNumber == 1
+      lastLineNumber == 2
+      lastColumnNumber == 5
+    }
 
     and:
-    ASTNode node2 = inspector.scriptExpressions[1].objectExpression
-    node2 instanceof ClassExpression
-    node2.lineNumber == 3
-    node2.columnNumber == 1
-    node2.lastLineNumber == 3
-    node2.lastColumnNumber == 5
+    with(inspector.scriptExpressions[1], PropertyExpression) {
+      with(objectExpression, ClassExpression) {
+        lineNumber == 3
+        columnNumber == 1
+        lastLineNumber == 3
+        lastColumnNumber == 5
+      }
+    }
 
     and:
-    ASTNode node3 = inspector.scriptExpressions[2].arguments.expressions[0]
-    node3 instanceof ClassExpression
-    node3.lineNumber == 4
-    node3.columnNumber == 11
-    node3.lastLineNumber == 4
-    node3.lastColumnNumber == 17 // should be: 15
+    with(inspector.scriptExpressions[2], MethodCall) {
+      with(arguments, ArgumentListExpression) {
+        with(expressions[0], ClassExpression) {
+          lineNumber == 4
+          columnNumber == 11
+          lastLineNumber == 4
+          lastColumnNumber == 17 // should be: 15
+        }
+      }
+    }
   }
 
   @Requires({ GroovyRuntimeUtil.MAJOR_VERSION >= 3 })
@@ -106,28 +115,34 @@ println(  List  )
     """)
 
     expect:
-    ASTNode node1 = inspector.scriptExpressions[0]
-    node1 instanceof ClassExpression
-    node1.lineNumber == 2
-    node1.columnNumber == 1
-    node1.lastLineNumber == 2
-    node1.lastColumnNumber == 5
+    with(inspector.scriptExpressions[0], ClassExpression) {
+      lineNumber == 2
+      columnNumber == 1
+      lastLineNumber == 2
+      lastColumnNumber == 5
+    }
 
     and:
-    ASTNode node2 = inspector.scriptExpressions[1].objectExpression
-    node2 instanceof ClassExpression
-    node2.lineNumber == 3
-    node2.columnNumber == 1
-    node2.lastLineNumber == 3
-    node2.lastColumnNumber == 5
+    with(inspector.scriptExpressions[1], PropertyExpression) {
+      with(objectExpression, ClassExpression) {
+        lineNumber == 3
+        columnNumber == 1
+        lastLineNumber == 3
+        lastColumnNumber == 5
+      }
+    }
 
     and:
-    ASTNode node3 = inspector.scriptExpressions[2].arguments.expressions[0]
-    node3 instanceof ClassExpression
-    node3.lineNumber == 4
-    node3.columnNumber == 11
-    node3.lastLineNumber == 4
-    node3.lastColumnNumber == 15
+    with(inspector.scriptExpressions[2], MethodCall) {
+      with(arguments, ArgumentListExpression) {
+        with(expressions[0], ClassExpression) {
+          lineNumber == 4
+          columnNumber == 11
+          lastLineNumber == 4
+          lastColumnNumber == 15
+        }
+      }
+    }
   }
 
   @Requires({ GroovyRuntimeUtil.MAJOR_VERSION == 2 })  //column number changed in Groovy 3
@@ -138,20 +153,22 @@ List.class.methods
     """)
 
     expect:
-    ASTNode node1 = inspector.scriptExpressions[0]
-    node1 instanceof ClassExpression
-    node1.lineNumber == 2
-    node1.columnNumber == 1
-    node1.lastLineNumber == 2
-    node1.lastColumnNumber == 11
+    with(inspector.scriptExpressions[0], ClassExpression) {
+      lineNumber == 2
+      columnNumber == 1
+      lastLineNumber == 2
+      lastColumnNumber == 11
+    }
 
     and:
-    ASTNode node2 = inspector.scriptExpressions[1].objectExpression
-    node2 instanceof ClassExpression
-    node2.lineNumber == 3
-    node2.columnNumber == 1
-    node2.lastLineNumber == 3
-    node2.lastColumnNumber == 11
+    with(inspector.scriptExpressions[1], PropertyExpression) {
+      with(objectExpression, ClassExpression) {
+        lineNumber == 3
+        columnNumber == 1
+        lastLineNumber == 3
+        lastColumnNumber == 11
+      }
+    }
   }
 
   @Requires({ GroovyRuntimeUtil.MAJOR_VERSION >= 3 })
@@ -162,19 +179,21 @@ List.class.methods
     """)
 
     expect:
-    ASTNode node1 = inspector.scriptExpressions[0]
-    node1 instanceof ClassExpression
-    node1.lineNumber == 2
-    node1.columnNumber == 1
-    node1.lastLineNumber == 2
-    node1.lastColumnNumber == 11
+    with(inspector.scriptExpressions[0], ClassExpression) {
+      lineNumber == 2
+      columnNumber == 1
+      lastLineNumber == 2
+      lastColumnNumber == 11
+    }
 
     and:
-    ASTNode node2 = inspector.scriptExpressions[1].objectExpression
-    node2 instanceof ClassExpression
-    node2.lineNumber == 3
-    node2.columnNumber == 5
-    node2.lastLineNumber == 3
-    node2.lastColumnNumber == 11
+    with(inspector.scriptExpressions[1], PropertyExpression) {
+      with(objectExpression, ClassExpression) {
+        lineNumber == 3
+        columnNumber == 5
+        lastLineNumber == 3
+        lastColumnNumber == 11
+      }
+    }
   }
 }

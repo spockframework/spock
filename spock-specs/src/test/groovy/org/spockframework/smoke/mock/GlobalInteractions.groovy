@@ -48,13 +48,13 @@ class GlobalInteractions extends Specification {
     expect: m.get(3) == "foo"
   }
 
-  def optional() {
+  List optional() {
     def m = Mock(List)
     m.size() >> 1
     m
   }
 
-  def required() {
+  List required() {
     def m = Mock(List)
     2 * m.get(_) >> "foo"
     m

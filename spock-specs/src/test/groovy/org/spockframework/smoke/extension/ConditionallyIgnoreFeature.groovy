@@ -16,13 +16,14 @@
 
 package org.spockframework.smoke.extension
 
+import org.spockframework.runtime.extension.builtin.PreconditionContext
 import org.spockframework.runtime.model.parallel.ExecutionMode
 
 import spock.lang.*
 
 @Execution(ExecutionMode.SAME_THREAD)
 class ConditionallyIgnoreFeature extends Specification {
-  @Shared log = []
+  @Shared List<Integer> log = []
 
   @IgnoreIf({ 1 < 2 })
   def "should be ignored"() {
@@ -48,19 +49,19 @@ class ConditionallyIgnoreFeature extends Specification {
     expect: true
   }
 
-  @IgnoreIf({ javaVersion < 1.5 })
+  @IgnoreIf({ PreconditionContext pc -> pc.javaVersion < 1.5 })
   def "provides convenient access to Java version"() {
     log << 5
     expect: true
   }
 
-  @IgnoreIf({ env."PATH" != env["PATH"] })
+  @IgnoreIf({ PreconditionContext pc -> pc.env."PATH" != pc.env["PATH"] })
   def "provides convenient access to environment variables"() {
     log << 6
     expect: true
   }
 
-  @IgnoreIf({ sys."os.name" != sys["os.name"] })
+  @IgnoreIf({ PreconditionContext pc -> pc.sys."os.name" != pc.sys["os.name"] })
   def "provides convenient access to system properties"() {
     log << 7
     expect: true

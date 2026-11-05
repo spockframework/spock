@@ -23,7 +23,7 @@ import spock.lang.*
  */
 @Stepwise
 class MethodExecutionOrder extends Specification {
-  @Shared order = []
+  @Shared List order = []
 
   def cleanup() {
     getOrder() << "c"

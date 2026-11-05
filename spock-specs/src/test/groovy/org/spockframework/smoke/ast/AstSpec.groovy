@@ -29,6 +29,8 @@ import spock.lang.SpockCompileStatic
 import spock.lang.SpockTypeChecked
 import spock.util.Show
 
+import java.lang.annotation.Annotation
+
 class AstSpec extends EmbeddedSpecification {
   @Snapshot(extension = 'groovy')
   SpockSnapshotter snapshotter
@@ -139,7 +141,7 @@ class Foo {
     snapshotter.assertThat(result.source).matchesSnapshot()
   }
 
-  def "STC annotations are transplanted to generated methods with @#annotation.simpleName"() {
+  def "STC annotations are transplanted to generated methods with @#annotation.simpleName"(Class<? extends Annotation> annotation) {
     when:
     def result = compiler.transpileWithImports("""
 class ASpec extends Specification {

@@ -20,7 +20,7 @@ import org.spockframework.util.ReflectionUtil
 import spock.lang.*
 
 class SpecClassFileFinderSpec extends Specification {
-  def finder = new SpecClassFileFinder()
+  SpecClassFileFinder finder = new SpecClassFileFinder()
 
   def "class file of regular class isn't considered a runnable spec"() {
     expect:
@@ -44,6 +44,3 @@ abstract class AbstractSpec extends Specification {}
 
 @Ignore
 class ConcreteSpec extends Specification {}
-
-
-

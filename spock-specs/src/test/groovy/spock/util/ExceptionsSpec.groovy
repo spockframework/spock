@@ -16,9 +16,9 @@ package spock.util
 import spock.lang.Specification
 
 class ExceptionsSpec extends Specification {
-  def exception = new RuntimeException()
-  def cause = new IllegalStateException()
-  def cause2 = new FileNotFoundException()
+  RuntimeException exception = new RuntimeException()
+  IllegalStateException cause = new IllegalStateException()
+  FileNotFoundException cause2 = new FileNotFoundException()
 
   def setup() {
     exception.initCause(cause)

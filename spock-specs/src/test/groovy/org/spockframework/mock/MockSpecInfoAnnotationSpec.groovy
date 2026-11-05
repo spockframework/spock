@@ -1,8 +1,11 @@
 package org.spockframework.mock
 
+import org.codehaus.groovy.runtime.typehandling.GroovyCastException
+import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.runtime.model.SpecInfo
 import org.spockframework.util.Nullable
 import spock.lang.Issue
+import spock.lang.PendingFeatureIf
 import spock.lang.Specification
 
 import java.lang.annotation.Annotation
@@ -10,6 +13,10 @@ import java.lang.annotation.Annotation
 class MockSpecInfoAnnotationSpec extends Specification {
 
   @Issue("https://github.com/spockframework/spock/issues/1163")
+  @PendingFeatureIf(
+    value = { GroovyRuntimeUtil.MAJOR_VERSION >= 4 },
+    exceptions = GroovyCastException,
+    reason = 'https://issues.apache.org/jira/browse/GROOVY-12469')
   def "NodeInfo.getAnnotation() shall return valid Stub for Stub Issue #1163"() {
     given:
     def mockUtil = new MockUtil()

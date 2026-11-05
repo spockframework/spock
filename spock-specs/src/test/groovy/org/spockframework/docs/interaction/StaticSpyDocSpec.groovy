@@ -16,6 +16,7 @@
 
 package org.spockframework.docs.interaction
 
+import org.spockframework.mock.IMockInvocation
 import org.spockframework.mock.ZeroOrNullResponse
 import spock.lang.Specification
 
@@ -54,7 +55,7 @@ class StaticSpyDocSpec extends Specification {
   def "SpyStatic mock all static methods"() {
     given:
     SpyStatic(StaticClass)
-    StaticClass._ >> { ZeroOrNullResponse.INSTANCE.getResponseSupplier(delegate).get() }
+    StaticClass._ >> { IMockInvocation it -> ZeroOrNullResponse.INSTANCE.getResponseSupplier(it).get() }
 
     expect:
     StaticClass.staticMethod() == null

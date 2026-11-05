@@ -16,13 +16,15 @@ package org.spockframework.runtime
 
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import spock.lang.Specification
+import spock.lang.SpockTypeChecked
 
+import static groovy.transform.TypeCheckingMode.SKIP
 import static org.spockframework.runtime.GroovyRuntimeUtil.propertyToBooleanGetterMethodName
 import static org.spockframework.runtime.GroovyRuntimeUtil.propertyToGetterMethodName
 import static org.spockframework.runtime.GroovyRuntimeUtil.propertyToSetterMethodName
 
 class GroovyRuntimeUtilSpec extends Specification {
-  def "getterMethodToPropertyName"() {
+  def "getterMethodToPropertyName"(String methodName, Class<?> returnType) {
     given:
     def propertyName = GroovyRuntimeUtil.MAJOR_VERSION >= 4 ? groovy4orHigherProperty : groovy3orLowerProperty
 
@@ -111,6 +113,7 @@ class GroovyRuntimeUtilSpec extends Specification {
     thrown(IllegalArgumentException)
   }
 
+  @SpockTypeChecked(SKIP)
   def "instantiate closure"() {
     def owner = [x : 1]
     def thisObject = new Object() {
@@ -134,6 +137,7 @@ class GroovyRuntimeUtilSpec extends Specification {
     l == ["A"]
   }
 
+  @SpockTypeChecked(SKIP)
   def "GroovyRuntimeUtil.#method unwraps InvokerInvocationException"() {
     when:
     GroovyRuntimeUtil."$method"(*args)
@@ -179,4 +183,3 @@ class GroovyRuntimeUtilSpec extends Specification {
     }
   }
 }
-

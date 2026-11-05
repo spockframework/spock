@@ -19,19 +19,20 @@ import org.spockframework.runtime.extension.IStore
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 
+import java.util.function.Function
 import java.util.function.Supplier
 
 class NamespacedExtensionStoreSpec extends Specification {
-  static final NS1 = IStore.Namespace.create("NS1")
-  static final NS2 = IStore.Namespace.create("NS2")
+  static final IStore.Namespace NS1 = IStore.Namespace.create("NS1")
+  static final IStore.Namespace NS2 = IStore.Namespace.create("NS2")
 
   @AutoCleanup
-  def rootStoreProvider = StoreProvider.createRootStoreProvider()
+  StoreProvider rootStoreProvider = StoreProvider.createRootStoreProvider()
   @AutoCleanup
-  def childStoreProvider = rootStoreProvider.createChildStoreProvider()
+  StoreProvider childStoreProvider = rootStoreProvider.createChildStoreProvider()
 
-  def ns1Root = rootStoreProvider.getStore(NS1)
-  def ns1Child = childStoreProvider.getStore(NS1)
+  NamespacedExtensionStore ns1Root = rootStoreProvider.getStore(NS1)
+  NamespacedExtensionStore ns1Child = childStoreProvider.getStore(NS1)
 
   def "can put something in and retrieve it"() {
     when:
@@ -138,7 +139,7 @@ class NamespacedExtensionStoreSpec extends Specification {
     ns1Child.get("key") == ["something"]
 
     and:
-    ns1Root.getOrComputeIfAbsent("key", { shouldNotBeCalled() }) == ["something"]
+    ns1Root.getOrComputeIfAbsent("key", { shouldNotBeCalled() } as Function) == ["something"]
   }
 
   def "create object via getOrComputeIfAbsent(key, creator, type)"() {
@@ -154,7 +155,7 @@ class NamespacedExtensionStoreSpec extends Specification {
     ns1Child.get("key") == ["something"]
 
     and: "create is not invoked if already present"
-    ns1Root.getOrComputeIfAbsent("key", { shouldNotBeCalled() }, List) == ["something"]
+    ns1Root.getOrComputeIfAbsent("key", { shouldNotBeCalled() } as Function, List) == ["something"]
   }
 
   def "AutoCloseable items are closed in reverse insertion order when the store is closed, but not when they have been removed or replaced prior"() {
@@ -294,8 +295,8 @@ class NamespacedExtensionStoreSpec extends Specification {
 
     expect:
     ns1Root.getOrComputeIfAbsent("a", { null }) == null
-    ns1Root.getOrComputeIfAbsent("a", { shouldNotBeCalled() }) == null
-    ns1Root.getOrComputeIfAbsent("key", { shouldNotBeCalled() }) == null
+    ns1Root.getOrComputeIfAbsent("a", { shouldNotBeCalled() } as Function) == null
+    ns1Root.getOrComputeIfAbsent("key", { shouldNotBeCalled() } as Function) == null
   }
 
   def "root stores have no parent and return themselves as root"() {

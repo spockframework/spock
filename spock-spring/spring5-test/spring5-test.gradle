@@ -6,9 +6,9 @@ dependencies {
   testImplementation projects.spockCore
   testImplementation projects.spockSpring
   testImplementation libs.junit4
+  testImplementation libs.junit.vintage
   testImplementation "org.springframework:spring-context"
   testImplementation "org.springframework:spring-test"
-
 }
 
 

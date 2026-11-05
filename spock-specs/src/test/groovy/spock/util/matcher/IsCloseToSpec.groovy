@@ -67,10 +67,10 @@ class IsCloseToSpec extends Specification {
   @Issue("https://github.com/spockframework/spock/issues/384")
   def "compare NaN"() {
     expect:
-    that Float.NaN, closeTo(Float.NaN, 0.1)
-    that Double.NaN, closeTo(Double.NaN, 0.0)
-    that Float.NaN, closeTo(Double.NaN, 0.0)
-    that Float.NaN, not(closeTo(9999.9f, 999999999))
+    that Float.@NaN, closeTo(Float.@NaN, 0.1)
+    that Double.@NaN, closeTo(Double.@NaN, 0.0)
+    that Float.@NaN, closeTo(Double.@NaN, 0.0)
+    that Float.@NaN, not(closeTo(9999.9f, 999999999))
   }
 
   def "error message uses correct values"() {

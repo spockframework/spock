@@ -2,7 +2,8 @@ package org.spockframework.smoke.mock;
 
 import java.util.concurrent.Callable;
 
-public class JavaCaller {
+public class JavaCaller implements Caller {
+  @Override
   public Throwable call(Callable callable) throws Exception {
     try {
       callable.call();

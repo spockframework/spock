@@ -19,8 +19,8 @@ package org.spockframework.util
 import spock.lang.Specification
 
 class JsonWriterSpec extends Specification {
-  def stringWriter = new StringWriter()
-  def jsonWriter = new JsonWriter(stringWriter)
+  StringWriter stringWriter = new StringWriter()
+  JsonWriter jsonWriter = new JsonWriter(stringWriter)
 
   def "can encode basic values"() {
     when:

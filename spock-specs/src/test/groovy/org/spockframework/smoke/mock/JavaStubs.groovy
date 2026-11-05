@@ -14,6 +14,7 @@
 
 package org.spockframework.smoke.mock
 
+import org.spockframework.mock.IMockInvocation
 import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.runtime.InvalidSpecException
 import org.spockframework.mock.CannotCreateMockException
@@ -21,10 +22,13 @@ import spock.lang.Issue
 import spock.lang.PendingFeatureIf
 import spock.lang.Specification
 import spock.lang.FailsWith
+import spock.lang.SpockTypeChecked
 import spock.mock.MockMakers
 
+import static groovy.transform.TypeCheckingMode.SKIP
+
 class JavaStubs extends Specification {
-  def person = Stub(IPerson)
+  IPerson person = Stub()
 
   def "default to empty response"() {
     expect:
@@ -67,6 +71,7 @@ class JavaStubs extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1076")
+  @SpockTypeChecked(SKIP)
   @PendingFeatureIf({ GroovyRuntimeUtil.MAJOR_VERSION < 4 })
   def "can stub property access for implicit getProperty() call in assertion"() {
     given:
@@ -82,6 +87,7 @@ class JavaStubs extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1076")
+  @SpockTypeChecked(SKIP)
   @PendingFeatureIf({ GroovyRuntimeUtil.MAJOR_VERSION < 4 })
   def "can stub property access for implicit getProperty() call"() {
     given:
@@ -144,7 +150,7 @@ class JavaStubs extends Specification {
 
   def "can call real method on class"() {
     def person = Stub(Person, constructorArgs: [])
-    person.getName() >> { callRealMethod() }
+    person.getName() >> { IMockInvocation it -> it.callRealMethod() }
 
     expect:
     person.getName() == "default"

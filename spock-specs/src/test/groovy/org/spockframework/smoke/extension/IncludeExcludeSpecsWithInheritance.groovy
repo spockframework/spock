@@ -15,6 +15,9 @@
 package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
+import spock.lang.SpockTypeChecked
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 class IncludeExcludeSpecsWithInheritance extends EmbeddedSpecification {
   List specs
@@ -39,12 +42,23 @@ class Spec2 extends Spec1 {
     """)
   }
 
-  def "include specs based on annotations"() {
+  @SpockTypeChecked(SKIP)
+  private includeAndExcludeByAnnotations(Map args) {
     runner.configurationScript = {
       runner {
-        include(*annotationTypes)
+        if (args.includeAnnotations) {
+          include(*args.includeAnnotations)
+        }
+        if (args.excludeAnnotations) {
+          exclude(*args.excludeAnnotations)
+        }
       }
     }
+  }
+
+  def "include specs based on annotations"() {
+    given:
+    includeAndExcludeByAnnotations(includeAnnotations: annotationTypes)
 
     when:
     def result = runner.runClasses(specs)
@@ -61,11 +75,8 @@ class Spec2 extends Spec1 {
   }
 
   def "exclude specs based on annotations"() {
-    runner.configurationScript = {
-      runner {
-        exclude(*annotationTypes)
-      }
-    }
+    given:
+    includeAndExcludeByAnnotations(excludeAnnotations: annotationTypes)
 
     when:
     def result = runner.runClasses(specs)

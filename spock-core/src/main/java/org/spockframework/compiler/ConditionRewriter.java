@@ -767,7 +767,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
     args.add(new ConstantExpression(rewritten.getMethod()));
     args.add(AstUtil.toArgumentArray(AstUtil.getArgumentList(rewritten), resources));
     // rewriting has produced N/A's that haven't been realized yet, so do that now
-    args.add(realizeNas(ConstantExpression.PRIM_FALSE));
+    args.add(realizeNas(primitiveConstExpression(false)));
     args.add(primitiveConstExpression(explicit));
     args.add(primitiveConstExpression(lastVariableNum));
 
@@ -862,7 +862,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
   private TryCatchStatement surroundWithTryCatch(Expression condition, Expression message, Expression executeAndVerify, boolean optOut) {
     final TryCatchStatement tryCatchStatement = new TryCatchStatement(
       new ExpressionStatement(executeAndVerify),
-      EmptyStatement.INSTANCE
+      new EmptyStatement()
     );
 
     tryCatchStatement.addCatch(
@@ -874,12 +874,12 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
             resources.getAstNodeCache().SpockRuntime_ConditionFailedWithException,
             new ArgumentListExpression(asList(
               new VariableExpression(errorCollectorName),
-              optOut ? ConstantExpression.NULL : new VariableExpression(valueRecorderName),  // recorder
-              new ConstantExpression(resources.getSourceText(condition)),                    // text
-              primitiveConstExpression(condition.getLineNumber()),                           // line
-              primitiveConstExpression(condition.getColumnNumber()),                         // column
-              message == null ? ConstantExpression.NULL : message,                           // message
-              new VariableExpression(THROWABLE)                                              // throwable
+              optOut ? new ConstantExpression(null) : new VariableExpression(valueRecorderName),  // recorder
+              new ConstantExpression(resources.getSourceText(condition)),                         // text
+              primitiveConstExpression(condition.getLineNumber()),                                // line
+              primitiveConstExpression(condition.getColumnNumber()),                              // column
+              message == null ? new ConstantExpression(null) : message,                           // message
+              new VariableExpression(THROWABLE)                                                   // throwable
             ))
           )
         )
@@ -891,7 +891,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
   private TryCatchStatement surroundSpecialTryCatch(Expression executeAndVerify) {
     final TryCatchStatement tryCatchStatement = new TryCatchStatement(
       new ExpressionStatement(executeAndVerify),
-      EmptyStatement.INSTANCE
+      new EmptyStatement()
     );
 
     tryCatchStatement.addCatch(
@@ -921,16 +921,16 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
         new ArgumentListExpression(args));
 
     args.add(new VariableExpression(errorCollectorName, resources.getAstNodeCache().ErrorCollector));
-    args.add(createDirectMethodCall(optOut ? ConstantExpression.NULL :
+    args.add(createDirectMethodCall(optOut ? new ConstantExpression(null) :
             new VariableExpression(valueRecorderName),
             resources.getAstNodeCache().ValueRecorder_Reset,
-            ArgumentListExpression.EMPTY_ARGUMENTS));
+            new ArgumentListExpression()));
     args.add(new ConstantExpression(resources.getSourceText(condition)));
     args.add(primitiveConstExpression(condition.getLineNumber()));
     args.add(primitiveConstExpression(condition.getColumnNumber()));
     // the following means that "assert x, exprEvaluatingToNull" will be
     // treated the same as "assert x"; but probably it doesn't matter too much
-    args.add(message == null ? ConstantExpression.NULL : message);
+    args.add(message == null ? new ConstantExpression(null) : message);
     args.addAll(additionalArgs);
 
     result.setSourcePosition(condition);

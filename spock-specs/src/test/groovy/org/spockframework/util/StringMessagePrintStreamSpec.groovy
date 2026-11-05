@@ -17,17 +17,22 @@
 package org.spockframework.util
 
 import spock.lang.Specification
+import spock.lang.SpockCompileDynamic
+import spock.lang.SpockTypeChecked
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 class StringMessagePrintStreamSpec extends Specification {
   def log
 
-  def notifier = new StringMessagePrintStream() {
+  StringMessagePrintStream notifier = new StringMessagePrintStream() {
     @Override
     protected void printed(String message) {
       log = message
     }
   }
 
+  @SpockTypeChecked(SKIP)
   def "notifies write methods"() {
     when:
     notifier.write(input)
@@ -49,6 +54,7 @@ class StringMessagePrintStreamSpec extends Specification {
     log == "BCD"
   }
 
+  @SpockCompileDynamic
   def "notifies print methods"() {
     when:
     notifier.print(input)
@@ -68,6 +74,7 @@ class StringMessagePrintStreamSpec extends Specification {
     "hi"           | "hi"
   }
 
+  @SpockCompileDynamic
   def "notifies println methods"() {
     when:
     notifier.println(input)
@@ -87,6 +94,7 @@ class StringMessagePrintStreamSpec extends Specification {
     "hi"           | "hi\n"
   }
 
+  @SpockTypeChecked(SKIP)
   def "notifies append methods"() {
     when:
     notifier.append(input)
@@ -102,9 +110,9 @@ class StringMessagePrintStreamSpec extends Specification {
     "c" as char                     | "c"
   }
 
-  def log2 = []
+  List<String> log2 = []
 
-  def notifier2 = new StringMessagePrintStream() {
+  StringMessagePrintStream notifier2 = new StringMessagePrintStream() {
     @Override
     protected void printed(String message) {
       log2 << message

@@ -15,10 +15,14 @@
 
 package org.spockframework.smoke.mock
 
+import groovy.transform.TypeChecked
 import org.spockframework.runtime.model.parallel.Resources
 import spock.lang.Issue
 import spock.lang.ResourceLock
 import spock.lang.Specification
+import spock.lang.SpockTypeChecked
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 @ResourceLock(
   value = Resources.META_CLASS_REGISTRY,
@@ -32,7 +36,7 @@ class GroovyMockGlobalClass extends Specification {
     GroovySpy(ClassB, global: true)
   }
 
-
+  @SpockTypeChecked(SKIP)
   def "Wildcard matching for static class methods returns correct results"() {
     given:
     def service = new Subject()
@@ -46,6 +50,7 @@ class GroovyMockGlobalClass extends Specification {
 }
 
 class Subject {
+  @TypeChecked(SKIP)
   void myMethodUnderTest() {
     assert ClassA.get(1) instanceof ClassA
     assert ClassB.get(2) instanceof ClassB

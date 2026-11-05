@@ -1,10 +1,12 @@
 package org.spockframework.docs.interaction
 
+import groovy.transform.CompileDynamic
 import org.spockframework.mock.TooFewInvocationsError
 import spock.lang.*
 
 import java.util.regex.Pattern
 
+import static groovy.transform.TypeCheckingMode.SKIP
 import static org.hamcrest.CoreMatchers.endsWith
 
 class InteractionDocSpec extends Specification {
@@ -68,6 +70,7 @@ class SubscriberImpl implements Subscriber {
   }
 }
 
+@CompileDynamic
 // tag::examplesetup[]
 class Publisher {
   List<Subscriber> subscribers = []
@@ -227,6 +230,7 @@ class PublisherSpec extends Specification {
 // end::argConstraints[]
   }
 
+  @SpockTypeChecked(SKIP)
   def "codeArg"() {
     when:
     publisher.send("foobar")

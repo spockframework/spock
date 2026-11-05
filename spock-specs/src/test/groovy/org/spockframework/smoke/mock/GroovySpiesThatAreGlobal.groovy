@@ -14,6 +14,8 @@
 
 package org.spockframework.smoke.mock
 
+import groovy.transform.TypeChecked
+import org.spockframework.mock.IMockInvocation
 import org.spockframework.runtime.GroovyRuntimeUtil
 import spock.lang.*
 import spock.util.environment.Jvm
@@ -21,8 +23,11 @@ import spock.util.environment.Jvm
 import java.lang.reflect.Modifier
 import java.util.regex.Pattern
 
+import static groovy.transform.TypeCheckingMode.SKIP
+
 @Isolated
 class GroovySpiesThatAreGlobal extends Specification {
+  @SpockCompileDynamic
   def "mock instance method"() {
     def myList = new ArrayList()
     def anyList = GroovySpy(ArrayList, global: true)
@@ -45,6 +50,7 @@ class GroovySpiesThatAreGlobal extends Specification {
     0 * _
   }
 
+  @SpockCompileDynamic
   def "calls real method if call isn't mocked"() {
     def myList = new ArrayList()
     GroovySpy(ArrayList, global: true)
@@ -57,6 +63,7 @@ class GroovySpiesThatAreGlobal extends Specification {
     myList.size() == 2
   }
 
+  @SpockCompileDynamic
   def "calls real method if mocked call provides no result"() {
     def myList = new ArrayList()
     GroovySpy(ArrayList, global: true)
@@ -70,6 +77,7 @@ class GroovySpiesThatAreGlobal extends Specification {
     myList.size() == 2
   }
 
+  @SpockCompileDynamic
   def "does not call real method if mocked call provides result"() {
     def myList = new ArrayList()
     GroovySpy(ArrayList, global: true)
@@ -83,6 +91,7 @@ class GroovySpiesThatAreGlobal extends Specification {
     myList.size() == 0
   }
 
+  @SpockCompileDynamic
   def "can call real method when providing result"() {
     def myList = new ArrayList()
     GroovySpy(ArrayList, global: true)
@@ -92,10 +101,11 @@ class GroovySpiesThatAreGlobal extends Specification {
     myList.add(1)
 
     then:
-    2 * myList.add(1) >> { callRealMethod() }
+    2 * myList.add(1) >> { IMockInvocation it -> it.callRealMethod() }
     myList.size() == 2
   }
 
+  @SpockCompileDynamic
   def "can call real method with changed arguments"() {
     def myList = new ArrayList()
     GroovySpy(ArrayList, global: true)
@@ -105,11 +115,12 @@ class GroovySpiesThatAreGlobal extends Specification {
     myList.add(1)
 
     then:
-    2 * myList.add(1) >> { callRealMethodWithArgs(42) }
+    2 * myList.add(1) >> { IMockInvocation it -> it.callRealMethodWithArgs(42) }
     myList.size() == 2
     myList[1] == 42
   }
 
+  @SpockTypeChecked(SKIP)
   def "mock dynamic instance method"() {
     def anyList = GroovySpy(ArrayList, global: true)
 
@@ -120,6 +131,7 @@ class GroovySpiesThatAreGlobal extends Specification {
     1 * anyList.foo(42) >> true
   }
 
+  @SpockCompileDynamic
   def "mock dynamic instance method called via MOP"() {
     def anyPerson = GroovySpy(Person, global: true)
 
@@ -130,6 +142,7 @@ class GroovySpiesThatAreGlobal extends Specification {
     1 * anyPerson.foo(42) >> "done"
   }
 
+  @SpockCompileDynamic
   def "mock dynamic property getter called via MOP"() {
     def anyPerson = GroovySpy(Person, global: true)
 
@@ -140,6 +153,7 @@ class GroovySpiesThatAreGlobal extends Specification {
     1 * anyPerson.foo >> "done"
   }
 
+  @SpockCompileDynamic
   def "mock dynamic property setter called via MOP"() {
     def anyPerson = GroovySpy(Person, global: true)
 
@@ -150,6 +164,7 @@ class GroovySpiesThatAreGlobal extends Specification {
     1 * anyPerson.setFoo(42) >> "done"
   }
 
+  @SpockCompileDynamic
   def "mock final instance method"() {
     assert Modifier.isFinal(Person.getMethod("performFinal", String).getModifiers())
 
@@ -162,6 +177,7 @@ class GroovySpiesThatAreGlobal extends Specification {
     1 * anyPerson.performFinal("work")
   }
 
+  @SpockCompileDynamic
   def "mock final class"() {
     assert Modifier.isFinal(FinalPerson.getModifiers())
 
@@ -174,6 +190,7 @@ class GroovySpiesThatAreGlobal extends Specification {
     1 * anyPerson.perform("work")
   }
 
+  @SpockCompileDynamic
   def "mock static method"() {
     // Use objenesis to create instance for Java 17 and later
     GroovySpy(Collections, global: true, useObjenesis: Jvm.current.java17Compatible)
@@ -188,6 +205,7 @@ class GroovySpiesThatAreGlobal extends Specification {
     0 * _
   }
 
+  @SpockTypeChecked(SKIP)
   def "mock dynamic static method"() {
     GroovySpy(Collections, global: true, useObjenesis: Jvm.current.java17Compatible)
 
@@ -201,6 +219,7 @@ class GroovySpiesThatAreGlobal extends Specification {
     0 * _
   }
 
+  @SpockCompileDynamic
   def "mock constructor"() {
     GroovySpy(Person, global: true)
 
@@ -215,7 +234,8 @@ class GroovySpiesThatAreGlobal extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/871")
-  def "type casts are not swallowed"() {
+  @SpockCompileDynamic
+  def "type casts are not swallowed"(Closure<String> action) {
     given:
     GroovySpy(PersonWithOverloadedMethods, global: true)
 
@@ -231,7 +251,8 @@ class GroovySpiesThatAreGlobal extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/871")
-  def "type casts are not swallowed when stubbing"() {
+  @SpockCompileDynamic
+  def "type casts are not swallowed when stubbing"(Closure<String> action) {
     given:
     GroovySpy(PersonWithOverloadedMethods, global: true)
     PersonWithOverloadedMethods.perform(_) >> "Foo"
@@ -247,6 +268,7 @@ class GroovySpiesThatAreGlobal extends Specification {
     _ | { PersonWithOverloadedMethods.perform((Pattern) null) }
   }
 
+  @SpockTypeChecked(SKIP)
   def "Accessing non-existing property throws MissingPropertyException"() {
     when:
     Enclosing.Super.NON_EXISTING_FIELD
@@ -255,6 +277,7 @@ class GroovySpiesThatAreGlobal extends Specification {
     ex.message.contains("NON_EXISTING_FIELD")
   }
 
+  @SpockTypeChecked(SKIP)
   def "Accessing non-existing property through global spy throws MissingPropertyException"() {
     given:
     GroovySpy(Enclosing.Super, global: true)
@@ -269,6 +292,7 @@ class GroovySpiesThatAreGlobal extends Specification {
     suppressed.message.contains("getNON_EXISTING_FIELD")
   }
 
+  @SpockTypeChecked(SKIP)
   def "Accessing non-existing property setter throws MissingPropertyException"() {
     when:
     Enclosing.Super.NON_EXISTING_FIELD = ""
@@ -276,6 +300,7 @@ class GroovySpiesThatAreGlobal extends Specification {
     thrown(MissingPropertyException)
   }
 
+  @SpockTypeChecked(SKIP)
   def "Accessing non-existing property setter through global spy throws MissingPropertyException"() {
     given:
     GroovySpy(Enclosing.Super, global: true)
@@ -290,6 +315,7 @@ class GroovySpiesThatAreGlobal extends Specification {
     suppressed.message.contains("setNON_EXISTING_FIELD")
   }
 
+  @SpockCompileDynamic
   def "Accessing static field through global spy shall only log single invocation"() {
     given:
     GroovySpy(Enclosing.Super, global: true)
@@ -307,6 +333,7 @@ class GroovySpiesThatAreGlobal extends Specification {
    * works identically when normal Groovy logic is used and when a global spy
    * intercepts but no stubbing was done.
    */
+  @SpockTypeChecked(SKIP)
   def "Accessing real fields through global spy works like in reality"() {
     given:
     if (createSpies) {
@@ -1855,6 +1882,7 @@ class GroovySpiesThatAreGlobal extends Specification {
       }
     }
 
+    @TypeChecked(SKIP)
     static class Sub extends Super {
       private static String SUB_STATIC_FIELD
       public static String PUBLIC_SUB_STATIC_FIELD
@@ -2084,10 +2112,12 @@ class GroovySpiesThatAreGlobal extends Specification {
         STATIC_PROPERTY = value
       }
 
+      @TypeChecked(SKIP)
       def retrieveSuperField() {
         super.FIELD
       }
 
+      @TypeChecked(SKIP)
       def overwriteSuperField(def value) {
         // `super.FIELD = value` is a compile error in Groovy <4
         // we work-around this by using `super."${"FIELD"}" = value` so that it is evaluated at runtime

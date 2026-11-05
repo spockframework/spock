@@ -18,11 +18,15 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.model.parallel.ExclusiveResource
 import org.spockframework.runtime.model.parallel.ResourceAccessMode
 import org.spockframework.runtime.model.parallel.Resources
+import spock.lang.SpockTypeChecked
 import spock.lang.Stepwise
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 /**
  * @author Luke Daley
  */
+@SpockTypeChecked(SKIP)
 @Stepwise
 class ConfineMetaClassChangesSpec extends EmbeddedSpecification {
 

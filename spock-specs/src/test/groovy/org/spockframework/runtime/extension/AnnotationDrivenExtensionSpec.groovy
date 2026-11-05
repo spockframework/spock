@@ -15,6 +15,7 @@
 package org.spockframework.runtime.extension
 
 import spock.config.ConfigurationObject
+import spock.lang.SpockTypeChecked
 
 import java.lang.annotation.ElementType
 import java.lang.annotation.Retention
@@ -28,6 +29,8 @@ import org.spockframework.runtime.model.FieldInfo
 import org.spockframework.runtime.model.MethodInfo
 import org.spockframework.runtime.model.SpecInfo
 
+import static groovy.transform.TypeCheckingMode.SKIP
+
 class AnnotationDrivenExtensionSpec extends EmbeddedSpecification {
 
   def setup() {
@@ -36,16 +39,21 @@ class AnnotationDrivenExtensionSpec extends EmbeddedSpecification {
     runner.configClasses << ExtensionCounter
   }
 
-  def "stateless extensions get re-used and stateful extensions get fresh instances per spec"() {
-    given:
-    def stateful = new AtomicInteger()
-    def stateless = new AtomicInteger()
+  @SpockTypeChecked(SKIP)
+  private initExtensionCounter(stateful, stateless) {
     runner.configurationScript {
       extensionCounter {
         statefulCounter stateful
         statelessCounter stateless
       }
     }
+  }
+
+  def "stateless extensions get re-used and stateful extensions get fresh instances per spec"() {
+    given:
+    def stateful = new AtomicInteger()
+    def stateless = new AtomicInteger()
+    initExtensionCounter(stateful, stateless)
 
     when:
     runner.runWithImports('''
@@ -56,7 +64,7 @@ class AnnotationDrivenExtensionSpec extends EmbeddedSpecification {
         expect: true
       }
     }
-    
+
     @Stateful
     @Stateless
     class BSpec extends Specification {
@@ -64,7 +72,7 @@ class AnnotationDrivenExtensionSpec extends EmbeddedSpecification {
         expect: true
       }
     }
-    
+
     @Stateful
     @Stateless
     class CSpec extends Specification {
@@ -83,38 +91,33 @@ class AnnotationDrivenExtensionSpec extends EmbeddedSpecification {
     given:
     def stateful = new AtomicInteger()
     def stateless = new AtomicInteger()
-    runner.configurationScript {
-      extensionCounter {
-        statefulCounter stateful
-        statelessCounter stateless
-      }
-    }
+    initExtensionCounter(stateful, stateless)
 
     when:
     runner.runWithImports('''
     @Stateful
     @Stateless
     class ASpec extends Specification {
-      
+
       @Stateful
       @Stateless
       int a
-      
+
       @Stateful
       @Stateless
       int b
-      
+
       @Stateful
       @Stateless
       def setupSpec() {
       }
-      
+
       @Stateful
       @Stateless
       def setup() {
       }
-   
-      
+
+
       @Stateful
       @Stateless
       def "a feature"() {
@@ -126,7 +129,7 @@ class AnnotationDrivenExtensionSpec extends EmbeddedSpecification {
         expect: true
       }
     }
-    
+
     ''')
 
     then:

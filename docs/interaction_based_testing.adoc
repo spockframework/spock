@@ -650,7 +650,7 @@ in this example, we've used a plain list.
 === Computing Return Values
 
 To compute a return value based on the method's argument, use the the right-shift (`>>`) operator together with a closure.
-If the closure declares a single untyped parameter, it gets passed the method's argument list:
+If the closure declares a single untyped parameter (or uses the implicit `it` parameter) or a single parameter with type `List` it gets passed the method's argument list:
 
 [source,groovy]
 ----
@@ -660,7 +660,7 @@ subscriber.receive(_) >> { args -> args[0].size() > 3 ? "ok" : "fail" }
 Here `"ok"` gets returned if the message is more than three characters long, and `"fail"` otherwise.
 
 In most cases it would be more convenient to have direct access to the method's arguments. If the closure declares more
-than one parameter or a single _typed_ parameter, method arguments will be mapped one-by-one to closure
+than one parameter or a single _typed_ parameter that is neither of type `List` nor `IMockInvocation`, method arguments will be mapped one-by-one to closure
 parameters:footnote:[The destructuring semantics for closure arguments come straight from Groovy.]
 
 [source,groovy]
@@ -673,6 +673,8 @@ This response generator behaves the same as the previous one, but is arguably mo
 If you find yourself in need of more information about a method invocation than its arguments, have a look at
 `org.spockframework.mock.IMockInvocation`. All methods declared in this interface are available inside the closure,
 without a need to prefix them. (In Groovy terminology, the closure _delegates_ to an instance of `IMockInvocation`.)
+
+You can also declare a single closure parameter of type `IMockInvocation` and get it passed as argument.
 
 === Performing Side Effects
 

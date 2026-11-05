@@ -3,6 +3,9 @@ package org.spockframework.docs.primer
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.smoke.condition.ConditionRenderingSpec
 import spock.lang.FailsWith
+import spock.lang.SpockTypeChecked
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 class ConditionsSpec extends ConditionRenderingSpec {
 
@@ -61,6 +64,7 @@ foobar
     })
   }
 
+  @SpockTypeChecked(SKIP)
   @FailsWith(ConditionNotSatisfiedError)
   def "using each-assert fails normally"(){
     given:
@@ -71,6 +75,7 @@ foobar
     // end::each-assert-normal[]
   }
 
+  @SpockTypeChecked(SKIP)
   def "using each-assert with opt-out passes"(){
     given:
     def aList = []

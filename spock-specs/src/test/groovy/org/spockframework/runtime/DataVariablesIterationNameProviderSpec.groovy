@@ -23,7 +23,7 @@ class DataVariablesIterationNameProviderSpec extends Specification {
   @Subject
   DataVariablesIterationNameProvider testee = new DataVariablesIterationNameProvider()
 
-  def feature = new FeatureInfo().tap {
+  FeatureInfo feature = new FeatureInfo().tap {
     name = 'the feature'
     reportIterations = true
   }

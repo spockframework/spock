@@ -6,14 +6,14 @@ import org.spockframework.runtime.model.IterationInfo
 import spock.lang.Specification
 
 class AsyncRunListenerSpec extends Specification {
-  def delegate = Mock(IRunListener)
-  def asyncListener = new AsyncRunListener("my-test-thread", delegate)
+  IRunListener delegate = Mock()
+  AsyncRunListener asyncListener = new AsyncRunListener("my-test-thread", delegate)
 
   def "replays events in correct order in a separate thread"() {
     def specInfo = new SpecInfoBuilder(getClass()).build()
     def featureInfo = specInfo.features[0]
     def iterationInfo = new IterationInfo(featureInfo, 0, [] as Object[], 1)
-    def errorInfo = new ErrorInfo(featureInfo.featureMethod, new Exception(), new ErrorContext(specInfo, featureInfo, iterationInfo, null))
+    def errorInfo = new ErrorInfo(featureInfo.featureMethod, new Exception(), ErrorContext.newInstance(specInfo, featureInfo, iterationInfo, null))
 
     when:
     asyncListener.start()

@@ -18,7 +18,7 @@ package org.spockframework.util
 import spock.lang.Specification
 
 class VersionNumberSpec extends Specification {
-  def "parsing"() {
+  def "parsing"(String versionString) {
     expect:
     VersionNumber.parse(versionString) == parsedVersion
 
@@ -84,7 +84,7 @@ class VersionNumberSpec extends Specification {
     new VersionNumber(1, 2, 3, false, "foo") | "1.2.3-foo"
   }
 
-  def "original representation"() {
+  def "original representation"(String versionString) {
     expect:
     VersionNumber.parse(versionString).toOriginalString() == versionString
 
@@ -110,7 +110,7 @@ class VersionNumberSpec extends Specification {
     ]
   }
 
-  def "original representation customized"() {
+  def "original representation customized"(String versionString, boolean includeSnapshot, boolean includeQualifier) {
     expect:
     VersionNumber.parse(versionString).toOriginalString(includeQualifier, includeSnapshot) == expected
 

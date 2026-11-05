@@ -22,8 +22,8 @@ import spock.lang.*
 @ResourceLock(Resources.SYSTEM_OUT)
 @ResourceLock(Resources.SYSTEM_ERR)
 class StandardStreamsCapturerSpec extends Specification {
-  def capturer = new StandardStreamsCapturer()
-  def listener = Mock(IStandardStreamsListener)
+  StandardStreamsCapturer capturer = new StandardStreamsCapturer()
+  IStandardStreamsListener listener = Mock()
 
   def setup() {
     capturer.addStandardStreamsListener(listener)

@@ -18,11 +18,11 @@ import spock.lang.*
 import org.spockframework.mock.IMockInvocation
 
 class MockNames extends Specification {
-  def fieldMock = Mock(List)
-  def fieldMock2
+  List fieldMock = Mock()
+  List fieldMock2
 
   def setup() {
-    fieldMock2 = Mock(List)
+    fieldMock2 = Mock()
   }
 
   def "a mock's name is inferred from the variable it is assigned to at the point of its creation"() {

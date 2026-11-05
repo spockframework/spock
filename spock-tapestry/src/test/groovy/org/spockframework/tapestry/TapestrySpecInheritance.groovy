@@ -20,7 +20,7 @@ import spock.lang.*
 
 @SubModule(Module1)
 abstract class BaseSpec extends Specification {
-  static beforeRegistryCreatedCount = 0
+  static int beforeRegistryCreatedCount = 0
 
   @Inject
   IService1 service1

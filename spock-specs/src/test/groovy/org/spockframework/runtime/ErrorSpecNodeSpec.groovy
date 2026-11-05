@@ -9,7 +9,7 @@ class ErrorSpecNodeSpec extends Specification {
   TestDescriptor tdParent = Mock()
 
   @Subject
-  def errorSpecNode = new ErrorSpecNode(
+  ErrorSpecNode errorSpecNode = new ErrorSpecNode(
     UniqueId.forEngine("test"),
     null,
     new SpecInfoBuilder(getClass()).build(),

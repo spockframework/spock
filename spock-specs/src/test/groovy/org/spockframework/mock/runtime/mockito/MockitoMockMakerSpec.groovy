@@ -22,6 +22,7 @@ import org.mockito.exceptions.base.MockitoException
 import spock.lang.Issue
 import spock.lang.Requires
 import spock.lang.Specification
+import spock.lang.SpockTypeChecked
 import spock.mock.DetachedMockFactory
 import spock.util.environment.Jvm
 
@@ -33,6 +34,7 @@ import org.spockframework.mock.MockUtil
 import org.spockframework.mock.runtime.ByteBuddyTestClassLoader
 import org.spockframework.runtime.GroovyRuntimeUtil
 
+import static groovy.transform.TypeCheckingMode.SKIP
 import static spock.mock.MockMakers.mockito
 
 @SuppressWarnings("GroovyAssignabilityCheck")
@@ -202,6 +204,7 @@ class MockitoMockMakerSpec extends Specification {
 Please ensure that the target class has a 0-arg constructor."""
   }
 
+  @SpockTypeChecked(SKIP)
   def "Additional interfaces"() {
     when:
     ArrayList<Integer> mock = Mock(mockMaker: mockito, additionalInterfaces: [Runnable])

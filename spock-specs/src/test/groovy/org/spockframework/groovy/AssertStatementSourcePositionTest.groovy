@@ -14,6 +14,7 @@
 
 package org.spockframework.groovy
 
+import org.codehaus.groovy.ast.stmt.BlockStatement
 import org.spockframework.util.inspector.AstInspector
 import org.codehaus.groovy.ast.stmt.AssertStatement
 import spock.lang.Specification
@@ -30,20 +31,22 @@ class Foo {
 }
     """)
 
-    def method = inspector.getMethod("bar");
-    def stat = method.code.statements[0]
+    def method = inspector.getMethod("bar")
 
     expect:
-    stat instanceof AssertStatement
-    stat.lineNumber == 4
-    stat.columnNumber == 5
-    stat.lastLineNumber == 4
-    stat.lastColumnNumber == 18
+    with(method.code, BlockStatement) {
+      with(statements.first(), AssertStatement) {
+        lineNumber == 4
+        columnNumber == 5
+        lastLineNumber == 4
+        lastColumnNumber == 18
 
-    def expr = stat.booleanExpression
-    expr.lineNumber == 4
-    expr.columnNumber == 12
-    expr.lastLineNumber == 4
-    expr.lastColumnNumber == 18
+        def expr = booleanExpression
+        expr.lineNumber == 4
+        expr.columnNumber == 12
+        expr.lastLineNumber == 4
+        expr.lastColumnNumber == 18
+      }
+    }
   }
 }

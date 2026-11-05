@@ -17,7 +17,7 @@ package org.spockframework.util
 import spock.lang.Specification
 
 class TextUtilSpec extends Specification {
-  def "camelCaseToConstantCase"() {
+  def "camelCaseToConstantCase"(String camelCase) {
     expect:
     TextUtil.camelCaseToConstantCase(camelCase) == constantCase
 
@@ -35,7 +35,7 @@ class TextUtilSpec extends Specification {
     "fred123Usage" | "FRED123_USAGE"
   }
 
-  def "escapeGroovyDoubleQuotedString"() {
+  def "escapeGroovyDoubleQuotedString"(String input) {
     expect:
     TextUtil.escapeGroovyDoubleQuotedString(input) == escaped
 

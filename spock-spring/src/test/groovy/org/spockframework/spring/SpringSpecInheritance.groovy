@@ -20,7 +20,9 @@ import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
+import spock.lang.SpockCompileDynamic
 
+@SpockCompileDynamic
 @ScanScopedBeans
 abstract class BaseSpec extends Specification {
   @Autowired

@@ -10,7 +10,7 @@ import groovy.util.logging.Log
 class RecorderScope extends Specification{
   def "assert within closure"() {
     given:
-    Closure sq = { x ->
+    Closure sq = { int x ->
       assert 1 == 1
       x * x
     }
@@ -59,7 +59,7 @@ class RecorderScope extends Specification{
   }
 
   Closure externalClosure() {
-    Closure sq = { x ->
+    Closure sq = { int x ->
       assert 1 == 1
       x * x
     }

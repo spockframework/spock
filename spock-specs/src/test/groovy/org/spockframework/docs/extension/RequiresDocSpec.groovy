@@ -1,11 +1,17 @@
 package org.spockframework.docs.extension
 
+import org.spockframework.runtime.extension.builtin.PreconditionContext
 import spock.lang.Requires
 import spock.lang.Specification
 
 class RequiresDocSpec extends Specification {
 // tag::example-a[]
-  @Requires({ os.windows })
+  @Requires({
+    // end::example-a[]
+    PreconditionContext pc -> pc.
+    // tag::example-a[]
+    os.windows
+  })
   def "I'll only run on Windows"() {
 // end::example-a[]
     expect:
@@ -13,8 +19,18 @@ class RequiresDocSpec extends Specification {
   }
 
 // tag::example-b[]
-  @Requires({ os.windows })
-  @Requires({ jvm.java8 })
+  @Requires({
+    // end::example-b[]
+    PreconditionContext pc -> pc.
+    // tag::example-b[]
+    os.windows
+  })
+  @Requires({
+    // end::example-b[]
+    PreconditionContext pc -> pc.
+    // tag::example-b[]
+    jvm.java8
+  })
   def "I'll run only on Windows with Java 8"() {
 // end::example-b[]
     expect:

@@ -20,6 +20,8 @@ package org.spockframework.junit4.junit
 import spock.lang.Issue
 import spock.util.EmbeddedSpecCompiler
 
+import java.lang.reflect.Field
+
 class JUnitCompliance extends JUnitBaseSpec {
   @Issue("https://issues.spockframework.org/detail?id=13")
   def "failing setupSpec method"() {
@@ -63,7 +65,7 @@ class Foo extends Specification {
     def result = runner.runClass(clazz)
 
     then:
-    clazz.log == ""
+    clazz.getDeclaredField('log').tap { Field it -> it.accessible = true }.get(clazz) == ""
     result.containersSkippedCount == 1
   }
 
@@ -83,7 +85,7 @@ def feature3() { setup: log += "3" }
     def result = runner.runClass(clazz)
 
     then:
-    clazz.log == "2"
+    clazz.getDeclaredField('log').tap { Field it -> it.accessible = true }.get(clazz) == "2"
     result.testsSucceededCount == 1
     result.testsSkippedCount == 2
   }

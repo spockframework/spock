@@ -15,6 +15,9 @@
 package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
+import spock.lang.SpockTypeChecked
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 class IncludeExcludeFeatures extends EmbeddedSpecification {
   Class spec
@@ -39,12 +42,45 @@ def feature3() {
   """)
   }
 
-  def "include methods based on annotations"() {
+  @SpockTypeChecked(SKIP)
+  private includeAndExcludeByAnnotations(Map args) {
     runner.configurationScript = {
       runner {
-        include(*annotationTypes)
+        if (args.includeAnnotations) {
+          include(*args.includeAnnotations)
+        }
+        if (args.excludeAnnotations) {
+          exclude(*args.excludeAnnotations)
+        }
       }
     }
+  }
+
+  @SpockTypeChecked(SKIP)
+  private includeAndExcludeByAnnotationsUsingDifferentConfigurationStyle(Map args) {
+    runner.configurationScript = {
+      runner {
+        if (args.includeAnnotations) {
+          include {
+            args.includeAnnotations.each {
+              annotation(it)
+            }
+          }
+        }
+        if (args.excludeAnnotations) {
+          exclude {
+            args.excludeAnnotations.each {
+              annotation(it)
+            }
+          }
+        }
+      }
+    }
+  }
+
+  def "include methods based on annotations"() {
+    given:
+    includeAndExcludeByAnnotations(includeAnnotations: annotationTypes)
 
     when:
     def result = runner.runClass(spec)
@@ -60,15 +96,8 @@ def feature3() {
   }
 
   def "include methods based on annotations using different configuration style"() {
-    runner.configurationScript = {
-      runner {
-        include {
-          annotationTypes.each {
-            annotation(it)
-          }
-        }
-      }
-    }
+    given:
+    includeAndExcludeByAnnotationsUsingDifferentConfigurationStyle(includeAnnotations: annotationTypes)
 
     when:
     def result = runner.runClass(spec)
@@ -84,11 +113,8 @@ def feature3() {
   }
 
   def "exclude methods based on annotations"() {
-    runner.configurationScript = {
-      runner {
-        exclude(*annotationTypes)
-      }
-    }
+    given:
+    includeAndExcludeByAnnotations(excludeAnnotations: annotationTypes)
 
     when:
     def result = runner.runClass(spec)
@@ -104,12 +130,8 @@ def feature3() {
   }
 
   def "include and exclude features based on annotations"() {
-    runner.configurationScript = {
-      runner {
-        include(*annTypes1)
-        exclude(*annTypes2)
-      }
-    }
+    given:
+    includeAndExcludeByAnnotations(includeAnnotations: includeAnnotations, excludeAnnotations: excludeAnnotations)
 
     when:
     def result = runner.runClass(spec)
@@ -120,13 +142,8 @@ def feature3() {
     result.testsSkippedCount == 0
 
     where:
-    annTypes1   << [[Slow], [Slow], [Slow],       [Fast], [Fast], [Fast],       [Slow, Fast], [Slow, Fast], [Slow, Fast]]
-    annTypes2   << [[Slow], [Fast], [Slow, Fast], [Slow], [Fast], [Slow, Fast], [Slow],       [Fast],       [Slow, Fast]]
-    runCount    << [0,      1,      0,            1,      0,      0,            1,            1,            0           ]
+    includeAnnotations << [[Slow], [Slow], [Slow],       [Fast], [Fast], [Fast],       [Slow, Fast], [Slow, Fast], [Slow, Fast]]
+    excludeAnnotations << [[Slow], [Fast], [Slow, Fast], [Slow], [Fast], [Slow, Fast], [Slow],       [Fast],       [Slow, Fast]]
+    runCount           << [0,      1,      0,            1,      0,      0,            1,            1,            0           ]
   }
 }
-
-
-
-
-

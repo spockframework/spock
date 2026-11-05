@@ -95,8 +95,30 @@ include "spock-guice"
 include "spock-junit4"
 include "spock-testkit"
 
-def variant = System.getProperty("variant") as BigDecimal ?: 2.5
-def javaVersion = (System.getProperty("javaVersion") ?: 8) as int
+def variants = variantsList.trim().split(/\s*+,\s*+/).collect { it as BigDecimal }
+def variant = System.getProperty("variant") as BigDecimal ?: variants.first()
+def javaVersions = javaVersionsList.trim().split(/\s*+,\s*+/).collect { it as int }
+def javaVersion = (System.getProperty("javaVersion") ?: javaVersions.first()) as int
+def minJavaVersionsInclusive = Eval.me(minJavaVersionsInclusive)
+def maxJavaVersionsExclusive = Eval.me(maxJavaVersionsExclusive)
+
+if ((minJavaVersionsInclusive.containsKey(variant) &&
+     (System.getProperty("javaVersion") != null) &&
+     (javaVersion < minJavaVersionsInclusive[variant])) ||
+    (maxJavaVersionsExclusive.containsKey(variant) &&
+     (javaVersion >= maxJavaVersionsExclusive[variant]))) {
+  throw new InvalidUserDataException("Groovy $variant is not compatible with Java $javaVersion")
+}
+if (minJavaVersionsInclusive.containsKey(variant) && (System.getProperty("javaVersion") == null)) {
+  javaVersion = minJavaVersionsInclusive[variant]
+}
+
+gradle.lifecycle.beforeProject {
+  ext.javaVersions = javaVersions
+  ext.javaVersion = javaVersion
+  ext.variants = variants
+  ext.variant = variant
+}
 
 if (variant == 2.5) {
   //Remove once Groovy 2.5 support is dropped

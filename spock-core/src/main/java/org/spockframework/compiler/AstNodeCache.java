@@ -181,6 +181,8 @@ public class AstNodeCache {
     InteractionBuilder.getDeclaredMethods(org.spockframework.mock.runtime.InteractionBuilder.ADD_CODE_ARG).get(0);
   public final MethodNode InteractionBuilder_AddEqualArg =
     InteractionBuilder.getDeclaredMethods(org.spockframework.mock.runtime.InteractionBuilder.ADD_EQUAL_ARG).get(0);
+  public final MethodNode InteractionBuilder_AddSpreadWildcardArg =
+    InteractionBuilder.getDeclaredMethods(org.spockframework.mock.runtime.InteractionBuilder.ADD_SPREAD_WILDCARD_ARG).get(0);
   public final MethodNode InteractionBuilder_AddIterableResponse =
     InteractionBuilder.getDeclaredMethods(org.spockframework.mock.runtime.InteractionBuilder.ADD_ITERABLE_RESPONSE).get(0);
   public final MethodNode InteractionBuilder_AddCodeResponse =

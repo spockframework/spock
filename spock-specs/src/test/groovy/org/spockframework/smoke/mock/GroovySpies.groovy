@@ -17,10 +17,76 @@ package org.spockframework.smoke.mock
 import org.spockframework.mock.CannotCreateMockException
 import org.spockframework.runtime.SpockException
 import org.spockframework.util.SpockDocLinks
+import spock.lang.Issue
 import spock.lang.Requires
 import spock.lang.Specification
 
 class GroovySpies extends Specification {
+  @Issue("https://github.com/spockframework/spock/issues/1815")
+  def "can read a missing property through propertyMissing"() {
+    given:
+    GroovySpyDynamicProperties spy = GroovySpy()
+    spy.values.prop1 = "value"
+
+    expect:
+    spy.prop1 == "value"
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1815")
+  def "can write a missing property through propertyMissing"() {
+    given:
+    GroovySpyDynamicProperties spy = GroovySpy()
+
+    when:
+    spy.prop1 = "value"
+
+    then:
+    spy.values == [prop1: "value"]
+  }
+
+  def "can read and write missing properties on a spied instance"() {
+    given:
+    def spy = GroovySpy(new GroovySpyDynamicProperties())
+
+    when:
+    spy.prop1 = "value"
+
+    then:
+    spy.prop1 == "value"
+  }
+
+  def "can stub missing properties without calling propertyMissing"() {
+    given:
+    GroovySpyDynamicProperties spy = GroovySpy()
+
+    when:
+    def result = spy.prop1
+    spy.prop1 = "value"
+
+    then:
+    1 * spy.getProp1() >> "stubbed"
+    1 * spy.setProp1("value") >> { }
+    0 * spy.propertyMissing(_)
+    0 * spy.propertyMissing(_, _)
+    result == "stubbed"
+    spy.values.isEmpty()
+  }
+
+  def "can call the real propertyMissing from an interaction"() {
+    given:
+    GroovySpyDynamicProperties spy = GroovySpy()
+
+    when:
+    spy.prop1 = "value"
+    def result = spy.prop1
+
+    then:
+    1 * spy.setProp1("value") >> { callRealMethod() }
+    1 * spy.getProp1() >> { callRealMethod() }
+    result == "value"
+    spy.values == [prop1: "value"]
+  }
+
   def "can spy on concrete instances"() {
     def person = GroovySpy(new Person())
 
@@ -173,5 +239,17 @@ class GroovySpies extends Specification {
     NoDefaultConstructor(int value) {
       this.value = value
     }
+  }
+}
+
+class GroovySpyDynamicProperties {
+  Map<String, Object> values = [:]
+
+  Object propertyMissing(String name) {
+    values[name]
+  }
+
+  void propertyMissing(String name, Object value) {
+    values[name] = value
   }
 }

@@ -32,6 +32,7 @@ Using `!!` on a `switch` still <<spock_primer.adoc#opt-out-of-condition-handling
 
 === Misc
 
+* Fix non-global `GroovySpy` property access bypassing `propertyMissing` spockIssue:1815[]
 * Fix argument mismatch descriptions for varargs methods by expanding varargs instead of reporting `<too few arguments>` spockPull:2315[]
 * Fix Pattern flags being dropped when `java.util.regex.Pattern` instances are used in Spock regex conditions spockIssue:2298[]
 * Fix `MockitoMockMaker` throwing an NPE on a `null` object spockIssue:2337[]

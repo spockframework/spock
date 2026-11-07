@@ -56,12 +56,12 @@ public class GroovyMockInterceptor extends BaseMockInterceptor {
     if (isMethod(method, "getProperty", String.class)) {
       String methodName = handleGetProperty((GroovyObject)target, args);
       if (methodName != null) {
-        return GroovyRuntimeUtil.invokeMethod(target, methodName);
+        return getMockMetaClass().getProperty(target, (String) args[0]);
       }
     }
     if (isMethod(method, "setProperty", String.class, Object.class)) {
-      String methodName = GroovyRuntimeUtil.propertyToSetterMethodName((String) args[0]);
-      return GroovyRuntimeUtil.invokeMethod(target, methodName, args[1]);
+      getMockMetaClass().setProperty(target, (String) args[0], args[1]);
+      return null;
     }
     if (isMethod(method, "methodMissing", String.class, Object.class)) {
       throw new MissingMethodException((String)args[0],

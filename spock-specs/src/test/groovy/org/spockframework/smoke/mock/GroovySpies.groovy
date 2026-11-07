@@ -98,6 +98,32 @@ class GroovySpies extends Specification {
     result == "singing, singing"
   }
 
+  def "does not retry a final setter that throws"() {
+    given:
+    ThrowingPropertyAccessors spy = GroovySpy()
+
+    when:
+    spy.value = "value"
+
+    then:
+    IOException error = thrown()
+    error.message == "setter failed"
+    spy.setterCalls == 1
+  }
+
+  def "does not retry a final getter that throws"() {
+    given:
+    ThrowingPropertyAccessors spy = GroovySpy()
+
+    when:
+    spy.value
+
+    then:
+    IOException error = thrown()
+    error.message == "getter failed"
+    spy.getterCalls == 1
+  }
+
   def "using >>_ does not call original method and produces stubbed value"() {
     def person = GroovySpy(new Person())
 
@@ -238,6 +264,21 @@ class GroovySpies extends Specification {
 
     NoDefaultConstructor(int value) {
       this.value = value
+    }
+  }
+
+  static class ThrowingPropertyAccessors {
+    int setterCalls
+    int getterCalls
+
+    final void setValue(String value) throws IOException {
+      setterCalls++
+      throw new IOException("setter failed")
+    }
+
+    final String getValue() throws IOException {
+      getterCalls++
+      throw new IOException("getter failed")
     }
   }
 }

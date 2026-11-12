@@ -350,6 +350,11 @@ public class InteractionRewriter {
       return;
     }
 
+    if (arg instanceof SpreadExpression) {
+      call(resources.getAstNodeCache().InteractionBuilder_AddEqualArgs, arg);
+      return;
+    }
+
     call(resources.getAstNodeCache().InteractionBuilder_AddEqualArg, arg);
   }
 

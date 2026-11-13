@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 the original author or authors.
+ * Copyright 2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,46 +16,33 @@
 package org.spockframework.smoke.mock
 
 import spock.lang.Specification
-import spock.lang.Unroll
 
 class SpreadArgumentUsage extends Specification {
-  @Unroll
-  def "matches runtime spread arguments for #methodName"() {
-    InternalClass internalClass = Mock()
-    WrapperClass wrapper = new WrapperClass(internalClass: internalClass)
+  def "matches runtime spread arguments in interaction declarations"() {
+    InternalClass mock = Mock()
 
     when:
-    wrapper."$methodName"(*args)
+    mock."$methodName"(*args)
 
     then:
-    1 * internalClass."$methodName"(*args)
+    1 * mock."$methodName"(*args)
 
     where:
-    methodName     | args
-    "noArgs"       | []
-    "firstMethod"  | ["firstArg", "secondArg"]
-    "secondMethod" | ["firstArg", "secondArg", 123L]
+    methodName           | args
+    "noArgs"             | []
+    "oneArg"             | ["oneArg"]
+    "firstMethod"        | ["firstArg", "secondArg"]
+    "secondMethod"       | ["firstArg", "secondArg", 123L]
+    "varargsOnly"        | ["firstVararg", "secondVararg"]
+    "fixedThenVarargs"   | ["fixedArg", "firstVararg", "secondVararg"]
   }
 }
 
-interface InternalClass {
-  void noArgs()
-  void firstMethod(String firstArg, String secondArg)
-  void secondMethod(String firstArg, String secondArg, long thirdArg)
-}
-
-class WrapperClass {
-  InternalClass internalClass
-
-  void noArgs() {
-    internalClass.noArgs()
-  }
-
-  void firstMethod(String firstArg, String secondArg) {
-    internalClass.firstMethod(firstArg, secondArg)
-  }
-
-  void secondMethod(String firstArg, String secondArg, long thirdArg) {
-    internalClass.secondMethod(firstArg, secondArg, thirdArg)
-  }
+class InternalClass {
+  void noArgs() {}
+  void oneArg(String arg) {}
+  void firstMethod(String firstArg, String secondArg) {}
+  void secondMethod(String firstArg, String secondArg, long thirdArg) {}
+  void varargsOnly(String... args) {}
+  void fixedThenVarargs(String fixedArg, String... args) {}
 }

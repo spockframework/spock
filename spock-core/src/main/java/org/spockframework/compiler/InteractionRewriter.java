@@ -351,7 +351,9 @@ public class InteractionRewriter {
     }
 
     if (arg instanceof SpreadExpression) {
-      call(resources.getAstNodeCache().InteractionBuilder_AddEqualArgs, arg);
+      ListExpression expandedArgs = new ListExpression(Collections.singletonList(arg));
+      CastExpression argsArray = new CastExpression(ClassHelper.OBJECT_TYPE.makeArray(), expandedArgs);
+      call(resources.getAstNodeCache().InteractionBuilder_AddEqualArgs, argsArray);
       return;
     }
 

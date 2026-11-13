@@ -31,6 +31,8 @@ class SpreadArgumentUsage extends Specification {
     methodName           | args
     "noArgs"             | []
     "oneArg"             | ["oneArg"]
+    "objectArg"           | [null]
+    "objectArg"           | [["arrayArg"] as Object[]]
     "firstMethod"        | ["firstArg", "secondArg"]
     "secondMethod"       | ["firstArg", "secondArg", 123L]
     "varargsOnly"        | ["firstVararg", "secondVararg"]
@@ -41,6 +43,7 @@ class SpreadArgumentUsage extends Specification {
 class InternalClass {
   void noArgs() {}
   void oneArg(String arg) {}
+  void objectArg(Object arg) {}
   void firstMethod(String firstArg, String secondArg) {}
   void secondMethod(String firstArg, String secondArg, long thirdArg) {}
   void varargsOnly(String... args) {}

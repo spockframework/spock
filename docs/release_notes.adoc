@@ -6,6 +6,10 @@ include::include.adoc[]
 
 == 2.6 (tbd)
 
+=== Misc
+
+* Fix spread argument matching in interaction declarations for methods with fixed or variable argument lists spockIssue:1365[]
+
 == 2.5 (2026-10-06)
 
 === Highlights

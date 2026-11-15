@@ -8,7 +8,10 @@ import groovy.lang.GString;
 import java.util.Locale;
 
 public class FailedStringComparisonRenderer implements ExpressionComparisonRenderer {
-  public static final long MAX_EDIT_DISTANCE_MEMORY = 50 * 1024;
+  // The edit distance computation needs O(N + M) memory since its linear-space rewrite, so this
+  // limit only bounds the computation effort: MAX cells cost milliseconds and a few MB, large
+  // enough to render diffs for differing sections of ~1000 characters directly.
+  public static final long MAX_EDIT_DISTANCE_MEMORY = 1024 * 1024;
   @Override
   public String render(ExpressionInfo expr) {
     if (!(Boolean.FALSE.equals(expr.getValue()))) return null;
@@ -43,14 +46,14 @@ public class FailedStringComparisonRenderer implements ExpressionComparisonRende
     end1++;
     end2++;
 
-    if (((long) end1-commonStart) * (end2-commonStart) > MAX_EDIT_DISTANCE_MEMORY) {
+    if (((long) end1 - commonStart) * (end2 - commonStart) > MAX_EDIT_DISTANCE_MEMORY) {
       return "false\nStrings too large to calculate edit distance.";
     } else {
-      // Check if we can add some context
-      if (((long) end1 - commonStart + 20) * (end2 - commonStart + 20) < MAX_EDIT_DISTANCE_MEMORY){
-        commonStart = Math.max(0, commonStart - 10);
-        end1 = Math.min(str1.length(), end1 + 10);
-        end2 = Math.min(str2.length(), end2 + 10);
+      // Check if we can add some context around the differing section
+      if (((long) end1 - commonStart + 500) * (end2 - commonStart + 500) < MAX_EDIT_DISTANCE_MEMORY){
+        commonStart = Math.max(0, commonStart - 250);
+        end1 = Math.min(str1.length(), end1 + 250);
+        end2 = Math.min(str2.length(), end2 + 250);
       }
       return createAndRenderEditDistance(str1, str2, commonStart, end1, end2);
     }

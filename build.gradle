@@ -19,19 +19,12 @@ ext {
   baseVersion = "2.6"
   snapshotVersion = true
   milestone = 0
-  javaVersions = javaVersionsList.trim().split(/\s*+,\s*+/).collect { it as int }
-  javaVersion = (System.getProperty("javaVersion") ?: 8) as int
-  variants = variantsList.trim().split(/\s*+,\s*+/).collect { it as BigDecimal }
-  variant = System.getProperty("variant") as BigDecimal ?: variants.first()
   develocity.buildScan.tag "groovy-$variant"
   if (variant == 2.5) {
     groovyGroup = "org.codehaus.groovy"
     groovyVersion = libs.versions.groovy2.get()
     minGroovyVersion = "2.5.0"
     maxGroovyVersion = "2.9.99"
-    if (javaVersion >= 17) {
-      throw new InvalidUserDataException("Groovy $variant is not compatible with Java $javaVersion")
-    }
   } else if (variant == 3.0) {
     groovyGroup = "org.codehaus.groovy"
     groovyVersion = libs.versions.groovy3.get()
@@ -47,23 +40,11 @@ ext {
     groovyVersion = libs.versions.groovy5.get()
     minGroovyVersion = "5.0.0"
     maxGroovyVersion = "5.9.99"
-    if (javaVersion < 11) {
-      if (System.getProperty("javaVersion") != null) {
-        throw new InvalidUserDataException("Groovy $variant is not compatible with Java $javaVersion")
-      }
-      javaVersion = 11
-    }
   } else if (variant == 6.0) {
     groovyGroup = "org.apache.groovy"
     groovyVersion = libs.versions.groovy6.get()
     minGroovyVersion = "6.0.0"
     maxGroovyVersion = "6.9.99"
-    if (javaVersion < 17) {
-      if (System.getProperty("javaVersion") != null) {
-        throw new InvalidUserDataException("Groovy $variant is not compatible with Java $javaVersion")
-      }
-      javaVersion = 17
-    }
   } else {
     throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")
   }

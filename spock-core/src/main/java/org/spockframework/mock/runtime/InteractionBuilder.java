@@ -148,6 +148,14 @@ public class InteractionBuilder {
     return this;
   }
 
+  public static final String ADD_EQUAL_ARGS = "addEqualArgs";
+  public InteractionBuilder addEqualArgs(Object... args) {
+    for (Object arg : args) {
+      addEqualArg(arg);
+    }
+    return this;
+  }
+
   public static final String TYPE_LAST_ARG = "typeLastArg";
   public InteractionBuilder typeLastArg(Class<?> type) {
     IArgumentConstraint last = argConstraints.get(argConstraints.size() - 1);

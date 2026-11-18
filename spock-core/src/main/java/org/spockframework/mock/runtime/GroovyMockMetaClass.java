@@ -137,7 +137,9 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
       // getMetaClass was already handled earlier; setMetaClass isn't handled specially
     }
 
-    final IResponseGenerator invoker = invokerFactory.apply(getAdaptee());
+    final IResponseGenerator invoker = metaMethod != null
+      ? new GroovyRealMethodInvoker(getAdaptee())
+      : invokerFactory.apply(getAdaptee());
     IMockInvocation invocation = createMockInvocation(metaMethod, target, methodName, args, isStatic, invoker);
     IMockController controller = specification.getSpecificationContext().getMockController();
     return controller.handle(invocation);

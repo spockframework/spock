@@ -350,6 +350,11 @@ public class InteractionRewriter {
       return;
     }
 
+    if ((arg instanceof SpreadExpression) && AstUtil.isWildcardRef(((SpreadExpression) arg).getExpression())) {
+      call(resources.getAstNodeCache().InteractionBuilder_AddSpreadWildcardArg);
+      return;
+    }
+
     call(resources.getAstNodeCache().InteractionBuilder_AddEqualArg, arg);
   }
 

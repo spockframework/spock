@@ -148,6 +148,12 @@ public class InteractionBuilder {
     return this;
   }
 
+  public static final String ADD_SPREAD_WILDCARD_ARG = "addSpreadWildcardArg";
+  public InteractionBuilder addSpreadWildcardArg() {
+    argConstraints.add(SpreadWildcardArgumentConstraint.INSTANCE);
+    return this;
+  }
+
   public static final String TYPE_LAST_ARG = "typeLastArg";
   public InteractionBuilder typeLastArg(Class<?> type) {
     IArgumentConstraint last = argConstraints.get(argConstraints.size() - 1);

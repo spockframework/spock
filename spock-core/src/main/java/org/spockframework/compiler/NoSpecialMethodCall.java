@@ -23,6 +23,7 @@ import java.util.Collection;
 
 public class NoSpecialMethodCall implements ISpecialMethodCall {
   public static final ISpecialMethodCall INSTANCE = new NoSpecialMethodCall();
+  public static final ISpecialMethodCall CLOSURE_INSTANCE = new NoSpecialMethodCall();
 
   @Override
   public boolean isMethodName(String name) {

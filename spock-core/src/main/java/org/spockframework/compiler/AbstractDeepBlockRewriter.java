@@ -151,7 +151,7 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
     groupConditionFound = false;
     ISpecialMethodCall oldSpecialMethodCall = currSpecialMethodCall;
     if (!currSpecialMethodCall.isMatch(expr)) {
-      currSpecialMethodCall = NoSpecialMethodCall.INSTANCE; // unrelated closure terminates currSpecialMethodCall scope
+      currSpecialMethodCall = NoSpecialMethodCall.CLOSURE_INSTANCE; // unrelated closure terminates currSpecialMethodCall scope
     }
     try {
       Statement code = expr.getCode();

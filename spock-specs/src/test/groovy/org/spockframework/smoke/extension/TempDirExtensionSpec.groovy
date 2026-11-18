@@ -88,12 +88,12 @@ class TempDirExtensionSpec extends EmbeddedSpecification {
       def tempFile = aaabbb.resolve("tmp.txt")
       Files.createDirectories(aaabbb)
       Files.write(tempFile, "ewfwf".bytes)
-      aaabbb.toFile().writable = false
-      aaa.toFile().writable = false
-      tempFile.toFile().writable = false
-      previousIteration = iterationDir
+      !!(aaabbb.toFile().writable = false)
+      !!(aaa.toFile().writable = false)
+      !!(tempFile.toFile().writable = false)
+      !!(previousIteration = iterationDir)
     } else if (i == 1) {
-      assert !previousIteration.exists()
+      !previousIteration.exists()
     }
 
     where:

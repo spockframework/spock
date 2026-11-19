@@ -2,6 +2,7 @@ package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
+import org.spockframework.runtime.SpockComparisonFailure
 import org.spockframework.runtime.SpockMultipleFailuresError
 import org.spockframework.runtime.extension.ExtensionAnnotation
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension
@@ -83,6 +84,31 @@ def bar() {
     }
     result.testsSkippedCount == 0
     featureCounter.get() == 4
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/2175")
+  def "@Retry preserves the exhausted retries message and stack trace"(Retry.Mode mode) {
+    when:
+    def result = runner.runSpecBody("""
+@Retry(count = 1, mode = Retry.Mode.${mode.name()})
+def bar() {
+  expect:
+  1 == 2
+}
+    """)
+
+    then:
+    result.testsFailedCount == 1
+    with(result.failures.exception[0], MultipleFailuresError) {
+      message.startsWith("Retries exhausted (2 failures)")
+      stackTrace.any { it.className.startsWith("org.spockframework.runtime.extension.builtin.Retry") }
+      failures.size() == 2
+      failures.every { it instanceof SpockComparisonFailure }
+      failures.every { it.expected.value == 2 && it.actual.value == 1 }
+    }
+
+    where:
+    mode << Retry.Mode.values()
   }
 
   def "@Retry mode #mode executes setup and cleanup #expectedCount times (parallel: #parallel)"(String mode, int expectedCount) {

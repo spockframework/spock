@@ -6,8 +6,6 @@ import org.spockframework.util.ExceptionUtil;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.opentest4j.MultipleFailuresError;
-
 public class ErrorInfoCollector {
   private List<ErrorInfo> errorInfos = new ArrayList<>();
 
@@ -23,13 +21,16 @@ public class ErrorInfoCollector {
     return !errorInfos.isEmpty();
   }
 
+  List<Throwable> getExceptions() {
+    return errorInfos.stream().map(ErrorInfo::getException).collect(Collectors.toList());
+  }
+
   public void assertEmpty() {
     if (!errorInfos.isEmpty()) {
       if (errorInfos.size() == 1) {
         ExceptionUtil.sneakyThrow(errorInfos.get(0).getException());
       }
-      throw new SpockMultipleFailuresError("",
-        errorInfos.stream().map(ErrorInfo::getException).collect(Collectors.toList()));
+      throw new SpockMultipleFailuresError("", getExceptions());
     }
   }
 }

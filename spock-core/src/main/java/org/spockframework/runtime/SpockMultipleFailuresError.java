@@ -22,8 +22,37 @@ import java.util.List;
 
 public class SpockMultipleFailuresError extends MultipleFailuresError {
   private static final long serialVersionUID = 1L;
+  private final MultipleFailuresError original;
 
   public SpockMultipleFailuresError(String heading, List<? extends Throwable> failures) {
+    this(heading, failures, null);
+  }
+
+  static SpockMultipleFailuresError from(MultipleFailuresError original, List<? extends Throwable> failures) {
+    return new SpockMultipleFailuresError("", failures, original);
+  }
+
+  private SpockMultipleFailuresError(String heading, List<? extends Throwable> failures, MultipleFailuresError original) {
     super(heading, failures);
+    this.original = original;
+    if (original == null) return;
+
+    setStackTrace(original.getStackTrace());
+    if (original.getCause() != null) {
+      initCause(original.getCause());
+    }
+    for (Throwable suppressed : original.getSuppressed()) {
+      addSuppressed(suppressed);
+    }
+  }
+
+  boolean isTransformed() {
+    return original != null;
+  }
+
+  @Override
+  public String getMessage() {
+    // getMessage already includes the failures, so it cannot be used as a new heading.
+    return original == null ? super.getMessage() : original.getMessage();
   }
 }

@@ -226,6 +226,7 @@ You can use
 
 as an equality constraint.
 
+[[hamcrest-constraint]]
 ==== Hamcrest Constraint
 
 A variation of the equality constraint, if the constraint object is a Hamcrest matcher, then it will use that matcher to check the argument.

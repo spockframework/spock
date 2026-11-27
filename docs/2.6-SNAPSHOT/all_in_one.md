@@ -27,9 +27,9 @@ So why not run [Hello, Spock!](https://groovyconsole.dev/?g=groovy_4_0&codez=eNp
 ### Spock Example Project
 
 To try Spock in your local environment, clone or download/unzip the [Spock Example Project](https://github.com/spockframework/spock-example).
-It comes with fully working Ant, Gradle, and Maven builds that require no further setup.
-The Gradle build even bootstraps Gradle itself and gets you up and running in Eclipse or IDEA with a single command.
-See the README for detailed instructions.
+It comes with fully working Ant, Gradle, and Maven builds.
+The Gradle build even bootstraps Gradle itself and gets you up and running in Eclipse or IntelliJ IDEA through the respective Gradle integrations.
+See the README in that project for detailed instructions and prerequisites.
 
 
 ## Spock Primer
